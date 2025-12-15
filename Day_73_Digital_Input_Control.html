@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Input & Control Structures</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            height: 100vh;
+        }
+
+        .presentation {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            min-height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 55px 60px 120px 60px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .slide-content {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #00d4ff;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(0, 212, 255, 0.5); }
+            to { text-shadow: 0 0 30px rgba(0, 212, 255, 0.8); }
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00d4ff;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ff9500;
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #b8c5d6;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #ff9500;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .objective-box {
+            background: linear-gradient(135deg, rgba(80, 250, 123, 0.1) 0%, rgba(80, 250, 123, 0.05) 100%);
+            border: 3px solid #50fa7b;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 0 30px rgba(80, 250, 123, 0.2);
+        }
+
+        .objective-box h3 {
+            color: #50fa7b;
+            margin-bottom: 12px;
+        }
+
+        .code-block {
+            background: #0d1117;
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 40px 25px 25px 25px;
+            margin: 15px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            line-height: 1.5;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+            position: relative;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 350px;
+            white-space: pre;
+        }
+
+        .code-block::before {
+            content: 'Arduino Code';
+            position: absolute;
+            top: 8px;
+            left: 20px;
+            background: transparent;
+            padding: 0;
+            font-size: 0.7rem;
+            color: #00d4ff;
+            font-weight: 700;
+            opacity: 0.6;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 6px;
+            right: 15px;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            border: none;
+            color: #0a0e27;
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 212, 255, 0.3);
+            z-index: 10;
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.5);
+        }
+
+        .copy-btn.copied {
+            background: linear-gradient(135deg, #50fa7b 0%, #40c96b 100%);
+        }
+
+        .keyword { color: #ff79c6; }
+        .function { color: #50fa7b; }
+        .number { color: #bd93f9; }
+        .comment { color: #6272a4; font-style: italic; }
+        .string { color: #f1fa8c; }
+        .datatype { color: #8be9fd; }
+
+        .bullet-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .bullet-list li {
+            font-size: 1.15rem;
+            margin: 12px 0;
+            padding-left: 35px;
+            position: relative;
+            color: #b8c5d6;
+            line-height: 1.5;
+        }
+
+        .bullet-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #ff9500;
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .box {
+            background: rgba(0, 212, 255, 0.05);
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+        }
+
+        .highlight {
+            color: #00d4ff;
+            font-weight: 700;
+        }
+
+        .warning {
+            color: #ff9500;
+            font-weight: 700;
+        }
+
+        .success {
+            color: #50fa7b;
+            font-weight: 700;
+        }
+
+        .checkmark {
+            color: #50fa7b;
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+
+        /* Interactive Elements */
+        .interactive-btn {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            border: none;
+            color: #0a0e27;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+            margin: 10px 5px;
+        }
+
+        .interactive-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .interactive-btn.active {
+            background: linear-gradient(135deg, #50fa7b 0%, #40c96b 100%);
+        }
+
+        .expandable {
+            background: rgba(255, 149, 0, 0.1);
+            border: 2px solid #ff9500;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .expandable:hover {
+            background: rgba(255, 149, 0, 0.15);
+            border-color: #ffaa00;
+        }
+
+        .expandable-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            color: #ff9500;
+            font-size: 1.1rem;
+        }
+
+        .expandable-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            padding-top: 0;
+        }
+
+        .expandable-content.expanded {
+            max-height: 500px;
+            padding-top: 15px;
+        }
+
+        .output-display {
+            background: #0d1117;
+            border: 2px solid #50fa7b;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            margin-top: 15px;
+            min-height: 50px;
+            color: #50fa7b;
+        }
+
+        .circuit-sim {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        .led-indicator {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #333;
+            border: 3px solid #666;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .led-indicator.on {
+            background: #50fa7b;
+            border-color: #50fa7b;
+            box-shadow: 0 0 30px rgba(80, 250, 123, 0.8);
+        }
+
+        .button-sim {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff9500 0%, #cc7700 100%);
+            border: 4px solid #ff9500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a0e27;
+            user-select: none;
+        }
+
+        .button-sim:active {
+            transform: scale(0.95);
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        /* Quiz Styles */
+        .quiz-question {
+            background: rgba(0, 212, 255, 0.05);
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .quiz-options {
+            margin-top: 15px;
+        }
+
+        .quiz-option {
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid #00d4ff;
+            border-radius: 8px;
+            padding: 12px 20px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .quiz-option:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: #00eeff;
+        }
+
+        .quiz-option.selected {
+            background: rgba(80, 250, 123, 0.2);
+            border-color: #50fa7b;
+        }
+
+        .quiz-option.correct {
+            background: rgba(80, 250, 123, 0.3);
+            border-color: #50fa7b;
+        }
+
+        .quiz-option.incorrect {
+            background: rgba(255, 85, 85, 0.3);
+            border-color: #ff5555;
+        }
+
+        .quiz-feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .quiz-feedback.correct {
+            background: rgba(80, 250, 123, 0.2);
+            border: 2px solid #50fa7b;
+            color: #50fa7b;
+        }
+
+        .quiz-feedback.incorrect {
+            background: rgba(255, 85, 85, 0.2);
+            border: 2px solid #ff5555;
+            color: #ff5555;
+        }
+
+        .quiz-score {
+            text-align: center;
+            font-size: 2rem;
+            color: #00d4ff;
+            margin: 20px 0;
+        }
+
+        .submit-form {
+            background: rgba(0, 212, 255, 0.05);
+            border: 3px solid #00d4ff;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        .form-group label {
+            display: block;
+            color: #00d4ff;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            background: #0d1117;
+            border: 2px solid #00d4ff;
+            border-radius: 8px;
+            padding: 12px;
+            color: #e0e6f0;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #00eeff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        button {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            border: none;
+            color: #0a0e27;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .slide-number {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            color: #00d4ff;
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            .slide { padding: 30px; }
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-content" style="text-align: center;">
+                <h1>Digital Input & Control Structures</h1>
+                <p class="subtitle">Reading Buttons & Making Decisions</p>
+                <div style="margin: 30px auto; max-width: 600px;">
+                    <svg viewBox="0 0 300 150" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; filter: drop-shadow(0 0 15px rgba(0, 212, 255, 0.5));">
+                        <!-- Button -->
+                        <circle cx="80" cy="75" r="35" fill="#ff9500" stroke="#ff9500" stroke-width="4">
+                            <animate attributeName="r" values="35;38;35" dur="2s" repeatCount="indefinite"/>
+                        </circle>
+                        <text x="80" y="85" font-family="Exo 2" font-size="16" fill="#0a0e27" text-anchor="middle" font-weight="bold">PUSH</text>
+                        
+                        <!-- Arrow -->
+                        <path d="M 130 75 L 170 75" stroke="#00d4ff" stroke-width="4" marker-end="url(#arrow)"/>
+                        
+                        <!-- LED -->
+                        <circle cx="220" cy="75" r="30" fill="#50fa7b" stroke="#50fa7b" stroke-width="4">
+                            <animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite"/>
+                        </circle>
+                        
+                        <defs>
+                            <marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                                <polygon points="0 0, 10 5, 0 10" fill="#00d4ff"/>
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+                <p style="font-size: 1rem; margin-top: 25px;">Wednesday, January 7, 2026 | 50 minutes</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Learning Objectives -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Today's Learning Objectives</h2>
+                <div style="display: grid; grid-template-columns: 1fr 180px; gap: 30px; align-items: center;">
+                    <div class="objective-box">
+                        <h3>By the end of today, you will be able to:</h3>
+                        <ul class="bullet-list" style="font-size: 1.05rem;">
+                            <li>Read digital inputs using <span class="highlight">digitalRead()</span></li>
+                            <li>Understand <span class="highlight">INPUT_PULLUP</span> and why we use it</li>
+                            <li>Use <span class="highlight">if/else</span> statements for decision-making</li>
+                            <li>Build a button-controlled LED circuit</li>
+                        </ul>
+                    </div>
+                    <div style="text-align: center;">
+                        <svg viewBox="0 0 150 200" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; filter: drop-shadow(0 0 15px rgba(255, 149, 0, 0.5));">
+                            <!-- Decision Diamond -->
+                            <path d="M 75 20 L 130 75 L 75 130 L 20 75 Z" fill="rgba(255, 149, 0, 0.2)" stroke="#ff9500" stroke-width="3"/>
+                            <text x="75" y="70" font-family="Exo 2" font-size="14" fill="#ff9500" text-anchor="middle">Button</text>
+                            <text x="75" y="90" font-family="Exo 2" font-size="14" fill="#ff9500" text-anchor="middle">Pressed?</text>
+                            
+                            <!-- Yes Arrow -->
+                            <path d="M 75 130 L 75 160" stroke="#50fa7b" stroke-width="3" marker-end="url(#arrow-green)"/>
+                            <text x="55" y="150" font-family="Exo 2" font-size="12" fill="#50fa7b">YES</text>
+                            <circle cx="75" cy="175" r="15" fill="#50fa7b"/>
+                            
+                            <!-- No Arrow -->
+                            <path d="M 20 75 L -10 75" stroke="#ff5555" stroke-width="3" marker-end="url(#arrow-red)"/>
+                            <text x="5" y="70" font-family="Exo 2" font-size="12" fill="#ff5555">NO</text>
+                            
+                            <defs>
+                                <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                                    <polygon points="0 0, 8 4, 0 8" fill="#50fa7b"/>
+                                </marker>
+                                <marker id="arrow-red" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                                    <polygon points="0 0, 8 4, 0 8" fill="#ff5555"/>
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+                </div>
+                <p style="text-align: center; font-size: 1.3rem; margin-top: 20px; color: #ff9500;">
+                    Make your Arduino respond to the real world! 🎮
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 3: What is Digital Input? -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>What is Digital Input?</h2>
+                <div class="grid-2">
+                    <div>
+                        <ul class="bullet-list">
+                            <li><span class="highlight">Digital</span> means only two states: HIGH or LOW</li>
+                            <li><span class="highlight">HIGH</span> = button pressed, switch on (5V)</li>
+                            <li><span class="highlight">LOW</span> = button released, switch off (0V)</li>
+                            <li>Perfect for buttons, switches, sensors</li>
+                        </ul>
+                    </div>
+                    <div class="box">
+                        <h3>Try It: Click the Button!</h3>
+                        <div class="circuit-sim" style="flex-direction: column;">
+                            <div class="button-sim" id="simButton" onmousedown="pressButton()" onmouseup="releaseButton()" ontouchstart="pressButton()" ontouchend="releaseButton()">
+                                PRESS ME
+                            </div>
+                            <div style="text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 1.2rem;">
+                                State: <span id="buttonState" style="color: #ff5555;">LOW</span>
+                            </div>
+                            <div class="led-indicator" id="simLED"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="expandable" onclick="toggleExpand(this)">
+                    <div class="expandable-header">
+                        <span>🔍 Deep Dive: How Buttons Work Electrically</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="expandable-content">
+                        <p>When you press a button, you're physically connecting two metal contacts inside. This creates a complete electrical circuit, allowing current to flow. In Arduino, this changes the voltage from 0V (LOW) to 5V (HIGH). When released, the circuit opens and voltage drops back to 0V.</p>
+                        <p style="margin-top: 10px;"><span class="warning">Problem:</span> Without a pull-up resistor, the pin "floats" when the button isn't pressed, giving random readings!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: pinMode and digitalRead -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Reading a Digital Pin</h2>
+                <div class="code-block" style="font-size: 0.95rem;">
+int buttonPin = 2;        // Pin connected to button
+int buttonState = 0;      // Variable to store state
+
+void setup() {
+  pinMode(buttonPin, INPUT_PULLUP);  // Set as input with pullup
+  Serial.begin(9600);
+}
+
+void loop() {
+  buttonState = digitalRead(buttonPin);  // Read the pin
+  Serial.println(buttonState);           // Print state
+  delay(100);
+}
+                </div>
+                <div class="box" style="margin-top: 15px;">
+                    <h3>What does digitalRead() return?</h3>
+                    <ul class="bullet-list" style="font-size: 1rem;">
+                        <li><span class="highlight">HIGH</span> (or 1) when button is pressed</li>
+                        <li><span class="highlight">LOW</span> (or 0) when button is released</li>
+                        <li>With <span class="success">INPUT_PULLUP</span>, the logic is REVERSED!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: INPUT_PULLUP Explained -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Understanding INPUT_PULLUP</h2>
+                <div class="grid-2">
+                    <div class="box">
+                        <h3>Without PULLUP</h3>
+                        <p style="font-size: 1rem;">Pin "floats" when button not pressed → random readings!</p>
+                        <div style="margin-top: 15px; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem;">
+                            Released: ???<br>
+                            Pressed: HIGH
+                        </div>
+                    </div>
+                    <div class="box">
+                        <h3>With INPUT_PULLUP</h3>
+                        <p style="font-size: 1rem;">Internal resistor pulls pin HIGH → stable readings!</p>
+                        <div style="margin-top: 15px; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem;">
+                            Released: HIGH<br>
+                            Pressed: LOW
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="box" style="margin-top: 20px; background: rgba(255, 149, 0, 0.1); border-color: #ff9500;">
+                    <h3>⚠ Important: Logic is Reversed!</h3>
+                    <p>With INPUT_PULLUP:</p>
+                    <ul class="bullet-list" style="font-size: 1rem;">
+                        <li>Button <span class="warning">NOT pressed</span> = <span class="highlight">HIGH</span></li>
+                        <li>Button <span class="warning">PRESSED</span> = <span class="highlight">LOW</span></li>
+                    </ul>
+                </div>
+
+                <div class="expandable" onclick="toggleExpand(this)">
+                    <div class="expandable-header">
+                        <span>🔍 Deep Dive: Why Reverse Logic?</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="expandable-content">
+                        <p>The internal pull-up resistor connects the pin to 5V through a high resistance (20-50kΩ). When the button is NOT pressed, the pin reads HIGH. When you press the button, you connect the pin directly to ground (0V), which "wins" over the weak pull-up, making the pin read LOW. This is called "active-low" logic and is very common in digital electronics because it's more noise-resistant than active-high.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: If Statements -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Making Decisions: if Statements</h2>
+                <div class="code-block" style="font-size: 0.95rem;">
+int buttonPin = 2;
+int ledPin = 13;
+
+void setup() {
+  pinMode(buttonPin, INPUT_PULLUP);
+  pinMode(ledPin, OUTPUT);
+}
+
+void loop() {
+  if (digitalRead(buttonPin) == LOW) {    // If button pressed
+    digitalWrite(ledPin, HIGH);           // Turn LED on
+  }
+}
+                </div>
+                
+                <div class="box" style="margin-top: 15px;">
+                    <h3>if Statement Syntax</h3>
+                    <div class="code-block" style="font-size: 0.9rem; margin-top: 10px;">
+if (condition) {
+  // Code runs ONLY if condition is true
+}
+                    </div>
+                    <p style="margin-top: 10px; font-size: 1rem;">Common conditions:</p>
+                    <ul class="bullet-list" style="font-size: 0.95rem;">
+                        <li><span class="highlight">==</span> equals</li>
+                        <li><span class="highlight">!=</span> not equals</li>
+                        <li><span class="highlight">&gt;</span> greater than, <span class="highlight">&lt;</span> less than</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Interactive If/Else Demo -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>if/else Statements</h2>
+                <div class="grid-2">
+                    <div>
+                        <div class="code-block" style="font-size: 0.9rem;">
+if (digitalRead(buttonPin) == LOW) {
+  digitalWrite(ledPin, HIGH);
+} else {
+  digitalWrite(ledPin, LOW);
+}
+                        </div>
+                        <div class="box" style="margin-top: 15px;">
+                            <h3>How it works:</h3>
+                            <ul class="bullet-list" style="font-size: 0.95rem;">
+                                <li><span class="highlight">if</span> block runs when condition is TRUE</li>
+                                <li><span class="highlight">else</span> block runs when condition is FALSE</li>
+                                <li>Only ONE block ever executes</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="box">
+                            <h3>Interactive Demo</h3>
+                            <div style="text-align: center; margin: 20px 0;">
+                                <button class="interactive-btn" id="demoBtn" onclick="toggleDemo()">
+                                    Press Button
+                                </button>
+                            </div>
+                            <div class="output-display" id="demoOutput">
+Waiting for button press...
+                            </div>
+                            <div style="text-align: center; margin-top: 20px;">
+                                <div class="led-indicator" id="demoLED"></div>
+                                <p style="margin-top: 10px; font-size: 0.9rem;">LED State</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: else if -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Multiple Conditions: else if</h2>
+                <div class="code-block" style="font-size: 0.85rem;">
+int sensorValue = analogRead(A0);
+
+if (sensorValue < 300) {
+  Serial.println("LOW");
+} else if (sensorValue < 700) {
+  Serial.println("MEDIUM");
+} else {
+  Serial.println("HIGH");
+}
+                </div>
+                
+                <div class="box" style="margin-top: 15px;">
+                    <h3>Try It: Adjust the Value</h3>
+                    <div style="margin: 15px 0;">
+                        <input type="range" min="0" max="1023" value="512" id="sensorSlider" 
+                               style="width: 100%; height: 30px; cursor: pointer;"
+                               oninput="updateSensorDemo(this.value)">
+                        <div style="text-align: center; margin-top: 10px; font-family: 'JetBrains Mono', monospace;">
+                            Value: <span id="sensorValueDisplay" style="color: #00d4ff; font-size: 1.2rem;">512</span>
+                        </div>
+                    </div>
+                    <div class="output-display" id="sensorOutput">
+MEDIUM
+                    </div>
+                </div>
+
+                <div class="expandable" onclick="toggleExpand(this)">
+                    <div class="expandable-header">
+                        <span>🔍 Deep Dive: Order Matters!</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="expandable-content">
+                        <p>Arduino checks conditions from top to bottom and stops at the FIRST true condition. That's why we check smallest values first! If we checked "value < 700" first, values like 200 would match it and never reach "value < 300". Always arrange conditions from most specific to least specific.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Today's Assignment -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Today's Challenge</h2>
+                <div style="background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 149, 0, 0.05) 100%); border: 3px solid #ff9500; border-radius: 12px; padding: 20px;">
+                    <h3>Button Toggle LED</h3>
+                    <p style="font-size: 1.1rem; margin-bottom: 15px;">Build a circuit that toggles an LED on/off with each button press</p>
+                    
+                    <h3 style="margin-top: 20px; color: #00d4ff; font-size: 1.3rem;">Requirements:</h3>
+                    <ul class="bullet-list" style="font-size: 1.05rem;">
+                        <li>Connect button to pin 2, LED to pin 13</li>
+                        <li>Use <span class="highlight">INPUT_PULLUP</span> for button</li>
+                        <li>Each button press toggles LED state</li>
+                        <li>Use a <span class="highlight">boolean</span> variable to track state</li>
+                        <li>Add debouncing with <span class="highlight">delay(200)</span></li>
+                    </ul>
+                    <p style="margin-top: 20px; font-size: 1.1rem;"><span class="warning">Due:</span> Thursday by noon - submit code + video</p>
+                </div>
+
+                <div class="expandable" onclick="toggleExpand(this)">
+                    <div class="expandable-header">
+                        <span>💡 Hint: How to Toggle</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="expandable-content">
+                        <div class="code-block" style="font-size: 0.85rem;">
+boolean ledState = false;
+
+if (digitalRead(buttonPin) == LOW) {
+  ledState = !ledState;          // Flip the state
+  digitalWrite(ledPin, ledState);
+  delay(200);                    // Debounce
+}
+                        </div>
+                        <p style="margin-top: 10px;">The <span class="highlight">!</span> operator flips a boolean: true becomes false, false becomes true!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Quiz Question 1 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 1 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">With INPUT_PULLUP, what state is the pin when the button is NOT pressed?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ1(this, 'A', false)">A) LOW</div>
+                        <div class="quiz-option" onclick="answerQ1(this, 'B', true)">B) HIGH</div>
+                        <div class="quiz-option" onclick="answerQ1(this, 'C', false)">C) Random/Floating</div>
+                        <div class="quiz-option" onclick="answerQ1(this, 'D', false)">D) 0</div>
+                    </div>
+                    <div id="feedback-q1" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q1-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> INPUT_PULLUP uses an internal resistor to pull the pin HIGH when nothing is connected. Pressing the button connects it to ground, making it LOW.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Quiz Question 2 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 2 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What symbol means "equals" in an if statement?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ2(this, 'A', false)">A) =</div>
+                        <div class="quiz-option" onclick="answerQ2(this, 'B', true)">B) ==</div>
+                        <div class="quiz-option" onclick="answerQ2(this, 'C', false)">C) ===</div>
+                        <div class="quiz-option" onclick="answerQ2(this, 'D', false)">D) !=</div>
+                    </div>
+                    <div id="feedback-q2" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q2-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> Single = is assignment (x = 5 sets x to 5), while double == is comparison (if x == 5 checks if x equals 5). Use == in if statements!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Quiz Question 3 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 3 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What does digitalRead() return?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ3(this, 'A', false)">A) A number from 0-1023</div>
+                        <div class="quiz-option" onclick="answerQ3(this, 'B', true)">B) Either HIGH or LOW</div>
+                        <div class="quiz-option" onclick="answerQ3(this, 'C', false)">C) A voltage value</div>
+                        <div class="quiz-option" onclick="answerQ3(this, 'D', false)">D) True or False</div>
+                    </div>
+                    <div id="feedback-q3" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q3-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> digitalRead() returns either HIGH (5V) or LOW (0V), representing the digital state of the pin. For analog readings (0-1023), use analogRead() instead!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Quiz Question 4 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 4 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">When does the else block execute?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ4(this, 'A', false)">A) Always</div>
+                        <div class="quiz-option" onclick="answerQ4(this, 'B', true)">B) When if condition is false</div>
+                        <div class="quiz-option" onclick="answerQ4(this, 'C', false)">C) When if condition is true</div>
+                        <div class="quiz-option" onclick="answerQ4(this, 'D', false)">D) Never</div>
+                    </div>
+                    <div id="feedback-q4" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q4-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> The else block only runs when the if condition evaluates to false. Think of it as "otherwise, do this."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Quiz Question 5 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 5 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">When using INPUT_PULLUP, how should you wire the button?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ5(this, 'A', false)">A) Pin to 5V</div>
+                        <div class="quiz-option" onclick="answerQ5(this, 'B', true)">B) Pin to Ground</div>
+                        <div class="quiz-option" onclick="answerQ5(this, 'C', false)">C) Between 5V and Ground</div>
+                        <div class="quiz-option" onclick="answerQ5(this, 'D', false)">D) No connection needed</div>
+                    </div>
+                    <div id="feedback-q5" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q5-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> With INPUT_PULLUP, one side of the button connects to the pin, the other to ground. Pressing the button connects the pin to ground (LOW).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Study Tips -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Preparing for Friday's Quiz</h2>
+                <div class="box" style="margin-bottom: 20px;">
+                    <h3>What to Review:</h3>
+                    <ul class="bullet-list">
+                        <li>How <span class="highlight">INPUT_PULLUP</span> works and why logic is reversed</li>
+                        <li>The difference between <span class="highlight">=</span> (assignment) and <span class="highlight">==</span> (comparison)</li>
+                        <li><span class="highlight">if/else/else-if</span> statement structure</li>
+                        <li><span class="highlight">digitalRead()</span> and <span class="highlight">digitalWrite()</span> functions</li>
+                        <li>Button wiring with pullup resistors</li>
+                    </ul>
+                </div>
+
+                <div class="box" style="background: rgba(255, 149, 0, 0.1); border-color: #ff9500;">
+                    <h3 style="color: #ff9500;">Study Resources:</h3>
+                    <ul class="bullet-list" style="font-size: 1rem;">
+                        <li>Review today's slides and interactive demos</li>
+                        <li>Complete today's assignment (button toggle)</li>
+                        <li>Test your code and understand why it works</li>
+                        <li>Use the expandable "Deep Dive" sections</li>
+                        <li>Ask questions in Google Classroom before Friday!</li>
+                    </ul>
+                </div>
+
+                <div style="text-align: center; margin-top: 25px;">
+                    <p style="font-size: 1.3rem; color: #00d4ff;">Quiz on Friday (Day 75) in Google Classroom</p>
+                    <p style="font-size: 1rem; margin-top: 10px; color: #b8c5d6;">20 questions total covering Days 71-74</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Objective Recap -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Objective Recap</h2>
+                <div class="objective-box">
+                    <h3>Today you learned to:</h3>
+                    <ul class="bullet-list">
+                        <li><span class="checkmark">✓</span> Read digital inputs using <span class="highlight">digitalRead()</span></li>
+                        <li><span class="checkmark">✓</span> Understand <span class="highlight">INPUT_PULLUP</span> and why we use it</li>
+                        <li><span class="checkmark">✓</span> Use <span class="highlight">if/else</span> statements for decision-making</li>
+                        <li><span class="checkmark">✓</span> Build a button-controlled LED circuit</li>
+                    </ul>
+                </div>
+                <div style="text-align: center; margin-top: 30px;">
+                    <h3 style="font-size: 1.8rem; color: #50fa7b;">Excellent Work!</h3>
+                    <p style="font-size: 1.2rem; margin-top: 15px;">Tomorrow: Analog Input & PWM Output</p>
+                    <p style="font-size: 1rem; margin-top: 12px; color: #ff9500;">Assignment due Thursday by noon!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-number">
+        <span id="current-slide">1</span> / <span id="total-slides">12</span>
+    </div>
+
+    <div class="controls">
+        <button id="prev-btn" onclick="previousSlide()">← Previous</button>
+        <button id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        function goToSlide(n) {
+            showSlide(n);
+        }
+
+        // Interactive button simulation
+        function pressButton() {
+            document.getElementById('buttonState').textContent = 'LOW';
+            document.getElementById('buttonState').style.color = '#50fa7b';
+            document.getElementById('simLED').classList.add('on');
+        }
+
+        function releaseButton() {
+            document.getElementById('buttonState').textContent = 'HIGH';
+            document.getElementById('buttonState').style.color = '#ff5555';
+            document.getElementById('simLED').classList.remove('on');
+        }
+
+        // Expandable sections
+        function toggleExpand(element) {
+            const content = element.querySelector('.expandable-content');
+            const icon = element.querySelector('.expand-icon');
+            content.classList.toggle('expanded');
+            icon.textContent = content.classList.contains('expanded') ? '▲' : '▼';
+        }
+
+        // Interactive demo
+        let demoActive = false;
+        function toggleDemo() {
+            demoActive = !demoActive;
+            const btn = document.getElementById('demoBtn');
+            const output = document.getElementById('demoOutput');
+            const led = document.getElementById('demoLED');
+            
+            if (demoActive) {
+                btn.classList.add('active');
+                btn.textContent = 'Release Button';
+                output.textContent = 'if block executed:\ndigitalRead(buttonPin) == LOW is TRUE\nLED turned ON';
+                led.classList.add('on');
+            } else {
+                btn.classList.remove('active');
+                btn.textContent = 'Press Button';
+                output.textContent = 'else block executed:\ndigitalRead(buttonPin) == LOW is FALSE\nLED turned OFF';
+                led.classList.remove('on');
+            }
+        }
+
+        // Copy code function
+        function copyCode(button) {
+            const codeBlock = button.parentElement;
+            const code = Array.from(codeBlock.childNodes)
+                .filter(node => node !== button)
+                .map(node => node.textContent)
+                .join('');
+            
+            navigator.clipboard.writeText(code).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '✓ Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                button.textContent = 'Copy Failed';
+                setTimeout(() => {
+                    button.textContent = 'Copy Code';
+                }, 2000);
+            });
+        }
+
+        // Sensor demo
+        function updateSensorDemo(value) {
+            document.getElementById('sensorValueDisplay').textContent = value;
+            const output = document.getElementById('sensorOutput');
+            
+            if (value < 300) {
+                output.textContent = 'LOW';
+                output.style.color = '#ff5555';
+            } else if (value < 700) {
+                output.textContent = 'MEDIUM';
+                output.style.color = '#ff9500';
+            } else {
+                output.textContent = 'HIGH';
+                output.style.color = '#50fa7b';
+            }
+        }
+
+        // Quiz answer functions
+        function answerQ1(element, answer, isCorrect) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback-q1');
+            const feedbackText = document.getElementById('feedback-q1-text');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === element) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+            
+            feedback.style.display = 'block';
+            feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is B) HIGH';
+        }
+
+        function answerQ2(element, answer, isCorrect) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback-q2');
+            const feedbackText = document.getElementById('feedback-q2-text');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === element) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+            
+            feedback.style.display = 'block';
+            feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is B) ==';
+        }
+
+        function answerQ3(element, answer, isCorrect) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback-q3');
+            const feedbackText = document.getElementById('feedback-q3-text');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === element) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+            
+            feedback.style.display = 'block';
+            feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is B) Either HIGH or LOW';
+        }
+
+        function answerQ4(element, answer, isCorrect) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback-q4');
+            const feedbackText = document.getElementById('feedback-q4-text');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === element) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+            
+            feedback.style.display = 'block';
+            feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is B) When if condition is false';
+        }
+
+        function answerQ5(element, answer, isCorrect) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback-q5');
+            const feedbackText = document.getElementById('feedback-q5-text');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === element) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+            
+            feedback.style.display = 'block';
+            feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is B) Pin to Ground';
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>

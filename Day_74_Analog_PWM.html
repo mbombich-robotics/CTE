@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analog Input & PWM Output</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            height: 100vh;
+        }
+
+        .presentation {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            min-height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 55px 60px 120px 60px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .slide-content {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #00d4ff;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(0, 212, 255, 0.5); }
+            to { text-shadow: 0 0 30px rgba(0, 212, 255, 0.8); }
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00d4ff;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ff9500;
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #b8c5d6;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #ff9500;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .objective-box {
+            background: linear-gradient(135deg, rgba(80, 250, 123, 0.1) 0%, rgba(80, 250, 123, 0.05) 100%);
+            border: 3px solid #50fa7b;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 0 30px rgba(80, 250, 123, 0.2);
+        }
+
+        .objective-box h3 {
+            color: #50fa7b;
+            margin-bottom: 12px;
+        }
+
+        .code-block {
+            background: #0d1117;
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 30px 25px 25px 25px;
+            margin: 15px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            line-height: 1.5;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+            position: relative;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+
+        .code-block::before {
+            content: 'Arduino Code';
+            position: absolute;
+            top: 8px;
+            left: 20px;
+            background: transparent;
+            padding: 0;
+            font-size: 0.7rem;
+            color: #00d4ff;
+            font-weight: 700;
+            opacity: 0.6;
+        }
+
+        .bullet-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .bullet-list li {
+            font-size: 1.15rem;
+            margin: 12px 0;
+            padding-left: 35px;
+            position: relative;
+            color: #b8c5d6;
+            line-height: 1.5;
+        }
+
+        .bullet-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #ff9500;
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .box {
+            background: rgba(0, 212, 255, 0.05);
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+        }
+
+        .highlight {
+            color: #00d4ff;
+            font-weight: 700;
+        }
+
+        .warning {
+            color: #ff9500;
+            font-weight: 700;
+        }
+
+        .success {
+            color: #50fa7b;
+            font-weight: 700;
+        }
+
+        .checkmark {
+            color: #50fa7b;
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+
+        /* Interactive Elements */
+        .interactive-btn {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            border: none;
+            color: #0a0e27;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+            margin: 10px 5px;
+        }
+
+        .interactive-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .expandable {
+            background: rgba(255, 149, 0, 0.1);
+            border: 2px solid #ff9500;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .expandable:hover {
+            background: rgba(255, 149, 0, 0.15);
+            border-color: #ffaa00;
+        }
+
+        .expandable-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            color: #ff9500;
+            font-size: 1.1rem;
+        }
+
+        .expandable-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            padding-top: 0;
+        }
+
+        .expandable-content.expanded {
+            max-height: 500px;
+            padding-top: 15px;
+        }
+
+        .output-display {
+            background: #0d1117;
+            border: 2px solid #50fa7b;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            margin-top: 15px;
+            min-height: 50px;
+            color: #50fa7b;
+        }
+
+        .led-brightness {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #333;
+            border: 3px solid #666;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            margin: 20px auto;
+        }
+
+        .potentiometer {
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .pot-slider {
+            width: 100%;
+            height: 40px;
+            cursor: pointer;
+            -webkit-appearance: none;
+            background: linear-gradient(to right, #333 0%, #00d4ff 100%);
+            border-radius: 20px;
+            outline: none;
+        }
+
+        .pot-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #ff9500 0%, #cc7700 100%);
+            border: 4px solid #ff9500;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 149, 0, 0.5);
+        }
+
+        .pot-slider::-moz-range-thumb {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #ff9500 0%, #cc7700 100%);
+            border: 4px solid #ff9500;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 149, 0, 0.5);
+        }
+
+        .value-display {
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.3rem;
+            margin: 15px 0;
+        }
+
+        .range-indicator {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            color: #6272a4;
+            margin-top: 10px;
+        }
+
+        /* Quiz Styles */
+        .quiz-question {
+            background: rgba(0, 212, 255, 0.05);
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .quiz-options {
+            margin-top: 15px;
+        }
+
+        .quiz-option {
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid #00d4ff;
+            border-radius: 8px;
+            padding: 12px 20px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .quiz-option:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: #00eeff;
+        }
+
+        .quiz-option.selected {
+            background: rgba(80, 250, 123, 0.2);
+            border-color: #50fa7b;
+        }
+
+        .quiz-option.correct {
+            background: rgba(80, 250, 123, 0.3);
+            border-color: #50fa7b;
+        }
+
+        .quiz-option.incorrect {
+            background: rgba(255, 85, 85, 0.3);
+            border-color: #ff5555;
+        }
+
+        .quiz-feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .quiz-feedback.correct {
+            background: rgba(80, 250, 123, 0.2);
+            border: 2px solid #50fa7b;
+            color: #50fa7b;
+        }
+
+        .quiz-feedback.incorrect {
+            background: rgba(255, 85, 85, 0.2);
+            border: 2px solid #ff5555;
+            color: #ff5555;
+        }
+
+        .quiz-score {
+            text-align: center;
+            font-size: 2rem;
+            color: #00d4ff;
+            margin: 20px 0;
+        }
+
+        .submit-form {
+            background: rgba(0, 212, 255, 0.05);
+            border: 3px solid #00d4ff;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        .form-group label {
+            display: block;
+            color: #00d4ff;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            background: #0d1117;
+            border: 2px solid #00d4ff;
+            border-radius: 8px;
+            padding: 12px;
+            color: #e0e6f0;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #00eeff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        button {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            border: none;
+            color: #0a0e27;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .slide-number {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            color: #00d4ff;
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            .slide { padding: 30px; }
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-content" style="text-align: center;">
+                <h1>Analog Input & PWM</h1>
+                <p class="subtitle">Reading Sensors & Controlling Brightness</p>
+                <div style="margin: 30px auto; max-width: 500px;">
+                    <svg viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; filter: drop-shadow(0 0 15px rgba(0, 212, 255, 0.5));">
+                        <!-- Potentiometer -->
+                        <circle cx="80" cy="100" r="40" fill="rgba(255, 149, 0, 0.2)" stroke="#ff9500" stroke-width="4"/>
+                        <line x1="80" y1="60" x2="80" y2="40" stroke="#ff9500" stroke-width="4"/>
+                        <circle cx="80" cy="40" r="8" fill="#ff9500"/>
+                        <text x="80" y="170" font-family="Exo 2" font-size="14" fill="#ff9500" text-anchor="middle">POT</text>
+                        
+                        <!-- Wave Arrow -->
+                        <path d="M 130 100 Q 150 80, 170 100 T 210 100" stroke="#00d4ff" stroke-width="3" fill="none" marker-end="url(#arrow-wave)"/>
+                        
+                        <!-- LED with brightness -->
+                        <circle cx="250" cy="100" r="35" fill="#50fa7b" stroke="#50fa7b" stroke-width="4">
+                            <animate attributeName="opacity" values="0.2;1;0.2" dur="2s" repeatCount="indefinite"/>
+                        </circle>
+                        <text x="250" y="170" font-family="Exo 2" font-size="14" fill="#50fa7b" text-anchor="middle">LED</text>
+                        
+                        <defs>
+                            <marker id="arrow-wave" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                                <polygon points="0 0, 10 5, 0 10" fill="#00d4ff"/>
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+                <p style="font-size: 1rem; margin-top: 25px;">Thursday, January 8, 2026 | 44 minutes</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Learning Objectives -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Today's Learning Objectives</h2>
+                <div style="display: grid; grid-template-columns: 1fr 200px; gap: 30px; align-items: center;">
+                    <div class="objective-box">
+                        <h3>By the end of today, you will be able to:</h3>
+                        <ul class="bullet-list" style="font-size: 1.05rem;">
+                            <li>Read analog values with <span class="highlight">analogRead()</span> (0-1023)</li>
+                            <li>Control LED brightness with <span class="highlight">analogWrite()</span> (PWM)</li>
+                            <li>Use <span class="highlight">map()</span> to convert between ranges</li>
+                            <li>Build a potentiometer-controlled LED circuit</li>
+                        </ul>
+                    </div>
+                    <div style="text-align: center;">
+                        <svg viewBox="0 0 180 220" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; filter: drop-shadow(0 0 15px rgba(0, 212, 255, 0.5));">
+                            <!-- Analog wave -->
+                            <path d="M 20 50 Q 40 20, 60 50 T 100 50 T 140 50 T 160 50" stroke="#00d4ff" stroke-width="4" fill="none"/>
+                            <text x="90" y="75" font-family="Exo 2" font-size="12" fill="#00d4ff" text-anchor="middle">0-1023</text>
+                            
+                            <!-- Arrow down -->
+                            <path d="M 90 90 L 90 120" stroke="#ff9500" stroke-width="3" marker-end="url(#arrow-down)"/>
+                            <text x="110" y="110" font-family="Exo 2" font-size="11" fill="#ff9500">map()</text>
+                            
+                            <!-- PWM signal -->
+                            <rect x="30" y="140" width="15" height="30" fill="#50fa7b"/>
+                            <rect x="60" y="140" width="15" height="30" fill="#50fa7b"/>
+                            <rect x="90" y="140" width="15" height="30" fill="#50fa7b"/>
+                            <rect x="120" y="140" width="15" height="30" fill="#50fa7b"/>
+                            <rect x="150" y="140" width="15" height="30" fill="#50fa7b"/>
+                            <text x="90" y="195" font-family="Exo 2" font-size="12" fill="#50fa7b" text-anchor="middle">0-255</text>
+                            
+                            <defs>
+                                <marker id="arrow-down" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                                    <polygon points="0 0, 8 4, 0 8" fill="#ff9500"/>
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+                </div>
+                <p style="text-align: center; font-size: 1.3rem; margin-top: 20px; color: #ff9500;">
+                    Go beyond ON/OFF - control the in-between! 🎚️
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 3: Analog vs Digital -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Analog vs Digital</h2>
+                <div class="grid-2">
+                    <div class="box">
+                        <h3>Digital (Yesterday)</h3>
+                        <p>Only TWO states:</p>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>HIGH (5V) or LOW (0V)</li>
+                            <li>Like a light switch: ON/OFF</li>
+                            <li>Perfect for buttons, switches</li>
+                        </ul>
+                        <div style="margin-top: 15px; text-align: center;">
+                            <svg viewBox="0 0 200 80" style="width: 100%;">
+                                <rect x="20" y="20" width="70" height="40" fill="#50fa7b"/>
+                                <rect x="110" y="20" width="70" height="40" fill="#333"/>
+                                <text x="55" y="75" font-size="12" fill="#b8c5d6" text-anchor="middle">HIGH</text>
+                                <text x="145" y="75" font-size="12" fill="#b8c5d6" text-anchor="middle">LOW</text>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="box">
+                        <h3>Analog (Today)</h3>
+                        <p>RANGE of values:</p>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>0-1023 (10-bit resolution)</li>
+                            <li>Like a dimmer switch: brightness levels</li>
+                            <li>Perfect for sensors, potentiometers</li>
+                        </ul>
+                        <div style="margin-top: 15px; text-align: center;">
+                            <svg viewBox="0 0 200 80" style="width: 100%;">
+                                <defs>
+                                    <linearGradient id="analog-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" style="stop-color:#333;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#50fa7b;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <rect x="20" y="20" width="160" height="40" fill="url(#analog-gradient)"/>
+                                <text x="25" y="75" font-size="12" fill="#b8c5d6">0</text>
+                                <text x="165" y="75" font-size="12" fill="#b8c5d6" text-anchor="end">1023</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expandable" onclick="toggleExpand(this)">
+                    <div class="expandable-header">
+                        <span>🔍 Deep Dive: Why 1023?</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="expandable-content">
+                        <p>Arduino's ADC (Analog-to-Digital Converter) is 10-bit. This means it can represent 2¹⁰ = 1024 different values. Since we start counting at 0, the range is 0-1023. It measures voltage from 0V to 5V and divides it into 1024 steps. So each step is about 4.9mV (5V ÷ 1024).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: analogRead() -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Reading Analog Values</h2>
+                <div class="code-block" style="font-size: 0.95rem;">
+int potPin = A0;          // Analog pin A0
+int potValue = 0;         // Variable to store reading
+
+void setup() {
+  Serial.begin(9600);
+  // No pinMode needed for analog inputs!
+}
+
+void loop() {
+  potValue = analogRead(potPin);  // Read 0-1023
+  
+  Serial.print("Pot Value: ");
+  Serial.println(potValue);
+  
+  delay(100);
+}
+                </div>
+
+                <div class="box" style="margin-top: 15px;">
+                    <h3>Key Points</h3>
+                    <ul class="bullet-list" style="font-size: 1rem;">
+                        <li><span class="highlight">analogRead()</span> always returns 0-1023</li>
+                        <li>Use pins <span class="success">A0-A5</span> for analog input</li>
+                        <li>No pinMode() needed for analog pins</li>
+                        <li>Reads voltage: 0V = 0, 5V = 1023</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Interactive analogRead() Demo -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Try It: analogRead() Simulator</h2>
+                <div class="box">
+                    <h3 style="text-align: center;">Turn the Potentiometer</h3>
+                    <div class="potentiometer">
+                        <input type="range" min="0" max="1023" value="512" class="pot-slider" 
+                               id="potInput" oninput="updatePotReading(this.value)">
+                        <div class="range-indicator">
+                            <span>0V (0)</span>
+                            <span>2.5V (512)</span>
+                            <span>5V (1023)</span>
+                        </div>
+                    </div>
+                    <div class="value-display">
+                        analogRead(A0) = <span id="potReading" style="color: #00d4ff;">512</span>
+                    </div>
+                    <div class="value-display" style="font-size: 1.1rem;">
+                        Voltage: <span id="voltageReading" style="color: #ff9500;">2.50V</span>
+                    </div>
+                </div>
+
+                <div class="output-display" id="analogOutput" style="margin-top: 20px;">
+Serial Monitor:
+Pot Value: 512
+                </div>
+
+                <div class="expandable" onclick="toggleExpand(this)">
+                    <div class="expandable-header">
+                        <span>💡 Converting to Voltage</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="expandable-content">
+                        <p>To convert the reading to voltage:</p>
+                        <div class="code-block" style="font-size: 0.85rem; margin-top: 10px;">
+float voltage = (potValue / 1023.0) * 5.0;
+Serial.println(voltage);
+                        </div>
+                        <p style="margin-top: 10px;">Or use map() for integer math (faster)!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: PWM Explained -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>PWM: Pulse Width Modulation</h2>
+                <div class="grid-2">
+                    <div>
+                        <p>PWM creates the <span class="highlight">illusion</span> of analog output by rapidly switching digital HIGH/LOW.</p>
+                        <ul class="bullet-list" style="font-size: 1rem; margin-top: 15px;">
+                            <li><span class="highlight">25% duty cycle</span> = dim LED</li>
+                            <li><span class="highlight">50% duty cycle</span> = medium brightness</li>
+                            <li><span class="highlight">75% duty cycle</span> = bright LED</li>
+                            <li>Switches so fast (~490 Hz) you can't see it</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <svg viewBox="0 0 300 200" style="width: 100%;">
+                            <!-- 25% -->
+                            <text x="10" y="25" font-size="12" fill="#ff5555">25%</text>
+                            <rect x="40" y="10" width="20" height="20" fill="#50fa7b"/>
+                            <rect x="80" y="10" width="20" height="20" fill="#50fa7b"/>
+                            <rect x="120" y="10" width="20" height="20" fill="#50fa7b"/>
+                            <circle cx="250" cy="20" r="15" fill="#50fa7b" opacity="0.3"/>
+                            
+                            <!-- 50% -->
+                            <text x="10" y="75" font-size="12" fill="#ff9500">50%</text>
+                            <rect x="40" y="60" width="30" height="20" fill="#50fa7b"/>
+                            <rect x="80" y="60" width="30" height="20" fill="#50fa7b"/>
+                            <rect x="120" y="60" width="30" height="20" fill="#50fa7b"/>
+                            <circle cx="250" cy="70" r="15" fill="#50fa7b" opacity="0.6"/>
+                            
+                            <!-- 75% -->
+                            <text x="10" y="125" font-size="12" fill="#00d4ff">75%</text>
+                            <rect x="40" y="110" width="40" height="20" fill="#50fa7b"/>
+                            <rect x="90" y="110" width="40" height="20" fill="#50fa7b"/>
+                            <rect x="140" y="110" width="40" height="20" fill="#50fa7b"/>
+                            <circle cx="250" cy="120" r="15" fill="#50fa7b" opacity="0.9"/>
+                            
+                            <!-- 100% -->
+                            <text x="10" y="175" font-size="12" fill="#50fa7b">100%</text>
+                            <rect x="40" y="160" width="150" height="20" fill="#50fa7b"/>
+                            <circle cx="250" cy="170" r="15" fill="#50fa7b"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="box" style="margin-top: 15px;">
+                    <h3>PWM Pins on Arduino Uno</h3>
+                    <p>Only certain pins support PWM (marked with <span class="highlight">~</span>):</p>
+                    <p style="margin-top: 10px; font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; color: #00d4ff;">
+                        Pins: 3, 5, 6, 9, 10, 11
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: analogWrite() -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>analogWrite() - PWM Output</h2>
+                <div class="code-block" style="font-size: 0.95rem;">
+int ledPin = 9;           // PWM pin
+int brightness = 0;       // 0-255
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+}
+
+void loop() {
+  analogWrite(ledPin, brightness);  // Set brightness
+  
+  brightness = brightness + 5;      // Increase
+  if (brightness > 255) {
+    brightness = 0;                 // Reset
+  }
+  
+  delay(30);                        // Smooth fade
+}
+                </div>
+
+                <div class="box" style="margin-top: 15px;">
+                    <h3>Key Points</h3>
+                    <ul class="bullet-list" style="font-size: 1rem;">
+                        <li><span class="highlight">analogWrite(pin, value)</span> takes 0-255</li>
+                        <li>0 = completely off, 255 = completely on</li>
+                        <li>Only works on PWM pins (~3, ~5, ~6, ~9, ~10, ~11)</li>
+                        <li>Still need <span class="success">pinMode(pin, OUTPUT)</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Interactive PWM Demo -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Try It: PWM Brightness Control</h2>
+                <div class="box">
+                    <h3 style="text-align: center;">Adjust LED Brightness</h3>
+                    <div class="potentiometer">
+                        <input type="range" min="0" max="255" value="128" class="pot-slider" 
+                               id="pwmInput" oninput="updatePWM(this.value)">
+                        <div class="range-indicator">
+                            <span>OFF (0)</span>
+                            <span>HALF (128)</span>
+                            <span>FULL (255)</span>
+                        </div>
+                    </div>
+                    <div class="value-display">
+                        analogWrite(9, <span id="pwmValue" style="color: #00d4ff;">128</span>)
+                    </div>
+                    <div id="pwmLED" class="led-brightness"></div>
+                    <div class="value-display" style="font-size: 1.1rem;">
+                        Duty Cycle: <span id="dutyValue" style="color: #ff9500;">50%</span>
+                    </div>
+                </div>
+
+                <div class="output-display" id="pwmOutput" style="margin-top: 20px;">
+Current brightness: 128
+LED is at 50% brightness
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: The map() Function -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>The map() Function</h2>
+                <p>Problem: <span class="highlight">analogRead()</span> gives 0-1023, but <span class="highlight">analogWrite()</span> needs 0-255!</p>
+                
+                <div class="code-block" style="font-size: 0.95rem; margin-top: 15px;">
+int potValue = analogRead(A0);     // 0-1023
+int ledBrightness = map(potValue, 0, 1023, 0, 255);
+analogWrite(9, ledBrightness);     // 0-255
+                </div>
+
+                <div class="box" style="margin-top: 15px;">
+                    <h3>map() Syntax</h3>
+                    <div class="code-block" style="font-size: 0.9rem; margin-top: 10px;">
+map(value, fromLow, fromHigh, toLow, toHigh)
+                    </div>
+                    <ul class="bullet-list" style="font-size: 1rem; margin-top: 15px;">
+                        <li><span class="highlight">value</span> - the number to map</li>
+                        <li><span class="highlight">fromLow/fromHigh</span> - input range</li>
+                        <li><span class="highlight">toLow/toHigh</span> - output range</li>
+                    </ul>
+                </div>
+
+                <div class="expandable" onclick="toggleExpand(this)">
+                    <div class="expandable-header">
+                        <span>🔍 Deep Dive: How map() Works</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="expandable-content">
+                        <p>map() uses proportional scaling:</p>
+                        <div class="code-block" style="font-size: 0.8rem; margin-top: 10px;">
+// If potValue = 512 (middle of 0-1023)
+// map(512, 0, 1023, 0, 255) returns:
+// (512 - 0) * (255 - 0) / (1023 - 0) + 0 = 127.5 ≈ 127
+                        </div>
+                        <p style="margin-top: 10px;">It maintains the same position in the new range!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Interactive map() Demo -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Try It: Complete Circuit Simulator</h2>
+                <div class="box">
+                    <h3 style="text-align: center;">Potentiometer Controls LED Brightness</h3>
+                    <div class="potentiometer">
+                        <input type="range" min="0" max="1023" value="512" class="pot-slider" 
+                               id="fullCircuitPot" oninput="updateFullCircuit(this.value)">
+                        <div class="range-indicator">
+                            <span>0</span>
+                            <span>512</span>
+                            <span>1023</span>
+                        </div>
+                    </div>
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <div class="value-display" style="font-size: 1rem;">
+                                analogRead(A0) = <span id="fullPotValue" style="color: #ff9500;">512</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="value-display" style="font-size: 1rem;">
+                                mapped to = <span id="fullMappedValue" style="color: #00d4ff;">127</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="fullCircuitLED" class="led-brightness"></div>
+                    <div class="value-display">
+                        analogWrite(9, <span id="fullPWMValue">127</span>)
+                    </div>
+                </div>
+
+                <div class="output-display" id="fullCircuitOutput" style="margin-top: 20px;">
+potValue = analogRead(A0);      // 512
+brightness = map(512, 0, 1023, 0, 255);  // 127
+analogWrite(9, 127);
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Today's Assignment -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Today's Challenge</h2>
+                <div style="background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 149, 0, 0.05) 100%); border: 3px solid #ff9500; border-radius: 12px; padding: 20px;">
+                    <h3>Potentiometer Brightness Control</h3>
+                    <p style="font-size: 1.1rem; margin-bottom: 15px;">Build a circuit where a potentiometer controls LED brightness</p>
+                    
+                    <h3 style="margin-top: 20px; color: #00d4ff; font-size: 1.3rem;">Requirements:</h3>
+                    <ul class="bullet-list" style="font-size: 1.05rem;">
+                        <li>Connect potentiometer to <span class="highlight">A0</span></li>
+                        <li>Connect LED to PWM pin <span class="highlight">9</span></li>
+                        <li>Use <span class="highlight">analogRead()</span> to read pot value</li>
+                        <li>Use <span class="highlight">map()</span> to convert 0-1023 to 0-255</li>
+                        <li>Use <span class="highlight">analogWrite()</span> to set LED brightness</li>
+                        <li>Print both values to Serial Monitor</li>
+                    </ul>
+                    <p style="margin-top: 20px; font-size: 1.1rem;"><span class="warning">Due:</span> Friday by noon - submit code + video</p>
+                </div>
+
+                <div class="expandable" onclick="toggleExpand(this)">
+                    <div class="expandable-header">
+                        <span>💡 Starter Code Template</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="expandable-content">
+                        <div class="code-block" style="font-size: 0.85rem;">
+int potPin = A0;
+int ledPin = 9;
+int potValue = 0;
+int brightness = 0;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Your code here!
+}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Quiz Question 1 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 1 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What range does analogRead() return?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ1(this, 'A', false)">A) 0-255</div>
+                        <div class="quiz-option" onclick="answerQ1(this, 'B', true)">B) 0-1023</div>
+                        <div class="quiz-option" onclick="answerQ1(this, 'C', false)">C) 0-1024</div>
+                        <div class="quiz-option" onclick="answerQ1(this, 'D', false)">D) 0-5</div>
+                    </div>
+                    <div id="feedback-q1" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q1-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> Arduino's 10-bit ADC (Analog-to-Digital Converter) provides 1024 possible values (2^10), numbered 0-1023.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Quiz Question 2 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 2 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What range does analogWrite() accept?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ2(this, 'A', true)">A) 0-255</div>
+                        <div class="quiz-option" onclick="answerQ2(this, 'B', false)">B) 0-1023</div>
+                        <div class="quiz-option" onclick="answerQ2(this, 'C', false)">C) 0-100</div>
+                        <div class="quiz-option" onclick="answerQ2(this, 'D', false)">D) LOW or HIGH</div>
+                    </div>
+                    <div id="feedback-q2" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q2-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> PWM output uses 8-bit resolution, giving 256 levels (0-255). This is why we often need map() to convert from analogRead() values!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Quiz Question 3 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 3 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">Which pins support PWM on Arduino Uno?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ3(this, 'A', false)">A) All digital pins</div>
+                        <div class="quiz-option" onclick="answerQ3(this, 'B', true)">B) Pins 3, 5, 6, 9, 10, 11</div>
+                        <div class="quiz-option" onclick="answerQ3(this, 'C', false)">C) Only pin 13</div>
+                        <div class="quiz-option" onclick="answerQ3(this, 'D', false)">D) Pins A0-A5</div>
+                    </div>
+                    <div id="feedback-q3" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q3-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> Only pins marked with ~ (tilde) support PWM on the Arduino Uno. Look for the ~ symbol next to the pin number on the board!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Quiz Question 4 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 4 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What does map(512, 0, 1023, 0, 255) return?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ4(this, 'A', false)">A) 512</div>
+                        <div class="quiz-option" onclick="answerQ4(this, 'B', false)">B) 255</div>
+                        <div class="quiz-option" onclick="answerQ4(this, 'C', true)">C) 127</div>
+                        <div class="quiz-option" onclick="answerQ4(this, 'D', false)">D) 0</div>
+                    </div>
+                    <div id="feedback-q4" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q4-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> map() converts 512 (the middle of 0-1023) proportionally to the middle of 0-255, which is approximately 127. It maintains the same relative position!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Quiz Question 5 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 5 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What does PWM stand for?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ5(this, 'A', false)">A) Power Width Modulation</div>
+                        <div class="quiz-option" onclick="answerQ5(this, 'B', true)">B) Pulse Width Modulation</div>
+                        <div class="quiz-option" onclick="answerQ5(this, 'C', false)">C) Pin Wave Mode</div>
+                        <div class="quiz-option" onclick="answerQ5(this, 'D', false)">D) Programmable Wave Method</div>
+                    </div>
+                    <div id="feedback-q5" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q5-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> PWM (Pulse Width Modulation) rapidly switches a digital signal on and off to simulate analog output by varying the pulse width!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Study Tips -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Preparing for Friday's Quiz</h2>
+                <div class="box" style="margin-bottom: 20px;">
+                    <h3>What to Review:</h3>
+                    <ul class="bullet-list">
+                        <li>Difference between <span class="highlight">analogRead()</span> (0-1023) and <span class="highlight">analogWrite()</span> (0-255)</li>
+                        <li>Which pins support <span class="highlight">PWM</span> (look for ~ symbol)</li>
+                        <li>How <span class="highlight">map()</span> converts between ranges</li>
+                        <li>What <span class="highlight">PWM</span> is and how it controls brightness</li>
+                        <li>Analog pins <span class="highlight">A0-A5</span> vs digital pins</li>
+                    </ul>
+                </div>
+
+                <div class="box" style="background: rgba(255, 149, 0, 0.1); border-color: #ff9500;">
+                    <h3 style="color: #ff9500;">Study Resources:</h3>
+                    <ul class="bullet-list" style="font-size: 1rem;">
+                        <li>Use the interactive sliders - experiment with values!</li>
+                        <li>Complete today's assignment (pot controls LED)</li>
+                        <li>Review the expandable "Deep Dive" sections</li>
+                        <li>Practice with the circuit simulators</li>
+                        <li>Review all four days' slides before Friday</li>
+                    </ul>
+                </div>
+
+                <div style="text-align: center; margin-top: 25px;">
+                    <p style="font-size: 1.3rem; color: #00d4ff;">Quiz on Friday (Day 75) in Google Classroom</p>
+                    <p style="font-size: 1rem; margin-top: 10px; color: #b8c5d6;">20 questions total covering Days 71-74</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Objective Recap -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Objective Recap</h2>
+                <div class="objective-box">
+                    <h3>Today you learned to:</h3>
+                    <ul class="bullet-list">
+                        <li><span class="checkmark">✓</span> Read analog values with <span class="highlight">analogRead()</span> (0-1023)</li>
+                        <li><span class="checkmark">✓</span> Control LED brightness with <span class="highlight">analogWrite()</span> (PWM)</li>
+                        <li><span class="checkmark">✓</span> Use <span class="highlight">map()</span> to convert between ranges</li>
+                        <li><span class="checkmark">✓</span> Build a potentiometer-controlled LED circuit</li>
+                    </ul>
+                </div>
+                <div style="text-align: center; margin-top: 30px;">
+                    <h3 style="font-size: 1.8rem; color: #50fa7b;">Amazing Progress!</h3>
+                    <p style="font-size: 1.2rem; margin-top: 15px;">Tomorrow: Quiz & Integration Challenge</p>
+                    <p style="font-size: 1rem; margin-top: 12px; color: #ff9500;">Assignment due Friday by noon!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-number">
+        <span id="current-slide">1</span> / <span id="total-slides">14</span>
+    </div>
+
+    <div class="controls">
+        <button id="prev-btn" onclick="previousSlide()">← Previous</button>
+        <button id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        function goToSlide(n) {
+            showSlide(n);
+        }
+
+        function toggleExpand(element) {
+            const content = element.querySelector('.expandable-content');
+            const icon = element.querySelector('.expand-icon');
+            content.classList.toggle('expanded');
+            icon.textContent = content.classList.contains('expanded') ? '▲' : '▼';
+        }
+
+        // Pot reading simulator
+        function updatePotReading(value) {
+            document.getElementById('potReading').textContent = value;
+            const voltage = (value / 1023 * 5).toFixed(2);
+            document.getElementById('voltageReading').textContent = voltage + 'V';
+            document.getElementById('analogOutput').textContent = `Serial Monitor:\nPot Value: ${value}`;
+        }
+
+        // PWM simulator
+        function updatePWM(value) {
+            document.getElementById('pwmValue').textContent = value;
+            const duty = Math.round((value / 255) * 100);
+            document.getElementById('dutyValue').textContent = duty + '%';
+            
+            const led = document.getElementById('pwmLED');
+            const brightness = value / 255;
+            led.style.background = `rgba(80, 250, 123, ${brightness})`;
+            led.style.borderColor = brightness > 0.5 ? '#50fa7b' : '#666';
+            led.style.boxShadow = `0 0 ${brightness * 30}px rgba(80, 250, 123, ${brightness})`;
+            
+            document.getElementById('pwmOutput').textContent = `Current brightness: ${value}\nLED is at ${duty}% brightness`;
+        }
+
+        // Full circuit simulator
+        function updateFullCircuit(value) {
+            const mapped = Math.round(value / 1023 * 255);
+            document.getElementById('fullPotValue').textContent = value;
+            document.getElementById('fullMappedValue').textContent = mapped;
+            document.getElementById('fullPWMValue').textContent = mapped;
+            
+            const led = document.getElementById('fullCircuitLED');
+            const brightness = mapped / 255;
+            led.style.background = `rgba(80, 250, 123, ${brightness})`;
+            led.style.borderColor = brightness > 0.5 ? '#50fa7b' : '#666';
+            led.style.boxShadow = `0 0 ${brightness * 30}px rgba(80, 250, 123, ${brightness})`;
+            
+            document.getElementById('fullCircuitOutput').textContent = 
+                `potValue = analogRead(A0);      // ${value}\nbrightness = map(${value}, 0, 1023, 0, 255);  // ${mapped}\nanalogWrite(9, ${mapped});`;
+        }
+
+        // Quiz answer functions
+        function answerQ1(element, answer, isCorrect) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback-q1');
+            const feedbackText = document.getElementById('feedback-q1-text');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === element) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+            
+            feedback.style.display = 'block';
+            feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is B) 0-1023';
+        }
+
+        function answerQ2(element, answer, isCorrect) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback-q2');
+            const feedbackText = document.getElementById('feedback-q2-text');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === element) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+            
+            feedback.style.display = 'block';
+            feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is A) 0-255';
+        }
+
+        function answerQ3(element, answer, isCorrect) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback-q3');
+            const feedbackText = document.getElementById('feedback-q3-text');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === element) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+            
+            feedback.style.display = 'block';
+            feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is B) Pins 3, 5, 6, 9, 10, 11';
+        }
+
+        function answerQ4(element, answer, isCorrect) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback-q4');
+            const feedbackText = document.getElementById('feedback-q4-text');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === element) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+            
+            feedback.style.display = 'block';
+            feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is C) 127';
+        }
+
+        function answerQ5(element, answer, isCorrect) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback-q5');
+            const feedbackText = document.getElementById('feedback-q5-text');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === element) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+            
+            feedback.style.display = 'block';
+            feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is B) Pulse Width Modulation';
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            }
+        });
+
+        showSlide(0);
+    </script>
+</body>
+</html>

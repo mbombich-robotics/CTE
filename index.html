@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arduino Robot Programming - Week 1</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            min-height: 100vh;
+            padding: 60px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            color: #00d4ff;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(0, 212, 255, 0.5); }
+            to { text-shadow: 0 0 40px rgba(0, 212, 255, 0.8); }
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #ff9500;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .week-info {
+            font-size: 1.1rem;
+            color: #b8c5d6;
+            margin-top: 15px;
+        }
+
+        .lessons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .lesson-card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(26, 31, 58, 0.8) 100%);
+            border: 2px solid #00d4ff;
+            border-radius: 16px;
+            padding: 35px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lesson-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .lesson-card:hover::before {
+            left: 100%;
+        }
+
+        .lesson-card:hover {
+            transform: translateY(-5px);
+            border-color: #00d4ff;
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.3);
+        }
+
+        .lesson-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: #ff9500;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .lesson-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            color: #00d4ff;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .lesson-description {
+            font-size: 1rem;
+            color: #b8c5d6;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .lesson-topics {
+            list-style: none;
+            margin: 20px 0;
+            padding: 0;
+        }
+
+        .lesson-topics li {
+            font-size: 0.95rem;
+            color: #e0e6f0;
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .lesson-topics li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #00d4ff;
+            font-size: 1.2rem;
+        }
+
+        .lesson-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            font-size: 0.9rem;
+            color: #6272a4;
+        }
+
+        .lesson-duration {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .lesson-status {
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-ready {
+            background: rgba(80, 250, 123, 0.2);
+            color: #50fa7b;
+            border: 1px solid #50fa7b;
+        }
+
+        .lesson-link {
+            text-decoration: none;
+            display: block;
+        }
+
+        .quiz-card {
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(26, 31, 58, 0.8) 100%);
+            border: 2px solid #ff9500;
+        }
+
+        .quiz-card:hover {
+            border-color: #ff9500;
+            box-shadow: 0 10px 40px rgba(255, 149, 0, 0.3);
+        }
+
+        .quiz-card .lesson-title {
+            color: #ff9500;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            color: #6272a4;
+            font-size: 0.95rem;
+        }
+
+        .icon {
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .lessons-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Arduino Robot Programming</h1>
+            <p class="subtitle">Week 1: From Blink to Robots</p>
+            <p class="week-info">January 5-9, 2026 | Applied Engineering & Robotics</p>
+        </header>
+
+        <div class="lessons-grid">
+            <!-- Day 71 -->
+            <a href="Day_71_Arduino_Introduction_v2.html" class="lesson-link">
+                <div class="lesson-card">
+                    <div class="lesson-number">Day 71 • Monday</div>
+                    <h2 class="lesson-title">Arduino Introduction</h2>
+                    <p class="lesson-description">
+                        Get started with Arduino! Learn the basics of programming and upload your first program.
+                    </p>
+                    <ul class="lesson-topics">
+                        <li>setup() and loop() structure</li>
+                        <li>pinMode() and digitalWrite()</li>
+                        <li>Creating blink patterns</li>
+                        <li>Uploading to Arduino</li>
+                    </ul>
+                    <div class="lesson-meta">
+                        <div class="lesson-duration">
+                            <span class="icon">⏱️</span>
+                            <span>50 minutes</span>
+                        </div>
+                        <div class="lesson-status status-ready">Ready</div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Day 72 -->
+            <a href="Day_72_Variables_Serial_Monitor_v2.html" class="lesson-link">
+                <div class="lesson-card">
+                    <div class="lesson-number">Day 72 • Tuesday</div>
+                    <h2 class="lesson-title">Variables & Serial Monitor</h2>
+                    <p class="lesson-description">
+                        Store data and debug your code! Learn to use variables and see your program's output.
+                    </p>
+                    <ul class="lesson-topics">
+                        <li>Declaring variables (int, float, boolean)</li>
+                        <li>Serial.begin() and Serial.println()</li>
+                        <li>Reading analog sensors</li>
+                        <li>Debugging with Serial Monitor</li>
+                    </ul>
+                    <div class="lesson-meta">
+                        <div class="lesson-duration">
+                            <span class="icon">⏱️</span>
+                            <span>44 minutes</span>
+                        </div>
+                        <div class="lesson-status status-ready">Ready</div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Day 73 -->
+            <a href="Day_73_Digital_Input_Control.html" class="lesson-link">
+                <div class="lesson-card">
+                    <div class="lesson-number">Day 73 • Wednesday</div>
+                    <h2 class="lesson-title">Digital Input & Control</h2>
+                    <p class="lesson-description">
+                        Make decisions with code! Read buttons and use if/else statements to control your programs.
+                    </p>
+                    <ul class="lesson-topics">
+                        <li>digitalRead() and INPUT_PULLUP</li>
+                        <li>if/else statements</li>
+                        <li>Comparison operators (==, !=, <, >)</li>
+                        <li>Button toggle programs</li>
+                    </ul>
+                    <div class="lesson-meta">
+                        <div class="lesson-duration">
+                            <span class="icon">⏱️</span>
+                            <span>50 minutes</span>
+                        </div>
+                        <div class="lesson-status status-ready">Ready</div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Day 74 -->
+            <a href="Day_74_Analog_PWM.html" class="lesson-link">
+                <div class="lesson-card">
+                    <div class="lesson-number">Day 74 • Thursday</div>
+                    <h2 class="lesson-title">Analog Input & PWM</h2>
+                    <p class="lesson-description">
+                        Control brightness and speed! Learn analog input and PWM for precise control.
+                    </p>
+                    <ul class="lesson-topics">
+                        <li>analogRead() 0-1023 values</li>
+                        <li>analogWrite() PWM control</li>
+                        <li>map() function for conversion</li>
+                        <li>Potentiometer → LED brightness</li>
+                    </ul>
+                    <div class="lesson-meta">
+                        <div class="lesson-duration">
+                            <span class="icon">⏱️</span>
+                            <span>50 minutes</span>
+                        </div>
+                        <div class="lesson-status status-ready">Ready</div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Day 75 - Quiz -->
+            <div class="lesson-card quiz-card">
+                <div class="lesson-number">Day 75 • Friday</div>
+                <h2 class="lesson-title">🎯 Quiz & Review</h2>
+                <p class="lesson-description">
+                    Test your knowledge! 20 questions covering all concepts from Days 71-74.
+                </p>
+                <ul class="lesson-topics">
+                    <li>Google Classroom quiz</li>
+                    <li>20 multiple choice questions</li>
+                    <li>Covers all week's topics</li>
+                    <li>Review incorrect answers together</li>
+                </ul>
+                <div class="lesson-meta">
+                    <div class="lesson-duration">
+                        <span class="icon">⏱️</span>
+                        <span>25-30 minutes</span>
+                    </div>
+                    <div class="lesson-status status-ready">Questions Ready</div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p><strong>Applied Engineering & Robotics</strong> | Control Freak</p>
+            <p style="margin-top: 10px;">Interactive presentations with copy buttons, scrollable code, and hands-on examples</p>
+            <p style="margin-top: 15px; font-size: 0.85rem;">Navigate using arrow keys or on-screen buttons | Press F11 for fullscreen</p>
+        </footer>
+    </div>
+</body>
+</html>

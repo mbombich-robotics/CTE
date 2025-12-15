@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arduino Introduction</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            height: 100vh;
+        }
+
+        .presentation {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            min-height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 60px;
+            padding-bottom: 120px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .slide-content {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            color: #00d4ff;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(0, 212, 255, 0.5); }
+            to { text-shadow: 0 0 30px rgba(0, 212, 255, 0.8); }
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: #00d4ff;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #ff9500;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            color: #b8c5d6;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #ff9500;
+            font-weight: 600;
+            margin-bottom: 40px;
+        }
+
+        .objective-box {
+            background: linear-gradient(135deg, rgba(80, 250, 123, 0.1) 0%, rgba(80, 250, 123, 0.05) 100%);
+            border: 3px solid #50fa7b;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 0 30px rgba(80, 250, 123, 0.2);
+        }
+
+        .objective-box h3 {
+            color: #50fa7b;
+            margin-bottom: 15px;
+        }
+
+        .code-block {
+            background: #0d1117;
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 40px 25px 25px 25px;
+            margin: 20px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            line-height: 1.6;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+            position: relative;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 350px;
+            white-space: pre;
+        }
+
+        .code-block::before {
+            content: 'Arduino Code';
+            position: absolute;
+            top: 8px;
+            left: 20px;
+            background: transparent;
+            padding: 0;
+            font-size: 0.75rem;
+            color: #00d4ff;
+            font-weight: 700;
+            opacity: 0.6;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 6px;
+            right: 15px;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            border: none;
+            color: #0a0e27;
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 212, 255, 0.3);
+            z-index: 10;
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.5);
+        }
+
+        .copy-btn.copied {
+            background: linear-gradient(135deg, #50fa7b 0%, #40c96b 100%);
+        }
+
+        .keyword { color: #ff79c6; }
+        .function { color: #50fa7b; }
+        .number { color: #bd93f9; }
+        .comment { color: #6272a4; font-style: italic; }
+        .string { color: #f1fa8c; }
+
+        .bullet-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .bullet-list li {
+            font-size: 1.4rem;
+            margin: 20px 0;
+            padding-left: 40px;
+            position: relative;
+            color: #b8c5d6;
+            line-height: 1.6;
+        }
+
+        .bullet-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #ff9500;
+            font-size: 2rem;
+            line-height: 1;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 30px;
+        }
+
+        .box {
+            background: rgba(0, 212, 255, 0.05);
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+        }
+
+        .highlight {
+            color: #00d4ff;
+            font-weight: 700;
+        }
+
+        .warning {
+            color: #ff9500;
+            font-weight: 700;
+        }
+
+        .success {
+            color: #50fa7b;
+            font-weight: 700;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        button {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            border: none;
+            color: #0a0e27;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .slide-number {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            color: #00d4ff;
+            z-index: 1000;
+        }
+
+        .circuit-icon {
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+            position: relative;
+        }
+
+        .circuit-icon svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
+        }
+
+        .assignment-box {
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 149, 0, 0.05) 100%);
+            border: 3px solid #ff9500;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 0 30px rgba(255, 149, 0, 0.2);
+        }
+
+        .steps {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+        }
+
+        .steps li {
+            counter-increment: step-counter;
+            font-size: 1.3rem;
+            margin: 25px 0;
+            padding-left: 60px;
+            position: relative;
+            color: #b8c5d6;
+        }
+
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: -5px;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            color: #0a0e27;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+        }
+
+        .checkmark {
+            color: #50fa7b;
+            font-size: 2rem;
+            margin-right: 15px;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            .slide { padding: 30px; }
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-content" style="text-align: center;">
+                <h1>Arduino Introduction</h1>
+                <p class="subtitle">Welcome Back! Time to Program Your Robots</p>
+                <div class="circuit-icon">
+                    <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="100" cy="100" r="80" stroke="#00d4ff" stroke-width="3"/>
+                        <circle cx="100" cy="100" r="60" stroke="#ff9500" stroke-width="2"/>
+                        <circle cx="100" cy="100" r="40" stroke="#00d4ff" stroke-width="2"/>
+                        <line x1="100" y1="20" x2="100" y2="60" stroke="#00d4ff" stroke-width="2"/>
+                        <line x1="100" y1="140" x2="100" y2="180" stroke="#00d4ff" stroke-width="2"/>
+                        <line x1="20" y1="100" x2="60" y2="100" stroke="#ff9500" stroke-width="2"/>
+                        <line x1="140" y1="100" x2="180" y2="100" stroke="#ff9500" stroke-width="2"/>
+                        <circle cx="100" cy="100" r="8" fill="#00d4ff"/>
+                        <circle cx="100" cy="20" r="6" fill="#ff9500"/>
+                        <circle cx="100" cy="180" r="6" fill="#ff9500"/>
+                        <circle cx="20" cy="100" r="6" fill="#00d4ff"/>
+                        <circle cx="180" cy="100" r="6" fill="#00d4ff"/>
+                    </svg>
+                </div>
+                <p style="font-size: 1.1rem; margin-top: 30px;">Monday, January 5, 2026 | 50 minutes</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Learning Objective -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Today's Learning Objective</h2>
+                <div style="display: grid; grid-template-columns: 1fr 200px; gap: 40px; align-items: center;">
+                    <div class="objective-box">
+                        <h3>By the end of today, you will be able to:</h3>
+                        <ul class="bullet-list">
+                            <li>Install and configure the Arduino IDE</li>
+                            <li>Understand the <span class="highlight">setup()</span> and <span class="highlight">loop()</span> code structure</li>
+                            <li>Upload your first program to an Arduino</li>
+                            <li>Modify timing parameters to create different blink patterns</li>
+                        </ul>
+                    </div>
+                    <div style="text-align: center;">
+                        <svg viewBox="0 0 200 300" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; filter: drop-shadow(0 0 15px rgba(0, 212, 255, 0.5));">
+                            <!-- Arduino Board -->
+                            <rect x="20" y="40" width="160" height="220" rx="8" fill="#008184" stroke="#00d4ff" stroke-width="3"/>
+                            
+                            <!-- USB Port -->
+                            <rect x="70" y="10" width="60" height="35" rx="4" fill="#b8c5d6" stroke="#00d4ff" stroke-width="2"/>
+                            
+                            <!-- Power Jack -->
+                            <circle cx="30" cy="80" r="12" fill="#1a1f3a" stroke="#ff9500" stroke-width="2"/>
+                            <circle cx="30" cy="80" r="6" fill="#ff9500"/>
+                            
+                            <!-- Digital Pins -->
+                            <rect x="30" y="120" width="8" height="80" rx="2" fill="#00d4ff"/>
+                            <rect x="45" y="120" width="8" height="80" rx="2" fill="#00d4ff"/>
+                            <rect x="60" y="120" width="8" height="80" rx="2" fill="#00d4ff"/>
+                            <rect x="75" y="120" width="8" height="80" rx="2" fill="#00d4ff"/>
+                            <rect x="90" y="120" width="8" height="80" rx="2" fill="#00d4ff"/>
+                            <rect x="105" y="120" width="8" height="80" rx="2" fill="#00d4ff"/>
+                            
+                            <!-- Analog Pins -->
+                            <rect x="120" y="120" width="8" height="80" rx="2" fill="#ff9500"/>
+                            <rect x="135" y="120" width="8" height="80" rx="2" fill="#ff9500"/>
+                            <rect x="150" y="120" width="8" height="80" rx="2" fill="#ff9500"/>
+                            <rect x="165" y="120" width="8" height="80" rx="2" fill="#ff9500"/>
+                            
+                            <!-- Microcontroller -->
+                            <rect x="60" y="60" width="80" height="50" rx="4" fill="#1a1f3a" stroke="#00d4ff" stroke-width="2"/>
+                            <text x="100" y="90" font-family="JetBrains Mono" font-size="14" fill="#00d4ff" text-anchor="middle">ATmega</text>
+                            
+                            <!-- LED indicators -->
+                            <circle cx="40" cy="230" r="6" fill="#50fa7b" opacity="0.8">
+                                <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+                            </circle>
+                            <circle cx="60" cy="230" r="6" fill="#ff9500" opacity="0.5"/>
+                            <circle cx="80" cy="230" r="6" fill="#ff9500" opacity="0.5"/>
+                            
+                            <!-- Reset Button -->
+                            <rect x="150" y="220" width="20" height="20" rx="3" fill="#ff9500" stroke="#00d4ff" stroke-width="2"/>
+                        </svg>
+                    </div>
+                </div>
+                <p style="text-align: center; font-size: 1.5rem; margin-top: 30px; color: #ff9500;">
+                    From zero to blinking in 50 minutes! 💡
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 3: Semester Progress -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Where We've Been</h2>
+                <div class="grid-2">
+                    <div class="box">
+                        <h3>✓ Design & CAD</h3>
+                        <p>Created robot components in Fusion 360, designed decks, motor mounts, and assemblies</p>
+                    </div>
+                    <div class="box">
+                        <h3>✓ Fabrication</h3>
+                        <p>CNC cut robot decks, 3D printed motor mounts, assembled mechanical systems</p>
+                    </div>
+                </div>
+                <div style="margin-top: 40px; text-align: center;">
+                    <h3 style="font-size: 2.5rem;">Now: <span class="highlight">Programming!</span></h3>
+                    <p style="font-size: 1.5rem; margin-top: 20px;">Your robots are built. Let's bring them to life.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: What is Arduino? -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>What is Arduino?</h2>
+                <ul class="bullet-list">
+                    <li><span class="highlight">Microcontroller platform</span> - a tiny computer that controls electronics</li>
+                    <li><span class="highlight">Easy to program</span> - designed for beginners and professionals</li>
+                    <li><span class="highlight">Controls everything</span> - motors, sensors, LEDs, robots, and more</li>
+                    <li><span class="highlight">Industry standard</span> - used in prototyping and product development worldwide</li>
+                </ul>
+                <div class="box" style="margin-top: 40px;">
+                    <h3>This Week's Goal</h3>
+                    <p>Learn Arduino fundamentals using the <span class="highlight">Arduino Uno</span>, then next week we'll program our <span class="highlight">RP2040 robots</span> using the same skills!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Arduino IDE Setup -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Arduino IDE Setup</h2>
+                <ol class="steps">
+                    <li>Open Arduino IDE (already installed on classroom computers)</li>
+                    <li>Connect your Arduino Uno via USB cable</li>
+                    <li>Select board: <span class="highlight">Tools → Board → Arduino Uno</span></li>
+                    <li>Select port: <span class="highlight">Tools → Port → COM# (Arduino Uno)</span></li>
+                    <li>Verify connection - the board should power on (LED lights up)</li>
+                </ol>
+                <div class="box" style="margin-top: 30px;">
+                    <p><span class="warning">⚠ Troubleshooting:</span> If port doesn't appear, try a different USB cable or port. Some cables are power-only!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Code Structure -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Arduino Code Structure</h2>
+                <p>Every Arduino program has two main parts:</p>
+                <div class="code-block">
+<span class="keyword">void</span> <span class="function">setup</span>() {
+  <span class="comment">// Runs ONCE when Arduino starts</span>
+  <span class="comment">// Initialize pins, serial, settings</span>
+}
+
+<span class="keyword">void</span> <span class="function">loop</span>() {
+  <span class="comment">// Runs FOREVER (continuously)</span>
+  <span class="comment">// Main program logic goes here</span>
+}
+                </div>
+                <ul class="bullet-list">
+                    <li><span class="highlight">setup()</span> runs once at power-on or reset</li>
+                    <li><span class="highlight">loop()</span> runs continuously, over and over forever</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 7: The Blink Example -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Your First Program: Blink</h2>
+                <p>Let's make the built-in LED blink!</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+<span class="keyword">void</span> <span class="function">setup</span>() {
+  <span class="function">pinMode</span>(<span class="number">13</span>, OUTPUT);  <span class="comment">// Set pin 13 as output</span>
+}
+
+<span class="keyword">void</span> <span class="function">loop</span>() {
+  <span class="function">digitalWrite</span>(<span class="number">13</span>, HIGH);  <span class="comment">// Turn LED on</span>
+  <span class="function">delay</span>(<span class="number">1000</span>);             <span class="comment">// Wait 1 second</span>
+  <span class="function">digitalWrite</span>(<span class="number">13</span>, LOW);   <span class="comment">// Turn LED off</span>
+  <span class="function">delay</span>(<span class="number">1000</span>);             <span class="comment">// Wait 1 second</span>
+}
+                </div>
+                <p style="margin-top: 20px;"><span class="highlight">Find it:</span> File → Examples → 01.Basics → Blink</p>
+            </div>
+        </div>
+
+        <!-- Slide 8: Key Functions -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Essential Arduino Functions</h2>
+                <div class="grid-2">
+                    <div class="box">
+                        <h3>pinMode(pin, mode)</h3>
+                        <p>Configures a pin as INPUT or OUTPUT</p>
+                        <div class="code-block">
+<span class="function">pinMode</span>(<span class="number">13</span>, OUTPUT);
+                        </div>
+                    </div>
+                    <div class="box">
+                        <h3>digitalWrite(pin, value)</h3>
+                        <p>Sets a pin HIGH (on) or LOW (off)</p>
+                        <div class="code-block">
+<span class="function">digitalWrite</span>(<span class="number">13</span>, HIGH);
+                        </div>
+                    </div>
+                </div>
+                <div class="box" style="margin-top: 30px;">
+                    <h3>delay(milliseconds)</h3>
+                    <p>Pauses the program for specified time (1000ms = 1 second)</p>
+                    <div class="code-block">
+<span class="function">delay</span>(<span class="number">1000</span>);  <span class="comment">// Wait 1 second</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Syntax Basics -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Arduino Syntax Rules</h2>
+                <ul class="bullet-list">
+                    <li><span class="highlight">Semicolons (;)</span> end every statement</li>
+                    <li><span class="highlight">Curly braces { }</span> group code blocks</li>
+                    <li><span class="highlight">Case-sensitive</span> - pinMode ≠ PinMode ≠ pinmode</li>
+                    <li><span class="highlight">Comments</span> start with // (single line) or /* */ (multi-line)</li>
+                </ul>
+                <div class="code-block" style="margin-top: 30px;">
+<span class="comment">// This is a single-line comment</span>
+
+<span class="comment">/*
+ * This is a multi-line comment
+ * Useful for longer explanations
+ */</span>
+
+<span class="function">digitalWrite</span>(<span class="number">13</span>, HIGH);  <span class="comment">// Don't forget the semicolon!</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Upload Process -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Uploading Your Code</h2>
+                <ol class="steps">
+                    <li>Write or modify code in the Arduino IDE</li>
+                    <li>Click the <span class="highlight">Verify</span> button (✓) to check for errors</li>
+                    <li>Fix any errors shown in the console (bottom of window)</li>
+                    <li>Click the <span class="highlight">Upload</span> button (→) to send code to Arduino</li>
+                    <li>Watch for "Done uploading" message</li>
+                </ol>
+                <div class="box" style="margin-top: 30px;">
+                    <p><span class="warning">Pro Tip:</span> Always verify before uploading! It catches syntax errors and saves time.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Today's Assignment -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Today's Challenge</h2>
+                <div class="assignment-box">
+                    <h3>Create Three Blink Patterns</h3>
+                    <ol class="steps">
+                        <li><span class="highlight">Fast Blink:</span> 200ms on, 200ms off</li>
+                        <li><span class="highlight">Slow Blink:</span> 2000ms on, 2000ms off</li>
+                        <li><span class="highlight">SOS Pattern:</span> Dot-dot-dot (short) then dash-dash-dash (long)</li>
+                    </ol>
+                    <p style="margin-top: 25px; font-size: 1.2rem;"><span class="warning">Due:</span> Tuesday by noon - submit video or description to Google Classroom</p>
+                </div>
+                <div class="box" style="margin-top: 30px;">
+                    <h3>SOS Hint</h3>
+                    <p>Short blink = 200ms, Long blink = 600ms, pause between = 200ms</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Connection to Robots -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>The Path Ahead</h2>
+                <div style="text-align: center;">
+                    <h3 style="font-size: 2rem; margin-bottom: 40px;">This Week → Next Week → Competition</h3>
+                </div>
+                <div class="grid-2">
+                    <div class="box">
+                        <h3>This Week (Arduino Uno)</h3>
+                        <ul class="bullet-list">
+                            <li>Code structure</li>
+                            <li>Variables & data types</li>
+                            <li>Digital & analog I/O</li>
+                            <li>Control structures</li>
+                        </ul>
+                    </div>
+                    <div class="box">
+                        <h3>Next Week (RP2040 Robot)</h3>
+                        <ul class="bullet-list">
+                            <li>Motor control</li>
+                            <li>Sensor reading</li>
+                            <li>Line following</li>
+                            <li>Competition!</li>
+                        </ul>
+                    </div>
+                </div>
+                <p style="text-align: center; font-size: 1.5rem; margin-top: 40px; color: #00d4ff;">
+                    Same skills, real robots! 🤖
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 13: Let's Code! -->
+        <div class="slide">
+            <div class="slide-content" style="text-align: center;">
+                <h1>LET'S CODE!</h1>
+                <p class="subtitle">Time to make something blink</p>
+                <ol class="steps" style="text-align: left; max-width: 700px; margin: 40px auto;">
+                    <li>Open Arduino IDE</li>
+                    <li>Connect your Arduino Uno</li>
+                    <li>Load the Blink example</li>
+                    <li>Upload it and watch it work</li>
+                    <li>Start modifying for your assignment</li>
+                </ol>
+                <div class="box" style="max-width: 800px; margin: 40px auto;">
+                    <h3>Remember</h3>
+                    <p>Engineering = Prototype → Test → Iterate</p>
+                    <p style="margin-top: 15px;">Don't worry about getting it perfect first try!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Quiz Question 1 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 1 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">Which function runs continuously in Arduino?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ1(this, 'A', false)">A) setup()</div>
+                        <div class="quiz-option" onclick="answerQ1(this, 'B', true)">B) loop()</div>
+                        <div class="quiz-option" onclick="answerQ1(this, 'C', false)">C) main()</div>
+                        <div class="quiz-option" onclick="answerQ1(this, 'D', false)">D) run()</div>
+                    </div>
+                    <div id="feedback-q1" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q1-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> The loop() function runs continuously after setup() completes, allowing your Arduino to repeatedly execute code. This is the heart of most Arduino programs!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Quiz Question 2 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 2 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What must you do before using digitalWrite()?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ2(this, 'A', false)">A) Nothing</div>
+                        <div class="quiz-option" onclick="answerQ2(this, 'B', true)">B) Set pinMode to OUTPUT</div>
+                        <div class="quiz-option" onclick="answerQ2(this, 'C', false)">C) Call Serial.begin()</div>
+                        <div class="quiz-option" onclick="answerQ2(this, 'D', false)">D) Add a delay</div>
+                    </div>
+                    <div id="feedback-q2" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q2-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> You must configure a pin as OUTPUT using pinMode() before you can write to it with digitalWrite(). This tells the Arduino the pin will be sending signals out, not receiving them.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Quiz Question 3 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 3 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What does delay(1000) do?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ3(this, 'A', true)">A) Wait 1 second</div>
+                        <div class="quiz-option" onclick="answerQ3(this, 'B', false)">B) Wait 1000 seconds</div>
+                        <div class="quiz-option" onclick="answerQ3(this, 'C', false)">C) Wait 1 minute</div>
+                        <div class="quiz-option" onclick="answerQ3(this, 'D', false)">D) Blink LED</div>
+                    </div>
+                    <div id="feedback-q3" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q3-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> delay() takes milliseconds as a parameter. Since 1000 milliseconds = 1 second, delay(1000) pauses the program for 1 second.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Quiz Question 4 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 4 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What are the two possible values for digitalWrite()?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ4(this, 'A', false)">A) 0 and 1</div>
+                        <div class="quiz-option" onclick="answerQ4(this, 'B', false)">B) ON and OFF</div>
+                        <div class="quiz-option" onclick="answerQ4(this, 'C', true)">C) HIGH and LOW</div>
+                        <div class="quiz-option" onclick="answerQ4(this, 'D', false)">D) True and False</div>
+                    </div>
+                    <div id="feedback-q4" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q4-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> digitalWrite() accepts HIGH (which outputs 5V) or LOW (which outputs 0V) as parameters. While these correspond to 1 and 0 internally, you should always use HIGH and LOW in your code for clarity.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 18: Quiz Question 5 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 5 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What happens if you forget a semicolon at the end of a statement?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ5(this, 'A', false)">A) Nothing</div>
+                        <div class="quiz-option" onclick="answerQ5(this, 'B', true)">B) Compile error</div>
+                        <div class="quiz-option" onclick="answerQ5(this, 'C', false)">C) Warning only</div>
+                        <div class="quiz-option" onclick="answerQ5(this, 'D', false)">D) Arduino crashes</div>
+                    </div>
+                    <div id="feedback-q5" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q5-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> Missing semicolons cause the Arduino IDE to fail compilation with an error message. The compiler needs semicolons to know where each statement ends!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 19: Study Tips -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Preparing for Friday's Quiz</h2>
+                <div class="box" style="margin-bottom: 20px;">
+                    <h3>What to Review:</h3>
+                    <ul class="bullet-list">
+                        <li>The roles of <span class="highlight">setup()</span> and <span class="highlight">loop()</span></li>
+                        <li>The three essential functions: <span class="highlight">pinMode()</span>, <span class="highlight">digitalWrite()</span>, <span class="highlight">delay()</span></li>
+                        <li>Arduino syntax rules: <span class="highlight">semicolons</span>, <span class="highlight">curly braces</span>, <span class="highlight">case sensitivity</span></li>
+                        <li>How to upload code and troubleshoot errors</li>
+                        <li>The difference between HIGH/LOW and 1/0</li>
+                    </ul>
+                </div>
+
+                <div class="box" style="background: rgba(255, 149, 0, 0.1); border-color: #ff9500;">
+                    <h3 style="color: #ff9500;">Study Resources:</h3>
+                    <ul class="bullet-list" style="font-size: 1rem;">
+                        <li>Review today's slides</li>
+                        <li>Complete the three blink patterns assignment</li>
+                        <li>Experiment with different delay values</li>
+                        <li>Try modifying the example code</li>
+                        <li>Practice reading code line-by-line</li>
+                    </ul>
+                </div>
+
+                <div style="text-align: center; margin-top: 25px;">
+                    <p style="font-size: 1.3rem; color: #00d4ff;">Quiz on Friday (Day 75) in Google Classroom</p>
+                    <p style="font-size: 1rem; margin-top: 10px; color: #b8c5d6;">20 questions total covering Days 71-74</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Objective Recap -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Objective Recap</h2>
+                <div class="objective-box">
+                    <h3>Today you learned to:</h3>
+                    <ul class="bullet-list">
+                        <li><span class="checkmark">✓</span> Install and configure the Arduino IDE</li>
+                        <li><span class="checkmark">✓</span> Understand the <span class="highlight">setup()</span> and <span class="highlight">loop()</span> code structure</li>
+                        <li><span class="checkmark">✓</span> Upload your first program to an Arduino</li>
+                        <li><span class="checkmark">✓</span> Modify timing parameters to create different blink patterns</li>
+                    </ul>
+                </div>
+                <div style="text-align: center; margin-top: 40px;">
+                    <h3 style="font-size: 2rem; color: #50fa7b;">Great Work!</h3>
+                    <p style="font-size: 1.3rem; margin-top: 20px;">Tomorrow: Variables and the Serial Monitor</p>
+                    <p style="font-size: 1.1rem; margin-top: 15px; color: #ff9500;">Don't forget: Assignment due Tuesday by noon!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-number">
+        <span id="current-slide">1</span> / <span id="total-slides">14</span>
+    </div>
+
+    <div class="controls">
+        <button id="prev-btn" onclick="previousSlide()">← Previous</button>
+        <button id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Copy code function
+        function copyCode(button) {
+            const codeBlock = button.parentElement;
+            // Get text content, excluding the button
+            const code = Array.from(codeBlock.childNodes)
+                .filter(node => node !== button)
+                .map(node => node.textContent)
+                .join('');
+            
+            navigator.clipboard.writeText(code).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '✓ Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                button.textContent = 'Copy Failed';
+                setTimeout(() => {
+                    button.textContent = 'Copy Code';
+                }, 2000);
+            });
+        }
+
+        // Quiz answer functions
+        function answerQ1(element, answer, isCorrect) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback-q1');
+            const feedbackText = document.getElementById('feedback-q1-text');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === element) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+            
+            feedback.style.display = 'block';
+            feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is B) loop()';
+        }
+
+        function answerQ2(element, answer, isCorrect) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback-q2');
+            const feedbackText = document.getElementById('feedback-q2-text');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === element) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+            
+            feedback.style.display = 'block';
+            feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is B) Set pinMode to OUTPUT';
+        }
+
+        function answerQ3(element, answer, isCorrect) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback-q3');
+            const feedbackText = document.getElementById('feedback-q3-text');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === element) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+            
+            feedback.style.display = 'block';
+            feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is A) Wait 1 second';
+        }
+
+        function answerQ4(element, answer, isCorrect) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback-q4');
+            const feedbackText = document.getElementById('feedback-q4-text');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === element) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+            
+            feedback.style.display = 'block';
+            feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is C) HIGH and LOW';
+        }
+
+        function answerQ5(element, answer, isCorrect) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback-q5');
+            const feedbackText = document.getElementById('feedback-q5-text');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === element) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+            
+            feedback.style.display = 'block';
+            feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is B) Compile error';
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>

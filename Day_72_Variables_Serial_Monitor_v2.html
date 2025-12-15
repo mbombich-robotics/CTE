@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Variables & Serial Monitor</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            height: 100vh;
+        }
+
+        .presentation {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            min-height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 55px 60px 120px 60px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .slide-content {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #00d4ff;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(0, 212, 255, 0.5); }
+            to { text-shadow: 0 0 30px rgba(0, 212, 255, 0.8); }
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00d4ff;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ff9500;
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #b8c5d6;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #ff9500;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .objective-box {
+            background: linear-gradient(135deg, rgba(80, 250, 123, 0.1) 0%, rgba(80, 250, 123, 0.05) 100%);
+            border: 3px solid #50fa7b;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 0 30px rgba(80, 250, 123, 0.2);
+        }
+
+        .objective-box h3 {
+            color: #50fa7b;
+            margin-bottom: 12px;
+        }
+
+        .code-block {
+            background: #0d1117;
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 40px 25px 25px 25px;
+            margin: 15px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            line-height: 1.5;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+            position: relative;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 350px;
+            white-space: pre;
+        }
+
+        .code-block::before {
+            content: 'Arduino Code';
+            position: absolute;
+            top: 8px;
+            left: 20px;
+            background: transparent;
+            padding: 0;
+            font-size: 0.7rem;
+            color: #00d4ff;
+            font-weight: 700;
+            opacity: 0.6;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 6px;
+            right: 15px;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            border: none;
+            color: #0a0e27;
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 212, 255, 0.3);
+            z-index: 10;
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.5);
+        }
+
+        .copy-btn.copied {
+            background: linear-gradient(135deg, #50fa7b 0%, #40c96b 100%);
+        }
+
+        .keyword { color: #ff79c6; }
+        .function { color: #50fa7b; }
+        .number { color: #bd93f9; }
+        .comment { color: #6272a4; font-style: italic; }
+        .string { color: #f1fa8c; }
+        .datatype { color: #8be9fd; }
+
+        .bullet-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .bullet-list li {
+            font-size: 1.15rem;
+            margin: 12px 0;
+            padding-left: 35px;
+            position: relative;
+            color: #b8c5d6;
+            line-height: 1.5;
+        }
+
+        .bullet-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #ff9500;
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .box {
+            background: rgba(0, 212, 255, 0.05);
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+        }
+
+        .box-small {
+            background: rgba(0, 212, 255, 0.05);
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+        }
+        
+        .box-small .code-block {
+            white-space: pre-wrap;
+        }
+
+        .highlight {
+            color: #00d4ff;
+            font-weight: 700;
+        }
+
+        .warning {
+            color: #ff9500;
+            font-weight: 700;
+        }
+
+        .success {
+            color: #50fa7b;
+            font-weight: 700;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        button {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            border: none;
+            color: #0a0e27;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .slide-number {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            color: #00d4ff;
+            z-index: 1000;
+        }
+
+        .assignment-box {
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 149, 0, 0.05) 100%);
+            border: 3px solid #ff9500;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 0 30px rgba(255, 149, 0, 0.2);
+        }
+
+        .steps {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+        }
+
+        .steps li {
+            counter-increment: step-counter;
+            font-size: 1.1rem;
+            margin: 15px 0;
+            padding-left: 50px;
+            position: relative;
+            color: #b8c5d6;
+        }
+
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: -3px;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            color: #0a0e27;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+        }
+
+        .comparison-table {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 12px;
+            margin: 15px 0;
+            font-size: 1.05rem;
+        }
+
+        .comparison-table .label {
+            color: #ff9500;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .comparison-table .value {
+            color: #b8c5d6;
+        }
+
+        .checkmark {
+            color: #50fa7b;
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            .slide { padding: 30px; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-content" style="text-align: center;">
+                <h1>Variables & Serial Monitor</h1>
+                <p class="subtitle">Storing Data & Debugging Your Code</p>
+                
+                <!-- Serial Monitor Visual -->
+                <div style="margin: 40px auto; max-width: 700px;">
+                    <svg viewBox="0 0 700 400" style="width: 100%; max-width: 700px;">
+                        <!-- Serial Monitor Window -->
+                        <rect x="0" y="0" width="700" height="400" rx="8" fill="#0d1117" stroke="#00d4ff" stroke-width="3"/>
+                        
+                        <!-- Title Bar -->
+                        <rect x="0" y="0" width="700" height="40" rx="8" fill="#1a1f3a"/>
+                        <text x="20" y="27" font-family="JetBrains Mono" font-size="16" fill="#00d4ff" font-weight="700">
+                            Serial Monitor - 9600 baud
+                        </text>
+                        
+                        <!-- Window Controls -->
+                        <circle cx="665" cy="20" r="6" fill="#ff5555"/>
+                        <circle cx="645" cy="20" r="6" fill="#f1fa8c"/>
+                        <circle cx="625" cy="20" r="6" fill="#50fa7b"/>
+                        
+                        <!-- Serial Output Text (Animated and Looping) -->
+                        <g font-family="JetBrains Mono" font-size="18" fill="#50fa7b">
+                            <text x="20" y="70" class="serial-line">
+                                <tspan fill="#b8c5d6">Count: </tspan>1
+                                <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.08;0.92;1" dur="6s" repeatCount="indefinite"/>
+                            </text>
+                            <text x="20" y="100" class="serial-line">
+                                <tspan fill="#b8c5d6">Count: </tspan>2
+                                <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.08;0.16;0.92;1" dur="6s" repeatCount="indefinite"/>
+                            </text>
+                            <text x="20" y="130" class="serial-line">
+                                <tspan fill="#b8c5d6">Count: </tspan>3
+                                <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.16;0.24;0.92;1" dur="6s" repeatCount="indefinite"/>
+                            </text>
+                            <text x="20" y="160" class="serial-line">
+                                <tspan fill="#b8c5d6">Count: </tspan>4
+                                <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.24;0.32;0.92;1" dur="6s" repeatCount="indefinite"/>
+                            </text>
+                            <text x="20" y="190" class="serial-line">
+                                <tspan fill="#b8c5d6">Count: </tspan>5
+                                <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.32;0.40;0.92;1" dur="6s" repeatCount="indefinite"/>
+                            </text>
+                            <text x="20" y="220" class="serial-line">
+                                <tspan fill="#b8c5d6">Count: </tspan>6
+                                <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.40;0.48;0.92;1" dur="6s" repeatCount="indefinite"/>
+                            </text>
+                            <text x="20" y="250" class="serial-line">
+                                <tspan fill="#b8c5d6">Count: </tspan>7
+                                <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.48;0.56;0.92;1" dur="6s" repeatCount="indefinite"/>
+                            </text>
+                            <text x="20" y="280" class="serial-line">
+                                <tspan fill="#b8c5d6">Count: </tspan>8
+                                <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.56;0.64;0.92;1" dur="6s" repeatCount="indefinite"/>
+                            </text>
+                            <text x="20" y="310" class="serial-line">
+                                <tspan fill="#b8c5d6">Count: </tspan>9
+                                <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.64;0.72;0.92;1" dur="6s" repeatCount="indefinite"/>
+                            </text>
+                            <text x="20" y="340" class="serial-line">
+                                <tspan fill="#b8c5d6">Count: </tspan>10
+                                <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.72;0.80;0.92;1" dur="6s" repeatCount="indefinite"/>
+                            </text>
+                            
+                            <!-- Blinking Cursor -->
+                            <text x="120" y="370" font-size="24" fill="#00d4ff">
+                                _
+                                <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
+                            </text>
+                        </g>
+                        
+                        <!-- Autoscroll indicator -->
+                        <text x="630" y="385" font-family="Exo 2" font-size="12" fill="#6272a4" text-anchor="end">
+                            Autoscroll
+                        </text>
+                    </svg>
+                    
+                    <p style="font-size: 1.1rem; margin-top: 20px; color: #b8c5d6;">
+                        <span style="color: #00d4ff;">→</span> See your variables in real-time
+                    </p>
+                </div>
+                
+                <p style="font-size: 1rem; margin-top: 25px;">Tuesday, January 6, 2026 | 44 minutes</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Learning Objective -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Today's Learning Objective</h2>
+                <div style="display: grid; grid-template-columns: 1fr 200px; gap: 30px; align-items: center;">
+                    <div class="objective-box">
+                        <h3>By the end of today, you will be able to:</h3>
+                        <ul class="bullet-list" style="font-size: 1.05rem;">
+                            <li>Declare and use variables (<span class="highlight">int</span>, <span class="highlight">float</span>, <span class="highlight">boolean</span>)</li>
+                            <li>Understand different data types</li>
+                            <li>Use <span class="highlight">Serial.begin()</span> and <span class="highlight">Serial.println()</span></li>
+                            <li>Read sensor values with <span class="highlight">analogRead()</span></li>
+                        </ul>
+                    </div>
+                    <div style="text-align: center;">
+                        <svg viewBox="0 0 220 280" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; filter: drop-shadow(0 0 15px rgba(0, 212, 255, 0.5));">
+                            <!-- Variable Storage Boxes -->
+                            <rect x="10" y="20" width="90" height="60" rx="6" fill="rgba(0, 212, 255, 0.1)" stroke="#00d4ff" stroke-width="3"/>
+                            <text x="55" y="45" font-family="JetBrains Mono" font-size="12" fill="#8be9fd" text-anchor="middle">int</text>
+                            <text x="55" y="65" font-family="JetBrains Mono" font-size="18" fill="#bd93f9" text-anchor="middle" font-weight="bold">42</text>
+                            
+                            <rect x="120" y="20" width="90" height="60" rx="6" fill="rgba(0, 212, 255, 0.1)" stroke="#00d4ff" stroke-width="3"/>
+                            <text x="165" y="45" font-family="JetBrains Mono" font-size="12" fill="#8be9fd" text-anchor="middle">float</text>
+                            <text x="165" y="65" font-family="JetBrains Mono" font-size="16" fill="#bd93f9" text-anchor="middle" font-weight="bold">3.14</text>
+                            
+                            <rect x="10" y="100" width="90" height="60" rx="6" fill="rgba(0, 212, 255, 0.1)" stroke="#00d4ff" stroke-width="3"/>
+                            <text x="55" y="125" font-family="JetBrains Mono" font-size="12" fill="#8be9fd" text-anchor="middle">boolean</text>
+                            <text x="55" y="145" font-family="JetBrains Mono" font-size="16" fill="#ff79c6" text-anchor="middle" font-weight="bold">true</text>
+                            
+                            <rect x="120" y="100" width="90" height="60" rx="6" fill="rgba(0, 212, 255, 0.1)" stroke="#00d4ff" stroke-width="3"/>
+                            <text x="165" y="125" font-family="JetBrains Mono" font-size="12" fill="#8be9fd" text-anchor="middle">char</text>
+                            <text x="165" y="145" font-family="JetBrains Mono" font-size="20" fill="#f1fa8c" text-anchor="middle" font-weight="bold">'A'</text>
+                            
+                            <!-- Serial Monitor -->
+                            <rect x="20" y="185" width="180" height="80" rx="8" fill="#0d1117" stroke="#ff9500" stroke-width="3"/>
+                            
+                            <!-- Monitor Screen Lines -->
+                            <line x1="30" y1="200" x2="170" y2="200" stroke="#50fa7b" stroke-width="2" opacity="0.8"/>
+                            <line x1="30" y1="215" x2="140" y2="215" stroke="#50fa7b" stroke-width="2" opacity="0.6"/>
+                            <line x1="30" y1="230" x2="160" y2="230" stroke="#50fa7b" stroke-width="2" opacity="0.4"/>
+                            <line x1="30" y1="245" x2="120" y2="245" stroke="#50fa7b" stroke-width="2" opacity="0.2"/>
+                            
+                            <!-- Serial Label -->
+                            <text x="110" y="177" font-family="Exo 2" font-size="11" fill="#ff9500" text-anchor="middle" font-weight="bold">SERIAL MONITOR</text>
+                            
+                            <!-- Data Flow Arrows -->
+                            <path d="M 55 80 L 55 100" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrowhead)"/>
+                            <path d="M 165 80 L 165 100" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrowhead)"/>
+                            <path d="M 55 160 L 55 180" stroke="#ff9500" stroke-width="3" marker-end="url(#arrowhead-orange)">
+                                <animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite"/>
+                            </path>
+                            <path d="M 165 160 L 165 180" stroke="#ff9500" stroke-width="3" marker-end="url(#arrowhead-orange)">
+                                <animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" begin="0.5s" repeatCount="indefinite"/>
+                            </path>
+                            
+                            <!-- Arrow definitions -->
+                            <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                                    <polygon points="0 0, 10 5, 0 10" fill="#00d4ff"/>
+                                </marker>
+                                <marker id="arrowhead-orange" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                                    <polygon points="0 0, 10 5, 0 10" fill="#ff9500"/>
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+                </div>
+                <p style="text-align: center; font-size: 1.3rem; margin-top: 20px; color: #ff9500;">
+                    Master the tools every programmer needs! 🔧
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 3: Why Variables? -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Why Do We Need Variables?</h2>
+                <ul class="bullet-list">
+                    <li><span class="highlight">Store information</span> - sensor readings, counts, states</li>
+                    <li><span class="highlight">Reuse values</span> - change one number instead of hundreds</li>
+                    <li><span class="highlight">Make code readable</span> - "motorSpeed" clearer than "127"</li>
+                    <li><span class="highlight">Perform calculations</span> - add, subtract, compare</li>
+                </ul>
+                <div class="grid-2" style="margin-top: 25px;">
+                    <div class="box">
+                        <h3>❌ Without Variables</h3>
+                        <div class="code-block" style="font-size: 0.95rem;">
+delay(500);
+delay(500);
+delay(500);
+// Change all 3!
+                        </div>
+                    </div>
+                    <div class="box">
+                        <h3>✓ With Variables</h3>
+                        <div class="code-block" style="font-size: 0.95rem;">
+int delayTime = 500;
+delay(delayTime);
+delay(delayTime);
+// Change once!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Variable Declaration -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Declaring Variables</h2>
+                <p>Every variable needs a <span class="highlight">type</span>, <span class="highlight">name</span>, and optional <span class="highlight">initial value</span>:</p>
+                <div class="code-block" style="font-size: 1.05rem; margin-top: 15px;">
+int ledPin = 13;           // type  name  value
+int counter = 0;            // Initialize to 0
+int buttonState;           // No initial value
+                </div>
+                <div class="box" style="margin-top: 20px;">
+                    <h3>Naming Rules</h3>
+                    <ul class="bullet-list" style="font-size: 1rem;">
+                        <li>Start with letter/underscore: <span class="success">motorSpeed</span>, <span class="success">_counter</span></li>
+                        <li>Letters, numbers, underscores: <span class="success">sensor1</span></li>
+                        <li>Case-sensitive: <span class="highlight">motorSpeed ≠ MotorSpeed</span></li>
+                        <li>No spaces: <span class="warning">motor speed</span> ❌</li>
+                        <li>No reserved words: <span class="warning">int</span>, <span class="warning">void</span> ❌</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Data Types -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Common Data Types</h2>
+                <div class="grid-3">
+                    <div class="box-small">
+                        <h3 style="color: #00d4ff; font-size: 1.5rem;">int</h3>
+                        <p style="font-size: 1rem;">Whole numbers<br>-32,768 to 32,767</p>
+                        <div class="code-block" style="font-size: 0.9rem; margin-top: 10px; padding: 20px 15px 15px 15px;">
+int count = 42;
+                        </div>
+                    </div>
+                    <div class="box-small">
+                        <h3 style="color: #00d4ff; font-size: 1.5rem;">float</h3>
+                        <p style="font-size: 1rem;">Decimal numbers<br>Large range</p>
+                        <div class="code-block" style="font-size: 0.9rem; margin-top: 10px; padding: 20px 15px 15px 15px;">
+float pi = 3.14159;
+                        </div>
+                    </div>
+                    <div class="box-small">
+                        <h3 style="color: #00d4ff; font-size: 1.5rem;">boolean</h3>
+                        <p style="font-size: 1rem;">True or False<br>Only two values</p>
+                        <div class="code-block" style="font-size: 0.9rem; margin-top: 10px; padding: 20px 15px 15px 15px;">
+bool isOn = true;
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-2" style="margin-top: 20px;">
+                    <div class="box-small">
+                        <h3 style="color: #00d4ff; font-size: 1.5rem;">long</h3>
+                        <p style="font-size: 1rem;">Big whole numbers (±2 billion)</p>
+                        <div class="code-block" style="font-size: 0.9rem; margin-top: 10px; padding: 20px 15px 15px 15px;">
+long distance = 1000000;
+                        </div>
+                    </div>
+                    <div class="box-small">
+                        <h3 style="color: #00d4ff; font-size: 1.5rem;">char</h3>
+                        <p style="font-size: 1rem;">Single character (letters, symbols)</p>
+                        <div class="code-block" style="font-size: 0.9rem; margin-top: 10px; padding: 20px 15px 15px 15px;">
+char grade = 'A';
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Variable Scope -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Variable Scope: Global vs Local</h2>
+                <div class="code-block" style="font-size: 0.95rem;"><button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+int globalCounter = 0;    // GLOBAL - accessible everywhere
+
+void setup() {
+  int setupVar = 10;      // LOCAL - only in setup()
+  globalCounter = 5;      // Can access global
+}
+
+void loop() {
+  int loopVar = 20;       // LOCAL - only in loop()
+  globalCounter++;        // Can access global
+  // setupVar NOT accessible here! ❌
+}
+                </div>
+                <div class="grid-2" style="margin-top: 20px;">
+                    <div class="box">
+                        <h3>Global Variables</h3>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>Declared outside functions</li>
+                            <li>Accessible everywhere</li>
+                            <li>Persist between loop() runs</li>
+                        </ul>
+                    </div>
+                    <div class="box">
+                        <h3>Local Variables</h3>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>Declared inside functions</li>
+                            <li>Only in that function</li>
+                            <li>Reset each call</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Serial Monitor Introduction -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>The Serial Monitor</h2>
+                <p style="font-size: 1.3rem; text-align: center; margin-bottom: 25px;">
+                    <span class="highlight">"If you can't see it, you can't fix it!"</span>
+                </p>
+                <ul class="bullet-list">
+                    <li><span class="highlight">Debug tool</span> - see what your Arduino is thinking</li>
+                    <li><span class="highlight">Print values</span> - sensor readings, calculations, states</li>
+                    <li><span class="highlight">Troubleshoot code</span> - find where things go wrong</li>
+                    <li><span class="highlight">Monitor progress</span> - track loop iterations</li>
+                </ul>
+                <div class="box" style="margin-top: 25px;">
+                    <h3>Opening the Serial Monitor</h3>
+                    <div class="comparison-table">
+                        <div class="label">Menu:</div>
+                        <div class="value">Tools → Serial Monitor</div>
+                        <div class="label">Shortcut:</div>
+                        <div class="value">Ctrl+Shift+M (Win) / Cmd+Shift+M (Mac)</div>
+                        <div class="label">Button:</div>
+                        <div class="value">Magnifying glass icon (top right)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Serial.begin() -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Setting Up Serial Communication</h2>
+                <p>Initialize in <span class="highlight">setup()</span> - only once!</p>
+                <div class="code-block" style="font-size: 0.9rem; margin-top: 12px; padding: 25px 20px 20px 20px;"><button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+void setup() {
+  Serial.begin(9600);
+  pinMode(13, OUTPUT);
+}
+
+void loop() {
+  Serial.println("Hello!");
+  delay(1000);
+}
+                </div>
+                <div class="box" style="margin-top: 12px; padding: 18px;">
+                    <h3>Baud Rate = Communication Speed</h3>
+                    <ul class="bullet-list" style="font-size: 0.95rem;">
+                        <li><span class="success">9600</span> - Standard (most common)</li>
+                        <li>115200 - Faster for lots of data</li>
+                        <li><span class="warning">⚠ Must match Serial Monitor!</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Serial Print Functions -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Serial.print() vs Serial.println()</h2>
+                <div class="grid-2">
+                    <div class="box">
+                        <h3>Serial.print()</h3>
+                        <p style="font-size: 1rem;">Prints WITHOUT newline</p>
+                        <div class="code-block" style="font-size: 0.9rem; padding: 25px 20px 20px 20px; margin: 10px 0;">
+Serial.print("A");
+Serial.print("B");
+                        </div>
+                        <p style="margin-top: 8px; font-family: 'JetBrains Mono', monospace; background: #0d1117; padding: 6px; border-radius: 5px; font-size: 0.9rem;">Output: AB</p>
+                    </div>
+                    <div class="box">
+                        <h3>Serial.println()</h3>
+                        <p style="font-size: 1rem;">Prints WITH newline</p>
+                        <div class="code-block" style="font-size: 0.9rem; padding: 25px 20px 20px 20px; margin: 10px 0;">
+Serial.println("A");
+Serial.println("B");
+                        </div>
+                        <p style="margin-top: 8px; font-family: 'JetBrains Mono', monospace; background: #0d1117; padding: 6px; border-radius: 5px; font-size: 0.9rem;">Output:<br>A<br>B</p>
+                    </div>
+                </div>
+                <div class="box" style="margin-top: 15px;">
+                    <h3>Combining Both</h3>
+                    <div class="code-block" style="font-size: 0.9rem; padding: 25px 20px 20px 20px; margin: 10px 0;">
+int val = 512;
+Serial.print("Sensor: ");
+Serial.println(val);
+                    </div>
+                    <p style="margin-top: 8px; font-family: 'JetBrains Mono', monospace; background: #0d1117; padding: 6px; border-radius: 5px; font-size: 0.9rem;">Output: Sensor: 512</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Printing Variables -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Printing Different Data Types</h2>
+                <div class="code-block" style="font-size: 0.95rem;"><button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+int counter = 42;
+float voltage = 5.13;
+bool isOn = true;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  Serial.print("Counter: ");
+  Serial.println(counter);      // Prints: Counter: 42
+  
+  Serial.print("Voltage: ");
+  Serial.println(voltage);      // Prints: Voltage: 5.13
+  
+  Serial.print("Status: ");
+  Serial.println(isOn);         // Prints: Status: 1 (1=true, 0=false)
+  
+  counter++;                    // Increment
+  delay(1000);
+}
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Reading Analog Sensors -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Reading Analog Values</h2>
+                <p>Even without a sensor connected, we can read values!</p>
+                <div class="code-block" style="font-size: 0.95rem;"><button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+int sensorPin = A0;       // Analog pin A0
+int sensorValue = 0;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  sensorValue = analogRead(sensorPin);  // Read (0-1023)
+  
+  Serial.print("Analog Value: ");
+  Serial.println(sensorValue);
+  
+  delay(500);  // Read twice per second
+}
+                </div>
+                <div class="box" style="margin-top: 20px;">
+                    <h3>Important Notes</h3>
+                    <ul class="bullet-list" style="font-size: 1rem;">
+                        <li><span class="highlight">analogRead()</span> returns <span class="success">0 to 1023</span></li>
+                        <li>No sensor = "floating" values (electrical noise)</li>
+                        <li>Great way to test Serial Monitor setup</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Today's Assignment -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Today's Challenge</h2>
+                <div class="assignment-box">
+                    <h3>Counter Program with Variables</h3>
+                    <p style="font-size: 1.1rem; margin-bottom: 15px;">Create a program that counts from 1 to 100 using variables</p>
+                    <h3 style="margin-top: 20px; color: #00d4ff; font-size: 1.3rem;">Requirements:</h3>
+                    <ul class="bullet-list" style="font-size: 1.05rem;">
+                        <li>Use variables for <span class="highlight">startValue</span>, <span class="highlight">endValue</span>, <span class="highlight">increment</span></li>
+                        <li>Print: <span class="success">"Count: 1"</span>, <span class="success">"Count: 2"</span>, etc.</li>
+                        <li>Add delay to see each number</li>
+                        <li>After 100, print <span class="success">"Done!"</span> and stop</li>
+                    </ul>
+                    <p style="margin-top: 20px; font-size: 1.1rem;"><span class="warning">Due:</span> Wednesday by noon - submit code to Google Classroom</p>
+                </div>
+                <div class="box" style="margin-top: 20px;">
+                    <h3>Bonus Challenge</h3>
+                    <p>Count backwards from 100 to 1 by changing just ONE variable!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Debugging Tips -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Debugging with Serial Monitor</h2>
+                <ul class="bullet-list">
+                    <li><span class="highlight">Check if code runs</span> - print "Starting..." in setup()</li>
+                    <li><span class="highlight">Track iterations</span> - print counter each loop</li>
+                    <li><span class="highlight">Verify conditions</span> - print before/after if statements</li>
+                    <li><span class="highlight">Monitor sensors</span> - see actual values</li>
+                    <li><span class="highlight">Find loops</span> - no prints = code stuck</li>
+                </ul>
+                <div class="code-block" style="margin-top: 20px; font-size: 0.95rem;">
+void loop() {
+  Serial.println("Loop start");    // Track execution
+  
+  int value = analogRead(A0);
+  Serial.print("Value: ");
+  Serial.println(value);           // See actual value
+  
+  if (value > 500) {
+    Serial.println("High!");       // Know when met
+  }
+  
+  delay(1000);
+}
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Let's Code! -->
+        <div class="slide">
+            <div class="slide-content" style="text-align: center;">
+                <h1>LET'S CODE!</h1>
+                <p class="subtitle">Time to make variables work for you</p>
+                <ol class="steps" style="text-align: left; max-width: 650px; margin: 30px auto;">
+                    <li>Create new sketch (File → New)</li>
+                    <li>Add Serial.begin(9600) to setup()</li>
+                    <li>Declare your counter variables</li>
+                    <li>Print messages with Serial.println()</li>
+                    <li>Test in Serial Monitor (Ctrl+Shift+M)</li>
+                </ol>
+                <div class="box" style="max-width: 750px; margin: 30px auto;">
+                    <h3>Pro Tips</h3>
+                    <p><span class="highlight">Start simple</span> - count to 10 first, then expand</p>
+                    <p style="margin-top: 8px;"><span class="highlight">Use descriptive names</span> - "counter" better than "x"</p>
+                    <p style="margin-top: 8px;"><span class="warning">Watch baud rate!</span> Must match Serial Monitor</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Quiz Question 1 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 1 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">Which is the correct way to declare an integer variable?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ1(this, 'A', false)">A) var x = 5;</div>
+                        <div class="quiz-option" onclick="answerQ1(this, 'B', true)">B) int x = 5;</div>
+                        <div class="quiz-option" onclick="answerQ1(this, 'C', false)">C) integer x = 5;</div>
+                        <div class="quiz-option" onclick="answerQ1(this, 'D', false)">D) x = 5;</div>
+                    </div>
+                    <div id="feedback-q1" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q1-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> Arduino uses 'int' as the keyword for integer variables, followed by the variable name and optional initial value. This declares a variable that can store whole numbers.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Quiz Question 2 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 2 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">Which data type stores decimal numbers?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ2(this, 'A', false)">A) int</div>
+                        <div class="quiz-option" onclick="answerQ2(this, 'B', false)">B) boolean</div>
+                        <div class="quiz-option" onclick="answerQ2(this, 'C', true)">C) float</div>
+                        <div class="quiz-option" onclick="answerQ2(this, 'D', false)">D) char</div>
+                    </div>
+                    <div id="feedback-q2" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q2-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> The float (floating-point) data type stores decimal numbers like 3.14 or 98.6, while int only stores whole numbers. Use float when you need precision with decimals!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Quiz Question 3 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 3 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What is the most common default baud rate used with Serial.begin()?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ3(this, 'A', false)">A) 300</div>
+                        <div class="quiz-option" onclick="answerQ3(this, 'B', true)">B) 9600</div>
+                        <div class="quiz-option" onclick="answerQ3(this, 'C', false)">C) 115200</div>
+                        <div class="quiz-option" onclick="answerQ3(this, 'D', false)">D) 57600</div>
+                    </div>
+                    <div id="feedback-q3" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q3-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> While any baud rate can work if both Serial.begin() and the Serial Monitor match, 9600 is the standard default used in most Arduino examples and tutorials.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 18: Quiz Question 4 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 4 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What's the difference between print() and println()?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ4(this, 'A', false)">A) No difference</div>
+                        <div class="quiz-option" onclick="answerQ4(this, 'B', true)">B) println adds a newline</div>
+                        <div class="quiz-option" onclick="answerQ4(this, 'C', false)">C) print is faster</div>
+                        <div class="quiz-option" onclick="answerQ4(this, 'D', false)">D) println is deprecated</div>
+                    </div>
+                    <div id="feedback-q4" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q4-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> Serial.println() automatically adds a newline character after printing, moving to the next line. Serial.print() does not, allowing you to print multiple items on the same line.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 19: Quiz Question 5 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 5 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">Where should you declare a variable used in both setup() and loop()?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ5(this, 'A', false)">A) In setup()</div>
+                        <div class="quiz-option" onclick="answerQ5(this, 'B', false)">B) In loop()</div>
+                        <div class="quiz-option" onclick="answerQ5(this, 'C', true)">C) Before setup() (globally)</div>
+                        <div class="quiz-option" onclick="answerQ5(this, 'D', false)">D) Anywhere</div>
+                    </div>
+                    <div id="feedback-q5" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q5-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> Global variables (declared before setup()) can be accessed by both setup() and loop(). Variables declared inside a function are only accessible within that function!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 20: Study Tips -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Preparing for Friday's Quiz</h2>
+                <div class="box" style="margin-bottom: 20px;">
+                    <h3>What to Review:</h3>
+                    <ul class="bullet-list">
+                        <li>How to <span class="highlight">declare variables</span> with correct data types</li>
+                        <li>The difference between <span class="highlight">int</span>, <span class="highlight">float</span>, <span class="highlight">boolean</span>, <span class="highlight">char</span></li>
+                        <li><span class="highlight">Serial.begin(9600)</span> and matching baud rates</li>
+                        <li><span class="highlight">Serial.print()</span> vs <span class="highlight">Serial.println()</span></li>
+                        <li>Variable <span class="highlight">scope</span> (global vs local)</li>
+                    </ul>
+                </div>
+
+                <div class="box" style="background: rgba(255, 149, 0, 0.1); border-color: #ff9500;">
+                    <h3 style="color: #ff9500;">Study Resources:</h3>
+                    <ul class="bullet-list" style="font-size: 1rem;">
+                        <li>Review today's slides and data type examples</li>
+                        <li>Complete the counter assignment (1-100)</li>
+                        <li>Experiment with Serial Monitor</li>
+                        <li>Try different variable types</li>
+                        <li>Practice declaring variables in different scopes</li>
+                    </ul>
+                </div>
+
+                <div style="text-align: center; margin-top: 25px;">
+                    <p style="font-size: 1.3rem; color: #00d4ff;">Quiz on Friday (Day 75) in Google Classroom</p>
+                    <p style="font-size: 1rem; margin-top: 10px; color: #b8c5d6;">20 questions total covering Days 71-74</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Objective Recap -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Objective Recap</h2>
+                <div class="objective-box">
+                    <h3>Today you learned to:</h3>
+                    <ul class="bullet-list">
+                        <li><span class="checkmark">✓</span> Declare and use variables (<span class="highlight">int</span>, <span class="highlight">float</span>, <span class="highlight">boolean</span>)</li>
+                        <li><span class="checkmark">✓</span> Understand different data types</li>
+                        <li><span class="checkmark">✓</span> Use <span class="highlight">Serial.begin()</span> and <span class="highlight">Serial.println()</span> for debugging</li>
+                        <li><span class="checkmark">✓</span> Read sensor values with <span class="highlight">analogRead()</span></li>
+                    </ul>
+                </div>
+                <div style="text-align: center; margin-top: 30px;">
+                    <h3 style="font-size: 1.8rem; color: #50fa7b;">Excellent Progress!</h3>
+                    <p style="font-size: 1.2rem; margin-top: 15px;">Tomorrow: Digital Input & Control Structures</p>
+                    <p style="font-size: 1rem; margin-top: 12px; color: #ff9500;">Don't forget: Assignment due Wednesday by noon!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-number">
+        <span id="current-slide">1</span> / <span id="total-slides">15</span>
+    </div>
+
+    <div class="controls">
+        <button id="prev-btn" onclick="previousSlide()">← Previous</button>
+        <button id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Quiz answer functions
+        // Copy code function
+        function copyCode(button) {
+            const codeBlock = button.parentElement;
+            const code = Array.from(codeBlock.childNodes)
+                .filter(node => node !== button)
+                .map(node => node.textContent)
+                .join('');
+            
+            navigator.clipboard.writeText(code).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '✓ Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                button.textContent = 'Copy Failed';
+                setTimeout(() => {
+                    button.textContent = 'Copy Code';
+                }, 2000);
+            });
+        }
+
+        function answerQ1(element, answer, isCorrect) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback-q1');
+            const feedbackText = document.getElementById('feedback-q1-text');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === element) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+            
+            feedback.style.display = 'block';
+            feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is B) int x = 5;';
+        }
+
+        function answerQ2(element, answer, isCorrect) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback-q2');
+            const feedbackText = document.getElementById('feedback-q2-text');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === element) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+            
+            feedback.style.display = 'block';
+            feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is C) float';
+        }
+
+        function answerQ3(element, answer, isCorrect) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback-q3');
+            const feedbackText = document.getElementById('feedback-q3-text');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === element) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+            
+            feedback.style.display = 'block';
+            feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is B) 9600';
+        }
+
+        function answerQ4(element, answer, isCorrect) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback-q4');
+            const feedbackText = document.getElementById('feedback-q4-text');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === element) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+            
+            feedback.style.display = 'block';
+            feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is B) println adds a newline';
+        }
+
+        function answerQ5(element, answer, isCorrect) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback-q5');
+            const feedbackText = document.getElementById('feedback-q5-text');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === element) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+            
+            feedback.style.display = 'block';
+            feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is C) Before setup() (globally)';
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>
