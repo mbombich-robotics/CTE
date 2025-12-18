@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 6: Arduino Fundamentals Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: #ff9500;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px rgba(255, 149, 0, 0.6);
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        .instructions {
+            background: rgba(0, 212, 255, 0.05);
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .instructions h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .instructions p {
+            color: #b8c5d6;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .quiz-section {
+            display: block;
+        }
+
+        .quiz-section.hidden {
+            display: none;
+        }
+
+        .question-card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(26, 31, 58, 0.8) 100%);
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .question-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: #ff9500;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            color: #e0e6f0;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .answer-option {
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid #00d4ff;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .answer-option:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: #00eeff;
+            transform: translateX(5px);
+        }
+
+        .answer-option input[type="radio"] {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .answer-option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 1.1rem;
+        }
+
+        .submit-button {
+            background: linear-gradient(135deg, #ff9500, #ff6b00);
+            border: 2px solid #ff9500;
+            border-radius: 12px;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            padding: 18px 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 40px auto;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-button:hover {
+            background: linear-gradient(135deg, #ffaa00, #ff8800);
+            box-shadow: 0 10px 40px rgba(255, 149, 0, 0.5);
+            transform: translateY(-3px);
+        }
+
+        .submit-button:disabled {
+            background: #444;
+            border-color: #666;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .results-section {
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(26, 31, 58, 0.8) 100%);
+            border: 3px solid #ff9500;
+            border-radius: 16px;
+            padding: 35px;
+            margin-bottom: 30px;
+        }
+
+        .score-display {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .score-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 5rem;
+            color: #00d4ff;
+            font-weight: 900;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.8);
+        }
+
+        .score-label {
+            font-size: 1.5rem;
+            color: #b8c5d6;
+            margin-top: 10px;
+        }
+
+        .grade-message {
+            font-size: 1.8rem;
+            color: #ff9500;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .incorrect-answers {
+            margin-top: 30px;
+        }
+
+        .incorrect-answers h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #ff9500;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .incorrect-item {
+            background: rgba(255, 0, 0, 0.1);
+            border: 2px solid #ff5555;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .incorrect-question {
+            font-size: 1.2rem;
+            color: #ff9500;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .your-answer {
+            color: #ff5555;
+            margin-bottom: 8px;
+        }
+
+        .correct-answer {
+            color: #50fa7b;
+            margin-bottom: 12px;
+        }
+
+        .explanation {
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 4px solid #00d4ff;
+            padding: 15px;
+            margin-top: 12px;
+            color: #b8c5d6;
+            line-height: 1.6;
+        }
+
+        .perfect-score {
+            background: rgba(80, 250, 123, 0.1);
+            border: 3px solid #50fa7b;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .perfect-score h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: #50fa7b;
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .retry-button {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            padding: 15px 35px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 30px auto 0;
+            text-transform: uppercase;
+        }
+
+        .retry-button:hover {
+            background: linear-gradient(135deg, #00eeff, #00bbee);
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.5);
+            transform: translateY(-3px);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            color: #6272a4;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Lesson 6: Quiz</h1>
+            <p class="subtitle">Arduino Fundamentals Practice Test</p>
+        </header>
+
+        <div class="instructions">
+            <h2>Instructions</h2>
+            <p>This quiz covers material from Lessons 2-5 (Arduino Introduction, Variables & Serial Monitor, Digital Input & Control, and Analog Input & PWM).</p>
+            <p><strong>Format:</strong> 20 multiple choice questions</p>
+            <p><strong>Practice Mode:</strong> Take this quiz as many times as you'd like. After submitting, you'll see your score and detailed explanations for any incorrect answers.</p>
+        </div>
+
+        <div id="quiz-section" class="quiz-section">
+            <form id="quiz-form">
+                <!-- Question 1 -->
+                <div class="question-card">
+                    <div class="question-number">Question 1 - Code Structure</div>
+                    <div class="question-text">Which function runs continuously in Arduino?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q1a" name="q1" value="A">
+                        <label for="q1a">A) setup()</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q1b" name="q1" value="B">
+                        <label for="q1b">B) loop()</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q1c" name="q1" value="C">
+                        <label for="q1c">C) main()</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q1d" name="q1" value="D">
+                        <label for="q1d">D) run()</label>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="question-card">
+                    <div class="question-number">Question 2 - pinMode()</div>
+                    <div class="question-text">What must you do before using digitalWrite()?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q2a" name="q2" value="A">
+                        <label for="q2a">A) Nothing</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q2b" name="q2" value="B">
+                        <label for="q2b">B) Set pinMode to OUTPUT</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q2c" name="q2" value="C">
+                        <label for="q2c">C) Call Serial.begin()</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q2d" name="q2" value="D">
+                        <label for="q2d">D) Add a delay</label>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="question-card">
+                    <div class="question-number">Question 3 - delay() Function</div>
+                    <div class="question-text">What does delay(1000) do?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q3a" name="q3" value="A">
+                        <label for="q3a">A) Wait 1 second</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q3b" name="q3" value="B">
+                        <label for="q3b">B) Wait 1000 seconds</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q3c" name="q3" value="C">
+                        <label for="q3c">C) Wait 1 minute</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q3d" name="q3" value="D">
+                        <label for="q3d">D) Blink LED</label>
+                    </div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="question-card">
+                    <div class="question-number">Question 4 - digitalWrite() Values</div>
+                    <div class="question-text">What are the two possible values for digitalWrite()?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q4a" name="q4" value="A">
+                        <label for="q4a">A) 0 and 1</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q4b" name="q4" value="B">
+                        <label for="q4b">B) ON and OFF</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q4c" name="q4" value="C">
+                        <label for="q4c">C) HIGH and LOW</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q4d" name="q4" value="D">
+                        <label for="q4d">D) True and False</label>
+                    </div>
+                </div>
+
+                <!-- Question 5 -->
+                <div class="question-card">
+                    <div class="question-number">Question 5 - Semicolons</div>
+                    <div class="question-text">What happens if you forget a semicolon at the end of a statement?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q5a" name="q5" value="A">
+                        <label for="q5a">A) Nothing</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q5b" name="q5" value="B">
+                        <label for="q5b">B) Compile error</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q5c" name="q5" value="C">
+                        <label for="q5c">C) Warning only</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q5d" name="q5" value="D">
+                        <label for="q5d">D) Arduino crashes</label>
+                    </div>
+                </div>
+
+                <!-- Question 6 -->
+                <div class="question-card">
+                    <div class="question-number">Question 6 - Variable Declaration</div>
+                    <div class="question-text">Which is the correct way to declare an integer variable?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q6a" name="q6" value="A">
+                        <label for="q6a">A) var x = 5;</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q6b" name="q6" value="B">
+                        <label for="q6b">B) int x = 5;</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q6c" name="q6" value="C">
+                        <label for="q6c">C) integer x = 5;</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q6d" name="q6" value="D">
+                        <label for="q6d">D) x = 5;</label>
+                    </div>
+                </div>
+
+                <!-- Question 7 -->
+                <div class="question-card">
+                    <div class="question-number">Question 7 - Data Types</div>
+                    <div class="question-text">Which data type stores decimal numbers?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q7a" name="q7" value="A">
+                        <label for="q7a">A) int</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q7b" name="q7" value="B">
+                        <label for="q7b">B) boolean</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q7c" name="q7" value="C">
+                        <label for="q7c">C) float</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q7d" name="q7" value="D">
+                        <label for="q7d">D) char</label>
+                    </div>
+                </div>
+
+                <!-- Question 8 -->
+                <div class="question-card">
+                    <div class="question-number">Question 8 - Serial.begin()</div>
+                    <div class="question-text">What is the most common default baud rate used with Serial.begin()?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q8a" name="q8" value="A">
+                        <label for="q8a">A) 300</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q8b" name="q8" value="B">
+                        <label for="q8b">B) 9600</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q8c" name="q8" value="C">
+                        <label for="q8c">C) 115200</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q8d" name="q8" value="D">
+                        <label for="q8d">D) 57600</label>
+                    </div>
+                </div>
+
+                <!-- Question 9 -->
+                <div class="question-card">
+                    <div class="question-number">Question 9 - Serial.print vs Serial.println</div>
+                    <div class="question-text">What's the difference between print() and println()?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q9a" name="q9" value="A">
+                        <label for="q9a">A) No difference</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q9b" name="q9" value="B">
+                        <label for="q9b">B) println adds a newline</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q9c" name="q9" value="C">
+                        <label for="q9c">C) print is faster</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q9d" name="q9" value="D">
+                        <label for="q9d">D) println is deprecated</label>
+                    </div>
+                </div>
+
+                <!-- Question 10 -->
+                <div class="question-card">
+                    <div class="question-number">Question 10 - Variable Scope</div>
+                    <div class="question-text">Where should you declare a variable used in both setup() and loop()?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q10a" name="q10" value="A">
+                        <label for="q10a">A) In setup()</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q10b" name="q10" value="B">
+                        <label for="q10b">B) In loop()</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q10c" name="q10" value="C">
+                        <label for="q10c">C) Before setup() (globally)</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q10d" name="q10" value="D">
+                        <label for="q10d">D) Anywhere</label>
+                    </div>
+                </div>
+
+                <!-- Question 11 -->
+                <div class="question-card">
+                    <div class="question-number">Question 11 - INPUT_PULLUP Behavior</div>
+                    <div class="question-text">With INPUT_PULLUP, what state is the pin when the button is NOT pressed?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q11a" name="q11" value="A">
+                        <label for="q11a">A) LOW</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q11b" name="q11" value="B">
+                        <label for="q11b">B) HIGH</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q11c" name="q11" value="C">
+                        <label for="q11c">C) Random/Floating</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q11d" name="q11" value="D">
+                        <label for="q11d">D) 0</label>
+                    </div>
+                </div>
+
+                <!-- Question 12 -->
+                <div class="question-card">
+                    <div class="question-number">Question 12 - Comparison Operators</div>
+                    <div class="question-text">What symbol means "equals" in an if statement?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q12a" name="q12" value="A">
+                        <label for="q12a">A) =</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q12b" name="q12" value="B">
+                        <label for="q12b">B) ==</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q12c" name="q12" value="C">
+                        <label for="q12c">C) ===</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q12d" name="q12" value="D">
+                        <label for="q12d">D) !=</label>
+                    </div>
+                </div>
+
+                <!-- Question 13 -->
+                <div class="question-card">
+                    <div class="question-number">Question 13 - digitalRead() Return Value</div>
+                    <div class="question-text">What does digitalRead() return?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q13a" name="q13" value="A">
+                        <label for="q13a">A) 0-1023</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q13b" name="q13" value="B">
+                        <label for="q13b">B) HIGH or LOW</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q13c" name="q13" value="C">
+                        <label for="q13c">C) A voltage value</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q13d" name="q13" value="D">
+                        <label for="q13d">D) True or False</label>
+                    </div>
+                </div>
+
+                <!-- Question 14 -->
+                <div class="question-card">
+                    <div class="question-number">Question 14 - else Statement</div>
+                    <div class="question-text">When does the else block execute?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q14a" name="q14" value="A">
+                        <label for="q14a">A) Always</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q14b" name="q14" value="B">
+                        <label for="q14b">B) When if condition is false</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q14c" name="q14" value="C">
+                        <label for="q14c">C) When if condition is true</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q14d" name="q14" value="D">
+                        <label for="q14d">D) Never</label>
+                    </div>
+                </div>
+
+                <!-- Question 15 -->
+                <div class="question-card">
+                    <div class="question-number">Question 15 - Button Wiring</div>
+                    <div class="question-text">When using INPUT_PULLUP, how should you wire the button?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q15a" name="q15" value="A">
+                        <label for="q15a">A) Pin to 5V</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q15b" name="q15" value="B">
+                        <label for="q15b">B) Pin to Ground</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q15c" name="q15" value="C">
+                        <label for="q15c">C) Between 5V and Ground</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q15d" name="q15" value="D">
+                        <label for="q15d">D) No connection needed</label>
+                    </div>
+                </div>
+
+                <!-- Question 16 -->
+                <div class="question-card">
+                    <div class="question-number">Question 16 - analogRead() Range</div>
+                    <div class="question-text">What range does analogRead() return?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q16a" name="q16" value="A">
+                        <label for="q16a">A) 0-255</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q16b" name="q16" value="B">
+                        <label for="q16b">B) 0-1023</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q16c" name="q16" value="C">
+                        <label for="q16c">C) 0-1024</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q16d" name="q16" value="D">
+                        <label for="q16d">D) 0-5</label>
+                    </div>
+                </div>
+
+                <!-- Question 17 -->
+                <div class="question-card">
+                    <div class="question-number">Question 17 - analogWrite() Range</div>
+                    <div class="question-text">What range does analogWrite() accept?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q17a" name="q17" value="A">
+                        <label for="q17a">A) 0-255</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q17b" name="q17" value="B">
+                        <label for="q17b">B) 0-1023</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q17c" name="q17" value="C">
+                        <label for="q17c">C) 0-100</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q17d" name="q17" value="D">
+                        <label for="q17d">D) LOW or HIGH</label>
+                    </div>
+                </div>
+
+                <!-- Question 18 -->
+                <div class="question-card">
+                    <div class="question-number">Question 18 - PWM Pins</div>
+                    <div class="question-text">Which pins support PWM on Arduino Uno?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q18a" name="q18" value="A">
+                        <label for="q18a">A) All digital pins</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q18b" name="q18" value="B">
+                        <label for="q18b">B) Pins 3, 5, 6, 9, 10, 11</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q18c" name="q18" value="C">
+                        <label for="q18c">C) Only pin 13</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q18d" name="q18" value="D">
+                        <label for="q18d">D) Pins A0-A5</label>
+                    </div>
+                </div>
+
+                <!-- Question 19 -->
+                <div class="question-card">
+                    <div class="question-number">Question 19 - map() Function</div>
+                    <div class="question-text">What does map(512, 0, 1023, 0, 255) return?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q19a" name="q19" value="A">
+                        <label for="q19a">A) 512</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q19b" name="q19" value="B">
+                        <label for="q19b">B) 255</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q19c" name="q19" value="C">
+                        <label for="q19c">C) 127</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q19d" name="q19" value="D">
+                        <label for="q19d">D) 0</label>
+                    </div>
+                </div>
+
+                <!-- Question 20 -->
+                <div class="question-card">
+                    <div class="question-number">Question 20 - PWM Concept</div>
+                    <div class="question-text">What does PWM stand for?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q20a" name="q20" value="A">
+                        <label for="q20a">A) Power Width Modulation</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q20b" name="q20" value="B">
+                        <label for="q20b">B) Pulse Width Modulation</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q20c" name="q20" value="C">
+                        <label for="q20c">C) Pin Wave Mode</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q20d" name="q20" value="D">
+                        <label for="q20d">D) Programmable Wave Method</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-button">Submit Quiz</button>
+            </form>
+        </div>
+
+        <div id="results-section" class="quiz-section hidden">
+            <div class="results-section">
+                <div class="score-display">
+                    <div class="score-number" id="score-number">0</div>
+                    <div class="score-label">out of 20 correct</div>
+                </div>
+                <div class="grade-message" id="grade-message"></div>
+
+                <div id="incorrect-answers" class="incorrect-answers"></div>
+                <div id="perfect-score" class="perfect-score hidden"></div>
+            </div>
+
+            <button class="retry-button" onclick="retakeQuiz()">Retake Quiz</button>
+        </div>
+
+        <footer>
+            <p><strong>Applied Engineering & Robotics</strong> | Control Freak</p>
+            <p style="margin-top: 10px;">Practice Quiz - Covers Lessons 2-5</p>
+        </footer>
+    </div>
+
+    <script>
+        // Answer key with explanations
+        const answerKey = {
+            q1: {
+                correct: 'B',
+                explanation: 'The loop() function runs continuously after setup() completes, allowing your Arduino to repeatedly execute code.',
+                options: ['setup()', 'loop()', 'main()', 'run()']
+            },
+            q2: {
+                correct: 'B',
+                explanation: 'You must configure a pin as OUTPUT using pinMode() before you can write to it with digitalWrite().',
+                options: ['Nothing', 'Set pinMode to OUTPUT', 'Call Serial.begin()', 'Add a delay']
+            },
+            q3: {
+                correct: 'A',
+                explanation: 'delay() takes milliseconds as a parameter. 1000 milliseconds = 1 second.',
+                options: ['Wait 1 second', 'Wait 1000 seconds', 'Wait 1 minute', 'Blink LED']
+            },
+            q4: {
+                correct: 'C',
+                explanation: 'digitalWrite() accepts HIGH (5V) or LOW (0V) as parameters.',
+                options: ['0 and 1', 'ON and OFF', 'HIGH and LOW', 'True and False']
+            },
+            q5: {
+                correct: 'B',
+                explanation: 'Missing semicolons cause the Arduino IDE to fail compilation with an error message.',
+                options: ['Nothing', 'Compile error', 'Warning only', 'Arduino crashes']
+            },
+            q6: {
+                correct: 'B',
+                explanation: "Arduino uses 'int' as the keyword for integer variables, followed by the variable name and optional initial value.",
+                options: ['var x = 5;', 'int x = 5;', 'integer x = 5;', 'x = 5;']
+            },
+            q7: {
+                correct: 'C',
+                explanation: 'float (floating-point) data type stores decimal numbers, while int only stores whole numbers.',
+                options: ['int', 'boolean', 'float', 'char']
+            },
+            q8: {
+                correct: 'B',
+                explanation: 'While any baud rate can work if both Serial.begin() and the Serial Monitor match, 9600 is the standard default used in most Arduino examples and tutorials.',
+                options: ['300', '9600', '115200', '57600']
+            },
+            q9: {
+                correct: 'B',
+                explanation: 'Serial.println() automatically adds a newline character after printing, while Serial.print() does not.',
+                options: ['No difference', 'println adds a newline', 'print is faster', 'println is deprecated']
+            },
+            q10: {
+                correct: 'C',
+                explanation: 'Global variables (declared before setup()) can be accessed by both setup() and loop().',
+                options: ['In setup()', 'In loop()', 'Before setup() (globally)', 'Anywhere']
+            },
+            q11: {
+                correct: 'B',
+                explanation: 'INPUT_PULLUP uses an internal resistor to pull the pin HIGH when nothing is connected. Pressing the button connects it to ground (LOW).',
+                options: ['LOW', 'HIGH', 'Random/Floating', '0']
+            },
+            q12: {
+                correct: 'B',
+                explanation: 'Single = is assignment, double == is comparison. Use == in if statements to test equality.',
+                options: ['=', '==', '===', '!=']
+            },
+            q13: {
+                correct: 'B',
+                explanation: 'digitalRead() returns either HIGH (5V) or LOW (0V), representing the digital state of the pin.',
+                options: ['0-1023', 'HIGH or LOW', 'A voltage value', 'True or False']
+            },
+            q14: {
+                correct: 'B',
+                explanation: 'The else block only runs when the if condition evaluates to false.',
+                options: ['Always', 'When if condition is false', 'When if condition is true', 'Never']
+            },
+            q15: {
+                correct: 'B',
+                explanation: 'With INPUT_PULLUP, one side of the button connects to the pin, the other to ground. Pressing connects pin to ground (LOW).',
+                options: ['Pin to 5V', 'Pin to Ground', 'Between 5V and Ground', 'No connection needed']
+            },
+            q16: {
+                correct: 'B',
+                explanation: "Arduino's 10-bit ADC provides 1024 possible values (2^10), numbered 0-1023.",
+                options: ['0-255', '0-1023', '0-1024', '0-5']
+            },
+            q17: {
+                correct: 'A',
+                explanation: 'PWM output uses 8-bit resolution, giving 256 levels (0-255).',
+                options: ['0-255', '0-1023', '0-100', 'LOW or HIGH']
+            },
+            q18: {
+                correct: 'B',
+                explanation: 'Only pins marked with ~ (tilde) support PWM on the Arduino Uno.',
+                options: ['All digital pins', 'Pins 3, 5, 6, 9, 10, 11', 'Only pin 13', 'Pins A0-A5']
+            },
+            q19: {
+                correct: 'C',
+                explanation: 'map() converts 512 (middle of 0-1023) proportionally to the middle of 0-255, which is approximately 127.',
+                options: ['512', '255', '127', '0']
+            },
+            q20: {
+                correct: 'B',
+                explanation: 'PWM (Pulse Width Modulation) rapidly switches a digital signal on and off to simulate analog output.',
+                options: ['Power Width Modulation', 'Pulse Width Modulation', 'Pin Wave Mode', 'Programmable Wave Method']
+            }
+        };
+
+        // Question text mapping
+        const questionText = {
+            q1: 'Which function runs continuously in Arduino?',
+            q2: 'What must you do before using digitalWrite()?',
+            q3: 'What does delay(1000) do?',
+            q4: 'What are the two possible values for digitalWrite()?',
+            q5: 'What happens if you forget a semicolon at the end of a statement?',
+            q6: 'Which is the correct way to declare an integer variable?',
+            q7: 'Which data type stores decimal numbers?',
+            q8: 'What is the most common default baud rate used with Serial.begin()?',
+            q9: "What's the difference between print() and println()?",
+            q10: 'Where should you declare a variable used in both setup() and loop()?',
+            q11: 'With INPUT_PULLUP, what state is the pin when the button is NOT pressed?',
+            q12: 'What symbol means "equals" in an if statement?',
+            q13: 'What does digitalRead() return?',
+            q14: 'When does the else block execute?',
+            q15: 'When using INPUT_PULLUP, how should you wire the button?',
+            q16: 'What range does analogRead() return?',
+            q17: 'What range does analogWrite() accept?',
+            q18: 'Which pins support PWM on Arduino Uno?',
+            q19: 'What does map(512, 0, 1023, 0, 255) return?',
+            q20: 'What does PWM stand for?'
+        };
+
+        document.getElementById('quiz-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            gradeQuiz();
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let incorrectAnswers = [];
+
+            // Check each answer
+            for (let i = 1; i <= 20; i++) {
+                const questionName = 'q' + i;
+                const selectedAnswer = document.querySelector(`input[name="${questionName}"]:checked`);
+
+                if (selectedAnswer) {
+                    const userAnswer = selectedAnswer.value;
+                    const correctAnswer = answerKey[questionName].correct;
+
+                    if (userAnswer === correctAnswer) {
+                        score++;
+                    } else {
+                        incorrectAnswers.push({
+                            number: i,
+                            question: questionText[questionName],
+                            userAnswer: userAnswer,
+                            userAnswerText: answerKey[questionName].options[userAnswer.charCodeAt(0) - 65],
+                            correctAnswer: correctAnswer,
+                            correctAnswerText: answerKey[questionName].options[correctAnswer.charCodeAt(0) - 65],
+                            explanation: answerKey[questionName].explanation
+                        });
+                    }
+                }
+            }
+
+            displayResults(score, incorrectAnswers);
+        }
+
+        function displayResults(score, incorrectAnswers) {
+            // Hide quiz, show results
+            document.getElementById('quiz-section').classList.add('hidden');
+            document.getElementById('results-section').classList.remove('hidden');
+
+            // Display score
+            document.getElementById('score-number').textContent = score;
+
+            // Display grade message
+            const percentage = (score / 20) * 100;
+            let gradeMessage = '';
+
+            if (percentage >= 90) {
+                gradeMessage = '🏆 Excellent! Outstanding work!';
+            } else if (percentage >= 80) {
+                gradeMessage = '✅ Good job! Strong understanding!';
+            } else if (percentage >= 70) {
+                gradeMessage = '👍 Satisfactory. Keep practicing!';
+            } else {
+                gradeMessage = '📚 Needs Review. Study the lessons again.';
+            }
+
+            document.getElementById('grade-message').textContent = gradeMessage;
+
+            // Display incorrect answers or perfect score message
+            const incorrectSection = document.getElementById('incorrect-answers');
+            const perfectSection = document.getElementById('perfect-score');
+
+            if (incorrectAnswers.length === 0) {
+                incorrectSection.style.display = 'none';
+                perfectSection.classList.remove('hidden');
+                perfectSection.innerHTML = `
+                    <h3>🎉 Perfect Score! 🎉</h3>
+                    <p style="color: #b8c5d6; font-size: 1.2rem; margin-top: 15px;">
+                        You answered all 20 questions correctly! You have mastered the material from Lessons 2-5.
+                    </p>
+                `;
+            } else {
+                perfectSection.classList.add('hidden');
+                incorrectSection.style.display = 'block';
+
+                let html = '<h2>📋 Review Your Incorrect Answers</h2>';
+
+                incorrectAnswers.forEach(item => {
+                    html += `
+                        <div class="incorrect-item">
+                            <div class="incorrect-question">Question ${item.number}: ${item.question}</div>
+                            <div class="your-answer"><strong>Your Answer:</strong> ${item.userAnswer}) ${item.userAnswerText}</div>
+                            <div class="correct-answer"><strong>Correct Answer:</strong> ${item.correctAnswer}) ${item.correctAnswerText}</div>
+                            <div class="explanation"><strong>Explanation:</strong> ${item.explanation}</div>
+                        </div>
+                    `;
+                });
+
+                incorrectSection.innerHTML = html;
+            }
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function retakeQuiz() {
+            // Reset form
+            document.getElementById('quiz-form').reset();
+
+            // Show quiz, hide results
+            document.getElementById('quiz-section').classList.remove('hidden');
+            document.getElementById('results-section').classList.add('hidden');
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>

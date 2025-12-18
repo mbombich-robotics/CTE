@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 6: Graded Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: #ff9500;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px rgba(255, 149, 0, 0.6);
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        .auth-section {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(26, 31, 58, 0.8) 100%);
+            border: 2px solid #00d4ff;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            max-width: 600px;
+            margin: 40px auto;
+        }
+
+        .auth-section h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .auth-section p {
+            color: #b8c5d6;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .google-signin-button {
+            background: #fff;
+            border: 2px solid #4285f4;
+            border-radius: 8px;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #444;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .google-signin-button:hover {
+            background: #f8f8f8;
+            box-shadow: 0 5px 20px rgba(66, 133, 244, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .google-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .instructions {
+            background: rgba(0, 212, 255, 0.05);
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .instructions h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .instructions p {
+            color: #b8c5d6;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .instructions ul {
+            margin: 15px 0 15px 25px;
+            color: #b8c5d6;
+        }
+
+        .instructions li {
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+
+        .warning {
+            background: rgba(255, 149, 0, 0.1);
+            border: 2px solid #ff9500;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            color: #ff9500;
+            font-weight: 600;
+        }
+
+        .user-info {
+            background: rgba(80, 250, 123, 0.1);
+            border: 2px solid #50fa7b;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info-text {
+            color: #50fa7b;
+            font-size: 1.1rem;
+        }
+
+        .signout-button {
+            background: rgba(255, 85, 85, 0.2);
+            border: 1px solid #ff5555;
+            border-radius: 6px;
+            color: #ff5555;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .signout-button:hover {
+            background: rgba(255, 85, 85, 0.3);
+        }
+
+        .quiz-section {
+            display: block;
+        }
+
+        .quiz-section.hidden {
+            display: none;
+        }
+
+        .question-card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(26, 31, 58, 0.8) 100%);
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .question-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: #ff9500;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            color: #e0e6f0;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .answer-option {
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid #00d4ff;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .answer-option:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: #00eeff;
+            transform: translateX(5px);
+        }
+
+        .answer-option input[type="radio"] {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .answer-option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 1.1rem;
+        }
+
+        .submit-button {
+            background: linear-gradient(135deg, #ff9500, #ff6b00);
+            border: 2px solid #ff9500;
+            border-radius: 12px;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            padding: 18px 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 40px auto;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-button:hover {
+            background: linear-gradient(135deg, #ffaa00, #ff8800);
+            box-shadow: 0 10px 40px rgba(255, 149, 0, 0.5);
+            transform: translateY(-3px);
+        }
+
+        .submit-button:disabled {
+            background: #444;
+            border-color: #666;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .results-section {
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(26, 31, 58, 0.8) 100%);
+            border: 3px solid #ff9500;
+            border-radius: 16px;
+            padding: 35px;
+            margin-bottom: 30px;
+        }
+
+        .score-display {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .score-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 5rem;
+            color: #00d4ff;
+            font-weight: 900;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.8);
+        }
+
+        .score-label {
+            font-size: 1.5rem;
+            color: #b8c5d6;
+            margin-top: 10px;
+        }
+
+        .grade-message {
+            font-size: 1.8rem;
+            color: #ff9500;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .submission-status {
+            background: rgba(80, 250, 123, 0.1);
+            border: 2px solid #50fa7b;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .submission-status.error {
+            background: rgba(255, 85, 85, 0.1);
+            border-color: #ff5555;
+        }
+
+        .submission-status h3 {
+            color: #50fa7b;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .submission-status.error h3 {
+            color: #ff5555;
+        }
+
+        .submission-status p {
+            color: #b8c5d6;
+            font-size: 1.1rem;
+        }
+
+        .incorrect-answers {
+            margin-top: 30px;
+        }
+
+        .incorrect-answers h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #ff9500;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .incorrect-item {
+            background: rgba(255, 0, 0, 0.1);
+            border: 2px solid #ff5555;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .incorrect-question {
+            font-size: 1.2rem;
+            color: #ff9500;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .your-answer {
+            color: #ff5555;
+            margin-bottom: 8px;
+        }
+
+        .correct-answer {
+            color: #50fa7b;
+            margin-bottom: 12px;
+        }
+
+        .explanation {
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 4px solid #00d4ff;
+            padding: 15px;
+            margin-top: 12px;
+            color: #b8c5d6;
+            line-height: 1.6;
+        }
+
+        .perfect-score {
+            background: rgba(80, 250, 123, 0.1);
+            border: 3px solid #50fa7b;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .perfect-score h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: #50fa7b;
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .retry-button {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            padding: 15px 35px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 30px auto 0;
+            text-transform: uppercase;
+        }
+
+        .retry-button:hover {
+            background: linear-gradient(135deg, #00eeff, #00bbee);
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.5);
+            transform: translateY(-3px);
+        }
+
+        .retry-button:disabled {
+            background: #444;
+            border-color: #666;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #00d4ff;
+            font-size: 1.2rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            color: #6272a4;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Lesson 6: Graded Quiz</h1>
+            <p class="subtitle">Arduino Fundamentals Assessment</p>
+        </header>
+
+        <!-- Authentication Section -->
+        <div id="auth-section" class="auth-section">
+            <h2>Sign In to Take Quiz</h2>
+            <p>You must sign in with your Google account to take the graded quiz.</p>
+            <p>Your email will be recorded with your submission to verify your identity.</p>
+            <button id="google-signin-btn" class="google-signin-button">
+                <svg class="google-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                    <path fill="none" d="M0 0h48v48H0z"/>
+                </svg>
+                Sign in with Google
+            </button>
+            <div class="warning" style="margin-top: 30px;">
+                ⚠️ This is a graded assessment. You may only retake it once if needed.
+            </div>
+        </div>
+
+        <!-- User Info (shown after sign-in) -->
+        <div id="user-info" class="user-info hidden">
+            <div class="user-info-text">
+                Signed in as: <strong id="user-email"></strong>
+            </div>
+            <button onclick="signOut()" class="signout-button">Sign Out</button>
+        </div>
+
+        <!-- Instructions -->
+        <div id="instructions" class="instructions hidden">
+            <h2>Instructions</h2>
+            <p>This graded quiz covers material from Lessons 2-5 (Arduino Introduction, Variables & Serial Monitor, Digital Input & Control, and Analog Input & PWM).</p>
+            <ul>
+                <li><strong>Format:</strong> 20 multiple choice questions</li>
+                <li><strong>Attempts:</strong> You may submit once, with one retake allowed if needed</li>
+                <li><strong>Answer Options:</strong> Randomized to prevent cheating</li>
+                <li><strong>Feedback:</strong> You'll see your score and explanations immediately after submitting</li>
+                <li><strong>Submission:</strong> Your results will be automatically sent to your instructor</li>
+            </ul>
+            <div class="warning">
+                ⚠️ Make sure you're ready before starting. Answer all questions before submitting.
+            </div>
+        </div>
+
+        <!-- Quiz Section -->
+        <div id="quiz-section" class="quiz-section hidden">
+            <form id="quiz-form">
+                <!-- Questions will be generated by JavaScript -->
+            </form>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results-section" class="quiz-section hidden">
+            <div id="submission-status"></div>
+            <div class="results-section">
+                <div class="score-display">
+                    <div class="score-number" id="score-number">0</div>
+                    <div class="score-label">out of 20 correct</div>
+                </div>
+                <div class="grade-message" id="grade-message"></div>
+
+                <div id="incorrect-answers" class="incorrect-answers"></div>
+                <div id="perfect-score" class="perfect-score hidden"></div>
+            </div>
+
+            <button id="retry-button" class="retry-button" onclick="retakeQuiz()">Retake Quiz (1 attempt remaining)</button>
+        </div>
+
+        <footer>
+            <p><strong>Applied Engineering & Robotics</strong> | Control Freak</p>
+            <p style="margin-top: 10px;">Graded Assessment - Covers Lessons 2-5</p>
+        </footer>
+    </div>
+
+    <!-- Google Sign-In Library -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <script>
+        // ==================== CONFIGURATION ====================
+        // IMPORTANT: Replace this with your Google Apps Script Web App URL after deployment
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzZytMfL-h0EEaA0C5vGHGT_D8_SPGulZztY_pwV2ANWFaN8oGyLlR_vLb5Nb2WACD2KA/exec';
+
+        // Replace with your Google OAuth Client ID
+        const GOOGLE_CLIENT_ID = '351912540436-54lj11b56684ni284ngu3afb5gruno05.apps.googleusercontent.com';
+
+        // ==================== GLOBAL STATE ====================
+        let userEmail = '';
+        let userName = '';
+        let attemptsUsed = 0;
+        let shuffledQuestions = [];
+
+        // ==================== ANSWER KEY ====================
+        const questionData = {
+            q1: {
+                text: 'Which function runs continuously in Arduino?',
+                category: 'Code Structure',
+                options: ['setup()', 'loop()', 'main()', 'run()'],
+                correct: 1, // Index of correct answer (loop)
+                explanation: 'The loop() function runs continuously after setup() completes, allowing your Arduino to repeatedly execute code.'
+            },
+            q2: {
+                text: 'What must you do before using digitalWrite()?',
+                category: 'pinMode()',
+                options: ['Nothing', 'Set pinMode to OUTPUT', 'Call Serial.begin()', 'Add a delay'],
+                correct: 1,
+                explanation: 'You must configure a pin as OUTPUT using pinMode() before you can write to it with digitalWrite().'
+            },
+            q3: {
+                text: 'What does delay(1000) do?',
+                category: 'delay() Function',
+                options: ['Wait 1 second', 'Wait 1000 seconds', 'Wait 1 minute', 'Blink LED'],
+                correct: 0,
+                explanation: 'delay() takes milliseconds as a parameter. 1000 milliseconds = 1 second.'
+            },
+            q4: {
+                text: 'What are the two possible values for digitalWrite()?',
+                category: 'digitalWrite() Values',
+                options: ['0 and 1', 'ON and OFF', 'HIGH and LOW', 'True and False'],
+                correct: 2,
+                explanation: 'digitalWrite() accepts HIGH (5V) or LOW (0V) as parameters.'
+            },
+            q5: {
+                text: 'What happens if you forget a semicolon at the end of a statement?',
+                category: 'Semicolons',
+                options: ['Nothing', 'Compile error', 'Warning only', 'Arduino crashes'],
+                correct: 1,
+                explanation: 'Missing semicolons cause the Arduino IDE to fail compilation with an error message.'
+            },
+            q6: {
+                text: 'Which is the correct way to declare an integer variable?',
+                category: 'Variable Declaration',
+                options: ['var x = 5;', 'int x = 5;', 'integer x = 5;', 'x = 5;'],
+                correct: 1,
+                explanation: "Arduino uses 'int' as the keyword for integer variables, followed by the variable name and optional initial value."
+            },
+            q7: {
+                text: 'Which data type stores decimal numbers?',
+                category: 'Data Types',
+                options: ['int', 'boolean', 'float', 'char'],
+                correct: 2,
+                explanation: 'float (floating-point) data type stores decimal numbers, while int only stores whole numbers.'
+            },
+            q8: {
+                text: 'What is the most common default baud rate used with Serial.begin()?',
+                category: 'Serial.begin()',
+                options: ['300', '9600', '115200', '57600'],
+                correct: 1,
+                explanation: 'While any baud rate can work if both Serial.begin() and the Serial Monitor match, 9600 is the standard default used in most Arduino examples and tutorials.'
+            },
+            q9: {
+                text: "What's the difference between print() and println()?",
+                category: 'Serial.print vs Serial.println',
+                options: ['No difference', 'println adds a newline', 'print is faster', 'println is deprecated'],
+                correct: 1,
+                explanation: 'Serial.println() automatically adds a newline character after printing, while Serial.print() does not.'
+            },
+            q10: {
+                text: 'Where should you declare a variable used in both setup() and loop()?',
+                category: 'Variable Scope',
+                options: ['In setup()', 'In loop()', 'Before setup() (globally)', 'Anywhere'],
+                correct: 2,
+                explanation: 'Global variables (declared before setup()) can be accessed by both setup() and loop().'
+            },
+            q11: {
+                text: 'With INPUT_PULLUP, what state is the pin when the button is NOT pressed?',
+                category: 'INPUT_PULLUP Behavior',
+                options: ['LOW', 'HIGH', 'Random/Floating', '0'],
+                correct: 1,
+                explanation: 'INPUT_PULLUP uses an internal resistor to pull the pin HIGH when nothing is connected. Pressing the button connects it to ground (LOW).'
+            },
+            q12: {
+                text: 'What symbol means "equals" in an if statement?',
+                category: 'Comparison Operators',
+                options: ['=', '==', '===', '!='],
+                correct: 1,
+                explanation: 'Single = is assignment, double == is comparison. Use == in if statements to test equality.'
+            },
+            q13: {
+                text: 'What does digitalRead() return?',
+                category: 'digitalRead() Return Value',
+                options: ['0-1023', 'HIGH or LOW', 'A voltage value', 'True or False'],
+                correct: 1,
+                explanation: 'digitalRead() returns either HIGH (5V) or LOW (0V), representing the digital state of the pin.'
+            },
+            q14: {
+                text: 'When does the else block execute?',
+                category: 'else Statement',
+                options: ['Always', 'When if condition is false', 'When if condition is true', 'Never'],
+                correct: 1,
+                explanation: 'The else block only runs when the if condition evaluates to false.'
+            },
+            q15: {
+                text: 'When using INPUT_PULLUP, how should you wire the button?',
+                category: 'Button Wiring',
+                options: ['Pin to 5V', 'Pin to Ground', 'Between 5V and Ground', 'No connection needed'],
+                correct: 1,
+                explanation: 'With INPUT_PULLUP, one side of the button connects to the pin, the other to ground. Pressing connects pin to ground (LOW).'
+            },
+            q16: {
+                text: 'What range does analogRead() return?',
+                category: 'analogRead() Range',
+                options: ['0-255', '0-1023', '0-1024', '0-5'],
+                correct: 1,
+                explanation: "Arduino's 10-bit ADC provides 1024 possible values (2^10), numbered 0-1023."
+            },
+            q17: {
+                text: 'What range does analogWrite() accept?',
+                category: 'analogWrite() Range',
+                options: ['0-255', '0-1023', '0-100', 'LOW or HIGH'],
+                correct: 0,
+                explanation: 'PWM output uses 8-bit resolution, giving 256 levels (0-255).'
+            },
+            q18: {
+                text: 'Which pins support PWM on Arduino Uno?',
+                category: 'PWM Pins',
+                options: ['All digital pins', 'Pins 3, 5, 6, 9, 10, 11', 'Only pin 13', 'Pins A0-A5'],
+                correct: 1,
+                explanation: 'Only pins marked with ~ (tilde) support PWM on the Arduino Uno.'
+            },
+            q19: {
+                text: 'What does map(512, 0, 1023, 0, 255) return?',
+                category: 'map() Function',
+                options: ['512', '255', '127', '0'],
+                correct: 2,
+                explanation: 'map() converts 512 (middle of 0-1023) proportionally to the middle of 0-255, which is approximately 127.'
+            },
+            q20: {
+                text: 'What does PWM stand for?',
+                category: 'PWM Concept',
+                options: ['Power Width Modulation', 'Pulse Width Modulation', 'Pin Wave Mode', 'Programmable Wave Method'],
+                correct: 1,
+                explanation: 'PWM (Pulse Width Modulation) rapidly switches a digital signal on and off to simulate analog output.'
+            }
+        };
+
+        // ==================== GOOGLE SIGN-IN ====================
+        function initializeGoogleSignIn() {
+            google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: handleCredentialResponse
+            });
+
+            google.accounts.id.renderButton(
+                document.getElementById('google-signin-btn'),
+                { theme: 'outline', size: 'large', text: 'signin_with', width: 280 }
+            );
+        }
+
+        function handleCredentialResponse(response) {
+            // Decode the JWT token to get user info
+            const payload = JSON.parse(atob(response.credential.split('.')[1]));
+            userEmail = payload.email;
+            userName = payload.name;
+
+            // Show quiz interface
+            document.getElementById('auth-section').classList.add('hidden');
+            document.getElementById('user-info').classList.remove('hidden');
+            document.getElementById('instructions').classList.remove('hidden');
+            document.getElementById('quiz-section').classList.remove('hidden');
+            document.getElementById('user-email').textContent = userEmail;
+
+            // Load attempts from localStorage
+            const storageKey = `quiz_attempts_${userEmail}`;
+            attemptsUsed = parseInt(localStorage.getItem(storageKey) || '0');
+
+            // Generate shuffled quiz
+            generateQuiz();
+        }
+
+        function signOut() {
+            google.accounts.id.disableAutoSelect();
+            userEmail = '';
+            userName = '';
+
+            document.getElementById('auth-section').classList.remove('hidden');
+            document.getElementById('user-info').classList.add('hidden');
+            document.getElementById('instructions').classList.add('hidden');
+            document.getElementById('quiz-section').classList.add('hidden');
+            document.getElementById('results-section').classList.add('hidden');
+        }
+
+        // Initialize Google Sign-In when script loads
+        window.onload = function() {
+            if (typeof google !== 'undefined') {
+                initializeGoogleSignIn();
+            }
+        };
+
+        // ==================== QUIZ GENERATION ====================
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function generateQuiz() {
+            const form = document.getElementById('quiz-form');
+            form.innerHTML = '';
+
+            // Create shuffled questions
+            shuffledQuestions = Object.keys(questionData).map((qId, index) => {
+                const q = questionData[qId];
+                const shuffledOptions = shuffleArray(q.options.map((opt, idx) => ({ text: opt, originalIndex: idx })));
+
+                return {
+                    id: qId,
+                    number: index + 1,
+                    text: q.text,
+                    category: q.category,
+                    shuffledOptions: shuffledOptions,
+                    correctOriginalIndex: q.correct,
+                    explanation: q.explanation
+                };
+            });
+
+            // Generate HTML for each question
+            shuffledQuestions.forEach(q => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card';
+                questionCard.innerHTML = `
+                    <div class="question-number">Question ${q.number} - ${q.category}</div>
+                    <div class="question-text">${q.text}</div>
+                    ${q.shuffledOptions.map((opt, idx) => `
+                        <div class="answer-option">
+                            <input type="radio" id="${q.id}_${idx}" name="${q.id}" value="${opt.originalIndex}">
+                            <label for="${q.id}_${idx}">${String.fromCharCode(65 + idx)}) ${opt.text}</label>
+                        </div>
+                    `).join('')}
+                `;
+                form.appendChild(questionCard);
+            });
+
+            // Add submit button
+            const submitBtn = document.createElement('button');
+            submitBtn.type = 'submit';
+            submitBtn.className = 'submit-button';
+            submitBtn.textContent = 'Submit Quiz';
+            form.appendChild(submitBtn);
+
+            // Add form submit handler
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                gradeQuiz();
+            });
+        }
+
+        // ==================== GRADING ====================
+        function gradeQuiz() {
+            let score = 0;
+            let incorrectAnswers = [];
+            let answersArray = [];
+
+            shuffledQuestions.forEach(q => {
+                const selectedAnswer = document.querySelector(`input[name="${q.id}"]:checked`);
+
+                if (selectedAnswer) {
+                    const userAnswerIndex = parseInt(selectedAnswer.value);
+                    const isCorrect = userAnswerIndex === q.correctOriginalIndex;
+
+                    if (isCorrect) {
+                        score++;
+                    } else {
+                        incorrectAnswers.push({
+                            number: q.number,
+                            question: q.text,
+                            userAnswer: q.shuffledOptions.find(opt => opt.originalIndex === userAnswerIndex).text,
+                            correctAnswer: questionData[q.id].options[q.correctOriginalIndex],
+                            explanation: q.explanation
+                        });
+                    }
+
+                    answersArray.push({
+                        question: q.number,
+                        correct: isCorrect ? 1 : 0
+                    });
+                }
+            });
+
+            // Submit to Google Sheets
+            submitToGoogleSheets(score, answersArray, incorrectAnswers);
+        }
+
+        // ==================== GOOGLE SHEETS SUBMISSION ====================
+        async function submitToGoogleSheets(score, answers, incorrectAnswers) {
+            const timestamp = new Date().toLocaleString();
+            const percentage = ((score / 20) * 100).toFixed(1);
+
+            const data = {
+                email: userEmail,
+                name: userName,
+                score: score,
+                percentage: percentage,
+                timestamp: timestamp,
+                answers: JSON.stringify(answers),
+                attemptNumber: attemptsUsed + 1
+            };
+
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                // Update attempts
+                attemptsUsed++;
+                localStorage.setItem(`quiz_attempts_${userEmail}`, attemptsUsed);
+
+                displayResults(score, incorrectAnswers, true);
+            } catch (error) {
+                console.error('Submission error:', error);
+                displayResults(score, incorrectAnswers, false);
+            }
+        }
+
+        // ==================== RESULTS DISPLAY ====================
+        function displayResults(score, incorrectAnswers, submissionSuccess) {
+            document.getElementById('quiz-section').classList.add('hidden');
+            document.getElementById('results-section').classList.remove('hidden');
+
+            // Submission status
+            const statusDiv = document.getElementById('submission-status');
+            if (submissionSuccess) {
+                statusDiv.innerHTML = `
+                    <div class="submission-status">
+                        <h3>✓ Successfully Submitted!</h3>
+                        <p>Your results have been recorded and sent to your instructor.</p>
+                    </div>
+                `;
+            } else {
+                statusDiv.innerHTML = `
+                    <div class="submission-status error">
+                        <h3>⚠ Submission Error</h3>
+                        <p>There was an issue submitting your results. Please notify your instructor and show them your score.</p>
+                    </div>
+                `;
+            }
+
+            // Display score
+            document.getElementById('score-number').textContent = score;
+
+            // Display grade message
+            const percentage = (score / 20) * 100;
+            let gradeMessage = '';
+
+            if (percentage >= 90) {
+                gradeMessage = '🏆 Excellent! Outstanding work!';
+            } else if (percentage >= 80) {
+                gradeMessage = '✅ Good job! Strong understanding!';
+            } else if (percentage >= 70) {
+                gradeMessage = '👍 Satisfactory. Keep practicing!';
+            } else {
+                gradeMessage = '📚 Needs Review. Study the lessons again.';
+            }
+
+            document.getElementById('grade-message').textContent = gradeMessage;
+
+            // Display incorrect answers or perfect score message
+            const incorrectSection = document.getElementById('incorrect-answers');
+            const perfectSection = document.getElementById('perfect-score');
+
+            if (incorrectAnswers.length === 0) {
+                incorrectSection.style.display = 'none';
+                perfectSection.classList.remove('hidden');
+                perfectSection.innerHTML = `
+                    <h3>🎉 Perfect Score! 🎉</h3>
+                    <p style="color: #b8c5d6; font-size: 1.2rem; margin-top: 15px;">
+                        You answered all 20 questions correctly! You have mastered the material from Lessons 2-5.
+                    </p>
+                `;
+            } else {
+                perfectSection.classList.add('hidden');
+                incorrectSection.style.display = 'block';
+
+                let html = '<h2>📋 Review Your Incorrect Answers</h2>';
+
+                incorrectAnswers.forEach(item => {
+                    html += `
+                        <div class="incorrect-item">
+                            <div class="incorrect-question">Question ${item.number}: ${item.question}</div>
+                            <div class="your-answer"><strong>Your Answer:</strong> ${item.userAnswer}</div>
+                            <div class="correct-answer"><strong>Correct Answer:</strong> ${item.correctAnswer}</div>
+                            <div class="explanation"><strong>Explanation:</strong> ${item.explanation}</div>
+                        </div>
+                    `;
+                });
+
+                incorrectSection.innerHTML = html;
+            }
+
+            // Update retry button
+            const retryBtn = document.getElementById('retry-button');
+            if (attemptsUsed >= 2) {
+                retryBtn.disabled = true;
+                retryBtn.textContent = 'No Retakes Remaining';
+            } else {
+                retryBtn.textContent = 'Retake Quiz (1 attempt remaining)';
+            }
+
+            window.scrollTo(0, 0);
+        }
+
+        function retakeQuiz() {
+            if (attemptsUsed >= 2) {
+                alert('You have used all available attempts for this quiz.');
+                return;
+            }
+
+            document.getElementById('quiz-form').reset();
+            document.getElementById('quiz-section').classList.remove('hidden');
+            document.getElementById('results-section').classList.add('hidden');
+
+            // Generate new shuffled quiz
+            generateQuiz();
+
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>
