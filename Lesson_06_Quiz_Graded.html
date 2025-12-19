@@ -869,6 +869,9 @@
             document.getElementById('quiz-section').classList.add('hidden');
             document.getElementById('results-section').classList.remove('hidden');
 
+            // Scroll to top of page
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
             // Submission status
             const statusDiv = document.getElementById('submission-status');
             if (submissionSuccess) {
@@ -947,8 +950,6 @@
             } else {
                 retryBtn.textContent = 'Retake Quiz (1 attempt remaining)';
             }
-
-            window.scrollTo(0, 0);
         }
 
         function retakeQuiz() {

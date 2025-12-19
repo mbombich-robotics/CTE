@@ -942,6 +942,9 @@
             document.getElementById('quiz-section').classList.add('hidden');
             document.getElementById('results-section').classList.remove('hidden');
 
+            // Scroll to top of page
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
             // Display score
             document.getElementById('score-number').textContent = score;
 
@@ -993,9 +996,6 @@
 
                 incorrectSection.innerHTML = html;
             }
-
-            // Scroll to top
-            window.scrollTo(0, 0);
         }
 
         function retakeQuiz() {
