@@ -928,6 +928,7 @@
         function gradeQuiz() {
             let score = 0;
             let incorrectAnswers = [];
+            let answeredCount = 0;
 
             // Check each answer
             for (let i = 1; i <= 20; i++) {
@@ -935,6 +936,7 @@
                 const selectedAnswer = document.querySelector(`input[name="${questionName}"]:checked`);
 
                 if (selectedAnswer) {
+                    answeredCount++;
                     const userAnswer = selectedAnswer.value;
                     const correctAnswer = answerKey[questionName].correct;
 
@@ -954,10 +956,10 @@
                 }
             }
 
-            displayResults(score, incorrectAnswers);
+            displayResults(score, incorrectAnswers, answeredCount);
         }
 
-        function displayResults(score, incorrectAnswers) {
+        function displayResults(score, incorrectAnswers, answeredCount) {
             // Hide quiz, show results
             document.getElementById('quiz-section').classList.add('hidden');
             document.getElementById('results-section').classList.remove('hidden');
@@ -988,7 +990,7 @@
             const incorrectSection = document.getElementById('incorrect-answers');
             const perfectSection = document.getElementById('perfect-score');
 
-            if (incorrectAnswers.length === 0) {
+            if (incorrectAnswers.length === 0 && answeredCount === 20) {
                 incorrectSection.style.display = 'none';
                 perfectSection.classList.remove('hidden');
                 perfectSection.innerHTML = `

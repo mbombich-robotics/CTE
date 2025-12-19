@@ -478,7 +478,6 @@
             <ul>
                 <li><strong>Format:</strong> 20 multiple choice questions</li>
                 <li><strong>Attempts:</strong> You may submit once, with one retake allowed if needed</li>
-                <li><strong>Answer Options:</strong> Randomized to prevent cheating</li>
                 <li><strong>Feedback:</strong> You'll see your score and explanations immediately after submitting</li>
                 <li><strong>Submission:</strong> Your results will be automatically sent to your instructor</li>
             </ul>
@@ -815,11 +814,13 @@
             let score = 0;
             let incorrectAnswers = [];
             let answersArray = [];
+            let answeredCount = 0;
 
             shuffledQuestions.forEach(q => {
                 const selectedAnswer = document.querySelector(`input[name="${q.id}"]:checked`);
 
                 if (selectedAnswer) {
+                    answeredCount++;
                     const userAnswerIndex = parseInt(selectedAnswer.value);
                     const isCorrect = userAnswerIndex === q.correctOriginalIndex;
 
@@ -843,11 +844,11 @@
             });
 
             // Submit to Google Sheets
-            submitToGoogleSheets(score, answersArray, incorrectAnswers);
+            submitToGoogleSheets(score, answersArray, incorrectAnswers, answeredCount);
         }
 
         // ==================== GOOGLE SHEETS SUBMISSION ====================
-        async function submitToGoogleSheets(score, answers, incorrectAnswers) {
+        async function submitToGoogleSheets(score, answers, incorrectAnswers, answeredCount) {
             const timestamp = new Date().toLocaleString();
             const percentage = ((score / 20) * 100).toFixed(1);
 
@@ -875,15 +876,15 @@
                 attemptsUsed++;
                 localStorage.setItem(`quiz_attempts_${userEmail}`, attemptsUsed);
 
-                displayResults(score, incorrectAnswers, true);
+                displayResults(score, incorrectAnswers, true, answeredCount);
             } catch (error) {
                 console.error('Submission error:', error);
-                displayResults(score, incorrectAnswers, false);
+                displayResults(score, incorrectAnswers, false, answeredCount);
             }
         }
 
         // ==================== RESULTS DISPLAY ====================
-        function displayResults(score, incorrectAnswers, submissionSuccess) {
+        function displayResults(score, incorrectAnswers, submissionSuccess, answeredCount) {
             document.getElementById('quiz-section').classList.add('hidden');
             document.getElementById('results-section').classList.remove('hidden');
 
@@ -931,7 +932,7 @@
             const incorrectSection = document.getElementById('incorrect-answers');
             const perfectSection = document.getElementById('perfect-score');
 
-            if (incorrectAnswers.length === 0) {
+            if (incorrectAnswers.length === 0 && answeredCount === 20) {
                 incorrectSection.style.display = 'none';
                 perfectSection.classList.remove('hidden');
                 perfectSection.innerHTML = `
