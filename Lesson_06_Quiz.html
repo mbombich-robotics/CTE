@@ -754,7 +754,7 @@
             <div class="results-section">
                 <div class="score-display">
                     <div class="score-number" id="score-number">0</div>
-                    <div class="score-label">out of 20 correct</div>
+                    <div class="score-label">out of 20 correct (<span id="score-percentage">0</span>%)</div>
                 </div>
                 <div class="grade-message" id="grade-message"></div>
 
@@ -964,14 +964,17 @@
             document.getElementById('quiz-section').classList.add('hidden');
             document.getElementById('results-section').classList.remove('hidden');
 
-            // Scroll to top of page
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Scroll to results section
+            setTimeout(() => {
+                document.getElementById('results-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
 
-            // Display score
+            // Display score and percentage
+            const percentage = Math.round((score / 20) * 100);
             document.getElementById('score-number').textContent = score;
+            document.getElementById('score-percentage').textContent = percentage;
 
             // Display grade message
-            const percentage = (score / 20) * 100;
             let gradeMessage = '';
 
             if (percentage >= 90) {
