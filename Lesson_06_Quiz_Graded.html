@@ -788,6 +788,24 @@
             // Add form submit handler
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
+
+                // Check if all questions are answered
+                let allAnswered = true;
+                let unansweredQuestions = [];
+
+                shuffledQuestions.forEach(q => {
+                    const selectedAnswer = document.querySelector(`input[name="${q.id}"]:checked`);
+                    if (!selectedAnswer) {
+                        allAnswered = false;
+                        unansweredQuestions.push(q.number);
+                    }
+                });
+
+                if (!allAnswered) {
+                    alert(`Please answer all questions before submitting.\n\nUnanswered questions: ${unansweredQuestions.join(', ')}`);
+                    return;
+                }
+
                 gradeQuiz();
             });
         }
