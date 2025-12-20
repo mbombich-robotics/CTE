@@ -474,15 +474,20 @@
         <!-- Instructions -->
         <div id="instructions" class="instructions hidden">
             <h2>Instructions</h2>
-            <p>This graded quiz covers material from Lessons 2-5 (Arduino Introduction, Variables & Serial Monitor, Digital Input & Control, and Analog Input & PWM).</p>
+            <p>This graded quiz has TWO parts covering material from Lessons 2-5.</p>
             <ul>
-                <li><strong>Format:</strong> 20 multiple choice questions</li>
+                <li><strong>Part A:</strong> 20 multiple choice questions (20 points)</li>
+                <li><strong>Part B:</strong> Practical coding test - debug Arduino code (10 points)</li>
+                <li><strong>Total Points:</strong> 30 points</li>
                 <li><strong>Attempts:</strong> You may submit once, with one retake allowed if needed</li>
                 <li><strong>Feedback:</strong> You'll see your score and explanations immediately after submitting</li>
                 <li><strong>Submission:</strong> Your results will be automatically sent to your instructor</li>
             </ul>
             <div class="warning">
                 ⚠️ Make sure you're ready before starting. Answer all questions before submitting.
+            </div>
+            <div class="warning" style="background: rgba(0, 212, 255, 0.1); border-color: #00d4ff; margin-top: 15px;">
+                💻 <strong>Part B Requirements:</strong> You will need your Arduino Uno connected to your computer and Arduino IDE open.
             </div>
         </div>
 
@@ -777,11 +782,106 @@
                 form.appendChild(questionCard);
             });
 
+            // Add Part B: Practical Test
+            const partBSection = document.createElement('div');
+            partBSection.style.cssText = 'background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(26, 31, 58, 0.8) 100%); border: 3px solid #00d4ff; border-radius: 16px; padding: 30px; margin: 40px 0;';
+            partBSection.innerHTML = `
+                <h2 style="color: #00d4ff; font-size: 2rem; margin-bottom: 20px;">Part B: Practical Coding Test (10 points)</h2>
+
+                <div style="background: rgba(255, 149, 0, 0.1); border: 2px solid #ff9500; border-radius: 12px; padding: 20px; margin-bottom: 25px;">
+                    <h3 style="color: #ff9500; margin-bottom: 15px;">📋 Instructions:</h3>
+                    <ol style="color: #b8c5d6; line-height: 1.8; margin-left: 20px;">
+                        <li>Copy the buggy code below using the <strong>Copy Code</strong> button</li>
+                        <li>Paste it into Arduino IDE (Ctrl+A, then Ctrl+V)</li>
+                        <li>Find and fix all <strong>5 bugs</strong> in the code</li>
+                        <li>Upload to your Arduino Uno and verify Serial Monitor output</li>
+                        <li>Copy your <strong>corrected code</strong> from Arduino IDE</li>
+                        <li>Paste it into the text box below</li>
+                    </ol>
+                </div>
+
+                <div style="background: rgba(80, 250, 123, 0.1); border: 2px solid #50fa7b; border-radius: 12px; padding: 20px; margin-bottom: 25px;">
+                    <h3 style="color: #50fa7b; margin-bottom: 15px;">✓ Expected Serial Monitor Output:</h3>
+                    <pre style="background: #0a0e27; padding: 15px; border-radius: 8px; color: #e0e6f0; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem;">Motor Speed: 0
+Motor Speed: 25
+Motor Speed: 50
+Motor Speed: 75
+Motor Speed: 100
+Motor Speed: 125
+Motor Speed: 150
+Motor Speed: 175
+Motor Speed: 200
+Motor Speed: 225
+Motor Speed: 255</pre>
+                </div>
+
+                <div style="background: #1a1f3a; border: 2px solid #bd93f9; border-radius: 12px; padding: 25px; margin: 20px 0; position: relative;">
+                    <h3 style="color: #bd93f9; margin-bottom: 15px;">🐛 Buggy Starter Code (Find 5 bugs!):</h3>
+                    <button onclick="copyStarterCode()" type="button" style="position: absolute; top: 15px; right: 15px; background: #50fa7b; color: #0a0e27; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: all 0.3s ease;">
+                        📋 Copy Code
+                    </button>
+                    <pre id="starter-code" style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #e0e6f0; overflow-x: auto; white-space: pre; margin-top: 15px;"><code>/*
+  PRACTICAL TEST - Motor Speed Control Simulation
+
+  THERE ARE 5 BUGS IN THIS CODE!
+
+  This code should:
+  1. Set up pin 9 as an output
+  2. Print motor speed values to Serial Monitor
+  3. Ramp speed from 0 to 255 in steps of 25
+*/
+
+void setup() {
+  // Bug 1: Missing Serial.begin(9600);
+  pinMode(9, INPUT);  // Bug 2: Should be OUTPUT
+}
+
+void loop() {
+  int motorSpeed = 0;
+
+  for (int i = 0; i <= 10; i++) {
+    int pwmValue = i * 25;
+
+    Serial.print("Motor Speed: ");
+    Serial.println(motorSpeed)  // Bug 3: Missing semicolon & wrong variable!
+
+    analogWrite(9, pwmValue);
+    delay(500);
+  }
+
+  // Bug 4 & 5: PWM out of range (max is 255)
+  analogWrite(9, 300);
+  Serial.print("Motor Speed: ");
+  Serial.println(300);
+
+  delay(5000);
+}</code></pre>
+                </div>
+
+                <div style="margin-top: 25px;">
+                    <label for="corrected-code" style="display: block; color: #00d4ff; font-size: 1.2rem; font-weight: 600; margin-bottom: 10px;">
+                        Paste Your Corrected Code Here:
+                    </label>
+                    <textarea
+                        id="corrected-code"
+                        name="corrected-code"
+                        rows="25"
+                        placeholder="Paste your corrected, working Arduino code here..."
+                        style="width: 100%; padding: 15px; background: #0a0e27; border: 2px solid #50fa7b; border-radius: 8px; color: #e0e6f0; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; resize: vertical;"
+                        required
+                    ></textarea>
+                    <p style="color: #b8c5d6; margin-top: 10px; font-size: 0.9rem;">
+                        💡 Tip: Make sure your code works in Arduino IDE before pasting it here!
+                    </p>
+                </div>
+            `;
+            form.appendChild(partBSection);
+
             // Add submit button
             const submitBtn = document.createElement('button');
             submitBtn.type = 'submit';
             submitBtn.className = 'submit-button';
-            submitBtn.textContent = 'Submit Quiz';
+            submitBtn.textContent = 'Submit Quiz (Parts A & B)';
             form.appendChild(submitBtn);
 
             // Add form submit handler
@@ -809,13 +909,116 @@
             });
         }
 
+        // ==================== COPY STARTER CODE ====================
+        function copyStarterCode() {
+            const codeElement = document.getElementById('starter-code');
+            const codeText = codeElement.textContent;
+
+            navigator.clipboard.writeText(codeText).then(() => {
+                const button = event.target;
+                const originalText = button.innerHTML;
+                button.innerHTML = '✓ Copied!';
+                button.style.background = '#00d4ff';
+
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.style.background = '#50fa7b';
+                }, 2000);
+            }).catch(err => {
+                alert('Failed to copy code. Please select and copy manually.');
+            });
+        }
+
+        // ==================== AUTO-GRADE CODE ====================
+        function gradeCode(submittedCode) {
+            let score = 0;
+            let feedback = [];
+            const maxScore = 10;
+
+            // Clean up code for analysis (remove comments and extra whitespace)
+            const cleanCode = submittedCode
+                .replace(/\/\*[\s\S]*?\*\//g, '')  // Remove block comments
+                .replace(/\/\/.*/g, '')             // Remove line comments
+                .replace(/\s+/g, ' ')               // Normalize whitespace
+                .trim();
+
+            // CHECK 1: Serial.begin(9600) - 2 points
+            if (/Serial\.begin\s*\(\s*9600\s*\)/.test(cleanCode)) {
+                score += 2;
+                feedback.push('✓ Serial.begin(9600) present (2 pts)');
+            } else {
+                feedback.push('✗ Serial.begin(9600) missing (0 pts)');
+            }
+
+            // CHECK 2: pinMode(9, OUTPUT) - 2 points
+            if (/pinMode\s*\(\s*9\s*,\s*OUTPUT\s*\)/.test(cleanCode)) {
+                score += 2;
+                feedback.push('✓ pinMode(9, OUTPUT) correct (2 pts)');
+            } else {
+                feedback.push('✗ pinMode(9, OUTPUT) incorrect (0 pts)');
+            }
+
+            // CHECK 3: Variable usage & semicolons - 2 points
+            const hasPwmValuePrint = /Serial\.println\s*\(\s*pwmValue\s*\)\s*;/.test(cleanCode);
+            const hasProperSemicolons = !/Serial\.(print|println)\s*\([^)]*\)(?!\s*;)/.test(cleanCode);
+
+            if (hasPwmValuePrint && hasProperSemicolons) {
+                score += 2;
+                feedback.push('✓ Correct variable and semicolons (2 pts)');
+            } else if (hasPwmValuePrint || hasProperSemicolons) {
+                score += 1;
+                feedback.push('⚠ Partial: variable or semicolon issues (1 pt)');
+            } else {
+                feedback.push('✗ Variable or semicolons incorrect (0 pts)');
+            }
+
+            // CHECK 4: PWM values in range (0-255) - 2 points
+            const has300 = /analogWrite\s*\([^,]+,\s*300\s*\)/.test(cleanCode) ||
+                           /println\s*\(\s*300\s*\)/.test(cleanCode);
+            const has255 = /analogWrite\s*\([^,]+,\s*255\s*\)/.test(cleanCode) &&
+                           /println\s*\(\s*255\s*\)/.test(cleanCode);
+
+            if (!has300 && has255) {
+                score += 2;
+                feedback.push('✓ PWM values corrected to 255 (2 pts)');
+            } else if (has255) {
+                score += 1;
+                feedback.push('⚠ PWM partially corrected (1 pt)');
+            } else {
+                feedback.push('✗ PWM values still out of range (0 pts)');
+            }
+
+            // CHECK 5: analogWrite() usage - 2 points
+            const analogWriteCount = (cleanCode.match(/analogWrite\s*\(/g) || []).length;
+            const hasLoopAnalogWrite = /analogWrite\s*\(\s*9\s*,\s*pwmValue\s*\)/.test(cleanCode);
+
+            if (analogWriteCount >= 2 && hasLoopAnalogWrite) {
+                score += 2;
+                feedback.push('✓ analogWrite() used correctly (2 pts)');
+            } else if (analogWriteCount >= 1) {
+                score += 1;
+                feedback.push('⚠ analogWrite() partially correct (1 pt)');
+            } else {
+                feedback.push('✗ analogWrite() incorrect (0 pts)');
+            }
+
+            return {
+                score: score,
+                maxScore: maxScore,
+                percentage: Math.round((score / maxScore) * 100),
+                feedback: feedback,
+                passed: score >= 7  // 70% to pass
+            };
+        }
+
         // ==================== GRADING ====================
         function gradeQuiz() {
-            let score = 0;
+            let mcScore = 0;  // Multiple choice score
             let incorrectAnswers = [];
             let answersArray = [];
             let answeredCount = 0;
 
+            // Grade Part A: Multiple Choice Questions
             shuffledQuestions.forEach(q => {
                 const selectedAnswer = document.querySelector(`input[name="${q.id}"]:checked`);
 
@@ -825,7 +1028,7 @@
                     const isCorrect = userAnswerIndex === q.correctOriginalIndex;
 
                     if (isCorrect) {
-                        score++;
+                        mcScore++;
                     } else {
                         incorrectAnswers.push({
                             number: q.number,
@@ -843,22 +1046,35 @@
                 }
             });
 
+            // Grade Part B: Practical Test
+            const submittedCode = document.getElementById('corrected-code').value;
+            const codeGradeResult = gradeCode(submittedCode);
+
+            // Calculate total score
+            const totalScore = mcScore + codeGradeResult.score;
+            const maxTotalScore = 30;  // 20 MC + 10 Practical
+
             // Submit to Google Sheets
-            submitToGoogleSheets(score, answersArray, incorrectAnswers, answeredCount);
+            submitToGoogleSheets(mcScore, answersArray, incorrectAnswers, answeredCount, codeGradeResult, totalScore, maxTotalScore, submittedCode);
         }
 
         // ==================== GOOGLE SHEETS SUBMISSION ====================
-        async function submitToGoogleSheets(score, answers, incorrectAnswers, answeredCount) {
+        async function submitToGoogleSheets(mcScore, answers, incorrectAnswers, answeredCount, codeGradeResult, totalScore, maxTotalScore, submittedCode) {
             const timestamp = new Date().toLocaleString();
-            const percentage = ((score / 20) * 100).toFixed(1);
+            const percentage = ((totalScore / maxTotalScore) * 100).toFixed(1);
 
             const data = {
                 email: userEmail,
                 name: userName,
-                score: score,
+                partAScore: mcScore,
+                partBScore: codeGradeResult.score,
+                totalScore: totalScore,
                 percentage: percentage,
                 timestamp: timestamp,
                 answers: JSON.stringify(answers),
+                codeScore: codeGradeResult.score,
+                codeFeedback: JSON.stringify(codeGradeResult.feedback),
+                submittedCode: submittedCode,
                 attemptNumber: attemptsUsed + 1
             };
 
@@ -876,15 +1092,15 @@
                 attemptsUsed++;
                 localStorage.setItem(`quiz_attempts_${userEmail}`, attemptsUsed);
 
-                displayResults(score, incorrectAnswers, true, answeredCount);
+                displayResults(mcScore, incorrectAnswers, true, answeredCount, codeGradeResult, totalScore, maxTotalScore);
             } catch (error) {
                 console.error('Submission error:', error);
-                displayResults(score, incorrectAnswers, false, answeredCount);
+                displayResults(mcScore, incorrectAnswers, false, answeredCount, codeGradeResult, totalScore, maxTotalScore);
             }
         }
 
         // ==================== RESULTS DISPLAY ====================
-        function displayResults(score, incorrectAnswers, submissionSuccess, answeredCount) {
+        function displayResults(mcScore, incorrectAnswers, submissionSuccess, answeredCount, codeGradeResult, totalScore, maxTotalScore) {
             document.getElementById('quiz-section').classList.add('hidden');
             document.getElementById('results-section').classList.remove('hidden');
 
@@ -911,10 +1127,14 @@
                 `;
             }
 
-            // Display score and percentage
-            const percentage = Math.round((score / 20) * 100);
-            document.getElementById('score-number').textContent = score;
+            // Display total score and percentage
+            const percentage = Math.round((totalScore / maxTotalScore) * 100);
+            document.getElementById('score-number').textContent = totalScore;
             document.getElementById('score-percentage').textContent = percentage;
+
+            // Update score label to show breakdown
+            document.querySelector('.score-label').innerHTML = `out of ${maxTotalScore} points (${percentage}%)<br>
+                <span style="font-size: 0.9rem; color: #b8c5d6;">Part A: ${mcScore}/20 | Part B: ${codeGradeResult.score}/10</span>`;
 
             // Display grade message
             let gradeMessage = '';
@@ -963,6 +1183,37 @@
 
                 incorrectSection.innerHTML = html;
             }
+
+            // Add Part B feedback section
+            const codeFeedbackSection = document.createElement('div');
+            codeFeedbackSection.style.cssText = 'background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(26, 31, 58, 0.8) 100%); border: 3px solid #00d4ff; border-radius: 16px; padding: 25px; margin: 30px 0;';
+            codeFeedbackSection.innerHTML = `
+                <h2 style="color: #00d4ff; margin-bottom: 20px;">Part B: Coding Test Results</h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <span style="font-size: 3rem; font-weight: 900; color: ${codeGradeResult.passed ? '#50fa7b' : '#ff9500'};">
+                            ${codeGradeResult.score}/10
+                        </span>
+                        <span style="font-size: 1.5rem; color: #b8c5d6; margin-left: 10px;">
+                            (${codeGradeResult.percentage}%)
+                        </span>
+                    </div>
+                    <div style="font-size: 1.3rem; font-weight: 600; color: ${codeGradeResult.passed ? '#50fa7b' : '#ff9500'};">
+                        ${codeGradeResult.passed ? '✓ PASSED' : '⚠ NEEDS IMPROVEMENT'}
+                    </div>
+                </div>
+                <div style="background: rgba(10, 14, 39, 0.6); border-radius: 8px; padding: 20px;">
+                    <h3 style="color: #bd93f9; margin-bottom: 15px;">Detailed Feedback:</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        ${codeGradeResult.feedback.map(item => `
+                            <li style="padding: 8px 0; color: ${item.startsWith('✓') ? '#50fa7b' : item.startsWith('⚠') ? '#ff9500' : '#ff5555'}; font-size: 1.05rem;">
+                                ${item}
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `;
+            incorrectSection.parentElement.appendChild(codeFeedbackSection);
 
             // Update retry button
             const retryBtn = document.getElementById('retry-button');

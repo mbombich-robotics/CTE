@@ -852,6 +852,66 @@ void loop() {
             </div>
         </div>
 
+        <!-- Slide 10.5: Debug Practice -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🐛 Debug This Code!</h2>
+                <p style="font-size: 1.2rem; margin-bottom: 25px;">
+                    This code has <strong>3 bugs</strong>. Find and fix them!
+                </p>
+
+                <div style="background: rgba(255, 149, 0, 0.1); border: 2px solid #ff9500; border-radius: 12px; padding: 20px; margin-bottom: 25px;">
+                    <h3 style="color: #ff9500; margin-bottom: 10px;">📋 Instructions:</h3>
+                    <ol style="color: #b8c5d6; line-height: 1.8; margin-left: 20px;">
+                        <li>Copy the buggy code below</li>
+                        <li>Paste into Arduino IDE (Ctrl+A, then Ctrl+V)</li>
+                        <li>Upload and open Serial Monitor (Tools → Serial Monitor)</li>
+                        <li>Notice the problem - then fix the bugs!</li>
+                    </ol>
+                </div>
+
+                <div class="code-block" style="font-size: 0.95rem; position: relative;">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+int motorSpeed = 0;
+
+void setup() {
+  <span class="comment">// Bug 1: Missing Serial.begin(9600)!</span>
+}
+
+void loop() {
+  motorSpeed = motorSpeed + 10;
+
+  Serial.print("Motor Speed: ");
+  Serial.println(motorspeed);  <span class="comment">// Bug 2: Wrong variable name!</span>
+
+  delay(1000)  <span class="comment">// Bug 3: Missing semicolon!</span>
+}
+                </div>
+
+                <div style="background: rgba(80, 250, 123, 0.1); border: 2px solid #50fa7b; border-radius: 12px; padding: 20px; margin-top: 25px;">
+                    <h3 style="color: #50fa7b; margin-bottom: 10px;">✓ Expected Output:</h3>
+                    <pre style="background: #0a0e27; padding: 15px; border-radius: 8px; color: #e0e6f0; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem;">Motor Speed: 10
+Motor Speed: 20
+Motor Speed: 30
+Motor Speed: 40
+...</pre>
+                </div>
+
+                <div style="background: rgba(0, 212, 255, 0.1); border: 2px solid #00d4ff; border-radius: 12px; padding: 20px; margin-top: 20px;">
+                    <h3 style="color: #00d4ff; margin-bottom: 10px;">💡 Debugging Tips:</h3>
+                    <ul style="color: #b8c5d6; line-height: 1.8; margin-left: 20px;">
+                        <li><strong>No Serial output?</strong> Check if Serial.begin() is in setup()</li>
+                        <li><strong>Variable names are case-sensitive</strong> - motorSpeed ≠ motorspeed</li>
+                        <li><strong>Compilation errors?</strong> Look for missing semicolons</li>
+                    </ul>
+                </div>
+
+                <p style="text-align: center; margin-top: 20px; color: #00d4ff; font-size: 1.1rem;">
+                    <strong>This is the EXACT workflow you'll use on the quiz!</strong>
+                </p>
+            </div>
+        </div>
+
         <!-- Slide 11: Reading Analog Sensors -->
         <div class="slide">
             <div class="slide-content">

@@ -592,6 +592,55 @@
             </div>
         </div>
 
+        <!-- Slide 7.5: Debug Practice -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🐛 Debug This Code!</h2>
+                <p style="font-size: 1.2rem; margin-bottom: 25px;">
+                    This code has <strong>3 bugs</strong>. Can you find them all?
+                </p>
+
+                <div style="background: rgba(255, 149, 0, 0.1); border: 2px solid #ff9500; border-radius: 12px; padding: 20px; margin-bottom: 25px;">
+                    <h3 style="color: #ff9500; margin-bottom: 10px;">📋 Instructions:</h3>
+                    <ol style="color: #b8c5d6; line-height: 1.8; margin-left: 20px;">
+                        <li>Copy the buggy code below</li>
+                        <li>Paste into Arduino IDE (Ctrl+A, then Ctrl+V)</li>
+                        <li>Try to compile - you'll see errors!</li>
+                        <li>Fix all 3 bugs</li>
+                        <li>Upload and verify the LED blinks</li>
+                    </ol>
+                </div>
+
+                <div class="code-block" style="position: relative;">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+<span class="keyword">void</span> <span class="function">setup</span>() {
+  <span class="function">pinMode</span>(<span class="number">13</span>, INPUT)  <span class="comment">// Bug 1: Wrong mode! Should be OUTPUT</span>
+}
+
+<span class="keyword">void</span> <span class="function">loop</span>() {
+  <span class="function">digitalWrite</span>(<span class="number">13</span>, HIGH);
+  <span class="function">delay</span>(<span class="number">1000</span>)  <span class="comment">// Bug 2: Missing semicolon!</span>
+  <span class="function">digitalWrite</span>(<span class="number">13</span>, LOW);
+  <span class="function">delay</span>(<span class="number">1000</span>);
+  <span class="comment">// Bug 3: Missing closing brace for loop!</span>
+                </div>
+
+                <div style="background: rgba(80, 250, 123, 0.1); border: 2px solid #50fa7b; border-radius: 12px; padding: 20px; margin-top: 25px;">
+                    <h3 style="color: #50fa7b; margin-bottom: 10px;">💡 Debugging Tips:</h3>
+                    <ul style="color: #b8c5d6; line-height: 1.8; margin-left: 20px;">
+                        <li><strong>Read error messages</strong> - Arduino IDE tells you the line number!</li>
+                        <li><strong>Check semicolons</strong> - Every statement needs one</li>
+                        <li><strong>Match braces</strong> - Every { needs a }</li>
+                        <li><strong>pinMode must match usage</strong> - OUTPUT for digitalWrite, INPUT for digitalRead</li>
+                    </ul>
+                </div>
+
+                <p style="text-align: center; margin-top: 20px; color: #00d4ff; font-size: 1.1rem;">
+                    <strong>Practice this workflow - you'll use it on the quiz!</strong>
+                </p>
+            </div>
+        </div>
+
         <!-- Slide 8: Key Functions -->
         <div class="slide">
             <div class="slide-content">

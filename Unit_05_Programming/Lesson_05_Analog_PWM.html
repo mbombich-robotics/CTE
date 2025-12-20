@@ -872,6 +872,73 @@ map(value, fromLow, fromHigh, toLow, toHigh)
             </div>
         </div>
 
+        <!-- Slide 9.5: Debug Practice -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🐛 Debug This Code!</h2>
+                <p style="font-size: 1.2rem; margin-bottom: 25px;">
+                    This motor speed code has <strong>2 bugs</strong>. Find and fix them!
+                </p>
+
+                <div style="background: rgba(255, 149, 0, 0.1); border: 2px solid #ff9500; border-radius: 12px; padding: 20px; margin-bottom: 25px;">
+                    <h3 style="color: #ff9500; margin-bottom: 10px;">📋 Instructions:</h3>
+                    <ol style="color: #b8c5d6; line-height: 1.8; margin-left: 20px;">
+                        <li>Copy the buggy code below</li>
+                        <li>Paste into Arduino IDE (Ctrl+A, then Ctrl+V)</li>
+                        <li>Upload to your Arduino Uno</li>
+                        <li>Find and fix the bugs - code compiles but doesn't work right!</li>
+                    </ol>
+                </div>
+
+                <div class="code-block" style="font-size: 0.95rem; position: relative;">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+void setup() {
+  Serial.begin(9600);
+  pinMode(9, OUTPUT);
+}
+
+void loop() {
+  for (int i = 0; i &lt;= 10; i++) {
+    int motorSpeed = i * 25;
+
+    Serial.print("Motor Speed: ");
+    Serial.println(motorSpeed);
+
+    analogWrite(9, motorSpeed);  <span class="comment">// Bug 1: What happens when i=10?</span>
+    delay(500);
+  }
+
+  <span class="comment">// Bug 2: PWM value out of range!</span>
+  analogWrite(9, 300);
+  Serial.println("Max speed!");
+
+  delay(2000);
+}
+                </div>
+
+                <div style="background: rgba(255, 85, 85, 0.1); border: 2px solid #ff5555; border-radius: 12px; padding: 20px; margin-top: 25px;">
+                    <h3 style="color: #ff5555; margin-bottom: 10px;">⚠️ The Problems:</h3>
+                    <ul style="color: #b8c5d6; line-height: 1.8; margin-left: 20px;">
+                        <li><strong>Bug 1:</strong> When i=10, motorSpeed = 250 (OK), but then analogWrite(9, 300) happens!</li>
+                        <li><strong>Bug 2:</strong> PWM values MUST be 0-255. Using 300 is undefined behavior!</li>
+                    </ul>
+                </div>
+
+                <div style="background: rgba(80, 250, 123, 0.1); border: 2px solid #50fa7b; border-radius: 12px; padding: 20px; margin-top: 20px;">
+                    <h3 style="color: #50fa7b; margin-bottom: 10px;">✓ The Fix:</h3>
+                    <ul style="color: #b8c5d6; line-height: 1.8; margin-left: 20px;">
+                        <li>Bug 1: The last motorSpeed value should be 250, not go to 300</li>
+                        <li>Bug 2: Change <code>analogWrite(9, 300)</code> to <code>analogWrite(9, 255)</code></li>
+                        <li><strong>Remember:</strong> PWM range is ALWAYS 0-255, never higher!</li>
+                    </ul>
+                </div>
+
+                <p style="text-align: center; margin-top: 20px; color: #00d4ff; font-size: 1.1rem;">
+                    <strong>PWM range errors are common - you'll see this on the quiz!</strong>
+                </p>
+            </div>
+        </div>
+
         <!-- Slide 10: Interactive map() Demo -->
         <div class="slide">
             <div class="slide-content">
