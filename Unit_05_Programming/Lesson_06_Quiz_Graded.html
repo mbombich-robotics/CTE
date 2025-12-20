@@ -817,7 +817,7 @@ Motor Speed: 255</pre>
 
                 <div style="background: #1a1f3a; border: 2px solid #bd93f9; border-radius: 12px; padding: 25px; margin: 20px 0; position: relative;">
                     <h3 style="color: #bd93f9; margin-bottom: 15px;">🐛 Buggy Starter Code (Find 5 bugs!):</h3>
-                    <button onclick="copyStarterCode()" type="button" style="position: absolute; top: 15px; right: 15px; background: #50fa7b; color: #0a0e27; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: all 0.3s ease;">
+                    <button onclick="copyStarterCode(event)" type="button" style="position: absolute; top: 15px; right: 15px; background: #50fa7b; color: #0a0e27; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: all 0.3s ease;">
                         📋 Copy Code
                     </button>
                     <pre id="starter-code" style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #e0e6f0; overflow-x: auto; white-space: pre; margin-top: 15px;"><code>/*
@@ -832,8 +832,7 @@ Motor Speed: 255</pre>
 */
 
 void setup() {
-  // Bug 1: Missing Serial.begin(9600);
-  pinMode(9, INPUT);  // Bug 2: Should be OUTPUT
+  pinMode(9, INPUT);
 }
 
 void loop() {
@@ -843,13 +842,12 @@ void loop() {
     int pwmValue = i * 25;
 
     Serial.print("Motor Speed: ");
-    Serial.println(motorSpeed)  // Bug 3: Missing semicolon & wrong variable!
+    Serial.println(motorSpeed)
 
     analogWrite(9, pwmValue);
     delay(500);
   }
 
-  // Bug 4 & 5: PWM out of range (max is 255)
   analogWrite(9, 300);
   Serial.print("Motor Speed: ");
   Serial.println(300);
@@ -910,7 +908,7 @@ void loop() {
         }
 
         // ==================== COPY STARTER CODE ====================
-        function copyStarterCode() {
+        function copyStarterCode(event) {
             const codeElement = document.getElementById('starter-code');
             const codeText = codeElement.textContent;
 
