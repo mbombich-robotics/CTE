@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 2 Homework - Blink Patterns</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            color: #00d4ff;
+            text-align: center;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #ff9500;
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+        }
+
+        .assignment-box {
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 149, 0, 0.05) 100%);
+            border: 3px solid #ff9500;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .assignment-box h2 {
+            color: #ff9500;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .requirement {
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 4px solid #00d4ff;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .requirement h3 {
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+
+        .form-section {
+            background: rgba(26, 31, 58, 0.8);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-section h2 {
+            color: #00d4ff;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #b8c5d6;
+            font-weight: 600;
+            margin-bottom: 8px;
+            margin-top: 20px;
+        }
+
+        input[type="email"],
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(10, 14, 39, 0.6);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            color: #e0e6f0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+        }
+
+        textarea {
+            min-height: 400px;
+            font-family: 'JetBrains Mono', monospace;
+            resize: vertical;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .submit-button {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            margin-top: 25px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .submit-button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #00eeff, #00bbee);
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .submit-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, rgba(80, 250, 123, 0.2) 0%, rgba(80, 250, 123, 0.1) 100%);
+            border: 3px solid #50fa7b;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+
+        .success-message h2 {
+            color: #50fa7b;
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .warning {
+            color: #ff9500;
+            font-weight: 700;
+        }
+
+        .highlight {
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        ol, ul {
+            margin-left: 25px;
+            line-height: 1.8;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lesson 2 Homework</h1>
+        <p class="subtitle">Create Three Blink Patterns | Due: Tuesday by Noon</p>
+
+        <!-- Assignment Description -->
+        <div class="assignment-box">
+            <h2>Assignment: Three Blink Patterns</h2>
+            <p style="font-size: 1.1rem; margin-bottom: 20px;">Create three different LED blink patterns using the built-in LED on pin 13.</p>
+
+            <div class="requirement">
+                <h3>Pattern 1: Heartbeat</h3>
+                <p>Two quick pulses, then a pause (buh-BUM...pause...repeat)</p>
+            </div>
+
+            <div class="requirement">
+                <h3>Pattern 2: Police Siren</h3>
+                <p>Alternating fast on/off cycles with different speeds</p>
+            </div>
+
+            <div class="requirement">
+                <h3>Pattern 3: SOS</h3>
+                <p>Morse code SOS pattern: dot-dot-dot, dash-dash-dash, dot-dot-dot</p>
+                <p style="margin-top: 8px; font-size: 0.9rem;">
+                    <span class="highlight">Dots:</span> short blinks (200ms) |
+                    <span class="highlight">Dashes:</span> long blinks (600ms)
+                </p>
+            </div>
+
+            <p style="margin-top: 20px; font-size: 1rem;">
+                <strong>What to submit:</strong> Your complete Arduino code that creates all three patterns in sequence.
+            </p>
+        </div>
+
+        <!-- Submission Form -->
+        <div class="form-section" id="submission-form">
+            <h2>Submit Your Code</h2>
+
+            <label for="student-email">Your School Email <span class="warning">*</span></label>
+            <input type="email" id="student-email" placeholder="yourname@vicksburgschools.org" required>
+
+            <label for="student-name">Your Name <span class="warning">*</span></label>
+            <input type="text" id="student-name" placeholder="First Last" required>
+
+            <label for="submitted-code">Your Arduino Code <span class="warning">*</span></label>
+            <p style="color: #b8c5d6; font-size: 0.9rem; margin-bottom: 10px;">
+                Paste your complete code below (including setup() and loop() functions):
+            </p>
+            <textarea id="submitted-code" placeholder="// Paste your code here
+void setup() {
+  pinMode(13, OUTPUT);
+}
+
+void loop() {
+  // Your patterns here
+}" required></textarea>
+
+            <label for="notes">Notes (Optional)</label>
+            <p style="color: #b8c5d6; font-size: 0.9rem; margin-bottom: 10px;">
+                Add any comments about challenges you faced or creative choices you made:
+            </p>
+            <textarea id="notes" style="min-height: 100px;" placeholder="Example: I adjusted the heartbeat timing to make it more realistic..."></textarea>
+
+            <button class="submit-button" onclick="submitHomework()">Submit Homework</button>
+        </div>
+
+        <!-- Success Message -->
+        <div class="success-message" id="success-message">
+            <h2>✓ Homework Submitted Successfully!</h2>
+            <p style="font-size: 1.2rem; margin-top: 15px; color: #b8c5d6;">
+                Your code has been recorded and sent to your instructor.
+            </p>
+            <p style="margin-top: 20px; color: #00d4ff;">
+                Great job completing the assignment!
+            </p>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 14, 39, 0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999;">
+            <div style="border: 4px solid rgba(0, 212, 255, 0.2); border-top: 4px solid #00d4ff; border-radius: 50%; width: 60px; height: 60px; animation: spin 1s linear infinite;"></div>
+            <p style="color: #00d4ff; font-size: 1.3rem; margin-top: 25px; font-weight: 600;">Submitting your homework...</p>
+        </div>
+    </div>
+
+    <script>
+        // Google Apps Script URL (replace with your deployed URL)
+        const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
+
+        async function submitHomework() {
+            // Get form values
+            const email = document.getElementById('student-email').value.trim();
+            const name = document.getElementById('student-name').value.trim();
+            const code = document.getElementById('submitted-code').value.trim();
+            const notes = document.getElementById('notes').value.trim();
+
+            // Validate required fields
+            if (!email || !name || !code) {
+                alert('Please fill in all required fields (marked with *)');
+                return;
+            }
+
+            // Validate email format
+            if (!email.includes('@') || !email.includes('.')) {
+                alert('Please enter a valid email address');
+                return;
+            }
+
+            // Disable submit button and show loading
+            const submitBtn = document.querySelector('.submit-button');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            document.getElementById('loading-overlay').classList.remove('hidden');
+
+            // Prepare submission data
+            const submissionData = {
+                lesson: 'Lesson 2',
+                assignment: 'Three Blink Patterns',
+                email: email,
+                name: name,
+                code: code,
+                notes: notes,
+                timestamp: new Date().toLocaleString(),
+                dueDate: 'Tuesday by Noon'
+            };
+
+            try {
+                // Submit to Google Sheets
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(submissionData)
+                });
+
+                // Hide loading, show success
+                document.getElementById('loading-overlay').classList.add('hidden');
+                document.getElementById('submission-form').classList.add('hidden');
+                document.getElementById('success-message').style.display = 'block';
+
+                // Scroll to success message
+                document.getElementById('success-message').scrollIntoView({ behavior: 'smooth' });
+
+            } catch (error) {
+                console.error('Submission error:', error);
+                document.getElementById('loading-overlay').classList.add('hidden');
+                alert('There was an error submitting your homework. Please try again or contact your instructor.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Homework';
+            }
+        }
+
+        // Check for browser support
+        if (!window.fetch) {
+            alert('Your browser does not support this submission form. Please use a modern browser like Chrome, Firefox, or Edge.');
+        }
+    </script>
+</body>
+</html>
