@@ -31,6 +31,7 @@ This unit covers the fundamentals of Arduino programming and microcontroller con
    - digitalRead() and INPUT_PULLUP
    - if/else statements
    - Comparison operators (==, !=, <, >)
+   - For loops and while loops
    - Button-controlled LEDs
    - Duration: 50 minutes
 
@@ -102,6 +103,7 @@ By the end of Unit 5, students will be able to:
 - Read digital and analog inputs from sensors
 - Control outputs using digitalWrite() and analogWrite()
 - Use if/else statements for decision-making
+- Use for loops and while loops to repeat code
 - Debug programs using the Serial Monitor
 - Apply the map() function for sensor value conversion
 - Understand PWM and its applications

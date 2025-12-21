@@ -829,7 +829,219 @@ MEDIUM
             </div>
         </div>
 
-        <!-- Slide 9: Today's Assignment -->
+        <!-- Slide 9: Introduction to For Loops -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Repeating Code: For Loops</h2>
+                <p style="font-size: 1.2rem; margin-bottom: 25px;">Sometimes you need to run the same code multiple times. Instead of copying and pasting, use a <span class="highlight">for loop</span>!</p>
+
+                <div class="grid-2">
+                    <div class="box" style="background: rgba(255, 68, 68, 0.1); border-color: #ff4444;">
+                        <h3 style="color: #ff4444;">❌ Without Loop (Repetitive)</h3>
+                        <div class="code-block" style="font-size: 0.8rem;">
+<span class="function">digitalWrite</span>(<span class="number">13</span>, HIGH);
+<span class="function">delay</span>(<span class="number">200</span>);
+<span class="function">digitalWrite</span>(<span class="number">13</span>, LOW);
+<span class="function">delay</span>(<span class="number">200</span>);
+<span class="function">digitalWrite</span>(<span class="number">13</span>, HIGH);
+<span class="function">delay</span>(<span class="number">200</span>);
+<span class="function">digitalWrite</span>(<span class="number">13</span>, LOW);
+<span class="function">delay</span>(<span class="number">200</span>);
+<span class="comment">// Imagine doing this 10 times!</span>
+                        </div>
+                    </div>
+
+                    <div class="box" style="background: rgba(80, 250, 123, 0.1); border-color: #50fa7b;">
+                        <h3 style="color: #50fa7b;">✓ With Loop (Elegant)</h3>
+                        <div class="code-block" style="font-size: 0.8rem;">
+<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i < <span class="number">5</span>; i++) {
+  <span class="function">digitalWrite</span>(<span class="number">13</span>, HIGH);
+  <span class="function">delay</span>(<span class="number">200</span>);
+  <span class="function">digitalWrite</span>(<span class="number">13</span>, LOW);
+  <span class="function">delay</span>(<span class="number">200</span>);
+}
+<span class="comment">// Blinks 5 times - easy!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box" style="margin-top: 25px; background: rgba(0, 212, 255, 0.1); border-color: #00d4ff;">
+                    <h3>Common Uses for For Loops:</h3>
+                    <ul class="bullet-list">
+                        <li>Blinking LEDs a specific number of times</li>
+                        <li>Fading LEDs smoothly (changing PWM values gradually)</li>
+                        <li>Reading multiple sensors in sequence</li>
+                        <li>Creating patterns or animations</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: For Loop Syntax -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>For Loop Syntax</h2>
+                <div class="code-block" style="font-size: 1rem; margin-bottom: 25px;">
+<span class="keyword">for</span> (<span style="color: #ff6b6b;">int i = 0</span>; <span style="color: #4ecdc4;">i < 10</span>; <span style="color: #ffd93d;">i++</span>) {
+  <span class="comment">// Code to repeat goes here</span>
+}
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 25px;">
+                    <div class="box" style="background: rgba(255, 107, 107, 0.1); border-color: #ff6b6b;">
+                        <h3 style="color: #ff6b6b;">1. Initialization</h3>
+                        <p><span class="highlight">int i = 0</span></p>
+                        <p style="font-size: 0.95rem;">Create a counter variable and set its starting value (usually 0)</p>
+                    </div>
+
+                    <div class="box" style="background: rgba(78, 205, 196, 0.1); border-color: #4ecdc4;">
+                        <h3 style="color: #4ecdc4;">2. Condition</h3>
+                        <p><span class="highlight">i < 10</span></p>
+                        <p style="font-size: 0.95rem;">Keep looping while this condition is true. Stop when it becomes false.</p>
+                    </div>
+
+                    <div class="box" style="background: rgba(255, 217, 61, 0.1); border-color: #ffd93d;">
+                        <h3 style="color: #ffd93d;">3. Increment</h3>
+                        <p><span class="highlight">i++</span></p>
+                        <p style="font-size: 0.95rem;">After each loop, add 1 to the counter (i++ means i = i + 1)</p>
+                    </div>
+                </div>
+
+                <div class="box">
+                    <h3>How It Works:</h3>
+                    <div class="code-block" style="font-size: 0.85rem; background: rgba(0, 212, 255, 0.05);">
+<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i < <span class="number">3</span>; i++) {
+  Serial.println(i);
+}
+
+<span class="comment">// Output:
+// 0
+// 1
+// 2</span>
+                    </div>
+                    <p style="margin-top: 15px; font-size: 1rem;">
+                        Loop runs <strong>3 times</strong>: i starts at 0, then 1, then 2. When i becomes 3, the condition "i < 3" is false, so the loop stops.
+                    </p>
+                </div>
+
+                <div class="expandable" onclick="toggleExpand(this)">
+                    <div class="expandable-header">
+                        <span>🔍 Deep Dive: Why Start at 0?</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="expandable-content">
+                        <p>In programming, we typically count from 0, not 1. This is because arrays (lists of values) start at index 0. If you want a loop to run 10 times, use "i < 10" which gives you i = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 (that's 10 numbers!). Alternatively, you could write "i = 1; i <= 10; i++" to count from 1 to 10.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Interactive For Loop Demo -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Try It: LED Fade with For Loop</h2>
+                <div class="code-block" style="font-size: 0.85rem; margin-bottom: 20px;">
+<span class="keyword">void</span> <span class="function">loop</span>() {
+  <span class="comment">// Fade LED from off to full brightness</span>
+  <span class="keyword">for</span> (<span class="keyword">int</span> brightness = <span class="number">0</span>; brightness <= <span class="number">255</span>; brightness += <span class="number">5</span>) {
+    <span class="function">analogWrite</span>(<span class="number">9</span>, brightness);
+    <span class="function">delay</span>(<span class="number">30</span>);
+  }
+
+  <span class="comment">// Fade LED from full brightness to off</span>
+  <span class="keyword">for</span> (<span class="keyword">int</span> brightness = <span class="number">255</span>; brightness >= <span class="number">0</span>; brightness -= <span class="number">5</span>) {
+    <span class="function">analogWrite</span>(<span class="number">9</span>, brightness);
+    <span class="function">delay</span>(<span class="number">30</span>);
+  }
+}
+                </div>
+
+                <div class="box" style="background: rgba(255, 149, 0, 0.1); border-color: #ff9500;">
+                    <h3 style="color: #ff9500;">Interactive Demo</h3>
+                    <p style="margin-bottom: 15px;">Adjust the loop parameters and see what happens:</p>
+
+                    <div style="margin: 20px 0;">
+                        <label style="display: block; margin-bottom: 8px;">Loop Iterations: <span id="loopCount" style="color: #00d4ff; font-weight: bold;">10</span></label>
+                        <input type="range" min="1" max="20" value="10" id="loopSlider"
+                               style="width: 100%; height: 30px; cursor: pointer;"
+                               oninput="updateLoopDemo(this.value)">
+                    </div>
+
+                    <div class="output-display" style="min-height: 200px; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; overflow-y: auto;" id="loopOutput">
+                    </div>
+
+                    <button onclick="runLoopDemo()" style="background: linear-gradient(135deg, #00d4ff, #0099cc); color: white; border: none; padding: 12px 24px; font-size: 1rem; border-radius: 8px; cursor: pointer; font-family: 'Exo 2', sans-serif; font-weight: 600; margin-top: 15px;">
+                        ▶ Run Loop
+                    </button>
+                </div>
+
+                <div class="expandable" onclick="toggleExpand(this)">
+                    <div class="expandable-header">
+                        <span>💡 Tip: Different Increment Values</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="expandable-content">
+                        <p>You don't have to increment by 1! Use <span class="highlight">i += 5</span> to count by 5s (0, 5, 10, 15...), or <span class="highlight">i--</span> to count backwards. You can even use <span class="highlight">i *= 2</span> to double each time (1, 2, 4, 8, 16...)!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: While Loops -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>While Loops (Bonus)</h2>
+                <p style="font-size: 1.2rem; margin-bottom: 25px;">Another type of loop: <span class="highlight">while</span> loops run as long as a condition is true.</p>
+
+                <div class="grid-2">
+                    <div class="box">
+                        <h3>For Loop</h3>
+                        <div class="code-block" style="font-size: 0.8rem;">
+<span class="comment">// Use when you know how many times to loop</span>
+<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i < <span class="number">5</span>; i++) {
+  <span class="function">Serial.println</span>(i);
+}
+                        </div>
+                        <p style="margin-top: 15px; font-size: 0.95rem;">Best for: Counting, repeating a specific number of times</p>
+                    </div>
+
+                    <div class="box">
+                        <h3>While Loop</h3>
+                        <div class="code-block" style="font-size: 0.8rem;">
+<span class="comment">// Use when condition determines when to stop</span>
+<span class="keyword">while</span> (<span class="function">digitalRead</span>(<span class="number">2</span>) == HIGH) {
+  <span class="function">digitalWrite</span>(<span class="number">13</span>, HIGH);
+}
+                        </div>
+                        <p style="margin-top: 15px; font-size: 0.95rem;">Best for: Waiting for a condition, unknown number of iterations</p>
+                    </div>
+                </div>
+
+                <div class="box" style="margin-top: 25px; background: rgba(255, 68, 68, 0.1); border-color: #ff4444;">
+                    <h3 style="color: #ff4444;">⚠️ Warning: Infinite Loops</h3>
+                    <div class="code-block" style="font-size: 0.8rem; margin-top: 10px;">
+<span class="comment">// BAD: This will never stop!</span>
+<span class="keyword">while</span> (<span class="keyword">true</span>) {
+  <span class="function">digitalWrite</span>(<span class="number">13</span>, HIGH);
+  <span class="comment">// Arduino gets stuck here forever!</span>
+}
+                    </div>
+                    <p style="margin-top: 15px;">Make sure your loop condition can eventually become false, or include a <span class="highlight">break</span> statement to exit the loop.</p>
+                </div>
+
+                <div class="expandable" onclick="toggleExpand(this)">
+                    <div class="expandable-header">
+                        <span>🔍 Deep Dive: For vs While</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="expandable-content">
+                        <p>Any <span class="highlight">for</span> loop can be rewritten as a <span class="highlight">while</span> loop, and vice versa. Use <span class="highlight">for</span> when you're counting (0 to 10), and <span class="highlight">while</span> when you're checking a condition (button pressed, sensor reading above threshold, etc.). While loops are also useful when you don't know how many iterations you'll need.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Today's Assignment -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Today's Challenge</h2>
@@ -979,6 +1191,7 @@ if (digitalRead(buttonPin) == LOW) {
                         <li>How <span class="highlight">INPUT_PULLUP</span> works and why logic is reversed</li>
                         <li>The difference between <span class="highlight">=</span> (assignment) and <span class="highlight">==</span> (comparison)</li>
                         <li><span class="highlight">if/else/else-if</span> statement structure</li>
+                        <li><span class="highlight">for loops</span> and <span class="highlight">while loops</span> syntax and use cases</li>
                         <li><span class="highlight">digitalRead()</span> and <span class="highlight">digitalWrite()</span> functions</li>
                         <li>Button wiring with pullup resistors</li>
                     </ul>
@@ -1012,6 +1225,7 @@ if (digitalRead(buttonPin) == LOW) {
                         <li><span class="checkmark">✓</span> Read digital inputs using <span class="highlight">digitalRead()</span></li>
                         <li><span class="checkmark">✓</span> Understand <span class="highlight">INPUT_PULLUP</span> and why we use it</li>
                         <li><span class="checkmark">✓</span> Use <span class="highlight">if/else</span> statements for decision-making</li>
+                        <li><span class="checkmark">✓</span> Use <span class="highlight">for loops</span> and <span class="highlight">while loops</span> to repeat code</li>
                         <li><span class="checkmark">✓</span> Build a button-controlled LED circuit</li>
                     </ul>
                 </div>
@@ -1025,7 +1239,7 @@ if (digitalRead(buttonPin) == LOW) {
     </div>
 
     <div class="slide-number">
-        <span id="current-slide">1</span> / <span id="total-slides">12</span>
+        <span id="current-slide">1</span> / <span id="total-slides">16</span>
     </div>
 
     <div class="controls">
@@ -1139,7 +1353,7 @@ if (digitalRead(buttonPin) == LOW) {
         function updateSensorDemo(value) {
             document.getElementById('sensorValueDisplay').textContent = value;
             const output = document.getElementById('sensorOutput');
-            
+
             if (value < 300) {
                 output.textContent = 'LOW';
                 output.style.color = '#ff5555';
@@ -1151,6 +1365,39 @@ if (digitalRead(buttonPin) == LOW) {
                 output.style.color = '#50fa7b';
             }
         }
+
+        // For loop demo functions
+        function updateLoopDemo(value) {
+            document.getElementById('loopCount').textContent = value;
+        }
+
+        function runLoopDemo() {
+            const iterations = parseInt(document.getElementById('loopSlider').value);
+            const output = document.getElementById('loopOutput');
+            let result = '';
+
+            result += 'for (int i = 0; i < ' + iterations + '; i++) {\n';
+            result += '  Serial.println(i);\n';
+            result += '}\n\n';
+            result += 'Output:\n';
+            result += '─────────\n';
+
+            for (let i = 0; i < iterations; i++) {
+                result += i + '\n';
+            }
+
+            result += '─────────\n';
+            result += 'Loop completed ' + iterations + ' times';
+
+            output.textContent = result;
+        }
+
+        // Initialize loop demo on page load
+        window.addEventListener('load', function() {
+            if (document.getElementById('loopOutput')) {
+                runLoopDemo();
+            }
+        });
 
         // Quiz answer functions
         function answerQ1(element, answer, isCorrect) {
