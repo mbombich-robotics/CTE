@@ -316,6 +316,9 @@ void loop() {
                     body: JSON.stringify(submissionData)
                 });
 
+                // With no-cors mode, we can't read the response, so wait a moment then show success
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
                 // Hide loading, show success
                 document.getElementById('loading-overlay').classList.add('hidden');
                 document.getElementById('submission-form').classList.add('hidden');
