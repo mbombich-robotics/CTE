@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arduino Robot Programming - Week 1</title>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>Applied Engineering & Robotics | Vicksburg High School</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,127 +14,267 @@
 
         body {
             font-family: 'Exo 2', sans-serif;
-            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
-            color: #e0e6f0;
+            background: #1a1a1a;
+            color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
             min-height: 100vh;
-            padding: 60px 20px;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
+        /* Top Title Bar with Circuit Board */
+        .top-bar {
+            background: linear-gradient(135deg, #8B0000 0%, #c41e3a 50%, #8B0000 100%);
+            height: 80px;
+            border-bottom: 3px solid #ffffff;
+            box-shadow: 0 4px 20px rgba(196, 30, 58, 0.5);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            z-index: 100;
         }
 
-        header {
-            text-align: center;
-            margin-bottom: 60px;
+        /* Circuit Board SVG Overlay */
+        .circuit-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.15;
+            background-image:
+                /* Horizontal traces */
+                linear-gradient(90deg, transparent 0%, transparent calc(50% - 1px), rgba(255,255,255,0.6) calc(50% - 1px), rgba(255,255,255,0.6) calc(50% + 1px), transparent calc(50% + 1px)),
+                linear-gradient(90deg, transparent 0%, transparent calc(20% - 1px), rgba(255,255,255,0.4) calc(20% - 1px), rgba(255,255,255,0.4) calc(20% + 1px), transparent calc(20% + 1px)),
+                linear-gradient(90deg, transparent 0%, transparent calc(80% - 1px), rgba(255,255,255,0.4) calc(80% - 1px), rgba(255,255,255,0.4) calc(80% + 1px), transparent calc(80% + 1px)),
+                /* Vertical traces */
+                linear-gradient(0deg, transparent 0%, transparent calc(30% - 1px), rgba(255,255,255,0.4) calc(30% - 1px), rgba(255,255,255,0.4) calc(30% + 1px), transparent calc(30% + 1px)),
+                linear-gradient(0deg, transparent 0%, transparent calc(70% - 1px), rgba(255,255,255,0.4) calc(70% - 1px), rgba(255,255,255,0.4) calc(70% + 1px), transparent calc(70% + 1px));
+            background-size: 100% 100%;
         }
 
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 4rem;
-            font-weight: 900;
-            color: #00d4ff;
-            margin-bottom: 15px;
+        /* Circuit pads/vias */
+        .circuit-overlay::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.7);
+            box-shadow:
+                100px 20px 0 rgba(255,255,255,0.5),
+                250px 45px 0 rgba(255,255,255,0.6),
+                450px 30px 0 rgba(255,255,255,0.4),
+                650px 50px 0 rgba(255,255,255,0.5),
+                850px 25px 0 rgba(255,255,255,0.6),
+                150px 55px 0 rgba(255,255,255,0.4),
+                350px 60px 0 rgba(255,255,255,0.5),
+                550px 15px 0 rgba(255,255,255,0.6),
+                750px 55px 0 rgba(255,255,255,0.4),
+                950px 40px 0 rgba(255,255,255,0.5);
+            top: 20px;
+            left: 50px;
+        }
+
+        .top-bar-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .school-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
             text-transform: uppercase;
-            letter-spacing: 3px;
-            text-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
-            animation: glow 2s ease-in-out infinite alternate;
+            white-space: nowrap;
         }
 
-        @keyframes glow {
-            from { text-shadow: 0 0 20px rgba(0, 212, 255, 0.5); }
-            to { text-shadow: 0 0 40px rgba(0, 212, 255, 0.8); }
+        .course-title-compact {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
         }
 
-        .subtitle {
-            font-size: 1.5rem;
-            color: #ff9500;
-            font-weight: 600;
+        /* Layout Container */
+        .layout-container {
+            display: flex;
+            flex: 1;
+        }
+
+        /* Left Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #0d0d0d;
+            border-right: 3px solid #c41e3a;
+            padding: 30px 0;
+            overflow-y: auto;
+            position: sticky;
+            top: 0;
+            height: calc(100vh - 80px);
+        }
+
+        .sidebar-section {
             margin-bottom: 10px;
         }
 
-        .week-info {
+        .sidebar-header {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 15px 25px 10px;
+            font-weight: 700;
+        }
+
+        .unit-link {
+            display: block;
+            padding: 12px 25px;
+            color: #b0b0b0;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+            position: relative;
+        }
+
+        .unit-link:hover {
+            background: rgba(196, 30, 58, 0.1);
+            color: #ffffff;
+            border-left-color: #c41e3a;
+        }
+
+        .unit-link.active {
+            background: rgba(196, 30, 58, 0.15);
+            color: #ffffff;
+            border-left-color: #c41e3a;
+        }
+
+        .unit-link.coming-soon {
+            color: #555;
+            cursor: not-allowed;
+        }
+
+        .unit-link.coming-soon:hover {
+            background: transparent;
+            border-left-color: transparent;
+        }
+
+        .unit-number {
+            font-family: 'Rajdhani', sans-serif;
+            color: #c41e3a;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        .coming-soon-badge {
+            display: inline-block;
+            background: rgba(136, 136, 136, 0.2);
+            color: #666;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            margin-left: 8px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            padding: 40px 50px;
+            overflow-y: auto;
+        }
+
+        .unit-header {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(196, 30, 58, 0.3);
+        }
+
+        .unit-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #c41e3a;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .unit-description {
             font-size: 1.1rem;
-            color: #b8c5d6;
-            margin-top: 15px;
+            color: #b0b0b0;
+            line-height: 1.7;
+            max-width: 900px;
         }
 
         .lessons-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
         }
 
         .lesson-card {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(26, 31, 58, 0.8) 100%);
-            border: 2px solid #00d4ff;
-            border-radius: 16px;
-            padding: 35px;
+            background: linear-gradient(135deg, rgba(196, 30, 58, 0.05) 0%, rgba(42, 42, 42, 0.8) 100%);
+            border: 2px solid rgba(196, 30, 58, 0.3);
+            border-radius: 10px;
+            padding: 25px;
             transition: all 0.3s ease;
             cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .lesson-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
-            transition: left 0.5s;
-        }
-
-        .lesson-card:hover::before {
-            left: 100%;
+            text-decoration: none;
+            display: block;
+            color: inherit;
         }
 
         .lesson-card:hover {
-            transform: translateY(-5px);
-            border-color: #00d4ff;
-            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.3);
+            transform: translateY(-3px);
+            border-color: #c41e3a;
+            box-shadow: 0 8px 25px rgba(196, 30, 58, 0.3);
         }
 
         .lesson-number {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1rem;
-            color: #ff9500;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+            color: #c41e3a;
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
         .lesson-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.8rem;
-            color: #00d4ff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.4rem;
+            color: #ffffff;
             margin-bottom: 15px;
             font-weight: 700;
         }
 
-        .lesson-description {
-            font-size: 1rem;
-            color: #b8c5d6;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
         .lesson-topics {
             list-style: none;
-            margin: 20px 0;
+            margin: 15px 0;
             padding: 0;
         }
 
         .lesson-topics li {
-            font-size: 0.95rem;
-            color: #e0e6f0;
-            padding: 8px 0;
-            padding-left: 25px;
+            font-size: 0.85rem;
+            color: #d0d0d0;
+            padding: 5px 0;
+            padding-left: 20px;
             position: relative;
         }
 
@@ -142,19 +282,19 @@
             content: '▸';
             position: absolute;
             left: 0;
-            color: #00d4ff;
-            font-size: 1.2rem;
+            color: #c41e3a;
+            font-size: 1rem;
         }
 
         .lesson-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(0, 212, 255, 0.2);
-            font-size: 0.9rem;
-            color: #6272a4;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(196, 30, 58, 0.2);
+            font-size: 0.85rem;
+            color: #888;
         }
 
         .lesson-duration {
@@ -164,246 +304,321 @@
         }
 
         .lesson-status {
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 4px;
-            font-size: 0.85rem;
-            font-weight: 600;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
         }
 
         .status-ready {
-            background: rgba(80, 250, 123, 0.2);
-            color: #50fa7b;
-            border: 1px solid #50fa7b;
-        }
-
-        .lesson-link {
-            text-decoration: none;
-            display: block;
+            background: rgba(196, 30, 58, 0.2);
+            color: #ff6b7a;
+            border: 1px solid #c41e3a;
         }
 
         .quiz-card {
-            background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(26, 31, 58, 0.8) 100%);
-            border: 2px solid #ff9500;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(42, 42, 42, 0.9) 100%);
+            border: 2px solid #ffffff;
         }
 
         .quiz-card:hover {
-            border-color: #ff9500;
-            box-shadow: 0 10px 40px rgba(255, 149, 0, 0.3);
+            border-color: #ffffff;
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
         }
 
         .quiz-card .lesson-title {
-            color: #ff9500;
+            color: #ffffff;
         }
 
+        .quiz-card .lesson-number {
+            color: #ffffff;
+        }
+
+        .graded-badge {
+            display: inline-block;
+            background: #c41e3a;
+            color: #ffffff;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-left: 10px;
+        }
+
+        /* Footer */
         footer {
             text-align: center;
-            margin-top: 60px;
-            padding-top: 40px;
-            border-top: 1px solid rgba(0, 212, 255, 0.2);
-            color: #6272a4;
-            font-size: 0.95rem;
+            padding: 30px 20px;
+            background: #0d0d0d;
+            border-top: 3px solid #c41e3a;
+            color: #888;
+            font-size: 0.9rem;
         }
 
-        .icon {
-            display: inline-block;
-            margin-right: 5px;
+        footer .mascot {
+            font-size: 1rem;
+            color: #ffffff;
+            margin: 8px 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+
+            .main-content {
+                padding: 30px 30px;
+            }
+
+            .lessons-grid {
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            }
         }
 
         @media (max-width: 768px) {
-            h1 {
-                font-size: 2.5rem;
+            .layout-container {
+                flex-direction: column;
             }
-            
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: 3px solid #c41e3a;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
             .lessons-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .top-bar {
+                height: 70px;
+                padding: 0 20px;
+            }
+
+            .course-title-compact {
+                font-size: 1.4rem;
+            }
+
+            .school-badge {
+                font-size: 0.7rem;
+                padding: 5px 12px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Arduino Robot Programming</h1>
-            <p class="subtitle">From Fundamentals to Robots</p>
-            <p class="week-info">Applied Engineering & Robotics</p>
-        </header>
-
-        <div class="lessons-grid">
-            <!-- Lesson 1 -->
-            <a href="Unit_05_Programming/Lesson_01_Microcontroller_Fundamentals.html" class="lesson-link">
-                <div class="lesson-card">
-                    <div class="lesson-number">Lesson 1</div>
-                    <h2 class="lesson-title">Microcontroller Fundamentals</h2>
-                    <p class="lesson-description">
-                        Understand the brain of your robot! Learn what microcontrollers are and how they control hardware.
-                    </p>
-                    <ul class="lesson-topics">
-                        <li>What is a microcontroller?</li>
-                        <li>CPU, memory, and I/O pins</li>
-                        <li>Arduino boards explained</li>
-                        <li>Motor controllers and power amplification</li>
-                    </ul>
-                    <div class="lesson-meta">
-                        <div class="lesson-duration">
-                            <span class="icon">⏱️</span>
-                            <span>50 minutes</span>
-                        </div>
-                        <div class="lesson-status status-ready">Ready</div>
-                    </div>
-                </div>
-            </a>
-
-            <!-- Lesson 2 -->
-            <a href="Unit_05_Programming/Lesson_02_Arduino_Introduction.html" class="lesson-link">
-                <div class="lesson-card">
-                    <div class="lesson-number">Lesson 2</div>
-                    <h2 class="lesson-title">Arduino Introduction</h2>
-                    <p class="lesson-description">
-                        Get started with Arduino! Learn the basics of programming and upload your first program.
-                    </p>
-                    <ul class="lesson-topics">
-                        <li>setup() and loop() structure</li>
-                        <li>pinMode() and digitalWrite()</li>
-                        <li>Creating blink patterns</li>
-                        <li>Uploading to Arduino</li>
-                    </ul>
-                    <div class="lesson-meta">
-                        <div class="lesson-duration">
-                            <span class="icon">⏱️</span>
-                            <span>50 minutes</span>
-                        </div>
-                        <div class="lesson-status status-ready">Ready</div>
-                    </div>
-                </div>
-            </a>
-
-            <!-- Lesson 3 -->
-            <a href="Unit_05_Programming/Lesson_03_Variables_Serial_Monitor.html" class="lesson-link">
-                <div class="lesson-card">
-                    <div class="lesson-number">Lesson 3</div>
-                    <h2 class="lesson-title">Variables & Serial Monitor</h2>
-                    <p class="lesson-description">
-                        Store data and debug your code! Learn to use variables and see your program's output.
-                    </p>
-                    <ul class="lesson-topics">
-                        <li>Declaring variables (int, float, boolean)</li>
-                        <li>Serial.begin() and Serial.println()</li>
-                        <li>Reading analog sensors</li>
-                        <li>Debugging with Serial Monitor</li>
-                    </ul>
-                    <div class="lesson-meta">
-                        <div class="lesson-duration">
-                            <span class="icon">⏱️</span>
-                            <span>44 minutes</span>
-                        </div>
-                        <div class="lesson-status status-ready">Ready</div>
-                    </div>
-                </div>
-            </a>
-
-            <!-- Lesson 4 -->
-            <a href="Unit_05_Programming/Lesson_04_Digital_Input_Control.html" class="lesson-link">
-                <div class="lesson-card">
-                    <div class="lesson-number">Lesson 4</div>
-                    <h2 class="lesson-title">Digital Input & Control</h2>
-                    <p class="lesson-description">
-                        Make decisions with code! Read buttons and use if/else statements to control your programs.
-                    </p>
-                    <ul class="lesson-topics">
-                        <li>digitalRead() and INPUT_PULLUP</li>
-                        <li>if/else statements</li>
-                        <li>Comparison operators (==, !=, <, >)</li>
-                        <li>Button toggle programs</li>
-                    </ul>
-                    <div class="lesson-meta">
-                        <div class="lesson-duration">
-                            <span class="icon">⏱️</span>
-                            <span>50 minutes</span>
-                        </div>
-                        <div class="lesson-status status-ready">Ready</div>
-                    </div>
-                </div>
-            </a>
-
-            <!-- Lesson 5 -->
-            <a href="Unit_05_Programming/Lesson_05_Analog_PWM.html" class="lesson-link">
-                <div class="lesson-card">
-                    <div class="lesson-number">Lesson 5</div>
-                    <h2 class="lesson-title">Analog Input & PWM</h2>
-                    <p class="lesson-description">
-                        Control brightness and speed! Learn analog input and PWM for precise control.
-                    </p>
-                    <ul class="lesson-topics">
-                        <li>analogRead() 0-1023 values</li>
-                        <li>analogWrite() PWM control</li>
-                        <li>map() function for conversion</li>
-                        <li>Potentiometer → LED brightness</li>
-                    </ul>
-                    <div class="lesson-meta">
-                        <div class="lesson-duration">
-                            <span class="icon">⏱️</span>
-                            <span>50 minutes</span>
-                        </div>
-                        <div class="lesson-status status-ready">Ready</div>
-                    </div>
-                </div>
-            </a>
-
-            <!-- Lesson 6 - Practice Quiz -->
-            <a href="Unit_05_Programming/Lesson_06_Quiz.html" class="lesson-link">
-                <div class="lesson-card quiz-card">
-                    <div class="lesson-number">Lesson 6</div>
-                    <h2 class="lesson-title">🎯 Practice Quiz</h2>
-                    <p class="lesson-description">
-                        Test your knowledge! 20 questions covering all concepts from Lessons 2-5.
-                    </p>
-                    <ul class="lesson-topics">
-                        <li>Interactive practice quiz</li>
-                        <li>Unlimited attempts</li>
-                        <li>Instant feedback with explanations</li>
-                        <li>No submission required</li>
-                    </ul>
-                    <div class="lesson-meta">
-                        <div class="lesson-duration">
-                            <span class="icon">⏱️</span>
-                            <span>20-25 minutes</span>
-                        </div>
-                        <div class="lesson-status status-ready">Ready</div>
-                    </div>
-                </div>
-            </a>
-
-            <!-- Lesson 6 - GRADED Quiz -->
-            <a href="Unit_05_Programming/Lesson_06_Quiz_Graded.html" class="lesson-link">
-                <div class="lesson-card quiz-card" style="border-color: #ff9500; box-shadow: 0 4px 20px rgba(255, 149, 0, 0.3);">
-                    <div class="lesson-number" style="background: linear-gradient(135deg, #ff9500 0%, #ff6b00 100%);">GRADED</div>
-                    <h2 class="lesson-title">📝 Unit 5 Assessment</h2>
-                    <p class="lesson-description">
-                        <strong>Graded quiz with automated code testing.</strong> Requires Google sign-in. Results sent to instructor.
-                    </p>
-                    <ul class="lesson-topics">
-                        <li>Part A: 20 multiple choice (20 pts)</li>
-                        <li>Part B: Debug Arduino code (10 pts)</li>
-                        <li>Total: 30 points</li>
-                        <li>2 attempts maximum</li>
-                        <li>Auto-graded with instant feedback</li>
-                    </ul>
-                    <div class="lesson-meta">
-                        <div class="lesson-duration">
-                            <span class="icon">⏱️</span>
-                            <span>35-45 minutes</span>
-                        </div>
-                        <div class="lesson-status status-ready" style="background: #ff9500; color: #0a0e27;">Assessment</div>
-                    </div>
-                </div>
-            </a>
+    <!-- Top Title Bar with Circuit Board -->
+    <div class="top-bar">
+        <div class="circuit-overlay"></div>
+        <div class="top-bar-content">
+            <div class="school-badge">VHS Bulldogs</div>
+            <div class="course-title-compact">Applied Engineering & Robotics</div>
         </div>
-
-        <footer>
-            <p><strong>Applied Engineering & Robotics</strong> | Control Freak</p>
-            <p style="margin-top: 10px;">Interactive presentations with copy buttons, scrollable code, and hands-on examples</p>
-            <p style="margin-top: 15px; font-size: 0.85rem;">Navigate using arrow keys or on-screen buttons | Press F11 for fullscreen</p>
-        </footer>
     </div>
+
+    <!-- Main Layout -->
+    <div class="layout-container">
+        <!-- Left Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-header">Course Units</div>
+
+                <a href="#unit1" class="unit-link coming-soon">
+                    <span class="unit-number">Unit 1</span> Engineering Design Process
+                    <span class="coming-soon-badge">Soon</span>
+                </a>
+
+                <a href="#unit2" class="unit-link coming-soon">
+                    <span class="unit-number">Unit 2</span> CAD Fundamentals
+                    <span class="coming-soon-badge">Soon</span>
+                </a>
+
+                <a href="#unit3" class="unit-link coming-soon">
+                    <span class="unit-number">Unit 3</span> Rapid Prototyping
+                    <span class="coming-soon-badge">Soon</span>
+                </a>
+
+                <a href="#unit4" class="unit-link coming-soon">
+                    <span class="unit-number">Unit 4</span> Shop Safety
+                    <span class="coming-soon-badge">Soon</span>
+                </a>
+
+                <a href="#unit5" class="unit-link active">
+                    <span class="unit-number">Unit 5</span> Introduction to Programming
+                </a>
+
+                <a href="#unit6" class="unit-link coming-soon">
+                    <span class="unit-number">Unit 6</span> Project Presentation
+                    <span class="coming-soon-badge">Soon</span>
+                </a>
+
+                <a href="#unit7" class="unit-link coming-soon">
+                    <span class="unit-number">Unit 7</span> Career Readiness
+                    <span class="coming-soon-badge">Soon</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div id="unit5">
+                <div class="unit-header">
+                    <h1 class="unit-title">Unit 5: Introduction to Programming</h1>
+                    <p class="unit-description">
+                        Master the fundamentals of Arduino programming! From understanding microcontrollers to writing code that controls motors and sensors, this unit builds the foundation for autonomous robotics.
+                    </p>
+                </div>
+
+                <div class="lessons-grid">
+                    <!-- Lesson 1 -->
+                    <a href="Unit_05_Programming/Lesson_01_Microcontroller_Fundamentals.html" class="lesson-card">
+                        <div class="lesson-number">Lesson 1</div>
+                        <h3 class="lesson-title">Microcontroller Fundamentals</h3>
+                        <ul class="lesson-topics">
+                            <li>What is a microcontroller?</li>
+                            <li>CPU, memory, and I/O pins</li>
+                            <li>Arduino boards explained</li>
+                            <li>Motor controllers</li>
+                        </ul>
+                        <div class="lesson-meta">
+                            <div class="lesson-duration">
+                                <span>⏱️</span>
+                                <span>50 min</span>
+                            </div>
+                            <div class="lesson-status status-ready">Ready</div>
+                        </div>
+                    </a>
+
+                    <!-- Lesson 2 -->
+                    <a href="Unit_05_Programming/Lesson_02_Arduino_Introduction.html" class="lesson-card">
+                        <div class="lesson-number">Lesson 2</div>
+                        <h3 class="lesson-title">Arduino Introduction</h3>
+                        <ul class="lesson-topics">
+                            <li>setup() and loop() structure</li>
+                            <li>pinMode() and digitalWrite()</li>
+                            <li>Creating blink patterns</li>
+                            <li>Uploading code</li>
+                        </ul>
+                        <div class="lesson-meta">
+                            <div class="lesson-duration">
+                                <span>⏱️</span>
+                                <span>50 min</span>
+                            </div>
+                            <div class="lesson-status status-ready">Ready</div>
+                        </div>
+                    </a>
+
+                    <!-- Lesson 3 -->
+                    <a href="Unit_05_Programming/Lesson_03_Variables_Serial_Monitor.html" class="lesson-card">
+                        <div class="lesson-number">Lesson 3</div>
+                        <h3 class="lesson-title">Variables & Serial Monitor</h3>
+                        <ul class="lesson-topics">
+                            <li>Declaring variables</li>
+                            <li>Serial communication</li>
+                            <li>Reading analog sensors</li>
+                            <li>Debugging techniques</li>
+                        </ul>
+                        <div class="lesson-meta">
+                            <div class="lesson-duration">
+                                <span>⏱️</span>
+                                <span>44 min</span>
+                            </div>
+                            <div class="lesson-status status-ready">Ready</div>
+                        </div>
+                    </a>
+
+                    <!-- Lesson 4 -->
+                    <a href="Unit_05_Programming/Lesson_04_Digital_Input_Control.html" class="lesson-card">
+                        <div class="lesson-number">Lesson 4</div>
+                        <h3 class="lesson-title">Digital Input & Control</h3>
+                        <ul class="lesson-topics">
+                            <li>digitalRead() and INPUT_PULLUP</li>
+                            <li>if/else statements</li>
+                            <li>For loops and while loops</li>
+                            <li>Button control</li>
+                        </ul>
+                        <div class="lesson-meta">
+                            <div class="lesson-duration">
+                                <span>⏱️</span>
+                                <span>50 min</span>
+                            </div>
+                            <div class="lesson-status status-ready">Ready</div>
+                        </div>
+                    </a>
+
+                    <!-- Lesson 5 -->
+                    <a href="Unit_05_Programming/Lesson_05_Analog_PWM.html" class="lesson-card">
+                        <div class="lesson-number">Lesson 5</div>
+                        <h3 class="lesson-title">Analog Input & PWM</h3>
+                        <ul class="lesson-topics">
+                            <li>analogRead() 0-1023</li>
+                            <li>analogWrite() PWM</li>
+                            <li>map() function</li>
+                            <li>Motor speed control</li>
+                        </ul>
+                        <div class="lesson-meta">
+                            <div class="lesson-duration">
+                                <span>⏱️</span>
+                                <span>50 min</span>
+                            </div>
+                            <div class="lesson-status status-ready">Ready</div>
+                        </div>
+                    </a>
+
+                    <!-- Practice Quiz -->
+                    <a href="Unit_05_Programming/Lesson_06_Quiz.html" class="lesson-card quiz-card">
+                        <div class="lesson-number">Lesson 6</div>
+                        <h3 class="lesson-title">🎯 Practice Quiz</h3>
+                        <ul class="lesson-topics">
+                            <li>20 multiple choice questions</li>
+                            <li>Unlimited attempts</li>
+                            <li>Instant feedback</li>
+                            <li>No submission required</li>
+                        </ul>
+                        <div class="lesson-meta">
+                            <div class="lesson-duration">
+                                <span>⏱️</span>
+                                <span>20-25 min</span>
+                            </div>
+                            <div class="lesson-status status-ready">Ready</div>
+                        </div>
+                    </a>
+
+                    <!-- Graded Assessment -->
+                    <a href="Unit_05_Programming/Lesson_06_Quiz_Graded.html" class="lesson-card quiz-card" style="border: 3px solid #c41e3a;">
+                        <div class="lesson-number">Assessment <span class="graded-badge">GRADED</span></div>
+                        <h3 class="lesson-title">📝 Unit 5 Quiz</h3>
+                        <ul class="lesson-topics">
+                            <li>Part A: 20 multiple choice (20 pts)</li>
+                            <li>Part B: Debug Arduino code (10 pts)</li>
+                            <li>Auto-graded with feedback</li>
+                            <li>2 attempts maximum</li>
+                        </ul>
+                        <div class="lesson-meta">
+                            <div class="lesson-duration">
+                                <span>⏱️</span>
+                                <span>35-45 min</span>
+                            </div>
+                            <div class="lesson-status" style="background: #c41e3a; color: #ffffff; border: none;">Assessment</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="mascot">🐕 Home of the Bulldogs 🐕</div>
+        <p style="margin-top: 10px; font-size: 0.85rem;">Vicksburg High School | Applied Engineering & Robotics</p>
+    </footer>
 </body>
 </html>
