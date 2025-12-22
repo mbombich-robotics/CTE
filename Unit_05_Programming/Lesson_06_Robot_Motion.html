@@ -146,17 +146,33 @@
         }
 
         .code-block {
-            background: #0a0e27;
+            background: #0d1117;
             border: 2px solid #00d4ff;
-            border-radius: 10px;
-            padding: 20px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.95rem;
-            color: #50fa7b;
-            overflow-x: auto;
+            border-radius: 12px;
+            padding: 40px 25px 25px 25px;
             margin: 15px 0;
-            line-height: 1.6;
-            white-space: pre-wrap;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            line-height: 1.5;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+            position: relative;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 350px;
+            white-space: pre;
+        }
+
+        .code-block::before {
+            content: 'Arduino Code';
+            position: absolute;
+            top: 8px;
+            left: 20px;
+            background: transparent;
+            padding: 0;
+            font-size: 0.7rem;
+            color: #00d4ff;
+            font-weight: 700;
+            opacity: 0.6;
         }
 
         .code-comment {
