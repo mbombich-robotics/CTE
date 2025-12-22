@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 8: Basic Line Following</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .slide {
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            background: rgba(26, 31, 58, 0.95);
+            border-radius: 20px;
+            border: 3px solid #00d4ff;
+            box-shadow: 0 20px 80px rgba(0, 212, 255, 0.3);
+            padding: 60px;
+            display: none;
+            flex-direction: column;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .lesson-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: #00d4ff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            color: #00d4ff;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            color: #00d4ff;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: #ff9500;
+            margin: 25px 0 15px 0;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #b8c5d6;
+            text-align: center;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 20px 0;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .concept-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 149, 0, 0.05) 100%);
+            border: 2px solid rgba(255, 149, 0, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, rgba(80, 250, 123, 0.1) 0%, rgba(80, 250, 123, 0.05) 100%);
+            border: 2px solid rgba(80, 250, 123, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+
+        .code-block {
+            background: #0d1117;
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 40px 25px 25px 25px;
+            margin: 15px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            line-height: 1.5;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+            position: relative;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 350px;
+            white-space: pre;
+        }
+
+        .code-block::before {
+            content: 'Arduino Code';
+            position: absolute;
+            top: 8px;
+            left: 20px;
+            background: transparent;
+            padding: 0;
+            font-size: 0.7rem;
+            color: #00d4ff;
+            font-weight: 700;
+            opacity: 0.6;
+        }
+
+        .code-comment {
+            color: #6c6c6c;
+        }
+
+        .code-keyword {
+            color: #ff6ac1;
+        }
+
+        .code-function {
+            color: #5af78e;
+        }
+
+        .code-number {
+            color: #f1fa8c;
+        }
+
+        .code-string {
+            color: #e9c46a;
+        }
+
+        ul, ol {
+            margin-left: 30px;
+            line-height: 2;
+        }
+
+        li {
+            margin: 10px 0;
+            font-size: 1.1rem;
+        }
+
+        .highlight {
+            color: #00d4ff;
+            font-weight: 700;
+        }
+
+        .emphasis {
+            color: #ff9500;
+            font-weight: 700;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1rem;
+        }
+
+        th {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            padding: 15px;
+            text-align: left;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        td {
+            padding: 12px 15px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        tr:nth-child(even) {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .diagram {
+            background: rgba(10, 14, 39, 0.5);
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+        }
+
+        .arrow {
+            color: #ff9500;
+            font-size: 1.5rem;
+            margin: 10px 0;
+        }
+
+        /* Navigation */
+        .nav-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .nav-btn:hover {
+            background: linear-gradient(135deg, #00eeff, #00bbee);
+            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(0, 212, 255, 0.2);
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            border: 2px solid rgba(0, 212, 255, 0.5);
+        }
+
+        .flowchart {
+            background: rgba(10, 14, 39, 0.5);
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .flow-step {
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .flow-decision {
+            background: rgba(255, 149, 0, 0.1);
+            border: 2px solid rgba(255, 149, 0, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-header">
+                <div class="lesson-label">Unit 5: Introduction to Programming • Lesson 8</div>
+                <h1>Basic Line Following</h1>
+                <p class="subtitle">Bang-Bang Control for Autonomous Navigation</p>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3 style="text-align: center; color: #00d4ff; margin-top: 0;">What You'll Learn Today</h3>
+                    <ul style="font-size: 1.2rem; line-height: 2.2;">
+                        <li>What is bang-bang control and why we use it</li>
+                        <li>Combining motor control with sensor feedback</li>
+                        <li>Creating decision logic for line following</li>
+                        <li>Implementing a 3-sensor basic line follower</li>
+                        <li>Improving accuracy with 5-sensor logic</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: What is Line Following? -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>What is Line Following?</h2>
+            </div>
+            <div class="content">
+                <div class="two-column">
+                    <div class="column">
+                        <h3>The Concept</h3>
+                        <ul>
+                            <li>Robot autonomously follows a <span class="highlight">black line</span> on a white surface</li>
+                            <li>Uses IR sensors to detect the line</li>
+                            <li>Adjusts motor speeds to stay on track</li>
+                            <li>No human control needed once started</li>
+                        </ul>
+
+                        <div class="concept-box">
+                            <h3>Real-World Applications</h3>
+                            <ul style="font-size: 1rem;">
+                                <li>Warehouse robots following paths</li>
+                                <li>Automated guided vehicles (AGVs)</li>
+                                <li>Manufacturing assembly lines</li>
+                                <li>Airport luggage systems</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="diagram">
+                            <div style="color: #ff9500; font-size: 1.3rem; margin-bottom: 15px;">Line Following Setup</div>
+                            <div style="margin: 20px 0;">
+                                White Background Surface
+                            </div>
+                            <div class="arrow">↓</div>
+                            <div style="margin: 20px 0; color: #000; background: #000; padding: 10px; border-radius: 5px; color: #fff;">
+                                Black Line (Track)
+                            </div>
+                            <div class="arrow">↓</div>
+                            <div style="margin: 20px 0; color: #00d4ff;">
+                                Robot follows the line
+                            </div>
+                        </div>
+
+                        <div class="warning-box">
+                            <strong>Line Width:</strong> Typically 15-25mm wide. Must be narrower than sensor array width.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Bang-Bang Control Explained -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Bang-Bang Control Explained</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>What is Bang-Bang Control?</h3>
+                    <p style="font-size: 1.1rem; margin: 15px 0;">Bang-bang control (also called on-off control) is the simplest form of feedback control. It makes <span class="emphasis">binary decisions</span> - there's no middle ground.</p>
+                </div>
+
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Bang-Bang Characteristics</h3>
+                        <ul>
+                            <li><span class="highlight">Binary decisions:</span> Turn OR don't turn</li>
+                            <li><span class="highlight">No proportional control:</span> Same correction every time</li>
+                            <li><span class="highlight">Simple to program:</span> Just if-else statements</li>
+                            <li><span class="highlight">Fast response:</span> Immediate corrections</li>
+                        </ul>
+
+                        <div class="warning-box">
+                            <strong>Drawback:</strong> Creates zigzag motion. Robot oscillates around the line rather than following it smoothly.
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="concept-box">
+                            <h3>Example: Home Thermostat</h3>
+                            <div style="margin: 15px 0; font-size: 1rem;">
+                                <div class="flow-decision">Too cold?</div>
+                                <div class="arrow">↓ YES</div>
+                                <div class="flow-step">Turn heater ON (full power)</div>
+                                <div class="arrow">↓</div>
+                                <div class="flow-decision">Too hot?</div>
+                                <div class="arrow">↓ YES</div>
+                                <div class="flow-step">Turn heater OFF (no power)</div>
+                            </div>
+                            <p style="font-size: 0.9rem; margin-top: 15px;">No "medium heat" - it's either ON or OFF!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: 3-Sensor Decision Tree -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>3-Sensor Basic Approach</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>Using Only Three Sensors</h3>
+                    <p style="margin: 10px 0;">For basic line following, we only need sensors 2, 3, and 4 (left, center, right).</p>
+                </div>
+
+                <table>
+                    <tr>
+                        <th>Sensor Pattern</th>
+                        <th>S2 (Left)</th>
+                        <th>S3 (Center)</th>
+                        <th>S4 (Right)</th>
+                        <th>Meaning</th>
+                        <th>Action</th>
+                    </tr>
+                    <tr>
+                        <td style="font-family: 'JetBrains Mono', monospace;">1 0 1</td>
+                        <td style="color: #50fa7b;">HIGH</td>
+                        <td style="color: #ff6b7a;">LOW</td>
+                        <td style="color: #50fa7b;">HIGH</td>
+                        <td><strong>Line Centered</strong></td>
+                        <td style="color: #50fa7b;">Go Straight</td>
+                    </tr>
+                    <tr>
+                        <td style="font-family: 'JetBrains Mono', monospace;">0 1 1</td>
+                        <td style="color: #ff6b7a;">LOW</td>
+                        <td style="color: #50fa7b;">HIGH</td>
+                        <td style="color: #50fa7b;">HIGH</td>
+                        <td><strong>Line on Left</strong></td>
+                        <td style="color: #f1fa8c;">Turn Left</td>
+                    </tr>
+                    <tr>
+                        <td style="font-family: 'JetBrains Mono', monospace;">0 0 1</td>
+                        <td style="color: #ff6b7a;">LOW</td>
+                        <td style="color: #ff6b7a;">LOW</td>
+                        <td style="color: #50fa7b;">HIGH</td>
+                        <td><strong>Line Far Left</strong></td>
+                        <td style="color: #ff6b7a;">Turn Left</td>
+                    </tr>
+                    <tr>
+                        <td style="font-family: 'JetBrains Mono', monospace;">1 1 0</td>
+                        <td style="color: #50fa7b;">HIGH</td>
+                        <td style="color: #50fa7b;">HIGH</td>
+                        <td style="color: #ff6b7a;">LOW</td>
+                        <td><strong>Line on Right</strong></td>
+                        <td style="color: #f1fa8c;">Turn Right</td>
+                    </tr>
+                    <tr>
+                        <td style="font-family: 'JetBrains Mono', monospace;">1 0 0</td>
+                        <td style="color: #50fa7b;">HIGH</td>
+                        <td style="color: #ff6b7a;">LOW</td>
+                        <td style="color: #ff6b7a;">LOW</td>
+                        <td><strong>Line Far Right</strong></td>
+                        <td style="color: #ff6b7a;">Turn Right</td>
+                    </tr>
+                    <tr>
+                        <td style="font-family: 'JetBrains Mono', monospace;">1 1 1</td>
+                        <td style="color: #50fa7b;">HIGH</td>
+                        <td style="color: #50fa7b;">HIGH</td>
+                        <td style="color: #50fa7b;">HIGH</td>
+                        <td><strong>No Line</strong></td>
+                        <td style="color: #888;">Stop/Search</td>
+                    </tr>
+                </table>
+
+                <div class="warning-box">
+                    <strong>Note:</strong> These are the most common patterns. Some patterns may not occur depending on line width.
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Reading the Center Sensor -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Reading the Center Sensor</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>The Most Important Rule</h3>
+                    <p style="font-size: 1.2rem; margin: 15px 0;">If the <span class="highlight">center sensor</span> detects the line (LOW), the robot should <span class="emphasis">go straight</span>.</p>
+                </div>
+
+                <div class="code-block"><span class="code-comment">// Read center sensor (S3 on pin 8)</span>
+<span class="code-keyword">int</span> centerSensor = <span class="code-function">digitalRead</span>(SENSOR_3);
+
+<span class="code-keyword">if</span> (centerSensor == <span class="code-number">LOW</span>) {
+  <span class="code-comment">// Center sensor sees the black line</span>
+  <span class="code-comment">// Robot is centered - go straight!</span>
+  <span class="code-function">moveForward</span>(<span class="code-number">150</span>);
+} <span class="code-keyword">else</span> {
+  <span class="code-comment">// Center sensor does NOT see the line</span>
+  <span class="code-comment">// Need to check left and right sensors</span>
+}</div>
+
+                <div class="diagram">
+                    <div style="color: #ff9500; font-size: 1.3rem; margin-bottom: 15px;">Center Sensor Logic</div>
+                    <div class="flow-decision">Is center sensor LOW?</div>
+                    <div class="arrow">↓ YES</div>
+                    <div class="flow-step" style="background: rgba(80, 250, 123, 0.1); border-color: rgba(80, 250, 123, 0.3);">
+                        Robot is on track!<br>
+                        Go straight forward
+                    </div>
+                    <div style="margin: 15px 0;">↓ NO</div>
+                    <div class="flow-step" style="background: rgba(255, 149, 0, 0.1); border-color: rgba(255, 149, 0, 0.5);">
+                        Robot is off-center<br>
+                        Check left/right sensors
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Turning Logic -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Turning Logic</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>Left and Right Sensor Rules</h3>
+                    <ul>
+                        <li>If <span class="highlight">left sensor sees line</span> (LOW) → Turn LEFT</li>
+                        <li>If <span class="highlight">right sensor sees line</span> (LOW) → Turn RIGHT</li>
+                        <li>Simple and intuitive!</li>
+                    </ul>
+                </div>
+
+                <div class="code-block"><span class="code-comment">// Read left and right sensors</span>
+<span class="code-keyword">int</span> leftSensor = <span class="code-function">digitalRead</span>(SENSOR_2);   <span class="code-comment">// Pin 7</span>
+<span class="code-keyword">int</span> rightSensor = <span class="code-function">digitalRead</span>(SENSOR_4);  <span class="code-comment">// Pin 9</span>
+<span class="code-keyword">int</span> centerSensor = <span class="code-function">digitalRead</span>(SENSOR_3);  <span class="code-comment">// Pin 8</span>
+
+<span class="code-keyword">if</span> (centerSensor == <span class="code-number">LOW</span>) {
+  <span class="code-comment">// Line is centered - go straight</span>
+  <span class="code-function">moveForward</span>(<span class="code-number">150</span>);
+}
+<span class="code-keyword">else if</span> (leftSensor == <span class="code-number">LOW</span>) {
+  <span class="code-comment">// Line is on the left - turn left to get back on track</span>
+  <span class="code-function">turnLeft</span>();
+}
+<span class="code-keyword">else if</span> (rightSensor == <span class="code-number">LOW</span>) {
+  <span class="code-comment">// Line is on the right - turn right to get back on track</span>
+  <span class="code-function">turnRight</span>();
+}
+<span class="code-keyword">else</span> {
+  <span class="code-comment">// No sensors see the line - we're lost!</span>
+  <span class="code-function">stopMotors</span>();
+}</div>
+
+                <div class="warning-box">
+                    <strong>Important:</strong> The order of if-else statements matters! We check center first because it's the ideal case.
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Combining Motors and Sensors -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Combining Motors and Sensors</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>Bringing Together Lessons 6 & 7</h3>
+                    <p style="margin: 15px 0; font-size: 1.1rem;">Now we combine everything you've learned:</p>
+                    <ul>
+                        <li><span class="highlight">Lesson 6:</span> Motor control functions (moveForward, turnLeft, turnRight, stopMotors)</li>
+                        <li><span class="highlight">Lesson 7:</span> Sensor reading with digitalRead()</li>
+                        <li><span class="emphasis">Lesson 8:</span> Decision logic to connect sensors to motors</li>
+                    </ul>
+                </div>
+
+                <div class="flowchart">
+                    <div style="text-align: center; color: #00d4ff; font-size: 1.2rem; margin-bottom: 20px;">The Control Loop</div>
+                    <div class="flow-step">START: Robot powered on</div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-step" style="background: rgba(0, 212, 255, 0.2);">Read all IR sensors</div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-decision">Analyze sensor pattern</div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-step" style="background: rgba(80, 250, 123, 0.1);">Make decision (straight/left/right)</div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-step" style="background: rgba(255, 149, 0, 0.1);">Send commands to motors</div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-step">Robot moves</div>
+                    <div class="arrow">↓</div>
+                    <div style="text-align: center; margin: 15px 0; color: #f1fa8c;">↻ REPEAT (loop forever)</div>
+                </div>
+
+                <div class="success-box">
+                    <strong>Key Insight:</strong> This loop runs continuously, making corrections many times per second. The robot is constantly adjusting to stay on the line!
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Complete Bang-Bang Algorithm -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Complete Bang-Bang Algorithm</h2>
+            </div>
+            <div class="content">
+                <div class="flowchart">
+                    <div style="text-align: center; color: #00d4ff; font-size: 1.2rem; margin-bottom: 15px;">3-Sensor Line Following Algorithm</div>
+
+                    <div class="flow-step">Read S2, S3, S4</div>
+                    <div class="arrow">↓</div>
+
+                    <div class="flow-decision">S3 == LOW?<br>(center on line)</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 10px 0;">
+                        <div>
+                            <div style="text-align: center;">YES ✓</div>
+                            <div class="arrow">↓</div>
+                            <div class="flow-step" style="background: rgba(80, 250, 123, 0.1);">moveForward(150)</div>
+                        </div>
+                        <div>
+                            <div style="text-align: center;">NO ✗</div>
+                            <div class="arrow">↓</div>
+                            <div class="flow-decision">S2 == LOW?<br>(left on line)</div>
+                            <div style="margin: 10px 0;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                    <div>
+                                        <div style="text-align: center; font-size: 0.8rem;">YES</div>
+                                        <div class="flow-step" style="background: rgba(255, 149, 0, 0.1); padding: 10px; margin: 5px 0;">turnLeft()</div>
+                                    </div>
+                                    <div>
+                                        <div style="text-align: center; font-size: 0.8rem;">NO</div>
+                                        <div class="flow-decision" style="padding: 10px; margin: 5px 0;">S4 == LOW?</div>
+                                        <div style="margin-top: 5px;">
+                                            <div style="font-size: 0.8rem;">YES: turnRight()</div>
+                                            <div style="font-size: 0.8rem;">NO: stopMotors()</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="concept-box">
+                    <h3>Algorithm Summary</h3>
+                    <ol style="font-size: 1rem;">
+                        <li>Center sensor on line? Go straight</li>
+                        <li>Else, left sensor on line? Turn left</li>
+                        <li>Else, right sensor on line? Turn right</li>
+                        <li>Else (no sensors on line)? Stop</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Full Working Example -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Full Working Example Code</h2>
+            </div>
+            <div class="content">
+                <div class="code-block" style="font-size: 0.75rem; max-height: 400px;"><span class="code-comment">// 3-Sensor Line Following Robot</span>
+
+<span class="code-comment">// Motor pins</span>
+<span class="code-keyword">const int</span> LEFT_MOTOR_PIN1 = <span class="code-number">2</span>;
+<span class="code-keyword">const int</span> LEFT_MOTOR_PIN2 = <span class="code-number">3</span>;
+<span class="code-keyword">const int</span> RIGHT_MOTOR_PIN1 = <span class="code-number">4</span>;
+<span class="code-keyword">const int</span> RIGHT_MOTOR_PIN2 = <span class="code-number">5</span>;
+
+<span class="code-comment">// Sensor pins (using 3 sensors)</span>
+<span class="code-keyword">const int</span> SENSOR_LEFT = <span class="code-number">7</span>;      <span class="code-comment">// S2</span>
+<span class="code-keyword">const int</span> SENSOR_CENTER = <span class="code-number">8</span>;    <span class="code-comment">// S3</span>
+<span class="code-keyword">const int</span> SENSOR_RIGHT = <span class="code-number">9</span>;     <span class="code-comment">// S4</span>
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  <span class="code-comment">// Motor pins as outputs</span>
+  <span class="code-function">pinMode</span>(LEFT_MOTOR_PIN1, OUTPUT);
+  <span class="code-function">pinMode</span>(LEFT_MOTOR_PIN2, OUTPUT);
+  <span class="code-function">pinMode</span>(RIGHT_MOTOR_PIN1, OUTPUT);
+  <span class="code-function">pinMode</span>(RIGHT_MOTOR_PIN2, OUTPUT);
+
+  <span class="code-comment">// Sensor pins as inputs</span>
+  <span class="code-function">pinMode</span>(SENSOR_LEFT, INPUT);
+  <span class="code-function">pinMode</span>(SENSOR_CENTER, INPUT);
+  <span class="code-function">pinMode</span>(SENSOR_RIGHT, INPUT);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Read sensors</span>
+  <span class="code-keyword">int</span> left = <span class="code-function">digitalRead</span>(SENSOR_LEFT);
+  <span class="code-keyword">int</span> center = <span class="code-function">digitalRead</span>(SENSOR_CENTER);
+  <span class="code-keyword">int</span> right = <span class="code-function">digitalRead</span>(SENSOR_RIGHT);
+
+  <span class="code-comment">// Decision logic</span>
+  <span class="code-keyword">if</span> (center == <span class="code-number">LOW</span>) {
+    <span class="code-comment">// Line centered - go straight</span>
+    <span class="code-function">moveForward</span>(<span class="code-number">150</span>);
+  }
+  <span class="code-keyword">else if</span> (left == <span class="code-number">LOW</span>) {
+    <span class="code-comment">// Line on left - turn left</span>
+    <span class="code-function">turnLeft</span>();
+  }
+  <span class="code-keyword">else if</span> (right == <span class="code-number">LOW</span>) {
+    <span class="code-comment">// Line on right - turn right</span>
+    <span class="code-function">turnRight</span>();
+  }
+  <span class="code-keyword">else</span> {
+    <span class="code-comment">// No line detected - stop</span>
+    <span class="code-function">stopMotors</span>();
+  }
+}
+
+<span class="code-comment">// Motor control functions (from Lesson 6)</span>
+<span class="code-keyword">void</span> <span class="code-function">moveForward</span>(<span class="code-keyword">int</span> speed) {
+  <span class="code-function">analogWrite</span>(LEFT_MOTOR_PIN1, speed);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
+  <span class="code-function">analogWrite</span>(RIGHT_MOTOR_PIN1, speed);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, LOW);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">turnLeft</span>() {
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, LOW);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, HIGH);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, HIGH);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, LOW);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">turnRight</span>() {
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, HIGH);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, HIGH);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">stopMotors</span>() {
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, LOW);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, LOW);
+}</div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Improved 5-Sensor Logic -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Improved 5-Sensor Logic</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>Why Use All 5 Sensors?</h3>
+                    <ul>
+                        <li>Better detection of <span class="highlight">sharp curves</span></li>
+                        <li>Earlier warning when line is drifting far off</li>
+                        <li>More accurate positioning information</li>
+                        <li>Can distinguish between slight and sharp turns</li>
+                    </ul>
+                </div>
+
+                <div class="code-block" style="font-size: 0.7rem;"><span class="code-comment">// Enhanced 5-sensor line following</span>
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Read all 5 sensors</span>
+  <span class="code-keyword">int</span> s1 = <span class="code-function">digitalRead</span>(SENSOR_1);  <span class="code-comment">// Far left</span>
+  <span class="code-keyword">int</span> s2 = <span class="code-function">digitalRead</span>(SENSOR_2);  <span class="code-comment">// Left</span>
+  <span class="code-keyword">int</span> s3 = <span class="code-function">digitalRead</span>(SENSOR_3);  <span class="code-comment">// Center</span>
+  <span class="code-keyword">int</span> s4 = <span class="code-function">digitalRead</span>(SENSOR_4);  <span class="code-comment">// Right</span>
+  <span class="code-keyword">int</span> s5 = <span class="code-function">digitalRead</span>(SENSOR_5);  <span class="code-comment">// Far right</span>
+
+  <span class="code-comment">// Centered - go straight</span>
+  <span class="code-keyword">if</span> (s3 == <span class="code-number">LOW</span>) {
+    <span class="code-function">moveForward</span>(<span class="code-number">150</span>);
+  }
+  <span class="code-comment">// Slight left - gentle correction</span>
+  <span class="code-keyword">else if</span> (s2 == <span class="code-number">LOW</span> && s1 == <span class="code-number">HIGH</span>) {
+    <span class="code-function">turnLeft</span>();
+  }
+  <span class="code-comment">// Far left - sharp turn needed</span>
+  <span class="code-keyword">else if</span> (s1 == <span class="code-number">LOW</span>) {
+    <span class="code-function">turnLeft</span>();  <span class="code-comment">// Could use faster turn speed here</span>
+  }
+  <span class="code-comment">// Slight right - gentle correction</span>
+  <span class="code-keyword">else if</span> (s4 == <span class="code-number">LOW</span> && s5 == <span class="code-number">HIGH</span>) {
+    <span class="code-function">turnRight</span>();
+  }
+  <span class="code-comment">// Far right - sharp turn needed</span>
+  <span class="code-keyword">else if</span> (s5 == <span class="code-number">LOW</span>) {
+    <span class="code-function">turnRight</span>();  <span class="code-comment">// Could use faster turn speed here</span>
+  }
+  <span class="code-comment">// No line detected</span>
+  <span class="code-keyword">else</span> {
+    <span class="code-function">stopMotors</span>();
+  }
+}</div>
+
+                <div class="success-box">
+                    <h3>Advanced Improvement Ideas</h3>
+                    <ul style="font-size: 1rem;">
+                        <li>Use different turn speeds for slight vs. sharp corrections</li>
+                        <li>Reduce forward speed during turns</li>
+                        <li>Add search behavior when line is lost</li>
+                        <li>Remember last known direction and search that way</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Lab Exercises -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Lab Time: Build Your Line Follower!</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box" style="margin-bottom: 20px;">
+                    <h3 style="margin-top: 0;">Starter Code</h3>
+                    <p style="margin: 10px 0;">File: <span class="highlight">Lesson_08_Starter_Code.ino</span> (or copy below)</p>
+                    <div style="position: relative;">
+                        <button onclick="copyStarterCode()" style="position: absolute; top: 10px; right: 10px; background: #00d4ff; color: #0a0e27; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 0.9rem; z-index: 10;">Copy Code</button>
+                        <div class="code-block" id="starter-code" style="font-size: 0.65rem; max-height: 250px; overflow-y: auto; margin-top: 0;"><span class="code-comment">// Lesson 8: Basic Line Following - Starter Code</span>
+
+<span class="code-comment">// Motor pins</span>
+<span class="code-keyword">const int</span> LEFT_MOTOR_PIN1 = <span class="code-number">2</span>;
+<span class="code-keyword">const int</span> LEFT_MOTOR_PIN2 = <span class="code-number">3</span>;
+<span class="code-keyword">const int</span> RIGHT_MOTOR_PIN1 = <span class="code-number">4</span>;
+<span class="code-keyword">const int</span> RIGHT_MOTOR_PIN2 = <span class="code-number">5</span>;
+
+<span class="code-comment">// Sensor pins</span>
+<span class="code-keyword">const int</span> SENSOR_LEFT = <span class="code-number">7</span>;
+<span class="code-keyword">const int</span> SENSOR_CENTER = <span class="code-number">8</span>;
+<span class="code-keyword">const int</span> SENSOR_RIGHT = <span class="code-number">9</span>;
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  <span class="code-function">pinMode</span>(LEFT_MOTOR_PIN1, OUTPUT);
+  <span class="code-function">pinMode</span>(LEFT_MOTOR_PIN2, OUTPUT);
+  <span class="code-function">pinMode</span>(RIGHT_MOTOR_PIN1, OUTPUT);
+  <span class="code-function">pinMode</span>(RIGHT_MOTOR_PIN2, OUTPUT);
+  <span class="code-function">pinMode</span>(SENSOR_LEFT, INPUT);
+  <span class="code-function">pinMode</span>(SENSOR_CENTER, INPUT);
+  <span class="code-function">pinMode</span>(SENSOR_RIGHT, INPUT);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// TODO: Read sensor values</span>
+
+  <span class="code-comment">// TODO: Add decision logic here</span>
+
+}
+
+<span class="code-comment">// Motor control functions</span>
+<span class="code-keyword">void</span> <span class="code-function">moveForward</span>(<span class="code-keyword">int</span> speed) {
+  <span class="code-function">analogWrite</span>(LEFT_MOTOR_PIN1, speed);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
+  <span class="code-function">analogWrite</span>(RIGHT_MOTOR_PIN1, speed);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, LOW);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">turnLeft</span>() {
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, LOW);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, HIGH);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, HIGH);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, LOW);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">turnRight</span>() {
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, HIGH);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, HIGH);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">stopMotors</span>() {
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, LOW);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, LOW);
+}</div>
+                    </div>
+                </div>
+
+                <div class="success-box">
+                    <h3>Exercise 1: Basic 3-Sensor Line Follower (15 min)</h3>
+                    <ol>
+                        <li>Complete the starter code with 3-sensor decision logic</li>
+                        <li>Test on a straight black line (tape on white paper)</li>
+                        <li>Verify the robot follows the line and corrects itself</li>
+                        <li>Observe the zigzag motion - that's bang-bang control!</li>
+                    </ol>
+                </div>
+
+                <div class="success-box">
+                    <h3>Exercise 2: Navigate Gentle Curves (10 min)</h3>
+                    <ol>
+                        <li>Create a curved track with gentle bends</li>
+                        <li>Test if your robot can navigate curves</li>
+                        <li>If it fails, try adjusting the motor speed</li>
+                        <li>Record the maximum curve radius your robot can handle</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Testing and Troubleshooting -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Testing and Troubleshooting</h2>
+            </div>
+            <div class="content">
+                <div class="success-box">
+                    <h3>Exercise 3: Lost Line Recovery (15 min)</h3>
+                    <ol>
+                        <li>Add a search behavior when all sensors read HIGH</li>
+                        <li>Ideas: spin slowly, return to last known position, move in a spiral</li>
+                        <li>Test by intentionally lifting the robot off the line</li>
+                        <li>Can your robot find the line again?</li>
+                    </ol>
+                </div>
+
+                <div class="success-box">
+                    <h3>Exercise 4: Speed Optimization (10 min)</h3>
+                    <ol>
+                        <li>Experiment with different forward speeds (100, 150, 200)</li>
+                        <li>Does faster = better? Or does it make control harder?</li>
+                        <li>Try reducing speed during turns</li>
+                        <li>Find the fastest speed that still follows reliably</li>
+                    </ol>
+                </div>
+
+                <div class="warning-box">
+                    <h3>Common Problems and Solutions</h3>
+                    <table style="font-size: 0.9rem;">
+                        <tr>
+                            <th>Problem</th>
+                            <th>Possible Solution</th>
+                        </tr>
+                        <tr>
+                            <td>Robot goes straight off the line</td>
+                            <td>Check sensor readings - are they inverted? Verify LOW = black line</td>
+                        </tr>
+                        <tr>
+                            <td>Robot spins in circles</td>
+                            <td>Verify motor wiring - left/right may be swapped</td>
+                        </tr>
+                        <tr>
+                            <td>Robot oscillates wildly</td>
+                            <td>Reduce motor speed for gentler corrections</td>
+                        </tr>
+                        <tr>
+                            <td>Robot can't follow curves</td>
+                            <td>Line may be too sharp - use wider curves OR reduce speed</td>
+                        </tr>
+                        <tr>
+                            <td>Sensors not detecting line</td>
+                            <td>Check sensor height (2-10mm optimal) and line contrast</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="concept-box">
+                    <h3>Testing Tips</h3>
+                    <ul style="font-size: 1rem;">
+                        <li>Start with a straight line before trying curves</li>
+                        <li>Use electrical tape for best contrast</li>
+                        <li>Test in consistent lighting conditions</li>
+                        <li>Add Serial.println() to debug sensor readings</li>
+                        <li>Make ONE change at a time when troubleshooting</li>
+                    </ul>
+                </div>
+
+                <div class="success-box" style="text-align: center; padding: 30px; margin-top: 20px;">
+                    <h3 style="font-size: 1.8rem; color: #50fa7b;">Congratulations!</h3>
+                    <p style="font-size: 1.2rem; margin-top: 15px;">You've built an autonomous line-following robot!</p>
+                    <p style="font-size: 1rem; margin-top: 10px;">This is a major milestone in robotics programming.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">12</span>
+    </div>
+
+    <div class="nav-container">
+        <button class="nav-btn" id="prev-btn" onclick="prevSlide()">← Previous</button>
+        <button class="nav-btn" id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = document.querySelectorAll('.slide').length;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+
+            if (n > totalSlides) currentSlide = totalSlides;
+            if (n < 1) currentSlide = 1;
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('current-slide').textContent = currentSlide;
+
+            // Update button states
+            document.getElementById('prev-btn').disabled = currentSlide === 1;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides;
+        }
+
+        function nextSlide() {
+            currentSlide++;
+            showSlide(currentSlide);
+        }
+
+        function prevSlide() {
+            currentSlide--;
+            showSlide(currentSlide);
+        }
+
+        // Copy starter code function
+        function copyStarterCode() {
+            const codeText = `// Lesson 8: Basic Line Following
+// Starter Code for Lab Exercises
+
+// Motor pin definitions
+const int LEFT_MOTOR_PIN1 = 2;
+const int LEFT_MOTOR_PIN2 = 3;
+const int RIGHT_MOTOR_PIN1 = 4;
+const int RIGHT_MOTOR_PIN2 = 5;
+
+// Sensor pin definitions (3-sensor approach)
+const int SENSOR_LEFT = 7;    // S2
+const int SENSOR_CENTER = 8;  // S3
+const int SENSOR_RIGHT = 9;   // S4
+
+void setup() {
+  // Set motor pins as outputs
+  pinMode(LEFT_MOTOR_PIN1, OUTPUT);
+  pinMode(LEFT_MOTOR_PIN2, OUTPUT);
+  pinMode(RIGHT_MOTOR_PIN1, OUTPUT);
+  pinMode(RIGHT_MOTOR_PIN2, OUTPUT);
+
+  // Set sensor pins as inputs
+  pinMode(SENSOR_LEFT, INPUT);
+  pinMode(SENSOR_CENTER, INPUT);
+  pinMode(SENSOR_RIGHT, INPUT);
+
+  // Optional: Serial for debugging
+  Serial.begin(9600);
+}
+
+void loop() {
+  // TODO: Read all three sensors
+  // int left = digitalRead(SENSOR_LEFT);
+  // int center = digitalRead(SENSOR_CENTER);
+  // int right = digitalRead(SENSOR_RIGHT);
+
+  // TODO: Add your decision logic here!
+  // if (center == LOW) {
+  //   // Line is centered
+  //   moveForward(150);
+  // }
+  // else if (left == LOW) {
+  //   // Line is on left
+  //   turnLeft();
+  // }
+  // else if (right == LOW) {
+  //   // Line is on right
+  //   turnRight();
+  // }
+  // else {
+  //   // No line detected
+  //   stopMotors();
+  // }
+}
+
+// Motor control functions
+void moveForward(int speed) {
+  analogWrite(LEFT_MOTOR_PIN1, speed);
+  digitalWrite(LEFT_MOTOR_PIN2, LOW);
+  analogWrite(RIGHT_MOTOR_PIN1, speed);
+  digitalWrite(RIGHT_MOTOR_PIN2, LOW);
+}
+
+void turnLeft() {
+  digitalWrite(LEFT_MOTOR_PIN1, LOW);
+  digitalWrite(LEFT_MOTOR_PIN2, HIGH);
+  digitalWrite(RIGHT_MOTOR_PIN1, HIGH);
+  digitalWrite(RIGHT_MOTOR_PIN2, LOW);
+}
+
+void turnRight() {
+  digitalWrite(LEFT_MOTOR_PIN1, HIGH);
+  digitalWrite(LEFT_MOTOR_PIN2, LOW);
+  digitalWrite(RIGHT_MOTOR_PIN1, LOW);
+  digitalWrite(RIGHT_MOTOR_PIN2, HIGH);
+}
+
+void stopMotors() {
+  digitalWrite(LEFT_MOTOR_PIN1, LOW);
+  digitalWrite(LEFT_MOTOR_PIN2, LOW);
+  digitalWrite(RIGHT_MOTOR_PIN1, LOW);
+  digitalWrite(RIGHT_MOTOR_PIN2, LOW);
+}`;
+
+            navigator.clipboard.writeText(codeText).then(function() {
+                alert('✅ Code copied to clipboard!');
+            }, function(err) {
+                alert('❌ Failed to copy code. Please copy manually from the code block.');
+            });
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight') nextSlide();
+            if (event.key === 'ArrowLeft') prevSlide();
+        });
+
+        // Initialize
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

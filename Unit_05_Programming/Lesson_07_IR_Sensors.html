@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 7: IR Sensor Fundamentals and Reading</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .slide {
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            background: rgba(26, 31, 58, 0.95);
+            border-radius: 20px;
+            border: 3px solid #00d4ff;
+            box-shadow: 0 20px 80px rgba(0, 212, 255, 0.3);
+            padding: 60px;
+            display: none;
+            flex-direction: column;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .lesson-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: #00d4ff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            color: #00d4ff;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            color: #00d4ff;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: #ff9500;
+            margin: 25px 0 15px 0;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #b8c5d6;
+            text-align: center;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 20px 0;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .concept-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 149, 0, 0.05) 100%);
+            border: 2px solid rgba(255, 149, 0, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, rgba(80, 250, 123, 0.1) 0%, rgba(80, 250, 123, 0.05) 100%);
+            border: 2px solid rgba(80, 250, 123, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+
+        .code-block {
+            background: #0d1117;
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 40px 25px 25px 25px;
+            margin: 15px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            line-height: 1.5;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+            position: relative;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 350px;
+            white-space: pre;
+        }
+
+        .code-block::before {
+            content: 'Arduino Code';
+            position: absolute;
+            top: 8px;
+            left: 20px;
+            background: transparent;
+            padding: 0;
+            font-size: 0.7rem;
+            color: #00d4ff;
+            font-weight: 700;
+            opacity: 0.6;
+        }
+
+        .code-comment {
+            color: #6c6c6c;
+        }
+
+        .code-keyword {
+            color: #ff6ac1;
+        }
+
+        .code-function {
+            color: #5af78e;
+        }
+
+        .code-number {
+            color: #f1fa8c;
+        }
+
+        ul, ol {
+            margin-left: 30px;
+            line-height: 2;
+        }
+
+        li {
+            margin: 10px 0;
+            font-size: 1.1rem;
+        }
+
+        .highlight {
+            color: #00d4ff;
+            font-weight: 700;
+        }
+
+        .emphasis {
+            color: #ff9500;
+            font-weight: 700;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1rem;
+        }
+
+        th {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            padding: 15px;
+            text-align: left;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        td {
+            padding: 12px 15px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        tr:nth-child(even) {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .diagram {
+            background: rgba(10, 14, 39, 0.5);
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+        }
+
+        .arrow {
+            color: #ff9500;
+            font-size: 1.5rem;
+            margin: 10px 0;
+        }
+
+        /* Navigation */
+        .nav-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .nav-btn:hover {
+            background: linear-gradient(135deg, #00eeff, #00bbee);
+            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(0, 212, 255, 0.2);
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            border: 2px solid rgba(0, 212, 255, 0.5);
+        }
+
+        /* Sensor Array Visualizer */
+        .sensor-array {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .sensor {
+            width: 60px;
+            height: 80px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .sensor-label {
+            font-size: 0.8rem;
+            color: #00d4ff;
+            margin-bottom: 5px;
+        }
+
+        .sensor-led {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #333;
+            border: 2px solid #00d4ff;
+            margin: 5px 0;
+        }
+
+        .sensor-led.active {
+            background: #50fa7b;
+            box-shadow: 0 0 20px rgba(80, 250, 123, 0.8);
+        }
+
+        .pattern-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2rem;
+            text-align: center;
+            margin: 20px 0;
+            color: #f1fa8c;
+            letter-spacing: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-header">
+                <div class="lesson-label">Unit 5: Introduction to Programming • Lesson 7</div>
+                <h1>IR Sensor Fundamentals</h1>
+                <p class="subtitle">Reading and Interpreting Line Sensors</p>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3 style="text-align: center; color: #00d4ff; margin-top: 0;">What You'll Learn Today</h3>
+                    <ul style="font-size: 1.2rem; line-height: 2.2;">
+                        <li>How infrared reflection sensors detect lines</li>
+                        <li>Understanding the 5-channel sensor array</li>
+                        <li>Reading digital sensor values with digitalRead()</li>
+                        <li>Interpreting sensor patterns for line position</li>
+                        <li>Using Serial Monitor for sensor debugging</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: How IR Sensors Work -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>How IR Reflection Sensors Work</h2>
+            </div>
+            <div class="content">
+                <div class="two-column">
+                    <div class="column">
+                        <h3>The Physics of Detection</h3>
+                        <ul>
+                            <li><span class="highlight">IR Emitter:</span> Sends out infrared light (invisible to humans)</li>
+                            <li><span class="highlight">Surface:</span> Reflects or absorbs the light</li>
+                            <li><span class="highlight">IR Detector:</span> Measures reflected light intensity</li>
+                            <li><span class="highlight">Output:</span> HIGH or LOW based on reflection</li>
+                        </ul>
+
+                        <div class="concept-box">
+                            <h3>Reflectivity Basics</h3>
+                            <p style="margin: 10px 0;"><strong style="color: #fff;">White/Light surfaces:</strong> Reflect more IR light</p>
+                            <p style="margin: 10px 0;"><strong style="color: #333;">Black/Dark surfaces:</strong> Absorb more IR light</p>
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="diagram">
+                            <div style="color: #ff9500; font-size: 1.3rem; margin-bottom: 15px;">IR Sensor Operation</div>
+                            <div style="margin: 20px 0;">
+                                IR LED (Emitter)
+                            </div>
+                            <div class="arrow">↓</div>
+                            <div style="margin: 20px 0;">
+                                Infrared Light Beam
+                            </div>
+                            <div class="arrow">↓</div>
+                            <div style="margin: 20px 0;">
+                                Surface (White or Black)
+                            </div>
+                            <div class="arrow">↑</div>
+                            <div style="margin: 20px 0;">
+                                Reflected Light
+                            </div>
+                            <div class="arrow">↑</div>
+                            <div style="color: #00d4ff;">
+                                Phototransistor (Detector)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: The 5-Channel Sensor Array -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>The 5-Channel Sensor Array</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>Osoyoo 5-Channel IR Line Tracker Sensor</h3>
+                    <ul>
+                        <li>5 independent IR sensors in a linear array</li>
+                        <li>Works with 3.3V to 5V power supply</li>
+                        <li>Digital outputs (HIGH or LOW)</li>
+                        <li>Adjustable sensitivity with onboard potentiometers</li>
+                    </ul>
+                </div>
+
+                <div class="sensor-array">
+                    <div class="sensor">
+                        <div class="sensor-label">Pin 6</div>
+                        <div class="sensor-led"></div>
+                        <div style="font-size: 0.7rem; color: #b8c5d6;">S1 (Left)</div>
+                    </div>
+                    <div class="sensor">
+                        <div class="sensor-label">Pin 7</div>
+                        <div class="sensor-led"></div>
+                        <div style="font-size: 0.7rem; color: #b8c5d6;">S2</div>
+                    </div>
+                    <div class="sensor">
+                        <div class="sensor-label">Pin 8</div>
+                        <div class="sensor-led"></div>
+                        <div style="font-size: 0.7rem; color: #b8c5d6;">S3 (Center)</div>
+                    </div>
+                    <div class="sensor">
+                        <div class="sensor-label">Pin 9</div>
+                        <div class="sensor-led"></div>
+                        <div style="font-size: 0.7rem; color: #b8c5d6;">S4</div>
+                    </div>
+                    <div class="sensor">
+                        <div class="sensor-label">Pin 10</div>
+                        <div class="sensor-led"></div>
+                        <div style="font-size: 0.7rem; color: #b8c5d6;">S5 (Right)</div>
+                    </div>
+                </div>
+
+                <div class="concept-box">
+                    <h3>Pin Connections</h3>
+                    <table>
+                        <tr>
+                            <th>Sensor</th>
+                            <th>Arduino Pin</th>
+                            <th>Position</th>
+                        </tr>
+                        <tr>
+                            <td><strong>S1</strong></td>
+                            <td>D6</td>
+                            <td>Far Left</td>
+                        </tr>
+                        <tr>
+                            <td><strong>S2</strong></td>
+                            <td>D7</td>
+                            <td>Left</td>
+                        </tr>
+                        <tr>
+                            <td><strong>S3</strong></td>
+                            <td>D8</td>
+                            <td>Center</td>
+                        </tr>
+                        <tr>
+                            <td><strong>S4</strong></td>
+                            <td>D9</td>
+                            <td>Right</td>
+                        </tr>
+                        <tr>
+                            <td><strong>S5</strong></td>
+                            <td>D10</td>
+                            <td>Far Right</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Digital vs Analog Readings -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Digital Output: HIGH or LOW</h2>
+            </div>
+            <div class="content">
+                <div class="two-column">
+                    <div class="column">
+                        <h3>What is Digital Output?</h3>
+                        <ul>
+                            <li>Only two possible states: <span class="highlight">HIGH (1)</span> or <span class="highlight">LOW (0)</span></li>
+                            <li>No in-between values (unlike analog)</li>
+                            <li>Simple to read and interpret</li>
+                            <li>Perfect for line detection (line present or not)</li>
+                        </ul>
+
+                        <div class="warning-box">
+                            <strong>Important:</strong> This sensor provides DIGITAL output, not analog. We use <span class="highlight">digitalRead()</span>, not analogRead().
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="concept-box">
+                            <h3>Sensor Logic (Typical)</h3>
+                            <table style="font-size: 0.9rem;">
+                                <tr>
+                                    <th>Surface Color</th>
+                                    <th>Reflection</th>
+                                    <th>Output</th>
+                                </tr>
+                                <tr style="background: rgba(255, 255, 255, 0.1);">
+                                    <td><strong>White/Light</strong></td>
+                                    <td>High reflection</td>
+                                    <td style="color: #50fa7b; font-weight: 700;">HIGH (1)</td>
+                                </tr>
+                                <tr style="background: rgba(0, 0, 0, 0.3);">
+                                    <td><strong>Black/Dark</strong></td>
+                                    <td>Low reflection</td>
+                                    <td style="color: #ff6b7a; font-weight: 700;">LOW (0)</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="concept-box">
+                            <h3>Line Following Setup</h3>
+                            <p style="margin: 10px 0;">For line following, place a <span class="emphasis">black line</span> on a <span class="emphasis">white surface</span>. Sensors return LOW when over the line, HIGH when over the background.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Reading Sensor Values -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Reading Sensors with digitalRead()</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>Pin Setup in setup()</h3>
+                    <p style="margin: 10px 0;">All sensor pins must be configured as <span class="highlight">INPUT</span> before reading.</p>
+                </div>
+
+                <div class="code-block"><span class="code-comment">// IR Sensor pin definitions</span>
+<span class="code-keyword">const int</span> SENSOR_1 = <span class="code-number">6</span>;   <span class="code-comment">// Far left</span>
+<span class="code-keyword">const int</span> SENSOR_2 = <span class="code-number">7</span>;   <span class="code-comment">// Left</span>
+<span class="code-keyword">const int</span> SENSOR_3 = <span class="code-number">8</span>;   <span class="code-comment">// Center</span>
+<span class="code-keyword">const int</span> SENSOR_4 = <span class="code-number">9</span>;   <span class="code-comment">// Right</span>
+<span class="code-keyword">const int</span> SENSOR_5 = <span class="code-number">10</span>;  <span class="code-comment">// Far right</span>
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  <span class="code-comment">// Configure all sensor pins as inputs</span>
+  <span class="code-function">pinMode</span>(SENSOR_1, INPUT);
+  <span class="code-function">pinMode</span>(SENSOR_2, INPUT);
+  <span class="code-function">pinMode</span>(SENSOR_3, INPUT);
+  <span class="code-function">pinMode</span>(SENSOR_4, INPUT);
+  <span class="code-function">pinMode</span>(SENSOR_5, INPUT);
+
+  <span class="code-comment">// Initialize serial communication for debugging</span>
+  Serial.<span class="code-function">begin</span>(<span class="code-number">9600</span>);
+}</div>
+
+                <div class="concept-box">
+                    <h3>Reading in loop()</h3>
+                    <p style="margin: 10px 0;">Use <span class="highlight">digitalRead()</span> to get the current state of each sensor.</p>
+                </div>
+
+                <div class="code-block"><span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Read all 5 sensors</span>
+  <span class="code-keyword">int</span> s1 = <span class="code-function">digitalRead</span>(SENSOR_1);
+  <span class="code-keyword">int</span> s2 = <span class="code-function">digitalRead</span>(SENSOR_2);
+  <span class="code-keyword">int</span> s3 = <span class="code-function">digitalRead</span>(SENSOR_3);
+  <span class="code-keyword">int</span> s4 = <span class="code-function">digitalRead</span>(SENSOR_4);
+  <span class="code-keyword">int</span> s5 = <span class="code-function">digitalRead</span>(SENSOR_5);
+
+  <span class="code-comment">// Now we can use these values...</span>
+}</div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Interpreting Sensor Patterns -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Interpreting Sensor Patterns</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>Understanding Binary Patterns</h3>
+                    <p style="margin: 10px 0;">The combination of 5 sensor readings creates a pattern that tells you where the line is positioned.</p>
+                </div>
+
+                <table style="font-size: 0.9rem;">
+                    <tr>
+                        <th>Pattern</th>
+                        <th>Binary</th>
+                        <th>Line Position</th>
+                        <th>Action</th>
+                    </tr>
+                    <tr>
+                        <td class="pattern-display" style="font-size: 1rem; letter-spacing: 5px;">00100</td>
+                        <td>LOW LOW LOW HIGH HIGH</td>
+                        <td>Centered</td>
+                        <td style="color: #50fa7b;">Go straight</td>
+                    </tr>
+                    <tr>
+                        <td class="pattern-display" style="font-size: 1rem; letter-spacing: 5px;">01100</td>
+                        <td>LOW HIGH LOW HIGH HIGH</td>
+                        <td>Slightly left</td>
+                        <td style="color: #f1fa8c;">Turn right slightly</td>
+                    </tr>
+                    <tr>
+                        <td class="pattern-display" style="font-size: 1rem; letter-spacing: 5px;">00110</td>
+                        <td>LOW LOW HIGH HIGH HIGH</td>
+                        <td>Slightly right</td>
+                        <td style="color: #f1fa8c;">Turn left slightly</td>
+                    </tr>
+                    <tr>
+                        <td class="pattern-display" style="font-size: 1rem; letter-spacing: 5px;">11000</td>
+                        <td>HIGH HIGH LOW LOW LOW</td>
+                        <td>Far left</td>
+                        <td style="color: #ff6b7a;">Turn right sharply</td>
+                    </tr>
+                    <tr>
+                        <td class="pattern-display" style="font-size: 1rem; letter-spacing: 5px;">00011</td>
+                        <td>LOW LOW LOW HIGH HIGH</td>
+                        <td>Far right</td>
+                        <td style="color: #ff6b7a;">Turn left sharply</td>
+                    </tr>
+                    <tr>
+                        <td class="pattern-display" style="font-size: 1rem; letter-spacing: 5px;">11111</td>
+                        <td>HIGH HIGH HIGH HIGH HIGH</td>
+                        <td>No line detected</td>
+                        <td style="color: #888;">Stop or search</td>
+                    </tr>
+                </table>
+
+                <div class="warning-box">
+                    <strong>Remember:</strong> The exact patterns depend on your line width and sensor spacing. You'll need to test and adjust!
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Serial Monitor Debugging -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Serial Monitor Debugging</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>Why Use Serial Monitor?</h3>
+                    <ul>
+                        <li>See sensor values in real-time</li>
+                        <li>Debug sensor behavior and patterns</li>
+                        <li>Verify sensors are working correctly</li>
+                        <li>Understand what the robot is "seeing"</li>
+                    </ul>
+                </div>
+
+                <div class="code-block"><span class="code-comment">// Print individual sensor values</span>
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-keyword">int</span> s1 = <span class="code-function">digitalRead</span>(SENSOR_1);
+  <span class="code-keyword">int</span> s2 = <span class="code-function">digitalRead</span>(SENSOR_2);
+  <span class="code-keyword">int</span> s3 = <span class="code-function">digitalRead</span>(SENSOR_3);
+  <span class="code-keyword">int</span> s4 = <span class="code-function">digitalRead</span>(SENSOR_4);
+  <span class="code-keyword">int</span> s5 = <span class="code-function">digitalRead</span>(SENSOR_5);
+
+  <span class="code-comment">// Print with labels</span>
+  Serial.<span class="code-function">print</span>(<span class="code-string">"S1:"</span>);
+  Serial.<span class="code-function">print</span>(s1);
+  Serial.<span class="code-function">print</span>(<span class="code-string">" S2:"</span>);
+  Serial.<span class="code-function">print</span>(s2);
+  Serial.<span class="code-function">print</span>(<span class="code-string">" S3:"</span>);
+  Serial.<span class="code-function">print</span>(s3);
+  Serial.<span class="code-function">print</span>(<span class="code-string">" S4:"</span>);
+  Serial.<span class="code-function">print</span>(s4);
+  Serial.<span class="code-function">print</span>(<span class="code-string">" S5:"</span>);
+  Serial.<span class="code-function">println</span>(s5);  <span class="code-comment">// println adds newline</span>
+
+  <span class="code-function">delay</span>(<span class="code-number">100</span>);  <span class="code-comment">// Small delay for readability</span>
+}</div>
+
+                <div class="concept-box">
+                    <h3>Example Serial Output</h3>
+                    <div class="diagram" style="text-align: left; font-size: 0.9rem;">
+                        S1:1 S2:1 S3:0 S4:1 S5:1<br>
+                        S1:1 S2:0 S3:0 S4:1 S5:1<br>
+                        S1:1 S2:0 S3:0 S4:0 S5:1<br>
+                        S1:1 S2:1 S3:0 S4:0 S5:1<br>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Understanding Surface Reflectivity -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Surface Reflectivity Testing</h2>
+            </div>
+            <div class="content">
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Testing Different Surfaces</h3>
+                        <ul>
+                            <li><span class="highlight">White paper:</span> Maximum reflection (HIGH)</li>
+                            <li><span class="highlight">Black tape:</span> Minimum reflection (LOW)</li>
+                            <li><span class="highlight">Wood/cardboard:</span> Medium reflection (varies)</li>
+                            <li><span class="highlight">Shiny surfaces:</span> Can cause false readings</li>
+                        </ul>
+
+                        <div class="warning-box">
+                            <strong>Tip:</strong> Test your sensors on the actual surface you'll use! Different materials reflect differently.
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="concept-box">
+                            <h3>Sensor Height Matters</h3>
+                            <p style="margin: 10px 0;">The distance between the sensor and surface affects readings:</p>
+                            <ul style="font-size: 1rem;">
+                                <li><strong>Too close:</strong> May get false readings</li>
+                                <li><strong>Too far:</strong> Weak signal, poor detection</li>
+                                <li><strong>Optimal:</strong> Usually 2-10mm gap</li>
+                            </ul>
+                        </div>
+
+                        <div class="concept-box">
+                            <h3>Environmental Factors</h3>
+                            <ul style="font-size: 1rem;">
+                                <li>Bright ambient light can interfere</li>
+                                <li>IR sensors work best indoors</li>
+                                <li>Adjust sensitivity if needed</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Complete Example Code -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Complete Example: Read All Sensors</h2>
+            </div>
+            <div class="content">
+                <div class="code-block" style="font-size: 0.85rem;"><span class="code-comment">// Complete IR Sensor Reading Example</span>
+
+<span class="code-comment">// Pin definitions</span>
+<span class="code-keyword">const int</span> SENSOR_1 = <span class="code-number">6</span>;
+<span class="code-keyword">const int</span> SENSOR_2 = <span class="code-number">7</span>;
+<span class="code-keyword">const int</span> SENSOR_3 = <span class="code-number">8</span>;
+<span class="code-keyword">const int</span> SENSOR_4 = <span class="code-number">9</span>;
+<span class="code-keyword">const int</span> SENSOR_5 = <span class="code-number">10</span>;
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  <span class="code-comment">// Set all sensor pins as inputs</span>
+  <span class="code-function">pinMode</span>(SENSOR_1, INPUT);
+  <span class="code-function">pinMode</span>(SENSOR_2, INPUT);
+  <span class="code-function">pinMode</span>(SENSOR_3, INPUT);
+  <span class="code-function">pinMode</span>(SENSOR_4, INPUT);
+  <span class="code-function">pinMode</span>(SENSOR_5, INPUT);
+
+  <span class="code-comment">// Start serial communication</span>
+  Serial.<span class="code-function">begin</span>(<span class="code-number">9600</span>);
+  Serial.<span class="code-function">println</span>(<span class="code-string">"IR Sensor Test Starting..."</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Read all sensors</span>
+  <span class="code-keyword">int</span> s1 = <span class="code-function">digitalRead</span>(SENSOR_1);
+  <span class="code-keyword">int</span> s2 = <span class="code-function">digitalRead</span>(SENSOR_2);
+  <span class="code-keyword">int</span> s3 = <span class="code-function">digitalRead</span>(SENSOR_3);
+  <span class="code-keyword">int</span> s4 = <span class="code-function">digitalRead</span>(SENSOR_4);
+  <span class="code-keyword">int</span> s5 = <span class="code-function">digitalRead</span>(SENSOR_5);
+
+  <span class="code-comment">// Print pattern</span>
+  Serial.<span class="code-function">print</span>(<span class="code-string">"Pattern: "</span>);
+  Serial.<span class="code-function">print</span>(s1);
+  Serial.<span class="code-function">print</span>(s2);
+  Serial.<span class="code-function">print</span>(s3);
+  Serial.<span class="code-function">print</span>(s4);
+  Serial.<span class="code-function">println</span>(s5);
+
+  <span class="code-function">delay</span>(<span class="code-number">200</span>);  <span class="code-comment">// Update 5 times per second</span>
+}</div>
+
+                <div class="success-box">
+                    <h3>Expected Output in Serial Monitor</h3>
+                    <div class="diagram" style="text-align: left; font-size: 0.9rem;">
+                        IR Sensor Test Starting...<br>
+                        Pattern: 11111  (all sensors see white)<br>
+                        Pattern: 11011  (center sensor sees black line)<br>
+                        Pattern: 11001  (line moving right)<br>
+                        Pattern: 11100  (line far right)<br>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Lab Exercises -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Lab Time: Test Your Sensors!</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box" style="margin-bottom: 20px;">
+                    <h3 style="margin-top: 0;">Starter Code</h3>
+                    <p style="margin: 10px 0;">File: <span class="highlight">Lesson_07_Starter_Code.ino</span> (or copy below)</p>
+                    <div style="position: relative;">
+                        <button onclick="copyStarterCode()" style="position: absolute; top: 10px; right: 10px; background: #00d4ff; color: #0a0e27; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 0.9rem; z-index: 10;">Copy Code</button>
+                        <div class="code-block" id="starter-code" style="font-size: 0.7rem; max-height: 200px; overflow-y: auto; margin-top: 0;"><span class="code-comment">// Lesson 7: IR Sensor Reading</span>
+<span class="code-keyword">const int</span> SENSOR_1 = <span class="code-number">6</span>;
+<span class="code-keyword">const int</span> SENSOR_2 = <span class="code-number">7</span>;
+<span class="code-keyword">const int</span> SENSOR_3 = <span class="code-number">8</span>;
+<span class="code-keyword">const int</span> SENSOR_4 = <span class="code-number">9</span>;
+<span class="code-keyword">const int</span> SENSOR_5 = <span class="code-number">10</span>;
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  <span class="code-function">pinMode</span>(SENSOR_1, INPUT);
+  <span class="code-function">pinMode</span>(SENSOR_2, INPUT);
+  <span class="code-function">pinMode</span>(SENSOR_3, INPUT);
+  <span class="code-function">pinMode</span>(SENSOR_4, INPUT);
+  <span class="code-function">pinMode</span>(SENSOR_5, INPUT);
+  Serial.<span class="code-function">begin</span>(<span class="code-number">9600</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Your code here!</span>
+}</div>
+                    </div>
+                </div>
+
+                <div class="success-box">
+                    <h3>Exercise 1: Basic Reading (10 min)</h3>
+                    <ol>
+                        <li>Upload the starter code and add sensor reading in loop()</li>
+                        <li>Print all 5 sensor values to Serial Monitor</li>
+                        <li>Test sensors over white paper - should see all HIGH (1)</li>
+                        <li>Test sensors over black tape - should see LOW (0)</li>
+                    </ol>
+                </div>
+
+                <div class="success-box">
+                    <h3>Exercise 2: Surface Testing (10 min)</h3>
+                    <ol>
+                        <li>Test different surfaces: white paper, black tape, wood, your hand</li>
+                        <li>Record which surfaces give HIGH vs LOW readings</li>
+                        <li>Find the maximum distance sensors can detect a line</li>
+                        <li>Experiment with sensor height above the surface</li>
+                    </ol>
+                </div>
+
+                <div class="success-box">
+                    <h3>Exercise 3: Visual Display (10 min)</h3>
+                    <ol>
+                        <li>Create a better visual display in Serial Monitor</li>
+                        <li>Print sensor states as a pattern: "11011" format</li>
+                        <li>Add text descriptions: "Line Left", "Line Center", "Line Right"</li>
+                        <li>Bonus: Use asterisks to create a bar graph display</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Advanced Exercise -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Advanced: Pattern Detection</h2>
+            </div>
+            <div class="content">
+                <div class="success-box">
+                    <h3>Exercise 4: Detect Line Position (15 min)</h3>
+                    <p style="margin: 15px 0;">Write code to interpret sensor patterns and print the line position in plain English.</p>
+                </div>
+
+                <div class="code-block" style="font-size: 0.75rem;"><span class="code-comment">// Example pattern detection</span>
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-keyword">int</span> s1 = <span class="code-function">digitalRead</span>(SENSOR_1);
+  <span class="code-keyword">int</span> s2 = <span class="code-function">digitalRead</span>(SENSOR_2);
+  <span class="code-keyword">int</span> s3 = <span class="code-function">digitalRead</span>(SENSOR_3);
+  <span class="code-keyword">int</span> s4 = <span class="code-function">digitalRead</span>(SENSOR_4);
+  <span class="code-keyword">int</span> s5 = <span class="code-function">digitalRead</span>(SENSOR_5);
+
+  <span class="code-comment">// Check for center line</span>
+  <span class="code-keyword">if</span> (s1 == <span class="code-number">1</span> && s2 == <span class="code-number">1</span> && s3 == <span class="code-number">0</span> && s4 == <span class="code-number">1</span> && s5 == <span class="code-number">1</span>) {
+    Serial.<span class="code-function">println</span>(<span class="code-string">"Line is CENTERED"</span>);
+  }
+  <span class="code-comment">// Add more pattern checks here...</span>
+  <span class="code-keyword">else if</span> (s1 == <span class="code-number">0</span>) {
+    Serial.<span class="code-function">println</span>(<span class="code-string">"Line is FAR LEFT"</span>);
+  }
+  <span class="code-keyword">else if</span> (s5 == <span class="code-number">0</span>) {
+    Serial.<span class="code-function">println</span>(<span class="code-string">"Line is FAR RIGHT"</span>);
+  }
+  <span class="code-keyword">else</span> {
+    Serial.<span class="code-function">println</span>(<span class="code-string">"No line detected"</span>);
+  }
+
+  <span class="code-function">delay</span>(<span class="code-number">200</span>);
+}</div>
+
+                <div class="concept-box">
+                    <h3>Your Challenge</h3>
+                    <ul>
+                        <li>Detect at least 5 different line positions</li>
+                        <li>Handle the "no line detected" case</li>
+                        <li>Test with a piece of black tape on white paper</li>
+                        <li>Move the tape slowly under the sensors and verify your code works</li>
+                    </ul>
+                </div>
+
+                <div class="warning-box">
+                    <strong>Hint:</strong> You can check multiple sensors in one condition using && (AND) and || (OR) operators!
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Summary -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Lesson Summary</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>What We Learned Today</h3>
+                    <ul style="font-size: 1.2rem;">
+                        <li>IR sensors detect surface reflectivity using infrared light</li>
+                        <li>Our 5-channel sensor array provides digital outputs (HIGH/LOW)</li>
+                        <li><span class="highlight">digitalRead()</span> reads sensor states</li>
+                        <li>White surfaces reflect IR (HIGH), black surfaces absorb it (LOW)</li>
+                        <li>Sensor patterns tell us where the line is positioned</li>
+                        <li>Serial Monitor is essential for debugging sensors</li>
+                    </ul>
+                </div>
+
+                <div class="warning-box">
+                    <h3>Next Lesson Preview</h3>
+                    <p style="font-size: 1.1rem;">In <span class="highlight">Lesson 8</span>, we'll combine everything you've learned! We'll use the IR sensor readings to control the robot's motors and create a <span class="emphasis">line-following robot</span>. Get ready to see your robot navigate autonomously!</p>
+                </div>
+
+                <div class="success-box" style="text-align: center; padding: 30px;">
+                    <h3 style="font-size: 1.8rem; color: #50fa7b;">Excellent Work!</h3>
+                    <p style="font-size: 1.2rem; margin-top: 15px;">You can now read and interpret sensor data!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">12</span>
+    </div>
+
+    <div class="nav-container">
+        <button class="nav-btn" id="prev-btn" onclick="prevSlide()">← Previous</button>
+        <button class="nav-btn" id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = document.querySelectorAll('.slide').length;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+
+            if (n > totalSlides) currentSlide = totalSlides;
+            if (n < 1) currentSlide = 1;
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('current-slide').textContent = currentSlide;
+
+            // Update button states
+            document.getElementById('prev-btn').disabled = currentSlide === 1;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides;
+        }
+
+        function nextSlide() {
+            currentSlide++;
+            showSlide(currentSlide);
+        }
+
+        function prevSlide() {
+            currentSlide--;
+            showSlide(currentSlide);
+        }
+
+        // Copy starter code function
+        function copyStarterCode() {
+            const codeText = `// Lesson 7: IR Sensor Fundamentals and Reading
+// Starter Code for Lab Exercises
+
+// IR Sensor pin definitions
+const int SENSOR_1 = 6;   // Far left
+const int SENSOR_2 = 7;   // Left
+const int SENSOR_3 = 8;   // Center
+const int SENSOR_4 = 9;   // Right
+const int SENSOR_5 = 10;  // Far right
+
+void setup() {
+  // Set all sensor pins as inputs
+  pinMode(SENSOR_1, INPUT);
+  pinMode(SENSOR_2, INPUT);
+  pinMode(SENSOR_3, INPUT);
+  pinMode(SENSOR_4, INPUT);
+  pinMode(SENSOR_5, INPUT);
+
+  // Start serial communication for debugging
+  Serial.begin(9600);
+  Serial.println("IR Sensor Test Starting...");
+}
+
+void loop() {
+  // TODO: Read all sensors
+  // TODO: Print sensor values to Serial Monitor
+  // TODO: Add your code here!
+
+  delay(200);  // Small delay for readability
+}`;
+
+            navigator.clipboard.writeText(codeText).then(function() {
+                alert('✅ Code copied to clipboard!');
+            }, function(err) {
+                alert('❌ Failed to copy code. Please copy manually from the code block.');
+            });
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight') nextSlide();
+            if (event.key === 'ArrowLeft') prevSlide();
+        });
+
+        // Initialize
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 9: PID Control for Line Following</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .slide {
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            background: rgba(26, 31, 58, 0.95);
+            border-radius: 20px;
+            border: 3px solid #00d4ff;
+            box-shadow: 0 20px 80px rgba(0, 212, 255, 0.3);
+            padding: 60px;
+            display: none;
+            flex-direction: column;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .lesson-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: #00d4ff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            color: #00d4ff;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            color: #00d4ff;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: #ff9500;
+            margin: 25px 0 15px 0;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #b8c5d6;
+            text-align: center;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 20px 0;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .concept-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 149, 0, 0.05) 100%);
+            border: 2px solid rgba(255, 149, 0, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, rgba(80, 250, 123, 0.1) 0%, rgba(80, 250, 123, 0.05) 100%);
+            border: 2px solid rgba(80, 250, 123, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+
+        .code-block {
+            background: #0d1117;
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 40px 25px 25px 25px;
+            margin: 15px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            line-height: 1.5;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+            position: relative;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 350px;
+            white-space: pre;
+        }
+
+        .code-block::before {
+            content: 'Arduino Code';
+            position: absolute;
+            top: 8px;
+            left: 20px;
+            background: transparent;
+            padding: 0;
+            font-size: 0.7rem;
+            color: #00d4ff;
+            font-weight: 700;
+            opacity: 0.6;
+        }
+
+        .code-comment {
+            color: #6c6c6c;
+        }
+
+        .code-keyword {
+            color: #ff6ac1;
+        }
+
+        .code-function {
+            color: #5af78e;
+        }
+
+        .code-number {
+            color: #f1fa8c;
+        }
+
+        .code-string {
+            color: #e9c46a;
+        }
+
+        ul, ol {
+            margin-left: 30px;
+            line-height: 2;
+        }
+
+        li {
+            margin: 10px 0;
+            font-size: 1.1rem;
+        }
+
+        .highlight {
+            color: #00d4ff;
+            font-weight: 700;
+        }
+
+        .emphasis {
+            color: #ff9500;
+            font-weight: 700;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1rem;
+        }
+
+        th {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            padding: 15px;
+            text-align: left;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        td {
+            padding: 12px 15px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        tr:nth-child(even) {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .diagram {
+            background: rgba(10, 14, 39, 0.5);
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+        }
+
+        .arrow {
+            color: #ff9500;
+            font-size: 1.5rem;
+            margin: 10px 0;
+        }
+
+        /* Navigation */
+        .nav-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .nav-btn:hover {
+            background: linear-gradient(135deg, #00eeff, #00bbee);
+            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(0, 212, 255, 0.2);
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            border: 2px solid rgba(0, 212, 255, 0.5);
+        }
+
+        .flowchart {
+            background: rgba(10, 14, 39, 0.5);
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .flow-step {
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .flow-decision {
+            background: rgba(255, 149, 0, 0.1);
+            border: 2px solid rgba(255, 149, 0, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .formula {
+            background: rgba(255, 149, 0, 0.05);
+            border: 2px solid rgba(255, 149, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.3rem;
+            color: #f1fa8c;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-header">
+                <div class="lesson-label">Unit 5: Introduction to Programming • Lesson 9</div>
+                <h1>PID Control for Line Following</h1>
+                <p class="subtitle">Smooth, Proportional Control for Superior Performance</p>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3 style="text-align: center; color: #00d4ff; margin-top: 0;">What You'll Learn Today</h3>
+                    <ul style="font-size: 1.2rem; line-height: 2.2;">
+                        <li>Why bang-bang control causes zigzag motion</li>
+                        <li>What PID control is and how it works</li>
+                        <li>Calculating position error from sensor array</li>
+                        <li>Using Proportional (P) control for smooth following</li>
+                        <li>Adding Derivative (D) to reduce oscillation</li>
+                        <li>Tuning PID constants for optimal performance</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Why PID? -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Why Do We Need PID Control?</h2>
+            </div>
+            <div class="content">
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Bang-Bang Control Limitations</h3>
+                        <ul>
+                            <li><span class="emphasis">Binary decisions:</span> Always turns at full power</li>
+                            <li><span class="emphasis">Zigzag motion:</span> Robot oscillates around the line</li>
+                            <li><span class="emphasis">Slow speeds:</span> Must go slow to avoid overshooting</li>
+                            <li><span class="emphasis">Poor efficiency:</span> Constant jerky corrections</li>
+                        </ul>
+
+                        <div class="warning-box">
+                            <strong>Problem:</strong> Small errors get the same correction as large errors. This causes overcorrection and oscillation!
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <h3>PID Control Advantages</h3>
+                        <ul>
+                            <li><span class="highlight">Proportional response:</span> Small errors = small corrections</li>
+                            <li><span class="highlight">Smooth motion:</span> Robot follows line gracefully</li>
+                            <li><span class="highlight">Higher speeds:</span> Can go faster while staying on track</li>
+                            <li><span class="highlight">Better accuracy:</span> Stays closer to center line</li>
+                        </ul>
+
+                        <div class="success-box">
+                            <strong>Result:</strong> Your robot will follow lines 2-3x faster with smoother, more accurate motion!
+                        </div>
+                    </div>
+                </div>
+
+                <div class="diagram">
+                    <div style="color: #ff9500; font-size: 1.3rem; margin-bottom: 15px;">Motion Comparison</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 0.9rem;">
+                        <div>
+                            <div style="color: #ff6b7a; margin-bottom: 10px;">Bang-Bang Control</div>
+                            <div style="font-size: 2rem;">〰️ 〰️ 〰️</div>
+                            <div style="margin-top: 10px;">Zigzag, jerky</div>
+                        </div>
+                        <div>
+                            <div style="color: #50fa7b; margin-bottom: 10px;">PID Control</div>
+                            <div style="font-size: 2rem;">━━━━━</div>
+                            <div style="margin-top: 10px;">Smooth, straight</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: What is PID? -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>What is PID Control?</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>PID Stands For:</h3>
+                    <ul style="font-size: 1.2rem;">
+                        <li><span class="highlight">P</span> = Proportional (responds to current error)</li>
+                        <li><span class="highlight">I</span> = Integral (responds to accumulated error over time)</li>
+                        <li><span class="highlight">D</span> = Derivative (responds to rate of change of error)</li>
+                    </ul>
+                </div>
+
+                <div class="formula">
+                    correction = Kp × error + Ki × integral + Kd × derivative
+                </div>
+
+                <div class="two-column">
+                    <div class="column">
+                        <div class="concept-box">
+                            <h3>For Beginners: Start Simple!</h3>
+                            <p style="margin: 10px 0; font-size: 1.1rem;">We'll focus on <span class="highlight">P and D only</span>. The Integral term is rarely needed for line following.</p>
+                            <div class="formula" style="font-size: 1.1rem; margin-top: 15px;">
+                                correction = Kp × error + Kd × derivative
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="success-box">
+                            <h3>What Each Term Does</h3>
+                            <ul style="font-size: 1rem;">
+                                <li><strong>P (Proportional):</strong> Main correction - makes robot turn toward line</li>
+                                <li><strong>D (Derivative):</strong> Dampening - reduces wobbling and overshooting</li>
+                                <li><strong>I (Integral):</strong> Fixes steady-state error - not needed for our robot!</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="warning-box">
+                    <strong>Learning Approach:</strong> First implement P-only control to understand the concept. Then add D to improve performance. This makes tuning much easier!
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: The Proportional (P) Term -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>The Proportional (P) Term</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>The Key Concept</h3>
+                    <p style="font-size: 1.2rem; margin: 15px 0;">The correction is <span class="highlight">proportional</span> to the error. Big error = big correction. Small error = small correction.</p>
+                </div>
+
+                <div class="formula">
+                    correction = Kp × error
+                </div>
+
+                <div class="two-column">
+                    <div class="column">
+                        <div class="concept-box">
+                            <h3>Understanding Kp</h3>
+                            <ul style="font-size: 1rem;">
+                                <li><strong>Kp</strong> = Proportional constant (you tune this!)</li>
+                                <li>Higher Kp = stronger, faster corrections</li>
+                                <li>Lower Kp = gentler, slower corrections</li>
+                                <li>Typical range: <span class="highlight">20 to 50</span></li>
+                            </ul>
+                        </div>
+
+                        <div class="warning-box">
+                            <strong>Too High:</strong> Robot oscillates wildly<br>
+                            <strong>Too Low:</strong> Robot can't correct fast enough
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <table style="font-size: 0.9rem;">
+                            <tr>
+                                <th>Error</th>
+                                <th>Kp = 30</th>
+                                <th>Correction</th>
+                            </tr>
+                            <tr>
+                                <td>-2 (far left)</td>
+                                <td>30</td>
+                                <td style="color: #50fa7b;">-60 (turn left)</td>
+                            </tr>
+                            <tr>
+                                <td>-1 (slight left)</td>
+                                <td>30</td>
+                                <td style="color: #50fa7b;">-30 (gentle left)</td>
+                            </tr>
+                            <tr>
+                                <td>0 (centered)</td>
+                                <td>30</td>
+                                <td style="color: #f1fa8c;">0 (straight)</td>
+                            </tr>
+                            <tr>
+                                <td>+1 (slight right)</td>
+                                <td>30</td>
+                                <td style="color: #50fa7b;">+30 (gentle right)</td>
+                            </tr>
+                            <tr>
+                                <td>+2 (far right)</td>
+                                <td>30</td>
+                                <td style="color: #50fa7b;">+60 (turn right)</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="success-box">
+                    <strong>Key Insight:</strong> Notice how the correction scales with the error! This is what makes PID control smooth and efficient.
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Calculating Position Error -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Calculating Position Error from Sensors</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>Weighted Average Position</h3>
+                    <p style="margin: 10px 0;">We assign each sensor a position value, then calculate where the robot thinks the line is based on which sensors detect it.</p>
+                </div>
+
+                <div class="diagram">
+                    <div style="color: #ff9500; font-size: 1.2rem; margin-bottom: 15px;">Sensor Position Values</div>
+                    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; font-size: 0.9rem;">
+                        <div style="border: 2px solid #00d4ff; padding: 15px; border-radius: 8px;">
+                            <div style="color: #00d4ff;">S1</div>
+                            <div style="font-size: 1.5rem; margin: 10px 0; color: #f1fa8c;">-2</div>
+                            <div>Far Left</div>
+                        </div>
+                        <div style="border: 2px solid #00d4ff; padding: 15px; border-radius: 8px;">
+                            <div style="color: #00d4ff;">S2</div>
+                            <div style="font-size: 1.5rem; margin: 10px 0; color: #f1fa8c;">-1</div>
+                            <div>Left</div>
+                        </div>
+                        <div style="border: 2px solid #50fa7b; padding: 15px; border-radius: 8px; background: rgba(80, 250, 123, 0.1);">
+                            <div style="color: #50fa7b;">S3</div>
+                            <div style="font-size: 1.5rem; margin: 10px 0; color: #f1fa8c;">0</div>
+                            <div>Center</div>
+                        </div>
+                        <div style="border: 2px solid #00d4ff; padding: 15px; border-radius: 8px;">
+                            <div style="color: #00d4ff;">S4</div>
+                            <div style="font-size: 1.5rem; margin: 10px 0; color: #f1fa8c;">+1</div>
+                            <div>Right</div>
+                        </div>
+                        <div style="border: 2px solid #00d4ff; padding: 15px; border-radius: 8px;">
+                            <div style="color: #00d4ff;">S5</div>
+                            <div style="font-size: 1.5rem; margin: 10px 0; color: #f1fa8c;">+2</div>
+                            <div>Far Right</div>
+                        </div>
+                    </div>
+                </div>
+
+                <table>
+                    <tr>
+                        <th>Sensor Pattern</th>
+                        <th>Binary</th>
+                        <th>Position Error</th>
+                        <th>Meaning</th>
+                    </tr>
+                    <tr>
+                        <td>Only S3 sees line</td>
+                        <td style="font-family: 'JetBrains Mono', monospace;">00100</td>
+                        <td style="color: #50fa7b; font-size: 1.2rem;">0</td>
+                        <td>Perfectly centered</td>
+                    </tr>
+                    <tr>
+                        <td>Only S2 sees line</td>
+                        <td style="font-family: 'JetBrains Mono', monospace;">01000</td>
+                        <td style="color: #f1fa8c; font-size: 1.2rem;">-1</td>
+                        <td>Line slightly left</td>
+                    </tr>
+                    <tr>
+                        <td>Only S4 sees line</td>
+                        <td style="font-family: 'JetBrains Mono', monospace;">00010</td>
+                        <td style="color: #f1fa8c; font-size: 1.2rem;">+1</td>
+                        <td>Line slightly right</td>
+                    </tr>
+                    <tr>
+                        <td>Only S1 sees line</td>
+                        <td style="font-family: 'JetBrains Mono', monospace;">10000</td>
+                        <td style="color: #ff6b7a; font-size: 1.2rem;">-2</td>
+                        <td>Line far left</td>
+                    </tr>
+                    <tr>
+                        <td>Only S5 sees line</td>
+                        <td style="font-family: 'JetBrains Mono', monospace;">00001</td>
+                        <td style="color: #ff6b7a; font-size: 1.2rem;">+2</td>
+                        <td>Line far right</td>
+                    </tr>
+                    <tr>
+                        <td>S2 and S3 see line</td>
+                        <td style="font-family: 'JetBrains Mono', monospace;">01100</td>
+                        <td style="color: #f1fa8c; font-size: 1.2rem;">-0.5</td>
+                        <td>Between left and center</td>
+                    </tr>
+                </table>
+
+                <div class="warning-box">
+                    <strong>Remember:</strong> Negative error = line is left, robot should turn left. Positive error = line is right, robot should turn right.
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Using Error to Adjust Motor Speeds -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Using Error to Adjust Motor Speeds</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>The Motor Speed Formula</h3>
+                    <p style="margin: 15px 0; font-size: 1.1rem;">Once we have the correction value, we adjust each motor's speed:</p>
+                </div>
+
+                <div class="formula" style="font-size: 1.1rem;">
+                    Left Motor = baseSpeed - correction<br>
+                    Right Motor = baseSpeed + correction
+                </div>
+
+                <div class="two-column">
+                    <div class="column">
+                        <div class="success-box">
+                            <h3>How It Works</h3>
+                            <ul style="font-size: 1rem;">
+                                <li><strong>Error = 0:</strong> Both motors same speed → straight</li>
+                                <li><strong>Error &lt; 0:</strong> Right motor faster → turn left</li>
+                                <li><strong>Error &gt; 0:</strong> Left motor faster → turn right</li>
+                            </ul>
+                        </div>
+
+                        <div class="concept-box">
+                            <h3>Example: baseSpeed = 150, Kp = 30</h3>
+                            <div style="margin: 10px 0; font-size: 0.9rem;">
+                                <strong>Error = -1 (line slightly left)</strong><br>
+                                correction = 30 × (-1) = -30<br>
+                                <span class="highlight">Left: 150 - (-30) = 180</span><br>
+                                <span class="highlight">Right: 150 + (-30) = 120</span><br>
+                                → Right motor slows, robot turns left
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="diagram">
+                            <div style="color: #ff9500; font-size: 1.2rem; margin-bottom: 15px;">Motor Speed Adjustments</div>
+                            <table style="font-size: 0.85rem;">
+                                <tr>
+                                    <th>Error</th>
+                                    <th>Correction</th>
+                                    <th>Left Motor</th>
+                                    <th>Right Motor</th>
+                                    <th>Result</th>
+                                </tr>
+                                <tr>
+                                    <td>-2</td>
+                                    <td>-60</td>
+                                    <td style="color: #50fa7b;">210</td>
+                                    <td style="color: #ff6b7a;">90</td>
+                                    <td>Sharp left</td>
+                                </tr>
+                                <tr>
+                                    <td>-1</td>
+                                    <td>-30</td>
+                                    <td style="color: #50fa7b;">180</td>
+                                    <td style="color: #f1fa8c;">120</td>
+                                    <td>Gentle left</td>
+                                </tr>
+                                <tr>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td style="color: #50fa7b;">150</td>
+                                    <td style="color: #50fa7b;">150</td>
+                                    <td>Straight</td>
+                                </tr>
+                                <tr>
+                                    <td>+1</td>
+                                    <td>+30</td>
+                                    <td style="color: #f1fa8c;">120</td>
+                                    <td style="color: #50fa7b;">180</td>
+                                    <td>Gentle right</td>
+                                </tr>
+                                <tr>
+                                    <td>+2</td>
+                                    <td>+60</td>
+                                    <td style="color: #ff6b7a;">90</td>
+                                    <td style="color: #50fa7b;">210</td>
+                                    <td>Sharp right</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="warning-box">
+                    <strong>Important:</strong> Always use constrain(speed, 0, 255) to keep motor speeds in valid range! Negative speeds or speeds above 255 will cause problems.
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: P-Only Control Implementation -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>P-Only Control Implementation</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>Start with Proportional Control Only</h3>
+                    <p style="margin: 10px 0;">Before adding complexity, get P-only control working well. This teaches you the fundamentals!</p>
+                </div>
+
+                <div class="code-block" style="font-size: 0.85rem; max-height: 420px;"><span class="code-comment">// P-Only Line Following Controller</span>
+
+<span class="code-comment">// PID Constants</span>
+<span class="code-keyword">const float</span> Kp = <span class="code-number">30.0</span>;          <span class="code-comment">// Proportional constant (tune this!)</span>
+<span class="code-keyword">const int</span> baseSpeed = <span class="code-number">150</span>;     <span class="code-comment">// Base motor speed</span>
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Step 1: Calculate position error from sensors</span>
+  <span class="code-keyword">int</span> error = <span class="code-function">getPositionError</span>();
+
+  <span class="code-comment">// Step 2: Calculate P correction</span>
+  <span class="code-keyword">float</span> correction = Kp * error;
+
+  <span class="code-comment">// Step 3: Adjust motor speeds</span>
+  <span class="code-keyword">int</span> leftSpeed = baseSpeed - correction;
+  <span class="code-keyword">int</span> rightSpeed = baseSpeed + correction;
+
+  <span class="code-comment">// Step 4: Constrain to valid range (0-255)</span>
+  leftSpeed = <span class="code-function">constrain</span>(leftSpeed, <span class="code-number">0</span>, <span class="code-number">255</span>);
+  rightSpeed = <span class="code-function">constrain</span>(rightSpeed, <span class="code-number">0</span>, <span class="code-number">255</span>);
+
+  <span class="code-comment">// Step 5: Apply to motors</span>
+  <span class="code-function">setMotorSpeeds</span>(leftSpeed, rightSpeed);
+}
+
+<span class="code-comment">// Returns position error based on sensor readings</span>
+<span class="code-comment">// Negative = line is left, Positive = line is right</span>
+<span class="code-keyword">int</span> <span class="code-function">getPositionError</span>() {
+  <span class="code-comment">// Read all 5 sensors (LOW = black line detected)</span>
+  <span class="code-keyword">int</span> s1 = <span class="code-function">digitalRead</span>(SENSOR_1);
+  <span class="code-keyword">int</span> s2 = <span class="code-function">digitalRead</span>(SENSOR_2);
+  <span class="code-keyword">int</span> s3 = <span class="code-function">digitalRead</span>(SENSOR_3);
+  <span class="code-keyword">int</span> s4 = <span class="code-function">digitalRead</span>(SENSOR_4);
+  <span class="code-keyword">int</span> s5 = <span class="code-function">digitalRead</span>(SENSOR_5);
+
+  <span class="code-comment">// Simple position calculation</span>
+  <span class="code-keyword">if</span> (s1 == <span class="code-number">LOW</span>) <span class="code-keyword">return</span> <span class="code-number">-2</span>;      <span class="code-comment">// Far left</span>
+  <span class="code-keyword">else if</span> (s2 == <span class="code-number">LOW</span>) <span class="code-keyword">return</span> <span class="code-number">-1</span>; <span class="code-comment">// Left</span>
+  <span class="code-keyword">else if</span> (s3 == <span class="code-number">LOW</span>) <span class="code-keyword">return</span> <span class="code-number">0</span>;  <span class="code-comment">// Center</span>
+  <span class="code-keyword">else if</span> (s4 == <span class="code-number">LOW</span>) <span class="code-keyword">return</span> <span class="code-number">1</span>;  <span class="code-comment">// Right</span>
+  <span class="code-keyword">else if</span> (s5 == <span class="code-number">LOW</span>) <span class="code-keyword">return</span> <span class="code-number">2</span>;  <span class="code-comment">// Far right</span>
+  <span class="code-keyword">return</span> <span class="code-number">0</span>;  <span class="code-comment">// Default: assume centered if no sensors detect line</span>
+}</div>
+
+                <div class="success-box">
+                    <h3>What You'll Notice</h3>
+                    <ul style="font-size: 1rem;">
+                        <li>Much smoother motion than bang-bang control</li>
+                        <li>Robot makes small adjustments continuously</li>
+                        <li>May still oscillate slightly - that's where D comes in!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: The Derivative (D) Term -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>The Derivative (D) Term</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>Why Add Derivative?</h3>
+                    <p style="font-size: 1.1rem; margin: 15px 0;">The D term responds to how <span class="highlight">fast</span> the error is changing. It helps prevent overshooting and reduces wobbling.</p>
+                </div>
+
+                <div class="formula">
+                    derivative = error - lastError
+                </div>
+
+                <div class="two-column">
+                    <div class="column">
+                        <div class="success-box">
+                            <h3>What D Does</h3>
+                            <ul style="font-size: 1rem;">
+                                <li><strong>Dampens oscillation:</strong> Reduces back-and-forth wobbling</li>
+                                <li><strong>Predicts future error:</strong> Starts correcting before error gets large</li>
+                                <li><strong>Smooths response:</strong> Makes corrections more gradual</li>
+                            </ul>
+                        </div>
+
+                        <div class="concept-box">
+                            <h3>Understanding Kd</h3>
+                            <ul style="font-size: 1rem;">
+                                <li><strong>Kd</strong> = Derivative constant</li>
+                                <li>Higher Kd = more dampening</li>
+                                <li>Typical range: <span class="highlight">5 to 20</span></li>
+                                <li>Start with Kd = Kp / 3</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="diagram">
+                            <div style="color: #ff9500; font-size: 1.2rem; margin-bottom: 15px;">How D Helps</div>
+                            <div style="text-align: left; font-size: 0.9rem;">
+                                <div style="margin: 15px 0;">
+                                    <strong style="color: #00d4ff;">Scenario: Robot crossing center line</strong>
+                                </div>
+                                <div style="margin: 10px 0;">
+                                    Last error: -1 (line was left)<br>
+                                    Current error: +1 (line now right)<br>
+                                    <span class="highlight">Derivative: +1 - (-1) = +2</span>
+                                </div>
+                                <div style="margin: 15px 0; padding: 15px; background: rgba(255, 149, 0, 0.1); border-radius: 8px;">
+                                    This large positive derivative tells the robot:<br>
+                                    <span class="emphasis">"Whoa! You're turning too fast left!"</span><br>
+                                    The D term adds a counteracting force to slow down the turn.
+                                </div>
+                                <div style="margin: 15px 0; color: #50fa7b;">
+                                    <strong>Result:</strong> Robot smoothly approaches center instead of overshooting and oscillating.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="warning-box">
+                    <strong>Tuning Tip:</strong> If Kd is too high, robot becomes sluggish and responds slowly. If too low, you still get oscillation. Find the sweet spot!
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Complete P+D Controller Example -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Complete P+D Controller Example</h2>
+            </div>
+            <div class="content">
+                <div class="code-block" style="font-size: 0.75rem; max-height: 450px;"><span class="code-comment">// Full PD Line Following Controller</span>
+
+<span class="code-comment">// PID Constants (tune these!)</span>
+<span class="code-keyword">const float</span> Kp = <span class="code-number">30.0</span>;          <span class="code-comment">// Proportional constant</span>
+<span class="code-keyword">const float</span> Kd = <span class="code-number">10.0</span>;          <span class="code-comment">// Derivative constant</span>
+<span class="code-keyword">const int</span> baseSpeed = <span class="code-number">150</span>;     <span class="code-comment">// Base motor speed</span>
+
+<span class="code-comment">// Variables to track error over time</span>
+<span class="code-keyword">int</span> lastError = <span class="code-number">0</span>;             <span class="code-comment">// Previous error for derivative</span>
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Step 1: Read sensors and calculate current error</span>
+  <span class="code-keyword">int</span> error = <span class="code-function">getPositionError</span>();
+
+  <span class="code-comment">// Step 2: Calculate derivative (rate of change of error)</span>
+  <span class="code-keyword">int</span> derivative = error - lastError;
+
+  <span class="code-comment">// Step 3: Calculate total correction (P + D)</span>
+  <span class="code-keyword">float</span> correction = (Kp * error) + (Kd * derivative);
+
+  <span class="code-comment">// Step 4: Calculate motor speeds</span>
+  <span class="code-keyword">int</span> leftSpeed = baseSpeed - correction;
+  <span class="code-keyword">int</span> rightSpeed = baseSpeed + correction;
+
+  <span class="code-comment">// Step 5: Constrain to valid range</span>
+  leftSpeed = <span class="code-function">constrain</span>(leftSpeed, <span class="code-number">0</span>, <span class="code-number">255</span>);
+  rightSpeed = <span class="code-function">constrain</span>(rightSpeed, <span class="code-number">0</span>, <span class="code-number">255</span>);
+
+  <span class="code-comment">// Step 6: Apply to motors</span>
+  <span class="code-function">setMotorSpeeds</span>(leftSpeed, rightSpeed);
+
+  <span class="code-comment">// Step 7: Save current error for next iteration</span>
+  lastError = error;
+}
+
+<span class="code-comment">// Motor control function using analogWrite for variable speed</span>
+<span class="code-keyword">void</span> <span class="code-function">setMotorSpeeds</span>(<span class="code-keyword">int</span> leftSpeed, <span class="code-keyword">int</span> rightSpeed) {
+  <span class="code-comment">// Left motor</span>
+  <span class="code-keyword">if</span> (leftSpeed >= <span class="code-number">0</span>) {
+    <span class="code-function">analogWrite</span>(LEFT_MOTOR_PIN1, leftSpeed);
+    <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
+  } <span class="code-keyword">else</span> {
+    <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, LOW);
+    <span class="code-function">analogWrite</span>(LEFT_MOTOR_PIN2, -leftSpeed);
+  }
+
+  <span class="code-comment">// Right motor</span>
+  <span class="code-keyword">if</span> (rightSpeed >= <span class="code-number">0</span>) {
+    <span class="code-function">analogWrite</span>(RIGHT_MOTOR_PIN1, rightSpeed);
+    <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, LOW);
+  } <span class="code-keyword">else</span> {
+    <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, LOW);
+    <span class="code-function">analogWrite</span>(RIGHT_MOTOR_PIN2, -rightSpeed);
+  }
+}
+
+<span class="code-comment">// Get position error from sensors</span>
+<span class="code-keyword">int</span> <span class="code-function">getPositionError</span>() {
+  <span class="code-keyword">int</span> s1 = <span class="code-function">digitalRead</span>(SENSOR_1);
+  <span class="code-keyword">int</span> s2 = <span class="code-function">digitalRead</span>(SENSOR_2);
+  <span class="code-keyword">int</span> s3 = <span class="code-function">digitalRead</span>(SENSOR_3);
+  <span class="code-keyword">int</span> s4 = <span class="code-function">digitalRead</span>(SENSOR_4);
+  <span class="code-keyword">int</span> s5 = <span class="code-function">digitalRead</span>(SENSOR_5);
+
+  <span class="code-comment">// Return position based on which sensor(s) see the line</span>
+  <span class="code-keyword">if</span> (s1 == <span class="code-number">LOW</span>) <span class="code-keyword">return</span> <span class="code-number">-2</span>;
+  <span class="code-keyword">else if</span> (s2 == <span class="code-number">LOW</span>) <span class="code-keyword">return</span> <span class="code-number">-1</span>;
+  <span class="code-keyword">else if</span> (s3 == <span class="code-number">LOW</span>) <span class="code-keyword">return</span> <span class="code-number">0</span>;
+  <span class="code-keyword">else if</span> (s4 == <span class="code-number">LOW</span>) <span class="code-keyword">return</span> <span class="code-number">1</span>;
+  <span class="code-keyword">else if</span> (s5 == <span class="code-number">LOW</span>) <span class="code-keyword">return</span> <span class="code-number">2</span>;
+  <span class="code-keyword">return</span> lastError;  <span class="code-comment">// If no line detected, maintain last known position</span>
+}</div>
+
+                <div class="success-box">
+                    <h3>Key Points</h3>
+                    <ul style="font-size: 1rem;">
+                        <li>Notice how we save <code>lastError</code> at the end of each loop</li>
+                        <li>The derivative is simply the change in error since last reading</li>
+                        <li>Both P and D terms are added together for total correction</li>
+                        <li>Always constrain motor speeds to prevent invalid values</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Tuning PID Constants -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Tuning PID Constants</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>Step-by-Step Tuning Process</h3>
+                    <p style="margin: 10px 0;">Tuning is the process of finding the best Kp and Kd values for your robot. It requires experimentation!</p>
+                </div>
+
+                <div class="flowchart">
+                    <div style="text-align: center; color: #00d4ff; font-size: 1.2rem; margin-bottom: 20px;">PID Tuning Workflow</div>
+
+                    <div class="flow-step">STEP 1: Set Kd = 0 (disable derivative)</div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-step">STEP 2: Start with Kp = 20</div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-decision">Test on track - Does it follow?</div>
+                    <div class="arrow">↓ If too gentle</div>
+                    <div class="flow-step">Increase Kp by 5-10 and test again</div>
+                    <div class="arrow">↓ Repeat until...</div>
+                    <div class="flow-step" style="background: rgba(80, 250, 123, 0.1);">Robot follows but oscillates slightly</div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-step">STEP 3: Set Kd = Kp / 3</div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-decision">Does oscillation reduce?</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 15px 0;">
+                        <div>
+                            <div style="text-align: center;">YES ✓</div>
+                            <div class="arrow">↓</div>
+                            <div class="flow-step" style="background: rgba(80, 250, 123, 0.1);">Fine-tune: adjust Kd ±2</div>
+                        </div>
+                        <div>
+                            <div style="text-align: center;">NO - Sluggish</div>
+                            <div class="arrow">↓</div>
+                            <div class="flow-step" style="background: rgba(255, 149, 0, 0.1);">Reduce Kd by 2-3</div>
+                        </div>
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-step" style="background: rgba(80, 250, 123, 0.2); border-color: rgba(80, 250, 123, 0.5);">
+                        <strong>DONE! You have optimal PID values!</strong>
+                    </div>
+                </div>
+
+                <div class="two-column">
+                    <div class="column">
+                        <div class="warning-box">
+                            <h3>Common Symptoms</h3>
+                            <ul style="font-size: 0.9rem;">
+                                <li><strong>Kp too low:</strong> Slow response, can't make sharp turns</li>
+                                <li><strong>Kp too high:</strong> Wild oscillation, unstable</li>
+                                <li><strong>Kd too low:</strong> Some wobbling remains</li>
+                                <li><strong>Kd too high:</strong> Sluggish, slow to respond</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="success-box">
+                            <h3>Starting Values</h3>
+                            <table style="font-size: 0.9rem;">
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Recommended Start</th>
+                                </tr>
+                                <tr>
+                                    <td>baseSpeed</td>
+                                    <td style="color: #50fa7b;">150</td>
+                                </tr>
+                                <tr>
+                                    <td>Kp</td>
+                                    <td style="color: #50fa7b;">30</td>
+                                </tr>
+                                <tr>
+                                    <td>Kd</td>
+                                    <td style="color: #50fa7b;">10</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="concept-box">
+                    <h3>Pro Tips</h3>
+                    <ul style="font-size: 1rem;">
+                        <li>Test on the same track section for consistency</li>
+                        <li>Make ONE change at a time</li>
+                        <li>Write down all values you test</li>
+                        <li>Once tuned, you can increase baseSpeed for faster following!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Lab Exercises -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Lab Time: Build Your PID Controller!</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box" style="margin-bottom: 20px;">
+                    <h3 style="margin-top: 0;">Starter Code</h3>
+                    <p style="margin: 10px 0;">File: <span class="highlight">Lesson_09_Starter_Code.ino</span> (or copy below)</p>
+                    <div style="position: relative;">
+                        <button onclick="copyStarterCode()" style="position: absolute; top: 10px; right: 10px; background: #00d4ff; color: #0a0e27; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 0.9rem; z-index: 10;">Copy Code</button>
+                        <div class="code-block" id="starter-code" style="font-size: 0.65rem; max-height: 220px; overflow-y: auto; margin-top: 0;"><span class="code-comment">// Lesson 9: PID Control - Starter Code</span>
+<span class="code-comment">// Complete the TODOs to implement PID control</span>
+
+<span class="code-keyword">const float</span> Kp = <span class="code-number">30.0</span>;
+<span class="code-keyword">const float</span> Kd = <span class="code-number">10.0</span>;
+<span class="code-keyword">const int</span> baseSpeed = <span class="code-number">150</span>;
+<span class="code-keyword">int</span> lastError = <span class="code-number">0</span>;
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-keyword">int</span> error = <span class="code-function">getPositionError</span>();
+
+  <span class="code-comment">// TODO: Calculate derivative</span>
+
+  <span class="code-comment">// TODO: Calculate correction using P and D</span>
+
+  <span class="code-comment">// TODO: Calculate motor speeds and constrain them</span>
+
+  <span class="code-comment">// TODO: Apply speeds to motors</span>
+
+  <span class="code-comment">// TODO: Update lastError</span>
+}</div>
+                    </div>
+                </div>
+
+                <div class="success-box">
+                    <h3>Exercise 1: Implement P-Only Controller (15 min)</h3>
+                    <ol style="font-size: 1rem;">
+                        <li>Complete the starter code with P-only control (set Kd = 0)</li>
+                        <li>Implement error calculation and motor speed adjustment</li>
+                        <li>Test on your track - it should follow smoothly!</li>
+                        <li>Compare to bang-bang control from Lesson 8</li>
+                    </ol>
+                </div>
+
+                <div class="success-box">
+                    <h3>Exercise 2: Tune Kp for Your Robot (10 min)</h3>
+                    <ol style="font-size: 1rem;">
+                        <li>Start with Kp = 20, test on a straight section</li>
+                        <li>If response is too weak, increase Kp by 5</li>
+                        <li>If robot oscillates wildly, decrease Kp by 5</li>
+                        <li>Find the highest Kp that doesn't oscillate too much</li>
+                    </ol>
+                </div>
+
+                <div class="success-box">
+                    <h3>Exercise 3: Add D Term to Reduce Wobbling (15 min)</h3>
+                    <ol style="font-size: 1rem;">
+                        <li>Add derivative calculation: <code>derivative = error - lastError</code></li>
+                        <li>Update correction: <code>correction = Kp * error + Kd * derivative</code></li>
+                        <li>Start with Kd = Kp / 3</li>
+                        <li>Test and adjust Kd until motion is smooth</li>
+                        <li>Save lastError at end of loop!</li>
+                    </ol>
+                </div>
+
+                <div class="success-box">
+                    <h3>Exercise 4: Optimize for Speed (10 min)</h3>
+                    <ol style="font-size: 1rem;">
+                        <li>Once PD is tuned, gradually increase baseSpeed</li>
+                        <li>Test: 150 → 170 → 190 → 200</li>
+                        <li>May need to adjust Kp/Kd for higher speeds</li>
+                        <li>Find maximum speed that still follows reliably</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Advanced Topics and Next Steps -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Advanced Topics and Next Steps</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>Weighted Sensor Reading (Advanced)</h3>
+                    <p style="margin: 10px 0;">For even better accuracy, use weighted average when multiple sensors detect the line:</p>
+                    <div class="code-block" style="font-size: 0.75rem; max-height: 200px;"><span class="code-keyword">int</span> <span class="code-function">getPositionError</span>() {
+  <span class="code-keyword">int</span> s1 = <span class="code-function">digitalRead</span>(SENSOR_1) == <span class="code-number">LOW</span> ? <span class="code-number">1</span> : <span class="code-number">0</span>;
+  <span class="code-keyword">int</span> s2 = <span class="code-function">digitalRead</span>(SENSOR_2) == <span class="code-number">LOW</span> ? <span class="code-number">1</span> : <span class="code-number">0</span>;
+  <span class="code-keyword">int</span> s3 = <span class="code-function">digitalRead</span>(SENSOR_3) == <span class="code-number">LOW</span> ? <span class="code-number">1</span> : <span class="code-number">0</span>;
+  <span class="code-keyword">int</span> s4 = <span class="code-function">digitalRead</span>(SENSOR_4) == <span class="code-number">LOW</span> ? <span class="code-number">1</span> : <span class="code-number">0</span>;
+  <span class="code-keyword">int</span> s5 = <span class="code-function">digitalRead</span>(SENSOR_5) == <span class="code-number">LOW</span> ? <span class="code-number">1</span> : <span class="code-number">0</span>;
+
+  <span class="code-keyword">int</span> sum = s1 + s2 + s3 + s4 + s5;
+  <span class="code-keyword">if</span> (sum == <span class="code-number">0</span>) <span class="code-keyword">return</span> lastError;  <span class="code-comment">// No line detected</span>
+
+  <span class="code-keyword">int</span> weightedSum = (-<span class="code-number">2</span>*s1) + (-<span class="code-number">1</span>*s2) + (<span class="code-number">0</span>*s3) + (<span class="code-number">1</span>*s4) + (<span class="code-number">2</span>*s5);
+  <span class="code-keyword">return</span> weightedSum / sum;  <span class="code-comment">// Average position</span>
+}</div>
+                </div>
+
+                <div class="two-column">
+                    <div class="column">
+                        <div class="success-box">
+                            <h3>Challenge Ideas</h3>
+                            <ul style="font-size: 0.95rem;">
+                                <li>Implement line-lost recovery behavior</li>
+                                <li>Add analog sensor reading for finer resolution</li>
+                                <li>Detect and handle intersections</li>
+                                <li>Add speed ramping for smooth start/stop</li>
+                                <li>Implement gap jumping (continue forward briefly when line disappears)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="warning-box">
+                            <h3>When to Use Full PID</h3>
+                            <p style="margin: 10px 0; font-size: 0.95rem;">The Integral term is useful for:</p>
+                            <ul style="font-size: 0.9rem;">
+                                <li>Robots with systematic bias (one motor weaker)</li>
+                                <li>Following on slopes/inclines</li>
+                                <li>Eliminating steady-state error</li>
+                            </ul>
+                            <p style="margin: 10px 0; font-size: 0.95rem;">For most line followers, <span class="highlight">PD is sufficient!</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="concept-box">
+                    <h3>Real-World PID Applications</h3>
+                    <ul style="font-size: 1rem;">
+                        <li><strong>Cruise control:</strong> Maintains constant vehicle speed</li>
+                        <li><strong>Quadcopters:</strong> Stabilizes flight and maintains altitude</li>
+                        <li><strong>3D printers:</strong> Controls temperature of hotend and bed</li>
+                        <li><strong>Industrial robots:</strong> Precise position control of robot arms</li>
+                        <li><strong>HVAC systems:</strong> Temperature regulation in buildings</li>
+                    </ul>
+                </div>
+
+                <div class="success-box" style="text-align: center; padding: 30px; margin-top: 20px;">
+                    <h3 style="font-size: 1.8rem; color: #50fa7b;">Congratulations!</h3>
+                    <p style="font-size: 1.2rem; margin-top: 15px;">You've mastered PID control!</p>
+                    <p style="font-size: 1rem; margin-top: 10px;">This is one of the most important concepts in control systems and robotics.</p>
+                    <p style="font-size: 1rem; margin-top: 10px; color: #00d4ff;">Your robot can now follow lines faster and smoother than ever before!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">12</span>
+    </div>
+
+    <div class="nav-container">
+        <button class="nav-btn" id="prev-btn" onclick="prevSlide()">← Previous</button>
+        <button class="nav-btn" id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = document.querySelectorAll('.slide').length;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+
+            if (n > totalSlides) currentSlide = totalSlides;
+            if (n < 1) currentSlide = 1;
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('current-slide').textContent = currentSlide;
+
+            // Update button states
+            document.getElementById('prev-btn').disabled = currentSlide === 1;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides;
+        }
+
+        function nextSlide() {
+            currentSlide++;
+            showSlide(currentSlide);
+        }
+
+        function prevSlide() {
+            currentSlide--;
+            showSlide(currentSlide);
+        }
+
+        // Copy starter code function
+        function copyStarterCode() {
+            const codeText = `// Lesson 9: PID Control for Line Following
+// Starter Code for Lab Exercises
+
+// Motor pin definitions
+const int LEFT_MOTOR_PIN1 = 2;
+const int LEFT_MOTOR_PIN2 = 3;
+const int RIGHT_MOTOR_PIN1 = 4;
+const int RIGHT_MOTOR_PIN2 = 5;
+
+// Sensor pin definitions (all 5 sensors)
+const int SENSOR_1 = 6;   // Far left
+const int SENSOR_2 = 7;   // Left
+const int SENSOR_3 = 8;   // Center
+const int SENSOR_4 = 9;   // Right
+const int SENSOR_5 = 10;  // Far right
+
+// PID Constants - tune these!
+const float Kp = 30.0;      // Proportional constant
+const float Kd = 10.0;      // Derivative constant
+const int baseSpeed = 150;  // Base motor speed
+
+// Variables
+int lastError = 0;          // For derivative calculation
+
+void setup() {
+  // Set motor pins as outputs
+  pinMode(LEFT_MOTOR_PIN1, OUTPUT);
+  pinMode(LEFT_MOTOR_PIN2, OUTPUT);
+  pinMode(RIGHT_MOTOR_PIN1, OUTPUT);
+  pinMode(RIGHT_MOTOR_PIN2, OUTPUT);
+
+  // Set sensor pins as inputs
+  pinMode(SENSOR_1, INPUT);
+  pinMode(SENSOR_2, INPUT);
+  pinMode(SENSOR_3, INPUT);
+  pinMode(SENSOR_4, INPUT);
+  pinMode(SENSOR_5, INPUT);
+
+  // Optional: Serial for debugging
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Step 1: Get current position error
+  int error = getPositionError();
+
+  // TODO: Step 2 - Calculate derivative
+  // int derivative = error - lastError;
+
+  // TODO: Step 3 - Calculate correction (P + D)
+  // float correction = (Kp * error) + (Kd * derivative);
+
+  // TODO: Step 4 - Calculate motor speeds
+  // int leftSpeed = baseSpeed - correction;
+  // int rightSpeed = baseSpeed + correction;
+
+  // TODO: Step 5 - Constrain speeds to valid range (0-255)
+  // leftSpeed = constrain(leftSpeed, 0, 255);
+  // rightSpeed = constrain(rightSpeed, 0, 255);
+
+  // TODO: Step 6 - Apply speeds to motors
+  // setMotorSpeeds(leftSpeed, rightSpeed);
+
+  // TODO: Step 7 - Save current error for next iteration
+  // lastError = error;
+
+  // For debugging - uncomment to see error values
+  // Serial.print("Error: ");
+  // Serial.print(error);
+  // Serial.print(" | Correction: ");
+  // Serial.println(correction);
+}
+
+// Function to calculate position error from sensors
+// Returns: -2 to +2 (negative = left, positive = right)
+int getPositionError() {
+  // Read all sensors (LOW = black line detected)
+  int s1 = digitalRead(SENSOR_1);
+  int s2 = digitalRead(SENSOR_2);
+  int s3 = digitalRead(SENSOR_3);
+  int s4 = digitalRead(SENSOR_4);
+  int s5 = digitalRead(SENSOR_5);
+
+  // Simple position calculation
+  if (s1 == LOW) return -2;      // Far left
+  else if (s2 == LOW) return -1; // Left
+  else if (s3 == LOW) return 0;  // Center (perfect!)
+  else if (s4 == LOW) return 1;  // Right
+  else if (s5 == LOW) return 2;  // Far right
+
+  return lastError;  // No line detected - maintain last position
+}
+
+// Function to set motor speeds
+void setMotorSpeeds(int leftSpeed, int rightSpeed) {
+  // Left motor
+  if (leftSpeed >= 0) {
+    analogWrite(LEFT_MOTOR_PIN1, leftSpeed);
+    digitalWrite(LEFT_MOTOR_PIN2, LOW);
+  } else {
+    digitalWrite(LEFT_MOTOR_PIN1, LOW);
+    analogWrite(LEFT_MOTOR_PIN2, -leftSpeed);
+  }
+
+  // Right motor
+  if (rightSpeed >= 0) {
+    analogWrite(RIGHT_MOTOR_PIN1, rightSpeed);
+    digitalWrite(RIGHT_MOTOR_PIN2, LOW);
+  } else {
+    digitalWrite(RIGHT_MOTOR_PIN1, LOW);
+    analogWrite(RIGHT_MOTOR_PIN2, -rightSpeed);
+  }
+}`;
+
+            navigator.clipboard.writeText(codeText).then(function() {
+                alert('✅ Code copied to clipboard!');
+            }, function(err) {
+                alert('❌ Failed to copy code. Please copy manually from the code block.');
+            });
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight') nextSlide();
+            if (event.key === 'ArrowLeft') prevSlide();
+        });
+
+        // Initialize
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>
