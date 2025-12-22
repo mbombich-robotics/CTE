@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson 7: Basic Robot Motion Control</title>
+    <title>Lesson 6: Basic Robot Motion Control</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         * {
@@ -322,7 +322,7 @@
         <!-- Slide 1: Title -->
         <div class="slide active">
             <div class="slide-header">
-                <div class="lesson-label">Unit 5: Introduction to Programming • Lesson 7</div>
+                <div class="lesson-label">Unit 5: Introduction to Programming • Lesson 6</div>
                 <h1>Basic Robot Motion Control</h1>
                 <p class="subtitle">Time-Based Movement and Speed Control</p>
             </div>
@@ -410,8 +410,7 @@
                     </table>
                 </div>
 
-                <div class="code-block">
-<span class="code-comment">// Motor pin definitions</span>
+                <div class="code-block"><span class="code-comment">// Motor pin definitions</span>
 <span class="code-keyword">const int</span> LEFT_MOTOR_PIN1 = <span class="code-number">2</span>;
 <span class="code-keyword">const int</span> LEFT_MOTOR_PIN2 = <span class="code-number">3</span>;
 <span class="code-keyword">const int</span> RIGHT_MOTOR_PIN1 = <span class="code-number">4</span>;
@@ -423,8 +422,7 @@
   <span class="code-function">pinMode</span>(LEFT_MOTOR_PIN2, OUTPUT);
   <span class="code-function">pinMode</span>(RIGHT_MOTOR_PIN1, OUTPUT);
   <span class="code-function">pinMode</span>(RIGHT_MOTOR_PIN2, OUTPUT);
-}
-                </div>
+}</div>
             </div>
         </div>
 
@@ -465,8 +463,7 @@
                     </table>
                 </div>
 
-                <div class="code-block">
-<span class="code-comment">// Function to move forward</span>
+                <div class="code-block"><span class="code-comment">// Function to move forward</span>
 <span class="code-keyword">void</span> <span class="code-function">moveForward</span>() {
   <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, HIGH);
   <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
@@ -480,8 +477,7 @@
   <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
   <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, LOW);
   <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, LOW);
-}
-                </div>
+}</div>
             </div>
         </div>
 
@@ -491,8 +487,7 @@
                 <h2>Complete Movement Functions</h2>
             </div>
             <div class="content">
-                <div class="code-block" style="font-size: 0.85rem;">
-<span class="code-keyword">void</span> <span class="code-function">moveForward</span>() {
+                <div class="code-block" style="font-size: 0.85rem;"><span class="code-keyword">void</span> <span class="code-function">moveForward</span>() {
   <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, HIGH);
   <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
   <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, HIGH);
@@ -520,8 +515,7 @@
   <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
   <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, LOW);
   <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, HIGH);
-}
-                </div>
+}</div>
             </div>
         </div>
 
@@ -587,8 +581,7 @@
                     </ul>
                 </div>
 
-                <div class="code-block">
-<span class="code-comment">// Motor speed control (0-255)</span>
+                <div class="code-block"><span class="code-comment">// Motor speed control (0-255)</span>
 <span class="code-keyword">const int</span> MOTOR_SPEED = <span class="code-number">150</span>;  <span class="code-comment">// Medium speed</span>
 
 <span class="code-keyword">void</span> <span class="code-function">moveForward</span>(<span class="code-keyword">int</span> speed) {
@@ -600,8 +593,7 @@
 
 <span class="code-comment">// In loop:</span>
 <span class="code-function">moveForward</span>(<span class="code-number">100</span>);   <span class="code-comment">// Slow</span>
-<span class="code-function">moveForward</span>(<span class="code-number">200</span>);   <span class="code-comment">// Fast</span>
-                </div>
+<span class="code-function">moveForward</span>(<span class="code-number">200</span>);   <span class="code-comment">// Fast</span></div>
 
                 <div class="warning-box">
                     <strong>Note:</strong> Very low speeds (below 100) may not have enough power to move the robot. Start with 150 and adjust!
@@ -620,8 +612,7 @@
                     <p style="font-size: 1.1rem; margin: 15px 0;">Use <span class="highlight">delay()</span> to control how long the robot moves</p>
                 </div>
 
-                <div class="code-block">
-<span class="code-comment">// Move forward for 2 seconds</span>
+                <div class="code-block"><span class="code-comment">// Move forward for 2 seconds</span>
 <span class="code-function">moveForward</span>(<span class="code-number">150</span>);
 <span class="code-function">delay</span>(<span class="code-number">2000</span>);        <span class="code-comment">// 2000 milliseconds = 2 seconds</span>
 <span class="code-function">stopMotors</span>();
@@ -634,8 +625,7 @@
 <span class="code-comment">// Move backward for 1 second</span>
 <span class="code-function">moveBackward</span>(<span class="code-number">150</span>);
 <span class="code-function">delay</span>(<span class="code-number">1000</span>);
-<span class="code-function">stopMotors</span>();
-                </div>
+<span class="code-function">stopMotors</span>();</div>
 
                 <div class="warning-box">
                     <strong>Important:</strong> Always call <span class="highlight">stopMotors()</span> after each movement, or the robot will keep moving!
@@ -649,8 +639,7 @@
                 <h2>Complete Example: Drive a Square</h2>
             </div>
             <div class="content">
-                <div class="code-block" style="font-size: 0.8rem;">
-<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+                <div class="code-block" style="font-size: 0.8rem;"><span class="code-keyword">void</span> <span class="code-function">loop</span>() {
   <span class="code-comment">// Side 1: Move forward</span>
   <span class="code-function">moveForward</span>(<span class="code-number">150</span>);
   <span class="code-function">delay</span>(<span class="code-number">2000</span>);
@@ -678,8 +667,7 @@
   <span class="code-comment">// Repeat for sides 3 and 4...</span>
 
   <span class="code-function">delay</span>(<span class="code-number">5000</span>);         <span class="code-comment">// Wait 5 seconds before repeating</span>
-}
-                </div>
+}</div>
             </div>
         </div>
 
@@ -689,10 +677,74 @@
                 <h2>🔬 Lab Time: Let's Move!</h2>
             </div>
             <div class="content">
+                <div class="concept-box" style="margin-bottom: 20px;">
+                    <h3 style="margin-top: 0;">📥 Starter Code</h3>
+                    <p style="margin: 10px 0;">File: <span class="highlight">Lesson_06_Starter_Code.ino</span> (or copy below)</p>
+                    <div style="position: relative;">
+                        <button onclick="copyStarterCode()" style="position: absolute; top: 10px; right: 10px; background: #00d4ff; color: #0a0e27; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 0.9rem; z-index: 10;">📋 Copy Code</button>
+                        <div class="code-block" id="starter-code" style="font-size: 0.7rem; max-height: 280px; overflow-y: auto; margin-top: 0;"><span class="code-comment">// Lesson 6: Basic Robot Motion Control</span>
+<span class="code-keyword">const int</span> LEFT_MOTOR_PIN1 = <span class="code-number">2</span>;
+<span class="code-keyword">const int</span> LEFT_MOTOR_PIN2 = <span class="code-number">3</span>;
+<span class="code-keyword">const int</span> RIGHT_MOTOR_PIN1 = <span class="code-number">4</span>;
+<span class="code-keyword">const int</span> RIGHT_MOTOR_PIN2 = <span class="code-number">5</span>;
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  <span class="code-function">pinMode</span>(LEFT_MOTOR_PIN1, OUTPUT);
+  <span class="code-function">pinMode</span>(LEFT_MOTOR_PIN2, OUTPUT);
+  <span class="code-function">pinMode</span>(RIGHT_MOTOR_PIN1, OUTPUT);
+  <span class="code-function">pinMode</span>(RIGHT_MOTOR_PIN2, OUTPUT);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">moveForward</span>(<span class="code-keyword">int</span> speed) {
+  <span class="code-function">analogWrite</span>(LEFT_MOTOR_PIN1, speed);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
+  <span class="code-function">analogWrite</span>(RIGHT_MOTOR_PIN1, speed);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, LOW);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">moveBackward</span>(<span class="code-keyword">int</span> speed) {
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, LOW);
+  <span class="code-function">analogWrite</span>(LEFT_MOTOR_PIN2, speed);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, LOW);
+  <span class="code-function">analogWrite</span>(RIGHT_MOTOR_PIN2, speed);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">turnLeft</span>() {
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, LOW);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, HIGH);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, HIGH);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, LOW);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">turnRight</span>() {
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, HIGH);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, HIGH);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">stopMotors</span>() {
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, LOW);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, LOW);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-function">moveForward</span>(<span class="code-number">150</span>);
+  <span class="code-function">delay</span>(<span class="code-number">2000</span>);
+  <span class="code-function">stopMotors</span>();
+  <span class="code-function">delay</span>(<span class="code-number">1000</span>);
+  <span class="code-comment">// Add your code here!</span>
+  <span class="code-function">delay</span>(<span class="code-number">5000</span>);
+}</div>
+                    </div>
+                </div>
+
                 <div class="success-box">
                     <h3>Exercise 1: Basic Movement (10 min)</h3>
                     <ol>
-                        <li>Upload the basic motor control code</li>
+                        <li>Upload the starter code above</li>
                         <li>Test each movement: forward, backward, left, right</li>
                         <li>Experiment with different speeds (100, 150, 200, 255)</li>
                         <li>Find the minimum speed that still moves your robot</li>
@@ -820,6 +872,75 @@
         function prevSlide() {
             currentSlide--;
             showSlide(currentSlide);
+        }
+
+        // Copy starter code function
+        function copyStarterCode() {
+            const codeText = `// Lesson 6: Basic Robot Motion Control
+// Starter Code for Lab Exercises
+
+// Motor pin definitions
+const int LEFT_MOTOR_PIN1 = 2;
+const int LEFT_MOTOR_PIN2 = 3;
+const int RIGHT_MOTOR_PIN1 = 4;
+const int RIGHT_MOTOR_PIN2 = 5;
+
+void setup() {
+  pinMode(LEFT_MOTOR_PIN1, OUTPUT);
+  pinMode(LEFT_MOTOR_PIN2, OUTPUT);
+  pinMode(RIGHT_MOTOR_PIN1, OUTPUT);
+  pinMode(RIGHT_MOTOR_PIN2, OUTPUT);
+}
+
+void moveForward(int speed) {
+  analogWrite(LEFT_MOTOR_PIN1, speed);
+  digitalWrite(LEFT_MOTOR_PIN2, LOW);
+  analogWrite(RIGHT_MOTOR_PIN1, speed);
+  digitalWrite(RIGHT_MOTOR_PIN2, LOW);
+}
+
+void moveBackward(int speed) {
+  digitalWrite(LEFT_MOTOR_PIN1, LOW);
+  analogWrite(LEFT_MOTOR_PIN2, speed);
+  digitalWrite(RIGHT_MOTOR_PIN1, LOW);
+  analogWrite(RIGHT_MOTOR_PIN2, speed);
+}
+
+void turnLeft() {
+  digitalWrite(LEFT_MOTOR_PIN1, LOW);
+  digitalWrite(LEFT_MOTOR_PIN2, HIGH);
+  digitalWrite(RIGHT_MOTOR_PIN1, HIGH);
+  digitalWrite(RIGHT_MOTOR_PIN2, LOW);
+}
+
+void turnRight() {
+  digitalWrite(LEFT_MOTOR_PIN1, HIGH);
+  digitalWrite(LEFT_MOTOR_PIN2, LOW);
+  digitalWrite(RIGHT_MOTOR_PIN1, LOW);
+  digitalWrite(RIGHT_MOTOR_PIN2, HIGH);
+}
+
+void stopMotors() {
+  digitalWrite(LEFT_MOTOR_PIN1, LOW);
+  digitalWrite(LEFT_MOTOR_PIN2, LOW);
+  digitalWrite(RIGHT_MOTOR_PIN1, LOW);
+  digitalWrite(RIGHT_MOTOR_PIN2, LOW);
+}
+
+void loop() {
+  moveForward(150);
+  delay(2000);
+  stopMotors();
+  delay(1000);
+  // Add your code here!
+  delay(5000);
+}`;
+
+            navigator.clipboard.writeText(codeText).then(function() {
+                alert('✅ Code copied to clipboard!');
+            }, function(err) {
+                alert('❌ Failed to copy code. Please copy manually from the code block.');
+            });
         }
 
         // Keyboard navigation
