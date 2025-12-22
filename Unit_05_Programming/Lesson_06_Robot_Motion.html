@@ -332,6 +332,66 @@
             font-size: 5rem;
             margin: 30px 0;
         }
+
+        /* Lesson Navigation */
+        .lesson-nav {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .nav-button {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            border: 2px solid;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            font-family: 'Exo 2', sans-serif;
+        }
+
+        .nav-button.home {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #ffffff;
+            color: #ffffff;
+        }
+
+        .nav-button.home:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-button.next {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.1));
+            border-color: #00d4ff;
+            color: #00d4ff;
+        }
+
+        .nav-button.next:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(0, 212, 255, 0.2));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .next-lesson-preview {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 212, 255, 0.05));
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .next-lesson-preview h3 {
+            color: #00d4ff;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -837,14 +897,33 @@
                     </ul>
                 </div>
 
-                <div class="warning-box">
-                    <h3>Key Concepts for Next Lesson</h3>
-                    <p style="font-size: 1.1rem;">Next time, we'll learn about <span class="highlight">infrared sensors</span> so our robot can see and follow lines! Instead of timing movements, we'll use <span class="emphasis">sensor feedback</span> for smarter navigation.</p>
+                <div class="next-lesson-preview">
+                    <h3>🔜 Next Lesson: IR Sensor Fundamentals</h3>
+                    <p style="font-size: 1.1rem; line-height: 1.6;">
+                        Now that your robot can move, it's time to give it eyes! In Lesson 7, you'll learn how infrared reflection sensors work and how to read the 5-channel sensor array. This is the foundation for autonomous line following.
+                    </p>
+                    <ul style="margin-top: 15px; font-size: 1.05rem;">
+                        <li>How IR sensors detect black vs white surfaces</li>
+                        <li>Reading digital sensor values (HIGH/LOW)</li>
+                        <li>Interpreting 5-sensor patterns</li>
+                        <li>Using Serial Monitor for debugging</li>
+                    </ul>
                 </div>
 
                 <div class="success-box" style="text-align: center; padding: 30px;">
                     <h3 style="font-size: 1.8rem; color: #50fa7b;">Great work today! 🎉</h3>
                     <p style="font-size: 1.2rem; margin-top: 15px;">Your robots are now moving!</p>
+                </div>
+
+                <div class="lesson-nav">
+                    <a href="../index.html" class="nav-button home">
+                        <span>🏠</span>
+                        <span>Back to Lessons</span>
+                    </a>
+                    <a href="Lesson_07_IR_Sensors.html" class="nav-button next">
+                        <span>Next: IR Sensors</span>
+                        <span>→</span>
+                    </a>
                 </div>
             </div>
         </div>

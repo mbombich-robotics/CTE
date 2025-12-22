@@ -343,6 +343,56 @@
             font-size: 1.3rem;
             color: #f1fa8c;
         }
+
+        /* Lesson Navigation */
+        .lesson-nav {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .nav-button {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            border: 2px solid;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            font-family: 'Exo 2', sans-serif;
+        }
+
+        .nav-button.home {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #ffffff;
+            color: #ffffff;
+        }
+
+        .nav-button.home:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .completion-message {
+            background: linear-gradient(135deg, rgba(80, 250, 123, 0.2), rgba(80, 250, 123, 0.1));
+            border: 3px solid #50fa7b;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .completion-message h3 {
+            color: #50fa7b;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -1196,11 +1246,35 @@
                     </ul>
                 </div>
 
+                <div class="completion-message">
+                    <h3>🎓 Unit 5 Complete: Robot Motion & Line Following</h3>
+                    <p style="font-size: 1.1rem; margin-top: 15px; line-height: 1.6;">
+                        You've completed the entire Robot Motion & Line Following sequence! From basic motor control to industry-standard PID algorithms, you now have the skills to build sophisticated autonomous robots.
+                    </p>
+                    <div style="margin: 25px 0; padding: 20px; background: rgba(0, 212, 255, 0.1); border-radius: 10px;">
+                        <p style="font-size: 1rem; margin-bottom: 10px;"><strong>Skills Mastered:</strong></p>
+                        <ul style="font-size: 0.95rem; text-align: left; display: inline-block;">
+                            <li>✅ H-bridge motor control and differential drive</li>
+                            <li>✅ IR sensor reading and pattern interpretation</li>
+                            <li>✅ Bang-bang control logic and decision trees</li>
+                            <li>✅ PID control algorithms and tuning</li>
+                            <li>✅ Real-time sensor feedback systems</li>
+                        </ul>
+                    </div>
+                </div>
+
                 <div class="success-box" style="text-align: center; padding: 30px; margin-top: 20px;">
-                    <h3 style="font-size: 1.8rem; color: #50fa7b;">Congratulations!</h3>
+                    <h3 style="font-size: 1.8rem; color: #50fa7b;">Congratulations! 🎉</h3>
                     <p style="font-size: 1.2rem; margin-top: 15px;">You've mastered PID control!</p>
                     <p style="font-size: 1rem; margin-top: 10px;">This is one of the most important concepts in control systems and robotics.</p>
                     <p style="font-size: 1rem; margin-top: 10px; color: #00d4ff;">Your robot can now follow lines faster and smoother than ever before!</p>
+                </div>
+
+                <div class="lesson-nav">
+                    <a href="../index.html" class="nav-button home">
+                        <span>🏠</span>
+                        <span>Back to Lessons</span>
+                    </a>
                 </div>
             </div>
         </div>

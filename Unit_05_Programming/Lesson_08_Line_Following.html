@@ -331,6 +331,66 @@
             margin: 10px 0;
             text-align: center;
         }
+
+        /* Lesson Navigation */
+        .lesson-nav {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .nav-button {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            border: 2px solid;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            font-family: 'Exo 2', sans-serif;
+        }
+
+        .nav-button.home {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #ffffff;
+            color: #ffffff;
+        }
+
+        .nav-button.home:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-button.next {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.1));
+            border-color: #00d4ff;
+            color: #00d4ff;
+        }
+
+        .nav-button.next:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(0, 212, 255, 0.2));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .next-lesson-preview {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 212, 255, 0.05));
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .next-lesson-preview h3 {
+            color: #00d4ff;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -1017,10 +1077,34 @@
                     </ul>
                 </div>
 
+                <div class="next-lesson-preview">
+                    <h3>🔜 Next Lesson: PID Control for Line Following</h3>
+                    <p style="font-size: 1.1rem; line-height: 1.6;">
+                        Bang-bang control works, but it's jerky and slow. In Lesson 9, you'll learn PID control—the industry-standard algorithm for smooth, fast line following. Instead of binary left/right decisions, PID creates proportional corrections that get smoother as you approach the line.
+                    </p>
+                    <ul style="margin-top: 15px; font-size: 1.05rem;">
+                        <li>Proportional control (P): Correction based on error magnitude</li>
+                        <li>Derivative control (D): Reduces oscillation and overshoot</li>
+                        <li>Weighted position error calculation</li>
+                        <li>Tuning PID constants for optimal performance</li>
+                    </ul>
+                </div>
+
                 <div class="success-box" style="text-align: center; padding: 30px; margin-top: 20px;">
-                    <h3 style="font-size: 1.8rem; color: #50fa7b;">Congratulations!</h3>
+                    <h3 style="font-size: 1.8rem; color: #50fa7b;">Congratulations! 🎉</h3>
                     <p style="font-size: 1.2rem; margin-top: 15px;">You've built an autonomous line-following robot!</p>
                     <p style="font-size: 1rem; margin-top: 10px;">This is a major milestone in robotics programming.</p>
+                </div>
+
+                <div class="lesson-nav">
+                    <a href="../index.html" class="nav-button home">
+                        <span>🏠</span>
+                        <span>Back to Lessons</span>
+                    </a>
+                    <a href="Lesson_09_PID_Control.html" class="nav-button next">
+                        <span>Next: PID Control</span>
+                        <span>→</span>
+                    </a>
                 </div>
             </div>
         </div>

@@ -349,6 +349,66 @@
             color: #f1fa8c;
             letter-spacing: 10px;
         }
+
+        /* Lesson Navigation */
+        .lesson-nav {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .nav-button {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            border: 2px solid;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            font-family: 'Exo 2', sans-serif;
+        }
+
+        .nav-button.home {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #ffffff;
+            color: #ffffff;
+        }
+
+        .nav-button.home:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-button.next {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.1));
+            border-color: #00d4ff;
+            color: #00d4ff;
+        }
+
+        .nav-button.next:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(0, 212, 255, 0.2));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .next-lesson-preview {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 212, 255, 0.05));
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .next-lesson-preview h3 {
+            color: #00d4ff;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -946,29 +1006,48 @@
         <!-- Slide 12: Summary -->
         <div class="slide">
             <div class="slide-header">
-                <h2>Lesson Summary</h2>
+                <h2>📚 Lesson Summary</h2>
             </div>
             <div class="content">
                 <div class="concept-box">
                     <h3>What We Learned Today</h3>
                     <ul style="font-size: 1.2rem;">
-                        <li>IR sensors detect surface reflectivity using infrared light</li>
-                        <li>Our 5-channel sensor array provides digital outputs (HIGH/LOW)</li>
-                        <li><span class="highlight">digitalRead()</span> reads sensor states</li>
-                        <li>White surfaces reflect IR (HIGH), black surfaces absorb it (LOW)</li>
-                        <li>Sensor patterns tell us where the line is positioned</li>
-                        <li>Serial Monitor is essential for debugging sensors</li>
+                        <li>✅ IR sensors detect surface reflectivity using infrared light</li>
+                        <li>✅ Our 5-channel sensor array provides digital outputs (HIGH/LOW)</li>
+                        <li>✅ <span class="highlight">digitalRead()</span> reads sensor states</li>
+                        <li>✅ White surfaces reflect IR (HIGH), black surfaces absorb it (LOW)</li>
+                        <li>✅ Sensor patterns tell us where the line is positioned</li>
+                        <li>✅ Serial Monitor is essential for debugging sensors</li>
                     </ul>
                 </div>
 
-                <div class="warning-box">
-                    <h3>Next Lesson Preview</h3>
-                    <p style="font-size: 1.1rem;">In <span class="highlight">Lesson 8</span>, we'll combine everything you've learned! We'll use the IR sensor readings to control the robot's motors and create a <span class="emphasis">line-following robot</span>. Get ready to see your robot navigate autonomously!</p>
+                <div class="next-lesson-preview">
+                    <h3>🔜 Next Lesson: Basic Line Following</h3>
+                    <p style="font-size: 1.1rem; line-height: 1.6;">
+                        Now that you can read sensors AND control motors, it's time to combine them! In Lesson 8, you'll build your first autonomous line-following robot using bang-bang control. Your robot will make decisions based on sensor feedback in real-time.
+                    </p>
+                    <ul style="margin-top: 15px; font-size: 1.05rem;">
+                        <li>Decision trees for line following logic</li>
+                        <li>Bang-bang control (binary left/right decisions)</li>
+                        <li>Combining motor control with sensor readings</li>
+                        <li>Handling lost-line situations</li>
+                    </ul>
                 </div>
 
                 <div class="success-box" style="text-align: center; padding: 30px;">
-                    <h3 style="font-size: 1.8rem; color: #50fa7b;">Excellent Work!</h3>
+                    <h3 style="font-size: 1.8rem; color: #50fa7b;">Excellent Work! 🎉</h3>
                     <p style="font-size: 1.2rem; margin-top: 15px;">You can now read and interpret sensor data!</p>
+                </div>
+
+                <div class="lesson-nav">
+                    <a href="../index.html" class="nav-button home">
+                        <span>🏠</span>
+                        <span>Back to Lessons</span>
+                    </a>
+                    <a href="Lesson_08_Line_Following.html" class="nav-button next">
+                        <span>Next: Line Following</span>
+                        <span>→</span>
+                    </a>
                 </div>
             </div>
         </div>
