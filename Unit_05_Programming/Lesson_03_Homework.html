@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson 2 Homework - Blink Patterns</title>
+    <title>Lesson 3 Homework - Counter Program</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         * {
@@ -169,7 +169,7 @@
             font-weight: 600;
         }
 
-        ol, ul {
+        ul {
             margin-left: 25px;
             line-height: 1.8;
         }
@@ -182,35 +182,31 @@
 </head>
 <body>
     <div class="container">
-        <h1>Lesson 2 Homework</h1>
-        <p class="subtitle">Create Three Blink Patterns | Due: Tuesday by Noon</p>
+        <h1>Lesson 3 Homework</h1>
+        <p class="subtitle">Counter Program with Variables | Due: Wednesday by Noon</p>
 
         <!-- Assignment Description -->
         <div class="assignment-box">
-            <h2>Assignment: Three Blink Patterns</h2>
-            <p style="font-size: 1.1rem; margin-bottom: 20px;">Create three different LED blink patterns using the built-in LED on pin 13.</p>
+            <h2>Assignment: Counter Program with Variables</h2>
+            <p style="font-size: 1.1rem; margin-bottom: 20px;">Create a program that counts from 1 to 100 using variables and the Serial Monitor.</p>
 
             <div class="requirement">
-                <h3>Pattern 1: Heartbeat</h3>
-                <p>Two quick pulses, then a pause (buh-BUM...pause...repeat)</p>
+                <h3>Core Requirements</h3>
+                <ul>
+                    <li>Use variables for <span class="highlight">startValue</span>, <span class="highlight">endValue</span>, and <span class="highlight">increment</span></li>
+                    <li>Print: <span class="highlight">"Count: 1"</span>, <span class="highlight">"Count: 2"</span>, etc.</li>
+                    <li>Add delay to see each number clearly</li>
+                    <li>After 100, print <span class="highlight">"Done!"</span> and stop</li>
+                </ul>
             </div>
 
             <div class="requirement">
-                <h3>Pattern 2: Police Siren</h3>
-                <p>Alternating fast on/off cycles with different speeds</p>
-            </div>
-
-            <div class="requirement">
-                <h3>Pattern 3: SOS</h3>
-                <p>Morse code SOS pattern: dot-dot-dot, dash-dash-dash, dot-dot-dot</p>
-                <p style="margin-top: 8px; font-size: 0.9rem;">
-                    <span class="highlight">Dots:</span> short blinks (200ms) |
-                    <span class="highlight">Dashes:</span> long blinks (600ms)
-                </p>
+                <h3>Bonus Challenge (Optional)</h3>
+                <p>Count backwards from 100 to 1 by changing just ONE variable!</p>
             </div>
 
             <p style="margin-top: 20px; font-size: 1rem;">
-                <strong>What to submit:</strong> Your complete Arduino code that creates all three patterns in sequence.
+                <strong>What to submit:</strong> Your complete Arduino code that counts to 100 using variables and Serial Monitor.
             </p>
         </div>
 
@@ -230,18 +226,18 @@
             </p>
             <textarea id="submitted-code" placeholder="// Paste your code here
 void setup() {
-  pinMode(13, OUTPUT);
+  Serial.begin(9600);
 }
 
 void loop() {
-  // Your patterns here
+  // Your counting logic here
 }" required></textarea>
 
             <label for="notes">Notes (Optional)</label>
             <p style="color: #b8c5d6; font-size: 0.9rem; margin-bottom: 10px;">
                 Add any comments about challenges you faced or creative choices you made:
             </p>
-            <textarea id="notes" style="min-height: 100px;" placeholder="Example: I adjusted the heartbeat timing to make it more realistic..."></textarea>
+            <textarea id="notes" style="min-height: 100px;" placeholder="Example: I completed the bonus challenge by changing the increment variable to -1..."></textarea>
 
             <button class="submit-button" onclick="submitHomework()">Submit Homework</button>
         </div>
@@ -295,14 +291,14 @@ void loop() {
 
             // Prepare submission data
             const submissionData = {
-                lesson: 'Lesson 2',
-                assignment: 'Three Blink Patterns',
+                lesson: 'Lesson 3',
+                assignment: 'Counter Program with Variables',
                 email: email,
                 name: name,
                 code: code,
                 notes: notes,
                 timestamp: new Date().toLocaleString(),
-                dueDate: 'Tuesday by Noon'
+                dueDate: 'Wednesday by Noon'
             };
 
             try {

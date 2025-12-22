@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson 2 Homework - Blink Patterns</title>
+    <title>Lesson 4 Homework - Button Toggle LED</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         * {
@@ -169,7 +169,7 @@
             font-weight: 600;
         }
 
-        ol, ul {
+        ul {
             margin-left: 25px;
             line-height: 1.8;
         }
@@ -182,35 +182,32 @@
 </head>
 <body>
     <div class="container">
-        <h1>Lesson 2 Homework</h1>
-        <p class="subtitle">Create Three Blink Patterns | Due: Tuesday by Noon</p>
+        <h1>Lesson 4 Homework</h1>
+        <p class="subtitle">Button Toggle LED | Due: Thursday by Noon</p>
 
         <!-- Assignment Description -->
         <div class="assignment-box">
-            <h2>Assignment: Three Blink Patterns</h2>
-            <p style="font-size: 1.1rem; margin-bottom: 20px;">Create three different LED blink patterns using the built-in LED on pin 13.</p>
+            <h2>Assignment: Button Toggle LED</h2>
+            <p style="font-size: 1.1rem; margin-bottom: 20px;">Build a circuit that toggles an LED on/off with each button press using digital input and control structures.</p>
 
             <div class="requirement">
-                <h3>Pattern 1: Heartbeat</h3>
-                <p>Two quick pulses, then a pause (buh-BUM...pause...repeat)</p>
+                <h3>Core Requirements</h3>
+                <ul>
+                    <li>Connect button to pin 2, LED to pin 13</li>
+                    <li>Use <span class="highlight">INPUT_PULLUP</span> for button</li>
+                    <li>Each button press toggles LED state (on→off or off→on)</li>
+                    <li>Use a <span class="highlight">boolean</span> variable to track LED state</li>
+                    <li>Add debouncing with <span class="highlight">delay(200)</span></li>
+                </ul>
             </div>
 
             <div class="requirement">
-                <h3>Pattern 2: Police Siren</h3>
-                <p>Alternating fast on/off cycles with different speeds</p>
-            </div>
-
-            <div class="requirement">
-                <h3>Pattern 3: SOS</h3>
-                <p>Morse code SOS pattern: dot-dot-dot, dash-dash-dash, dot-dot-dot</p>
-                <p style="margin-top: 8px; font-size: 0.9rem;">
-                    <span class="highlight">Dots:</span> short blinks (200ms) |
-                    <span class="highlight">Dashes:</span> long blinks (600ms)
-                </p>
+                <h3>What to Submit</h3>
+                <p>Your complete Arduino code AND a short video (or description) showing the button toggling the LED on and off.</p>
             </div>
 
             <p style="margin-top: 20px; font-size: 1rem;">
-                <strong>What to submit:</strong> Your complete Arduino code that creates all three patterns in sequence.
+                <strong>Hint:</strong> You'll need to use if/else statements to check the button state and toggle the boolean variable.
             </p>
         </div>
 
@@ -229,19 +226,24 @@
                 Paste your complete code below (including setup() and loop() functions):
             </p>
             <textarea id="submitted-code" placeholder="// Paste your code here
+const int buttonPin = 2;
+const int ledPin = 13;
+boolean ledState = false;
+
 void setup() {
-  pinMode(13, OUTPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
+  pinMode(ledPin, OUTPUT);
 }
 
 void loop() {
-  // Your patterns here
+  // Your toggle logic here
 }" required></textarea>
 
-            <label for="notes">Notes (Optional)</label>
+            <label for="notes">Video Link or Description <span class="warning">*</span></label>
             <p style="color: #b8c5d6; font-size: 0.9rem; margin-bottom: 10px;">
-                Add any comments about challenges you faced or creative choices you made:
+                Either paste a link to your video OR describe what happens when you press the button:
             </p>
-            <textarea id="notes" style="min-height: 100px;" placeholder="Example: I adjusted the heartbeat timing to make it more realistic..."></textarea>
+            <textarea id="notes" style="min-height: 100px;" placeholder="Example: When I press the button, the LED turns on. When I press it again, it turns off. I uploaded the video to Google Drive: [link]" required></textarea>
 
             <button class="submit-button" onclick="submitHomework()">Submit Homework</button>
         </div>
@@ -276,7 +278,7 @@ void loop() {
             const notes = document.getElementById('notes').value.trim();
 
             // Validate required fields
-            if (!email || !name || !code) {
+            if (!email || !name || !code || !notes) {
                 alert('Please fill in all required fields (marked with *)');
                 return;
             }
@@ -295,14 +297,14 @@ void loop() {
 
             // Prepare submission data
             const submissionData = {
-                lesson: 'Lesson 2',
-                assignment: 'Three Blink Patterns',
+                lesson: 'Lesson 4',
+                assignment: 'Button Toggle LED',
                 email: email,
                 name: name,
                 code: code,
                 notes: notes,
                 timestamp: new Date().toLocaleString(),
-                dueDate: 'Tuesday by Noon'
+                dueDate: 'Thursday by Noon'
             };
 
             try {
