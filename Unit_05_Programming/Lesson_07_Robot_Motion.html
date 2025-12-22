@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 7: Basic Robot Motion Control</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .slide {
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            background: rgba(26, 31, 58, 0.95);
+            border-radius: 20px;
+            border: 3px solid #00d4ff;
+            box-shadow: 0 20px 80px rgba(0, 212, 255, 0.3);
+            padding: 60px;
+            display: none;
+            flex-direction: column;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .lesson-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: #00d4ff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            color: #00d4ff;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            color: #00d4ff;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: #ff9500;
+            margin: 25px 0 15px 0;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #b8c5d6;
+            text-align: center;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 20px 0;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .concept-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 149, 0, 0.05) 100%);
+            border: 2px solid rgba(255, 149, 0, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, rgba(80, 250, 123, 0.1) 0%, rgba(80, 250, 123, 0.05) 100%);
+            border: 2px solid rgba(80, 250, 123, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+
+        .code-block {
+            background: #0a0e27;
+            border: 2px solid #00d4ff;
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            color: #50fa7b;
+            overflow-x: auto;
+            margin: 15px 0;
+            line-height: 1.6;
+        }
+
+        .code-comment {
+            color: #6c6c6c;
+        }
+
+        .code-keyword {
+            color: #ff6ac1;
+        }
+
+        .code-function {
+            color: #5af78e;
+        }
+
+        .code-number {
+            color: #f1fa8c;
+        }
+
+        ul, ol {
+            margin-left: 30px;
+            line-height: 2;
+        }
+
+        li {
+            margin: 10px 0;
+            font-size: 1.1rem;
+        }
+
+        .highlight {
+            color: #00d4ff;
+            font-weight: 700;
+        }
+
+        .emphasis {
+            color: #ff9500;
+            font-weight: 700;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1rem;
+        }
+
+        th {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            padding: 15px;
+            text-align: left;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        td {
+            padding: 12px 15px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        tr:nth-child(even) {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .diagram {
+            background: rgba(10, 14, 39, 0.5);
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+        }
+
+        .arrow {
+            color: #ff9500;
+            font-size: 1.5rem;
+            margin: 10px 0;
+        }
+
+        /* Navigation */
+        .nav-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .nav-btn:hover {
+            background: linear-gradient(135deg, #00eeff, #00bbee);
+            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(0, 212, 255, 0.2);
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            border: 2px solid rgba(0, 212, 255, 0.5);
+        }
+
+        /* Motor Direction Visualizer */
+        .motor-viz {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+
+        .motor {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            min-width: 200px;
+        }
+
+        .motor-label {
+            font-weight: 700;
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+
+        .motor-arrow {
+            font-size: 3rem;
+            margin: 10px 0;
+        }
+
+        .robot-movement {
+            text-align: center;
+            font-size: 5rem;
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-header">
+                <div class="lesson-label">Unit 5: Introduction to Programming • Lesson 7</div>
+                <h1>Basic Robot Motion Control</h1>
+                <p class="subtitle">Time-Based Movement and Speed Control</p>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3 style="text-align: center; color: #00d4ff; margin-top: 0;">🤖 What You'll Learn Today</h3>
+                    <ul style="font-size: 1.2rem; line-height: 2.2;">
+                        <li>How motor drivers control robot wheels</li>
+                        <li>Programming forward, backward, left, and right movement</li>
+                        <li>Using PWM to control motor speed</li>
+                        <li>Creating timed movements for precise navigation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: H-Bridge Motor Driver -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Understanding Motor Drivers</h2>
+            </div>
+            <div class="content">
+                <div class="two-column">
+                    <div class="column">
+                        <h3>What is an H-Bridge?</h3>
+                        <ul>
+                            <li>Electronic circuit that controls motor direction</li>
+                            <li>Can make motors spin <span class="highlight">forward</span> or <span class="highlight">backward</span></li>
+                            <li>Controls speed using <span class="highlight">PWM signals</span></li>
+                            <li>Protects Arduino from high motor current</li>
+                        </ul>
+
+                        <div class="warning-box">
+                            <strong>⚠️ Important:</strong> Never connect motors directly to Arduino pins! Always use a motor driver to protect your board.
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="diagram">
+                            <div style="color: #ff9500; font-size: 1.3rem; margin-bottom: 15px;">H-Bridge Control</div>
+                            <div style="margin: 20px 0;">
+                                Arduino Pin → Motor Driver → Motor
+                            </div>
+                            <div class="arrow">↓</div>
+                            <div style="color: #00d4ff;">Controls both direction AND speed</div>
+                        </div>
+
+                        <div class="concept-box">
+                            <strong>Your Robot:</strong><br>
+                            Nano RP2040 + Motor Driver<br>
+                            Controls 2 motors (left & right wheels)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Motor Control Pins -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Motor Control Pin Setup</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>Each motor needs 2 pins for direction control:</h3>
+                    <table>
+                        <tr>
+                            <th>Motor</th>
+                            <th>Pin 1</th>
+                            <th>Pin 2</th>
+                            <th>Function</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Left Motor</strong></td>
+                            <td>D2</td>
+                            <td>D3</td>
+                            <td>Forward/Backward control</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Right Motor</strong></td>
+                            <td>D4</td>
+                            <td>D5</td>
+                            <td>Forward/Backward control</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="code-block">
+<span class="code-comment">// Motor pin definitions</span>
+<span class="code-keyword">const int</span> LEFT_MOTOR_PIN1 = <span class="code-number">2</span>;
+<span class="code-keyword">const int</span> LEFT_MOTOR_PIN2 = <span class="code-number">3</span>;
+<span class="code-keyword">const int</span> RIGHT_MOTOR_PIN1 = <span class="code-number">4</span>;
+<span class="code-keyword">const int</span> RIGHT_MOTOR_PIN2 = <span class="code-number">5</span>;
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  <span class="code-comment">// Set all motor pins as outputs</span>
+  <span class="code-function">pinMode</span>(LEFT_MOTOR_PIN1, OUTPUT);
+  <span class="code-function">pinMode</span>(LEFT_MOTOR_PIN2, OUTPUT);
+  <span class="code-function">pinMode</span>(RIGHT_MOTOR_PIN1, OUTPUT);
+  <span class="code-function">pinMode</span>(RIGHT_MOTOR_PIN2, OUTPUT);
+}
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Direction Control Logic -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Motor Direction Control</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>How Pin States Control Direction</h3>
+                    <table>
+                        <tr>
+                            <th>Pin 1</th>
+                            <th>Pin 2</th>
+                            <th>Result</th>
+                        </tr>
+                        <tr>
+                            <td style="color: #50fa7b;">HIGH</td>
+                            <td style="color: #ff6b7a;">LOW</td>
+                            <td><strong>Forward</strong> →</td>
+                        </tr>
+                        <tr>
+                            <td style="color: #ff6b7a;">LOW</td>
+                            <td style="color: #50fa7b;">HIGH</td>
+                            <td><strong>Backward</strong> ←</td>
+                        </tr>
+                        <tr>
+                            <td style="color: #ff6b7a;">LOW</td>
+                            <td style="color: #ff6b7a;">LOW</td>
+                            <td><strong>Stop</strong> ⏸️</td>
+                        </tr>
+                        <tr>
+                            <td style="color: #50fa7b;">HIGH</td>
+                            <td style="color: #50fa7b;">HIGH</td>
+                            <td><strong>Brake</strong> (both HIGH)</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="code-block">
+<span class="code-comment">// Function to move forward</span>
+<span class="code-keyword">void</span> <span class="code-function">moveForward</span>() {
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, HIGH);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, HIGH);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, LOW);
+}
+
+<span class="code-comment">// Function to stop</span>
+<span class="code-keyword">void</span> <span class="code-function">stopMotors</span>() {
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, LOW);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, LOW);
+}
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: All Movement Functions -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Complete Movement Functions</h2>
+            </div>
+            <div class="content">
+                <div class="code-block" style="font-size: 0.85rem;">
+<span class="code-keyword">void</span> <span class="code-function">moveForward</span>() {
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, HIGH);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, HIGH);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, LOW);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">moveBackward</span>() {
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, LOW);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, HIGH);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, HIGH);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">turnLeft</span>() {
+  <span class="code-comment">// Left motor backward, right motor forward</span>
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, LOW);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, HIGH);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, HIGH);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, LOW);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">turnRight</span>() {
+  <span class="code-comment">// Left motor forward, right motor backward</span>
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, HIGH);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, HIGH);
+}
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Movement Visualization -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Understanding Robot Turns</h2>
+            </div>
+            <div class="content">
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Turn Left</h3>
+                        <div class="motor-viz">
+                            <div class="motor">
+                                <div class="motor-label">Left Motor</div>
+                                <div class="motor-arrow">⬅️</div>
+                                <div>Backward</div>
+                            </div>
+                            <div class="motor">
+                                <div class="motor-label">Right Motor</div>
+                                <div class="motor-arrow">➡️</div>
+                                <div>Forward</div>
+                            </div>
+                        </div>
+                        <div class="robot-movement">↰</div>
+                        <div style="text-align: center; color: #00d4ff;">Robot spins left</div>
+                    </div>
+
+                    <div class="column">
+                        <h3>Turn Right</h3>
+                        <div class="motor-viz">
+                            <div class="motor">
+                                <div class="motor-label">Left Motor</div>
+                                <div class="motor-arrow">➡️</div>
+                                <div>Forward</div>
+                            </div>
+                            <div class="motor">
+                                <div class="motor-label">Right Motor</div>
+                                <div class="motor-arrow">⬅️</div>
+                                <div>Backward</div>
+                            </div>
+                        </div>
+                        <div class="robot-movement">↱</div>
+                        <div style="text-align: center; color: #00d4ff;">Robot spins right</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Speed Control with PWM -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Speed Control with PWM</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>Why Use PWM for Speed?</h3>
+                    <ul>
+                        <li><span class="highlight">digitalWrite()</span> = Full speed only (ON/OFF)</li>
+                        <li><span class="highlight">analogWrite()</span> = Variable speed (0-255)</li>
+                        <li>Lower values = slower movement</li>
+                        <li>Higher values = faster movement</li>
+                    </ul>
+                </div>
+
+                <div class="code-block">
+<span class="code-comment">// Motor speed control (0-255)</span>
+<span class="code-keyword">const int</span> MOTOR_SPEED = <span class="code-number">150</span>;  <span class="code-comment">// Medium speed</span>
+
+<span class="code-keyword">void</span> <span class="code-function">moveForward</span>(<span class="code-keyword">int</span> speed) {
+  <span class="code-function">analogWrite</span>(LEFT_MOTOR_PIN1, speed);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
+  <span class="code-function">analogWrite</span>(RIGHT_MOTOR_PIN1, speed);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, LOW);
+}
+
+<span class="code-comment">// In loop:</span>
+<span class="code-function">moveForward</span>(<span class="code-number">100</span>);   <span class="code-comment">// Slow</span>
+<span class="code-function">moveForward</span>(<span class="code-number">200</span>);   <span class="code-comment">// Fast</span>
+                </div>
+
+                <div class="warning-box">
+                    <strong>Note:</strong> Very low speeds (below 100) may not have enough power to move the robot. Start with 150 and adjust!
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Time-Based Movement -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Time-Based Movement</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>Creating Precise Movements</h3>
+                    <p style="font-size: 1.1rem; margin: 15px 0;">Use <span class="highlight">delay()</span> to control how long the robot moves</p>
+                </div>
+
+                <div class="code-block">
+<span class="code-comment">// Move forward for 2 seconds</span>
+<span class="code-function">moveForward</span>(<span class="code-number">150</span>);
+<span class="code-function">delay</span>(<span class="code-number">2000</span>);        <span class="code-comment">// 2000 milliseconds = 2 seconds</span>
+<span class="code-function">stopMotors</span>();
+
+<span class="code-comment">// Turn right for 0.5 seconds (approximately 90 degrees)</span>
+<span class="code-function">turnRight</span>();
+<span class="code-function">delay</span>(<span class="code-number">500</span>);         <span class="code-comment">// 500 milliseconds = 0.5 seconds</span>
+<span class="code-function">stopMotors</span>();
+
+<span class="code-comment">// Move backward for 1 second</span>
+<span class="code-function">moveBackward</span>(<span class="code-number">150</span>);
+<span class="code-function">delay</span>(<span class="code-number">1000</span>);
+<span class="code-function">stopMotors</span>();
+                </div>
+
+                <div class="warning-box">
+                    <strong>Important:</strong> Always call <span class="highlight">stopMotors()</span> after each movement, or the robot will keep moving!
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Complete Example -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Complete Example: Drive a Square</h2>
+            </div>
+            <div class="content">
+                <div class="code-block" style="font-size: 0.8rem;">
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Side 1: Move forward</span>
+  <span class="code-function">moveForward</span>(<span class="code-number">150</span>);
+  <span class="code-function">delay</span>(<span class="code-number">2000</span>);
+  <span class="code-function">stopMotors</span>();
+  <span class="code-function">delay</span>(<span class="code-number">500</span>);          <span class="code-comment">// Brief pause</span>
+
+  <span class="code-comment">// Turn 90 degrees right</span>
+  <span class="code-function">turnRight</span>();
+  <span class="code-function">delay</span>(<span class="code-number">500</span>);
+  <span class="code-function">stopMotors</span>();
+  <span class="code-function">delay</span>(<span class="code-number">500</span>);
+
+  <span class="code-comment">// Side 2: Move forward</span>
+  <span class="code-function">moveForward</span>(<span class="code-number">150</span>);
+  <span class="code-function">delay</span>(<span class="code-number">2000</span>);
+  <span class="code-function">stopMotors</span>();
+  <span class="code-function">delay</span>(<span class="code-number">500</span>);
+
+  <span class="code-comment">// Turn 90 degrees right</span>
+  <span class="code-function">turnRight</span>();
+  <span class="code-function">delay</span>(<span class="code-number">500</span>);
+  <span class="code-function">stopMotors</span>();
+  <span class="code-function">delay</span>(<span class="code-number">500</span>);
+
+  <span class="code-comment">// Repeat for sides 3 and 4...</span>
+
+  <span class="code-function">delay</span>(<span class="code-number">5000</span>);         <span class="code-comment">// Wait 5 seconds before repeating</span>
+}
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Lab Exercises -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>🔬 Lab Time: Let's Move!</h2>
+            </div>
+            <div class="content">
+                <div class="success-box">
+                    <h3>Exercise 1: Basic Movement (10 min)</h3>
+                    <ol>
+                        <li>Upload the basic motor control code</li>
+                        <li>Test each movement: forward, backward, left, right</li>
+                        <li>Experiment with different speeds (100, 150, 200, 255)</li>
+                        <li>Find the minimum speed that still moves your robot</li>
+                    </ol>
+                </div>
+
+                <div class="success-box">
+                    <h3>Exercise 2: Timed Distance (10 min)</h3>
+                    <ol>
+                        <li>Make your robot move forward exactly 1 meter</li>
+                        <li>Adjust the delay time until you get it right</li>
+                        <li>Record your time: <span class="highlight">Speed 150 = _____ ms for 1 meter</span></li>
+                        <li>Test if the same time works at speed 200</li>
+                    </ol>
+                </div>
+
+                <div class="success-box">
+                    <h3>Exercise 3: Perfect 90° Turn (10 min)</h3>
+                    <ol>
+                        <li>Find the exact delay time for a 90-degree turn</li>
+                        <li>Test by making 4 turns - should face the same direction</li>
+                        <li>Try different speeds - does turn time change?</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Challenge -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>🏆 Challenge: Navigation Pattern</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box" style="text-align: center; padding: 40px;">
+                    <h3 style="color: #ff9500; font-size: 2rem;">Choose Your Challenge!</h3>
+                </div>
+
+                <div class="success-box">
+                    <h3>Challenge A: Drive a Square</h3>
+                    <p>Make your robot drive in a perfect square pattern. All four sides should be equal length, and all turns should be exactly 90 degrees.</p>
+                </div>
+
+                <div class="success-box">
+                    <h3>Challenge B: Drive a Figure-8</h3>
+                    <p>More difficult! Make your robot drive in a figure-8 pattern. Hint: You'll need to use different turn times for wider curves.</p>
+                </div>
+
+                <div class="success-box">
+                    <h3>Challenge C: Obstacle Course</h3>
+                    <p>Navigate around 3 obstacles using only timed movements. Plan your route first, then program it!</p>
+                </div>
+
+                <div class="warning-box" style="text-align: center; margin-top: 30px;">
+                    <strong>Remember:</strong> Test incrementally! Get one movement working before adding the next.
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Summary -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>📚 Lesson Summary</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3>What We Learned Today</h3>
+                    <ul style="font-size: 1.2rem;">
+                        <li>✅ Motor drivers use H-bridges to control direction</li>
+                        <li>✅ Each motor needs 2 pins for forward/backward control</li>
+                        <li>✅ <span class="highlight">analogWrite()</span> controls motor speed (0-255)</li>
+                        <li>✅ <span class="highlight">delay()</span> creates timed movements</li>
+                        <li>✅ Differential drive: opposite motor directions = turns</li>
+                    </ul>
+                </div>
+
+                <div class="warning-box">
+                    <h3>Key Concepts for Next Lesson</h3>
+                    <p style="font-size: 1.1rem;">Next time, we'll learn about <span class="highlight">infrared sensors</span> so our robot can see and follow lines! Instead of timing movements, we'll use <span class="emphasis">sensor feedback</span> for smarter navigation.</p>
+                </div>
+
+                <div class="success-box" style="text-align: center; padding: 30px;">
+                    <h3 style="font-size: 1.8rem; color: #50fa7b;">Great work today! 🎉</h3>
+                    <p style="font-size: 1.2rem; margin-top: 15px;">Your robots are now moving!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">12</span>
+    </div>
+
+    <div class="nav-container">
+        <button class="nav-btn" id="prev-btn" onclick="prevSlide()">← Previous</button>
+        <button class="nav-btn" id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = document.querySelectorAll('.slide').length;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+
+            if (n > totalSlides) currentSlide = totalSlides;
+            if (n < 1) currentSlide = 1;
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('current-slide').textContent = currentSlide;
+
+            // Update button states
+            document.getElementById('prev-btn').disabled = currentSlide === 1;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides;
+        }
+
+        function nextSlide() {
+            currentSlide++;
+            showSlide(currentSlide);
+        }
+
+        function prevSlide() {
+            currentSlide--;
+            showSlide(currentSlide);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight') nextSlide();
+            if (event.key === 'ArrowLeft') prevSlide();
+        });
+
+        // Initialize
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>
