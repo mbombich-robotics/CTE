@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 4: CAM & Toolpath Generation | Unit 3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: #0a0e27;
+            color: #e0e0e0;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+
+        .presentation {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            min-height: 100%;
+            display: none;
+            padding: 55px 60px 120px 60px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 100%);
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .slide-content {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(196, 30, 58, 0.8),
+                         0 0 60px rgba(196, 30, 58, 0.4);
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 1.8rem;
+            color: #00d4ff;
+            font-weight: 300;
+            margin-bottom: 50px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            font-size: 3rem;
+            margin-bottom: 40px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: #ff6b9d;
+            font-size: 2rem;
+            margin-top: 40px;
+            margin-bottom: 25px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        h4 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        p {
+            font-size: 1.4rem;
+            line-height: 1.9;
+            margin-bottom: 20px;
+            color: #d0d0d0;
+        }
+
+        ul {
+            list-style: none;
+            margin: 30px 0;
+        }
+
+        ul li {
+            padding: 15px 0 15px 40px;
+            position: relative;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            color: #d0d0d0;
+        }
+
+        ul li:before {
+            content: "▸";
+            color: #c41e3a;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+            font-size: 1.8rem;
+        }
+
+        strong {
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(0, 212, 255, 0.1);
+            padding: 3px 8px;
+            border-radius: 4px;
+            color: #50fa7b;
+            font-size: 1.2rem;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%);
+            border-left: 5px solid #00d4ff;
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(196, 30, 58, 0.2) 0%, rgba(196, 30, 58, 0.1) 100%);
+            border-left: 5px solid #c41e3a;
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(196, 30, 58, 0.3);
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, rgba(80, 250, 123, 0.15) 0%, rgba(80, 250, 123, 0.08) 100%);
+            border-left: 5px solid #50fa7b;
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(80, 250, 123, 0.2);
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(255, 184, 108, 0.15) 0%, rgba(255, 184, 108, 0.08) 100%);
+            border-left: 5px solid #ffb86c;
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(255, 184, 108, 0.2);
+        }
+
+        .step-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #c41e3a 0%, #8b1429 100%);
+            color: #ffffff;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 45px;
+            font-weight: 700;
+            margin-right: 15px;
+            font-size: 1.2rem;
+            box-shadow: 0 0 20px rgba(196, 30, 58, 0.5);
+        }
+
+        .toolpath-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .toolpath-card {
+            background: linear-gradient(135deg, rgba(196, 30, 58, 0.15) 0%, rgba(196, 30, 58, 0.05) 100%);
+            border: 2px solid rgba(196, 30, 58, 0.4);
+            border-radius: 15px;
+            padding: 35px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .toolpath-card:hover {
+            border-color: #00d4ff;
+            box-shadow: 0 8px 40px rgba(0, 212, 255, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .code-block {
+            background: #1a1a2e;
+            border: 2px solid #c41e3a;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            font-family: 'JetBrains Mono', monospace;
+            overflow-x: auto;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .code-block pre {
+            color: #50fa7b;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .diagram {
+            background: rgba(10, 14, 39, 0.6);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .diagram pre {
+            font-family: 'JetBrains Mono', monospace;
+            color: #00d4ff;
+            font-size: 1rem;
+            line-height: 1.6;
+            display: inline-block;
+            text-align: left;
+        }
+
+        /* Navigation Bar */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 2px solid rgba(196, 30, 58, 0.5);
+            padding: 20px;
+            z-index: 1000;
+            box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-button {
+            padding: 15px 35px;
+            background: linear-gradient(135deg, #c41e3a 0%, #8b1429 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 4px 15px rgba(196, 30, 58, 0.4);
+        }
+
+        .nav-button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #8b1429 0%, #c41e3a 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(196, 30, 58, 0.6);
+        }
+
+        .nav-button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .slide-indicator {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #00d4ff;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .slide {
+                padding: 40px 25px 100px 25px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            h3 {
+                font-size: 1.5rem;
+            }
+
+            .subtitle {
+                font-size: 1.3rem;
+            }
+
+            p, ul li {
+                font-size: 1.1rem;
+            }
+
+            .toolpath-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-button {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- Slide 1: Title & Objectives -->
+        <div class="slide active">
+            <div class="slide-content">
+                <h1>🛠️ CAM & TOOLPATH GENERATION</h1>
+                <p class="subtitle">Creating 2D Toolpaths, Setup Sheets, & G-Code</p>
+
+                <div class="info-box">
+                    <h3>From 3D Model to CNC Instructions</h3>
+                    <p>You've designed your robot parts and configured your machines. Now it's time to bridge the gap between CAD and physical cutting. In this lesson, you'll learn how to generate precise toolpaths that tell the CNC machine exactly how to manufacture your parts.</p>
+                </div>
+
+                <h3>Learning Objectives</h3>
+                <ul>
+                    <li>Understand the difference between geometry and toolpaths</li>
+                    <li>Create 2D contour and pocket toolpaths in Fusion 360</li>
+                    <li>Configure setup sheets and work coordinate systems</li>
+                    <li>Set cutting parameters (feeds, speeds, depths)</li>
+                    <li>Simulate toolpaths to verify before cutting</li>
+                    <li>Generate G-code using post-processors</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <p><strong>Prerequisites:</strong> Completed Lesson 2 (Machine & Tool Library setup). You should have both the OMIO and Crossfire machines configured in Fusion 360.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: CAM Workflow Overview -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🔄 THE CAM WORKFLOW</h2>
+
+                <div class="diagram">
+                    <pre>
+┌─────────────────────────────────────────────┐
+│  STEP 1: SETUP                              │
+│  • Select machine & work coordinate system  │
+│  • Define stock material dimensions         │
+│  • Set work offset (X0, Y0, Z0)            │
+└─────────────────────────────────────────────┘
+              ↓
+┌─────────────────────────────────────────────┐
+│  STEP 2: CREATE TOOLPATHS                   │
+│  • 2D Contour (cut outline)                │
+│  • 2D Pocket (remove interior material)    │
+│  • Drill (holes)                           │
+└─────────────────────────────────────────────┘
+              ↓
+┌─────────────────────────────────────────────┐
+│  STEP 3: SIMULATE                           │
+│  • Preview material removal                 │
+│  • Check for collisions                     │
+│  • Verify dimensions                        │
+└─────────────────────────────────────────────┘
+              ↓
+┌─────────────────────────────────────────────┐
+│  STEP 4: POST-PROCESS                       │
+│  • Generate G-code file                     │
+│  • Export to USB drive                      │
+│  • Load into CNC controller                 │
+└─────────────────────────────────────────────┘
+                    </pre>
+                </div>
+
+                <div class="info-box">
+                    <p><strong>Key Concept:</strong> CAM is about <em>process planning</em>—deciding the sequence of cuts, tool selection, and cutting parameters that efficiently produce your part.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Setup - Work Coordinate System -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>📐 WORK COORDINATE SYSTEM (WCS)</h2>
+
+                <h3>What is a Setup?</h3>
+                <div class="highlight-box">
+                    <p>A <strong>Setup</strong> defines the relationship between your part, the stock material, and the machine. It establishes where X0, Y0, Z0 are located—the "origin" from which all tool movements are calculated.</p>
+                </div>
+
+                <h3>Common Zero Positions for Robot Parts</h3>
+                <div class="toolpath-grid">
+                    <div class="toolpath-card">
+                        <h4>BOTTOM-LEFT CORNER</h4>
+                        <p><strong>X0, Y0:</strong> Lower-left corner of stock</p>
+                        <p><strong>Z0:</strong> Top of stock material</p>
+                        <p><strong>Use Case:</strong> Best for rectangular parts with clear edges (robot decks)</p>
+                    </div>
+                    <div class="toolpath-card">
+                        <h4>CENTER OF PART</h4>
+                        <p><strong>X0, Y0:</strong> Geometric center</p>
+                        <p><strong>Z0:</strong> Top of stock</p>
+                        <p><strong>Use Case:</strong> Symmetrical parts (circular plates, gears)</p>
+                    </div>
+                </div>
+
+                <div class="warning-box">
+                    <p><strong>⚠️ Critical:</strong> Your physical zero position on the CNC machine MUST match the zero position you define in Fusion 360. Misalignment = crashed tool or ruined part.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Stock Material Setup -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>📦 DEFINING STOCK MATERIAL</h2>
+
+                <h3>Stock vs. Model</h3>
+                <div class="info-box">
+                    <ul>
+                        <li><strong>Model:</strong> Your final part design (the geometry you created in the Design workspace)</li>
+                        <li><strong>Stock:</strong> The raw material you'll cut from (larger than the finished part)</li>
+                    </ul>
+                </div>
+
+                <h3>Stock Setup Example: Robot Deck</h3>
+                <div class="code-block">
+                    <pre>Model Dimensions:     200mm × 150mm × 3mm (finished part)
+Stock Dimensions:     220mm × 170mm × 3.2mm (raw polycarbonate)
+
+Extra Stock:
+  • X/Y sides: +10mm each side (clamping area)
+  • Z top: +0.2mm (surfacing allowance)
+  • Z bottom: 0mm (bottom sits on spoilboard)</pre>
+                </div>
+
+                <h3>Creating the Setup</h3>
+                <ul>
+                    <li><span class="step-number">1</span> <strong>Manufacture workspace</strong> → <code>Setup → New Setup</code></li>
+                    <li><span class="step-number">2</span> Select <strong>OMIO X8-2200</strong> machine</li>
+                    <li><span class="step-number">3</span> Set <strong>Work Coordinate System</strong> to bottom-left corner</li>
+                    <li><span class="step-number">4</span> Define <strong>Stock</strong> → <code>Relative Size Box</code></li>
+                    <li><span class="step-number">5</span> Offset: <code>X+10, Y+10, Z+0.2mm</code> (sides and top)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 5: 2D Contour Toolpath -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>✂️ 2D CONTOUR TOOLPATH</h2>
+
+                <h3>What is a Contour?</h3>
+                <div class="highlight-box">
+                    <p>A <strong>2D Contour</strong> follows the outline of your part, cutting around the perimeter. This is typically the final operation that separates your part from the stock material.</p>
+                </div>
+
+                <h3>Contour Parameters</h3>
+                <div class="toolpath-grid">
+                    <div class="toolpath-card">
+                        <h4>GEOMETRY</h4>
+                        <ul style="margin: 0;">
+                            <li style="padding: 8px 0;">Select edges to cut</li>
+                            <li style="padding: 8px 0;">Choose inside/outside/on-line</li>
+                            <li style="padding: 8px 0;">Set cut direction (climb/conventional)</li>
+                        </ul>
+                    </div>
+                    <div class="toolpath-card">
+                        <h4>HEIGHTS</h4>
+                        <ul style="margin: 0;">
+                            <li style="padding: 8px 0;"><strong>Clearance:</strong> 10mm (safe travel height)</li>
+                            <li style="padding: 8px 0;"><strong>Retract:</strong> 5mm (between cuts)</li>
+                            <li style="padding: 8px 0;"><strong>Top:</strong> 0mm (stock top)</li>
+                            <li style="padding: 8px 0;"><strong>Bottom:</strong> -3.2mm (cut through)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Creating a Contour</h3>
+                <ul>
+                    <li><span class="step-number">1</span> <code>2D → 2D Contour</code></li>
+                    <li><span class="step-number">2</span> Select 6.35mm flat end mill</li>
+                    <li><span class="step-number">3</span> Select part outline (edges)</li>
+                    <li><span class="step-number">4</span> Set <strong>Side</strong> to "Outside" (cut around part)</li>
+                    <li><span class="step-number">5</span> Add <strong>tabs</strong> (small connections to hold part in place)</li>
+                    <li><span class="step-number">6</span> Set bottom height to <code>-3.3mm</code> (0.1mm deeper than stock)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 6: 2D Pocket Toolpath -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🕳️ 2D POCKET TOOLPATH</h2>
+
+                <h3>What is a Pocket?</h3>
+                <div class="info-box">
+                    <p>A <strong>2D Pocket</strong> removes material from an enclosed area—like holes, recesses, or weight-reduction cutouts in your robot deck.</p>
+                </div>
+
+                <h3>Pocket vs. Contour</h3>
+                <div class="toolpath-grid">
+                    <div class="toolpath-card">
+                        <h4>2D CONTOUR</h4>
+                        <p>Cuts around a profile (outline)</p>
+                        <p>Follows edges</p>
+                        <p>Used for: Part separation, slots</p>
+                    </div>
+                    <div class="toolpath-card">
+                        <h4>2D POCKET</h4>
+                        <p>Removes interior material</p>
+                        <p>Fills bounded area with toolpath</p>
+                        <p>Used for: Holes, recesses, lightening</p>
+                    </div>
+                </div>
+
+                <h3>Pocket Strategies</h3>
+                <div class="code-block">
+                    <pre>OFFSET STRATEGY:
+  • Spirals inward from boundary
+  • Smooth, continuous motion
+  • Best for most pockets
+
+ZIGZAG STRATEGY:
+  • Back-and-forth passes
+  • Faster but rougher
+  • Use for large areas with finishing pass</pre>
+                </div>
+
+                <h3>Creating a Pocket for Mounting Holes</h3>
+                <ul>
+                    <li><span class="step-number">1</span> <code>2D → 2D Pocket</code></li>
+                    <li><span class="step-number">2</span> Select hole boundaries (sketch circles or model pockets)</li>
+                    <li><span class="step-number">3</span> Set <strong>Bottom Height</strong> to recess depth (e.g., <code>-2mm</code>)</li>
+                    <li><span class="step-number">4</span> Choose <strong>Offset</strong> clearing strategy</li>
+                    <li><span class="step-number">5</span> Set <strong>Stepover</strong> to 50% of tool diameter (3.175mm for 6.35mm tool)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 7: Feeds and Speeds -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>⚡ FEEDS, SPEEDS & DEPTH OF CUT</h2>
+
+                <h3>The Three Critical Parameters</h3>
+                <div class="toolpath-grid">
+                    <div class="toolpath-card">
+                        <h4>SPINDLE SPEED (RPM)</h4>
+                        <p>How fast the tool spins</p>
+                        <p><strong>Polycarbonate:</strong> 18,000 RPM</p>
+                        <p><strong>Plywood:</strong> 18,000 RPM</p>
+                        <p><strong>Aluminum:</strong> 12,000 RPM</p>
+                    </div>
+                    <div class="toolpath-card">
+                        <h4>FEED RATE (mm/min)</h4>
+                        <p>How fast the tool moves through material</p>
+                        <p><strong>Polycarbonate:</strong> 1500 mm/min</p>
+                        <p><strong>Plywood:</strong> 2000 mm/min</p>
+                        <p><strong>Aluminum:</strong> 800 mm/min</p>
+                    </div>
+                    <div class="toolpath-card">
+                        <h4>DEPTH OF CUT (DOC)</h4>
+                        <p>How deep each pass goes</p>
+                        <p><strong>Polycarbonate:</strong> 1.5mm per pass</p>
+                        <p><strong>Plywood:</strong> 3mm per pass</p>
+                        <p><strong>Aluminum:</strong> 0.5mm per pass</p>
+                    </div>
+                </div>
+
+                <div class="warning-box">
+                    <p><strong>⚠️ Conservative Settings for Beginners:</strong> Start at 75% of recommended speeds. You can always go faster, but you can't un-break a tool!</p>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>Rule of Thumb: Listen to the Cut</h3>
+                    <ul>
+                        <li><strong>Smooth humming:</strong> Perfect! ✅</li>
+                        <li><strong>Squealing/chattering:</strong> Feed rate too slow or RPM too high ⚠️</li>
+                        <li><strong>Grinding/laboring:</strong> Feed rate too fast or RPM too low ⚠️</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Simulation -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🎬 SIMULATING TOOLPATHS</h2>
+
+                <h3>Why Simulate?</h3>
+                <div class="highlight-box">
+                    <p>Simulation lets you preview the entire cutting process before you waste material or break tools. It's like a dress rehearsal for your CNC job.</p>
+                </div>
+
+                <h3>What to Look For During Simulation</h3>
+                <ul>
+                    <li><span class="step-number">1</span> <strong>Tool Collisions:</strong> Does the tool hit clamps or fixtures?</li>
+                    <li><span class="step-number">2</span> <strong>Material Removal:</strong> Is all intended material removed?</li>
+                    <li><span class="step-number">3</span> <strong>Excess Material:</strong> Any "islands" left behind?</li>
+                    <li><span class="step-number">4</span> <strong>Part Dimensions:</strong> Does final part match design?</li>
+                    <li><span class="step-number">5</span> <strong>Rapid Movements:</strong> Does tool retract to safe heights?</li>
+                </ul>
+
+                <h3>Running a Simulation</h3>
+                <ul>
+                    <li><span class="step-number">1</span> Click <strong>Actions → Simulate</strong></li>
+                    <li><span class="step-number">2</span> Click <strong>Play</strong> to watch full simulation</li>
+                    <li><span class="step-number">3</span> Use <strong>Slider</strong> to step through toolpath slowly</li>
+                    <li><span class="step-number">4</span> Toggle <strong>Stock</strong> visibility to see part emerge</li>
+                    <li><span class="step-number">5</span> Check <strong>Compare</strong> to see design vs. simulated result</li>
+                </ul>
+
+                <div class="success-box">
+                    <p><strong>Pro Tip:</strong> Run simulation at 2-4x speed to quickly check for major errors, then slow down to 0.5x to inspect critical areas like corners and pockets.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Tabs & Part Holding -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>📎 TABS: KEEPING PARTS SECURE</h2>
+
+                <h3>The Tab Problem</h3>
+                <div class="info-box">
+                    <p>When you cut completely through your stock, what holds the part in place? Without tabs, your part becomes a projectile as soon as the final cut completes.</p>
+                </div>
+
+                <h3>What are Tabs?</h3>
+                <div class="highlight-box">
+                    <p><strong>Tabs</strong> are small "bridges" of material intentionally left uncut during the toolpath. They keep the part attached to the stock until you manually break them off.</p>
+                </div>
+
+                <h3>Tab Configuration</h3>
+                <div class="code-block">
+                    <pre>Recommended Tab Settings:
+
+  Tab Height:     1.5mm (half your stock thickness)
+  Tab Width:      10mm
+  Number of Tabs: 3-6 (depending on part size)
+
+  Placement:
+    • Distribute evenly around perimeter
+    • Avoid placing on critical edges
+    • Position on flat sections (not corners)</pre>
+                </div>
+
+                <h3>Removing Tabs After Cutting</h3>
+                <ul>
+                    <li>Use flush-cut pliers or small saw to cut tabs</li>
+                    <li>Sand tab remnants flush with part edge</li>
+                    <li>File or deburr sharp edges</li>
+                </ul>
+
+                <div class="warning-box">
+                    <p><strong>⚠️ Safety Note:</strong> NEVER attempt to cut tabs while part is still on the machine. Remove workpiece first, then break tabs at the bench.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: G-Code Generation -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>💾 GENERATING G-CODE</h2>
+
+                <h3>What is G-Code?</h3>
+                <div class="info-box">
+                    <p><strong>G-code</strong> is the language CNC machines speak. It's a text file containing line-by-line instructions: "move to X100 Y50", "spin tool at 18000 RPM", "cut to Z-3mm", etc.</p>
+                </div>
+
+                <h3>Sample G-Code</h3>
+                <div class="code-block">
+                    <pre>G21          ; Set units to millimeters
+G90          ; Absolute positioning
+M3 S18000    ; Spindle on, 18,000 RPM
+G0 Z10       ; Rapid move to safe height
+G0 X50 Y50   ; Rapid move to start position
+G1 Z-1.5 F500  ; Plunge to depth, 500 mm/min
+G1 X150 F1500  ; Cut to X150, 1500 mm/min
+G1 Y100      ; Cut to Y100
+G0 Z10       ; Retract to safe height
+M5           ; Spindle off
+M2           ; Program end</pre>
+                </div>
+
+                <h3>Post-Processing Steps</h3>
+                <ul>
+                    <li><span class="step-number">1</span> Right-click <strong>Setup</strong> → <code>Post Process</code></li>
+                    <li><span class="step-number">2</span> Select <strong>omio-grbl</strong> post-processor</li>
+                    <li><span class="step-number">3</span> Click <strong>Post</strong> to generate .nc file</li>
+                    <li><span class="step-number">4</span> Save to USB drive or network folder</li>
+                    <li><span class="step-number">5</span> Load file into CNC controller (UGS, Carbide Motion, etc.)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 11: Lab Exercise -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🧪 LAB EXERCISE: ROBOT DECK CAM</h2>
+
+                <div class="highlight-box">
+                    <h3>The Challenge</h3>
+                    <p>Generate complete toolpaths for a robot base deck with mounting holes and perimeter cutout. Simulate and export G-code ready for production.</p>
+                </div>
+
+                <h3>Part Specifications</h3>
+                <div class="code-block">
+                    <pre>Material:    3mm polycarbonate
+Dimensions:  200mm × 150mm
+Features:
+  • 4x mounting holes (Ø8mm, countersunk)
+  • 2x weight-reduction pockets (40mm × 80mm, 2mm deep)
+  • Rounded corners (R5mm)
+  • Perimeter cutout with 4 tabs</pre>
+                </div>
+
+                <h3>Required Toolpaths (in order)</h3>
+                <ul>
+                    <li><span class="step-number">1</span> <strong>2D Pocket</strong> for mounting holes (full depth)</li>
+                    <li><span class="step-number">2</span> <strong>2D Pocket</strong> for weight-reduction cutouts (2mm deep)</li>
+                    <li><span class="step-number">3</span> <strong>2D Contour</strong> for perimeter (with tabs)</li>
+                </ul>
+
+                <div class="success-box">
+                    <p><strong>Deliverable:</strong> Screenshot of simulation showing completed part + exported .nc file. Submit both to Google Classroom.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Summary -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>✅ LESSON SUMMARY</h2>
+
+                <h3>Key Takeaways</h3>
+                <ul>
+                    <li>CAM translates 3D geometry into machine instructions (toolpaths)</li>
+                    <li>Setup defines work coordinate system and stock dimensions</li>
+                    <li>2D Contour cuts outlines; 2D Pocket removes interior material</li>
+                    <li>Feeds, speeds, and depth of cut determine cutting efficiency and quality</li>
+                    <li>Simulation catches errors before they become expensive mistakes</li>
+                    <li>Post-processors generate machine-specific G-code from toolpaths</li>
+                </ul>
+
+                <div class="info-box">
+                    <h3>The CAM Mindset</h3>
+                    <p>Good CAM work is about <strong>process planning</strong>—thinking through the sequence of operations, selecting the right tools, and balancing speed with quality. Your first job will take hours. Your tenth will take minutes.</p>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>🔜 Next Lesson: Iterative Design Process</h3>
+                    <p>Now that you can manufacture parts, you'll learn the iterative process: make a part, test it, measure the error, improve the design, and repeat until it's perfect.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="nav-bar">
+        <div class="nav-container">
+            <button class="nav-button" id="prevBtn" onclick="changeSlide(-1)">← PREVIOUS</button>
+            <div class="slide-indicator">
+                <span id="currentSlide">1</span> / <span id="totalSlides">12</span>
+            </div>
+            <button class="nav-button" id="nextBtn" onclick="changeSlide(1)">NEXT →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.toggle('active', index === currentSlide);
+            });
+
+            document.getElementById('currentSlide').textContent = currentSlide + 1;
+            document.getElementById('totalSlides').textContent = totalSlides;
+
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide < 0) currentSlide = 0;
+            if (currentSlide >= totalSlides) currentSlide = totalSlides - 1;
+            updateSlide();
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') {
+                changeSlide(-1);
+            } else if (event.key === 'ArrowRight' || event.key === ' ') {
+                event.preventDefault();
+                changeSlide(1);
+            }
+        });
+
+        // Initialize
+        updateSlide();
+    </script>
+</body>
+</html>

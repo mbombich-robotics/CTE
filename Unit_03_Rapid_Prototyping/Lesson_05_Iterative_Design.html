@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 5: Iterative Design Process | Unit 3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: #0a0e27;
+            color: #e0e0e0;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+
+        .presentation {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            min-height: 100%;
+            display: none;
+            padding: 55px 60px 120px 60px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 100%);
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .slide-content {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(196, 30, 58, 0.8),
+                         0 0 60px rgba(196, 30, 58, 0.4);
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 1.8rem;
+            color: #00d4ff;
+            font-weight: 300;
+            margin-bottom: 50px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            font-size: 3rem;
+            margin-bottom: 40px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: #ff6b9d;
+            font-size: 2rem;
+            margin-top: 40px;
+            margin-bottom: 25px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        h4 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        p {
+            font-size: 1.4rem;
+            line-height: 1.9;
+            margin-bottom: 20px;
+            color: #d0d0d0;
+        }
+
+        ul {
+            list-style: none;
+            margin: 30px 0;
+        }
+
+        ul li {
+            padding: 15px 0 15px 40px;
+            position: relative;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            color: #d0d0d0;
+        }
+
+        ul li:before {
+            content: "▸";
+            color: #c41e3a;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+            font-size: 1.8rem;
+        }
+
+        strong {
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%);
+            border-left: 5px solid #00d4ff;
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(196, 30, 58, 0.2) 0%, rgba(196, 30, 58, 0.1) 100%);
+            border-left: 5px solid #c41e3a;
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(196, 30, 58, 0.3);
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, rgba(80, 250, 123, 0.15) 0%, rgba(80, 250, 123, 0.08) 100%);
+            border-left: 5px solid #50fa7b;
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(80, 250, 123, 0.2);
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(255, 184, 108, 0.15) 0%, rgba(255, 184, 108, 0.08) 100%);
+            border-left: 5px solid #ffb86c;
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(255, 184, 108, 0.2);
+        }
+
+        .step-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #c41e3a 0%, #8b1429 100%);
+            color: #ffffff;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 45px;
+            font-weight: 700;
+            margin-right: 15px;
+            font-size: 1.2rem;
+            box-shadow: 0 0 20px rgba(196, 30, 58, 0.5);
+        }
+
+        .iteration-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .iteration-card {
+            background: linear-gradient(135deg, rgba(196, 30, 58, 0.15) 0%, rgba(196, 30, 58, 0.05) 100%);
+            border: 2px solid rgba(196, 30, 58, 0.4);
+            border-radius: 15px;
+            padding: 35px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .iteration-card:hover {
+            border-color: #00d4ff;
+            box-shadow: 0 8px 40px rgba(0, 212, 255, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .diagram {
+            background: rgba(10, 14, 39, 0.6);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .diagram pre {
+            font-family: 'JetBrains Mono', monospace;
+            color: #00d4ff;
+            font-size: 1rem;
+            line-height: 1.6;
+            display: inline-block;
+            text-align: left;
+        }
+
+        .formula {
+            background: rgba(80, 250, 123, 0.1);
+            border: 2px solid #50fa7b;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.3rem;
+            text-align: center;
+        }
+
+        .formula code {
+            color: #50fa7b;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .rubric-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            background: rgba(10, 14, 39, 0.4);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .rubric-table th {
+            background: linear-gradient(135deg, #c41e3a 0%, #8b1429 100%);
+            color: #ffffff;
+            padding: 15px;
+            text-align: left;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .rubric-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(196, 30, 58, 0.2);
+            color: #d0d0d0;
+        }
+
+        .rubric-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Navigation Bar */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 2px solid rgba(196, 30, 58, 0.5);
+            padding: 20px;
+            z-index: 1000;
+            box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-button {
+            padding: 15px 35px;
+            background: linear-gradient(135deg, #c41e3a 0%, #8b1429 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 4px 15px rgba(196, 30, 58, 0.4);
+        }
+
+        .nav-button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #8b1429 0%, #c41e3a 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(196, 30, 58, 0.6);
+        }
+
+        .nav-button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .slide-indicator {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #00d4ff;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .slide {
+                padding: 40px 25px 100px 25px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            h3 {
+                font-size: 1.5rem;
+            }
+
+            .subtitle {
+                font-size: 1.3rem;
+            }
+
+            p, ul li {
+                font-size: 1.1rem;
+            }
+
+            .iteration-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-button {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- Slide 1: Title & Objectives -->
+        <div class="slide active">
+            <div class="slide-content">
+                <h1>🔄 ITERATIVE DESIGN PROCESS</h1>
+                <p class="subtitle">Test, Measure, Improve, Repeat</p>
+
+                <div class="info-box">
+                    <h3>Engineering is Iteration</h3>
+                    <p>Professional engineers rarely get designs perfect on the first try. Instead, they embrace iteration—a systematic process of building, testing, learning from failures, and improving until the part works perfectly. This is how SpaceX builds rockets, how Tesla designs cars, and how you'll build championship robots.</p>
+                </div>
+
+                <h3>Learning Objectives</h3>
+                <ul>
+                    <li>Understand the iterative design methodology</li>
+                    <li>Document design decisions and test results</li>
+                    <li>Measure dimensional accuracy and functional errors</li>
+                    <li>Calculate design adjustments based on measurements</li>
+                    <li>Complete Robot Part Iteration Logs (20 points each)</li>
+                    <li>Apply lessons learned to improve future designs</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <p><strong>Robot Base Project:</strong> You'll complete 8 custom parts for your line-following robot. Each part requires an iteration log documenting your design process—worth 160 points total!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: The Iteration Cycle -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>♻️ THE ITERATION CYCLE</h2>
+
+                <div class="diagram">
+                    <pre>
+            ┌──────────────┐
+            │   DESIGN     │
+            │  (CAD Model) │
+            └──────┬───────┘
+                   │
+                   ▼
+            ┌──────────────┐
+            │  MANUFACTURE │
+            │ (CNC/3D Print)│
+            └──────┬───────┘
+                   │
+                   ▼
+            ┌──────────────┐
+            │     TEST     │
+            │  (Fit/Func)  │
+            └──────┬───────┘
+                   │
+                   ▼
+            ┌──────────────┐
+            │   MEASURE    │
+            │   (Analyze)  │
+            └──────┬───────┘
+                   │
+                   ▼
+            ┌──────────────┐
+            │   IMPROVE    │
+            │  (Rev 2, 3...)│
+            └──────┬───────┘
+                   │
+                   └──────► REPEAT until perfect
+                    </pre>
+                </div>
+
+                <div class="info-box">
+                    <p><strong>Key Insight:</strong> Each iteration makes your part better. Version 1 rarely works. Version 2 is closer. Version 3 might be perfect. Document everything so you don't repeat mistakes.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Part Iteration Log Overview -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>📋 ROBOT PART ITERATION LOG</h2>
+
+                <h3>What is an Iteration Log?</h3>
+                <div class="highlight-box">
+                    <p>An <strong>Iteration Log</strong> is a structured document that tracks every version of a part from initial concept to final working prototype. It's your engineering notebook—the proof that you followed the design process professionally.</p>
+                </div>
+
+                <h3>Log Sections</h3>
+                <div class="iteration-grid">
+                    <div class="iteration-card">
+                        <h4>SECTION 1: DESIGN INTENT</h4>
+                        <p>What is this part supposed to do?</p>
+                        <p>Dimensions, materials, features</p>
+                        <p>Sketches and CAD screenshots</p>
+                    </div>
+                    <div class="iteration-card">
+                        <h4>SECTION 2: MANUFACTURING</h4>
+                        <p>How was it made?</p>
+                        <p>CNC toolpaths or 3D print settings</p>
+                        <p>Material used, machine time</p>
+                    </div>
+                    <div class="iteration-card">
+                        <h4>SECTION 3: TESTING</h4>
+                        <p>Does it fit? Does it work?</p>
+                        <p>Assembly photos</p>
+                        <p>Functional test results</p>
+                    </div>
+                    <div class="iteration-card">
+                        <h4>SECTION 4: ANALYSIS</h4>
+                        <p>What went wrong?</p>
+                        <p>Measurements of errors</p>
+                        <p>Calculations for corrections</p>
+                    </div>
+                </div>
+
+                <div class="success-box">
+                    <p><strong>Grading:</strong> Each log is worth 20 points. You need 8 logs (one per custom robot part) = 160 points toward your Robot Base Project grade.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Design Intent Section -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>💡 SECTION 1: DESIGN INTENT</h2>
+
+                <h3>Clearly State the Purpose</h3>
+                <div class="info-box">
+                    <p>Before you design anything, answer: <strong>"What problem does this part solve?"</strong></p>
+                </div>
+
+                <h3>Example: Motor Mount Bracket</h3>
+                <div class="highlight-box">
+                    <p><strong>Part Name:</strong> Motor Mount Bracket (Left Side)</p>
+                    <p><strong>Purpose:</strong> Securely attach DC motor to robot base deck at 90° angle. Must align motor shaft with wheel hub.</p>
+                    <p><strong>Key Dimensions:</strong></p>
+                    <ul>
+                        <li>Motor mounting holes: 31mm × 31mm bolt pattern (M3 screws)</li>
+                        <li>Deck mounting: 40mm × 40mm base plate (4× M3 screws)</li>
+                        <li>Motor shaft centerline: 15mm above deck surface</li>
+                        <li>Material: 3mm PETG (3D printed)</li>
+                    </ul>
+                </div>
+
+                <h3>Required Documentation</h3>
+                <ul>
+                    <li>CAD screenshot showing critical dimensions</li>
+                    <li>Sketch or reference drawing of mating parts</li>
+                    <li>List of tolerances (e.g., "Mounting holes ±0.5mm acceptable")</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 5: Manufacturing Section -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🏭 SECTION 2: MANUFACTURING DETAILS</h2>
+
+                <h3>Document How You Made It</h3>
+                <div class="info-box">
+                    <p>Future-you (or a teammate) should be able to recreate this exact part from your manufacturing notes.</p>
+                </div>
+
+                <h3>CNC Parts - Required Info</h3>
+                <ul>
+                    <li><strong>Material:</strong> Type, thickness, source (e.g., "3mm polycarbonate, McMaster 8574K12")</li>
+                    <li><strong>Machine:</strong> OMIO X8-2200 or Crossfire Pro</li>
+                    <li><strong>Tool:</strong> 6.35mm flat end mill, 2-flute carbide</li>
+                    <li><strong>Toolpaths:</strong> List operations (2D Pocket for holes, 2D Contour for outline)</li>
+                    <li><strong>Feeds/Speeds:</strong> 18,000 RPM @ 1500 mm/min, 1.5mm DOC</li>
+                    <li><strong>Run Time:</strong> Approx. 12 minutes</li>
+                </ul>
+
+                <h3>3D Printed Parts - Required Info</h3>
+                <ul>
+                    <li><strong>Material:</strong> PETG, PLA, or ABS (specify brand/color)</li>
+                    <li><strong>Nozzle Temp:</strong> 240°C (PETG) or 210°C (PLA)</li>
+                    <li><strong>Bed Temp:</strong> 80°C (PETG) or 60°C (PLA)</li>
+                    <li><strong>Layer Height:</strong> 0.2mm or 0.3mm</li>
+                    <li><strong>Infill:</strong> 50% gyroid (structural parts) or 20% grid (lightweight)</li>
+                    <li><strong>Supports:</strong> Yes/No, tree supports if needed</li>
+                    <li><strong>Print Time:</strong> 1h 45m</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 6: Testing Section -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🧪 SECTION 3: TESTING & ASSEMBLY</h2>
+
+                <h3>Fit Test: Does it Assemble?</h3>
+                <div class="highlight-box">
+                    <p>The most important test: <strong>Can you physically assemble this part with the rest of your robot?</strong></p>
+                </div>
+
+                <h3>Fit Test Checklist</h3>
+                <ul>
+                    <li><span class="step-number">1</span> <strong>Holes align:</strong> Do bolt holes line up with mating parts?</li>
+                    <li><span class="step-number">2</span> <strong>Clearances:</strong> Is there enough space for tools (screwdriver access)?</li>
+                    <li><span class="step-number">3</span> <strong>Interference:</strong> Does anything hit that shouldn't?</li>
+                    <li><span class="step-number">4</span> <strong>Fasteners:</strong> Do screws thread smoothly? Nuts fit?</li>
+                </ul>
+
+                <h3>Function Test: Does it Work?</h3>
+                <ul>
+                    <li><strong>Motor mount:</strong> Does motor spin freely? No binding?</li>
+                    <li><strong>Sensor bracket:</strong> Does sensor detect line at correct distance?</li>
+                    <li><strong>Battery holder:</strong> Does battery fit snugly? Easy to remove?</li>
+                    <li><strong>Wheel hub:</strong> Does wheel spin without wobble?</li>
+                </ul>
+
+                <div class="success-box">
+                    <p><strong>Photo Evidence:</strong> Include at least 2 photos showing the part installed on your robot. Use a ruler in the photo to show scale.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Measurement & Error Analysis -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>📏 SECTION 4: MEASUREMENT & ANALYSIS</h2>
+
+                <h3>Quantify What Went Wrong</h3>
+                <div class="info-box">
+                    <p>"The hole is too small" is not useful. <strong>"The hole measured 7.8mm instead of 8.0mm (0.2mm undersized)"</strong> tells you exactly how to fix it.</p>
+                </div>
+
+                <h3>Critical Measurements</h3>
+                <div class="iteration-grid">
+                    <div class="iteration-card">
+                        <h4>DIMENSIONAL ERRORS</h4>
+                        <p>Measure with calipers:</p>
+                        <ul style="margin: 0;">
+                            <li style="padding: 8px 0;">Hole diameters</li>
+                            <li style="padding: 8px 0;">Wall thicknesses</li>
+                            <li style="padding: 8px 0;">Overall dimensions</li>
+                            <li style="padding: 8px 0;">Bolt pattern spacing</li>
+                        </ul>
+                    </div>
+                    <div class="iteration-card">
+                        <h4>FUNCTIONAL ERRORS</h4>
+                        <p>Measure performance:</p>
+                        <ul style="margin: 0;">
+                            <li style="padding: 8px 0;">Gap sizes (clearance issues)</li>
+                            <li style="padding: 8px 0;">Alignment angles</li>
+                            <li style="padding: 8px 0;">Height above deck</li>
+                            <li style="padding: 8px 0;">Distance from target</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Error Calculation Example</h3>
+                <div class="formula">
+                    <p><strong>Error = Measured Value - Design Value</strong></p>
+                    <code>Error = 7.8mm - 8.0mm = -0.2mm (undersized)</code>
+                </div>
+
+                <div class="formula">
+                    <p><strong>Percent Error = (Error / Design Value) × 100%</strong></p>
+                    <code>% Error = (-0.2mm / 8.0mm) × 100% = -2.5%</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Correcting Design Errors -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🔧 CALCULATING DESIGN CORRECTIONS</h2>
+
+                <h3>Adjust CAD Model for Next Iteration</h3>
+                <div class="highlight-box">
+                    <p>Once you know the error, update your CAD model to compensate. Add the inverse of the error to get the correct dimension.</p>
+                </div>
+
+                <h3>Correction Examples</h3>
+
+                <div class="iteration-grid">
+                    <div class="iteration-card">
+                        <h4>HOLE TOO SMALL</h4>
+                        <p><strong>Design:</strong> 8.0mm hole</p>
+                        <p><strong>Measured:</strong> 7.8mm</p>
+                        <p><strong>Error:</strong> -0.2mm (undersized)</p>
+                        <p><strong>Fix:</strong> Increase CAD hole to 8.2mm</p>
+                        <p><em>Logic: 8.2mm design → 8.0mm actual</em></p>
+                    </div>
+                    <div class="iteration-card">
+                        <h4>PART TOO LONG</h4>
+                        <p><strong>Design:</strong> 100.0mm length</p>
+                        <p><strong>Measured:</strong> 100.3mm</p>
+                        <p><strong>Error:</strong> +0.3mm (oversized)</p>
+                        <p><strong>Fix:</strong> Reduce CAD length to 99.7mm</p>
+                        <p><em>Logic: 99.7mm design → 100.0mm actual</em></p>
+                    </div>
+                </div>
+
+                <div class="warning-box">
+                    <p><strong>⚠️ Over-Correction Danger:</strong> Don't compensate too much! If your hole was 0.2mm small, add 0.2mm—not 0.5mm "to be safe." That causes new problems.</p>
+                </div>
+
+                <h3>Iteration 2 Notes</h3>
+                <div class="info-box">
+                    <p>Document your changes:</p>
+                    <ul>
+                        <li>"Increased motor mounting holes from 3.0mm → 3.2mm (0.2mm compensation)"</li>
+                        <li>"Reduced base plate length from 100mm → 99.7mm (0.3mm shrinkage observed)"</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Common Manufacturing Errors -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>⚠️ COMMON ERRORS & SOLUTIONS</h2>
+
+                <h3>CNC Router Issues</h3>
+                <div class="iteration-grid">
+                    <div class="iteration-card">
+                        <h4>HOLES TOO SMALL</h4>
+                        <p><strong>Cause:</strong> Tool deflection, bit runout</p>
+                        <p><strong>Solution:</strong> Add 0.1-0.2mm to hole diameters</p>
+                    </div>
+                    <div class="iteration-card">
+                        <h4>ROUGH EDGES</h4>
+                        <p><strong>Cause:</strong> Feed rate too fast, dull tool</p>
+                        <p><strong>Solution:</strong> Reduce feed 25%, add finishing pass</p>
+                    </div>
+                    <div class="iteration-card">
+                        <h4>TABS TOO THICK</h4>
+                        <p><strong>Cause:</strong> Tab height too large</p>
+                        <p><strong>Solution:</strong> Reduce tab height from 2mm → 1mm</p>
+                    </div>
+                </div>
+
+                <h3>3D Printing Issues</h3>
+                <div class="iteration-grid">
+                    <div class="iteration-card">
+                        <h4>WARPING/LIFTING</h4>
+                        <p><strong>Cause:</strong> Bed adhesion failure</p>
+                        <p><strong>Solution:</strong> Increase bed temp +5°C, use brim</p>
+                    </div>
+                    <div class="iteration-card">
+                        <h4>LAYER SEPARATION</h4>
+                        <p><strong>Cause:</strong> Nozzle temp too low</p>
+                        <p><strong>Solution:</strong> Increase nozzle +10°C</p>
+                    </div>
+                    <div class="iteration-card">
+                        <h4>HOLES UNDERSIZED</h4>
+                        <p><strong>Cause:</strong> Plastic expands while printing</p>
+                        <p><strong>Solution:</strong> Increase hole diameter +0.3mm</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Iteration Log Rubric -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>📊 GRADING RUBRIC (20 POINTS)</h2>
+
+                <table class="rubric-table">
+                    <thead>
+                        <tr>
+                            <th>Section</th>
+                            <th>Points</th>
+                            <th>Requirements</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Design Intent</strong></td>
+                            <td>4 pts</td>
+                            <td>Clear purpose statement, CAD screenshot with dimensions, material specified</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Manufacturing</strong></td>
+                            <td>4 pts</td>
+                            <td>Complete settings (speeds/feeds or print settings), toolpath list, runtime estimate</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Testing</strong></td>
+                            <td>4 pts</td>
+                            <td>Assembly photos (min 2), fit test results, function test description</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Measurement</strong></td>
+                            <td>4 pts</td>
+                            <td>At least 3 critical dimensions measured, error calculations shown</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Analysis & Iteration</strong></td>
+                            <td>4 pts</td>
+                            <td>Root cause identified, corrective actions documented, changes for V2 listed</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="warning-box">
+                    <p><strong>⚠️ Important:</strong> You must complete <strong>at least 2 iterations</strong> per part to receive full credit. Version 1 alone (even if perfect) earns maximum 15/20 points.</p>
+                </div>
+
+                <div class="success-box">
+                    <p><strong>Bonus Points:</strong> +2 points for exceptional documentation (detailed photos, thorough analysis, 3+ iterations)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Robot Base Project Timeline -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🤖 ROBOT BASE PROJECT: 8 PARTS</h2>
+
+                <h3>Required Custom Parts (with Iteration Logs)</h3>
+                <ul>
+                    <li><span class="step-number">1</span> <strong>Robot Base Deck</strong> (CNC polycarbonate, 200×150mm)</li>
+                    <li><span class="step-number">2</span> <strong>Motor Mount Bracket - Left</strong> (3D print PETG)</li>
+                    <li><span class="step-number">3</span> <strong>Motor Mount Bracket - Right</strong> (3D print PETG)</li>
+                    <li><span class="step-number">4</span> <strong>Front Caster Mount</strong> (3D print PETG)</li>
+                    <li><span class="step-number">5</span> <strong>Line Sensor Bracket</strong> (3D print PLA)</li>
+                    <li><span class="step-number">6</span> <strong>Battery Holder</strong> (CNC or 3D print)</li>
+                    <li><span class="step-number">7</span> <strong>Arduino Mount Plate</strong> (3D print PLA)</li>
+                    <li><span class="step-number">8</span> <strong>Wheel Hub Adapter</strong> (3D print PETG)</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <p><strong>Total Project Value:</strong> 8 parts × 20 points/log = 160 points</p>
+                    <p>This is your largest assignment in Unit 3!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Summary -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>✅ LESSON SUMMARY</h2>
+
+                <h3>Key Takeaways</h3>
+                <ul>
+                    <li>Iteration is the core of engineering—embrace failure as learning</li>
+                    <li>Document everything: designs, manufacturing, tests, measurements</li>
+                    <li>Measure errors precisely, then calculate exact corrections</li>
+                    <li>Each iteration makes your part better—Version 1 is supposed to fail!</li>
+                    <li>Robot Part Iteration Logs are worth 20 points each (160 total)</li>
+                </ul>
+
+                <div class="info-box">
+                    <h3>The Professional Mindset</h3>
+                    <p>"Good engineering is 10% inspiration and 90% iteration. Your first design teaches you what's wrong. Your second design gets closer. By the third, you understand the system well enough to nail it." <em>— Every successful engineer</em></p>
+                </div>
+
+                <div class="success-box">
+                    <h3>🎉 Unit 3 Complete!</h3>
+                    <p>You now have the full skillset to design robot parts in CAD, generate CNC toolpaths, operate CNC equipment safely, and iterate toward perfect parts. Time to build your robot!</p>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>🔜 Next Up: Unit 5 - Programming</h3>
+                    <p>Your robot has a body. Now it needs a brain. Learn Arduino programming to bring your line-following robot to life.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="nav-bar">
+        <div class="nav-container">
+            <button class="nav-button" id="prevBtn" onclick="changeSlide(-1)">← PREVIOUS</button>
+            <div class="slide-indicator">
+                <span id="currentSlide">1</span> / <span id="totalSlides">12</span>
+            </div>
+            <button class="nav-button" id="nextBtn" onclick="changeSlide(1)">NEXT →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.toggle('active', index === currentSlide);
+            });
+
+            document.getElementById('currentSlide').textContent = currentSlide + 1;
+            document.getElementById('totalSlides').textContent = totalSlides;
+
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide < 0) currentSlide = 0;
+            if (currentSlide >= totalSlides) currentSlide = totalSlides - 1;
+            updateSlide();
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') {
+                changeSlide(-1);
+            } else if (event.key === 'ArrowRight' || event.key === ' ') {
+                event.preventDefault();
+                changeSlide(1);
+            }
+        });
+
+        // Initialize
+        updateSlide();
+    </script>
+</body>
+</html>
