@@ -7,7 +7,11 @@
       "Bash(dir:*)",
       "Bash(for file in Lesson_*.html)",
       "Bash(do sed -i 's|href=\"\"../../index.html\"\" class=\"\"nav-button\"\"|href=\"\"index.html\"\" class=\"\"nav-button\"\"|g' \"$file\")",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(do if grep -q \"BACK TO UNIT 5\" \"$file\")",
+      "Bash(then echo \"✓ $file\")",
+      "Bash(else echo \"✗ $file - MISSING\")",
+      "Bash(fi)"
     ]
   }
 }

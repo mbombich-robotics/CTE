@@ -258,12 +258,16 @@
 
         /* Navigation */
         .nav-container {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
             display: flex;
-            gap: 15px;
-            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
         }
 
         .nav-btn {
@@ -1286,6 +1290,7 @@
 
     <div class="nav-container">
         <button class="nav-btn" id="prev-btn" onclick="prevSlide()">← Previous</button>
+        <a href="index.html" class="nav-button">⌂ BACK TO UNIT 5</a>
         <button class="nav-btn" id="next-btn" onclick="nextSlide()">Next →</button>
     </div>
 

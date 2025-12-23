@@ -237,7 +237,8 @@
 
         .expandable-header {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
+            gap: 20px;
             align-items: center;
             font-weight: 700;
             color: #ff9500;
@@ -324,7 +325,8 @@
 
         .range-indicator {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
+            gap: 20px;
             font-family: 'Space Mono', monospace;
             font-size: 0.9rem;
             color: #6272a4;
@@ -441,9 +443,12 @@
         .controls {
             position: fixed;
             bottom: 30px;
-            right: 30px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
-            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
             z-index: 1000;
         }
 
@@ -469,6 +474,26 @@
         button:disabled {
             opacity: 0.3;
             cursor: not-allowed;
+        }
+        .nav-button {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            border: none;
+            color: #0a0e27;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
         }
 
         .slide-number {
@@ -1190,6 +1215,7 @@ void loop() {
 
     <div class="controls">
         <button id="prev-btn" onclick="previousSlide()">← Previous</button>
+        <a href="index.html" class="nav-button">⌂ BACK TO UNIT 5</a>
         <button id="next-btn" onclick="nextSlide()">Next →</button>
     </div>
 
