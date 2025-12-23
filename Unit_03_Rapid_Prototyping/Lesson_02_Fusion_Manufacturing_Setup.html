@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 2: Fusion 360 Manufacturing Setup | Unit 3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #c41e3a 0%, #8b1429 100%);
+            padding: 30px 0;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(196, 30, 58, 0.4);
+            border-bottom: 4px solid #00d4ff;
+            margin-bottom: 30px;
+        }
+
+        .unit-tag {
+            display: inline-block;
+            background: rgba(0, 0, 0, 0.3);
+            color: #00d4ff;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .lesson-subtitle {
+            font-size: 1.2rem;
+            color: #ffb3c1;
+            font-weight: 400;
+        }
+
+        /* Navigation */
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: rgba(26, 26, 46, 0.6);
+            border-radius: 10px;
+            border: 1px solid rgba(196, 30, 58, 0.3);
+        }
+
+        .nav-button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #c41e3a 0%, #8b1429 100%);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-button:hover {
+            background: linear-gradient(135deg, #8b1429 0%, #c41e3a 100%);
+            border-color: #00d4ff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(196, 30, 58, 0.4);
+        }
+
+        .nav-button.disabled {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .slide-counter {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #00d4ff;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        /* Slide Content */
+        .slide {
+            display: none;
+            background: rgba(26, 26, 46, 0.8);
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 2px solid rgba(196, 30, 58, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            min-height: 500px;
+        }
+
+        .slide.active {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide h2 {
+            color: #00d4ff;
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 3px solid #c41e3a;
+            padding-bottom: 15px;
+        }
+
+        .slide h3 {
+            color: #ff6b9d;
+            font-size: 1.6rem;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .slide ul {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .slide ul li {
+            padding: 12px 0 12px 30px;
+            position: relative;
+            font-size: 1.15rem;
+            line-height: 1.8;
+        }
+
+        .slide ul li:before {
+            content: "▸";
+            color: #c41e3a;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+            font-size: 1.3rem;
+        }
+
+        .highlight-box {
+            background: rgba(196, 30, 58, 0.15);
+            border-left: 5px solid #c41e3a;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .info-box {
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 5px solid #00d4ff;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .success-box {
+            background: rgba(80, 250, 123, 0.1);
+            border-left: 5px solid #50fa7b;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .warning-box {
+            background: rgba(255, 184, 108, 0.1);
+            border-left: 5px solid #ffb86c;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #c41e3a 0%, #8b1429 100%);
+            color: #ffffff;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: 700;
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        .machine-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .machine-card {
+            background: rgba(196, 30, 58, 0.1);
+            border: 2px solid rgba(196, 30, 58, 0.4);
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .machine-card:hover {
+            border-color: #00d4ff;
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .machine-card h4 {
+            color: #00d4ff;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .spec-list {
+            list-style: none;
+            margin: 10px 0;
+        }
+
+        .spec-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(196, 30, 58, 0.2);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .spec-list li:before {
+            content: none;
+        }
+
+        .spec-label {
+            color: #888;
+            font-size: 0.95rem;
+        }
+
+        .spec-value {
+            color: #00d4ff;
+            font-weight: 700;
+        }
+
+        .download-box {
+            background: rgba(80, 250, 123, 0.1);
+            border: 2px solid #50fa7b;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .download-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #50fa7b 0%, #3dcc6b 100%);
+            color: #0a0e27;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            margin: 10px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .download-button:hover {
+            background: linear-gradient(135deg, #3dcc6b 0%, #50fa7b 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(80, 250, 123, 0.4);
+        }
+
+        .code-block {
+            background: #1a1a2e;
+            border: 2px solid #c41e3a;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Roboto Mono', monospace;
+            overflow-x: auto;
+        }
+
+        .code-block pre {
+            color: #50fa7b;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            background: #0d0d0d;
+            border-top: 3px solid #c41e3a;
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 50px;
+        }
+
+        .mascot {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: #c41e3a;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .slide h2 {
+                font-size: 1.6rem;
+            }
+
+            .slide {
+                padding: 25px;
+            }
+
+            .nav-button {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+
+            .machine-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="unit-tag">UNIT 3: RAPID PROTOTYPING & MANUFACTURING</div>
+            <h1>Lesson 2: Fusion 360 Manufacturing Setup</h1>
+            <p class="lesson-subtitle">Machine Libraries, Tool Libraries, & Post-Processors</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Navigation -->
+        <div class="nav-container">
+            <button class="nav-button" id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <span class="slide-counter"><span id="currentSlide">1</span> / <span id="totalSlides">12</span></span>
+            <button class="nav-button" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+
+        <!-- Slide 1: Title & Objectives -->
+        <div class="slide active">
+            <h2>⚙️ Fusion 360 Manufacturing Setup</h2>
+
+            <div class="info-box">
+                <h3>From CAD to CAM</h3>
+                <p>You've designed robot parts in Fusion 360's Design workspace. Now you'll learn how to transform those designs into physical parts using the <strong>Manufacturing workspace</strong>—where CAD (Computer-Aided Design) becomes CAM (Computer-Aided Manufacturing).</p>
+            </div>
+
+            <h3>Learning Objectives</h3>
+            <ul>
+                <li>Understand the Manufacturing workspace layout</li>
+                <li>Import machine definitions (OMIO CNC Router, Crossfire Pro Plasma)</li>
+                <li>Install post-processors for G-code generation</li>
+                <li>Create custom tool definitions (end mills, plasma cutter)</li>
+                <li>Configure machine parameters and work envelopes</li>
+                <li>Prepare files for CNC manufacturing</li>
+            </ul>
+
+            <div class="highlight-box">
+                <p><strong>Before Class:</strong> Ensure Fusion 360 is installed and updated. Have your VHS Google Drive access ready for downloading machine files.</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: CAD vs CAM -->
+        <div class="slide">
+            <h2>🔄 Design vs. Manufacturing Workspace</h2>
+
+            <h3>What's the Difference?</h3>
+            <div class="machine-grid">
+                <div class="machine-card">
+                    <h4>DESIGN Workspace</h4>
+                    <ul class="spec-list">
+                        <li><span class="spec-label">Purpose:</span> <span class="spec-value">Create 3D models</span></li>
+                        <li><span class="spec-label">Tools:</span> <span class="spec-value">Sketch, Extrude, Fillet</span></li>
+                        <li><span class="spec-label">Output:</span> <span class="spec-value">.f3d, .step, .stl files</span></li>
+                        <li><span class="spec-label">Focus:</span> <span class="spec-value">Geometry & dimensions</span></li>
+                    </ul>
+                </div>
+                <div class="machine-card">
+                    <h4>MANUFACTURE Workspace</h4>
+                    <ul class="spec-list">
+                        <li><span class="spec-label">Purpose:</span> <span class="spec-value">Make real parts</span></li>
+                        <li><span class="spec-label">Tools:</span> <span class="spec-value">Toolpaths, Operations</span></li>
+                        <li><span class="spec-label">Output:</span> <span class="spec-value">G-code (.nc, .tap, .gcode)</span></li>
+                        <li><span class="spec-label">Focus:</span> <span class="spec-value">How to cut material</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h3>The Manufacturing Workflow</h3>
+                <p><span class="step-number">1</span> Design part in <strong>Design workspace</strong></p>
+                <p><span class="step-number">2</span> Switch to <strong>Manufacture workspace</strong></p>
+                <p><span class="step-number">3</span> Select machine & tool</p>
+                <p><span class="step-number">4</span> Create toolpaths (how tool cuts material)</p>
+                <p><span class="step-number">5</span> Simulate cutting process</p>
+                <p><span class="step-number">6</span> Generate G-code with post-processor</p>
+                <p><span class="step-number">7</span> Load G-code into CNC machine</p>
+            </div>
+        </div>
+
+        <!-- Slide 3: What is a Machine Library -->
+        <div class="slide">
+            <h2>🏭 Machine Libraries Explained</h2>
+
+            <h3>What is a Machine Library?</h3>
+            <div class="highlight-box">
+                <p>A <strong>machine library</strong> is a digital definition of your CNC machine. It tells Fusion 360:</p>
+                <ul>
+                    <li>How big the cutting area is (work envelope)</li>
+                    <li>What axes the machine has (X, Y, Z, rotational)</li>
+                    <li>Maximum speeds and accelerations</li>
+                    <li>Safety limits and machine capabilities</li>
+                </ul>
+            </div>
+
+            <h3>Why We Need Machine Libraries</h3>
+            <ul>
+                <li><strong>Collision prevention:</strong> Fusion won't let you design toolpaths outside the machine's range</li>
+                <li><strong>Realistic simulation:</strong> Preview exactly how your part will be cut</li>
+                <li><strong>Optimized G-code:</strong> Code is tailored to your specific machine</li>
+                <li><strong>Setup sheets:</strong> Generates instructions for machine operators</li>
+            </ul>
+
+            <div class="warning-box">
+                <p><strong>⚠️ Important:</strong> Using the wrong machine library can generate G-code that damages equipment or produces incorrect parts. Always verify your machine selection!</p>
+            </div>
+        </div>
+
+        <!-- Slide 4: Our Two Machines -->
+        <div class="slide">
+            <h2>🔧 VHS CNC Machines</h2>
+
+            <div class="machine-grid">
+                <div class="machine-card">
+                    <h4>OMIO X8-2200 CNC Router</h4>
+                    <ul class="spec-list">
+                        <li><span class="spec-label">Work Area:</span> <span class="spec-value">850 × 550 × 85 mm</span></li>
+                        <li><span class="spec-label">Spindle:</span> <span class="spec-value">2.2 kW (3 HP) water-cooled</span></li>
+                        <li><span class="spec-label">Materials:</span> <span class="spec-value">Wood, plastic, soft metals</span></li>
+                        <li><span class="spec-label">Controller:</span> <span class="spec-value">GRBL</span></li>
+                        <li><span class="spec-label">Use Case:</span> <span class="spec-value">Robot decks, mounting plates</span></li>
+                    </ul>
+                </div>
+                <div class="machine-card">
+                    <h4>Crossfire Pro Plasma CNC</h4>
+                    <ul class="spec-list">
+                        <li><span class="spec-label">Work Area:</span> <span class="spec-value">29″ × 29″ (737 × 737 mm)</span></li>
+                        <li><span class="spec-label">Cut Capacity:</span> <span class="spec-value">Up to 1/2″ steel</span></li>
+                        <li><span class="spec-label">Materials:</span> <span class="spec-value">Steel, aluminum, stainless</span></li>
+                        <li><span class="spec-label">Controller:</span> <span class="spec-value">FireControl</span></li>
+                        <li><span class="spec-label">Use Case:</span> <span class="spec-value">Metal brackets, chassis parts</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <p><strong>Material Selection Guide:</strong></p>
+                <ul>
+                    <li>Polycarbonate robot deck → <strong>OMIO Router</strong></li>
+                    <li>Aluminum heat sink → <strong>Crossfire Plasma</strong> (rough cut) + <strong>OMIO</strong> (precision holes)</li>
+                    <li>3D-printed parts → Design workspace only (no CAM needed)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 5: Installing Machine Library -->
+        <div class="slide">
+            <h2>📥 Installing Machine Definitions</h2>
+
+            <h3>Step-by-Step: Import OMIO Machine</h3>
+            <ul>
+                <li><span class="step-number">1</span> Switch to <strong>Manufacture</strong> workspace (top-left dropdown)</li>
+                <li><span class="step-number">2</span> Click <strong>Manage → Machine Library</strong></li>
+                <li><span class="step-number">3</span> Click <strong>Import</strong> button (folder icon)</li>
+                <li><span class="step-number">4</span> Navigate to downloaded <code>OMIO X8-2200.machine</code> file</li>
+                <li><span class="step-number">5</span> Select file → Click <strong>Open</strong></li>
+                <li><span class="step-number">6</span> Machine appears in "My Machines" list</li>
+                <li><span class="step-number">7</span> Repeat for <code>Crossfire Pro.machine</code></li>
+            </ul>
+
+            <div class="success-box">
+                <h3>✅ Verification</h3>
+                <p>After import, you should see both machines listed:</p>
+                <div class="code-block">
+                    <pre>My Machines:
+  └─ OMIO X8-2200
+  └─ Langmuir Crossfire PRO</pre>
+                </div>
+            </div>
+
+            <div class="download-box">
+                <h3>📦 Download Machine Files</h3>
+                <p>Get the machine definitions from Google Drive:</p>
+                <a href="#" class="download-button">⬇ OMIO Machine File</a>
+                <a href="#" class="download-button">⬇ Crossfire Machine File</a>
+                <p style="margin-top: 15px; font-size: 0.95rem; color: #888;">Files also available in class shared folder</p>
+            </div>
+        </div>
+
+        <!-- Slide 6: Post-Processors -->
+        <div class="slide">
+            <h2>📝 What is a Post-Processor?</h2>
+
+            <h3>The Translation Layer</h3>
+            <div class="highlight-box">
+                <p>Fusion 360 creates <strong>toolpaths</strong> (the path the cutting tool follows). But CNC machines can't read toolpaths directly—they need <strong>G-code</strong>.</p>
+                <p>A <strong>post-processor</strong> translates Fusion's toolpaths into machine-specific G-code.</p>
+            </div>
+
+            <h3>Why Different Post-Processors?</h3>
+            <ul>
+                <li>Different controllers use different G-code dialects (GRBL vs. LinuxCNC vs. Mach3)</li>
+                <li>Machines have different capabilities (e.g., plasma needs torch height control codes)</li>
+                <li>File format preferences (.nc vs .tap vs .gcode)</li>
+                <li>Custom safety protocols and startup sequences</li>
+            </ul>
+
+            <div class="info-box">
+                <h3>Our Post-Processors</h3>
+                <ul>
+                    <li><strong>omio-grbl.cps</strong> → For OMIO CNC Router (GRBL controller)</li>
+                    <li><strong>FireControl-v1.6.cps</strong> → For Crossfire Pro Plasma (FireControl software)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 7: Installing Post-Processors -->
+        <div class="slide">
+            <h2>⚙️ Installing Post-Processors</h2>
+
+            <h3>Locating the Post-Processor Folder</h3>
+            <div class="code-block">
+                <pre>Windows Path:
+C:\Users\YourName\AppData\Roaming\Autodesk\
+  Fusion 360 CAM\Posts
+
+Mac Path:
+~/Library/Application Support/Autodesk/
+  Fusion 360 CAM/Posts</pre>
+            </div>
+
+            <h3>Installation Steps</h3>
+            <ul>
+                <li><span class="step-number">1</span> Download <code>omio-grbl.cps</code> and <code>FireControl-v1.6.cps</code></li>
+                <li><span class="step-number">2</span> Press <strong>Windows Key + R</strong> → Type <code>%appdata%</code> → Press Enter</li>
+                <li><span class="step-number">3</span> Navigate to <code>Autodesk → Fusion 360 CAM → Posts</code></li>
+                <li><span class="step-number">4</span> Copy both .cps files into this folder</li>
+                <li><span class="step-number">5</span> Restart Fusion 360</li>
+            </ul>
+
+            <div class="warning-box">
+                <p><strong>⚠️ Troubleshooting:</strong> If you don't see the "Posts" folder, create it manually. The path must be exact—spaces and capitalization matter!</p>
+            </div>
+
+            <div class="download-box">
+                <h3>📦 Download Post-Processors</h3>
+                <a href="#" class="download-button">⬇ OMIO GRBL Post</a>
+                <a href="#" class="download-button">⬇ FireControl Post</a>
+            </div>
+        </div>
+
+        <!-- Slide 8: Tool Libraries Overview -->
+        <div class="slide">
+            <h2>🔨 Tool Libraries Explained</h2>
+
+            <h3>What is a Tool Library?</h3>
+            <div class="info-box">
+                <p>A <strong>tool library</strong> contains definitions of every cutting tool you own:</p>
+                <ul>
+                    <li>Physical dimensions (diameter, length, flutes)</li>
+                    <li>Material properties (HSS, carbide, diamond)</li>
+                    <li>Cutting parameters (speeds, feeds, depths)</li>
+                    <li>Tool number (for automatic tool changers)</li>
+                </ul>
+            </div>
+
+            <h3>Why Accurate Tool Data Matters</h3>
+            <ul>
+                <li><strong>Collision prevention:</strong> Fusion simulates with actual tool geometry</li>
+                <li><strong>Optimal cutting:</strong> Wrong speeds = broken tools or burned material</li>
+                <li><strong>Finish quality:</strong> Feed rates affect surface smoothness</li>
+                <li><strong>Tool life:</strong> Proper parameters prevent premature wear</li>
+            </ul>
+
+            <div class="highlight-box">
+                <p><strong>Professional Shops:</strong> Tool libraries can have 100+ tools. We'll start with 2 essential tools for robot manufacturing.</p>
+            </div>
+        </div>
+
+        <!-- Slide 9: Creating Tools -->
+        <div class="slide">
+            <h2>🛠️ Creating Tool Definitions</h2>
+
+            <h3>Tool #1: Flat End Mill (OMIO Router)</h3>
+            <div class="code-block">
+                <pre>Tool Type:         Flat End Mill
+Diameter:          6.35 mm (1/4")
+Flute Length:      25 mm
+Overall Length:    63 mm
+Number of Flutes:  2
+Material:          Carbide
+Coolant:           Air blast
+
+Cutting Parameters:
+  Spindle Speed:   18,000 RPM
+  Feed Rate:       1500 mm/min
+  Plunge Rate:     500 mm/min
+  Max DOC:         3 mm (depth of cut)</pre>
+            </div>
+
+            <h3>Tool #2: Plasma Cutter (Crossfire Pro)</h3>
+            <div class="code-block">
+                <pre>Tool Type:         Plasma (consumable)
+Kerf Width:        1.5 mm (cut width)
+Pierce Height:     3.8 mm
+Cut Height:        1.5 mm
+Pierce Delay:      0.5 seconds
+Lead-in Distance:  3 mm
+
+Cutting Parameters:
+  Feed Rate:       4000 mm/min (mild steel)
+  Max Thickness:   12.7 mm (1/2")</pre>
+            </div>
+        </div>
+
+        <!-- Slide 10: Tool Creation Steps -->
+        <div class="slide">
+            <h2>➕ Adding Tools to Your Library</h2>
+
+            <h3>Creating the End Mill</h3>
+            <ul>
+                <li><span class="step-number">1</span> Manufacture workspace → <strong>Manage → Tool Library</strong></li>
+                <li><span class="step-number">2</span> Click <strong>New Tool</strong> → Select <strong>Flat End Mill</strong></li>
+                <li><span class="step-number">3</span> Enter tool geometry (diameter, length, flutes)</li>
+                <li><span class="step-number">4</span> Switch to <strong>Cutting Data</strong> tab</li>
+                <li><span class="step-number">5</span> Enter speeds/feeds for each material (plastic, wood, aluminum)</li>
+                <li><span class="step-number">6</span> Click <strong>Accept</strong> to save</li>
+            </ul>
+
+            <div class="info-box">
+                <h3>💡 Pro Tip: Material-Specific Settings</h3>
+                <p>The same tool cuts different materials at different speeds:</p>
+                <ul>
+                    <li><strong>Polycarbonate:</strong> 18,000 RPM @ 1500 mm/min</li>
+                    <li><strong>Plywood:</strong> 18,000 RPM @ 2000 mm/min</li>
+                    <li><strong>Aluminum:</strong> 12,000 RPM @ 800 mm/min (use coolant!)</li>
+                </ul>
+            </div>
+
+            <div class="warning-box">
+                <p><strong>⚠️ Safety Note:</strong> Never exceed manufacturer's recommended RPM for your tool diameter. Formula: Surface Speed (SFM) = (RPM × Diameter × π) / 12</p>
+            </div>
+        </div>
+
+        <!-- Slide 11: Lab Exercise -->
+        <div class="slide">
+            <h2>🧪 Lab Exercise: Setup Verification</h2>
+
+            <div class="highlight-box">
+                <h3>The Challenge</h3>
+                <p>Configure your Fusion 360 Manufacturing workspace with both machines and tools, then create a test setup sheet.</p>
+            </div>
+
+            <h3>Part 1: Machine Import (10 min)</h3>
+            <ul>
+                <li>Download both machine files from Google Drive</li>
+                <li>Import OMIO X8-2200 into Fusion 360</li>
+                <li>Import Crossfire Pro into Fusion 360</li>
+                <li>Verify both appear in Machine Library</li>
+            </ul>
+
+            <h3>Part 2: Post-Processor Install (10 min)</h3>
+            <ul>
+                <li>Download both .cps post-processor files</li>
+                <li>Locate Fusion 360 Posts folder</li>
+                <li>Copy files and restart Fusion</li>
+                <li>Verify posts appear in dropdown during NC code generation</li>
+            </ul>
+
+            <h3>Part 3: Tool Creation (15 min)</h3>
+            <ul>
+                <li>Create 6.35mm flat end mill with specs from Slide 9</li>
+                <li>Create plasma tool with specs from Slide 9</li>
+                <li>Save tools to "VHS Robot Tools" library</li>
+            </ul>
+
+            <div class="success-box">
+                <p><strong>Deliverable:</strong> Screenshot showing Machine Library with both machines + Tool Library with both tools. Submit to Google Classroom.</p>
+            </div>
+        </div>
+
+        <!-- Slide 12: Summary -->
+        <div class="slide">
+            <h2>✅ Lesson Summary</h2>
+
+            <h3>Key Takeaways</h3>
+            <ul>
+                <li>Manufacturing workspace transforms CAD designs into CNC toolpaths</li>
+                <li>Machine libraries define your CNC equipment's capabilities and limits</li>
+                <li>Post-processors translate toolpaths into machine-specific G-code</li>
+                <li>Tool libraries store cutting tool geometry and parameters</li>
+                <li>Accurate machine/tool data prevents collisions and optimizes cutting</li>
+            </ul>
+
+            <div class="info-box">
+                <h3>The Manufacturing Stack</h3>
+                <div class="code-block">
+                    <pre>┌─────────────────────────────────┐
+│   DESIGN (CAD)                  │  ← Part geometry
+├─────────────────────────────────┤
+│   MANUFACTURE (CAM)             │  ← Toolpath strategy
+├─────────────────────────────────┤
+│   MACHINE LIBRARY               │  ← Equipment limits
+├─────────────────────────────────┤
+│   TOOL LIBRARY                  │  ← Cutting parameters
+├─────────────────────────────────┤
+│   POST-PROCESSOR                │  ← G-code translation
+├─────────────────────────────────┤
+│   CNC MACHINE                   │  ← Physical cutting
+└─────────────────────────────────┘</pre>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h3>🔜 Next Lesson: CNC Safety & Operation</h3>
+                <p>Now that your software is configured, we'll learn the safety protocols and operational procedures for running CNC equipment safely.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="mascot">🐕 Home of the Bulldogs 🐕</div>
+        <p style="margin-top: 10px; font-size: 0.85rem;">Vicksburg High School | Applied Engineering & Robotics</p>
+    </footer>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 12;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (n > totalSlides) currentSlide = totalSlides;
+            if (n < 1) currentSlide = 1;
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('currentSlide').textContent = currentSlide;
+
+            prevBtn.classList.toggle('disabled', currentSlide === 1);
+            nextBtn.classList.toggle('disabled', currentSlide === totalSlides);
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            showSlide(currentSlide);
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') changeSlide(-1);
+            if (event.key === 'ArrowRight') changeSlide(1);
+        });
+
+        document.getElementById('totalSlides').textContent = totalSlides;
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 1: Measurement Fundamentals | Unit 3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #c41e3a 0%, #8b1429 100%);
+            padding: 30px 0;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(196, 30, 58, 0.4);
+            border-bottom: 4px solid #00d4ff;
+            margin-bottom: 30px;
+        }
+
+        .unit-tag {
+            display: inline-block;
+            background: rgba(0, 0, 0, 0.3);
+            color: #00d4ff;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .lesson-subtitle {
+            font-size: 1.2rem;
+            color: #ffb3c1;
+            font-weight: 400;
+        }
+
+        /* Navigation */
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: rgba(26, 26, 46, 0.6);
+            border-radius: 10px;
+            border: 1px solid rgba(196, 30, 58, 0.3);
+        }
+
+        .nav-button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #c41e3a 0%, #8b1429 100%);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-button:hover {
+            background: linear-gradient(135deg, #8b1429 0%, #c41e3a 100%);
+            border-color: #00d4ff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(196, 30, 58, 0.4);
+        }
+
+        .nav-button.disabled {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .slide-counter {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #00d4ff;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        /* Slide Content */
+        .slide {
+            display: none;
+            background: rgba(26, 26, 46, 0.8);
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 2px solid rgba(196, 30, 58, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            min-height: 500px;
+        }
+
+        .slide.active {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide h2 {
+            color: #00d4ff;
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 3px solid #c41e3a;
+            padding-bottom: 15px;
+        }
+
+        .slide h3 {
+            color: #ff6b9d;
+            font-size: 1.6rem;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .slide ul {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .slide ul li {
+            padding: 12px 0 12px 30px;
+            position: relative;
+            font-size: 1.15rem;
+            line-height: 1.8;
+        }
+
+        .slide ul li:before {
+            content: "▸";
+            color: #c41e3a;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+            font-size: 1.3rem;
+        }
+
+        .highlight-box {
+            background: rgba(196, 30, 58, 0.15);
+            border-left: 5px solid #c41e3a;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .info-box {
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 5px solid #00d4ff;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .success-box {
+            background: rgba(80, 250, 123, 0.1);
+            border-left: 5px solid #50fa7b;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .warning-box {
+            background: rgba(255, 184, 108, 0.1);
+            border-left: 5px solid #ffb86c;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .code-block {
+            background: #1a1a2e;
+            border: 2px solid #c41e3a;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Roboto Mono', monospace;
+            overflow-x: auto;
+        }
+
+        .code-block pre {
+            color: #50fa7b;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .measurement-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .measurement-card {
+            background: rgba(196, 30, 58, 0.1);
+            border: 2px solid rgba(196, 30, 58, 0.4);
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .measurement-card:hover {
+            border-color: #00d4ff;
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .measurement-card h4 {
+            color: #00d4ff;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .comparison-table {
+            width: 100%;
+            margin: 25px 0;
+            border-collapse: collapse;
+            background: rgba(10, 14, 39, 0.6);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #c41e3a 0%, #8b1429 100%);
+            color: #ffffff;
+            padding: 15px;
+            text-align: left;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .comparison-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(196, 30, 58, 0.2);
+            font-size: 1.05rem;
+        }
+
+        .comparison-table tr:hover {
+            background: rgba(196, 30, 58, 0.1);
+        }
+
+        .step-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #c41e3a 0%, #8b1429 100%);
+            color: #ffffff;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: 700;
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            background: #0d0d0d;
+            border-top: 3px solid #c41e3a;
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 50px;
+        }
+
+        .mascot {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: #c41e3a;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .slide h2 {
+                font-size: 1.6rem;
+            }
+
+            .slide {
+                padding: 25px;
+            }
+
+            .nav-button {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+
+            .measurement-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="unit-tag">UNIT 3: RAPID PROTOTYPING & MANUFACTURING</div>
+            <h1>Lesson 1: Measurement Fundamentals</h1>
+            <p class="lesson-subtitle">Digital Calipers, Tape Measures, Accuracy & Precision</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Navigation -->
+        <div class="nav-container">
+            <button class="nav-button" id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <span class="slide-counter"><span id="currentSlide">1</span> / <span id="totalSlides">12</span></span>
+            <button class="nav-button" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+
+        <!-- Slide 1: Title & Objectives -->
+        <div class="slide active">
+            <h2>📏 Measurement Fundamentals</h2>
+
+            <div class="info-box">
+                <h3>Why Measurement Matters in Manufacturing</h3>
+                <p>In precision manufacturing, being "close enough" isn't good enough. A 0.1mm error can mean the difference between a perfect fit and a failed part. This lesson teaches you professional measurement techniques used in industry.</p>
+            </div>
+
+            <h3>Learning Objectives</h3>
+            <ul>
+                <li>Master digital caliper operation and zeroing procedures</li>
+                <li>Understand tape measure compensating hooks</li>
+                <li>Distinguish between accuracy and precision</li>
+                <li>Apply the 3-measurement rule for quality control</li>
+                <li>Measure critical dimensions on robot components</li>
+            </ul>
+
+            <div class="highlight-box">
+                <p><strong>Before Class Begins:</strong></p>
+                <ul>
+                    <li>Phones in pouch, backpacks under chair</li>
+                    <li>Open Fusion 360 → File → Open from Hub → Common Components → Electronics → "5 Channel IR Tracker"</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 2: Digital Caliper Overview -->
+        <div class="slide">
+            <h2>🔧 Tool #1: Digital Caliper</h2>
+
+            <h3>Parts of a Digital Caliper</h3>
+            <div class="measurement-grid">
+                <div class="measurement-card">
+                    <h4>Outside Jaws (Flat)</h4>
+                    <p>For measuring external dimensions like diameters, widths, and thicknesses</p>
+                </div>
+                <div class="measurement-card">
+                    <h4>Inside Jaws (Thin Tips)</h4>
+                    <p>For measuring internal dimensions like hole diameters and slot widths</p>
+                </div>
+                <div class="measurement-card">
+                    <h4>Depth Probe</h4>
+                    <p>Extends from the end to measure hole depths and step heights</p>
+                </div>
+                <div class="measurement-card">
+                    <h4>Digital Display</h4>
+                    <p>Shows measurements in mm or inches with 0.01mm resolution</p>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <p><strong>⚠️ Handle with Care:</strong> Digital calipers are precision instruments. Never drop them, overtighten the jaws, or use them as a prying tool. Cost: ~$30-200 depending on quality.</p>
+            </div>
+        </div>
+
+        <!-- Slide 3: How to Hold & Zero -->
+        <div class="slide">
+            <h2>✋ Proper Caliper Technique</h2>
+
+            <h3>How to Hold the Caliper</h3>
+            <div class="info-box">
+                <p><strong>Like a game controller:</strong></p>
+                <ul>
+                    <li><strong>Thumb</strong> on the slider (movable jaw)</li>
+                    <li><strong>Index finger</strong> on the fixed frame</li>
+                    <li>Gentle, controlled pressure only</li>
+                </ul>
+            </div>
+
+            <h3>The Zeroing Procedure</h3>
+            <p>Always zero your caliper before each measurement session:</p>
+            <ul>
+                <li><span class="step-number">1</span> Close jaws completely (should be flush with no gap)</li>
+                <li><span class="step-number">2</span> Press the ZERO button</li>
+                <li><span class="step-number">3</span> Display should read 0.00 mm</li>
+                <li><span class="step-number">4</span> Open jaws and you're ready to measure</li>
+            </ul>
+
+            <div class="highlight-box">
+                <p><strong>Unit Switching:</strong> Press the mm/inch button to toggle between metric and imperial units. For this class, we'll work in <strong>millimeters (mm)</strong>.</p>
+            </div>
+        </div>
+
+        <!-- Slide 4: Measurement Rules -->
+        <div class="slide">
+            <h2>📊 The 3-Measurement Rule</h2>
+
+            <div class="success-box">
+                <h3>Industry Best Practice</h3>
+                <p><strong>Measure 3 times, write the middle number</strong></p>
+                <p>This technique eliminates outliers caused by parallax error, jaw misalignment, or measurement angle.</p>
+            </div>
+
+            <h3>Example: Measuring a Motor Mount Hole</h3>
+            <div class="code-block">
+                <pre>Measurement 1:  3.34 mm
+Measurement 2:  3.35 mm  ← Middle value (RECORD THIS)
+Measurement 3:  3.36 mm
+
+Recorded Value: 3.35 mm</pre>
+            </div>
+
+            <div class="info-box">
+                <p><strong>Why not average?</strong> In manufacturing quality control, we use the median (middle value) rather than mean (average) because it's less affected by extreme outliers. If one measurement is wildly off, the median stays accurate.</p>
+            </div>
+        </div>
+
+        <!-- Slide 5: Tool #2 Tape Measure -->
+        <div class="slide">
+            <h2>📐 Tool #2: Tape Measure</h2>
+
+            <h3>The Mysterious Loose Hook</h3>
+            <div class="highlight-box">
+                <p><strong>It's not broken—it's a feature!</strong></p>
+                <p>The metal hook on a tape measure is intentionally loose. It moves exactly the thickness of the hook itself (about 1mm) to compensate for different measuring scenarios.</p>
+            </div>
+
+            <h3>How the Hook Compensation Works</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Measurement Type</th>
+                        <th>Hook Position</th>
+                        <th>Why It Moves</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Outside Edge</strong></td>
+                        <td>Hook PUSHES against edge</td>
+                        <td>Hook moves outward to account for its thickness</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Inside Box</strong></td>
+                        <td>Hook PULLS into corner</td>
+                        <td>Hook moves inward, removing its thickness from measurement</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="warning-box">
+                <p><strong>⚠️ Never Trust the First Inch!</strong> The first 1-2 inches of a tape measure experience the most wear. For precision work, start at the 1" or 2" mark and subtract.</p>
+            </div>
+        </div>
+
+        <!-- Slide 6: Accuracy vs Precision -->
+        <div class="slide">
+            <h2>🎯 Accuracy vs. Precision</h2>
+
+            <h3>What's the Difference?</h3>
+            <div class="measurement-grid">
+                <div class="measurement-card">
+                    <h4>ACCURACY</h4>
+                    <p><strong>Close to the TRUTH</strong></p>
+                    <p>How close your measurement is to the actual, correct value</p>
+                </div>
+                <div class="measurement-card">
+                    <h4>PRECISION</h4>
+                    <p><strong>Same number every time</strong></p>
+                    <p>How consistent your measurements are when repeated</p>
+                </div>
+            </div>
+
+            <h3>The Bullseye Analogy</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Scenario</th>
+                        <th>Result</th>
+                        <th>Manufacturing Impact</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>🎯 <strong>Accurate + Precise</strong></td>
+                        <td>3 bullseyes</td>
+                        <td>✅ Perfect! Part will fit every time</td>
+                    </tr>
+                    <tr>
+                        <td>🎯 <strong>Precise only</strong></td>
+                        <td>3 shots in same wrong spot</td>
+                        <td>⚠️ Consistent error (e.g., uncalibrated tool)</td>
+                    </tr>
+                    <tr>
+                        <td>🎯 <strong>Accurate only</strong></td>
+                        <td>Shots scatter near center</td>
+                        <td>⚠️ May not meet tolerances</td>
+                    </tr>
+                    <tr>
+                        <td>❌ <strong>Neither</strong></td>
+                        <td>Random shots everywhere</td>
+                        <td>❌ Unusable—needs recalibration</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="success-box">
+                <p><strong>We want BOTH!</strong> That's why we take 3 measurements and calculate the median—it gives us both accuracy and precision.</p>
+            </div>
+        </div>
+
+        <!-- Slide 7: How Precision Without Accuracy Happens -->
+        <div class="slide">
+            <h2>🔍 Precise But Inaccurate: How?</h2>
+
+            <h3>Real-World Causes</h3>
+            <ul>
+                <li><strong>Uncalibrated calipers:</strong> Zeroed incorrectly, giving consistent but wrong readings</li>
+                <li><strong>Parallax error:</strong> Always reading from the same wrong angle</li>
+                <li><strong>Temperature expansion:</strong> Measuring in different temperature than design spec</li>
+                <li><strong>Worn tools:</strong> Tape measure hook bent, always adding the same error</li>
+                <li><strong>Systematic bias:</strong> Always applying too much/too little jaw pressure</li>
+            </ul>
+
+            <div class="info-box">
+                <h3>Example: The Uncalibrated Caliper</h3>
+                <div class="code-block">
+                    <pre>True dimension:    10.00 mm
+Your measurements: 10.15 mm, 10.16 mm, 10.15 mm
+
+Result: PRECISE (all within 0.01mm)
+        But INACCURATE (all off by +0.15mm)
+
+Cause: Caliper wasn't zeroed properly</pre>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <p><strong>Quality Control Lesson:</strong> Always verify your tools are calibrated before starting a measurement session. In professional shops, calipers are recalibrated monthly.</p>
+            </div>
+        </div>
+
+        <!-- Slide 8: Sticky Note Challenge Introduction -->
+        <div class="slide">
+            <h2>📝 Lab Exercise: Sticky Note Challenge</h2>
+
+            <div class="highlight-box">
+                <h3>The Challenge</h3>
+                <p>Measure three critical dimensions on the 5 Channel IR Tracker PCB. Record your measurements on a sticky note and compare with classmates.</p>
+            </div>
+
+            <h3>Three Measurements Required</h3>
+            <ul>
+                <li><strong>Dimension A:</strong> Overall board width (outside edge to outside edge)</li>
+                <li><strong>Dimension B:</strong> Center mounting hole diameter</li>
+                <li><strong>Dimension C:</strong> Distance between outer sensor centers</li>
+            </ul>
+
+            <h3>Success Criteria</h3>
+            <div class="success-box">
+                <ul>
+                    <li>Each dimension measured 3 times</li>
+                    <li>Median (middle) value recorded</li>
+                    <li>Measurements in millimeters (mm) to 0.01mm precision</li>
+                    <li>Sticky note shows student name + 3 dimensions</li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <p><strong>Teamwork:</strong> Work with a partner to verify measurements. Compare your median values—they should be within ±0.1mm if done correctly.</p>
+            </div>
+        </div>
+
+        <!-- Slide 9: Measurement Tips -->
+        <div class="slide">
+            <h2>💡 Pro Tips for Accurate Measurements</h2>
+
+            <div class="measurement-grid">
+                <div class="measurement-card">
+                    <h4>🔧 Jaw Alignment</h4>
+                    <p>Make sure jaws are perpendicular to the surface. Angled jaws give false readings.</p>
+                </div>
+                <div class="measurement-card">
+                    <h4>👁️ Eye Level</h4>
+                    <p>Read the display straight on, not at an angle (parallax error).</p>
+                </div>
+                <div class="measurement-card">
+                    <h4>🤏 Light Touch</h4>
+                    <p>Apply just enough pressure to close the gap. Overtightening compresses soft materials.</p>
+                </div>
+                <div class="measurement-card">
+                    <h4>🧹 Clean Surface</h4>
+                    <p>Dirt, dust, or burrs add measurement error. Wipe parts clean first.</p>
+                </div>
+                <div class="measurement-card">
+                    <h4>🌡️ Temperature</h4>
+                    <p>Metals expand when hot. Let parts cool to room temperature before measuring.</p>
+                </div>
+                <div class="measurement-card">
+                    <h4>📝 Record Immediately</h4>
+                    <p>Write down measurements right away. Don't trust your memory!</p>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <p><strong>Common Beginner Mistake:</strong> Moving the part or caliper between the 3 measurements. Keep everything stable and consistent.</p>
+            </div>
+        </div>
+
+        <!-- Slide 10: Tolerance & Engineering Fits -->
+        <div class="slide">
+            <h2>📐 Understanding Tolerances</h2>
+
+            <h3>What is Tolerance?</h3>
+            <div class="info-box">
+                <p><strong>Tolerance</strong> is the allowable variation in a dimension. No manufacturing process is perfect—tolerance tells you how much error is acceptable.</p>
+            </div>
+
+            <h3>Example: Motor Mount Hole</h3>
+            <div class="code-block">
+                <pre>Design specification: 3.00 mm ± 0.05 mm
+
+Acceptable range: 2.95 mm to 3.05 mm
+
+Your measurement: 3.02 mm → ✅ PASS (within tolerance)
+Your measurement: 3.08 mm → ❌ FAIL (out of tolerance)</pre>
+            </div>
+
+            <h3>Common Tolerance Standards</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Manufacturing Process</th>
+                        <th>Typical Tolerance</th>
+                        <th>Used For</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>3D Printing (FDM)</td>
+                        <td>±0.2 mm</td>
+                        <td>Non-critical parts, prototypes</td>
+                    </tr>
+                    <tr>
+                        <td>CNC Routing</td>
+                        <td>±0.1 mm</td>
+                        <td>Robot decks, mounting plates</td>
+                    </tr>
+                    <tr>
+                        <td>CNC Milling</td>
+                        <td>±0.025 mm</td>
+                        <td>Precision mechanical parts</td>
+                    </tr>
+                    <tr>
+                        <td>Injection Molding</td>
+                        <td>±0.05 mm</td>
+                        <td>High-volume production parts</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Slide 11: Error Calculation -->
+        <div class="slide">
+            <h2>🧮 Calculating Measurement Error</h2>
+
+            <h3>The Error Formula</h3>
+            <div class="highlight-box">
+                <h3 style="color: #00d4ff;">Error = Actual Measurement - Target Value</h3>
+                <p>Positive error = too big | Negative error = too small</p>
+            </div>
+
+            <h3>Example Calculations</h3>
+            <div class="code-block">
+                <pre>Example 1: Hole Diameter
+Target:  3.30 mm
+Actual:  3.35 mm
+Error:   3.35 - 3.30 = +0.05 mm (hole is too big)
+
+Example 2: Mounting Bracket Width
+Target:  38.75 mm
+Actual:  38.65 mm
+Error:   38.65 - 38.75 = -0.10 mm (part is too small)
+
+Example 3: Wall Thickness
+Target:  4.00 mm
+Actual:  4.03 mm
+Error:   4.03 - 4.00 = +0.03 mm (within tolerance!)</pre>
+            </div>
+
+            <div class="info-box">
+                <p><strong>In Your Iteration Log:</strong> You'll calculate error for 3 critical dimensions. This helps you understand if your manufacturing process is consistent and how to adjust parameters for the next version.</p>
+            </div>
+        </div>
+
+        <!-- Slide 12: Summary & Next Steps -->
+        <div class="slide">
+            <h2>✅ Lesson Summary</h2>
+
+            <h3>Key Takeaways</h3>
+            <ul>
+                <li>Digital calipers measure to ±0.01mm precision with proper technique</li>
+                <li>Always zero your caliper before measuring</li>
+                <li>Tape measure hooks are designed to be loose for compensation</li>
+                <li>Measure 3 times, record the median (middle) value</li>
+                <li><strong>Accuracy</strong> = closeness to truth | <strong>Precision</strong> = repeatability</li>
+                <li>We need BOTH accuracy and precision for quality manufacturing</li>
+                <li>Error = Actual - Target (shows how much adjustment is needed)</li>
+            </ul>
+
+            <div class="success-box">
+                <h3>Lab Exercise Deliverable</h3>
+                <p>Complete the Sticky Note Challenge:</p>
+                <ul>
+                    <li>Measure dimensions A, B, and C on the IR sensor (3× each)</li>
+                    <li>Record median values on sticky note</li>
+                    <li>Compare with 2 classmates to verify accuracy</li>
+                    <li>Submit sticky note before end of class</li>
+                </ul>
+            </div>
+
+            <div class="highlight-box">
+                <h3>🔜 Next Lesson: Fusion 360 Manufacturing Setup</h3>
+                <p>We'll use these measurement skills to configure machine libraries, create tool definitions, and set up Fusion 360's Manufacturing workspace for CNC production.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="mascot">🐕 Home of the Bulldogs 🐕</div>
+        <p style="margin-top: 10px; font-size: 0.85rem;">Vicksburg High School | Applied Engineering & Robotics</p>
+    </footer>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 12;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (n > totalSlides) currentSlide = totalSlides;
+            if (n < 1) currentSlide = 1;
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('currentSlide').textContent = currentSlide;
+
+            // Disable/enable navigation buttons
+            prevBtn.classList.toggle('disabled', currentSlide === 1);
+            nextBtn.classList.toggle('disabled', currentSlide === totalSlides);
+
+            // Scroll to top of slide
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            showSlide(currentSlide);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') changeSlide(-1);
+            if (event.key === 'ArrowRight') changeSlide(1);
+        });
+
+        // Initialize
+        document.getElementById('totalSlides').textContent = totalSlides;
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>
