@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Iteration Log Assistant | VHS Robotics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(196, 30, 58, 0.2) 0%, rgba(196, 30, 58, 0.1) 100%);
+            border-radius: 15px;
+            border: 2px solid rgba(196, 30, 58, 0.4);
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(196, 30, 58, 0.8);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #00d4ff;
+            font-weight: 300;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: rgba(26, 26, 46, 0.6);
+            border-radius: 15px;
+            border: 2px solid rgba(196, 30, 58, 0.3);
+            padding: 25px;
+        }
+
+        .sidebar h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .progress-section {
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            background: rgba(10, 14, 39, 0.6);
+            border-radius: 10px;
+            height: 30px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(196, 30, 58, 0.3);
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #c41e3a 0%, #ff6b9d 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .section-status {
+            margin-bottom: 15px;
+        }
+
+        .section-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: rgba(10, 14, 39, 0.4);
+            border-radius: 8px;
+            border: 1px solid rgba(196, 30, 58, 0.2);
+        }
+
+        .section-item.active {
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .section-item.completed {
+            border-color: #50fa7b;
+            background: rgba(80, 250, 123, 0.1);
+        }
+
+        .status-icon {
+            font-size: 1.2rem;
+        }
+
+        .part-info {
+            background: rgba(0, 212, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .part-info label {
+            display: block;
+            color: #00d4ff;
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .part-info input {
+            width: 100%;
+            padding: 8px;
+            background: rgba(10, 14, 39, 0.6);
+            border: 1px solid rgba(196, 30, 58, 0.3);
+            border-radius: 5px;
+            color: #e0e0e0;
+            font-family: 'Exo 2', sans-serif;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #c41e3a 0%, #8b1429 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #8b1429 0%, #c41e3a 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(196, 30, 58, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #0099cc 0%, #00d4ff 100%);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
+        }
+
+        /* Chat Area */
+        .chat-container {
+            background: rgba(26, 26, 46, 0.6);
+            border-radius: 15px;
+            border: 2px solid rgba(196, 30, 58, 0.3);
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+        }
+
+        .chat-header {
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(196, 30, 58, 0.3) 0%, rgba(196, 30, 58, 0.1) 100%);
+            border-bottom: 2px solid rgba(196, 30, 58, 0.3);
+            border-radius: 15px 15px 0 0;
+        }
+
+        .chat-header h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+
+        .chat-header p {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.ai {
+            display: flex;
+            gap: 15px;
+        }
+
+        .message.student {
+            display: flex;
+            gap: 15px;
+            flex-direction: row-reverse;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .avatar.ai {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+        }
+
+        .avatar.student {
+            background: linear-gradient(135deg, #c41e3a 0%, #8b1429 100%);
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 15px;
+            line-height: 1.6;
+        }
+
+        .message.ai .message-content {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .message.student .message-content {
+            background: rgba(196, 30, 58, 0.1);
+            border: 1px solid rgba(196, 30, 58, 0.3);
+            text-align: right;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .typing-indicator.active {
+            display: flex;
+        }
+
+        .typing-dots {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            padding: 15px 20px;
+            border-radius: 15px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: #00d4ff;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.7;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            background: rgba(10, 14, 39, 0.6);
+            border-top: 2px solid rgba(196, 30, 58, 0.3);
+            border-radius: 0 0 15px 15px;
+        }
+
+        .chat-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(26, 26, 46, 0.8);
+            border: 2px solid rgba(196, 30, 58, 0.3);
+            border-radius: 10px;
+            color: #e0e0e0;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .input-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .input-actions button {
+            flex: 1;
+        }
+
+        /* Warning/Info boxes */
+        .info-box {
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 4px solid #00d4ff;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-size: 0.95rem;
+        }
+
+        .warning-box {
+            background: rgba(255, 184, 108, 0.1);
+            border-left: 4px solid #ffb86c;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-size: 0.95rem;
+        }
+
+        .success-box {
+            background: rgba(80, 250, 123, 0.1);
+            border-left: 4px solid #50fa7b;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-size: 0.95rem;
+        }
+
+        /* Setup modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 100%);
+            border: 2px solid #c41e3a;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal-content h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            margin-bottom: 20px;
+        }
+
+        .modal-content label {
+            display: block;
+            color: #e0e0e0;
+            margin-bottom: 5px;
+            margin-top: 15px;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(26, 26, 46, 0.8);
+            border: 1px solid rgba(196, 30, 58, 0.3);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-family: 'Exo 2', sans-serif;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .chat-container {
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 AI ITERATION LOG ASSISTANT</h1>
+            <p class="subtitle">Professional Documentation Made Easy</p>
+        </header>
+
+        <div class="main-grid">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="part-info">
+                    <label>Part Name:</label>
+                    <input type="text" id="partName" placeholder="e.g., Motor Mount Bracket" value="">
+                    <label>Version:</label>
+                    <input type="number" id="version" min="1" value="1">
+                </div>
+
+                <div class="progress-section">
+                    <h2>Progress</h2>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill">0%</div>
+                    </div>
+                </div>
+
+                <div class="section-status">
+                    <h2>Sections</h2>
+                    <div class="section-item" data-section="1">
+                        <span class="status-icon">⏸️</span>
+                        <span>Design Intent</span>
+                    </div>
+                    <div class="section-item" data-section="2">
+                        <span class="status-icon">⏸️</span>
+                        <span>Manufacturing</span>
+                    </div>
+                    <div class="section-item" data-section="3">
+                        <span class="status-icon">⏸️</span>
+                        <span>Testing</span>
+                    </div>
+                    <div class="section-item" data-section="4">
+                        <span class="status-icon">⏸️</span>
+                        <span>Measurement</span>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="saveProgress()">💾 Save Progress</button>
+                <button class="btn btn-secondary" onclick="exportPDF()">📄 Export PDF</button>
+                <button class="btn" onclick="resetLog()" style="background: #666;">🔄 Start New Log</button>
+            </div>
+
+            <!-- Chat Area -->
+            <div class="chat-container">
+                <div class="chat-header">
+                    <h2>AI Engineering Mentor</h2>
+                    <p>I'll guide you through creating a professional iteration log</p>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Messages will be added here dynamically -->
+                </div>
+
+                <div class="typing-indicator" id="typingIndicator">
+                    <div class="avatar ai">🤖</div>
+                    <div class="typing-dots">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+
+                <div class="chat-input-container">
+                    <textarea class="chat-input" id="userInput" placeholder="Type your response here..." rows="3"></textarea>
+                    <div class="input-actions">
+                        <button class="btn btn-secondary" onclick="sendMessage()">Send Response</button>
+                        <button class="btn" onclick="skipQuestion()">Skip Question</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Setup Modal -->
+    <div class="modal active" id="setupModal">
+        <div class="modal-content">
+            <h2>⚙️ AI Iteration Log Assistant</h2>
+            <p style="color: #888; margin-bottom: 20px;">This proof-of-concept demonstrates how AI can guide students through creating professional iteration logs.</p>
+
+            <div class="warning-box">
+                <strong>⚠️ Browser Limitation:</strong> Direct API calls from browsers are blocked by CORS security policies. In production, this would use a secure backend server to handle API communication.
+            </div>
+
+            <div class="info-box" style="margin-top: 15px;">
+                <strong>Demo Mode Available!</strong> Click "Start in Demo Mode" to test the full workflow with simulated AI responses. The demo intelligently guides you through all 4 sections:
+                <br><br>
+                ✓ Design Intent<br>
+                ✓ Manufacturing<br>
+                ✓ Testing<br>
+                ✓ Measurement & Error Analysis
+            </div>
+
+            <label style="margin-top: 15px;">Claude API Key (optional - won't work in browser):</label>
+            <input type="password" id="apiKey" placeholder="sk-ant-... (CORS will block this)">
+
+            <button class="btn btn-secondary" onclick="startSession()" style="margin-top: 20px;">Start in Demo Mode</button>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        let logData = {
+            partName: '',
+            version: 1,
+            currentSection: 1,
+            currentQuestion: 0, // Track which question in the section
+            sections: {
+                1: { name: 'Design Intent', questions: [], completed: false },
+                2: { name: 'Manufacturing', questions: [], completed: false },
+                3: { name: 'Testing', questions: [], completed: false },
+                4: { name: 'Measurement', questions: [], completed: false }
+            },
+            apiKey: null,
+            responses: [] // Store all user responses
+        };
+
+        let conversationHistory = [];
+
+        // Load saved progress on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadProgress();
+        });
+
+        function startSession() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            if (apiKey && apiKey.startsWith('sk-ant-')) {
+                logData.apiKey = apiKey;
+                localStorage.setItem('claude_api_key_temp', apiKey);
+                document.getElementById('setupModal').classList.remove('active');
+                initializeChat();
+            } else {
+                // Demo mode without API key
+                logData.apiKey = null;
+                document.getElementById('setupModal').classList.remove('active');
+                initializeChat();
+            }
+        }
+
+        function initializeChat() {
+            addAIMessage("👋 Hi! I'm your AI engineering mentor. I'll help you create a professional Robot Part Iteration Log.\n\nLet's start with the basics. What part are you documenting?");
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            // Add user message to chat
+            addUserMessage(message);
+            input.value = '';
+
+            // Store in conversation history
+            conversationHistory.push({
+                role: 'user',
+                content: message
+            });
+
+            // Show typing indicator
+            document.getElementById('typingIndicator').classList.add('active');
+
+            // Simulate brief thinking delay
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            try {
+                // Get AI response
+                const aiResponse = await getAIResponse(message);
+
+                // Hide typing indicator
+                document.getElementById('typingIndicator').classList.remove('active');
+
+                // Add AI response
+                addAIMessage(aiResponse);
+
+                // Update progress
+                updateProgress();
+                saveProgress();
+            } catch (error) {
+                console.error('Error in sendMessage:', error);
+                // Make sure typing indicator is hidden even if there's an error
+                document.getElementById('typingIndicator').classList.remove('active');
+                addAIMessage('⚠️ An error occurred. Please try again or click "Start New Log" to reset.');
+            }
+        }
+
+        async function getAIResponse(userMessage) {
+            // Build the system prompt
+            const systemPrompt = `You are an engineering mentor helping a high school robotics student complete a Robot Part Iteration Log. This is a structured document with 4 sections:
+
+1. DESIGN INTENT - Purpose, dimensions, materials
+2. MANUFACTURING - CNC/3D print settings, process details
+3. TESTING - Fit tests, function tests, assembly photos
+4. MEASUREMENT - Precise measurements, error analysis, corrections
+
+Current section: ${logData.sections[logData.currentSection].name}
+Part name: ${logData.partName || 'Not specified yet'}
+Version: ${logData.version}
+
+Guidelines:
+- Ask ONE specific question at a time
+- Be encouraging but push for precision and detail
+- When students give vague answers, ask for specifics
+- Calculate errors automatically when given measurements
+- Provide engineering feedback and suggestions
+- Use bullet points and formatting for clarity
+- When a section seems complete, move to the next section
+
+Be conversational, helpful, and educational. Act like a patient mentor, not a chatbot.`;
+
+            if (logData.apiKey) {
+                // Real Claude API call
+                try {
+                    const response = await fetch('https://api.anthropic.com/v1/messages', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-api-key': logData.apiKey,
+                            'anthropic-version': '2023-06-01'
+                        },
+                        body: JSON.stringify({
+                            model: 'claude-3-5-sonnet-20241022',
+                            max_tokens: 1024,
+                            system: systemPrompt,
+                            messages: conversationHistory
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('API request failed');
+                    }
+
+                    const data = await response.json();
+                    const aiMessage = data.content[0].text;
+
+                    conversationHistory.push({
+                        role: 'assistant',
+                        content: aiMessage
+                    });
+
+                    return aiMessage;
+                } catch (error) {
+                    console.error('API Error:', error);
+
+                    // Clear API key since it doesn't work
+                    logData.apiKey = null;
+
+                    // Return error message + demo response
+                    const demoResponse = getDemoResponse(userMessage);
+                    return `⚠️ **API Connection Error**\n\nThe browser cannot directly call the Anthropic API due to CORS (Cross-Origin Resource Sharing) restrictions.\n\n**Why this happens:**\nBrowsers block direct API calls for security. In production, API calls would go through a secure backend server.\n\n**Falling back to demo mode:**\n\n---\n\n${demoResponse}`;
+                }
+            } else {
+                // Demo mode - simulated responses
+                return getDemoResponse(userMessage);
+            }
+        }
+
+        function getDemoResponse(userMessage) {
+            // Store the response
+            logData.responses.push({
+                section: logData.currentSection,
+                question: logData.currentQuestion,
+                answer: userMessage
+            });
+
+            // State machine for demo mode
+            const section = logData.currentSection;
+            const question = logData.currentQuestion;
+
+            // SECTION 1: Design Intent
+            if (section === 1) {
+                if (question === 0) {
+                    // First question: part name
+                    logData.partName = userMessage;
+                    document.getElementById('partName').value = userMessage;
+                    logData.currentQuestion++;
+                    return `Great! Let's document the **${userMessage}**.\n\n**Section 1: Design Intent**\n\nWhat is the primary purpose of this part? What problem does it solve on your robot?\n\n*Example: "This bracket holds the motor at a 45° angle to drive the intake mechanism."*`;
+                } else if (question === 1) {
+                    // Second question: purpose
+                    logData.currentQuestion++;
+                    return `✅ Good functional description!\n\nNow tell me about the critical dimensions and materials:\n• What are the key measurements?\n• What material will you use?\n• What tolerances are acceptable?\n\n*Example: "Overall size 50x30mm, two 3mm mounting holes, made from PETG, ±0.5mm tolerance acceptable."*`;
+                } else if (question === 2) {
+                    // Third question: dimensions/materials - move to section 2
+                    logData.sections[1].completed = true;
+                    logData.currentSection = 2;
+                    logData.currentQuestion = 0;
+                    updateSectionStatus();
+                    return `✅ **Section 1 Complete!**\n\n---\n\n**Section 2: Manufacturing**\n\nHow did you manufacture this part?\n\n**[A]** CNC Router (wood, plastic, soft metals)\n**[B]** CNC Plasma (metal cutting)\n**[C]** 3D Printer (FDM/filament)\n\nJust type A, B, or C.`;
+                }
+            }
+
+            // SECTION 2: Manufacturing
+            else if (section === 2) {
+                if (question === 0) {
+                    // Manufacturing method
+                    const lower = userMessage.toLowerCase();
+                    let method = '';
+
+                    if (lower.includes('a') || lower.includes('router') || lower.includes('cnc')) {
+                        method = 'CNC Router';
+                        logData.currentQuestion++;
+                        return `Great! **CNC Router** manufacturing.\n\nPlease provide these settings:\n• Material (e.g., MDF, plywood, HDPE):\n• Bit size used:\n• Spindle RPM:\n• Feed rate:\n• Number of passes:\n• Total cut time:\n\n*You can list them or just describe the process.*`;
+                    } else if (lower.includes('b') || lower.includes('plasma')) {
+                        method = 'CNC Plasma';
+                        logData.currentQuestion++;
+                        return `Great! **CNC Plasma** cutting.\n\nPlease provide these settings:\n• Material (e.g., steel, aluminum) and thickness:\n• Amperage:\n• Cut speed:\n• Pierce delay:\n• Gas type:\n• Total cut time:\n\n*You can list them or just describe the process.*`;
+                    } else if (lower.includes('c') || lower.includes('3d') || lower.includes('print')) {
+                        method = '3D Printer';
+                        logData.currentQuestion++;
+                        return `Great! **3D Printing**.\n\nPlease provide these settings:\n• Material (PLA, PETG, ABS, etc.):\n• Nozzle temperature:\n• Bed temperature:\n• Layer height:\n• Infill percentage:\n• Print time:\n\n*You can list them or just describe the settings.*`;
+                    } else {
+                        // Didn't match - ask again with hint
+                        return `I didn't catch that. Which manufacturing method?\n\nType:\n**A** for CNC Router\n**B** for CNC Plasma\n**C** for 3D Printer`;
+                    }
+                } else if (question === 1) {
+                    // Manufacturing settings provided - move to section 3
+                    logData.sections[2].completed = true;
+                    logData.currentSection = 3;
+                    logData.currentQuestion = 0;
+                    updateSectionStatus();
+                    return `✅ **Section 2 Complete!**\n\n---\n\n**Section 3: Testing & Assembly**\n\nDid you test-fit this part on your robot?\n\n**Describe:**\n• Did all mounting holes align correctly?\n• Were there any clearance/interference issues?\n• Did the part function as intended?\n• Any problems during assembly?\n\n*Be specific about what worked and what didn't.*`;
+                }
+            }
+
+            // SECTION 3: Testing
+            else if (section === 3) {
+                if (question === 0) {
+                    // Testing feedback - move to section 4
+                    logData.sections[3].completed = true;
+                    logData.currentSection = 4;
+                    logData.currentQuestion = 0;
+                    updateSectionStatus();
+                    return `✅ **Section 3 Complete!**\n\n---\n\n**Section 4: Measurement & Analysis**\n\nNow let's measure how accurate your part is. This is critical for improvement!\n\nGive me a measurement in this format:\n**[Dimension name]: Design [value], Measured [value]**\n\nExamples:\n• "Motor hole diameter: Design 3.0mm, Measured 2.8mm"\n• "Overall length: Design 50mm, Measured 50.3mm"\n• "Mounting hole spacing: Design 25mm, Measured 24.7mm"`;
+                }
+            }
+
+            // SECTION 4: Measurement
+            else if (section === 4) {
+                const lower = userMessage.toLowerCase();
+
+                // Try to extract measurements
+                const designMatch = userMessage.match(/design[:\s]+(\d+\.?\d*)/i);
+                const measuredMatch = userMessage.match(/measured[:\s]+(\d+\.?\d*)/i);
+
+                if (designMatch && measuredMatch) {
+                    const design = parseFloat(designMatch[1]);
+                    const measured = parseFloat(measuredMatch[1]);
+                    const error = measured - design;
+                    const percentError = ((error / design) * 100).toFixed(2);
+                    const absPercentError = Math.abs(percentError);
+
+                    let feedback = '';
+                    if (Math.abs(error) < 0.1) {
+                        feedback = '✅ Excellent accuracy! This dimension is within tight tolerance.';
+                    } else if (Math.abs(error) < 0.5) {
+                        feedback = '✓ Good accuracy. This is acceptable for most applications.';
+                    } else {
+                        feedback = '⚠️ Significant error detected. You should adjust your design for the next version.';
+                    }
+
+                    logData.currentQuestion++;
+
+                    return `📊 **Measurement Analysis:**\n\n**Error Calculation:**\n• Error = ${measured}mm - ${design}mm = **${error.toFixed(2)}mm**\n• Percent Error = ${percentError}%\n\n**Result:** ${error < 0 ? 'Part is UNDERSIZED ↓' : 'Part is OVERSIZED ↑'}\n\n${feedback}\n\n**Recommended Correction for Version 2:**\nAdjust CAD dimension to **${(design - error).toFixed(2)}mm** to compensate.\n\n---\n\nWould you like to:\n• Add another measurement (provide dimension)\n• Complete the log (type "done" or "finish")`;
+                } else if (lower.includes('done') || lower.includes('finish') || lower.includes('complete')) {
+                    // Complete section 4
+                    logData.sections[4].completed = true;
+                    updateSectionStatus();
+                    return `✅ **All Sections Complete!**\n\n🎉 **Excellent work!** Your Robot Part Iteration Log is complete with all 4 sections documented:\n\n✓ Design Intent\n✓ Manufacturing\n✓ Testing\n✓ Measurement & Error Analysis\n\n**Next Steps:**\n1. Click **"Save Progress"** to preserve your work\n2. Click **"Export PDF"** to generate your final document\n3. Submit for grading!\n\nThis log demonstrates professional engineering documentation skills.`;
+                } else {
+                    // Didn't understand measurement format
+                    return `I didn't detect a measurement in the correct format.\n\nPlease use this format:\n**[Dimension]: Design [number], Measured [number]**\n\nExample:\n"Hole diameter: Design 3.0mm, Measured 2.85mm"\n\nOr type **"done"** if you're finished with measurements.`;
+                }
+            }
+
+            // Fallback
+            return "I'm not sure I understand. Can you rephrase that or provide more details?";
+        }
+
+        function addAIMessage(text) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ai';
+            messageDiv.innerHTML = `
+                <div class="avatar ai">🤖</div>
+                <div class="message-content">${formatMessage(text)}</div>
+            `;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function addUserMessage(text) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message student';
+            messageDiv.innerHTML = `
+                <div class="avatar student">👤</div>
+                <div class="message-content">${formatMessage(text)}</div>
+            `;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function formatMessage(text) {
+            // Convert markdown-style formatting to HTML
+            return text
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                .replace(/\n/g, '<br>');
+        }
+
+        function updateSectionStatus() {
+            document.querySelectorAll('.section-item').forEach((item, index) => {
+                const section = index + 1;
+                const iconSpan = item.querySelector('.status-icon');
+
+                if (logData.sections[section].completed) {
+                    item.classList.add('completed');
+                    item.classList.remove('active');
+                    iconSpan.textContent = '✅';
+                } else if (section === logData.currentSection) {
+                    item.classList.add('active');
+                    item.classList.remove('completed');
+                    iconSpan.textContent = '⏳';
+                } else {
+                    item.classList.remove('active', 'completed');
+                    iconSpan.textContent = '⏸️';
+                }
+            });
+        }
+
+        function updateProgress() {
+            const completedSections = Object.values(logData.sections).filter(s => s.completed).length;
+            const progress = (completedSections / 4) * 100;
+            const progressFill = document.getElementById('progressFill');
+            progressFill.style.width = progress + '%';
+            progressFill.textContent = Math.round(progress) + '%';
+        }
+
+        function saveProgress() {
+            logData.partName = document.getElementById('partName').value;
+            logData.version = parseInt(document.getElementById('version').value);
+
+            const saveData = {
+                ...logData,
+                conversationHistory,
+                timestamp: new Date().toISOString()
+            };
+
+            localStorage.setItem('iteration_log_progress', JSON.stringify(saveData));
+
+            addAIMessage("✅ Progress saved to your browser!");
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem('iteration_log_progress');
+            if (saved) {
+                const data = JSON.parse(saved);
+                logData = data;
+                conversationHistory = data.conversationHistory || [];
+
+                document.getElementById('partName').value = logData.partName || '';
+                document.getElementById('version').value = logData.version || 1;
+
+                // Restore chat messages
+                conversationHistory.forEach(msg => {
+                    if (msg.role === 'user') {
+                        addUserMessage(msg.content);
+                    } else {
+                        addAIMessage(msg.content);
+                    }
+                });
+
+                updateSectionStatus();
+                updateProgress();
+            }
+        }
+
+        async function skipQuestion() {
+            addUserMessage("[Skipped this question]");
+
+            // Store skip in conversation history
+            conversationHistory.push({
+                role: 'user',
+                content: '[SKIP]'
+            });
+
+            // Show typing indicator
+            document.getElementById('typingIndicator').classList.add('active');
+
+            // Simulate brief delay
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // Get response as if they answered (will advance state)
+            const aiResponse = await getAIResponse('[User chose to skip]');
+
+            // Hide typing indicator
+            document.getElementById('typingIndicator').classList.remove('active');
+
+            // Add AI response
+            addAIMessage(aiResponse);
+
+            // Update progress
+            updateProgress();
+            saveProgress();
+        }
+
+        function resetLog() {
+            if (confirm('Are you sure? This will delete all progress and start fresh.')) {
+                localStorage.removeItem('iteration_log_progress');
+                localStorage.removeItem('claude_api_key_temp');
+                location.reload();
+            }
+        }
+
+        // Debug helper - force hide typing indicator if it gets stuck
+        document.addEventListener('keydown', (e) => {
+            // Press Escape to force-hide typing indicator
+            if (e.key === 'Escape') {
+                document.getElementById('typingIndicator').classList.remove('active');
+            }
+        });
+
+        function exportPDF() {
+            addAIMessage("📄 **PDF Export Feature**\n\nIn the full version, this would generate a professional PDF with:\n• All your answers formatted\n• Photos embedded\n• Calculations shown\n• Ready for submission\n\nFor this proof-of-concept, your data is saved in your browser's localStorage.");
+
+            // In production, this would call a server endpoint to generate PDF
+            console.log('Log data:', logData);
+            console.log('Conversation:', conversationHistory);
+        }
+
+        // Enter key to send
+        document.getElementById('userInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
