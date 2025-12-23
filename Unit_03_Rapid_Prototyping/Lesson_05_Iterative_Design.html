@@ -195,28 +195,6 @@
             margin: 40px 0;
         }
 
-        /* Video Container */
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 aspect ratio */
-            height: 0;
-            overflow: hidden;
-            max-width: 100%;
-            margin: 30px 0;
-            border-radius: 10px;
-            border: 2px solid rgba(0, 212, 255, 0.4);
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
-        }
-
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
         .iteration-card {
             background: linear-gradient(135deg, rgba(196, 30, 58, 0.15) 0%, rgba(196, 30, 58, 0.05) 100%);
             border: 2px solid rgba(196, 30, 58, 0.4);
@@ -314,8 +292,9 @@
             max-width: 1400px;
             margin: 0 auto;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
+            gap: 20px;
         }
 
         .nav-button {
@@ -574,40 +553,7 @@
             </div>
         </div>
 
-        <!-- Slide 6: CNC Toolpath Video Demo -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>🎥 MANUFACTURING DEMO: CNC TOOLPATHS</h2>
-
-                <div class="info-box">
-                    <p><strong>Watch:</strong> This video demonstrates the complete process of creating CNC router toolpaths in Fusion 360's Manufacturing workspace. Pay attention to the setup, tool selection, and toolpath operations.</p>
-                </div>
-
-                <div class="video-container">
-                    <iframe
-                        src="https://drive.google.com/file/d/1J0k8KW4ijKAnTttBXiyXWf4Pt2U04HIw/preview"
-                        allow="autoplay"
-                        allowfullscreen>
-                    </iframe>
-                </div>
-
-                <h3>Key Topics Covered in Video</h3>
-                <ul>
-                    <li>Setting up the Manufacturing workspace in Fusion 360</li>
-                    <li>Selecting appropriate tools (end mills, bits)</li>
-                    <li>Creating 2D toolpaths (contour, pocket, drill operations)</li>
-                    <li>Setting feeds, speeds, and depth of cut</li>
-                    <li>Simulating toolpaths to verify cutting operations</li>
-                    <li>Post-processing for your specific CNC machine</li>
-                </ul>
-
-                <div class="highlight-box">
-                    <p><strong>💡 Pro Tip:</strong> Watch this video before creating your manufacturing documentation. It shows exactly what settings and operations you need to document in Section 2 of your iteration log.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 7: Testing Section -->
+        <!-- Slide 6: Testing Section -->
         <div class="slide">
             <div class="slide-content">
                 <h2>🧪 SECTION 3: TESTING & ASSEMBLY</h2>
@@ -889,8 +835,9 @@
     <div class="nav-bar">
         <div class="nav-container">
             <button class="nav-button" id="prevBtn" onclick="changeSlide(-1)">← PREVIOUS</button>
+            <a href="index.html" class="nav-button" style="text-decoration: none;">⌂ BACK TO UNIT 3</a>
             <div class="slide-indicator">
-                <span id="currentSlide">1</span> / <span id="totalSlides">13</span>
+                <span id="currentSlide">1</span> / <span id="totalSlides">12</span>
             </div>
             <button class="nav-button" id="nextBtn" onclick="changeSlide(1)">NEXT →</button>
         </div>

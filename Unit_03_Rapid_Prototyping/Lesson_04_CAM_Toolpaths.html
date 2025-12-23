@@ -204,6 +204,28 @@
             margin: 40px 0;
         }
 
+        /* Video Container */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            max-width: 100%;
+            margin: 30px 0;
+            border-radius: 10px;
+            border: 2px solid rgba(0, 212, 255, 0.4);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
         .toolpath-card {
             background: linear-gradient(135deg, rgba(196, 30, 58, 0.15) 0%, rgba(196, 30, 58, 0.05) 100%);
             border: 2px solid rgba(196, 30, 58, 0.4);
@@ -272,8 +294,9 @@
             max-width: 1400px;
             margin: 0 auto;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
+            gap: 20px;
         }
 
         .nav-button {
@@ -420,7 +443,42 @@
             </div>
         </div>
 
-        <!-- Slide 3: Setup - Work Coordinate System -->
+        <!-- Slide 3: Video Walkthrough -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🎥 TOOLPATH CREATION WALKTHROUGH</h2>
+
+                <div class="info-box">
+                    <p><strong>Watch First:</strong> This video demonstrates the complete workflow of creating CNC router toolpaths in Fusion 360's Manufacturing workspace. Follow along as we go from CAD model to G-code.</p>
+                </div>
+
+                <div class="video-container">
+                    <iframe
+                        src="https://drive.google.com/file/d/1J0k8KW4ijKAnTttBXiyXWf4Pt2U04HIw/preview"
+                        allow="autoplay"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+
+                <h3>Key Operations Demonstrated</h3>
+                <ul>
+                    <li>Setting up the Manufacturing workspace and work coordinate system</li>
+                    <li>Defining stock material and zero position</li>
+                    <li>Selecting appropriate cutting tools from the tool library</li>
+                    <li>Creating 2D contour toolpaths (cutting the outline)</li>
+                    <li>Creating 2D pocket toolpaths (removing interior material)</li>
+                    <li>Configuring feeds, speeds, and depth of cut parameters</li>
+                    <li>Simulating toolpaths to verify the cutting operations</li>
+                    <li>Post-processing to generate G-code for the CNC machine</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <p><strong>💡 Pro Tip:</strong> Watch this video first to see the entire process, then use the following slides as a detailed reference guide when creating your own toolpaths.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Setup - Work Coordinate System -->
         <div class="slide">
             <div class="slide-content">
                 <h2>📐 WORK COORDINATE SYSTEM (WCS)</h2>
@@ -803,8 +861,9 @@ Features:
     <div class="nav-bar">
         <div class="nav-container">
             <button class="nav-button" id="prevBtn" onclick="changeSlide(-1)">← PREVIOUS</button>
+            <a href="index.html" class="nav-button" style="text-decoration: none;">⌂ BACK TO UNIT 3</a>
             <div class="slide-indicator">
-                <span id="currentSlide">1</span> / <span id="totalSlides">12</span>
+                <span id="currentSlide">1</span> / <span id="totalSlides">13</span>
             </div>
             <button class="nav-button" id="nextBtn" onclick="changeSlide(1)">NEXT →</button>
         </div>
