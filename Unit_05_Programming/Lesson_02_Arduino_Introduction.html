@@ -615,7 +615,77 @@
             </div>
         </div>
 
-        <!-- Slide 7.5: Debug Practice -->
+        <!-- Slide 8: Key Functions -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Essential Arduino Functions</h2>
+                <div class="grid-2">
+                    <div class="box">
+                        <h3>pinMode(pin, mode)</h3>
+                        <p>Configures a pin as INPUT or OUTPUT</p>
+                        <div class="code-block">
+<span class="function">pinMode</span>(<span class="number">13</span>, OUTPUT);
+                        </div>
+                    </div>
+                    <div class="box">
+                        <h3>digitalWrite(pin, value)</h3>
+                        <p>Sets a pin HIGH (on) or LOW (off)</p>
+                        <div class="code-block">
+<span class="function">digitalWrite</span>(<span class="number">13</span>, HIGH);
+                        </div>
+                    </div>
+                </div>
+                <div class="box" style="margin-top: 30px;">
+                    <h3>delay(milliseconds)</h3>
+                    <p>Pauses the program for specified time (1000ms = 1 second)</p>
+                    <div class="code-block">
+<span class="function">delay</span>(<span class="number">1000</span>);  <span class="comment">// Wait 1 second</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Syntax Basics -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Arduino Syntax Rules</h2>
+                <ul class="bullet-list">
+                    <li><span class="highlight">Semicolons (;)</span> end every statement</li>
+                    <li><span class="highlight">Curly braces { }</span> group code blocks</li>
+                    <li><span class="highlight">Case-sensitive</span> - pinMode ≠ PinMode ≠ pinmode</li>
+                    <li><span class="highlight">Comments</span> start with // (single line) or /* */ (multi-line)</li>
+                </ul>
+                <div class="code-block" style="margin-top: 30px;">
+<span class="comment">// This is a single-line comment</span>
+
+<span class="comment">/*
+ * This is a multi-line comment
+ * Useful for longer explanations
+ */</span>
+
+<span class="function">digitalWrite</span>(<span class="number">13</span>, HIGH);  <span class="comment">// Don't forget the semicolon!</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Upload Process -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Uploading Your Code</h2>
+                <ol class="steps">
+                    <li>Write or modify code in the Arduino IDE</li>
+                    <li>Click the <span class="highlight">Verify</span> button (✓) to check for errors</li>
+                    <li>Fix any errors shown in the console (bottom of window)</li>
+                    <li>Click the <span class="highlight">Upload</span> button (→) to send code to Arduino</li>
+                    <li>Watch for "Done uploading" message</li>
+                </ol>
+                <div class="box" style="margin-top: 30px;">
+                    <p><span class="warning">Pro Tip:</span> Always verify before uploading! It catches syntax errors and saves time.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Debug Practice -->
         <div class="slide">
             <div class="slide-content">
                 <h2>🐛 Debug This Code!</h2>
@@ -664,47 +734,7 @@
             </div>
         </div>
 
-        <!-- Slide 9: Syntax Basics -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Arduino Syntax Rules</h2>
-                <ul class="bullet-list">
-                    <li><span class="highlight">Semicolons (;)</span> end every statement</li>
-                    <li><span class="highlight">Curly braces { }</span> group code blocks</li>
-                    <li><span class="highlight">Case-sensitive</span> - pinMode ≠ PinMode ≠ pinmode</li>
-                    <li><span class="highlight">Comments</span> start with // (single line) or /* */ (multi-line)</li>
-                </ul>
-                <div class="code-block" style="margin-top: 30px;">
-<span class="comment">// This is a single-line comment</span>
-
-<span class="comment">/*
- * This is a multi-line comment
- * Useful for longer explanations
- */</span>
-
-<span class="function">digitalWrite</span>(<span class="number">13</span>, HIGH);  <span class="comment">// Don't forget the semicolon!</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 10: Upload Process -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Uploading Your Code</h2>
-                <ol class="steps">
-                    <li>Write or modify code in the Arduino IDE</li>
-                    <li>Click the <span class="highlight">Verify</span> button (✓) to check for errors</li>
-                    <li>Fix any errors shown in the console (bottom of window)</li>
-                    <li>Click the <span class="highlight">Upload</span> button (→) to send code to Arduino</li>
-                    <li>Watch for "Done uploading" message</li>
-                </ol>
-                <div class="box" style="margin-top: 30px;">
-                    <p><span class="warning">Pro Tip:</span> Always verify before uploading! It catches syntax errors and saves time.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 11: Today's Assignment -->
+        <!-- Slide 12: Today's Assignment -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Today's Challenge</h2>
@@ -723,36 +753,6 @@
                 <div class="box" style="margin-top: 30px;">
                     <h3>SOS Hint</h3>
                     <p>Short blink = 200ms, Long blink = 600ms, pause between = 200ms</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 12: Key Functions -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Essential Arduino Functions</h2>
-                <div class="grid-2">
-                    <div class="box">
-                        <h3>pinMode(pin, mode)</h3>
-                        <p>Configures a pin as INPUT or OUTPUT</p>
-                        <div class="code-block">
-<span class="function">pinMode</span>(<span class="number">13</span>, OUTPUT);
-                        </div>
-                    </div>
-                    <div class="box">
-                        <h3>digitalWrite(pin, value)</h3>
-                        <p>Sets a pin HIGH (on) or LOW (off)</p>
-                        <div class="code-block">
-<span class="function">digitalWrite</span>(<span class="number">13</span>, HIGH);
-                        </div>
-                    </div>
-                </div>
-                <div class="box" style="margin-top: 30px;">
-                    <h3>delay(milliseconds)</h3>
-                    <p>Pauses the program for specified time (1000ms = 1 second)</p>
-                    <div class="code-block">
-<span class="function">delay</span>(<span class="number">1000</span>);  <span class="comment">// Wait 1 second</span>
-                    </div>
                 </div>
             </div>
         </div>
