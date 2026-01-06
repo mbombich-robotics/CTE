@@ -524,11 +524,11 @@
         </div>
 
 
-        <!-- Slide 3: Arduino Code Structure Review -->
+        <!-- Slide 3: Arduino Code Structure & Functions -->
         <div class="slide">
             <div class="slide-content">
-                <h2>Arduino Code Structure (Review)</h2>
-                <p style="font-size: 1.2rem; margin-bottom: 20px;">Yesterday we saw the <strong>structure</strong> of Arduino code. Today we'll write our own!</p>
+                <h2>Arduino Code Structure & Functions</h2>
+                <p style="font-size: 1.2rem; margin-bottom: 20px;">Every Arduino program needs two special <strong>functions</strong>:</p>
                 <div class="code-block">
 <span class="keyword">void</span> <span class="function">setup</span>() {
   <span class="comment">// Runs ONCE when Arduino starts</span>
@@ -540,9 +540,20 @@
   <span class="comment">// Main program logic goes here</span>
 }
                 </div>
-                <ul class="bullet-list">
-                    <li><span class="highlight">setup()</span> runs once at power-on or reset</li>
-                    <li><span class="highlight">loop()</span> runs continuously, over and over forever</li>
+                <div class="grid-2" style="margin-top: 25px;">
+                    <div class="box" style="background: rgba(0, 212, 255, 0.1); border-color: #00d4ff;">
+                        <h3 style="color: #00d4ff;">What are Functions?</h3>
+                        <p style="font-size: 1rem;">Functions are reusable blocks of code that perform specific tasks. They have a name followed by parentheses <code>()</code> and curly braces <code>{}</code> that contain the code.</p>
+                    </div>
+                    <div class="box" style="background: rgba(255, 149, 0, 0.1); border-color: #ff9500;">
+                        <h3 style="color: #ff9500;">Function Syntax</h3>
+                        <p style="font-size: 1rem;"><span class="highlight">void</span> means the function doesn't return a value. The parentheses <code>()</code> can hold parameters (inputs). The braces <code>{}</code> contain the code that runs.</p>
+                    </div>
+                </div>
+                <ul class="bullet-list" style="margin-top: 20px;">
+                    <li><span class="highlight">setup()</span> runs once at power-on or reset - perfect for configuration</li>
+                    <li><span class="highlight">loop()</span> runs continuously forever - your robot's main behavior goes here</li>
+                    <li>Later, you'll create your own custom functions to organize code!</li>
                 </ul>
             </div>
         </div>
