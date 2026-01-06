@@ -1005,10 +1005,10 @@
             </div>
         </div>
 
-        <!-- Slide 13: Arduino IDE Introduction -->
+        <!-- Slide 13: Arduino IDE Setup -->
         <div class="slide">
             <div class="slide-content">
-                <h2>Hands-On: Arduino IDE</h2>
+                <h2>Hands-On: Arduino IDE Setup</h2>
                 <p style="font-size: 1.3rem; margin-bottom: 25px; color: #b8c5d6;">
                     Let's get familiar with the tool you'll use to program your robot!
                 </p>
@@ -1024,185 +1024,135 @@
                 <div class="objective-box" style="border-color: #bd93f9; box-shadow: 0 0 30px rgba(189, 147, 249, 0.2);">
                     <h3 style="color: #bd93f9;">Step 2: Select Your Board</h3>
                     <ul class="bullet-list">
-                        <li>Go to <strong>Tools → Board → Arduino Mbed OS RP2040 Boards</strong></li>
-                        <li>Select <strong>"Arduino Nano RP2040 Connect"</strong></li>
+                        <li>Go to <strong>Tools → Board → Arduino AVR Boards</strong></li>
+                        <li>Select <strong>"Arduino Uno"</strong></li>
                         <li>This tells the IDE what microcontroller you're using</li>
                     </ul>
                 </div>
 
                 <div class="objective-box" style="border-color: #ff9500; box-shadow: 0 0 30px rgba(255, 149, 0, 0.2);">
-                    <h3 style="color: #ff9500;">Step 3: Connect Your Robot (if available)</h3>
+                    <h3 style="color: #ff9500;">Step 3: Connect Your Arduino</h3>
                     <ul class="bullet-list">
-                        <li>Connect your robot via USB cable</li>
-                        <li>Go to <strong>Tools → Port</strong> and select the port showing your Arduino</li>
-                        <li>Don't worry if your robot isn't available yet - we'll just explore the IDE</li>
+                        <li>Connect your Arduino Uno via USB cable</li>
+                        <li>Go to <strong>Tools → Port</strong> and select the port showing Arduino Uno</li>
+                        <li>The board should power on (LED lights up)</li>
                     </ul>
                 </div>
             </div>
         </div>
 
-        <!-- Slide 14: The Blink Example -->
+        <!-- Slide 14: Your First Code - Blink -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Your First Code: Blink</h2>
                 <p style="font-size: 1.3rem; margin-bottom: 25px; color: #b8c5d6;">
-                    This code makes the onboard LED blink on and off. Don't worry about understanding every detail yet - we'll learn it in Lesson 2!
+                    Let's load a simple program that makes the onboard LED blink on and off!
                 </p>
 
-                <div style="background: #1a1f3a; border: 2px solid #00d4ff; border-radius: 12px; padding: 25px; margin: 20px 0; position: relative;">
-                    <button onclick="copyBlinkCode()" style="position: absolute; top: 15px; right: 15px; background: #50fa7b; color: #0a0e27; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: all 0.3s ease;">
-                        📋 Copy Code
-                    </button>
-                    <pre id="blink-code" style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; color: #e0e6f0; overflow-x: auto;"><code>void setup() {
-  // Initialize digital pin LED_BUILTIN as an output
+                <div class="objective-box">
+                    <h3>Loading the Blink Example</h3>
+                    <ul class="bullet-list" style="font-size: 1rem;">
+                        <li>In Arduino IDE, go to <strong>File → Examples → 01.Basics → Blink</strong></li>
+                        <li>A new window opens with the Blink code</li>
+                        <li>This is a pre-written example that comes with Arduino IDE</li>
+                    </ul>
+                </div>
+
+                <div style="background: #1a1f3a; border: 2px solid #00d4ff; border-radius: 12px; padding: 25px; margin: 20px 0;">
+                    <pre style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: #e0e6f0; overflow-x: auto;"><code>void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
 }
 
 void loop() {
-  digitalWrite(LED_BUILTIN, HIGH);   // Turn the LED on
-  delay(1000);                        // Wait for 1 second
-  digitalWrite(LED_BUILTIN, LOW);    // Turn the LED off
-  delay(1000);                        // Wait for 1 second
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(1000);
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(1000);
 }</code></pre>
                 </div>
 
                 <div class="grid-2" style="margin-top: 25px;">
-                    <div class="info-box" style="background: rgba(80, 250, 123, 0.1); border: 2px solid #50fa7b; padding: 20px; border-radius: 8px;">
-                        <h4 style="color: #50fa7b; margin-bottom: 10px;">setup() - Runs Once</h4>
-                        <p style="color: #b8c5d6;">This section runs one time when the Arduino starts. We use it to configure pins.</p>
+                    <div class="box" style="background: rgba(80, 250, 123, 0.1); border-color: #50fa7b;">
+                        <h4 style="color: #50fa7b; margin-bottom: 10px; font-size: 1.2rem;">setup() - Runs Once</h4>
+                        <p style="font-size: 1rem;">Runs one time when Arduino starts. Configures pin 13 as an output.</p>
                     </div>
-                    <div class="info-box" style="background: rgba(189, 147, 249, 0.1); border: 2px solid #bd93f9; padding: 20px; border-radius: 8px;">
-                        <h4 style="color: #bd93f9; margin-bottom: 10px;">loop() - Runs Forever</h4>
-                        <p style="color: #b8c5d6;">This section repeats over and over. Our robot's actions go here!</p>
+                    <div class="box" style="background: rgba(189, 147, 249, 0.1); border-color: #bd93f9;">
+                        <h4 style="color: #bd93f9; margin-bottom: 10px; font-size: 1.2rem;">loop() - Runs Forever</h4>
+                        <p style="font-size: 1rem;">Repeats continuously: LED on, wait, LED off, wait.</p>
                     </div>
-                </div>
-
-                <div class="box" style="margin-top: 25px; background: rgba(255, 149, 0, 0.1); border-color: #ff9500;">
-                    <p style="text-align: center; font-size: 1.1rem;">
-                        <span class="warning">What are functions?</span> <strong>setup()</strong> and <strong>loop()</strong> are called <strong>functions</strong> - reusable blocks of code that perform specific tasks. Every Arduino program needs these two special functions. You'll learn to write your own functions soon!
-                    </p>
                 </div>
             </div>
         </div>
 
-        <!-- Slide 15: Copy-Paste Workflow -->
+        <!-- Slide 15: Upload & Verify It Works -->
         <div class="slide">
             <div class="slide-content">
-                <h2>Copy-Paste Workflow</h2>
+                <h2>Upload & Verify It Works</h2>
                 <p style="font-size: 1.3rem; margin-bottom: 25px; color: #b8c5d6;">
-                    You'll use this workflow throughout the course to load code examples!
+                    Now let's send this program to your Arduino and watch it work!
                 </p>
 
                 <div class="objective-box">
-                    <h3>Step 1: Copy the Code</h3>
-                    <ul class="bullet-list">
-                        <li>Go back to the previous slide with the Blink code</li>
-                        <li>Click the green <strong>📋 Copy Code</strong> button in the top-right corner</li>
-                        <li>The code is now on your clipboard!</li>
-                    </ul>
-                </div>
-
-                <div class="objective-box" style="border-color: #bd93f9; box-shadow: 0 0 30px rgba(189, 147, 249, 0.2);">
-                    <h3 style="color: #bd93f9;">Step 2: Open Arduino IDE</h3>
-                    <ul class="bullet-list">
-                        <li>Click in the Arduino IDE window to make it active</li>
-                        <li>You'll see the blank sketch skeleton with <code>setup()</code> and <code>loop()</code></li>
-                    </ul>
-                </div>
-
-                <div class="objective-box" style="border-color: #ff9500; box-shadow: 0 0 30px rgba(255, 149, 0, 0.2);">
-                    <h3 style="color: #ff9500;">Step 3: Select All & Paste</h3>
-                    <ul class="bullet-list">
-                        <li>Press <strong>Ctrl+A</strong> to select all the existing code in the IDE</li>
-                        <li>Press <strong>Ctrl+V</strong> to paste your copied code</li>
-                        <li>The old skeleton code is replaced with the new Blink code!</li>
-                    </ul>
-                </div>
-
-                <div class="objective-box" style="border-color: #50fa7b; box-shadow: 0 0 30px rgba(80, 250, 123, 0.2);">
-                    <h3 style="color: #50fa7b;">Step 4: Verify (Check) the Code</h3>
-                    <ul class="bullet-list">
-                        <li>Click the <strong>checkmark ✓</strong> button (Verify) in the top-left of Arduino IDE</li>
-                        <li>Arduino checks your code for errors (compiles it)</li>
-                        <li>If it says "Done compiling" at the bottom - success!</li>
-                        <li>If there are errors, make sure you copied all the code correctly</li>
-                    </ul>
-                </div>
-
-                <p style="text-align: center; font-size: 1.2rem; margin-top: 20px; color: #00d4ff;">
-                    <strong>Practice this now!</strong> Go back one slide, click Copy Code, then paste into Arduino IDE.
-                </p>
-            </div>
-        </div>
-
-        <!-- Slide 16: Try It! (Optional Upload) -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Optional: Upload & Test</h2>
-                <p style="font-size: 1.3rem; margin-bottom: 25px; color: #b8c5d6;">
-                    If your robot is connected, let's see it work!
-                </p>
-
-                <div class="objective-box">
-                    <h3>Upload the Blink Code</h3>
-                    <ul class="bullet-list">
-                        <li>Make sure your robot is connected via USB</li>
-                        <li>Make sure you selected the correct board and port (from Slide 13)</li>
-                        <li>Click the <strong>right arrow →</strong> button (Upload) in the top-left</li>
-                        <li>Wait for "Done uploading" message</li>
+                    <h3>Uploading Your Code</h3>
+                    <ul class="bullet-list" style="font-size: 1.05rem;">
+                        <li>Click the <strong>checkmark ✓</strong> button (Verify) to check for errors</li>
+                        <li>If it says "Done compiling" - you're ready!</li>
+                        <li>Click the <strong>right arrow →</strong> button (Upload) to send code to Arduino</li>
+                        <li>Wait for "Done uploading" message at the bottom</li>
                     </ul>
                 </div>
 
                 <div class="grid-2" style="margin-top: 30px;">
-                    <div class="info-box" style="background: rgba(80, 250, 123, 0.15); border: 3px solid #50fa7b; padding: 25px; border-radius: 12px; text-align: center;">
-                        <h3 style="color: #50fa7b; font-size: 2rem; margin-bottom: 15px;">✓ Success!</h3>
-                        <p style="color: #b8c5d6; font-size: 1.2rem;">You should see a small LED on your Arduino board blinking on and off every second!</p>
+                    <div class="box" style="background: rgba(80, 250, 123, 0.15); border: 3px solid #50fa7b; padding: 25px; text-align: center;">
+                        <h3 style="color: #50fa7b; font-size: 1.8rem; margin-bottom: 15px;">✓ Success!</h3>
+                        <p style="font-size: 1.1rem;">You should see a small LED on your Arduino board blinking on and off every second!</p>
                         <p style="color: #50fa7b; margin-top: 15px; font-weight: 600;">You just programmed your first microcontroller!</p>
                     </div>
-                    <div class="info-box" style="background: rgba(255, 149, 0, 0.15); border: 3px solid #ff9500; padding: 25px; border-radius: 12px;">
-                        <h4 style="color: #ff9500; font-size: 1.5rem; margin-bottom: 15px;">Troubleshooting</h4>
-                        <ul class="bullet-list" style="text-align: left;">
-                            <li>Error uploading? Check that you selected the correct port</li>
+                    <div class="box" style="background: rgba(255, 149, 0, 0.15); border: 3px solid #ff9500; padding: 25px;">
+                        <h4 style="color: #ff9500; font-size: 1.3rem; margin-bottom: 15px;">Troubleshooting</h4>
+                        <ul class="bullet-list" style="text-align: left; font-size: 0.95rem;">
+                            <li>Error uploading? Check you selected the correct port</li>
                             <li>Try unplugging and replugging the USB cable</li>
-                            <li>Make sure the board type is "Arduino Nano RP2040 Connect"</li>
-                            <li>Don't worry - we'll practice this more in Lesson 2!</li>
+                            <li>Make sure board type is "Arduino Uno"</li>
+                            <li>Some USB cables are power-only - try a different cable</li>
                         </ul>
                     </div>
                 </div>
 
-                <p style="text-align: center; font-size: 1.1rem; margin-top: 25px; color: #b8c5d6;">
-                    <em>No robot available? That's okay! You've still learned the workflow and you're ready for Lesson 2.</em>
+                <p style="text-align: center; font-size: 1.2rem; margin-top: 25px; color: #00d4ff;">
+                    <strong>Congratulations!</strong> You've completed the full workflow: setup → load → upload → verify!
                 </p>
             </div>
         </div>
 
-        <!-- Slide 17: Recap -->
+        <!-- Slide 16: Recap -->
         <div class="slide">
             <div class="slide-content">
-                <h2>Objective Recap</h2>
+                <h2>Lesson 1 Recap</h2>
                 <div class="objective-box">
                     <h3>Today you learned:</h3>
-                    <ul class="bullet-list">
+                    <ul class="bullet-list" style="font-size: 1.05rem;">
                         <li><span class="checkmark">✓</span> Microcontrollers are complete computers on a chip (CPU + memory + I/O)</li>
                         <li><span class="checkmark">✓</span> Arduino makes microcontrollers easy to program</li>
                         <li><span class="checkmark">✓</span> Motor controllers amplify weak microcontroller signals to high power</li>
                         <li><span class="checkmark">✓</span> Direction control uses two digital pins (INA/INB)</li>
                         <li><span class="checkmark">✓</span> Speed control uses PWM on one pin</li>
                         <li><span class="checkmark">✓</span> Complete path: Code → CPU → I/O Pins → Motor Controller → Motor → Motion!</li>
-                        <li><span class="checkmark">✓</span> How to use Arduino IDE and the copy-paste workflow</li>
+                        <li><span class="checkmark">✓</span> How to setup Arduino IDE and select a board</li>
                         <li><span class="checkmark">✓</span> The structure of Arduino code: setup() and loop()</li>
+                        <li><span class="checkmark">✓</span> How to upload code and verify it works on real hardware</li>
                     </ul>
                 </div>
                 <div style="text-align: center; margin-top: 30px;">
                     <h3 style="font-size: 1.8rem; color: #50fa7b;">Foundation Complete!</h3>
-                    <p style="font-size: 1.2rem; margin-top: 15px;">You're ready for Lesson 2 - Hands-on Programming</p>
+                    <p style="font-size: 1.2rem; margin-top: 15px;">Tomorrow: Writing your own Arduino code from scratch</p>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="slide-number">
-        <span id="current-slide">1</span> / <span id="total-slides">14</span>
+        <span id="current-slide">1</span> / <span id="total-slides">16</span>
     </div>
 
     <div class="controls">
@@ -1239,27 +1189,6 @@ void loop() {
             if (currentSlide > 0) {
                 showSlide(currentSlide - 1);
             }
-        }
-
-        // Copy code function
-        function copyBlinkCode() {
-            const codeElement = document.getElementById('blink-code');
-            const codeText = codeElement.textContent;
-
-            navigator.clipboard.writeText(codeText).then(() => {
-                // Visual feedback
-                const button = event.target;
-                const originalText = button.innerHTML;
-                button.innerHTML = '✓ Copied!';
-                button.style.background = '#00d4ff';
-
-                setTimeout(() => {
-                    button.innerHTML = originalText;
-                    button.style.background = '#50fa7b';
-                }, 2000);
-            }).catch(err => {
-                alert('Failed to copy code. Please select and copy manually.');
-            });
         }
 
         // Keyboard navigation

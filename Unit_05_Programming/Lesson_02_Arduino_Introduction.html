@@ -454,17 +454,24 @@
             </div>
         </div>
 
-        <!-- Slide 2: Learning Objective -->
+        <!-- Slide 2: This Week's Goal & Learning Objective -->
         <div class="slide">
             <div class="slide-content">
-                <h2>Today's Learning Objective</h2>
+                <h2>This Week's Goal</h2>
+                <div class="box" style="margin-bottom: 30px; background: rgba(0, 212, 255, 0.1); border-color: #00d4ff;">
+                    <p style="font-size: 1.4rem; text-align: center;">
+                        Learn Arduino fundamentals using the <span class="highlight">Arduino Uno</span>, then next week we'll program our <span class="highlight">RP2040 robots</span> using the same skills!
+                    </p>
+                </div>
+
+                <h2 style="margin-top: 40px;">Today's Learning Objective</h2>
                 <div style="display: grid; grid-template-columns: 1fr 200px; gap: 40px; align-items: center;">
                     <div class="objective-box">
                         <h3>By the end of today, you will be able to:</h3>
                         <ul class="bullet-list">
-                            <li>Install and configure the Arduino IDE</li>
+                            <li>Write your own Arduino code from scratch</li>
                             <li>Understand the <span class="highlight">setup()</span> and <span class="highlight">loop()</span> code structure</li>
-                            <li>Upload your first program to an Arduino</li>
+                            <li>Upload your programs to an Arduino</li>
                             <li>Modify timing parameters to create different blink patterns</li>
                         </ul>
                     </div>
@@ -472,14 +479,14 @@
                         <svg viewBox="0 0 200 300" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; filter: drop-shadow(0 0 15px rgba(0, 212, 255, 0.5));">
                             <!-- Arduino Board -->
                             <rect x="20" y="40" width="160" height="220" rx="8" fill="#008184" stroke="#00d4ff" stroke-width="3"/>
-                            
+
                             <!-- USB Port -->
                             <rect x="70" y="10" width="60" height="35" rx="4" fill="#b8c5d6" stroke="#00d4ff" stroke-width="2"/>
-                            
+
                             <!-- Power Jack -->
                             <circle cx="30" cy="80" r="12" fill="#1a1f3a" stroke="#ff9500" stroke-width="2"/>
                             <circle cx="30" cy="80" r="6" fill="#ff9500"/>
-                            
+
                             <!-- Digital Pins -->
                             <rect x="30" y="120" width="8" height="80" rx="2" fill="#00d4ff"/>
                             <rect x="45" y="120" width="8" height="80" rx="2" fill="#00d4ff"/>
@@ -487,24 +494,24 @@
                             <rect x="75" y="120" width="8" height="80" rx="2" fill="#00d4ff"/>
                             <rect x="90" y="120" width="8" height="80" rx="2" fill="#00d4ff"/>
                             <rect x="105" y="120" width="8" height="80" rx="2" fill="#00d4ff"/>
-                            
+
                             <!-- Analog Pins -->
                             <rect x="120" y="120" width="8" height="80" rx="2" fill="#ff9500"/>
                             <rect x="135" y="120" width="8" height="80" rx="2" fill="#ff9500"/>
                             <rect x="150" y="120" width="8" height="80" rx="2" fill="#ff9500"/>
                             <rect x="165" y="120" width="8" height="80" rx="2" fill="#ff9500"/>
-                            
+
                             <!-- Microcontroller -->
                             <rect x="60" y="60" width="80" height="50" rx="4" fill="#1a1f3a" stroke="#00d4ff" stroke-width="2"/>
                             <text x="100" y="90" font-family="JetBrains Mono" font-size="14" fill="#00d4ff" text-anchor="middle">ATmega</text>
-                            
+
                             <!-- LED indicators -->
                             <circle cx="40" cy="230" r="6" fill="#50fa7b" opacity="0.8">
                                 <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
                             </circle>
                             <circle cx="60" cy="230" r="6" fill="#ff9500" opacity="0.5"/>
                             <circle cx="80" cy="230" r="6" fill="#ff9500" opacity="0.5"/>
-                            
+
                             <!-- Reset Button -->
                             <rect x="150" y="220" width="20" height="20" rx="3" fill="#ff9500" stroke="#00d4ff" stroke-width="2"/>
                         </svg>
@@ -516,66 +523,12 @@
             </div>
         </div>
 
-        <!-- Slide 3: Semester Progress -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Where We've Been</h2>
-                <div class="grid-2">
-                    <div class="box">
-                        <h3>✓ Design & CAD</h3>
-                        <p>Created robot components in Fusion 360, designed decks, motor mounts, and assemblies</p>
-                    </div>
-                    <div class="box">
-                        <h3>✓ Fabrication</h3>
-                        <p>CNC cut robot decks, 3D printed motor mounts, assembled mechanical systems</p>
-                    </div>
-                </div>
-                <div style="margin-top: 40px; text-align: center;">
-                    <h3 style="font-size: 2.5rem;">Now: <span class="highlight">Programming!</span></h3>
-                    <p style="font-size: 1.5rem; margin-top: 20px;">Your robots are built. Let's bring them to life.</p>
-                </div>
-            </div>
-        </div>
 
-        <!-- Slide 4: What is Arduino? -->
+        <!-- Slide 3: Arduino Code Structure Review -->
         <div class="slide">
             <div class="slide-content">
-                <h2>What is Arduino?</h2>
-                <ul class="bullet-list">
-                    <li><span class="highlight">Microcontroller platform</span> - a tiny computer that controls electronics</li>
-                    <li><span class="highlight">Easy to program</span> - designed for beginners and professionals</li>
-                    <li><span class="highlight">Controls everything</span> - motors, sensors, LEDs, robots, and more</li>
-                    <li><span class="highlight">Industry standard</span> - used in prototyping and product development worldwide</li>
-                </ul>
-                <div class="box" style="margin-top: 40px;">
-                    <h3>This Week's Goal</h3>
-                    <p>Learn Arduino fundamentals using the <span class="highlight">Arduino Uno</span>, then next week we'll program our <span class="highlight">RP2040 robots</span> using the same skills!</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 5: Arduino IDE Setup -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Arduino IDE Setup</h2>
-                <ol class="steps">
-                    <li>Open Arduino IDE (already installed on classroom computers)</li>
-                    <li>Connect your Arduino Uno via USB cable</li>
-                    <li>Select board: <span class="highlight">Tools → Board → Arduino Uno</span></li>
-                    <li>Select port: <span class="highlight">Tools → Port → COM# (Arduino Uno)</span></li>
-                    <li>Verify connection - the board should power on (LED lights up)</li>
-                </ol>
-                <div class="box" style="margin-top: 30px;">
-                    <p><span class="warning">⚠ Troubleshooting:</span> If port doesn't appear, try a different USB cable or port. Some cables are power-only!</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 6: Code Structure -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Arduino Code Structure</h2>
-                <p>Every Arduino program has two main parts:</p>
+                <h2>Arduino Code Structure (Review)</h2>
+                <p style="font-size: 1.2rem; margin-bottom: 20px;">Yesterday we saw the <strong>structure</strong> of Arduino code. Today we'll write our own!</p>
                 <div class="code-block">
 <span class="keyword">void</span> <span class="function">setup</span>() {
   <span class="comment">// Runs ONCE when Arduino starts</span>
@@ -591,6 +544,112 @@
                     <li><span class="highlight">setup()</span> runs once at power-on or reset</li>
                     <li><span class="highlight">loop()</span> runs continuously, over and over forever</li>
                 </ul>
+            </div>
+        </div>
+
+        <!-- Slide 4: Copy-Paste Workflow -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Copy-Paste Workflow</h2>
+                <p style="font-size: 1.3rem; margin-bottom: 25px; color: #b8c5d6;">
+                    You'll use this workflow throughout the course to load code examples!
+                </p>
+
+                <div class="objective-box">
+                    <h3>Step 1: Copy the Code</h3>
+                    <ul class="bullet-list">
+                        <li>When you see a code example on a slide, look for the <strong>📋 Copy Code</strong> button</li>
+                        <li>Click it to copy the code to your clipboard</li>
+                        <li>The code is now ready to paste!</li>
+                    </ul>
+                </div>
+
+                <div class="objective-box" style="border-color: #bd93f9; box-shadow: 0 0 30px rgba(189, 147, 249, 0.2);">
+                    <h3 style="color: #bd93f9;">Step 2: Open Arduino IDE</h3>
+                    <ul class="bullet-list">
+                        <li>Click in the Arduino IDE window to make it active</li>
+                        <li>You'll see the blank sketch skeleton with <code>setup()</code> and <code>loop()</code></li>
+                    </ul>
+                </div>
+
+                <div class="objective-box" style="border-color: #ff9500; box-shadow: 0 0 30px rgba(255, 149, 0, 0.2);">
+                    <h3 style="color: #ff9500;">Step 3: Select All & Paste</h3>
+                    <ul class="bullet-list">
+                        <li>Press <strong>Ctrl+A</strong> to select all the existing code in the IDE</li>
+                        <li>Press <strong>Ctrl+V</strong> to paste your copied code</li>
+                        <li>The old skeleton code is replaced with the new code!</li>
+                    </ul>
+                </div>
+
+                <p style="text-align: center; font-size: 1.2rem; margin-top: 20px; color: #00d4ff;">
+                    <strong>We'll practice this workflow next!</strong>
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 5: Verify and Upload -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Verify and Upload</h2>
+                <p style="font-size: 1.3rem; margin-bottom: 25px; color: #b8c5d6;">
+                    After pasting code, always verify before uploading!
+                </p>
+
+                <div class="objective-box" style="border-color: #50fa7b; box-shadow: 0 0 30px rgba(80, 250, 123, 0.2);">
+                    <h3 style="color: #50fa7b;">Step 4: Verify (Check) the Code</h3>
+                    <ul class="bullet-list">
+                        <li>Click the <strong>checkmark ✓</strong> button (Verify) in the top-left of Arduino IDE</li>
+                        <li>Arduino checks your code for errors (compiles it)</li>
+                        <li>If it says "Done compiling" at the bottom - success!</li>
+                        <li>If there are errors, double-check you copied all the code correctly</li>
+                    </ul>
+                </div>
+
+                <div class="objective-box" style="border-color: #00d4ff; box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);">
+                    <h3 style="color: #00d4ff;">Step 5: Upload to Arduino</h3>
+                    <ul class="bullet-list">
+                        <li>Make sure your Arduino Uno is connected via USB</li>
+                        <li>Make sure you selected the correct board and port (from yesterday)</li>
+                        <li>Click the <strong>right arrow →</strong> button (Upload) in the top-left</li>
+                        <li>Wait for "Done uploading" message</li>
+                    </ul>
+                </div>
+
+                <div class="box" style="margin-top: 30px;">
+                    <p><span class="warning">Pro Tip:</span> Always verify before uploading! It catches syntax errors and saves time.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Troubleshooting Tips -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Common Upload Issues</h2>
+                <div class="grid-2">
+                    <div class="box" style="background: rgba(255, 149, 0, 0.15); border: 3px solid #ff9500; padding: 25px;">
+                        <h4 style="color: #ff9500; font-size: 1.3rem; margin-bottom: 15px;">Upload Error?</h4>
+                        <ul class="bullet-list" style="text-align: left; font-size: 1rem;">
+                            <li>Check that you selected the correct port (Tools → Port)</li>
+                            <li>Try unplugging and replugging the USB cable</li>
+                            <li>Make sure board type is "Arduino Uno"</li>
+                            <li>Some USB cables are power-only - try a different cable</li>
+                        </ul>
+                    </div>
+                    <div class="box" style="background: rgba(80, 250, 123, 0.15); border: 3px solid #50fa7b; padding: 25px;">
+                        <h4 style="color: #50fa7b; font-size: 1.3rem; margin-bottom: 15px;">Compile Error?</h4>
+                        <ul class="bullet-list" style="text-align: left; font-size: 1rem;">
+                            <li>Read the error message - it tells you the line number!</li>
+                            <li>Check for missing semicolons (;)</li>
+                            <li>Check for matching curly braces { }</li>
+                            <li>Make sure you copied all the code</li>
+                        </ul>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 30px;">
+                    <p style="font-size: 1.2rem; color: #00d4ff;">
+                        <strong>Don't panic!</strong> Errors are part of learning. Read the messages and fix one issue at a time.
+                    </p>
+                </div>
             </div>
         </div>
 
