@@ -1119,14 +1119,114 @@ MEDIUM
             </div>
         </div>
 
-        <!-- Slide 13: Today's Assignment -->
+        <!-- Slide 13: Quiz Question 1 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 1 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">With INPUT_PULLUP, what state is the pin when the button is NOT pressed?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ1(this, 'A', false)">A) LOW</div>
+                        <div class="quiz-option" onclick="answerQ1(this, 'B', true)">B) HIGH</div>
+                        <div class="quiz-option" onclick="answerQ1(this, 'C', false)">C) Random/Floating</div>
+                        <div class="quiz-option" onclick="answerQ1(this, 'D', false)">D) 0</div>
+                    </div>
+                    <div id="feedback-q1" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q1-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> INPUT_PULLUP uses an internal resistor to pull the pin HIGH when nothing is connected. Pressing the button connects it to ground, making it LOW.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Quiz Question 2 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 2 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What symbol means "equals" in an if statement?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ2(this, 'A', false)">A) =</div>
+                        <div class="quiz-option" onclick="answerQ2(this, 'B', true)">B) ==</div>
+                        <div class="quiz-option" onclick="answerQ2(this, 'C', false)">C) ===</div>
+                        <div class="quiz-option" onclick="answerQ2(this, 'D', false)">D) !=</div>
+                    </div>
+                    <div id="feedback-q2" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q2-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> Single = is assignment (x = 5 sets x to 5), while double == is comparison (if x == 5 checks if x equals 5). Use == in if statements!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Quiz Question 3 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 3 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What does digitalRead() return?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ3(this, 'A', false)">A) A number from 0-1023</div>
+                        <div class="quiz-option" onclick="answerQ3(this, 'B', true)">B) Either HIGH or LOW</div>
+                        <div class="quiz-option" onclick="answerQ3(this, 'C', false)">C) A voltage value</div>
+                        <div class="quiz-option" onclick="answerQ3(this, 'D', false)">D) True or False</div>
+                    </div>
+                    <div id="feedback-q3" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q3-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> digitalRead() returns either HIGH (5V) or LOW (0V), representing the digital state of the pin. For analog readings (0-1023), use analogRead() instead!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Quiz Question 4 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 4 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">When does the else block execute?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ4(this, 'A', false)">A) Always</div>
+                        <div class="quiz-option" onclick="answerQ4(this, 'B', true)">B) When if condition is false</div>
+                        <div class="quiz-option" onclick="answerQ4(this, 'C', false)">C) When if condition is true</div>
+                        <div class="quiz-option" onclick="answerQ4(this, 'D', false)">D) Never</div>
+                    </div>
+                    <div id="feedback-q4" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q4-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> The else block only runs when the if condition evaluates to false. Think of it as "otherwise, do this."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Quiz Question 5 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 5 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">When using INPUT_PULLUP, how should you wire the button?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ5(this, 'A', false)">A) Pin to 5V</div>
+                        <div class="quiz-option" onclick="answerQ5(this, 'B', true)">B) Pin to Ground</div>
+                        <div class="quiz-option" onclick="answerQ5(this, 'C', false)">C) Between 5V and Ground</div>
+                        <div class="quiz-option" onclick="answerQ5(this, 'D', false)">D) No connection needed</div>
+                    </div>
+                    <div id="feedback-q5" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q5-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> With INPUT_PULLUP, one side of the button connects to the pin, the other to ground. Pressing the button connects the pin to ground (LOW).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 18: Today's Challenge -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Today's Challenge</h2>
                 <div style="background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 149, 0, 0.05) 100%); border: 3px solid #ff9500; border-radius: 12px; padding: 20px;">
                     <h3>Button Toggle LED</h3>
                     <p style="font-size: 1.1rem; margin-bottom: 15px;">Build a circuit that toggles an LED on/off with each button press</p>
-                    
+
                     <h3 style="margin-top: 20px; color: #00d4ff; font-size: 1.3rem;">Requirements:</h3>
                     <ul class="bullet-list" style="font-size: 1.05rem;">
                         <li>Connect button to pin 2, LED to pin 13</li>
@@ -1136,7 +1236,7 @@ MEDIUM
                         <li>Add debouncing with <span class="highlight">delay(200)</span></li>
                     </ul>
                     <p style="margin-top: 20px; font-size: 1.1rem;">
-                        <span class="warning">Due:</span> Thursday by noon -
+                        <span class="warning">Due:</span> Tomorrow by noon -
                         <a href="Lesson_04_Homework.html" target="_blank" style="color: #00d4ff; text-decoration: underline; font-weight: 700;">Submit Homework Here</a>
                     </p>
                 </div>
@@ -1162,107 +1262,7 @@ if (digitalRead(buttonPin) == LOW) {
             </div>
         </div>
 
-        <!-- Slide 10: Quiz Question 1 -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Quiz Preview - Question 1 of 5</h2>
-                <div class="quiz-question">
-                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">With INPUT_PULLUP, what state is the pin when the button is NOT pressed?</h3>
-                    <div class="quiz-options">
-                        <div class="quiz-option" onclick="answerQ1(this, 'A', false)">A) LOW</div>
-                        <div class="quiz-option" onclick="answerQ1(this, 'B', true)">B) HIGH</div>
-                        <div class="quiz-option" onclick="answerQ1(this, 'C', false)">C) Random/Floating</div>
-                        <div class="quiz-option" onclick="answerQ1(this, 'D', false)">D) 0</div>
-                    </div>
-                    <div id="feedback-q1" class="quiz-feedback" style="display: none;">
-                        <p id="feedback-q1-text"></p>
-                        <p style="margin-top: 15px;"><strong>Explanation:</strong> INPUT_PULLUP uses an internal resistor to pull the pin HIGH when nothing is connected. Pressing the button connects it to ground, making it LOW.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 11: Quiz Question 2 -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Quiz Preview - Question 2 of 5</h2>
-                <div class="quiz-question">
-                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What symbol means "equals" in an if statement?</h3>
-                    <div class="quiz-options">
-                        <div class="quiz-option" onclick="answerQ2(this, 'A', false)">A) =</div>
-                        <div class="quiz-option" onclick="answerQ2(this, 'B', true)">B) ==</div>
-                        <div class="quiz-option" onclick="answerQ2(this, 'C', false)">C) ===</div>
-                        <div class="quiz-option" onclick="answerQ2(this, 'D', false)">D) !=</div>
-                    </div>
-                    <div id="feedback-q2" class="quiz-feedback" style="display: none;">
-                        <p id="feedback-q2-text"></p>
-                        <p style="margin-top: 15px;"><strong>Explanation:</strong> Single = is assignment (x = 5 sets x to 5), while double == is comparison (if x == 5 checks if x equals 5). Use == in if statements!</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 12: Quiz Question 3 -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Quiz Preview - Question 3 of 5</h2>
-                <div class="quiz-question">
-                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What does digitalRead() return?</h3>
-                    <div class="quiz-options">
-                        <div class="quiz-option" onclick="answerQ3(this, 'A', false)">A) A number from 0-1023</div>
-                        <div class="quiz-option" onclick="answerQ3(this, 'B', true)">B) Either HIGH or LOW</div>
-                        <div class="quiz-option" onclick="answerQ3(this, 'C', false)">C) A voltage value</div>
-                        <div class="quiz-option" onclick="answerQ3(this, 'D', false)">D) True or False</div>
-                    </div>
-                    <div id="feedback-q3" class="quiz-feedback" style="display: none;">
-                        <p id="feedback-q3-text"></p>
-                        <p style="margin-top: 15px;"><strong>Explanation:</strong> digitalRead() returns either HIGH (5V) or LOW (0V), representing the digital state of the pin. For analog readings (0-1023), use analogRead() instead!</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 13: Quiz Question 4 -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Quiz Preview - Question 4 of 5</h2>
-                <div class="quiz-question">
-                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">When does the else block execute?</h3>
-                    <div class="quiz-options">
-                        <div class="quiz-option" onclick="answerQ4(this, 'A', false)">A) Always</div>
-                        <div class="quiz-option" onclick="answerQ4(this, 'B', true)">B) When if condition is false</div>
-                        <div class="quiz-option" onclick="answerQ4(this, 'C', false)">C) When if condition is true</div>
-                        <div class="quiz-option" onclick="answerQ4(this, 'D', false)">D) Never</div>
-                    </div>
-                    <div id="feedback-q4" class="quiz-feedback" style="display: none;">
-                        <p id="feedback-q4-text"></p>
-                        <p style="margin-top: 15px;"><strong>Explanation:</strong> The else block only runs when the if condition evaluates to false. Think of it as "otherwise, do this."</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 14: Quiz Question 5 -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Quiz Preview - Question 5 of 5</h2>
-                <div class="quiz-question">
-                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">When using INPUT_PULLUP, how should you wire the button?</h3>
-                    <div class="quiz-options">
-                        <div class="quiz-option" onclick="answerQ5(this, 'A', false)">A) Pin to 5V</div>
-                        <div class="quiz-option" onclick="answerQ5(this, 'B', true)">B) Pin to Ground</div>
-                        <div class="quiz-option" onclick="answerQ5(this, 'C', false)">C) Between 5V and Ground</div>
-                        <div class="quiz-option" onclick="answerQ5(this, 'D', false)">D) No connection needed</div>
-                    </div>
-                    <div id="feedback-q5" class="quiz-feedback" style="display: none;">
-                        <p id="feedback-q5-text"></p>
-                        <p style="margin-top: 15px;"><strong>Explanation:</strong> With INPUT_PULLUP, one side of the button connects to the pin, the other to ground. Pressing the button connects the pin to ground (LOW).</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 15: Study Tips -->
+        <!-- Slide 19: Study Tips -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Preparing for Friday's Quiz</h2>
@@ -1296,7 +1296,7 @@ if (digitalRead(buttonPin) == LOW) {
             </div>
         </div>
 
-        <!-- Slide 12: Objective Recap -->
+        <!-- Slide 20: Objective Recap -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Objective Recap</h2>

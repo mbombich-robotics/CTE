@@ -713,6 +713,16 @@ char grade = 'A';
                         </div>
                     </div>
                 </div>
+                <div class="box" style="margin-top: 20px; background: rgba(255, 149, 0, 0.1); border-color: #ff9500;">
+                    <h3 style="color: #ff9500;">💡 Why use <code style="color: #00d4ff;">int</code> if it has limits?</h3>
+                    <ul class="bullet-list" style="font-size: 1rem;">
+                        <li><span class="highlight">Both int and long store whole numbers only</span> - neither can have decimals (use float for that)</li>
+                        <li><span class="highlight">Memory efficiency</span> - int uses 2 bytes, long uses 4 bytes (Arduino Uno only has 2KB RAM!)</li>
+                        <li><span class="highlight">Processing speed</span> - int is faster on 8-bit microcontrollers</li>
+                        <li><span class="highlight">Good practice</span> - use the smallest type that fits your needs</li>
+                        <li><span class="success">Use long only when you need values bigger than ±32,767</span></li>
+                    </ul>
+                </div>
             </div>
         </div>
 
@@ -968,33 +978,7 @@ void loop() {
             </div>
         </div>
 
-        <!-- Slide 12: Today's Assignment -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Today's Challenge</h2>
-                <div class="assignment-box">
-                    <h3>Counter Program with Variables</h3>
-                    <p style="font-size: 1.1rem; margin-bottom: 15px;">Create a program that counts from 1 to 100 using variables</p>
-                    <h3 style="margin-top: 20px; color: #00d4ff; font-size: 1.3rem;">Requirements:</h3>
-                    <ul class="bullet-list" style="font-size: 1.05rem;">
-                        <li>Use variables for <span class="highlight">startValue</span>, <span class="highlight">endValue</span>, <span class="highlight">increment</span></li>
-                        <li>Print: <span class="success">"Count: 1"</span>, <span class="success">"Count: 2"</span>, etc.</li>
-                        <li>Add delay to see each number</li>
-                        <li>After 100, print <span class="success">"Done!"</span> and stop</li>
-                    </ul>
-                    <p style="margin-top: 20px; font-size: 1.1rem;">
-                        <span class="warning">Due:</span> Wednesday by noon -
-                        <a href="Lesson_03_Homework.html" target="_blank" style="color: #00d4ff; text-decoration: underline; font-weight: 700;">Submit Homework Here</a>
-                    </p>
-                </div>
-                <div class="box" style="margin-top: 20px;">
-                    <h3>Bonus Challenge</h3>
-                    <p>Count backwards from 100 to 1 by changing just ONE variable!</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 13: Debugging Tips -->
+        <!-- Slide 12: Debugging Tips -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Debugging with Serial Monitor</h2>
@@ -1023,7 +1007,7 @@ void loop() {
             </div>
         </div>
 
-        <!-- Slide 14: Let's Code! -->
+        <!-- Slide 13: Let's Code! -->
         <div class="slide">
             <div class="slide-content" style="text-align: center;">
                 <h1>LET'S CODE!</h1>
@@ -1037,14 +1021,14 @@ void loop() {
                 </ol>
                 <div class="box" style="max-width: 750px; margin: 30px auto;">
                     <h3>Pro Tips</h3>
-                    <p><span class="highlight">Start simple</span> - count to 10 first, then expand</p>
+                    <p><span class="highlight">Start simple</span> - get basic counting working first, then add features</p>
                     <p style="margin-top: 8px;"><span class="highlight">Use descriptive names</span> - "counter" better than "x"</p>
                     <p style="margin-top: 8px;"><span class="warning">Watch baud rate!</span> Must match Serial Monitor</p>
                 </div>
             </div>
         </div>
 
-        <!-- Slide 15: Quiz Question 1 -->
+        <!-- Slide 14: Quiz Question 1 -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Quiz Preview - Question 1 of 5</h2>
@@ -1064,7 +1048,7 @@ void loop() {
             </div>
         </div>
 
-        <!-- Slide 16: Quiz Question 2 -->
+        <!-- Slide 15: Quiz Question 2 -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Quiz Preview - Question 2 of 5</h2>
@@ -1084,7 +1068,7 @@ void loop() {
             </div>
         </div>
 
-        <!-- Slide 17: Quiz Question 3 -->
+        <!-- Slide 16: Quiz Question 3 -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Quiz Preview - Question 3 of 5</h2>
@@ -1104,7 +1088,7 @@ void loop() {
             </div>
         </div>
 
-        <!-- Slide 18: Quiz Question 4 -->
+        <!-- Slide 17: Quiz Question 4 -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Quiz Preview - Question 4 of 5</h2>
@@ -1124,7 +1108,7 @@ void loop() {
             </div>
         </div>
 
-        <!-- Slide 19: Quiz Question 5 -->
+        <!-- Slide 18: Quiz Question 5 -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Quiz Preview - Question 5 of 5</h2>
@@ -1140,6 +1124,37 @@ void loop() {
                         <p id="feedback-q5-text"></p>
                         <p style="margin-top: 15px;"><strong>Explanation:</strong> Global variables (declared before setup()) can be accessed by both setup() and loop(). Variables declared inside a function are only accessible within that function!</p>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 19: Today's Challenge -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Today's Challenge</h2>
+                <div class="assignment-box">
+                    <h3>Counter Program with Variables</h3>
+                    <p style="font-size: 1.1rem; margin-bottom: 15px;">Create a program that counts up continuously using variables</p>
+                    <h3 style="margin-top: 20px; color: #00d4ff; font-size: 1.3rem;">Requirements:</h3>
+                    <ul class="bullet-list" style="font-size: 1.05rem;">
+                        <li>Declare a global variable called <span class="highlight">counter</span> and set it to 0</li>
+                        <li>In loop(), increment the counter by 1 each time (<code>counter++</code> or <code>counter = counter + 1</code>)</li>
+                        <li>Print: <span class="success">"Count: 1"</span>, <span class="success">"Count: 2"</span>, etc. using <code>Serial.print()</code> and <code>Serial.println()</code></li>
+                        <li>Add a <code>delay(500)</code> so you can see each number</li>
+                        <li>Let it count forever - watch it go past 100, 200, 300...</li>
+                    </ul>
+                    <p style="margin-top: 20px; font-size: 1.1rem;">
+                        <span class="warning">Due:</span> Tomorrow by noon -
+                        <a href="Lesson_03_Homework.html" target="_blank" style="color: #00d4ff; text-decoration: underline; font-weight: 700;">Submit Homework Here</a>
+                    </p>
+                </div>
+                <div class="box" style="margin-top: 20px;">
+                    <h3>Bonus Challenges</h3>
+                    <ul class="bullet-list" style="font-size: 1rem;">
+                        <li>Make it count by 2s, 5s, or 10s instead of by 1</li>
+                        <li>Can you make it count down instead? (Hint: start at a high number and subtract)</li>
+                        <li>Print the counter value twice per second instead of once per second</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -1177,7 +1192,7 @@ void loop() {
             </div>
         </div>
 
-        <!-- Slide 17: Objective Recap -->
+        <!-- Slide 21: Objective Recap -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Objective Recap</h2>

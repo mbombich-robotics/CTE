@@ -1005,14 +1005,114 @@ analogWrite(9, 127);
             </div>
         </div>
 
-        <!-- Slide 11: Today's Assignment -->
+        <!-- Slide 11: Quiz Question 1 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 1 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What range does analogRead() return?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ1(this, 'A', false)">A) 0-255</div>
+                        <div class="quiz-option" onclick="answerQ1(this, 'B', true)">B) 0-1023</div>
+                        <div class="quiz-option" onclick="answerQ1(this, 'C', false)">C) 0-1024</div>
+                        <div class="quiz-option" onclick="answerQ1(this, 'D', false)">D) 0-5</div>
+                    </div>
+                    <div id="feedback-q1" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q1-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> Arduino's 10-bit ADC (Analog-to-Digital Converter) provides 1024 possible values (2^10), numbered 0-1023.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Quiz Question 2 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 2 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What range does analogWrite() accept?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ2(this, 'A', true)">A) 0-255</div>
+                        <div class="quiz-option" onclick="answerQ2(this, 'B', false)">B) 0-1023</div>
+                        <div class="quiz-option" onclick="answerQ2(this, 'C', false)">C) 0-100</div>
+                        <div class="quiz-option" onclick="answerQ2(this, 'D', false)">D) LOW or HIGH</div>
+                    </div>
+                    <div id="feedback-q2" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q2-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> PWM output uses 8-bit resolution, giving 256 levels (0-255). This is why we often need map() to convert from analogRead() values!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Quiz Question 3 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 3 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">Which pins support PWM on Arduino Uno?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ3(this, 'A', false)">A) All digital pins</div>
+                        <div class="quiz-option" onclick="answerQ3(this, 'B', true)">B) Pins 3, 5, 6, 9, 10, 11</div>
+                        <div class="quiz-option" onclick="answerQ3(this, 'C', false)">C) Only pin 13</div>
+                        <div class="quiz-option" onclick="answerQ3(this, 'D', false)">D) Pins A0-A5</div>
+                    </div>
+                    <div id="feedback-q3" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q3-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> Only pins marked with ~ (tilde) support PWM on the Arduino Uno. Look for the ~ symbol next to the pin number on the board!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Quiz Question 4 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 4 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What does map(512, 0, 1023, 0, 255) return?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ4(this, 'A', false)">A) 512</div>
+                        <div class="quiz-option" onclick="answerQ4(this, 'B', false)">B) 255</div>
+                        <div class="quiz-option" onclick="answerQ4(this, 'C', true)">C) 127</div>
+                        <div class="quiz-option" onclick="answerQ4(this, 'D', false)">D) 0</div>
+                    </div>
+                    <div id="feedback-q4" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q4-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> map() converts 512 (the middle of 0-1023) proportionally to the middle of 0-255, which is approximately 127. It maintains the same relative position!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Quiz Question 5 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Quiz Preview - Question 5 of 5</h2>
+                <div class="quiz-question">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What does PWM stand for?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQ5(this, 'A', false)">A) Power Width Modulation</div>
+                        <div class="quiz-option" onclick="answerQ5(this, 'B', true)">B) Pulse Width Modulation</div>
+                        <div class="quiz-option" onclick="answerQ5(this, 'C', false)">C) Pin Wave Mode</div>
+                        <div class="quiz-option" onclick="answerQ5(this, 'D', false)">D) Programmable Wave Method</div>
+                    </div>
+                    <div id="feedback-q5" class="quiz-feedback" style="display: none;">
+                        <p id="feedback-q5-text"></p>
+                        <p style="margin-top: 15px;"><strong>Explanation:</strong> PWM (Pulse Width Modulation) rapidly switches a digital signal on and off to simulate analog output by varying the pulse width!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Today's Challenge -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Today's Challenge</h2>
                 <div style="background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 149, 0, 0.05) 100%); border: 3px solid #ff9500; border-radius: 12px; padding: 20px;">
                     <h3>Potentiometer Brightness Control</h3>
                     <p style="font-size: 1.1rem; margin-bottom: 15px;">Build a circuit where a potentiometer controls LED brightness</p>
-                    
+
                     <h3 style="margin-top: 20px; color: #00d4ff; font-size: 1.3rem;">Requirements:</h3>
                     <ul class="bullet-list" style="font-size: 1.05rem;">
                         <li>Connect potentiometer to <span class="highlight">A0</span></li>
@@ -1023,7 +1123,7 @@ analogWrite(9, 127);
                         <li>Print both values to Serial Monitor</li>
                     </ul>
                     <p style="margin-top: 20px; font-size: 1.1rem;">
-                        <span class="warning">Due:</span> Friday by noon -
+                        <span class="warning">Due:</span> Tomorrow by noon -
                         <a href="Lesson_05_Homework.html" target="_blank" style="color: #00d4ff; text-decoration: underline; font-weight: 700;">Submit Homework Here</a>
                     </p>
                 </div>
@@ -1049,106 +1149,6 @@ void loop() {
   // Your code here!
 }
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 12: Quiz Question 1 -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Quiz Preview - Question 1 of 5</h2>
-                <div class="quiz-question">
-                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What range does analogRead() return?</h3>
-                    <div class="quiz-options">
-                        <div class="quiz-option" onclick="answerQ1(this, 'A', false)">A) 0-255</div>
-                        <div class="quiz-option" onclick="answerQ1(this, 'B', true)">B) 0-1023</div>
-                        <div class="quiz-option" onclick="answerQ1(this, 'C', false)">C) 0-1024</div>
-                        <div class="quiz-option" onclick="answerQ1(this, 'D', false)">D) 0-5</div>
-                    </div>
-                    <div id="feedback-q1" class="quiz-feedback" style="display: none;">
-                        <p id="feedback-q1-text"></p>
-                        <p style="margin-top: 15px;"><strong>Explanation:</strong> Arduino's 10-bit ADC (Analog-to-Digital Converter) provides 1024 possible values (2^10), numbered 0-1023.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 13: Quiz Question 2 -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Quiz Preview - Question 2 of 5</h2>
-                <div class="quiz-question">
-                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What range does analogWrite() accept?</h3>
-                    <div class="quiz-options">
-                        <div class="quiz-option" onclick="answerQ2(this, 'A', true)">A) 0-255</div>
-                        <div class="quiz-option" onclick="answerQ2(this, 'B', false)">B) 0-1023</div>
-                        <div class="quiz-option" onclick="answerQ2(this, 'C', false)">C) 0-100</div>
-                        <div class="quiz-option" onclick="answerQ2(this, 'D', false)">D) LOW or HIGH</div>
-                    </div>
-                    <div id="feedback-q2" class="quiz-feedback" style="display: none;">
-                        <p id="feedback-q2-text"></p>
-                        <p style="margin-top: 15px;"><strong>Explanation:</strong> PWM output uses 8-bit resolution, giving 256 levels (0-255). This is why we often need map() to convert from analogRead() values!</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 14: Quiz Question 3 -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Quiz Preview - Question 3 of 5</h2>
-                <div class="quiz-question">
-                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">Which pins support PWM on Arduino Uno?</h3>
-                    <div class="quiz-options">
-                        <div class="quiz-option" onclick="answerQ3(this, 'A', false)">A) All digital pins</div>
-                        <div class="quiz-option" onclick="answerQ3(this, 'B', true)">B) Pins 3, 5, 6, 9, 10, 11</div>
-                        <div class="quiz-option" onclick="answerQ3(this, 'C', false)">C) Only pin 13</div>
-                        <div class="quiz-option" onclick="answerQ3(this, 'D', false)">D) Pins A0-A5</div>
-                    </div>
-                    <div id="feedback-q3" class="quiz-feedback" style="display: none;">
-                        <p id="feedback-q3-text"></p>
-                        <p style="margin-top: 15px;"><strong>Explanation:</strong> Only pins marked with ~ (tilde) support PWM on the Arduino Uno. Look for the ~ symbol next to the pin number on the board!</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 15: Quiz Question 4 -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Quiz Preview - Question 4 of 5</h2>
-                <div class="quiz-question">
-                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What does map(512, 0, 1023, 0, 255) return?</h3>
-                    <div class="quiz-options">
-                        <div class="quiz-option" onclick="answerQ4(this, 'A', false)">A) 512</div>
-                        <div class="quiz-option" onclick="answerQ4(this, 'B', false)">B) 255</div>
-                        <div class="quiz-option" onclick="answerQ4(this, 'C', true)">C) 127</div>
-                        <div class="quiz-option" onclick="answerQ4(this, 'D', false)">D) 0</div>
-                    </div>
-                    <div id="feedback-q4" class="quiz-feedback" style="display: none;">
-                        <p id="feedback-q4-text"></p>
-                        <p style="margin-top: 15px;"><strong>Explanation:</strong> map() converts 512 (the middle of 0-1023) proportionally to the middle of 0-255, which is approximately 127. It maintains the same relative position!</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 16: Quiz Question 5 -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Quiz Preview - Question 5 of 5</h2>
-                <div class="quiz-question">
-                    <h3 style="font-size: 1.4rem; margin-bottom: 20px;">What does PWM stand for?</h3>
-                    <div class="quiz-options">
-                        <div class="quiz-option" onclick="answerQ5(this, 'A', false)">A) Power Width Modulation</div>
-                        <div class="quiz-option" onclick="answerQ5(this, 'B', true)">B) Pulse Width Modulation</div>
-                        <div class="quiz-option" onclick="answerQ5(this, 'C', false)">C) Pin Wave Mode</div>
-                        <div class="quiz-option" onclick="answerQ5(this, 'D', false)">D) Programmable Wave Method</div>
-                    </div>
-                    <div id="feedback-q5" class="quiz-feedback" style="display: none;">
-                        <p id="feedback-q5-text"></p>
-                        <p style="margin-top: 15px;"><strong>Explanation:</strong> PWM (Pulse Width Modulation) rapidly switches a digital signal on and off to simulate analog output by varying the pulse width!</p>
                     </div>
                 </div>
             </div>
@@ -1187,7 +1187,7 @@ void loop() {
             </div>
         </div>
 
-        <!-- Slide 14: Objective Recap -->
+        <!-- Slide 18: Objective Recap -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Objective Recap</h2>
