@@ -307,20 +307,14 @@ void loop() {
 
         async function submitHomework() {
             // Get form values
-            const email = document.getElementById('student-email').value.trim();
-            const name = document.getElementById('student-name').value.trim();
+            const firstName = document.getElementById('student-first-name').value.trim();
+            const lastName = document.getElementById('student-last-name').value.trim();
             const code = document.getElementById('submitted-code').value.trim();
             const notes = document.getElementById('notes').value.trim();
 
             // Validate required fields
-            if (!email || !name || !code) {
+            if (!firstName || !lastName || !code) {
                 alert('Please fill in all required fields (marked with *)');
-                return;
-            }
-
-            // Validate email format
-            if (!email.includes('@') || !email.includes('.')) {
-                alert('Please enter a valid email address');
                 return;
             }
 
@@ -334,12 +328,13 @@ void loop() {
             const submissionData = {
                 lesson: 'Lesson 3',
                 assignment: 'Counter Program with Variables',
-                email: email,
-                name: name,
+                firstName: firstName,
+                lastName: lastName,
+                name: firstName + ' ' + lastName,
                 code: code,
                 notes: notes,
                 timestamp: new Date().toLocaleString(),
-                dueDate: 'Wednesday by Noon'
+                dueDate: 'Tomorrow by Noon'
             };
 
             try {
