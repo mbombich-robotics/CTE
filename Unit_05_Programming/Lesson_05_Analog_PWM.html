@@ -1005,7 +1005,265 @@ analogWrite(9, 127);
             </div>
         </div>
 
-        <!-- Slide 11: Quiz Question 1 -->
+        <!-- Slide 11: LET'S BUILD TOGETHER! -->
+        <div class="slide">
+            <div class="slide-content">
+                <h1 style="font-size: 3rem; text-align: center; margin-bottom: 30px;">LET'S BUILD TOGETHER!</h1>
+                <p class="subtitle" style="text-align: center; font-size: 1.4rem; margin-bottom: 50px;">
+                    Before trying the full assignment, let's build a simpler version step-by-step
+                </p>
+
+                <div class="box" style="margin-bottom: 25px;">
+                    <h3 style="color: #00d4ff; font-size: 1.5rem;">Today's Full Assignment:</h3>
+                    <p style="font-size: 1.2rem; color: #e0e6f0;">Potentiometer controls LED brightness using map()</p>
+                </div>
+
+                <div class="box" style="background: linear-gradient(135deg, rgba(80, 250, 123, 0.1) 0%, rgba(80, 250, 123, 0.05) 100%); border-color: #50fa7b;">
+                    <h3 style="color: #50fa7b; font-size: 1.5rem;">What We'll Build First:</h3>
+                    <p style="font-size: 1.2rem; color: #e0e6f0;">Same circuit, but we'll add each piece one at a time</p>
+                    <ul class="bullet-list" style="font-size: 1.1rem; margin-top: 15px;">
+                        <li>Start by just reading the potentiometer</li>
+                        <li>Then add LED control with a fixed brightness</li>
+                        <li>Finally, connect them with map()</li>
+                    </ul>
+                </div>
+
+                <p style="font-size: 1.3rem; text-align: center; color: #ff9500; margin-top: 40px; font-weight: 700;">
+                    Follow along with me. Don't copy/paste yet - just watch!
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 12: Hardware Setup -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Step 0: Hardware Setup</h2>
+                <div class="box" style="margin-bottom: 25px;">
+                    <h3 style="color: #00d4ff;">Wire Your Circuit:</h3>
+                    <ul class="bullet-list" style="font-size: 1.2rem;">
+                        <li><span class="highlight">Potentiometer</span> → Middle pin to <span class="highlight">A0</span></li>
+                        <li>Potentiometer outer pins → <span class="highlight">5V</span> and <span class="highlight">GND</span></li>
+                        <li><span class="highlight">LED</span> → Long leg to <span class="highlight">Pin 9</span> (PWM pin with ~ symbol)</li>
+                        <li>LED short leg → <span class="highlight">220Ω resistor</span> → <span class="highlight">GND</span></li>
+                    </ul>
+                </div>
+
+                <div class="box" style="background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 149, 0, 0.05) 100%); border-color: #ff9500;">
+                    <h3 style="color: #ff9500;">Important Notes:</h3>
+                    <ul class="bullet-list">
+                        <li>Potentiometer outer pins can go to 5V and GND in either order</li>
+                        <li>Make sure LED is on a <span class="highlight">PWM pin</span> (pin 9 has ~ symbol)</li>
+                        <li>Don't forget the 220Ω resistor with the LED</li>
+                    </ul>
+                </div>
+
+                <p style="font-size: 1.3rem; text-align: center; color: #50fa7b; margin-top: 30px; font-weight: 700;">
+                    ✓ Once your circuit is wired, move to the next slide
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 13: Step 1 - Read Potentiometer -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Step 1: Read the Potentiometer</h2>
+                <p class="subtitle">First, let's just read and print the potentiometer value</p>
+
+                <div class="box" style="margin-bottom: 20px;">
+                    <h3 style="color: #00d4ff;">Define the pin variable:</h3>
+                    <div class="code-block" style="font-size: 1rem;">
+int potPin = A0;
+                    </div>
+                </div>
+
+                <div class="box" style="margin-bottom: 20px;">
+                    <h3 style="color: #00d4ff;">In setup(), start Serial Monitor:</h3>
+                    <div class="code-block" style="font-size: 1rem;">
+void setup() {
+  Serial.begin(9600);
+}
+                    </div>
+                </div>
+
+                <div class="box">
+                    <h3 style="color: #00d4ff;">In loop(), read and print the value:</h3>
+                    <div class="code-block" style="font-size: 1rem;">
+void loop() {
+  int potValue = analogRead(potPin);
+  Serial.print("Pot Value: ");
+  Serial.println(potValue);
+  delay(100);
+}
+                    </div>
+                </div>
+
+                <p style="font-size: 1.2rem; text-align: center; color: #ff9500; margin-top: 25px; font-weight: 600;">
+                    Upload and test! Turn the pot and watch the values change from 0-1023
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 14: Step 2 - Add LED with Fixed Brightness -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Step 2: Add LED Control</h2>
+                <p class="subtitle">Now add the LED at a fixed brightness (we'll connect it to the pot next)</p>
+
+                <div class="box" style="margin-bottom: 20px;">
+                    <h3 style="color: #00d4ff;">Add LED pin variable at the top:</h3>
+                    <div class="code-block" style="font-size: 1rem;">
+int potPin = A0;
+<span class="highlight">int ledPin = 9;</span>
+                    </div>
+                </div>
+
+                <div class="box" style="margin-bottom: 20px;">
+                    <h3 style="color: #00d4ff;">In setup(), configure the LED pin:</h3>
+                    <div class="code-block" style="font-size: 1rem;">
+void setup() {
+  <span class="highlight">pinMode(ledPin, OUTPUT);</span>
+  Serial.begin(9600);
+}
+                    </div>
+                </div>
+
+                <div class="box">
+                    <h3 style="color: #00d4ff;">In loop(), set LED to medium brightness (127):</h3>
+                    <div class="code-block" style="font-size: 1rem;">
+void loop() {
+  int potValue = analogRead(potPin);
+  Serial.print("Pot Value: ");
+  Serial.println(potValue);
+
+  <span class="highlight">analogWrite(ledPin, 127);  // Half brightness</span>
+
+  delay(100);
+}
+                    </div>
+                </div>
+
+                <p style="font-size: 1.2rem; text-align: center; color: #ff9500; margin-top: 25px; font-weight: 600;">
+                    Upload and test! LED should glow at medium brightness
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 15: Step 3 - Use map() to Connect Them -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Step 3: Connect Pot to LED with map()</h2>
+                <p class="subtitle">Now let's make the pot control the LED brightness</p>
+
+                <div class="box" style="background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 149, 0, 0.05) 100%); border-color: #ff9500; margin-bottom: 20px;">
+                    <h3 style="color: #ff9500;">The Problem:</h3>
+                    <p style="font-size: 1.1rem;">analogRead() gives us 0-1023, but analogWrite() needs 0-255</p>
+                    <p style="font-size: 1.1rem; color: #50fa7b; margin-top: 10px;">The Solution: Use map() to convert!</p>
+                </div>
+
+                <div class="box">
+                    <h3 style="color: #00d4ff;">Update loop() to use map():</h3>
+                    <div class="code-block" style="font-size: 1rem;">
+void loop() {
+  int potValue = analogRead(potPin);
+  <span class="highlight">int brightness = map(potValue, 0, 1023, 0, 255);</span>
+
+  Serial.print("Pot: ");
+  Serial.print(potValue);
+  Serial.print(" → Brightness: ");
+  Serial.println(brightness);
+
+  <span class="highlight">analogWrite(ledPin, brightness);</span>
+
+  delay(100);
+}
+                    </div>
+                </div>
+
+                <p style="font-size: 1.2rem; text-align: center; color: #50fa7b; margin-top: 25px; font-weight: 700;">
+                    Upload and test! Turn the pot and watch the LED brightness change!
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 16: Complete Working Code -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Complete Working Code</h2>
+                <p class="subtitle">Here's everything together - this is almost the full assignment!</p>
+
+                <div class="code-block" style="font-size: 0.95rem;">
+int potPin = A0;
+int ledPin = 9;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int potValue = analogRead(potPin);
+  int brightness = map(potValue, 0, 1023, 0, 255);
+
+  Serial.print("Pot: ");
+  Serial.print(potValue);
+  Serial.print(" → Brightness: ");
+  Serial.println(brightness);
+
+  analogWrite(ledPin, brightness);
+
+  delay(100);
+}
+                </div>
+
+                <div class="box" style="margin-top: 25px; background: linear-gradient(135deg, rgba(80, 250, 123, 0.1) 0%, rgba(80, 250, 123, 0.05) 100%); border-color: #50fa7b;">
+                    <h3 style="color: #50fa7b;">What This Does:</h3>
+                    <ul class="bullet-list">
+                        <li>Reads potentiometer value (0-1023)</li>
+                        <li>Converts to LED brightness (0-255) using map()</li>
+                        <li>Sets LED brightness with analogWrite()</li>
+                        <li>Prints both values to Serial Monitor</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Understanding & Bridge to Assignment -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Understanding What We Built</h2>
+
+                <div class="box" style="margin-bottom: 25px;">
+                    <h3 style="color: #00d4ff;">Key Concepts:</h3>
+                    <ul class="bullet-list" style="font-size: 1.1rem;">
+                        <li><span class="highlight">analogRead(A0)</span> reads potentiometer (0-1023)</li>
+                        <li><span class="highlight">map()</span> converts one range to another</li>
+                        <li><span class="highlight">analogWrite(pin, value)</span> controls LED brightness (0-255)</li>
+                        <li>PWM pins (~) can create analog-like output from digital signals</li>
+                    </ul>
+                </div>
+
+                <div class="box" style="background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 149, 0, 0.05) 100%); border-color: #ff9500; margin-bottom: 25px;">
+                    <h3 style="color: #ff9500;">For the Full Assignment:</h3>
+                    <p style="font-size: 1.1rem;">You already built 90% of it! The assignment has the same requirements - just make sure your code includes all the pieces we practiced.</p>
+                </div>
+
+                <div class="box" style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%); border-color: #00d4ff;">
+                    <h3 style="color: #00d4ff;">Pro Tips:</h3>
+                    <ul class="bullet-list">
+                        <li>Use meaningful variable names (potValue, brightness)</li>
+                        <li>Print both values so you can see the conversion working</li>
+                        <li>Test by turning pot all the way left (0) and right (1023)</li>
+                        <li>Make sure LED goes from OFF to FULL BRIGHT</li>
+                    </ul>
+                </div>
+
+                <p style="font-size: 1.3rem; text-align: center; color: #50fa7b; margin-top: 30px; font-weight: 700;">
+                    Now let's review with some practice questions!
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 18: Quiz Question 1 -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Quiz Preview - Question 1 of 5</h2>
@@ -1025,7 +1283,7 @@ analogWrite(9, 127);
             </div>
         </div>
 
-        <!-- Slide 12: Quiz Question 2 -->
+        <!-- Slide 19: Quiz Question 2 -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Quiz Preview - Question 2 of 5</h2>
@@ -1045,7 +1303,7 @@ analogWrite(9, 127);
             </div>
         </div>
 
-        <!-- Slide 13: Quiz Question 3 -->
+        <!-- Slide 20: Quiz Question 3 -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Quiz Preview - Question 3 of 5</h2>
@@ -1065,7 +1323,7 @@ analogWrite(9, 127);
             </div>
         </div>
 
-        <!-- Slide 14: Quiz Question 4 -->
+        <!-- Slide 21: Quiz Question 4 -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Quiz Preview - Question 4 of 5</h2>
@@ -1085,7 +1343,7 @@ analogWrite(9, 127);
             </div>
         </div>
 
-        <!-- Slide 15: Quiz Question 5 -->
+        <!-- Slide 22: Quiz Question 5 -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Quiz Preview - Question 5 of 5</h2>
@@ -1105,7 +1363,7 @@ analogWrite(9, 127);
             </div>
         </div>
 
-        <!-- Slide 16: Today's Challenge -->
+        <!-- Slide 23: Today's Challenge -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Today's Challenge</h2>
@@ -1154,10 +1412,10 @@ void loop() {
             </div>
         </div>
 
-        <!-- Slide 17: Study Tips -->
+        <!-- Slide 24: Study Tips -->
         <div class="slide">
             <div class="slide-content">
-                <h2>Preparing for Friday's Quiz</h2>
+                <h2>Preparing for Tuesday's Quiz</h2>
                 <div class="box" style="margin-bottom: 20px;">
                     <h3>What to Review:</h3>
                     <ul class="bullet-list">
@@ -1176,18 +1434,18 @@ void loop() {
                         <li>Complete today's assignment (pot controls LED)</li>
                         <li>Review the expandable "Deep Dive" sections</li>
                         <li>Practice with the circuit simulators</li>
-                        <li>Review all four days' slides before Friday</li>
+                        <li>Review all lesson slides before the quiz</li>
                     </ul>
                 </div>
 
                 <div style="text-align: center; margin-top: 25px;">
-                    <p style="font-size: 1.3rem; color: #00d4ff;">Quiz on Friday (Day 75) in Google Classroom</p>
-                    <p style="font-size: 1rem; margin-top: 10px; color: #b8c5d6;">20 questions total covering Days 71-74</p>
+                    <p style="font-size: 1.3rem; color: #00d4ff;">Quiz on Tuesday in Google Classroom</p>
+                    <p style="font-size: 1rem; margin-top: 10px; color: #b8c5d6;">20 questions total covering this unit</p>
                 </div>
             </div>
         </div>
 
-        <!-- Slide 18: Objective Recap -->
+        <!-- Slide 25: Objective Recap -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Objective Recap</h2>
@@ -1203,7 +1461,7 @@ void loop() {
                 <div style="text-align: center; margin-top: 30px;">
                     <h3 style="font-size: 1.8rem; color: #50fa7b;">Amazing Progress!</h3>
                     <p style="font-size: 1.2rem; margin-top: 15px;">Tomorrow: Quiz & Integration Challenge</p>
-                    <p style="font-size: 1rem; margin-top: 12px; color: #ff9500;">Assignment due Friday by noon!</p>
+                    <p style="font-size: 1rem; margin-top: 12px; color: #ff9500;">Assignment due tomorrow by noon!</p>
                 </div>
             </div>
         </div>
@@ -1315,7 +1573,7 @@ void loop() {
             
             feedback.style.display = 'block';
             feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
-            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is B) 0-1023';
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is C) 0-1023';
         }
 
         function answerQ2(element, answer, isCorrect) {
@@ -1332,7 +1590,7 @@ void loop() {
             
             feedback.style.display = 'block';
             feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
-            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is A) 0-255';
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is D) 0-255';
         }
 
         function answerQ3(element, answer, isCorrect) {
@@ -1349,7 +1607,7 @@ void loop() {
             
             feedback.style.display = 'block';
             feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
-            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is B) Pins 3, 5, 6, 9, 10, 11';
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is A) Pins 3, 5, 6, 9, 10, 11';
         }
 
         function answerQ4(element, answer, isCorrect) {
@@ -1366,7 +1624,7 @@ void loop() {
             
             feedback.style.display = 'block';
             feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
-            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is C) 127';
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is B) 127';
         }
 
         function answerQ5(element, answer, isCorrect) {
@@ -1383,7 +1641,7 @@ void loop() {
             
             feedback.style.display = 'block';
             feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
-            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is B) Pulse Width Modulation';
+            feedbackText.textContent = isCorrect ? '✓ Correct! Great job!' : '✗ Not quite. The correct answer is D) Pulse Width Modulation';
         }
 
         document.addEventListener('keydown', (e) => {
