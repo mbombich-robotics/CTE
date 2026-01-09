@@ -1119,7 +1119,237 @@ MEDIUM
             </div>
         </div>
 
-        <!-- Slide 13: Quiz Question 1 -->
+        <!-- Slide 13: Guided Coding - Let's Build Together! -->
+        <div class="slide">
+            <div class="slide-content" style="text-align: center;">
+                <h1 style="font-size: 3rem; margin-bottom: 10px;">LET'S BUILD TOGETHER!</h1>
+                <p class="subtitle" style="font-size: 1.4rem;">Step-by-step: Button Controlled LED</p>
+                <div class="box" style="margin-top: 30px; background: rgba(0, 212, 255, 0.1); border-color: #00d4ff;">
+                    <p style="font-size: 1.2rem; line-height: 1.8;">
+                        🎯 <strong>Goal:</strong> Make an LED turn ON while button is pressed, OFF when released<br>
+                        💡 <strong>What You'll Learn:</strong> This is 80% of today's challenge!<br>
+                        🚀 <strong>How:</strong> Follow along - I'll code, you code
+                    </p>
+                </div>
+                <p style="font-size: 1.1rem; margin-top: 30px; color: #ff9500;">
+                    Open Arduino IDE now - we're coding together! 💻
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 14: Step 1 - Hardware Setup -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Step 1: Build the Circuit 🔌</h2>
+                <div class="box" style="background: rgba(255, 149, 0, 0.1); border-color: #ff9500;">
+                    <h3 style="color: #ff9500;">Wire Up Your Components</h3>
+                    <ul class="bullet-list" style="font-size: 1.1rem;">
+                        <li>Connect button to <span class="highlight">pin 2</span></li>
+                        <li>Connect LED to <span class="highlight">pin 13</span> (or use built-in LED)</li>
+                        <li>That's it - no resistors needed for INPUT_PULLUP!</li>
+                    </ul>
+                </div>
+
+                <div class="grid-2" style="margin-top: 25px;">
+                    <div class="box">
+                        <h3>Button Wiring</h3>
+                        <p style="font-size: 1rem;">• One button leg → Pin 2<br>• Other button leg → GND</p>
+                    </div>
+                    <div class="box">
+                        <h3>LED Wiring</h3>
+                        <p style="font-size: 1rem;">• Use the built-in LED on pin 13<br>• Or wire external LED to pin 13</p>
+                    </div>
+                </div>
+
+                <p style="margin-top: 25px; font-size: 1.1rem; text-align: center; color: #50fa7b;">
+                    ✓ Done? Let's start coding together!
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 15: Step 2 - Define Pins -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Step 2: Set Up Pin Numbers 📍</h2>
+                <p style="font-size: 1.1rem; margin-bottom: 20px;">First, let's tell Arduino which pins we're using. <strong>Type this with me:</strong></p>
+
+                <div class="code-block">
+<span class="comment">// Pin definitions</span>
+<span class="keyword">int</span> buttonPin = <span class="number">2</span>;
+<span class="keyword">int</span> ledPin = <span class="number">13</span>;
+
+<span class="keyword">void</span> <span class="function">setup</span>() {
+  <span class="comment">// We'll fill this next!</span>
+}
+
+<span class="keyword">void</span> <span class="function">loop</span>() {
+  <span class="comment">// We'll fill this next!</span>
+}
+                </div>
+
+                <div class="box" style="margin-top: 25px; background: rgba(0, 212, 255, 0.1); border-color: #00d4ff;">
+                    <h3>💡 Why Define Pins at the Top?</h3>
+                    <p>If you ever need to change pins, you only change it in ONE place. Much easier than finding it scattered throughout your code!</p>
+                </div>
+
+                <p style="margin-top: 20px; font-size: 1.1rem; text-align: center;">
+                    <span class="success">✓ Check:</span> Did you type this in Arduino IDE? Save your file!
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 16: Step 3 - Configure pinMode -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Step 3: Configure the Pins ⚙️</h2>
+                <p style="font-size: 1.1rem; margin-bottom: 20px;">Now let's tell Arduino how to use these pins. <strong>Add this to setup():</strong></p>
+
+                <div class="code-block">
+<span class="comment">// Pin definitions</span>
+<span class="keyword">int</span> buttonPin = <span class="number">2</span>;
+<span class="keyword">int</span> ledPin = <span class="number">13</span>;
+
+<span class="keyword">void</span> <span class="function">setup</span>() {
+  <span class="function">pinMode</span>(buttonPin, INPUT_PULLUP);  <span class="comment">// Button is INPUT</span>
+  <span class="function">pinMode</span>(ledPin, OUTPUT);          <span class="comment">// LED is OUTPUT</span>
+}
+
+<span class="keyword">void</span> <span class="function">loop</span>() {
+  <span class="comment">// We'll fill this next!</span>
+}
+                </div>
+
+                <div class="box" style="margin-top: 25px; background: rgba(255, 149, 0, 0.1); border-color: #ff9500;">
+                    <h3>🤔 Remember INPUT_PULLUP?</h3>
+                    <ul class="bullet-list">
+                        <li>Button NOT pressed = <span class="highlight">HIGH</span></li>
+                        <li>Button pressed = <span class="highlight">LOW</span></li>
+                        <li>It's backwards on purpose - no external resistor needed!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Step 4 - Read Button and Control LED -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Step 4: Read Button & Control LED 🎮</h2>
+                <p style="font-size: 1.1rem; margin-bottom: 20px;">Final step! <strong>Add this logic to loop():</strong></p>
+
+                <div class="code-block">
+<span class="comment">// Pin definitions</span>
+<span class="keyword">int</span> buttonPin = <span class="number">2</span>;
+<span class="keyword">int</span> ledPin = <span class="number">13</span>;
+
+<span class="keyword">void</span> <span class="function">setup</span>() {
+  <span class="function">pinMode</span>(buttonPin, INPUT_PULLUP);
+  <span class="function">pinMode</span>(ledPin, OUTPUT);
+}
+
+<span class="keyword">void</span> <span class="function">loop</span>() {
+  <span class="keyword">if</span> (<span class="function">digitalRead</span>(buttonPin) == LOW) {  <span class="comment">// Button pressed?</span>
+    <span class="function">digitalWrite</span>(ledPin, HIGH);           <span class="comment">// Turn LED ON</span>
+  } <span class="keyword">else</span> {
+    <span class="function">digitalWrite</span>(ledPin, LOW);            <span class="comment">// Turn LED OFF</span>
+  }
+}
+                </div>
+
+                <div class="box" style="margin-top: 25px; background: rgba(80, 250, 123, 0.1); border-color: #50fa7b;">
+                    <h3 style="color: #50fa7b;">🎉 Upload and Test!</h3>
+                    <p style="font-size: 1.1rem;">Press the Upload button (→). Then press your button - the LED should turn on! Release it - LED turns off!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 18: Step 5 - Understanding What You Built -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Let's Break Down What You Just Built 🧠</h2>
+
+                <div class="box" style="margin-bottom: 25px;">
+                    <h3>The Logic Flow</h3>
+                    <ol class="bullet-list" style="font-size: 1.1rem;">
+                        <li><strong>Arduino checks:</strong> Is button pressed? (digitalRead returns LOW)</li>
+                        <li><strong>If YES:</strong> Turn LED on (digitalWrite HIGH)</li>
+                        <li><strong>If NO:</strong> Turn LED off (digitalWrite LOW)</li>
+                        <li><strong>Repeat:</strong> This happens thousands of times per second!</li>
+                    </ol>
+                </div>
+
+                <div class="grid-2">
+                    <div class="box" style="background: rgba(0, 212, 255, 0.1); border-color: #00d4ff;">
+                        <h3>What We Used</h3>
+                        <ul style="list-style: none; padding: 0;">
+                            <li>✓ Variables (buttonPin, ledPin)</li>
+                            <li>✓ pinMode() in setup()</li>
+                            <li>✓ digitalRead() to check button</li>
+                            <li>✓ digitalWrite() to control LED</li>
+                            <li>✓ if/else to make decisions</li>
+                        </ul>
+                    </div>
+                    <div class="box" style="background: rgba(255, 149, 0, 0.1); border-color: #ff9500;">
+                        <h3>Today's Challenge</h3>
+                        <p>You'll upgrade this to <strong>TOGGLE</strong> mode:</p>
+                        <ul style="font-size: 0.95rem;">
+                            <li>Press once → LED stays ON</li>
+                            <li>Press again → LED stays OFF</li>
+                            <li>Need: boolean variable to remember state</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <p style="margin-top: 25px; font-size: 1.2rem; text-align: center; color: #50fa7b;">
+                    You just built 80% of today's assignment! 🎯
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 19: Troubleshooting Checklist -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Not Working? Troubleshooting Checklist 🔧</h2>
+
+                <div class="box" style="background: rgba(255, 68, 68, 0.1); border-color: #ff4444;">
+                    <h3 style="color: #ff4444;">Check These Common Issues:</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                        <div>
+                            <h4 style="color: #00d4ff; margin-bottom: 10px;">Hardware:</h4>
+                            <ul class="bullet-list" style="font-size: 0.95rem;">
+                                <li>❏ Button connected to pin 2 and GND</li>
+                                <li>❏ LED connected to pin 13 (or using built-in)</li>
+                                <li>❏ Arduino plugged into computer</li>
+                                <li>❏ Button actually clicking when pressed</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: #00d4ff; margin-bottom: 10px;">Code:</h4>
+                            <ul class="bullet-list" style="font-size: 0.95rem;">
+                                <li>❏ pinMode set to INPUT_PULLUP (not INPUT)</li>
+                                <li>❏ Checking for == LOW (not HIGH)</li>
+                                <li>❏ digitalWrite uses HIGH/LOW correctly</li>
+                                <li>❏ No semicolons missing</li>
+                                <li>❏ Code uploaded successfully</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box" style="margin-top: 25px; background: rgba(0, 212, 255, 0.1); border-color: #00d4ff;">
+                    <h3>💡 Debugging Tip: Add Serial Monitor</h3>
+                    <div class="code-block" style="font-size: 0.85rem; margin-top: 10px;">
+<span class="comment">// Add to setup():</span>
+<span class="function">Serial.begin</span>(<span class="number">9600</span>);
+
+<span class="comment">// Add to loop():</span>
+<span class="function">Serial.println</span>(<span class="function">digitalRead</span>(buttonPin));  <span class="comment">// See button state</span>
+                    </div>
+                    <p style="margin-top: 10px;">Press Ctrl+Shift+M to open Serial Monitor - you should see 1 (HIGH) normally, 0 (LOW) when pressed</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 20: Quiz Question 1 -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Quiz Preview - Question 1 of 5</h2>
@@ -1139,7 +1369,7 @@ MEDIUM
             </div>
         </div>
 
-        <!-- Slide 14: Quiz Question 2 -->
+        <!-- Slide 21: Quiz Question 2 -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Quiz Preview - Question 2 of 5</h2>
@@ -1159,7 +1389,7 @@ MEDIUM
             </div>
         </div>
 
-        <!-- Slide 15: Quiz Question 3 -->
+        <!-- Slide 22: Quiz Question 3 -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Quiz Preview - Question 3 of 5</h2>
@@ -1179,7 +1409,7 @@ MEDIUM
             </div>
         </div>
 
-        <!-- Slide 16: Quiz Question 4 -->
+        <!-- Slide 23: Quiz Question 4 -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Quiz Preview - Question 4 of 5</h2>
@@ -1199,7 +1429,7 @@ MEDIUM
             </div>
         </div>
 
-        <!-- Slide 17: Quiz Question 5 -->
+        <!-- Slide 24: Quiz Question 5 -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Quiz Preview - Question 5 of 5</h2>
@@ -1219,7 +1449,7 @@ MEDIUM
             </div>
         </div>
 
-        <!-- Slide 18: Today's Challenge -->
+        <!-- Slide 25: Today's Challenge -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Today's Challenge</h2>
@@ -1262,7 +1492,7 @@ if (digitalRead(buttonPin) == LOW) {
             </div>
         </div>
 
-        <!-- Slide 19: Study Tips -->
+        <!-- Slide 26: Study Tips -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Preparing for Friday's Quiz</h2>
@@ -1296,7 +1526,7 @@ if (digitalRead(buttonPin) == LOW) {
             </div>
         </div>
 
-        <!-- Slide 20: Objective Recap -->
+        <!-- Slide 27: Objective Recap -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Objective Recap</h2>
