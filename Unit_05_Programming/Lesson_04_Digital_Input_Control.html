@@ -1192,9 +1192,10 @@ MEDIUM
                     <p>If you ever need to change pins, you only change it in ONE place. Much easier than finding it scattered throughout your code!</p>
                 </div>
 
-                <p style="margin-top: 20px; font-size: 1.1rem; text-align: center;">
-                    <span class="success">✓ Check:</span> Did you type this in Arduino IDE? Save your file!
-                </p>
+                <div class="box" style="margin-top: 25px; background: rgba(80, 250, 123, 0.1); border-color: #50fa7b;">
+                    <h3 style="color: #50fa7b;">✓ CHECKPOINT: Compile Now!</h3>
+                    <p style="font-size: 1.1rem;">Click the checkmark (✓) button in Arduino IDE. It should say "Done compiling" with no errors. This confirms your syntax is correct so far!</p>
+                </div>
             </div>
         </div>
 
@@ -1227,6 +1228,11 @@ MEDIUM
                         <li>It's backwards on purpose - no external resistor needed!</li>
                     </ul>
                 </div>
+
+                <div class="box" style="margin-top: 25px; background: rgba(80, 250, 123, 0.1); border-color: #50fa7b;">
+                    <h3 style="color: #50fa7b;">✓ CHECKPOINT: Compile Again!</h3>
+                    <p style="font-size: 1.1rem;">Click the checkmark (✓) button again. Still no errors? Great! You're ready for the final step.</p>
+                </div>
             </div>
         </div>
 
@@ -1256,16 +1262,58 @@ MEDIUM
                 </div>
 
                 <div class="box" style="margin-top: 25px; background: rgba(80, 250, 123, 0.1); border-color: #50fa7b;">
-                    <h3 style="color: #50fa7b;">🎉 Upload and Test!</h3>
-                    <p style="font-size: 1.1rem;">Press the Upload button (→). Then press your button - the LED should turn on! Release it - LED turns off!</p>
+                    <h3 style="color: #50fa7b;">✓ CHECKPOINT: Upload and Test!</h3>
+                    <p style="font-size: 1.1rem;"><strong>Click the Upload button (→)</strong></p>
+                    <p style="font-size: 1.1rem; margin-top: 10px;">✓ Press your button → LED turns ON<br>
+                    ✓ Release your button → LED turns OFF</p>
+                    <p style="font-size: 1.1rem; margin-top: 15px; color: #50fa7b; font-weight: 700;">If it works, you're done! Move to the next slide to submit your homework.</p>
                 </div>
             </div>
         </div>
 
-        <!-- Slide 18: Step 5 - Understanding What You Built -->
+        <!-- Slide 18: SUBMIT YOUR HOMEWORK -->
         <div class="slide">
             <div class="slide-content">
-                <h2>Let's Break Down What You Just Built 🧠</h2>
+                <h1 style="text-align: center; color: #00d4ff; margin-bottom: 20px;">🎉 CONGRATULATIONS!</h1>
+                <h2 style="text-align: center; margin-bottom: 30px;">You Just Completed Today's Assignment!</h2>
+
+                <div class="box" style="background: linear-gradient(135deg, rgba(80, 250, 123, 0.2) 0%, rgba(80, 250, 123, 0.1) 100%); border: 3px solid #50fa7b; padding: 30px;">
+                    <h3 style="color: #50fa7b; font-size: 1.5rem; text-align: center; margin-bottom: 20px;">✓ YOUR CODE IS READY TO SUBMIT!</h3>
+
+                    <p style="font-size: 1.2rem; margin-bottom: 20px; text-align: center;">
+                        <strong>What you built:</strong> Button controlled LED<br>
+                        <span style="color: #b8c5d6;">Press button → LED ON | Release button → LED OFF</span>
+                    </p>
+
+                    <div style="text-align: center; margin-top: 30px;">
+                        <a href="Lesson_04_Homework.html" target="_blank" style="background: linear-gradient(135deg, #00d4ff, #0099cc); color: #0a0e27; padding: 20px 40px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 1.3rem; display: inline-block; box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5); transition: all 0.3s ease;">
+                            📤 SUBMIT YOUR HOMEWORK HERE
+                        </a>
+                    </div>
+
+                    <p style="margin-top: 25px; text-align: center; font-size: 1rem; color: #ff9500;">
+                        <strong>Due:</strong> Tomorrow by Noon
+                    </p>
+                </div>
+
+                <div class="box" style="margin-top: 30px; background: rgba(0, 212, 255, 0.1); border-color: #00d4ff;">
+                    <h3>What to Submit</h3>
+                    <ul class="bullet-list" style="font-size: 1.05rem;">
+                        <li>Your complete Arduino code (copy from IDE and paste)</li>
+                        <li>That's it! The code you just wrote is the assignment.</li>
+                    </ul>
+                </div>
+
+                <p style="margin-top: 30px; text-align: center; font-size: 1.2rem; color: #00d4ff; font-weight: 600;">
+                    Want an extra challenge? Keep going to the next slide! →
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 19: Understanding What You Built -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Understanding What You Built 🧠</h2>
 
                 <div class="box" style="margin-bottom: 25px;">
                     <h3>The Logic Flow</h3>
@@ -1277,30 +1325,19 @@ MEDIUM
                     </ol>
                 </div>
 
-                <div class="grid-2">
-                    <div class="box" style="background: rgba(0, 212, 255, 0.1); border-color: #00d4ff;">
-                        <h3>What We Used</h3>
-                        <ul style="list-style: none; padding: 0;">
-                            <li>✓ Variables (buttonPin, ledPin)</li>
-                            <li>✓ pinMode() in setup()</li>
-                            <li>✓ digitalRead() to check button</li>
-                            <li>✓ digitalWrite() to control LED</li>
-                            <li>✓ if/else to make decisions</li>
-                        </ul>
-                    </div>
-                    <div class="box" style="background: rgba(255, 149, 0, 0.1); border-color: #ff9500;">
-                        <h3>Today's Challenge</h3>
-                        <p>You'll upgrade this to <strong>TOGGLE</strong> mode:</p>
-                        <ul style="font-size: 0.95rem;">
-                            <li>Press once → LED stays ON</li>
-                            <li>Press again → LED stays OFF</li>
-                            <li>Need: boolean variable to remember state</li>
-                        </ul>
-                    </div>
+                <div class="box" style="background: rgba(0, 212, 255, 0.1); border-color: #00d4ff;">
+                    <h3>What We Used</h3>
+                    <ul style="list-style: none; padding: 0; font-size: 1.1rem;">
+                        <li>✓ Variables (buttonPin, ledPin)</li>
+                        <li>✓ pinMode() in setup()</li>
+                        <li>✓ digitalRead() to check button</li>
+                        <li>✓ digitalWrite() to control LED</li>
+                        <li>✓ if/else to make decisions</li>
+                    </ul>
                 </div>
 
-                <p style="margin-top: 25px; font-size: 1.2rem; text-align: center; color: #50fa7b;">
-                    You just built 80% of today's assignment! 🎯
+                <p style="margin-top: 25px; font-size: 1.2rem; text-align: center; color: #50fa7b; font-weight: 600;">
+                    Already submitted? Keep going for optional bonus challenges! →
                 </p>
             </div>
         </div>
@@ -1349,7 +1386,92 @@ MEDIUM
             </div>
         </div>
 
-        <!-- Slide 20: Quiz Question 1 -->
+        <!-- Slide 20: OPTIONAL BONUS CHALLENGES -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 style="text-align: center;">🏆 Optional Bonus Challenges</h2>
+                <p class="subtitle" style="text-align: center;">Already submitted? Try these upgrades!</p>
+
+                <div class="box" style="background: linear-gradient(135deg, rgba(255, 149, 0, 0.15) 0%, rgba(255, 149, 0, 0.05) 100%); border: 3px solid #ff9500; margin-bottom: 25px;">
+                    <p style="font-size: 1.1rem; text-align: center; color: #ff9500; font-weight: 600;">
+                        These are OPTIONAL - only try if you want extra practice!<br>
+                        Your basic button control code is all that's required for homework.
+                    </p>
+                </div>
+
+                <div class="box" style="margin-bottom: 20px;">
+                    <h3 style="color: #00d4ff;">Challenge 1: Button Toggle (Medium)</h3>
+                    <p style="margin-bottom: 15px;">Make the LED stay on after one press, then turn off after another press (like a light switch).</p>
+                    <div class="expandable" onclick="toggleExpand(this)">
+                        <div class="expandable-header">
+                            <span>💡 Hint</span>
+                            <span class="expand-icon">▼</span>
+                        </div>
+                        <div class="expandable-content">
+                            <div class="code-block" style="font-size: 0.85rem;">
+<span class="keyword">boolean</span> ledState = <span class="keyword">false</span>;
+
+<span class="keyword">void</span> <span class="function">loop</span>() {
+  <span class="keyword">if</span> (<span class="function">digitalRead</span>(buttonPin) == LOW) {
+    ledState = !ledState;               <span class="comment">// Flip the state</span>
+    <span class="function">digitalWrite</span>(ledPin, ledState);
+    <span class="function">delay</span>(<span class="number">200</span>);                       <span class="comment">// Debounce</span>
+  }
+}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box" style="margin-bottom: 20px;">
+                    <h3 style="color: #00d4ff;">Challenge 2: Timed Auto-Off (Medium)</h3>
+                    <p style="margin-bottom: 15px;">Press button to turn LED on. After 3 seconds, LED automatically turns off.</p>
+                    <div class="expandable" onclick="toggleExpand(this)">
+                        <div class="expandable-header">
+                            <span>💡 Hint</span>
+                            <span class="expand-icon">▼</span>
+                        </div>
+                        <div class="expandable-content">
+                            <p style="font-size: 0.95rem;">Use millis() to track time instead of delay(). Look up "Arduino blink without delay" for examples!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box" style="margin-bottom: 20px;">
+                    <h3 style="color: #00d4ff;">Challenge 3: Button Changes Blink Speed (Hard)</h3>
+                    <p style="margin-bottom: 15px;">LED blinks slowly. Each button press makes it blink faster. After reaching max speed, it resets to slow.</p>
+                    <div class="expandable" onclick="toggleExpand(this)">
+                        <div class="expandable-header">
+                            <span>💡 Hint</span>
+                            <span class="expand-icon">▼</span>
+                        </div>
+                        <div class="expandable-content">
+                            <p style="font-size: 0.95rem;">Create a variable for delay time. When button is pressed, decrease the delay variable. Use millis() for non-blocking blink.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box">
+                    <h3 style="color: #00d4ff;">Challenge 4: Double-Click Detection (Very Hard)</h3>
+                    <p style="margin-bottom: 15px;">Single click = LED on. Double click = LED blinks. Triple click = LED off.</p>
+                    <div class="expandable" onclick="toggleExpand(this)">
+                        <div class="expandable-header">
+                            <span>💡 Hint</span>
+                            <span class="expand-icon">▼</span>
+                        </div>
+                        <div class="expandable-content">
+                            <p style="font-size: 0.95rem;">Count button presses within a time window (300ms). Use millis() to track time between presses.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p style="margin-top: 30px; text-align: center; font-size: 1.1rem; color: #50fa7b;">
+                    Have fun experimenting! These challenges teach real-world coding patterns. 🚀
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 21: Quiz Question 1 -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Quiz Preview - Question 1 of 5</h2>
@@ -1449,45 +1571,39 @@ MEDIUM
             </div>
         </div>
 
-        <!-- Slide 25: Today's Challenge -->
+        <!-- Slide 25: Assignment Summary (Already Submitted!) -->
         <div class="slide">
             <div class="slide-content">
-                <h2>Today's Challenge</h2>
-                <div style="background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 149, 0, 0.05) 100%); border: 3px solid #ff9500; border-radius: 12px; padding: 20px;">
-                    <h3>Button Toggle LED</h3>
-                    <p style="font-size: 1.1rem; margin-bottom: 15px;">Build a circuit that toggles an LED on/off with each button press</p>
+                <h2 style="text-align: center;">📋 Today's Assignment Summary</h2>
 
-                    <h3 style="margin-top: 20px; color: #00d4ff; font-size: 1.3rem;">Requirements:</h3>
-                    <ul class="bullet-list" style="font-size: 1.05rem;">
-                        <li>Connect button to pin 2, LED to pin 13</li>
-                        <li>Use <span class="highlight">INPUT_PULLUP</span> for button</li>
-                        <li>Each button press toggles LED state</li>
-                        <li>Use a <span class="highlight">boolean</span> variable to track state</li>
-                        <li>Add debouncing with <span class="highlight">delay(200)</span></li>
-                    </ul>
-                    <p style="margin-top: 20px; font-size: 1.1rem;">
-                        <span class="warning">Due:</span> Tomorrow by noon -
-                        <a href="Lesson_04_Homework.html" target="_blank" style="color: #00d4ff; text-decoration: underline; font-weight: 700;">Submit Homework Here</a>
+                <div style="background: linear-gradient(135deg, rgba(80, 250, 123, 0.2) 0%, rgba(80, 250, 123, 0.1) 100%); border: 3px solid #50fa7b; border-radius: 12px; padding: 30px; text-align: center;">
+                    <h3 style="color: #50fa7b; font-size: 1.8rem; margin-bottom: 20px;">✅ You Already Completed This!</h3>
+                    <p style="font-size: 1.2rem; margin-bottom: 15px;">If you followed along in class, you built and submitted:</p>
+
+                    <div class="box" style="margin: 25px auto; max-width: 600px; background: rgba(0, 212, 255, 0.1); border-color: #00d4ff;">
+                        <h3 style="color: #00d4ff;">Button Controlled LED</h3>
+                        <ul class="bullet-list" style="font-size: 1.05rem; text-align: left;">
+                            <li>Button on pin 2, LED on pin 13</li>
+                            <li>INPUT_PULLUP for button</li>
+                            <li>Press button → LED ON</li>
+                            <li>Release button → LED OFF</li>
+                        </ul>
+                    </div>
+
+                    <p style="font-size: 1.1rem; margin-top: 20px;">
+                        <strong style="color: #ff9500;">Due:</strong> Tomorrow by Noon
                     </p>
+
+                    <div style="margin-top: 25px;">
+                        <a href="Lesson_04_Homework.html" target="_blank" style="background: linear-gradient(135deg, #00d4ff, #0099cc); color: #0a0e27; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 1.1rem; display: inline-block;">
+                            Submit Homework (If You Haven't Yet)
+                        </a>
+                    </div>
                 </div>
 
-                <div class="expandable" onclick="toggleExpand(this)">
-                    <div class="expandable-header">
-                        <span>💡 Hint: How to Toggle</span>
-                        <span class="expand-icon">▼</span>
-                    </div>
-                    <div class="expandable-content">
-                        <div class="code-block" style="font-size: 0.85rem;">
-boolean ledState = false;
-
-if (digitalRead(buttonPin) == LOW) {
-  ledState = !ledState;          // Flip the state
-  digitalWrite(ledPin, ledState);
-  delay(200);                    // Debounce
-}
-                        </div>
-                        <p style="margin-top: 10px;">The <span class="highlight">!</span> operator flips a boolean: true becomes false, false becomes true!</p>
-                    </div>
+                <div class="box" style="margin-top: 30px; background: rgba(255, 149, 0, 0.1); border-color: #ff9500;">
+                    <h3 style="color: #ff9500;">Want More Challenge?</h3>
+                    <p style="font-size: 1.1rem;">Go back to Slide 20 to see optional bonus challenges like button toggle, timed auto-off, and more!</p>
                 </div>
             </div>
         </div>

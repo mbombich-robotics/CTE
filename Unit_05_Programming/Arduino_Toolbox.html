@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arduino Coding Toolbox - Unit 5</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            color: #00d4ff;
+            text-align: center;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #ff9500;
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+        }
+
+        .section {
+            background: rgba(26, 31, 58, 0.8);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #00d4ff;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .section h3 {
+            color: #ff9500;
+            font-size: 1.4rem;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .function-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%);
+            border-left: 4px solid #00d4ff;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .function-name {
+            font-family: 'JetBrains Mono', monospace;
+            color: #50fa7b;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .function-desc {
+            color: #b8c5d6;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .code-block {
+            background: #0a0e27;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: #e0e6f0;
+            overflow-x: auto;
+            white-space: pre;
+            margin: 10px 0;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #0a0e27;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 700;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: linear-gradient(135deg, #00eeff, #00bbee);
+            transform: translateY(-2px);
+        }
+
+        .copy-btn.copied {
+            background: linear-gradient(135deg, #50fa7b, #3dd465);
+        }
+
+        .highlight {
+            color: #ff9500;
+            font-weight: 600;
+        }
+
+        .note {
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 149, 0, 0.05) 100%);
+            border-left: 4px solid #ff9500;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .tip {
+            background: linear-gradient(135deg, rgba(80, 250, 123, 0.1) 0%, rgba(80, 250, 123, 0.05) 100%);
+            border-left: 4px solid #50fa7b;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 900px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        ul {
+            margin-left: 25px;
+            line-height: 1.8;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        th {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            font-weight: 700;
+        }
+
+        td {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .back-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            color: #0a0e27;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .toc {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%);
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .toc h2 {
+            margin-bottom: 15px;
+        }
+
+        .toc a {
+            color: #00d4ff;
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: block;
+            padding: 8px 0;
+            transition: color 0.3s ease;
+        }
+
+        .toc a:hover {
+            color: #00eeff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">⌂ BACK TO UNIT 5</a>
+
+        <h1>Arduino Coding Toolbox</h1>
+        <p class="subtitle">Quick Reference Guide - Copy & Paste Helper</p>
+
+        <!-- Table of Contents -->
+        <div class="toc">
+            <h2>Quick Navigation</h2>
+            <a href="#functions">📌 Core Arduino Functions</a>
+            <a href="#patterns">🔧 Code Patterns</a>
+            <a href="#examples">💡 Complete Examples</a>
+            <a href="#syntax">⚙️ Syntax Rules & Tips</a>
+        </div>
+
+        <!-- CORE FUNCTIONS SECTION -->
+        <div class="section" id="functions">
+            <h2>📌 Core Arduino Functions</h2>
+
+            <h3>Setup & Loop Structure</h3>
+            <div class="function-box">
+                <div class="function-name">void setup()</div>
+                <div class="function-desc">Runs once when Arduino starts or resets. Use for initialization.</div>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>void setup() {
+  // Your initialization code here
+}</div>
+            </div>
+
+            <div class="function-box">
+                <div class="function-name">void loop()</div>
+                <div class="function-desc">Runs continuously forever after setup(). Your main program logic goes here.</div>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>void loop() {
+  // Your main code here
+  // This repeats forever
+}</div>
+            </div>
+
+            <h3>Digital I/O Functions</h3>
+            <div class="function-box">
+                <div class="function-name">pinMode(pin, mode)</div>
+                <div class="function-desc">Configures a pin as INPUT, OUTPUT, or INPUT_PULLUP</div>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>pinMode(13, OUTPUT);        // Set pin 13 as output
+pinMode(2, INPUT);          // Set pin 2 as input
+pinMode(2, INPUT_PULLUP);   // Input with internal pullup resistor</div>
+            </div>
+
+            <div class="function-box">
+                <div class="function-name">digitalWrite(pin, value)</div>
+                <div class="function-desc">Sets a digital pin HIGH (5V) or LOW (0V)</div>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>digitalWrite(13, HIGH);   // Turn LED on (5V)
+digitalWrite(13, LOW);    // Turn LED off (0V)</div>
+            </div>
+
+            <div class="function-box">
+                <div class="function-name">digitalRead(pin)</div>
+                <div class="function-desc">Reads a digital pin. Returns HIGH or LOW</div>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>int buttonState = digitalRead(2);   // Read pin 2
+if (buttonState == HIGH) {
+  // Button is pressed (if using regular INPUT)
+}</div>
+            </div>
+
+            <h3>Analog I/O Functions</h3>
+            <div class="function-box">
+                <div class="function-name">analogRead(pin)</div>
+                <div class="function-desc">Reads analog input (A0-A5). Returns 0-1023</div>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>int sensorValue = analogRead(A0);  // Read analog pin A0
+// Returns value between 0-1023</div>
+            </div>
+
+            <div class="function-box">
+                <div class="function-name">analogWrite(pin, value)</div>
+                <div class="function-desc">Sets PWM output (0-255). Only works on PWM pins (3, 5, 6, 9, 10, 11)</div>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>analogWrite(9, 255);   // Full brightness
+analogWrite(9, 127);   // Half brightness
+analogWrite(9, 0);     // Off</div>
+            </div>
+
+            <h3>Serial Monitor Functions</h3>
+            <div class="function-box">
+                <div class="function-name">Serial.begin(baud_rate)</div>
+                <div class="function-desc">Starts serial communication. Must be in setup(). Use 9600 baud rate.</div>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>void setup() {
+  Serial.begin(9600);   // Start serial at 9600 baud
+}</div>
+            </div>
+
+            <div class="function-box">
+                <div class="function-name">Serial.print(value)</div>
+                <div class="function-desc">Prints to Serial Monitor without newline</div>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>Serial.print("Temperature: ");
+Serial.print(tempValue);
+Serial.print(" degrees");</div>
+            </div>
+
+            <div class="function-box">
+                <div class="function-name">Serial.println(value)</div>
+                <div class="function-desc">Prints to Serial Monitor WITH newline (moves to next line)</div>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>Serial.println("Hello World");   // Prints and moves to next line
+Serial.println(counter);         // Prints number and newline</div>
+            </div>
+
+            <h3>Timing Functions</h3>
+            <div class="function-box">
+                <div class="function-name">delay(milliseconds)</div>
+                <div class="function-desc">Pauses program for specified time (1000ms = 1 second)</div>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>delay(1000);   // Wait 1 second
+delay(500);    // Wait 0.5 seconds
+delay(100);    // Wait 0.1 seconds</div>
+            </div>
+
+            <h3>Utility Functions</h3>
+            <div class="function-box">
+                <div class="function-name">map(value, fromLow, fromHigh, toLow, toHigh)</div>
+                <div class="function-desc">Converts a number from one range to another range</div>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>// Convert 0-1023 to 0-255
+int brightness = map(potValue, 0, 1023, 0, 255);
+
+// Convert 0-1023 to 0-100 (percentage)
+int percent = map(sensorValue, 0, 1023, 0, 100);</div>
+            </div>
+        </div>
+
+        <!-- CODE PATTERNS SECTION -->
+        <div class="section" id="patterns">
+            <h2>🔧 Common Code Patterns</h2>
+
+            <h3>Variable Declaration</h3>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>int ledPin = 13;           // Integer (whole numbers)
+int counter = 0;
+int sensorValue = 0;
+
+float temperature = 98.6;  // Decimal numbers
+float voltage = 3.14;
+
+boolean isOn = true;       // True or false
+boolean buttonPressed = false;
+
+char grade = 'A';          // Single character
+
+long bigNumber = 1000000;  // Large whole numbers</div>
+
+            <h3>If Statement (Decision Making)</h3>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>// Simple if
+if (condition) {
+  // Code runs if condition is true
+}
+
+// If-else
+if (condition) {
+  // Code runs if true
+} else {
+  // Code runs if false
+}
+
+// If-else if-else
+if (condition1) {
+  // Code 1
+} else if (condition2) {
+  // Code 2
+} else {
+  // Code 3
+}</div>
+
+            <div class="note">
+                <strong>Comparison Operators:</strong><br>
+                <table style="margin-top: 10px;">
+                    <tr><td>= =</td><td>equals (comparison) - two equals signs</td></tr>
+                    <tr><td>! =</td><td>not equals</td></tr>
+                    <tr><td>&gt;</td><td>greater than</td></tr>
+                    <tr><td>&lt;</td><td>less than</td></tr>
+                    <tr><td>&gt; =</td><td>greater than or equal (type &gt; then =)</td></tr>
+                    <tr><td>&lt; =</td><td>less than or equal (type &lt; then =)</td></tr>
+                    <tr><td>=</td><td>assignment (NOT comparison!)</td></tr>
+                </table>
+            </div>
+
+            <h3>For Loop (Counting)</h3>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>// Count from 0 to 9
+for (int i = 0; i < 10; i++) {
+  // Code repeats 10 times
+  // i = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+}
+
+// Count from 1 to 100
+for (int i = 1; i <= 100; i++) {
+  // i = 1, 2, 3, ... 99, 100
+}
+
+// Count backwards
+for (int i = 10; i > 0; i--) {
+  // i = 10, 9, 8, 7, 6, 5, 4, 3, 2, 1
+}
+
+// Count by 5s
+for (int i = 0; i < 100; i += 5) {
+  // i = 0, 5, 10, 15, 20, ... 95
+}</div>
+
+            <h3>While Loop</h3>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>while (condition) {
+  // Code runs while condition is true
+  // Be careful - must change condition to avoid infinite loop!
+}
+
+// Example: Count to 10
+int counter = 0;
+while (counter < 10) {
+  Serial.println(counter);
+  counter++;   // Don't forget to increment!
+}</div>
+
+            <h3>Comments</h3>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>// Single line comment - use for short notes
+
+/* Multi-line comment
+   Use for longer explanations
+   or to temporarily disable code */</div>
+        </div>
+
+        <!-- COMPLETE EXAMPLES SECTION -->
+        <div class="section" id="examples">
+            <h2>💡 Complete Working Examples</h2>
+
+            <h3>Example 1: Blink LED</h3>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>// Blink built-in LED on pin 13
+void setup() {
+  pinMode(13, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(13, HIGH);   // Turn on
+  delay(1000);              // Wait 1 second
+  digitalWrite(13, LOW);    // Turn off
+  delay(1000);              // Wait 1 second
+}</div>
+
+            <h3>Example 2: Counter with Serial Monitor</h3>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>// Count from 1 to 100
+int startValue = 1;
+int endValue = 100;
+int increment = 1;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  for (int counter = startValue; counter <= endValue; counter += increment) {
+    Serial.print("Count: ");
+    Serial.println(counter);
+    delay(100);
+  }
+
+  Serial.println("Done!");
+  while(true) { }  // Stop forever
+}</div>
+
+            <h3>Example 3: Read Button (Digital Input)</h3>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>// LED on while button is pressed
+int buttonPin = 2;
+int ledPin = 13;
+
+void setup() {
+  pinMode(buttonPin, INPUT_PULLUP);  // Button with pullup
+  pinMode(ledPin, OUTPUT);
+}
+
+void loop() {
+  if (digitalRead(buttonPin) == LOW) {   // Pressed (LOW with pullup)
+    digitalWrite(ledPin, HIGH);           // Turn LED on
+  } else {
+    digitalWrite(ledPin, LOW);            // Turn LED off
+  }
+}</div>
+
+            <h3>Example 4: Button Toggle</h3>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>// Press button to toggle LED on/off
+int buttonPin = 2;
+int ledPin = 13;
+boolean ledState = false;
+
+void setup() {
+  pinMode(buttonPin, INPUT_PULLUP);
+  pinMode(ledPin, OUTPUT);
+}
+
+void loop() {
+  if (digitalRead(buttonPin) == LOW) {
+    ledState = !ledState;               // Toggle (flip) state
+    digitalWrite(ledPin, ledState);
+    delay(200);                         // Debounce delay
+  }
+}</div>
+
+            <h3>Example 5: Read Potentiometer (Analog Input)</h3>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>// Read potentiometer and print value
+int potPin = A0;
+int potValue = 0;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  potValue = analogRead(potPin);   // Read 0-1023
+
+  Serial.print("Pot Value: ");
+  Serial.println(potValue);
+
+  delay(100);
+}</div>
+
+            <h3>Example 6: Potentiometer Controls LED Brightness</h3>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>// Pot controls LED brightness using PWM
+int potPin = A0;
+int ledPin = 9;   // Must be PWM pin!
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int potValue = analogRead(potPin);              // Read 0-1023
+  int brightness = map(potValue, 0, 1023, 0, 255); // Convert to 0-255
+
+  Serial.print("Pot: ");
+  Serial.print(potValue);
+  Serial.print(" → Brightness: ");
+  Serial.println(brightness);
+
+  analogWrite(ledPin, brightness);   // Set LED brightness
+
+  delay(100);
+}</div>
+
+            <h3>Example 7: LED Fade In/Out</h3>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>// Fade LED from off to full brightness and back
+int ledPin = 9;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+}
+
+void loop() {
+  // Fade in
+  for (int brightness = 0; brightness <= 255; brightness += 5) {
+    analogWrite(ledPin, brightness);
+    delay(30);
+  }
+
+  // Fade out
+  for (int brightness = 255; brightness >= 0; brightness -= 5) {
+    analogWrite(ledPin, brightness);
+    delay(30);
+  }
+}</div>
+
+            <h3>Example 8: Multiple LEDs Pattern</h3>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>// Blink 3 LEDs in sequence
+int led1 = 9;
+int led2 = 10;
+int led3 = 11;
+
+void setup() {
+  pinMode(led1, OUTPUT);
+  pinMode(led2, OUTPUT);
+  pinMode(led3, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(led1, HIGH);
+  delay(200);
+  digitalWrite(led1, LOW);
+
+  digitalWrite(led2, HIGH);
+  delay(200);
+  digitalWrite(led2, LOW);
+
+  digitalWrite(led3, HIGH);
+  delay(200);
+  digitalWrite(led3, LOW);
+}</div>
+        </div>
+
+        <!-- SYNTAX RULES SECTION -->
+        <div class="section" id="syntax">
+            <h2>⚙️ Syntax Rules & Common Mistakes</h2>
+
+            <div class="tip">
+                <h3 style="margin-top: 0; color: #50fa7b;">✓ Key Syntax Rules</h3>
+                <ul>
+                    <li><strong>Semicolons (;)</strong> end every statement</li>
+                    <li><strong>Curly braces { }</strong> group code blocks</li>
+                    <li><strong>Case-sensitive</strong> - pinMode ≠ PINMODE ≠ pinmode</li>
+                    <li><strong>Parentheses ( )</strong> required for function calls</li>
+                    <li><strong>Comments</strong> start with // or /* */</li>
+                </ul>
+            </div>
+
+            <div class="note">
+                <h3 style="margin-top: 0;">⚠️ Common Mistakes to Avoid</h3>
+                <table>
+                    <tr>
+                        <th>Wrong</th>
+                        <th>Right</th>
+                        <th>Why</th>
+                    </tr>
+                    <tr>
+                        <td>pinMode(13, output)</td>
+                        <td>pinMode(13, OUTPUT)</td>
+                        <td>OUTPUT must be all caps</td>
+                    </tr>
+                    <tr>
+                        <td>serial.begin(9600)</td>
+                        <td>Serial.begin(9600)</td>
+                        <td>Capital S in Serial</td>
+                    </tr>
+                    <tr>
+                        <td>if (x = 5)</td>
+                        <td>if (x == 5)</td>
+                        <td>Use == for comparison</td>
+                    </tr>
+                    <tr>
+                        <td>digitalWrite(13, high)</td>
+                        <td>digitalWrite(13, HIGH)</td>
+                        <td>HIGH must be all caps</td>
+                    </tr>
+                    <tr>
+                        <td>delay(1)</td>
+                        <td>delay(1000)</td>
+                        <td>Delay is in milliseconds</td>
+                    </tr>
+                    <tr>
+                        <td>analogWrite(A0, 128)</td>
+                        <td>analogWrite(9, 128)</td>
+                        <td>Use PWM pins, not analog pins</td>
+                    </tr>
+                </table>
+            </div>
+
+            <h3>Important Pin Information</h3>
+            <div class="grid-2">
+                <div>
+                    <div class="tip">
+                        <strong>Digital Pins:</strong> 0-13<br>
+                        Can be INPUT or OUTPUT<br>
+                        Use digitalWrite() and digitalRead()
+                    </div>
+                </div>
+                <div>
+                    <div class="tip">
+                        <strong>Analog Input Pins:</strong> A0-A5<br>
+                        Always INPUT (no pinMode needed)<br>
+                        Use analogRead() - returns 0-1023
+                    </div>
+                </div>
+            </div>
+
+            <div class="note">
+                <strong>PWM Pins (marked with ~):</strong> 3, 5, 6, 9, 10, 11<br>
+                Only these pins work with analogWrite()<br>
+                Used for LED brightness, motor speed, etc.
+            </div>
+
+            <h3>Value Ranges to Remember</h3>
+            <table>
+                <tr>
+                    <th>Function</th>
+                    <th>Range</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td>analogRead()</td>
+                    <td>0-1023</td>
+                    <td>10-bit resolution (2^10 = 1024)</td>
+                </tr>
+                <tr>
+                    <td>analogWrite()</td>
+                    <td>0-255</td>
+                    <td>8-bit resolution (2^8 = 256)</td>
+                </tr>
+                <tr>
+                    <td>digitalWrite()</td>
+                    <td>HIGH or LOW</td>
+                    <td>HIGH = 5V, LOW = 0V</td>
+                </tr>
+                <tr>
+                    <td>digitalRead()</td>
+                    <td>HIGH or LOW</td>
+                    <td>Returns current pin state</td>
+                </tr>
+                <tr>
+                    <td>delay()</td>
+                    <td>milliseconds</td>
+                    <td>1000 = 1 second</td>
+                </tr>
+                <tr>
+                    <td>Serial.begin()</td>
+                    <td>9600 baud</td>
+                    <td>Must match Serial Monitor</td>
+                </tr>
+            </table>
+
+            <h3>Debugging Tips</h3>
+            <div class="tip">
+                <strong>Use Serial.println() to debug:</strong>
+                <div class="code-block" style="margin-top: 10px;"><button class="copy-btn" onclick="copyCode(this)">Copy</button>// Print variable values to see what's happening
+Serial.print("Variable x = ");
+Serial.println(x);
+
+// Check if code reaches certain points
+Serial.println("Made it to this point!");
+
+// Print multiple values
+Serial.print("Sensor: ");
+Serial.print(sensorValue);
+Serial.print(" LED: ");
+Serial.println(ledValue);</div>
+            </div>
+
+            <div class="note">
+                <strong>Common Debug Checklist:</strong>
+                <ul>
+                    <li>Is Serial Monitor baud rate set to 9600?</li>
+                    <li>Did you call Serial.begin(9600) in setup()?</li>
+                    <li>Are you using the correct pin numbers?</li>
+                    <li>Did you call pinMode() for OUTPUT pins?</li>
+                    <li>Are you using PWM pins for analogWrite()?</li>
+                    <li>Did you forget any semicolons?</li>
+                    <li>Are variables spelled the same everywhere?</li>
+                </ul>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; color: #b8c5d6;">
+            <p style="font-size: 1.2rem;">Keep this toolbox open while coding!</p>
+            <p style="margin-top: 10px;">Click the Copy buttons to quickly grab code snippets.</p>
+        </div>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.parentElement;
+            const code = codeBlock.textContent.replace('Copy', '').trim();
+
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = 'Copied!';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                alert('Failed to copy code. Please copy manually.');
+            });
+        }
+    </script>
+</body>
+</html>

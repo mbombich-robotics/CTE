@@ -224,31 +224,36 @@
     <div class="container">
         <a href="index.html" class="back-button">⌂ BACK TO UNIT 5</a>
         <h1>Lesson 4 Homework</h1>
-        <p class="subtitle">Button Toggle LED | Due: Tomorrow by Noon</p>
+        <p class="subtitle">Button Controlled LED | Due: Tomorrow by Noon</p>
 
         <!-- Assignment Description -->
         <div class="assignment-box">
-            <h2>Assignment: Button Toggle LED</h2>
-            <p style="font-size: 1.1rem; margin-bottom: 20px;">Build a circuit that toggles an LED on/off with each button press using digital input and control structures.</p>
+            <h2>Assignment: Button Controlled LED</h2>
+            <p style="font-size: 1.1rem; margin-bottom: 20px;">Build a circuit where pressing a button turns an LED on, and releasing it turns the LED off.</p>
 
             <div class="requirement">
                 <h3>Core Requirements</h3>
                 <ul>
-                    <li>Connect button to pin 2, LED to pin 13</li>
-                    <li>Use <span class="highlight">INPUT_PULLUP</span> for button</li>
-                    <li>Each button press toggles LED state (on→off or off→on)</li>
-                    <li>Use a <span class="highlight">boolean</span> variable to track LED state</li>
-                    <li>Add debouncing with <span class="highlight">delay(200)</span></li>
+                    <li>Connect button to <span class="highlight">pin 2</span>, LED to <span class="highlight">pin 13</span></li>
+                    <li>Use <span class="highlight">INPUT_PULLUP</span> for the button</li>
+                    <li>LED turns ON when button is pressed</li>
+                    <li>LED turns OFF when button is released</li>
+                    <li>Use <span class="highlight">if/else</span> statements to check button state</li>
                 </ul>
             </div>
 
             <div class="requirement">
                 <h3>What to Submit</h3>
-                <p>Your complete Arduino code AND a short video (or description) showing the button toggling the LED on and off.</p>
+                <p>Your complete Arduino code (including setup() and loop() functions). That's it!</p>
+            </div>
+
+            <div class="requirement" style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%); border-color: #00d4ff;">
+                <h3 style="color: #00d4ff;">💡 This is what we built together in class!</h3>
+                <p>If you followed along during the lesson, you already have the code. Just copy and paste it below.</p>
             </div>
 
             <p style="margin-top: 20px; font-size: 1rem;">
-                <strong>Hint:</strong> You'll need to use if/else statements to check the button state and toggle the boolean variable.
+                <strong>Reminder:</strong> With INPUT_PULLUP, the button reads LOW when pressed, HIGH when released.
             </p>
         </div>
 
