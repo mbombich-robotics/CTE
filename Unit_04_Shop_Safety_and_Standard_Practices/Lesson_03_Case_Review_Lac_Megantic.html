@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Review: Lac-Mégantic Disaster</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #0a0404 40%, #1a0d08 100%);
+            color: #e0e6f0;
+            height: 100vh;
+        }
+
+        .presentation {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            min-height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 55px 60px 120px 60px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .slide-content {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #ff6b35;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255, 107, 53, 0.5); }
+            to { text-shadow: 0 0 30px rgba(255, 107, 53, 0.8); }
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ff6b35;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ffa500;
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #b8c5d6;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #ffa500;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .objective-box {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(255, 107, 53, 0.05) 100%);
+            border: 3px solid #ff6b35;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 0 30px rgba(255, 107, 53, 0.2);
+        }
+
+        .objective-box h3 {
+            color: #ff6b35;
+            margin-bottom: 12px;
+        }
+
+        .bullet-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .bullet-list li {
+            font-size: 1.15rem;
+            margin: 12px 0;
+            padding-left: 35px;
+            position: relative;
+            color: #b8c5d6;
+            line-height: 1.5;
+        }
+
+        .bullet-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #ffa500;
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .box {
+            background: rgba(255, 107, 53, 0.05);
+            border: 2px solid #ff6b35;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.1);
+        }
+
+        .warning-box {
+            background: rgba(255, 85, 85, 0.1);
+            border: 3px solid #ff5555;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 0 30px rgba(255, 85, 85, 0.2);
+        }
+
+        .warning-box h3 {
+            color: #ff5555;
+        }
+
+        .success-box {
+            background: rgba(80, 250, 123, 0.1);
+            border: 3px solid #50fa7b;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .info-box {
+            background: rgba(0, 212, 255, 0.1);
+            border: 3px solid #00d4ff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .info-box h3 {
+            color: #00d4ff;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        button {
+            background: linear-gradient(135deg, #ff6b35 0%, #cc5429 100%);
+            border: none;
+            color: #1a0f0a;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.5);
+        }
+
+        button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .nav-button {
+            background: linear-gradient(135deg, #ff6b35 0%, #cc5429 100%);
+            border: none;
+            color: #1a0f0a;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.5);
+        }
+
+        .slide-number {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            color: #ff6b35;
+            z-index: 1000;
+        }
+
+        .highlight {
+            color: #ff6b35;
+            font-weight: 700;
+        }
+
+        .stat-box {
+            text-align: center;
+            background: rgba(255, 85, 85, 0.2);
+            border: 3px solid #ff5555;
+            border-radius: 12px;
+            padding: 30px;
+        }
+
+        .stat-number {
+            font-size: 4rem;
+            font-weight: 900;
+            color: #ff5555;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            .slide { padding: 30px; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-content" style="text-align: center;">
+                <h1>Case Review</h1>
+                <p class="subtitle">The Lac-Mégantic Disaster</p>
+                <div style="margin: 40px auto; max-width: 600px;">
+                    <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; filter: drop-shadow(0 0 15px rgba(255, 85, 85, 0.5));">
+                        <!-- Train with flames -->
+                        <rect x="100" y="150" width="200" height="80" rx="8" fill="rgba(50, 50, 50, 0.5)" stroke="#ff6b35" stroke-width="4"/>
+                        <circle cx="140" cy="230" r="20" fill="#333" stroke="#ff6b35" stroke-width="3"/>
+                        <circle cx="260" cy="230" r="20" fill="#333" stroke="#ff6b35" stroke-width="3"/>
+                        <!-- Flames -->
+                        <path d="M 150 120 Q 140 80 150 40 Q 160 80 150 120" fill="#ff5555"/>
+                        <path d="M 190 130 Q 180 90 190 50 Q 200 90 190 130" fill="#ffa500"/>
+                        <path d="M 230 120 Q 220 80 230 40 Q 240 80 230 120" fill="#ff5555"/>
+                    </svg>
+                </div>
+                <p style="font-size: 1rem; margin-top: 25px;">Lesson 4.3 | System Failures and Safety Culture</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Learning Objectives -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Today's Learning Objective</h2>
+                <div class="objective-box">
+                    <h3>Understanding System Failures and Safety Culture</h3>
+                    <p style="font-size: 1.3rem; margin: 20px 0;">Analyze the Lac-Mégantic disaster to identify multiple system failures and understand how safety culture prevents catastrophic accidents.</p>
+                </div>
+                <div class="info-box">
+                    <h3>What We'll Cover</h3>
+                    <ul class="bullet-list">
+                        <li>The events of July 6, 2013 in Lac-Mégantic, Quebec</li>
+                        <li>Multiple failures that led to the disaster</li>
+                        <li>The concept of safety culture and accountability</li>
+                        <li>How to apply these lessons to our lab environment</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Content Warning -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Content Warning</h2>
+                <div class="warning-box" style="text-align: center; padding: 60px;">
+                    <h3 style="font-size: 2rem; margin-bottom: 30px;">Serious Content</h3>
+                    <p style="font-size: 1.3rem; line-height: 1.8;">
+                        This lesson discusses a real disaster that resulted in 47 deaths and the destruction of a small town.
+                        <br><br>
+                        We study this tragedy with respect for those who lost their lives, to learn from these failures and prevent future accidents.
+                        <br><br>
+                        If at any point this content feels overwhelming, please speak with your instructor.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: The Night of July 6, 2013 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Lac-Mégantic: A Night of Tragedy</h2>
+                <div class="grid-2">
+                    <div class="stat-box">
+                        <div class="stat-number">47</div>
+                        <h3>Deaths</h3>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">72</div>
+                        <h3>Oil Tank Cars</h3>
+                    </div>
+                </div>
+                <div class="warning-box" style="margin-top: 20px;">
+                    <h3>What Happened</h3>
+                    <ul class="bullet-list">
+                        <li>Runaway train carrying crude oil</li>
+                        <li>Derailed in downtown Lac-Mégantic, Quebec</li>
+                        <li>Massive explosions and fire</li>
+                        <li>30+ buildings destroyed</li>
+                        <li>River contaminated with oil</li>
+                        <li>Town center completely devastated</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: The Sequence of Events -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>The Sequence of Events</h2>
+                <div class="box">
+                    <h3>Timeline of Failure</h3>
+                    <ul class="bullet-list">
+                        <li><span class="highlight">11:15 PM:</span> Engineer Tom Harding parks 72-car train on incline, applies only 5 handbrakes (17 needed)</li>
+                        <li><span class="highlight">11:30 PM:</span> Harding leaves train unattended with engine running to maintain air brakes</li>
+                        <li><span class="highlight">11:50 PM:</span> Locomotive fire breaks out, local fire department called</li>
+                        <li><span class="highlight">12:00 AM:</span> Fire department shuts down engine to fight fire, disabling air brakes</li>
+                        <li><span class="highlight">1:15 AM:</span> Train begins rolling downhill - insufficient handbrakes</li>
+                        <li><span class="highlight">1:15 AM:</span> Train reaches 65 mph, derails in downtown, explosions follow</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: What Went Wrong - Part 1 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>What Went Wrong: Root Causes</h2>
+                <div class="grid-2">
+                    <div class="warning-box">
+                        <h3>Insufficient Handbrakes</h3>
+                        <ul class="bullet-list">
+                            <li>Only 5 applied instead of 17</li>
+                            <li>No effective test performed</li>
+                            <li>Engineer didn't calculate requirement</li>
+                            <li>Relied solely on air brakes</li>
+                        </ul>
+                    </div>
+                    <div class="warning-box">
+                        <h3>Single-Person Crew</h3>
+                        <ul class="bullet-list">
+                            <li>One person responsible for 72 cars</li>
+                            <li>No backup or second check</li>
+                            <li>Company policy to reduce costs</li>
+                            <li>Insufficient oversight</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: What Went Wrong - Part 2 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>What Went Wrong: Contributing Factors</h2>
+                <div class="grid-2">
+                    <div class="warning-box">
+                        <h3>Poor Maintenance</h3>
+                        <ul class="bullet-list">
+                            <li>Engine oil leak caused fire</li>
+                            <li>Known maintenance issues</li>
+                            <li>Deferred repairs to save money</li>
+                            <li>Inadequate inspection procedures</li>
+                        </ul>
+                    </div>
+                    <div class="warning-box">
+                        <h3>Weak Safety Culture</h3>
+                        <ul class="bullet-list">
+                            <li>Production over safety</li>
+                            <li>Ignored warning signs</li>
+                            <li>Inadequate training</li>
+                            <li>No verification of procedures</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: The Swiss Cheese Model Applied -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Multiple Failures Aligned</h2>
+                <div class="info-box">
+                    <h3>How the Swiss Cheese Holes Aligned</h3>
+                    <p style="font-size: 1.2rem; margin-bottom: 20px;">Every layer of protection failed:</p>
+                    <ul class="bullet-list">
+                        <li><span class="highlight">Equipment:</span> Oil leak, poor maintenance</li>
+                        <li><span class="highlight">Procedures:</span> Insufficient handbrakes applied</li>
+                        <li><span class="highlight">Training:</span> No proper brake calculation</li>
+                        <li><span class="highlight">Oversight:</span> Single-person crew, no verification</li>
+                        <li><span class="highlight">Company Culture:</span> Cost-cutting over safety</li>
+                        <li><span class="highlight">Regulatory:</span> Inadequate inspection and enforcement</li>
+                    </ul>
+                </div>
+                <p style="text-align: center; font-size: 1.3rem; margin-top: 20px; color: #ff5555; font-weight: 700;">
+                    Any ONE of these failures prevented could have stopped the disaster
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 9: Discussion Question -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Critical Thinking</h2>
+                <div class="objective-box" style="text-align: center; padding: 60px;">
+                    <h3 style="font-size: 2rem; margin-bottom: 30px;">Tom Harding applied 5 brakes—why wasn't that enough?</h3>
+                    <p style="font-size: 1.3rem; line-height: 1.8;">
+                        Discuss with your team:
+                        <br><br>
+                        • Was this human error or system failure?
+                        <br>
+                        • Who bears responsibility?
+                        <br>
+                        • What could have prevented this?
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: The Answer -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Why 5 Brakes Wasn't Enough</h2>
+                <div class="success-box">
+                    <h3>The Technical Answer</h3>
+                    <p style="font-size: 1.2rem;">A train of this weight on this grade required <span class="highlight">17 handbrakes</span> to hold it safely when air brakes were released.</p>
+                </div>
+                <div class="warning-box" style="margin-top: 20px;">
+                    <h3>The Systemic Answer</h3>
+                    <ul class="bullet-list">
+                        <li><span class="highlight">No calculation performed:</span> Engineer didn't determine requirement</li>
+                        <li><span class="highlight">No verification:</span> No second person to check</li>
+                        <li><span class="highlight">No test:</span> Didn't verify brakes would hold</li>
+                        <li><span class="highlight">Relied on air brakes:</span> Not designed as primary holding system</li>
+                        <li><span class="highlight">Company culture:</span> Speed and cost prioritized over thoroughness</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Changes After Lac-Mégantic -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Changes After the Disaster</h2>
+                <div class="grid-2">
+                    <div class="success-box">
+                        <h3>New Regulations</h3>
+                        <ul class="bullet-list">
+                            <li>Multi-person crews required</li>
+                            <li>Better brake checks and backups</li>
+                            <li>Improved tank car standards</li>
+                            <li>Enhanced inspection requirements</li>
+                            <li>Route restrictions for hazardous materials</li>
+                        </ul>
+                    </div>
+                    <div class="success-box">
+                        <h3>Industry Changes</h3>
+                        <ul class="bullet-list">
+                            <li>Safety management systems required</li>
+                            <li>Enhanced emergency response planning</li>
+                            <li>Better communication protocols</li>
+                            <li>Increased oversight and audits</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Safety Culture -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>What is Safety Culture?</h2>
+                <div class="objective-box">
+                    <h3>Definition</h3>
+                    <p style="font-size: 1.3rem;">Safety culture is the shared values, beliefs, and behaviors regarding safety within an organization. It's "how we do things around here" when it comes to safety.</p>
+                </div>
+                <div class="grid-2" style="margin-top: 20px;">
+                    <div class="warning-box">
+                        <h3>Poor Safety Culture</h3>
+                        <ul class="bullet-list">
+                            <li>Production over safety</li>
+                            <li>"Good enough" mentality</li>
+                            <li>Blame individuals, not systems</li>
+                            <li>Ignore near-misses</li>
+                            <li>Cut corners to save time/money</li>
+                        </ul>
+                    </div>
+                    <div class="success-box">
+                        <h3>Strong Safety Culture</h3>
+                        <ul class="bullet-list">
+                            <li>Safety is non-negotiable</li>
+                            <li>Everyone empowered to stop work</li>
+                            <li>Learn from mistakes</li>
+                            <li>Report concerns without fear</li>
+                            <li>Continuous improvement</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Personal Accountability -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Personal Accountability in Safety</h2>
+                <div class="objective-box">
+                    <h3>You Are Part of the Safety System</h3>
+                    <p style="font-size: 1.2rem; margin-bottom: 20px;">Every person in a workspace has a responsibility to maintain safety</p>
+                    <ul class="bullet-list">
+                        <li><span class="highlight">Speak up:</span> If something looks unsafe, say something</li>
+                        <li><span class="highlight">Follow procedures:</span> Even when it seems "easier" not to</li>
+                        <li><span class="highlight">Don't assume:</span> Verify critical steps</li>
+                        <li><span class="highlight">Ask for help:</span> If you're unsure, stop and ask</li>
+                        <li><span class="highlight">Report near-misses:</span> Help prevent future accidents</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Applying to Our Lab -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Lessons for Our Robotics Lab</h2>
+                <div class="success-box">
+                    <h3>How Lac-Mégantic Applies to Us</h3>
+                    <ul class="bullet-list" style="font-size: 1.2rem;">
+                        <li><span class="highlight">Never leave tools unattended:</span> Like the train left running</li>
+                        <li><span class="highlight">Always verify critical steps:</span> Don't assume it's correct</li>
+                        <li><span class="highlight">Work in teams when possible:</span> Second sets of eyes catch errors</li>
+                        <li><span class="highlight">Maintain equipment properly:</span> Small problems become big disasters</li>
+                        <li><span class="highlight">Never sacrifice safety for speed:</span> Taking time saves lives</li>
+                        <li><span class="highlight">Build a strong safety culture:</span> Everyone looks out for everyone</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Real Lab Scenario -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Apply This: Real Lab Scenario</h2>
+                <div class="box">
+                    <h3>Scenario</h3>
+                    <p style="font-size: 1.2rem; margin: 20px 0;">
+                        You're rushing to finish a robot before the competition deadline. You notice the battery isn't secured properly, but it seems "good enough" and stopping would delay the team. What do you do?
+                    </p>
+                </div>
+                <div class="grid-2" style="margin-top: 20px;">
+                    <div class="warning-box">
+                        <h3>Poor Safety Culture Response</h3>
+                        <p>"We're in a hurry, it'll probably be fine. Let's just test it quickly."</p>
+                        <p style="margin-top: 15px; font-weight: 700;">Result: Potential battery fire, injury, disqualification</p>
+                    </div>
+                    <div class="success-box">
+                        <h3>Strong Safety Culture Response</h3>
+                        <p>"Stop. This isn't safe. Let's fix it properly - it'll only take 5 minutes."</p>
+                        <p style="margin-top: 15px; font-weight: 700;">Result: Safe robot, team pride, competition ready</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: The Right to Stop Work -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>The Right to Stop Work</h2>
+                <div class="objective-box" style="text-align: center; padding: 60px;">
+                    <h3 style="font-size: 2.5rem; margin-bottom: 30px; color: #50fa7b;">YOU HAVE THE RIGHT TO STOP WORK</h3>
+                    <p style="font-size: 1.4rem; line-height: 1.8;">
+                        If you believe a situation is unsafe:
+                        <br><br>
+                        <span class="highlight">STOP</span>
+                        <br>
+                        <span class="highlight">SPEAK UP</span>
+                        <br>
+                        <span class="highlight">GET HELP</span>
+                        <br><br>
+                        You will NEVER be punished for prioritizing safety.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Discussion Activity -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Team Discussion</h2>
+                <div class="box">
+                    <h3>Discuss with Your Team</h3>
+                    <ul class="bullet-list" style="font-size: 1.2rem;">
+                        <li>How can we build a strong safety culture in our robotics lab?</li>
+                        <li>What specific behaviors should we encourage?</li>
+                        <li>What specific behaviors should we discourage?</li>
+                        <li>How do we make sure everyone feels empowered to speak up?</li>
+                    </ul>
+                </div>
+                <p style="text-align: center; font-size: 1.2rem; margin-top: 30px; color: #ffa500;">
+                    Time: 8 minutes - Be ready to share one key idea
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 18: Remembering the Victims -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Remembering Those We Lost</h2>
+                <div style="text-align: center; padding: 60px; background: rgba(0, 0, 0, 0.3); border-radius: 12px;">
+                    <p style="font-size: 1.5rem; line-height: 2; color: #b8c5d6;">
+                        We study these tragedies not out of morbid curiosity,
+                        <br>
+                        but out of profound respect for those who lost their lives.
+                        <br><br>
+                        Their stories teach us that safety is never accidental—
+                        <br>
+                        it must be designed, practiced, and protected.
+                        <br><br>
+                        By learning from Lac-Mégantic, we honor their memory
+                        <br>
+                        and work to ensure such tragedies never happen again.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 19: Exit Ticket -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Exit Ticket</h2>
+                <div class="objective-box">
+                    <h3>Before You Leave Today</h3>
+                    <p style="font-size: 1.2rem; margin: 20px 0;">Answer these questions in your notebook:</p>
+                    <div style="background: rgba(255, 165, 0, 0.1); padding: 30px; border-radius: 8px; margin: 20px 0;">
+                        <p style="font-size: 1.3rem; margin-bottom: 20px;">
+                            1. What was the single most important lesson you learned from the Lac-Mégantic disaster?
+                        </p>
+                        <p style="font-size: 1.3rem;">
+                            2. Name one specific action you will take in our lab to prevent similar system failures.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 20: Recap -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Lesson Recap</h2>
+                <div class="success-box">
+                    <h3>Today you learned:</h3>
+                    <ul class="bullet-list">
+                        <li>✓ The tragic events of Lac-Mégantic: 47 deaths, entire town destroyed</li>
+                        <li>✓ Multiple system failures: insufficient brakes, single crew, poor maintenance</li>
+                        <li>✓ The Swiss Cheese model applied: all layers of protection failed</li>
+                        <li>✓ Safety culture: shared values and behaviors that prevent accidents</li>
+                        <li>✓ Personal accountability: everyone's role in maintaining safety</li>
+                        <li>✓ Your right to stop work when something seems unsafe</li>
+                        <li>✓ How these lessons apply directly to our robotics lab</li>
+                    </ul>
+                </div>
+                <div style="text-align: center; margin-top: 30px;">
+                    <h3 style="font-size: 1.8rem; color: #ff6b35;">Build Safety Culture Every Day</h3>
+                    <p style="font-size: 1.2rem; margin-top: 15px;">Unit 4 Complete - Continue building safe practices!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-number">
+        <span id="current-slide">1</span> / <span id="total-slides">20</span>
+    </div>
+
+    <div class="controls">
+        <button id="prev-btn" onclick="previousSlide()">← Previous</button>
+        <a href="../index.html" class="nav-button">⌂ HOME</a>
+        <button id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>

@@ -653,7 +653,32 @@
             </div>
         </div>
 
-        <!-- Slide 4: analogRead() -->
+        <!-- Slide 4: Potentiometer Hardware Setup -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Potentiometer Hardware Setup</h2>
+
+                <div style="text-align: center; margin: 20px 0;">
+                    <img src="POT setup.JPG" alt="Potentiometer wired to Arduino" style="max-width: 80%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+                </div>
+
+                <div class="box info-box" style="margin-top: 20px;">
+                    <h3 style="margin-top: 0;">🔌 Wiring Configuration</h3>
+                    <p><strong>The potentiometer has three pins that connect to the Arduino shield:</strong></p>
+                    <ul style="line-height: 1.8;">
+                        <li><strong>Pin 1 (Left):</strong> Connected to <span class="highlight">5V</span> - Provides power</li>
+                        <li><strong>Pin 2 (Center/Wiper):</strong> Connected to <span class="highlight">A0</span> - Analog signal output</li>
+                        <li><strong>Pin 3 (Right):</strong> Connected to <span class="highlight">GND</span> - Ground connection</li>
+                    </ul>
+                </div>
+
+                <div class="box" style="margin-top: 15px;">
+                    <p><strong>How it works:</strong> As you turn the red knob, the wiper (center pin) moves along a resistive track between the outer pins. This creates a variable voltage between 0V and 5V that the Arduino reads at pin A0.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: analogRead() -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Reading Analog Values</h2>

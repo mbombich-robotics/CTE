@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Review: Matthew Henne Incident</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #0a0404 40%, #1a0d08 100%);
+            color: #e0e6f0;
+            height: 100vh;
+        }
+
+        .presentation {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            min-height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 55px 60px 120px 60px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .slide-content {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #ff6b35;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255, 107, 53, 0.5); }
+            to { text-shadow: 0 0 30px rgba(255, 107, 53, 0.8); }
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ff6b35;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ffa500;
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #b8c5d6;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #ffa500;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .objective-box {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(255, 107, 53, 0.05) 100%);
+            border: 3px solid #ff6b35;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 0 30px rgba(255, 107, 53, 0.2);
+        }
+
+        .objective-box h3 {
+            color: #ff6b35;
+            margin-bottom: 12px;
+        }
+
+        .bullet-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .bullet-list li {
+            font-size: 1.15rem;
+            margin: 12px 0;
+            padding-left: 35px;
+            position: relative;
+            color: #b8c5d6;
+            line-height: 1.5;
+        }
+
+        .bullet-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #ffa500;
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .box {
+            background: rgba(255, 107, 53, 0.05);
+            border: 2px solid #ff6b35;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.1);
+        }
+
+        .warning-box {
+            background: rgba(255, 85, 85, 0.1);
+            border: 3px solid #ff5555;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 0 30px rgba(255, 85, 85, 0.2);
+        }
+
+        .warning-box h3 {
+            color: #ff5555;
+        }
+
+        .success-box {
+            background: rgba(80, 250, 123, 0.1);
+            border: 3px solid #50fa7b;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .info-box {
+            background: rgba(0, 212, 255, 0.1);
+            border: 3px solid #00d4ff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .info-box h3 {
+            color: #00d4ff;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        button {
+            background: linear-gradient(135deg, #ff6b35 0%, #cc5429 100%);
+            border: none;
+            color: #1a0f0a;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.5);
+        }
+
+        button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .nav-button {
+            background: linear-gradient(135deg, #ff6b35 0%, #cc5429 100%);
+            border: none;
+            color: #1a0f0a;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.5);
+        }
+
+        .slide-number {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            color: #ff6b35;
+            z-index: 1000;
+        }
+
+        .highlight {
+            color: #ff6b35;
+            font-weight: 700;
+        }
+
+        .video-placeholder {
+            background: #1a0f0a;
+            border: 3px solid #ff6b35;
+            border-radius: 12px;
+            padding: 80px 40px;
+            font-size: 2rem;
+            color: #ff6b35;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            .slide { padding: 30px; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-content" style="text-align: center;">
+                <h1>Case Review</h1>
+                <p class="subtitle">The Matthew Henne Incident</p>
+                <div style="margin: 40px auto; max-width: 600px;">
+                    <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; filter: drop-shadow(0 0 15px rgba(255, 85, 85, 0.5));">
+                        <!-- Warning symbol -->
+                        <path d="M 200 50 L 320 250 L 80 250 Z" fill="rgba(255, 85, 85, 0.2)" stroke="#ff5555" stroke-width="6"/>
+                        <text x="200" y="180" font-family="Orbitron" font-size="80" fill="#ff5555" text-anchor="middle" font-weight="bold">!</text>
+                    </svg>
+                </div>
+                <p style="font-size: 1rem; margin-top: 25px;">Lesson 4.2 | Learning from Tragedy</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Learning Objectives -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Today's Learning Objective</h2>
+                <div class="objective-box">
+                    <h3>Safety by Design</h3>
+                    <p style="font-size: 1.3rem; margin: 20px 0;">Identify key safety features from the Matthew Henne incident and propose one engineering control or safety design feature to prevent similar risks.</p>
+                </div>
+                <div class="info-box">
+                    <h3>What We'll Cover</h3>
+                    <ul class="bullet-list">
+                        <li>Review the Matthew Henne rollercoaster incident</li>
+                        <li>Understand engineering controls and safety by design</li>
+                        <li>Analyze what went wrong and how it could be prevented</li>
+                        <li>Apply these lessons to our robotics lab</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Video Introduction -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>The Worst Week of Roller Coaster Accidents</h2>
+                <div class="video-placeholder">
+                    Video: The Worst Week of Roller Coaster Accidents
+                    <p style="font-size: 1rem; margin-top: 20px; color: #b8c5d6;">Teacher: Play video about roller coaster safety incidents</p>
+                </div>
+                <div class="warning-box">
+                    <h3>Content Warning</h3>
+                    <p>This lesson discusses real safety incidents. We study these to learn and prevent future accidents.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: The Matthew Henne Incident -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>The Matthew Henne Incident</h2>
+                <div class="grid-2">
+                    <div class="box">
+                        <h3>What Happened?</h3>
+                        <ul class="bullet-list">
+                            <li>Young maintenance worker at amusement park</li>
+                            <li>Entered restricted area of operating roller coaster</li>
+                            <li>Attempting to retrieve lost item during operation</li>
+                            <li>Struck by moving roller coaster car</li>
+                            <li>Fatal accident that could have been prevented</li>
+                        </ul>
+                    </div>
+                    <div class="warning-box">
+                        <h3>Key Safety Failures</h3>
+                        <ul class="bullet-list">
+                            <li>No physical barriers preventing access during operation</li>
+                            <li>No sensors to detect human presence in danger zones</li>
+                            <li>No automatic shutdown when unauthorized entry occurred</li>
+                            <li>Inadequate training and supervision</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Engineering Controls Overview -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Engineering Controls: Safety by Design</h2>
+                <div class="success-box">
+                    <h3>What are Engineering Controls?</h3>
+                    <p style="font-size: 1.3rem;">Physical solutions designed into equipment and workspaces to reduce or eliminate hazards <span class="highlight">before</span> human error can occur.</p>
+                </div>
+                <div class="grid-3">
+                    <div class="box" style="text-align: center;">
+                        <div style="font-size: 4rem; margin-bottom: 15px;">🚧</div>
+                        <h3>Barriers</h3>
+                        <p>Physical guards that block access</p>
+                    </div>
+                    <div class="box" style="text-align: center;">
+                        <div style="font-size: 4rem; margin-bottom: 15px;">📡</div>
+                        <h3>Sensors</h3>
+                        <p>Detect dangerous conditions</p>
+                    </div>
+                    <div class="box" style="text-align: center;">
+                        <div style="font-size: 4rem; margin-bottom: 15px;">🔒</div>
+                        <h3>Interlocks</h3>
+                        <p>Prevent operation when unsafe</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Why Engineering Controls Matter -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Why Engineering Controls Matter</h2>
+                <div class="objective-box">
+                    <h3>The Hierarchy of Controls</h3>
+                    <p style="margin-bottom: 20px;">From most effective to least effective:</p>
+                    <ul class="bullet-list">
+                        <li><span class="highlight">1. Elimination:</span> Remove the hazard entirely</li>
+                        <li><span class="highlight">2. Substitution:</span> Replace with something safer</li>
+                        <li><span class="highlight">3. Engineering Controls:</span> Isolate people from hazards</li>
+                        <li>4. Administrative Controls: Change work procedures</li>
+                        <li>5. PPE: Personal protective equipment (least effective alone)</li>
+                    </ul>
+                </div>
+                <p style="text-align: center; font-size: 1.2rem; margin-top: 20px; color: #ffa500;">
+                    Engineering controls are the 3rd most effective way to prevent accidents!
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 7: How Controls Could've Saved Matthew -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>How Controls Could've Saved Matthew</h2>
+                <div class="grid-2">
+                    <div class="success-box">
+                        <h3>Interlocked Doors</h3>
+                        <p>Automatically stop the ride if a restricted door is opened</p>
+                        <p style="margin-top: 15px; font-style: italic;">Example: Elevator doors won't close if something is in the way</p>
+                    </div>
+                    <div class="success-box">
+                        <h3>Motion Sensors</h3>
+                        <p>Detect when someone enters a danger zone and halt operation</p>
+                        <p style="margin-top: 15px; font-style: italic;">Example: Automatic garage door sensors</p>
+                    </div>
+                </div>
+                <div class="success-box" style="margin-top: 20px;">
+                    <h3>Physical Barriers</h3>
+                    <p>Block access to moving parts during operation - make it physically impossible to enter</p>
+                    <p style="margin-top: 15px; font-style: italic;">Example: Machine guards on table saws, milling machines</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Real-World Examples -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Engineering Controls in Action</h2>
+                <div class="grid-2">
+                    <div class="box">
+                        <h3>SawStop Technology</h3>
+                        <p>Table saw with flesh-sensing technology</p>
+                        <ul class="bullet-list">
+                            <li>Detects electrical conductivity of human skin</li>
+                            <li>Stops blade in milliseconds</li>
+                            <li>Retracts blade below table</li>
+                            <li>Prevents amputation injuries</li>
+                        </ul>
+                    </div>
+                    <div class="box">
+                        <h3>CNC Machine Enclosures</h3>
+                        <p>Fully enclosed cutting area</p>
+                        <ul class="bullet-list">
+                            <li>Clear polycarbonate shields</li>
+                            <li>Interlocked doors stop spindle</li>
+                            <li>Contains chips and coolant</li>
+                            <li>Impossible to reach cutting tool during operation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Applying Controls in Our Lab -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Applying Controls Here</h2>
+                <div class="grid-2">
+                    <div class="info-box">
+                        <h3>Plasma CNC</h3>
+                        <ul class="bullet-list">
+                            <li><span class="highlight">Water table:</span> Arrests sparks and reduces fire hazard</li>
+                            <li><span class="highlight">Ventilation:</span> Removes harmful fumes</li>
+                            <li><span class="highlight">Emergency stop:</span> Large red button accessible from all sides</li>
+                        </ul>
+                    </div>
+                    <div class="info-box">
+                        <h3>Table Saw</h3>
+                        <ul class="bullet-list">
+                            <li><span class="highlight">Blade guards:</span> Pre-installed to cover blade</li>
+                            <li><span class="highlight">Riving knife:</span> Prevents kickback</li>
+                            <li><span class="highlight">SawStop technology:</span> Detects skin contact</li>
+                            <li><span class="highlight">Push sticks:</span> Keep hands away from blade</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="info-box" style="margin-top: 20px;">
+                    <h3>3D Printer Enclosures</h3>
+                    <ul class="bullet-list">
+                        <li><span class="highlight">Temperature isolation:</span> Hot end can reach 500°F</li>
+                        <li><span class="highlight">Fume extraction:</span> Removes plastic vapors</li>
+                        <li><span class="highlight">Clear viewing:</span> Monitor without opening</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Design Challenge Part 1 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Design Challenge: Part 1</h2>
+                <div class="objective-box">
+                    <h3>Scenario: Robotic Arm Workstation</h3>
+                    <p style="font-size: 1.2rem; margin: 20px 0;">You're designing a workstation where a robotic arm picks and places parts. The arm moves quickly and has significant force. Operators need to load parts and remove finished products.</p>
+                </div>
+                <div class="warning-box">
+                    <h3>Hazards to Consider</h3>
+                    <ul class="bullet-list">
+                        <li>Operators could reach into work area while arm is moving</li>
+                        <li>Arm could strike operator causing injury</li>
+                        <li>Parts could be ejected at high speed</li>
+                        <li>Pinch points between arm and fixtures</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Design Challenge Part 2 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Design Challenge: Part 2</h2>
+                <div class="success-box">
+                    <h3>Your Task</h3>
+                    <p style="font-size: 1.2rem; margin-bottom: 20px;">Work with your team to propose <span class="highlight">one engineering control</span> that would make this workstation safer.</p>
+                    <p style="margin-bottom: 20px;">Consider:</p>
+                    <ul class="bullet-list">
+                        <li>How will operators safely load/unload parts?</li>
+                        <li>What prevents someone from entering while the robot operates?</li>
+                        <li>What happens if someone does enter the danger zone?</li>
+                        <li>How can we make the system "fail-safe"?</li>
+                    </ul>
+                </div>
+                <p style="text-align: center; font-size: 1.2rem; margin-top: 30px; color: #ffa500;">
+                    Time: 10 minutes to sketch and discuss with your team
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 12: Possible Solutions -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Possible Engineering Solutions</h2>
+                <div class="grid-2">
+                    <div class="success-box">
+                        <h3>Light Curtain System</h3>
+                        <ul class="bullet-list">
+                            <li>Invisible beam of light surrounds work area</li>
+                            <li>Breaking beam immediately stops robot</li>
+                            <li>Used in industrial automation</li>
+                            <li>Allows access without physical barriers</li>
+                        </ul>
+                    </div>
+                    <div class="success-box">
+                        <h3>Interlocked Safety Cage</h3>
+                        <ul class="bullet-list">
+                            <li>Physical barrier around robot</li>
+                            <li>Door with safety interlock</li>
+                            <li>Robot stops when door opens</li>
+                            <li>Cannot restart until door closed and reset button pressed</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="success-box" style="margin-top: 20px;">
+                    <h3>Collaborative Robot (Cobot)</h3>
+                    <ul class="bullet-list">
+                        <li>Force-sensing technology in joints</li>
+                        <li>Automatically stops if it contacts unexpected resistance</li>
+                        <li>Limited speed and force by design</li>
+                        <li>Safe for human-robot collaboration</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: The Swiss Cheese Model -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>The Swiss Cheese Model of Accident Causation</h2>
+                <div class="info-box">
+                    <h3>Why Multiple Layers of Protection Matter</h3>
+                    <p style="font-size: 1.2rem;">No single safety measure is perfect. Each has "holes" or weaknesses. Accidents happen when holes align across all layers.</p>
+                </div>
+                <div style="text-align: center; margin: 30px 0;">
+                    <svg viewBox="0 0 600 300" style="width: 100%; max-width: 600px;">
+                        <!-- Cheese slices with holes -->
+                        <ellipse cx="100" cy="150" rx="80" ry="120" fill="rgba(255, 165, 0, 0.3)" stroke="#ffa500" stroke-width="3"/>
+                        <ellipse cx="90" cy="120" rx="20" ry="30" fill="#1a0f0a"/>
+                        <ellipse cx="110" cy="180" rx="15" ry="25" fill="#1a0f0a"/>
+
+                        <ellipse cx="230" cy="150" rx="80" ry="120" fill="rgba(255, 165, 0, 0.3)" stroke="#ffa500" stroke-width="3"/>
+                        <ellipse cx="240" cy="160" rx="18" ry="28" fill="#1a0f0a"/>
+
+                        <ellipse cx="360" cy="150" rx="80" ry="120" fill="rgba(255, 165, 0, 0.3)" stroke="#ffa500" stroke-width="3"/>
+                        <ellipse cx="350" cy="140" rx="22" ry="32" fill="#1a0f0a"/>
+
+                        <ellipse cx="490" cy="150" rx="80" ry="120" fill="rgba(255, 165, 0, 0.3)" stroke="#ffa500" stroke-width="3"/>
+                        <ellipse cx="480" cy="170" rx="16" ry="26" fill="#1a0f0a"/>
+
+                        <!-- Arrow showing path through holes -->
+                        <path d="M 20 150 L 570 150" stroke="#ff5555" stroke-width="4" stroke-dasharray="10,5"/>
+
+                        <text x="300" y="30" font-family="Exo 2" font-size="16" fill="#ffa500" text-anchor="middle" font-weight="bold">Multiple Layers of Protection</text>
+                    </svg>
+                </div>
+                <p style="text-align: center; font-size: 1.1rem; color: #b8c5d6;">
+                    Engineering controls + Training + PPE + Procedures = Maximum Safety
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 14: Lessons for Our Lab -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Lessons for Our Lab</h2>
+                <div class="objective-box">
+                    <h3>Key Takeaways from Matthew Henne Incident</h3>
+                    <ul class="bullet-list">
+                        <li><span class="highlight">Never bypass safety systems</span> - they exist for a reason</li>
+                        <li><span class="highlight">Design systems to be fail-safe</span> - assume humans will make mistakes</li>
+                        <li><span class="highlight">Multiple layers of protection</span> - don't rely on just one control</li>
+                        <li><span class="highlight">If it seems unsafe, stop and ask</span> - better to pause than proceed</li>
+                        <li><span class="highlight">Respect locked-out equipment</span> - someone's life depends on it</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Real Lab Scenarios -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Apply This to Real Lab Scenarios</h2>
+                <div class="grid-2">
+                    <div class="warning-box">
+                        <h3>Unsafe Scenario</h3>
+                        <p>You drop a tool near the CNC machine while it's running. What do you do?</p>
+                        <p style="margin-top: 15px; color: #ff5555; font-weight: 700;">❌ Reach in quickly to grab it</p>
+                    </div>
+                    <div class="success-box">
+                        <h3>Safe Approach</h3>
+                        <p>What should you actually do?</p>
+                        <p style="margin-top: 15px; color: #50fa7b; font-weight: 700;">✓ Press emergency stop</p>
+                        <p style="color: #50fa7b; font-weight: 700;">✓ Wait for machine to fully stop</p>
+                        <p style="color: #50fa7b; font-weight: 700;">✓ Retrieve tool safely</p>
+                        <p style="color: #50fa7b; font-weight: 700;">✓ Restart machine properly</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Discussion Questions -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Discussion Questions</h2>
+                <div class="box">
+                    <h3>Think and Share</h3>
+                    <ul class="bullet-list" style="font-size: 1.2rem;">
+                        <li>What engineering controls have you noticed in other places? (Cars, elevators, appliances?)</li>
+                        <li>Why do you think some companies don't install engineering controls even when they're available?</li>
+                        <li>If you were designing a new piece of equipment, what safety features would you prioritize?</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Exit Ticket -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Exit Ticket</h2>
+                <div class="objective-box">
+                    <h3>Before You Leave Today</h3>
+                    <p style="font-size: 1.2rem; margin: 20px 0;">On a piece of paper or in your notebook, answer this question:</p>
+                    <div style="background: rgba(255, 165, 0, 0.1); padding: 30px; border-radius: 8px; margin: 20px 0;">
+                        <p style="font-size: 1.4rem; font-style: italic; color: #ffa500;">
+                            "Describe one engineering control that could have prevented the Matthew Henne incident and explain how it works."
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 18: Recap -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Lesson Recap</h2>
+                <div class="success-box">
+                    <h3>Today you learned:</h3>
+                    <ul class="bullet-list">
+                        <li>✓ The tragic Matthew Henne incident and what went wrong</li>
+                        <li>✓ Engineering controls are physical safety solutions designed into systems</li>
+                        <li>✓ Three types of controls: barriers, sensors, and interlocks</li>
+                        <li>✓ The hierarchy of controls - engineering is the 3rd most effective</li>
+                        <li>✓ How to apply these concepts to real equipment in our lab</li>
+                        <li>✓ The Swiss Cheese model - why multiple layers of protection matter</li>
+                        <li>✓ Never bypass safety systems or reach into operating equipment</li>
+                    </ul>
+                </div>
+                <div style="text-align: center; margin-top: 30px;">
+                    <h3 style="font-size: 1.8rem; color: #ff6b35;">Design Safety In from the Start</h3>
+                    <p style="font-size: 1.2rem; margin-top: 15px;">Next: Lesson 4.3 - Case Review: Lac-Mégantic Incident</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-number">
+        <span id="current-slide">1</span> / <span id="total-slides">18</span>
+    </div>
+
+    <div class="controls">
+        <button id="prev-btn" onclick="previousSlide()">← Previous</button>
+        <a href="../index.html" class="nav-button">⌂ HOME</a>
+        <button id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>
