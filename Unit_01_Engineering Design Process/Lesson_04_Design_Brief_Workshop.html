@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Brief Workshop</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #0a0404 40%, #1a0d08 100%);
+            color: #e0e6f0;
+            height: 100vh;
+        }
+
+        .presentation {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            min-height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 55px 60px 120px 60px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .slide-content {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #ff6b35;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255, 107, 53, 0.5); }
+            to { text-shadow: 0 0 30px rgba(255, 107, 53, 0.8); }
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ff6b35;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ffa500;
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #b8c5d6;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #ffa500;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .objective-box {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(255, 107, 53, 0.05) 100%);
+            border: 3px solid #ff6b35;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 0 30px rgba(255, 107, 53, 0.2);
+        }
+
+        .objective-box h3 {
+            color: #ff6b35;
+            margin-bottom: 12px;
+        }
+
+        .bullet-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .bullet-list li {
+            font-size: 1.15rem;
+            margin: 12px 0;
+            padding-left: 35px;
+            position: relative;
+            color: #b8c5d6;
+            line-height: 1.5;
+        }
+
+        .bullet-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #ffa500;
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .box {
+            background: rgba(255, 107, 53, 0.05);
+            border: 2px solid #ff6b35;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.1);
+        }
+
+        .highlight {
+            color: #ff6b35;
+            font-weight: 700;
+        }
+
+        .warning {
+            color: #ffa500;
+            font-weight: 700;
+        }
+
+        .success {
+            color: #50fa7b;
+            font-weight: 700;
+        }
+
+        .checkmark {
+            color: #50fa7b;
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+
+        .day-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.15) 0%, rgba(0, 212, 255, 0.05) 100%);
+            border: 3px solid #00d4ff;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+        }
+
+        .day-box h3 {
+            color: #00d4ff;
+        }
+
+        .homework-box {
+            background: linear-gradient(135deg, rgba(80, 250, 123, 0.15) 0%, rgba(80, 250, 123, 0.05) 100%);
+            border: 3px solid #50fa7b;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 0 30px rgba(80, 250, 123, 0.2);
+        }
+
+        .homework-box h3 {
+            color: #50fa7b;
+        }
+
+        .example-box {
+            background: #0d1117;
+            border: 2px solid #ffa500;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.95rem;
+        }
+
+        .comparison-table th {
+            background: rgba(255, 107, 53, 0.2);
+            color: #ff6b35;
+            padding: 12px;
+            border: 2px solid #ff6b35;
+            font-weight: 700;
+        }
+
+        .comparison-table td {
+            padding: 12px;
+            border: 1px solid #ff6b35;
+            color: #b8c5d6;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        button {
+            background: linear-gradient(135deg, #ff6b35 0%, #cc5429 100%);
+            border: none;
+            color: #1a0f0a;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.5);
+        }
+
+        button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .nav-button {
+            background: linear-gradient(135deg, #ff6b35 0%, #cc5429 100%);
+            border: none;
+            color: #1a0f0a;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.5);
+        }
+
+        .slide-number {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            color: #ff6b35;
+            z-index: 1000;
+        }
+
+        .icon-large {
+            font-size: 6rem;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .step-badge {
+            display: inline-block;
+            background: #ff6b35;
+            color: #000000;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 0.9rem;
+            margin-right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            .slide { padding: 30px; }
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-content" style="text-align: center;">
+                <h1>Design Brief Workshop</h1>
+                <p class="subtitle">Lesson 1.4: Professional Engineering Documentation</p>
+                <div class="icon-large">📋</div>
+                <p style="font-size: 1.5rem; margin-top: 25px; color: #ffa500;">
+                    The Foundation Document for Engineering Projects
+                </p>
+                <p style="font-size: 1rem; margin-top: 15px;">Lesson 1.4 | Multi-day workshop</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: What is a Design Brief? -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>What is a Design Brief?</h2>
+                <div class="objective-box">
+                    <h3>Definition</h3>
+                    <p style="font-size: 1.3rem;">A <span class="highlight">design brief</span> is a comprehensive document that guides an engineering project from concept to completion.</p>
+                </div>
+                <div class="grid-2">
+                    <div class="box">
+                        <h3>It Answers:</h3>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>What problem are we solving?</li>
+                            <li>Who are the stakeholders?</li>
+                            <li>What are the requirements?</li>
+                            <li>What are the constraints?</li>
+                            <li>What solutions exist?</li>
+                            <li>Which solution is best?</li>
+                        </ul>
+                    </div>
+                    <div class="box">
+                        <h3>Why It Matters:</h3>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>Keeps team aligned</li>
+                            <li>Documents decisions</li>
+                            <li>Guides development</li>
+                            <li>Communicates with clients</li>
+                            <li>Used in industry!</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Workshop Overview -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Workshop Overview</h2>
+                <div class="objective-box">
+                    <h3>This Week's Project:</h3>
+                    <p style="font-size: 1.2rem;">Design a desktop cell phone stand using the Engineering Design Process</p>
+                    <p style="font-size: 1rem; margin-top: 10px;">Customer: Mr. Bombich</p>
+                </div>
+                <div class="day-box">
+                    <h3>Daily Schedule</h3>
+                    <ul class="bullet-list">
+                        <li><span class="highlight">Day 1 (Tuesday):</span> Problem Statement (Ask)</li>
+                        <li><span class="highlight">Day 2 (Wednesday):</span> Research Summary (Research)</li>
+                        <li><span class="highlight">Day 3 (Thursday):</span> Brainstormed Ideas (Imagine)</li>
+                        <li><span class="highlight">Day 4 (Friday):</span> Pugh Matrix (Plan) & Finalize</li>
+                    </ul>
+                </div>
+                <div class="box" style="margin-top: 20px; background: rgba(255, 85, 85, 0.1); border-color: #ff5555;">
+                    <p style="text-align: center; font-size: 1.1rem;">
+                        <span style="color: #ff5555; font-weight: 700;">Due:</span> Complete design brief due Monday (next week)
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Day 1 - Problem Statement -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2><span class="step-badge">DAY 1</span> Problem Statement (Ask)</h2>
+                <div class="box" style="background: rgba(255, 107, 53, 0.1); margin-bottom: 25px;">
+                    <h3>Purpose:</h3>
+                    <p style="font-size: 1.2rem;">Define the problem clearly to start the EDP</p>
+                </div>
+                <div class="objective-box">
+                    <h3>What to Include:</h3>
+                    <ul class="bullet-list">
+                        <li><span class="highlight">Problem Description:</span> Who? What? Where? When? Why? How big?</li>
+                        <li><span class="highlight">Stakeholders:</span> List everyone affected (users, customer, etc.)</li>
+                        <li><span class="highlight">Needs:</span> Functionality, ease of use, aesthetics</li>
+                        <li><span class="highlight">Constraints:</span> Budget, materials, manufacturing, time, size</li>
+                        <li><span class="highlight">Ethics:</span> Sustainability, safety, accessibility</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Problem Statement Example -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Problem Statement: Good vs. Weak</h2>
+                <div class="comparison-table">
+                    <table style="width: 100%;">
+                        <tr>
+                            <th style="width: 20%;">Element</th>
+                            <th style="width: 40%;">Weak Example</th>
+                            <th style="width: 40%;">Strong Example</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Problem</strong></td>
+                            <td>"Cables are messy."</td>
+                            <td>"Our lab benches have three loose cables—power, USB, network—that create trip hazards and slow setup."</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Requirements</strong></td>
+                            <td>"Must hold cables."</td>
+                            <td>"Must hold up to 3 cables (≤6 mm Ø), allow insertion in ≤2 lb force, removal in ≤1 lb force."</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Constraints</strong></td>
+                            <td>"Use plastic."</td>
+                            <td>"Use PLA filament; cost ≤$1 per unit; fit in 120×120×120 mm print volume; complete by Week 3."</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="box" style="margin-top: 20px; background: rgba(255, 165, 0, 0.1); border-color: #ffa500;">
+                    <p style="text-align: center; font-size: 1.2rem;">
+                        <span class="warning">Key Tip:</span> Be specific! Use numbers, measurements, and clear criteria.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Day 1 Homework -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Day 1: Homework</h2>
+                <div class="homework-box">
+                    <h3>📝 Tonight's Assignment</h3>
+                    <p style="font-size: 1.2rem; margin-bottom: 20px;">Complete the Problem Statement section of your design brief</p>
+
+                    <h3 style="margin-top: 20px;">Requirements:</h3>
+                    <ul class="bullet-list">
+                        <li>Write a clear problem description (who, what, where, when, why, how big)</li>
+                        <li>List all stakeholders</li>
+                        <li>Specify needs with details</li>
+                        <li>Detail constraints (budget, manufacturing, materials, time, size)</li>
+                        <li>Include ethical considerations (sustainability, safety)</li>
+                        <li>Write 3-5 questions to ask Mr. Bombich (the customer)</li>
+                    </ul>
+                </div>
+                <div class="box" style="margin-top: 20px; border-color: #ffa500; background: rgba(255, 165, 0, 0.1);">
+                    <p style="text-align: center; font-size: 1.1rem;">
+                        <span class="warning">Submission:</span> Add to your Google Doc, submit on Google Classroom by tomorrow
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Day 2 - Research Summary -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2><span class="step-badge">DAY 2</span> Research Summary (Research)</h2>
+                <div class="box" style="background: rgba(255, 165, 0, 0.1); border-color: #ffa500; margin-bottom: 25px;">
+                    <h3 style="color: #ffa500;">Purpose:</h3>
+                    <p style="font-size: 1.2rem;">Gather information to inform your solution</p>
+                </div>
+                <div class="objective-box">
+                    <h3>Research Activities:</h3>
+                    <ul class="bullet-list">
+                        <li>Find 3–5 credible sources (websites, videos, products)</li>
+                        <li>Search terms: "DIY cell phone stand", "Amazon cell phone stand", "phone holder designs"</li>
+                        <li>Summarize existing solutions or components</li>
+                        <li>Note features, materials, prices, pros/cons</li>
+                        <li>Connect research to YOUR project constraints</li>
+                        <li>Cite ALL sources (including AI if used!)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Research Example -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Research Summary Example</h2>
+                <div class="example-box">
+                    <p style="color: #ffa500; font-weight: 700; margin-bottom: 15px;">Source 1: Amazon.com - Lamicall Phone Stand</p>
+                    <p>Adjustable aluminum stand, $15.99. Features:</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>• Adjustable angle (5°-85°)</li>
+                        <li>• Non-slip rubber pads</li>
+                        <li>• Holds phones 4"-10"</li>
+                        <li>• Aluminum construction</li>
+                    </ul>
+                    <p style="margin-top: 15px; color: #50fa7b;">Relevant to project: Shows importance of adjustability and non-slip features. Price point suggests we can create cheaper version with 3D printing.</p>
+                </div>
+                <div class="box" style="margin-top: 20px; background: rgba(80, 250, 123, 0.05); border-color: #50fa7b;">
+                    <p style="font-size: 1rem;">
+                        <span class="success">Citation:</span> Lamicall. (2024). Cell Phone Stand. Amazon.com. Retrieved [date]. URL: [link]
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Day 2 Homework -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Day 2: Homework</h2>
+                <div class="homework-box">
+                    <h3>📝 Tonight's Assignment</h3>
+                    <p style="font-size: 1.2rem; margin-bottom: 20px;">Complete the Research Summary section</p>
+
+                    <h3 style="margin-top: 20px;">Requirements:</h3>
+                    <ul class="bullet-list">
+                        <li>Find and summarize 3–5 credible sources</li>
+                        <li>Describe existing solutions or design approaches</li>
+                        <li>Note materials, features, costs</li>
+                        <li>Explain how research connects to YOUR project constraints</li>
+                        <li>Cite ALL sources fully (website, date, URL)</li>
+                        <li>If you used AI tools (ChatGPT, Grok, etc.), cite them too!</li>
+                    </ul>
+                </div>
+                <div class="box" style="margin-top: 20px; border-color: #ffa500; background: rgba(255, 165, 0, 0.1);">
+                    <p style="text-align: center; font-size: 1.1rem;">
+                        <span class="warning">Tip:</span> Use Google Docs to organize. Take screenshots if helpful!
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Day 3 - Brainstormed Ideas -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2><span class="step-badge">DAY 3</span> Brainstormed Ideas (Imagine)</h2>
+                <div class="box" style="background: rgba(80, 250, 123, 0.1); border-color: #50fa7b; margin-bottom: 25px;">
+                    <h3 style="color: #50fa7b;">Purpose:</h3>
+                    <p style="font-size: 1.2rem;">Generate creative solutions with your team</p>
+                </div>
+                <div class="objective-box">
+                    <h3>Brainstorming Activities:</h3>
+                    <ul class="bullet-list">
+                        <li>Team mind-mapping session (5+ ideas minimum)</li>
+                        <li>For EACH idea: Write 2-3 sentences describing it</li>
+                        <li>List pros and cons for each idea</li>
+                        <li>Note how it meets constraints and ethics</li>
+                        <li>Create paper/pencil sketches (clear labels!)</li>
+                        <li>Photo-upload sketches to Google Doc</li>
+                        <li>Document team roles in journals</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Brainstorming Tips -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Brainstorming Best Practices</h2>
+                <div class="grid-2">
+                    <div class="box" style="background: rgba(80, 250, 123, 0.1); border-color: #50fa7b;">
+                        <h3 style="color: #50fa7b;">DO</h3>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>Go wild with ideas first!</li>
+                            <li>Build on others' suggestions</li>
+                            <li>"Yes, and..." not "No, but..."</li>
+                            <li>Sketch quickly, iterate often</li>
+                            <li>Consider different approaches</li>
+                            <li>Think about user experience</li>
+                        </ul>
+                    </div>
+                    <div class="box" style="background: rgba(255, 85, 85, 0.1); border-color: #ff5555;">
+                        <h3 style="color: #ff5555;">DON'T</h3>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>Judge ideas too quickly</li>
+                            <li>Shoot down teammates' ideas</li>
+                            <li>Worry about perfection</li>
+                            <li>Limit yourself to "safe" ideas</li>
+                            <li>Skip the sketching step</li>
+                            <li>Design alone (it's teamwork!)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="box" style="margin-top: 25px; background: rgba(255, 165, 0, 0.1); border-color: #ffa500;">
+                    <p style="text-align: center; font-size: 1.2rem;">
+                        <span class="warning">Remember:</span> Quantity leads to quality. Generate lots of ideas THEN evaluate!
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Day 3 Homework -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Day 3: Homework</h2>
+                <div class="homework-box">
+                    <h3>📝 Tonight's Assignment</h3>
+                    <p style="font-size: 1.2rem; margin-bottom: 20px;">Complete the Brainstormed Ideas section</p>
+
+                    <h3 style="margin-top: 20px;">Requirements:</h3>
+                    <ul class="bullet-list">
+                        <li>Document 5+ ideas (descriptions, pros/cons)</li>
+                        <li>Create clear sketches for each idea</li>
+                        <li>Take photos and upload to your Google Doc</li>
+                        <li>Label sketches clearly</li>
+                        <li>Explain how each addresses constraints/ethics</li>
+                        <li>In your journal: Document who did what on your team</li>
+                    </ul>
+                </div>
+                <div class="box" style="margin-top: 20px; border-color: #ffa500; background: rgba(255, 165, 0, 0.1);">
+                    <p style="text-align: center; font-size: 1.1rem;">
+                        <span class="warning">Tip:</span> Clear sketches help! Use rulers, label dimensions, add notes.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Day 4 - Pugh Matrix -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2><span class="step-badge">DAY 4</span> Evaluation (Pugh Matrix)</h2>
+                <div class="box" style="background: rgba(0, 212, 255, 0.1); border-color: #00d4ff; margin-bottom: 25px;">
+                    <h3 style="color: #00d4ff;">Purpose:</h3>
+                    <p style="font-size: 1.2rem;">Choose the best idea using a decision matrix</p>
+                </div>
+                <div class="objective-box">
+                    <h3>Pugh Matrix Process:</h3>
+                    <ul class="bullet-list">
+                        <li>Create table comparing all ideas to baseline (Idea 1)</li>
+                        <li>Select 3–5 evaluation criteria (functionality, cost, ethics, etc.)</li>
+                        <li>Assign weights to criteria (1–5, higher = more important)</li>
+                        <li>Score each idea: <span class="success">+</span> (better, +1), <span class="warning">S</span> (same, 0), <span style="color: #ff5555;">-</span> (worse, -1)</li>
+                        <li>Multiply score × weight, sum for total</li>
+                        <li>Justify top-scoring idea, tie to project goals</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Pugh Matrix Example -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Pugh Matrix Example</h2>
+                <div class="comparison-table">
+                    <table style="width: 100%;">
+                        <tr>
+                            <th>Criteria (Weight)</th>
+                            <th>Idea 1 (Baseline)</th>
+                            <th>Idea 2</th>
+                            <th>Idea 3</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Cost (3)</strong></td>
+                            <td style="text-align: center;">0</td>
+                            <td style="text-align: center; color: #50fa7b;">+ (3)</td>
+                            <td style="text-align: center;">S (0)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Durability (4)</strong></td>
+                            <td style="text-align: center;">0</td>
+                            <td style="text-align: center;">S (0)</td>
+                            <td style="text-align: center; color: #ff5555;">- (-4)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ease of Fabrication (2)</strong></td>
+                            <td style="text-align: center;">0</td>
+                            <td style="text-align: center; color: #50fa7b;">+ (2)</td>
+                            <td style="text-align: center; color: #ff5555;">- (-2)</td>
+                        </tr>
+                        <tr style="background: rgba(255, 165, 0, 0.2);">
+                            <td><strong>TOTAL SCORE</strong></td>
+                            <td style="text-align: center; font-weight: 700;">0</td>
+                            <td style="text-align: center; font-weight: 700; color: #50fa7b;">+5</td>
+                            <td style="text-align: center; font-weight: 700; color: #ff5555;">-6</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="box" style="margin-top: 20px;">
+                    <p style="font-size: 1.1rem;"><span class="highlight">Result:</span> Idea 2 scores highest (+5). It's cheaper and easier to make than baseline, with equal durability.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Day 4 Activities -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Day 4: In-Class & Homework</h2>
+                <div class="day-box">
+                    <h3>In-Class Activities:</h3>
+                    <ul class="bullet-list">
+                        <li>Create your Pugh Matrix as a team</li>
+                        <li>Score all your brainstormed ideas</li>
+                        <li>Calculate weighted totals</li>
+                        <li>Select winning design</li>
+                        <li>Write justification paragraph</li>
+                    </ul>
+                </div>
+                <div class="homework-box">
+                    <h3>📝 Final Homework</h3>
+                    <p style="font-size: 1.1rem;">Complete and polish your entire design brief:</p>
+                    <ul class="bullet-list" style="font-size: 1rem; margin-top: 15px;">
+                        <li>Problem Statement ✓</li>
+                        <li>Research Summary ✓</li>
+                        <li>Brainstormed Ideas ✓</li>
+                        <li>Pugh Matrix (finish today)</li>
+                        <li>Next Steps section</li>
+                        <li>References section</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Final Submission -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Final Submission Requirements</h2>
+                <div class="objective-box">
+                    <h3>Complete Design Brief Must Include:</h3>
+                    <ul class="bullet-list">
+                        <li>✅ Problem Statement (stakeholders, needs, constraints, ethics)</li>
+                        <li>✅ Research Summary (3-5 sources with citations)</li>
+                        <li>✅ Brainstormed Ideas (5+ ideas with sketches)</li>
+                        <li>✅ Pugh Matrix (complete with justification)</li>
+                        <li>✅ Next Steps (what happens after this brief?)</li>
+                        <li>✅ References (all sources cited)</li>
+                    </ul>
+                </div>
+                <div class="box" style="margin-top: 25px; background: rgba(255, 85, 85, 0.1); border-color: #ff5555;">
+                    <p style="text-align: center; font-size: 1.3rem;">
+                        <span style="color: #ff5555; font-weight: 700;">DUE: Monday (next week) by noon</span>
+                    </p>
+                    <p style="text-align: center; font-size: 1rem; margin-top: 10px;">Submit via Google Classroom as Google Doc</p>
+                    <p style="text-align: center; font-size: 0.95rem; margin-top: 10px; color: #ff5555;">Late penalty: -10% per day (max 3 days)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Rubric Overview -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Grading Rubric (B Grade: 80-89%)</h2>
+                <div class="comparison-table">
+                    <table style="width: 100%;">
+                        <tr>
+                            <th style="width: 30%;">Section</th>
+                            <th>B Grade Criteria (80-89%)</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Problem Statement</strong></td>
+                            <td>Clear problem with stakeholders, needs, constraints, ethics. Relevant customer questions.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Research Summary</strong></td>
+                            <td>3–5 sources with relevant insights tied to constraints/ethics. Citations mostly complete.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Brainstormed Ideas</strong></td>
+                            <td>5 ideas with clear descriptions, adequate sketches. Addresses constraints/ethics. Collaboration evident.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pugh Matrix</strong></td>
+                            <td>Complete matrix with 3–5 criteria, mostly accurate math, clear justification with ethical focus.</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="box" style="margin-top: 20px; background: rgba(255, 165, 0, 0.1); border-color: #ffa500;">
+                    <p style="text-align: center; font-size: 1.1rem;">
+                        <span class="warning">Full rubric available on Google Classroom!</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 18: Next Steps After Design Brief -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>What Happens Next?</h2>
+                <div class="box" style="background: rgba(0, 212, 255, 0.1); border-color: #00d4ff; margin-bottom: 25px;">
+                    <h3 style="color: #00d4ff;">After Your Design Brief is Complete...</h3>
+                </div>
+                <div class="objective-box">
+                    <h3>Future Steps (Coming Units):</h3>
+                    <ul class="bullet-list">
+                        <li><span class="highlight">Create:</span> Build CAD model in Fusion 360 (Unit 2)</li>
+                        <li><span class="highlight">Prototype:</span> 3D print your design (Unit 3)</li>
+                        <li><span class="highlight">Test:</span> Evaluate with real phone, gather data</li>
+                        <li><span class="highlight">Improve:</span> Iterate based on test results</li>
+                        <li><span class="highlight">Present:</span> Share final design with class</li>
+                    </ul>
+                </div>
+                <div class="box" style="margin-top: 25px; border-color: #50fa7b; background: rgba(80, 250, 123, 0.05);">
+                    <p style="text-align: center; font-size: 1.1rem;">
+                        <span class="success">Your design brief guides the entire project!</span> It's the roadmap for success.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 19: Tips for Success -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Tips for Success</h2>
+                <div class="grid-2">
+                    <div class="box" style="background: rgba(80, 250, 123, 0.1); border-color: #50fa7b;">
+                        <h3 style="color: #50fa7b;">DO</h3>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>Be specific with measurements</li>
+                            <li>Use numbers and data</li>
+                            <li>Cite all sources properly</li>
+                            <li>Work daily (don't wait!)</li>
+                            <li>Ask Mr. Bombich questions</li>
+                            <li>Collaborate with your team</li>
+                            <li>Check the rubric often</li>
+                        </ul>
+                    </div>
+                    <div class="box" style="background: rgba(255, 85, 85, 0.1); border-color: #ff5555;">
+                        <h3 style="color: #ff5555;">DON'T</h3>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>Use vague descriptions</li>
+                            <li>Wait until the last minute</li>
+                            <li>Skip citations</li>
+                            <li>Forget to upload sketches</li>
+                            <li>Work alone (it's teamwork!)</li>
+                            <li>Ignore constraints</li>
+                            <li>Rush through Pugh Matrix</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="box" style="margin-top: 25px; background: rgba(255, 165, 0, 0.1); border-color: #ffa500;">
+                    <p style="text-align: center; font-size: 1.2rem;">
+                        <span class="warning">Quality matters!</span> This document represents your professional engineering work.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 20: Recap -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Workshop Recap</h2>
+                <div class="objective-box">
+                    <h3>This week you will:</h3>
+                    <ul class="bullet-list" style="font-size: 1.05rem;">
+                        <li><span class="checkmark">✓</span> Define a clear problem statement with stakeholders and constraints</li>
+                        <li><span class="checkmark">✓</span> Research existing solutions and document findings</li>
+                        <li><span class="checkmark">✓</span> Brainstorm creative design ideas as a team</li>
+                        <li><span class="checkmark">✓</span> Evaluate ideas systematically using a Pugh Matrix</li>
+                        <li><span class="checkmark">✓</span> Select the best design with clear justification</li>
+                        <li><span class="checkmark">✓</span> Create a professional engineering document</li>
+                        <li><span class="checkmark">✓</span> Experience real engineering workflow!</li>
+                    </ul>
+                </div>
+                <div style="text-align: center; margin-top: 30px;">
+                    <h3 style="font-size: 1.8rem; color: #50fa7b;">Ready to Engineer!</h3>
+                    <p style="font-size: 1.2rem; margin-top: 15px;">Let's create professional design briefs!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-number">
+        <span id="current-slide">1</span> / <span id="total-slides">20</span>
+    </div>
+
+    <div class="controls">
+        <button id="prev-btn" onclick="previousSlide()">← Previous</button>
+        <a href="index.html" class="nav-button">⌂ BACK TO UNIT 1</a>
+        <button id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>

@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 2.1: Introduction to CAD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #0a0404 40%, #1a0d08 100%);
+            color: #e0e6f0;
+            height: 100vh;
+        }
+
+        .presentation {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .slide-content {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 4em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #4a9eff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        h2 {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #5eb3ff;
+            text-align: center;
+        }
+
+        h3 {
+            font-size: 2em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #4a9eff;
+        }
+
+        .subtitle {
+            font-size: 1.8em;
+            text-align: center;
+            color: #b0b8c8;
+            font-weight: 300;
+            margin-top: 10px;
+        }
+
+        .bullet-list {
+            list-style: none;
+            padding: 0;
+            margin: 30px 0;
+        }
+
+        .bullet-list li {
+            font-size: 1.6em;
+            padding: 15px 0;
+            padding-left: 50px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .bullet-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #4a9eff;
+            font-size: 1.2em;
+        }
+
+        .quote {
+            font-size: 2em;
+            font-style: italic;
+            text-align: center;
+            color: #5eb3ff;
+            margin: 40px 0;
+            padding: 30px;
+            border-left: 5px solid #4a9eff;
+            background: rgba(74, 158, 255, 0.1);
+        }
+
+        .cad-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .cad-category {
+            background: rgba(74, 158, 255, 0.1);
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #4a9eff;
+        }
+
+        .cad-category h4 {
+            color: #5eb3ff;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .cad-category ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .cad-category li {
+            font-size: 1.2em;
+            padding: 8px 0;
+            color: #b0b8c8;
+        }
+
+        .step-box {
+            background: rgba(74, 158, 255, 0.15);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #4a9eff;
+        }
+
+        .step-box h4 {
+            color: #5eb3ff;
+            font-size: 1.6em;
+            margin-bottom: 15px;
+        }
+
+        .step-box p {
+            font-size: 1.3em;
+            line-height: 1.6;
+            color: #b0b8c8;
+        }
+
+        .interface-section {
+            background: rgba(74, 158, 255, 0.08);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .interface-section h4 {
+            color: #5eb3ff;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .tip-box {
+            background: rgba(94, 179, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #5eb3ff;
+        }
+
+        .tip-box strong {
+            color: #5eb3ff;
+            font-size: 1.3em;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-button {
+            background: rgba(74, 158, 255, 0.3);
+            border: 2px solid #4a9eff;
+            color: #e0e6f0;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-button:hover {
+            background: rgba(74, 158, 255, 0.6);
+            transform: scale(1.1);
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(74, 158, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: 2px solid #4a9eff;
+            font-size: 1.2em;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .emphasis {
+            color: #5eb3ff;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 2.5em;
+            }
+
+            h2 {
+                font-size: 2em;
+            }
+
+            .bullet-list li {
+                font-size: 1.2em;
+            }
+
+            .cad-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-content">
+                <h1>Introduction to CAD</h1>
+                <p class="subtitle">Learning Fusion 360 from Scratch: A Beginner's Guide</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Available CAD Solutions -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Available CAD Solutions</h2>
+                <div class="cad-grid">
+                    <div class="cad-category">
+                        <h4>Desktop</h4>
+                        <ul>
+                            <li>Autodesk Inventor</li>
+                            <li>SolidWorks</li>
+                            <li>CATIA</li>
+                            <li>PTC Creo</li>
+                            <li>Siemens NX</li>
+                            <li>Rhinoceros (Rhino)</li>
+                        </ul>
+                    </div>
+                    <div class="cad-category">
+                        <h4>Cloud</h4>
+                        <ul>
+                            <li>Autodesk Fusion 360</li>
+                            <li>Onshape</li>
+                            <li>TinkerCAD</li>
+                        </ul>
+                    </div>
+                    <div class="cad-category">
+                        <h4>Open-Source</h4>
+                        <ul>
+                            <li>FreeCAD</li>
+                            <li>Blender</li>
+                            <li>SketchUp</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Why Fusion 360? -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Learning Fusion 360 From Scratch</h2>
+                <p style="font-size: 2em; text-align: center; margin: 40px 0;">
+                    We'll be using <span class="emphasis">Autodesk Fusion 360</span> - a powerful, cloud-based CAD platform
+                </p>
+                <ul class="bullet-list">
+                    <li>Free for students and educators</li>
+                    <li>Industry-standard professional tool</li>
+                    <li>Cloud-based - access your designs anywhere</li>
+                    <li>Integrated CAD, CAM, and simulation</li>
+                    <li>Perfect for 3D printing and manufacturing</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 4: Getting Set Up -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Getting Set Up - Fusion 360</h2>
+                <div class="step-box">
+                    <h4>Fusion 360 Accounts</h4>
+                    <p>Open Fusion 360 desktop version and login with your school email</p>
+                </div>
+                <div class="tip-box">
+                    <strong>Important:</strong> Make sure you use your school email address to access the free educational license
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Safety Brief -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Safety Brief</h2>
+                <ul class="bullet-list">
+                    <li>No shop tools today—avoid sharp pencils</li>
+                    <li>Keep workspace tidy (5S: Sort, Set in order)</li>
+                    <li>Avoid kicking wires under the desk</li>
+                    <li>Report any technical issues to instructor</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 6: Fusion 360 Interface Tour - Launch Screen -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Fusion 360 Interface Tour</h2>
+                <div class="interface-section">
+                    <h4>Launch Screen:</h4>
+                    <ul class="bullet-list">
+                        <li><span class="emphasis">Overview:</span> Welcome screen with recent files and new project options</li>
+                        <li><span class="emphasis">Action:</span> Click "New Design from Scratch" to start</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Main Workspace -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Fusion 360 Interface Tour</h2>
+                <div class="interface-section">
+                    <h4>Main Workspace:</h4>
+                    <ul class="bullet-list">
+                        <li><span class="emphasis">System Tools:</span> File menu, save, undo/redo</li>
+                        <li><span class="emphasis">Canvas:</span> 3D modeling area (center) where sketches and models appear</li>
+                        <li><span class="emphasis">Toolbar:</span>
+                            <ul style="list-style: disc; margin-left: 40px; margin-top: 10px;">
+                                <li>Top level tabs (e.g., Solid, Surface, Mesh)</li>
+                                <li>Secondary level groups (e.g., Create, Modify, Constraints)</li>
+                                <li>Tools (e.g., Line, Rectangle, Circle, and dropdown contents)</li>
+                            </ul>
+                        </li>
+                        <li><span class="emphasis">Browser:</span> Left panel showing design history, bodies, and components</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Navigation Tools -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Fusion 360 Interface Tour</h2>
+                <div class="interface-section">
+                    <h4>Navigation Tools:</h4>
+                    <ul class="bullet-list">
+                        <li><span class="emphasis">ViewCube:</span> Top-right corner to rotate view (click faces or edges)</li>
+                        <li><span class="emphasis">Orbit/Pan/Zoom:</span> Middle mouse button or toolbar icons for navigation</li>
+                        <li><span class="emphasis">Tip:</span> Hold Shift + middle mouse for orbit</li>
+                    </ul>
+                </div>
+                <div class="interface-section" style="margin-top: 30px;">
+                    <h4>Timeline:</h4>
+                    <ul class="bullet-list">
+                        <li>Bottom area tracking design steps (editable history)</li>
+                        <li><span class="emphasis">Use:</span> Click steps to revisit or edit</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Quick Tips -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Fusion 360 Quick Tips</h2>
+                <ul class="bullet-list">
+                    <li>Hover over icons for tooltips</li>
+                    <li>Use F5–F8 for view presets (e.g., F5 for top view)</li>
+                    <li>Ask for help if lost!</li>
+                </ul>
+                <div class="tip-box" style="margin-top: 50px;">
+                    <strong>Pro Tip:</strong> Keyboard shortcuts will speed up your workflow significantly. Start learning them early!
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Fusion 360 Preferences -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Fusion 360 Preferences</h2>
+                <p style="font-size: 1.6em; margin-bottom: 30px; text-align: center;">
+                    Click on your account settings icon, and select preferences
+                </p>
+                <ul class="bullet-list">
+                    <li>Reverse Zoom Direction if desired</li>
+                    <li>Change Pan, Zoom, Orbit shortcuts if desired</li>
+                </ul>
+                <div class="tip-box" style="margin-top: 40px;">
+                    <strong>Note:</strong> Customize your settings to match your preferred workflow. Everyone works differently!
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Constrained Sketches Intro -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Guide to Making Constrained Sketches</h2>
+                <div class="step-box">
+                    <h4>What Are Constrained Sketches?</h4>
+                    <ul class="bullet-list">
+                        <li>Sketches where geometry is fully defined (black lines in Fusion 360)</li>
+                        <li>Prevents unwanted changes with parametric editing</li>
+                    </ul>
+                </div>
+                <div class="step-box">
+                    <h4>Why It Matters:</h4>
+                    <ul class="bullet-list">
+                        <li>Ensures accuracy in engineering designs</li>
+                        <li>Ties to EDP "Plan" step (precise planning)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Creating Constrained Sketches - Part 1 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Steps to Create Constrained Sketches</h2>
+                <div class="step-box">
+                    <h4>Step 1: Start a New Sketch</h4>
+                    <ul class="bullet-list">
+                        <li>Open Fusion 360 > Create > Sketch</li>
+                        <li>Select a plane (e.g., XY plane)</li>
+                    </ul>
+                </div>
+                <div class="step-box">
+                    <h4>Step 2: Draw Basic Shapes</h4>
+                    <ul class="bullet-list">
+                        <li>Use tools: Line, Rectangle, Circle</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Creating Constrained Sketches - Part 2 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Steps to Create Constrained Sketches</h2>
+                <div class="step-box">
+                    <h4>Step 3: Apply Geometric Constraints</h4>
+                    <ul class="bullet-list">
+                        <li><span class="emphasis">Horizontal/Vertical:</span> Align lines</li>
+                        <li><span class="emphasis">Parallel/Perpendicular:</span> Match angles</li>
+                        <li><span class="emphasis">Tangent:</span> Connect curves to lines</li>
+                        <li><span class="emphasis">Equal:</span> Match lengths or radii</li>
+                        <li><span class="emphasis">Tip:</span> Right-click to add constraints</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Creating Constrained Sketches - Part 3 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Steps to Create Constrained Sketches</h2>
+                <div class="step-box">
+                    <h4>Step 4: Add Dimensions</h4>
+                    <ul class="bullet-list">
+                        <li>Click Dimension tool</li>
+                        <li>Set lengths, angles, or radii (e.g., 50 mm)</li>
+                        <li>Edit to test parametric changes</li>
+                    </ul>
+                </div>
+                <div class="step-box">
+                    <h4>Step 5: Verify Full Constraint</h4>
+                    <ul class="bullet-list">
+                        <li>Look for <span class="emphasis">black lines</span> (fully defined)</li>
+                        <li><span class="emphasis">Blue lines</span> indicate under-constrained areas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Tutorial Videos -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Tutorial Videos</h2>
+                <p style="font-size: 1.8em; margin-bottom: 30px; color: #5eb3ff;">Fusion 360 in 30 Days Video Tutorial Series</p>
+                <ul class="bullet-list">
+                    <li><span class="emphasis">Day 1:</span> Lego Brick</li>
+                    <li><span class="emphasis">Day 2:</span> Soda Bottle (Image in Google Classroom, Unit 2)</li>
+                    <li><span class="emphasis">Day 3:</span> Paperclip</li>
+                    <li><span class="emphasis">Day 4:</span> Square Bottle</li>
+                </ul>
+                <div class="tip-box" style="margin-top: 40px;">
+                    <strong>Practice Makes Perfect:</strong> Follow along with these tutorials to build your CAD skills!
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Classroom Expectations -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>When the Bell Rings, Be Prepared to Start Class By:</h2>
+                <div class="step-box">
+                    <h4>1. Be seated</h4>
+                </div>
+                <div class="step-box">
+                    <h4>2. Cell phone in pouch</h4>
+                </div>
+                <div class="step-box">
+                    <h4>3. Backpack stowed</h4>
+                </div>
+                <div class="step-box">
+                    <h4>4. Have Fusion 360 on your computer and start relevant work</h4>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Let's Get Started! -->
+        <div class="slide">
+            <div class="slide-content">
+                <h1 style="font-size: 5em;">Let's Get Started!</h1>
+                <p style="font-size: 2em; text-align: center; margin-top: 50px; color: #5eb3ff;">
+                    Time to explore Fusion 360 and create amazing designs
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">17</span>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-button" onclick="previousSlide()">←</button>
+        <button class="nav-button" onclick="nextSlide()">→</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight' || event.key === ' ') {
+                nextSlide();
+            } else if (event.key === 'ArrowLeft') {
+                previousSlide();
+            }
+        });
+    </script>
+</body>
+</html>

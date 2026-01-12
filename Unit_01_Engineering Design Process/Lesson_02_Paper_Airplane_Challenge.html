@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paper Airplane Challenge</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #0a0404 40%, #1a0d08 100%);
+            color: #e0e6f0;
+            height: 100vh;
+        }
+
+        .presentation {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            min-height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 55px 60px 120px 60px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .slide-content {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #ff6b35;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255, 107, 53, 0.5); }
+            to { text-shadow: 0 0 30px rgba(255, 107, 53, 0.8); }
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ff6b35;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ffa500;
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #b8c5d6;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #ffa500;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .objective-box {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(255, 107, 53, 0.05) 100%);
+            border: 3px solid #ff6b35;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 0 30px rgba(255, 107, 53, 0.2);
+        }
+
+        .objective-box h3 {
+            color: #ff6b35;
+            margin-bottom: 12px;
+        }
+
+        .bullet-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .bullet-list li {
+            font-size: 1.15rem;
+            margin: 12px 0;
+            padding-left: 35px;
+            position: relative;
+            color: #b8c5d6;
+            line-height: 1.5;
+        }
+
+        .bullet-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #ffa500;
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .box {
+            background: rgba(255, 107, 53, 0.05);
+            border: 2px solid #ff6b35;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.1);
+        }
+
+        .highlight {
+            color: #ff6b35;
+            font-weight: 700;
+        }
+
+        .warning {
+            color: #ffa500;
+            font-weight: 700;
+        }
+
+        .success {
+            color: #50fa7b;
+            font-weight: 700;
+        }
+
+        .checkmark {
+            color: #50fa7b;
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+
+        .challenge-box {
+            background: linear-gradient(135deg, rgba(255, 165, 0, 0.15) 0%, rgba(255, 165, 0, 0.05) 100%);
+            border: 3px solid #ffa500;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 0 30px rgba(255, 165, 0, 0.2);
+        }
+
+        .challenge-box h3 {
+            color: #ffa500;
+        }
+
+        .homework-box {
+            background: linear-gradient(135deg, rgba(80, 250, 123, 0.15) 0%, rgba(80, 250, 123, 0.05) 100%);
+            border: 3px solid #50fa7b;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 0 30px rgba(80, 250, 123, 0.2);
+        }
+
+        .homework-box h3 {
+            color: #50fa7b;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #ff6b35;
+            color: #000000;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: 900;
+            font-size: 1.2rem;
+            margin-right: 15px;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        button {
+            background: linear-gradient(135deg, #ff6b35 0%, #cc5429 100%);
+            border: none;
+            color: #1a0f0a;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.5);
+        }
+
+        button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .nav-button {
+            background: linear-gradient(135deg, #ff6b35 0%, #cc5429 100%);
+            border: none;
+            color: #1a0f0a;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.5);
+        }
+
+        .slide-number {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            color: #ff6b35;
+            z-index: 1000;
+        }
+
+        .icon-large {
+            font-size: 6rem;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            .slide { padding: 30px; }
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-content" style="text-align: center;">
+                <h1>Paper Airplane Challenge</h1>
+                <p class="subtitle">Lesson 1.2: Engineering Design in Action</p>
+                <div class="icon-large">✈️</div>
+                <p style="font-size: 1.5rem; margin-top: 25px; color: #ffa500;">
+                    Design, Build, Test, Improve!
+                </p>
+                <p style="font-size: 1rem; margin-top: 15px;">Lesson 1.2 | 50 minutes + homework</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Learning Objectives -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Today's Learning Objectives</h2>
+                <div class="objective-box">
+                    <h3>By the end of today, you will:</h3>
+                    <ul class="bullet-list">
+                        <li>Apply all 7 steps of the Engineering Design Process</li>
+                        <li>Design a paper airplane for a specific goal (distance OR accuracy)</li>
+                        <li>Build and test multiple prototypes</li>
+                        <li>Collect and analyze test data</li>
+                        <li>Make iterative improvements based on testing</li>
+                        <li>Document your process in an engineering journal</li>
+                    </ul>
+                </div>
+                <p style="text-align: center; font-size: 1.3rem; margin-top: 20px; color: #ffa500;">
+                    Real engineering, real iteration, real fun!
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 3: The Challenge -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>The Challenge</h2>
+                <div class="challenge-box">
+                    <h3>Choose Your Mission:</h3>
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div class="box" style="border-color: #00d4ff; background: rgba(0, 212, 255, 0.05);">
+                            <h3 style="color: #00d4ff; font-size: 1.8rem; text-align: center;">Option A: Distance</h3>
+                            <p style="text-align: center; font-size: 1.3rem; margin: 15px 0;">🎯</p>
+                            <p style="font-size: 1.1rem; text-align: center;">Design a plane that flies the <span class="highlight">farthest distance</span></p>
+                        </div>
+                        <div class="box" style="border-color: #bd93f9; background: rgba(189, 147, 249, 0.05);">
+                            <h3 style="color: #bd93f9; font-size: 1.8rem; text-align: center;">Option B: Accuracy</h3>
+                            <p style="text-align: center; font-size: 1.3rem; margin: 15px 0;">🎪</p>
+                            <p style="font-size: 1.1rem; text-align: center;">Design a plane that flies through a <span class="highlight">target hoop</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="box" style="margin-top: 25px;">
+                    <h3>Materials:</h3>
+                    <ul class="bullet-list">
+                        <li>Standard 8.5" × 11" paper (multiple sheets)</li>
+                        <li>Optional: tape, paperclips (ask first!)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Step 1 - Ask -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2><span class="step-number">1</span> Ask: Understand the Challenge</h2>
+                <div class="box" style="background: rgba(255, 107, 53, 0.1); margin-bottom: 25px;">
+                    <h3>What do you need to understand?</h3>
+                    <ul class="bullet-list">
+                        <li><span class="highlight">Distance mission:</span> What makes a plane fly far? (stability, weight, aerodynamics)</li>
+                        <li><span class="highlight">Accuracy mission:</span> What makes a plane controllable? (balance, predictability)</li>
+                        <li>What are the constraints? (materials, time, testing space)</li>
+                    </ul>
+                </div>
+                <div class="grid-2">
+                    <div class="box">
+                        <h3>Key Questions</h3>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>What goal did you choose?</li>
+                            <li>What matters most for YOUR goal?</li>
+                            <li>What have you seen work before?</li>
+                        </ul>
+                    </div>
+                    <div class="box" style="background: rgba(255, 165, 0, 0.1); border-color: #ffa500;">
+                        <h3 style="color: #ffa500;">Activity (5 min)</h3>
+                        <p>Discuss with a partner: What features do you think will help you succeed?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Step 2 - Research -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2><span class="step-number">2</span> Research: Gather Information</h2>
+                <div class="grid-2">
+                    <div>
+                        <div class="box" style="background: rgba(255, 165, 0, 0.1); border-color: #ffa500;">
+                            <h3 style="color: #ffa500;">Research Activities</h3>
+                            <ul class="bullet-list">
+                                <li>Look at example plane designs</li>
+                                <li>Think about planes you've made before</li>
+                                <li>What worked? What didn't?</li>
+                                <li>Consider: wing shape, weight distribution, nose design</li>
+                            </ul>
+                        </div>
+                        <div class="box" style="margin-top: 20px;">
+                            <h3>Key Concepts</h3>
+                            <ul class="bullet-list" style="font-size: 1rem;">
+                                <li><span class="highlight">Lift:</span> Upward force from air</li>
+                                <li><span class="highlight">Drag:</span> Air resistance</li>
+                                <li><span class="highlight">Weight:</span> Gravity pulling down</li>
+                                <li><span class="highlight">Thrust:</span> Your throwing force</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        <svg viewBox="0 0 400 400" style="width: 100%; max-width: 400px;">
+                            <!-- Paper airplane illustration -->
+                            <path d="M 50,200 L 350,180 L 350,220 Z" fill="rgba(255, 107, 53, 0.3)" stroke="#ff6b35" stroke-width="3"/>
+                            <path d="M 50,200 L 200,100 L 350,180 Z" fill="rgba(255, 165, 0, 0.2)" stroke="#ffa500" stroke-width="3"/>
+                            <path d="M 50,200 L 200,300 L 350,220 Z" fill="rgba(255, 165, 0, 0.2)" stroke="#ffa500" stroke-width="3"/>
+                            <line x1="50" y1="200" x2="350" y2="200" stroke="#ff6b35" stroke-width="4"/>
+
+                            <!-- Force arrows -->
+                            <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                                    <polygon points="0 0, 10 5, 0 10" fill="#50fa7b"/>
+                                </marker>
+                            </defs>
+                            <line x1="200" y1="200" x2="200" y2="100" stroke="#50fa7b" stroke-width="4" marker-end="url(#arrowhead)"/>
+                            <text x="210" y="145" font-family="Exo 2" font-size="18" fill="#50fa7b" font-weight="bold">LIFT</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Step 3 - Imagine -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2><span class="step-number">3</span> Imagine: Brainstorm Designs</h2>
+                <div class="box" style="background: rgba(80, 250, 123, 0.1); border-color: #50fa7b; margin-bottom: 25px;">
+                    <h3 style="color: #50fa7b;">Brainstorming Rules</h3>
+                    <ul class="bullet-list">
+                        <li>No bad ideas! Get creative!</li>
+                        <li>Sketch at least 3 different designs</li>
+                        <li>Think about different wing shapes, nose types, and folds</li>
+                        <li>Consider what will help YOUR specific goal</li>
+                    </ul>
+                </div>
+                <div class="grid-2">
+                    <div class="box">
+                        <h3>Distance Design Ideas</h3>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>Long, narrow wings for gliding</li>
+                            <li>Pointed nose for aerodynamics</li>
+                            <li>Weight forward for stability</li>
+                            <li>Smooth, simple design</li>
+                        </ul>
+                    </div>
+                    <div class="box">
+                        <h3>Accuracy Design Ideas</h3>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>Wide wings for control</li>
+                            <li>Balanced weight distribution</li>
+                            <li>Fins for stability</li>
+                            <li>Predictable flight path</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="box" style="margin-top: 20px; background: rgba(255, 165, 0, 0.1); border-color: #ffa500;">
+                    <p style="text-align: center; font-size: 1.2rem;">
+                        <span class="warning">Activity (10 min):</span> Sketch 3 different airplane designs in your journal
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Step 4 - Plan -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2><span class="step-number">4</span> Plan: Choose Your Best Design</h2>
+                <div class="box" style="background: rgba(0, 212, 255, 0.1); border-color: #00d4ff; margin-bottom: 25px;">
+                    <h3 style="color: #00d4ff;">Selection Criteria</h3>
+                    <p style="font-size: 1.1rem;">Look at your 3 sketches. Which one will work best for your goal?</p>
+                </div>
+                <div class="grid-2">
+                    <div class="box">
+                        <h3>Evaluate Each Design</h3>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>Does it match my goal?</li>
+                            <li>Can I actually build it?</li>
+                            <li>Will it be stable?</li>
+                            <li>Is it too complex?</li>
+                        </ul>
+                    </div>
+                    <div class="box" style="background: rgba(255, 165, 0, 0.1); border-color: #ffa500;">
+                        <h3 style="color: #ffa500;">Activity (5 min)</h3>
+                        <p>Circle your chosen design and write 2-3 sentences explaining WHY you chose it</p>
+                    </div>
+                </div>
+                <div class="box" style="margin-top: 20px;">
+                    <h3>Your Build Plan</h3>
+                    <ul class="bullet-list">
+                        <li>What folds will you make first?</li>
+                        <li>Where will you add weight (if needed)?</li>
+                        <li>How will you test it?</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Step 5 - Create -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2><span class="step-number">5</span> Create: Build Your Prototype</h2>
+                <div class="box" style="background: rgba(189, 147, 249, 0.1); border-color: #bd93f9; margin-bottom: 25px;">
+                    <h3 style="color: #bd93f9;">Build Time!</h3>
+                    <p style="font-size: 1.2rem;">Carefully fold your chosen design. Take your time!</p>
+                </div>
+                <div class="grid-2">
+                    <div class="box">
+                        <h3>Building Tips</h3>
+                        <ul class="bullet-list">
+                            <li>Make crisp, clean folds</li>
+                            <li>Keep wings symmetrical</li>
+                            <li>Check balance before testing</li>
+                            <li>Make adjustments as needed</li>
+                        </ul>
+                    </div>
+                    <div class="box" style="background: rgba(255, 165, 0, 0.1); border-color: #ffa500;">
+                        <h3 style="color: #ffa500;">Activity (10 min)</h3>
+                        <p style="font-size: 1.1rem;"><span class="highlight">Prototype 1:</span> Build your first airplane following your plan</p>
+                        <p style="font-size: 0.95rem; margin-top: 10px;">Label it "V1" (Version 1)</p>
+                    </div>
+                </div>
+                <div class="box" style="margin-top: 20px; border-color: #50fa7b; background: rgba(80, 250, 123, 0.05);">
+                    <p style="text-align: center; font-size: 1.1rem;">
+                        <span class="success">Remember:</span> This is just your FIRST prototype. You'll make improvements!
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Step 6 - Test -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2><span class="step-number">6</span> Test: Gather Data</h2>
+                <div class="box" style="background: rgba(255, 149, 0, 0.1); border-color: #ff9500; margin-bottom: 25px;">
+                    <h3 style="color: #ff9500;">Testing Protocol</h3>
+                    <ul class="bullet-list">
+                        <li>Test each plane 3 times</li>
+                        <li>Record the results each time</li>
+                        <li>Take notes on what you observe</li>
+                    </ul>
+                </div>
+                <div class="grid-2">
+                    <div class="box">
+                        <h3>Distance Mission</h3>
+                        <p style="font-size: 1rem; margin-bottom: 15px;">Measure in feet/meters from throw line to where it lands</p>
+                        <p style="font-family: 'JetBrains Mono', monospace; background: #0d1117; padding: 15px; border-radius: 8px; font-size: 0.95rem;">
+                            Trial 1: _____<br>
+                            Trial 2: _____<br>
+                            Trial 3: _____<br>
+                            Average: _____
+                        </p>
+                    </div>
+                    <div class="box">
+                        <h3>Accuracy Mission</h3>
+                        <p style="font-size: 1rem; margin-bottom: 15px;">Did it go through the hoop? (Yes/No)</p>
+                        <p style="font-family: 'JetBrains Mono', monospace; background: #0d1117; padding: 15px; border-radius: 8px; font-size: 0.95rem;">
+                            Trial 1: _____<br>
+                            Trial 2: _____<br>
+                            Trial 3: _____<br>
+                            Success: __ / 3
+                        </p>
+                    </div>
+                </div>
+                <div class="box" style="margin-top: 20px; background: rgba(255, 165, 0, 0.1); border-color: #ffa500;">
+                    <p style="text-align: center; font-size: 1.2rem;">
+                        <span class="warning">Activity (10 min):</span> Test your V1 plane and record results in your journal
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Step 7 - Improve -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2><span class="step-number">7</span> Improve: Make It Better!</h2>
+                <div class="box" style="background: rgba(255, 107, 53, 0.1); margin-bottom: 25px;">
+                    <h3>Analyze Your Results</h3>
+                    <p style="font-size: 1.2rem;">What worked? What didn't? Why?</p>
+                </div>
+                <div class="grid-2">
+                    <div class="box">
+                        <h3>Common Issues & Fixes</h3>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li><span class="warning">Dives down:</span> Move weight back or adjust wings up</li>
+                            <li><span class="warning">Flies up then stalls:</span> Add weight to nose</li>
+                            <li><span class="warning">Veers left/right:</span> Check wing symmetry</li>
+                            <li><span class="warning">Wobbly:</span> Stiffen wings or add tail</li>
+                        </ul>
+                    </div>
+                    <div class="box" style="background: rgba(255, 165, 0, 0.1); border-color: #ffa500;">
+                        <h3 style="color: #ffa500;">Iteration Activity</h3>
+                        <p style="font-size: 1rem;">Build an improved V2 (or V3!) based on what you learned</p>
+                        <p style="margin-top: 15px; font-size: 1rem;">Document your changes and test again!</p>
+                    </div>
+                </div>
+                <div class="box" style="margin-top: 20px; border-color: #50fa7b; background: rgba(80, 250, 123, 0.05);">
+                    <p style="text-align: center; font-size: 1.1rem;">
+                        <span class="success">This is REAL engineering!</span> Professionals iterate many times to get the best design
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Final Competition -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Final Competition</h2>
+                <div class="challenge-box">
+                    <h3>Test Your Final Design!</h3>
+                    <p style="font-size: 1.2rem; margin: 15px 0;">Use your best version for the final competition</p>
+                </div>
+                <div class="grid-2">
+                    <div class="box" style="text-align: center; padding: 40px;">
+                        <div style="font-size: 4rem; margin-bottom: 15px;">🏆</div>
+                        <h3>Distance Competition</h3>
+                        <p style="font-size: 1.1rem; margin-top: 10px;">Who can fly the farthest?</p>
+                    </div>
+                    <div class="box" style="text-align: center; padding: 40px;">
+                        <div style="font-size: 4rem; margin-bottom: 15px;">🎯</div>
+                        <h3>Accuracy Competition</h3>
+                        <p style="font-size: 1.1rem; margin-top: 10px;">Who can hit the target?</p>
+                    </div>
+                </div>
+                <div class="box" style="margin-top: 25px;">
+                    <h3>Record Your Final Results</h3>
+                    <ul class="bullet-list">
+                        <li>Final version number (V2, V3, etc.)</li>
+                        <li>Final test results</li>
+                        <li>Competition placement</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Homework Assignment -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Homework: Engineering Journal Entry</h2>
+                <div class="homework-box">
+                    <h3>📓 Journal Assignment (Due Next Class)</h3>
+                    <p style="font-size: 1.2rem; margin-bottom: 20px;">Write a complete reflection on your engineering process</p>
+
+                    <h3 style="margin-top: 20px;">Required Sections:</h3>
+                    <ul class="bullet-list">
+                        <li><span class="highlight">Ask:</span> What goal did you choose? Why?</li>
+                        <li><span class="highlight">Research:</span> What did you learn about airplane design?</li>
+                        <li><span class="highlight">Imagine:</span> Describe your 3 sketched designs</li>
+                        <li><span class="highlight">Plan:</span> Which design did you choose? Why?</li>
+                        <li><span class="highlight">Create:</span> How many versions did you build?</li>
+                        <li><span class="highlight">Test:</span> Include all your test data (V1, V2, V3, etc.)</li>
+                        <li><span class="highlight">Improve:</span> What changes did you make? Why? What worked?</li>
+                        <li><span class="highlight">Reflection:</span> What did you learn about the engineering design process?</li>
+                    </ul>
+                </div>
+                <div class="box" style="margin-top: 25px; border-color: #ffa500; background: rgba(255, 165, 0, 0.1);">
+                    <p style="text-align: center; font-size: 1.1rem;">
+                        <span class="warning">Length:</span> 1-2 pages, typed or handwritten (neat and legible!)
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Recap -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Lesson Recap</h2>
+                <div class="objective-box">
+                    <h3>Today you:</h3>
+                    <ul class="bullet-list" style="font-size: 1.05rem;">
+                        <li><span class="checkmark">✓</span> Applied all 7 steps of the Engineering Design Process</li>
+                        <li><span class="checkmark">✓</span> Designed paper airplanes for specific goals</li>
+                        <li><span class="checkmark">✓</span> Built and tested multiple prototypes</li>
+                        <li><span class="checkmark">✓</span> Made data-driven improvements through iteration</li>
+                        <li><span class="checkmark">✓</span> Experienced real engineering problem-solving</li>
+                    </ul>
+                </div>
+                <div style="text-align: center; margin-top: 30px;">
+                    <h3 style="font-size: 1.8rem; color: #50fa7b;">Great Work, Engineers!</h3>
+                    <p style="font-size: 1.2rem; margin-top: 15px;">Next: Spaghetti Tower Challenge</p>
+                    <p style="font-size: 1rem; margin-top: 10px; color: #ffa500;">Don't forget your homework journal entry!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-number">
+        <span id="current-slide">1</span> / <span id="total-slides">13</span>
+    </div>
+
+    <div class="controls">
+        <button id="prev-btn" onclick="previousSlide()">← Previous</button>
+        <a href="index.html" class="nav-button">⌂ BACK TO UNIT 1</a>
+        <button id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>

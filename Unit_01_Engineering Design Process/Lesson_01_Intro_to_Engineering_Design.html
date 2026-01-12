@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction to Engineering Design</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #0a0404 40%, #1a0d08 100%);
+            color: #e0e6f0;
+            height: 100vh;
+        }
+
+        .presentation {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            min-height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 55px 60px 120px 60px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .slide-content {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #ff6b35;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255, 107, 53, 0.5); }
+            to { text-shadow: 0 0 30px rgba(255, 107, 53, 0.8); }
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ff6b35;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ffa500;
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #b8c5d6;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #ffa500;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .objective-box {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(255, 107, 53, 0.05) 100%);
+            border: 3px solid #ff6b35;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 0 30px rgba(255, 107, 53, 0.2);
+        }
+
+        .objective-box h3 {
+            color: #ff6b35;
+            margin-bottom: 12px;
+        }
+
+        .bullet-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .bullet-list li {
+            font-size: 1.15rem;
+            margin: 12px 0;
+            padding-left: 35px;
+            position: relative;
+            color: #b8c5d6;
+            line-height: 1.5;
+        }
+
+        .bullet-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #ffa500;
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .box {
+            background: rgba(255, 107, 53, 0.05);
+            border: 2px solid #ff6b35;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.1);
+        }
+
+        .highlight {
+            color: #ff6b35;
+            font-weight: 700;
+        }
+
+        .warning {
+            color: #ffa500;
+            font-weight: 700;
+        }
+
+        .success {
+            color: #50fa7b;
+            font-weight: 700;
+        }
+
+        .checkmark {
+            color: #50fa7b;
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+
+        .diagram-box {
+            background: #1a0f0a;
+            border: 2px solid #ff6b35;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .icon-item {
+            text-align: center;
+        }
+
+        .icon-box {
+            background: #c94432;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .icon-label {
+            color: #c94432;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .safety-icons {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .safety-icon {
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        button {
+            background: linear-gradient(135deg, #ff6b35 0%, #cc5429 100%);
+            border: none;
+            color: #1a0f0a;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.5);
+        }
+
+        button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .nav-button {
+            background: linear-gradient(135deg, #ff6b35 0%, #cc5429 100%);
+            border: none;
+            color: #1a0f0a;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.5);
+        }
+
+        .slide-number {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            color: #ff6b35;
+            z-index: 1000;
+        }
+
+        .process-circle {
+            width: 400px;
+            height: 400px;
+            margin: 20px auto;
+        }
+
+        .step-box {
+            background: linear-gradient(135deg, rgba(255, 165, 0, 0.15) 0%, rgba(255, 165, 0, 0.05) 100%);
+            border: 2px solid #ffa500;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .step-box h3 {
+            color: #ffa500;
+        }
+
+        .robot-image {
+            width: 100%;
+            max-width: 350px;
+            margin: 20px auto;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            .slide { padding: 30px; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .icon-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-content" style="text-align: center;">
+                <h1>Introduction to Engineering Design</h1>
+                <p class="subtitle">Unit 1: Engineering Design Process</p>
+                <div style="margin: 40px auto; max-width: 600px;">
+                    <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; filter: drop-shadow(0 0 15px rgba(255, 107, 53, 0.5));">
+                        <!-- Robotic arm illustration -->
+                        <rect x="150" y="240" width="100" height="40" rx="6" fill="rgba(255, 107, 53, 0.3)" stroke="#ff6b35" stroke-width="3"/>
+                        <text x="200" y="265" font-family="Orbitron" font-size="16" fill="#ff6b35" text-anchor="middle" font-weight="bold">APPLIED</text>
+
+                        <!-- Arm segments -->
+                        <line x1="200" y1="240" x2="200" y2="180" stroke="#ff6b35" stroke-width="8" stroke-linecap="round"/>
+                        <circle cx="200" cy="180" r="10" fill="#ffa500"/>
+
+                        <line x1="200" y1="180" x2="250" y2="130" stroke="#ff6b35" stroke-width="8" stroke-linecap="round"/>
+                        <circle cx="250" cy="130" r="10" fill="#ffa500"/>
+
+                        <line x1="250" y1="130" x2="280" y2="90" stroke="#ff6b35" stroke-width="6" stroke-linecap="round"/>
+
+                        <!-- Gripper -->
+                        <path d="M 280 90 L 270 80 L 275 75" stroke="#ff6b35" stroke-width="4" fill="none"/>
+                        <path d="M 280 90 L 290 80 L 285 75" stroke="#ff6b35" stroke-width="4" fill="none"/>
+
+                        <!-- Gears decoration -->
+                        <circle cx="100" cy="150" r="25" fill="none" stroke="#ffa500" stroke-width="3"/>
+                        <circle cx="100" cy="150" r="15" fill="none" stroke="#ffa500" stroke-width="2"/>
+
+                        <circle cx="320" cy="180" r="20" fill="none" stroke="#ffa500" stroke-width="3"/>
+                        <circle cx="320" cy="180" r="12" fill="none" stroke="#ffa500" stroke-width="2"/>
+
+                        <!-- Text elements -->
+                        <text x="200" y="35" font-family="Orbitron" font-size="20" fill="#ff6b35" text-anchor="middle" font-weight="bold">ENGINEERING</text>
+                        <text x="200" y="60" font-family="Orbitron" font-size="16" fill="#ffa500" text-anchor="middle">& ROBOTICS</text>
+                    </svg>
+                </div>
+                <p style="font-size: 1rem; margin-top: 25px;">Lesson 1.1 | 50 minutes</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Welcome & Agenda -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Welcome & Agenda</h2>
+                <div class="objective-box">
+                    <h3>Today's Journey</h3>
+                    <ul class="bullet-list">
+                        <li>Course overview: What you'll learn this year</li>
+                        <li>Safety first: Top 5 shop rules</li>
+                        <li>Explore our robotics lab & past projects</li>
+                        <li>Master the 7 steps of Engineering Design Process</li>
+                        <li>Understand how engineers solve real problems</li>
+                    </ul>
+                </div>
+                <p style="text-align: center; font-size: 1.3rem; margin-top: 20px; color: #ffa500;">
+                    Get ready to design, build, and innovate!
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 3: What You'll Learn -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>What You'll Learn In This Course</h2>
+                <div class="grid-2" style="margin-top: 30px;">
+                    <div>
+                        <ul class="bullet-list">
+                            <li>Master the Engineering Design Process</li>
+                            <li>Create functional CAD models & prototypes</li>
+                            <li>Program microcontrollers (Arduino/Robot brains)</li>
+                            <li>Program 3D printers, CNC Machine, and Plasma CNC</li>
+                            <li>Troubleshoot and refine parts and designs</li>
+                            <li>Solve problems, build teamwork, project-management, and critical-thinking skills</li>
+                        </ul>
+                    </div>
+                    <div class="icon-grid">
+                        <div class="icon-item">
+                            <div class="icon-box">💡</div>
+                            <div class="icon-label">DESIGN</div>
+                        </div>
+                        <div class="icon-item">
+                            <div class="icon-box">📦</div>
+                            <div class="icon-label">CAD</div>
+                        </div>
+                        <div class="icon-item">
+                            <div class="icon-box">&lt;/&gt;</div>
+                            <div class="icon-label">CODE</div>
+                        </div>
+                        <div class="icon-item">
+                            <div class="icon-box">🖨️</div>
+                            <div class="icon-label">PRINT</div>
+                        </div>
+                        <div class="icon-item">
+                            <div class="icon-box">👥</div>
+                            <div class="icon-label">TEAMWORK</div>
+                        </div>
+                        <div class="icon-item">
+                            <div class="icon-box">🔧</div>
+                            <div class="icon-label">BUILD</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Safety -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Staying Safe in the Shop</h2>
+                <div class="objective-box" style="border-color: #ff5555; box-shadow: 0 0 30px rgba(255, 85, 85, 0.2);">
+                    <h3 style="color: #ff5555;">Top 5 Shop Rules</h3>
+                    <ul class="bullet-list" style="font-size: 1.2rem;">
+                        <li>No horseplay</li>
+                        <li>Always wear required PPE (Personal Protective Equipment)</li>
+                        <li>No loose clothing or jewelry</li>
+                        <li>Closed-toed shoes required</li>
+                        <li>Don't touch machines you're not trained on</li>
+                    </ul>
+                </div>
+                <div class="safety-icons">
+                    <svg width="100" height="100" viewBox="0 0 100 100" class="safety-icon">
+                        <rect x="10" y="30" width="80" height="40" rx="8" fill="none" stroke="#c94432" stroke-width="4"/>
+                        <rect x="20" y="40" width="25" height="20" rx="4" fill="rgba(201, 68, 50, 0.3)"/>
+                        <rect x="55" y="40" width="25" height="20" rx="4" fill="rgba(201, 68, 50, 0.3)"/>
+                        <text x="50" y="90" font-size="12" fill="#c94432" text-anchor="middle">Safety Glasses</text>
+                    </svg>
+                    <svg width="100" height="100" viewBox="0 0 100 100" class="safety-icon">
+                        <path d="M 20,40 L 30,20 L 70,20 L 80,40 L 70,70 L 30,70 Z" fill="none" stroke="#c94432" stroke-width="4"/>
+                        <path d="M 30,40 L 35,45 L 30,50" fill="none" stroke="#c94432" stroke-width="3"/>
+                        <path d="M 70,40 L 65,45 L 70,50" fill="none" stroke="#c94432" stroke-width="3"/>
+                        <text x="50" y="90" font-size="12" fill="#c94432" text-anchor="middle">Gloves</text>
+                    </svg>
+                    <svg width="100" height="100" viewBox="0 0 100 100" class="safety-icon">
+                        <ellipse cx="50" cy="40" rx="30" ry="25" fill="none" stroke="#c94432" stroke-width="4"/>
+                        <path d="M 25,40 Q 25,60 50,70 Q 75,60 75,40" fill="none" stroke="#c94432" stroke-width="4"/>
+                        <text x="50" y="90" font-size="12" fill="#c94432" text-anchor="middle">Closed Shoes</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Explore Our Lab -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Explore Our Robotics Lab</h2>
+                <div class="box" style="margin-bottom: 25px;">
+                    <h3>Activity: Robot Design Analysis</h3>
+                    <ul class="bullet-list">
+                        <li>See past student robots & discuss design evolution</li>
+                        <li>Identify successes & "what would you change?" moments</li>
+                        <li>Note different mechanism types (drivetrains, arms, manipulators)</li>
+                    </ul>
+                </div>
+                <div class="grid-3">
+                    <div class="box" style="text-align: center; padding: 30px;">
+                        <div style="font-size: 3rem; color: #ff6b35; margin-bottom: 10px;">🤖</div>
+                        <h3 style="font-size: 1.1rem;">Tank Drive</h3>
+                        <p style="font-size: 0.95rem;">Simple & powerful</p>
+                    </div>
+                    <div class="box" style="text-align: center; padding: 30px;">
+                        <div style="font-size: 3rem; color: #ffa500; margin-bottom: 10px;">🦾</div>
+                        <h3 style="font-size: 1.1rem;">Robotic Arms</h3>
+                        <p style="font-size: 0.95rem;">Reach & manipulate</p>
+                    </div>
+                    <div class="box" style="text-align: center; padding: 30px;">
+                        <div style="font-size: 3rem; color: #50fa7b; margin-bottom: 10px;">⚙️</div>
+                        <h3 style="font-size: 1.1rem;">Mechanisms</h3>
+                        <p style="font-size: 0.95rem;">Lifts, claws, grippers</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Engineering Design Process Overview -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>The Engineering Design Process</h2>
+                <p style="text-align: center; font-size: 1.2rem; margin-bottom: 30px;">A systematic approach to solving problems</p>
+                <div class="grid-2">
+                    <div>
+                        <div class="step-box" style="border-color: #ff6b35;">
+                            <h3>1. Ask</h3>
+                            <p>Empathize & understand user needs</p>
+                        </div>
+                        <div class="step-box" style="border-color: #ffa500;">
+                            <h3>2. Research</h3>
+                            <p>Clarify the problem</p>
+                        </div>
+                        <div class="step-box" style="border-color: #50fa7b;">
+                            <h3>3. Imagine</h3>
+                            <p>Brainstorm solutions</p>
+                        </div>
+                        <div class="step-box" style="border-color: #00d4ff;">
+                            <h3>4. Plan</h3>
+                            <p>Select a promising solution</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="step-box" style="border-color: #bd93f9;">
+                            <h3>5. Create</h3>
+                            <p>Build a prototype</p>
+                        </div>
+                        <div class="step-box" style="border-color: #ff9500;">
+                            <h3>6. Test</h3>
+                            <p>Gather feedback</p>
+                        </div>
+                        <div class="step-box" style="border-color: #ff6b35;">
+                            <h3>7. Improve</h3>
+                            <p>Refine iterations of your design</p>
+                        </div>
+                        <div class="box" style="margin-top: 20px; background: rgba(255, 165, 0, 0.1); border-color: #ffa500;">
+                            <p style="text-align: center; font-size: 1.1rem; color: #ffa500;">
+                                <strong>Poll:</strong> Which step seems most critical to you?
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Ask - Empathize -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Step 1: Ask – Empathize & Understand</h2>
+                <div class="grid-2">
+                    <div>
+                        <div class="box" style="background: rgba(255, 107, 53, 0.1);">
+                            <h3>Purpose</h3>
+                            <p style="font-size: 1.2rem;">Put yourself in the user's shoes</p>
+                        </div>
+                        <div class="box" style="margin-top: 20px;">
+                            <h3>Key Activities</h3>
+                            <ul class="bullet-list">
+                                <li>Interview stakeholders (customers, end users, anyone who will have input on the final product)</li>
+                                <li>Observe behaviors & pain points</li>
+                                <li>Create an empathy map (What they say, think, feel, do)</li>
+                            </ul>
+                        </div>
+                        <div class="box" style="margin-top: 20px; background: rgba(255, 165, 0, 0.1); border-color: #ffa500;">
+                            <h3 style="color: #ffa500;">Prompt Question</h3>
+                            <p style="font-size: 1.1rem; font-style: italic;">"What really matters to our user?"</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        <svg viewBox="0 0 400 300" style="width: 100%; max-width: 400px;">
+                            <!-- Interview illustration -->
+                            <rect x="50" y="100" width="300" height="150" rx="8" fill="rgba(255, 107, 53, 0.1)" stroke="#ff6b35" stroke-width="2"/>
+
+                            <!-- People -->
+                            <circle cx="120" cy="150" r="20" fill="#ffa500"/>
+                            <rect x="100" y="170" width="40" height="60" rx="8" fill="#ffa500"/>
+
+                            <circle cx="200" cy="150" r="20" fill="#ff6b35"/>
+                            <rect x="180" y="170" width="40" height="60" rx="8" fill="#ff6b35"/>
+                            <rect x="190" y="140" width="30" height="5" fill="white"/>
+
+                            <circle cx="280" cy="150" r="20" fill="#ffa500"/>
+                            <rect x="260" y="170" width="40" height="60" rx="8" fill="#ffa500"/>
+
+                            <!-- Table -->
+                            <line x1="80" y1="230" x2="320" y2="230" stroke="#ff6b35" stroke-width="4"/>
+
+                            <text x="200" y="280" font-family="Exo 2" font-size="16" fill="#ff6b35" text-anchor="middle" font-weight="bold">Understanding Users</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Research -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Step 2: Research – Clarify the Problem</h2>
+                <div class="grid-2">
+                    <div>
+                        <div class="box" style="background: rgba(255, 165, 0, 0.1); border-color: #ffa500;">
+                            <h3 style="color: #ffa500;">Purpose</h3>
+                            <p style="font-size: 1.2rem;">Gather facts & define the scope</p>
+                        </div>
+                        <div class="box" style="margin-top: 20px;">
+                            <h3>Key Activities</h3>
+                            <ul class="bullet-list">
+                                <li>Review incident reports / existing designs</li>
+                                <li>List requirements & constraints (size, cost, safety)</li>
+                                <li>Benchmark similar solutions</li>
+                            </ul>
+                        </div>
+                        <div class="box" style="margin-top: 20px; background: rgba(80, 250, 123, 0.1); border-color: #50fa7b;">
+                            <h3 style="color: #50fa7b;">Prompt Question</h3>
+                            <p style="font-size: 1.1rem; font-style: italic;">"What do we know – and what don't we know?"</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        <svg viewBox="0 0 400 300" style="width: 100%; max-width: 400px;">
+                            <!-- Research illustration - magnifying glass over checklist -->
+                            <rect x="100" y="50" width="200" height="220" rx="8" fill="rgba(255, 165, 0, 0.05)" stroke="#ffa500" stroke-width="3"/>
+
+                            <!-- Checklist items -->
+                            <rect x="130" y="80" width="15" height="15" fill="none" stroke="#ff6b35" stroke-width="2"/>
+                            <path d="M 135,88 L 138,92 L 143,84" stroke="#50fa7b" stroke-width="3" fill="none"/>
+                            <line x1="155" y1="87" x2="250" y2="87" stroke="#ffa500" stroke-width="2"/>
+
+                            <rect x="130" y="120" width="15" height="15" fill="none" stroke="#ff6b35" stroke-width="2"/>
+                            <path d="M 135,128 L 138,132 L 143,124" stroke="#50fa7b" stroke-width="3" fill="none"/>
+                            <line x1="155" y1="127" x2="250" y2="127" stroke="#ffa500" stroke-width="2"/>
+
+                            <rect x="130" y="160" width="15" height="15" fill="none" stroke="#ff6b35" stroke-width="2"/>
+                            <line x1="155" y1="167" x2="250" y2="167" stroke="#ffa500" stroke-width="2"/>
+
+                            <!-- Magnifying glass -->
+                            <circle cx="220" cy="180" r="50" fill="none" stroke="#ff6b35" stroke-width="6"/>
+                            <line x1="260" y1="220" x2="290" y2="250" stroke="#ff6b35" stroke-width="8" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Imagine -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Step 3: Imagine – Brainstorm Solutions</h2>
+                <div class="grid-2">
+                    <div>
+                        <div class="box" style="background: rgba(80, 250, 123, 0.1); border-color: #50fa7b;">
+                            <h3 style="color: #50fa7b;">Purpose</h3>
+                            <p style="font-size: 1.2rem;">Generate as many ideas as possible</p>
+                        </div>
+                        <div class="box" style="margin-top: 20px;">
+                            <h3>Key Activities</h3>
+                            <ul class="bullet-list">
+                                <li>Brainwriting / mind-mapping sessions</li>
+                                <li>Crazy-8 sketch exercise (8 sketches × 8 minutes)</li>
+                                <li>No-judgment "Yes, and…" culture</li>
+                            </ul>
+                        </div>
+                        <div class="box" style="margin-top: 20px; background: rgba(255, 165, 0, 0.1); border-color: #ffa500;">
+                            <h3 style="color: #ffa500;">Prompt Question</h3>
+                            <p style="font-size: 1.1rem; font-style: italic;">"How might we…?"</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        <svg viewBox="0 0 400 300" style="width: 100%; max-width: 400px;">
+                            <!-- Brainstorming illustration -->
+                            <circle cx="120" cy="120" r="30" fill="#ffa500"/>
+                            <circle cx="120" cy="110" r="8" fill="#1a0f0a"/>
+                            <circle cx="135" cy="110" r="8" fill="#1a0f0a"/>
+                            <path d="M 115,135 Q 127,140 140,135" stroke="#1a0f0a" stroke-width="2" fill="none"/>
+
+                            <circle cx="200" cy="120" r="30" fill="#ff6b35"/>
+                            <circle cx="200" cy="110" r="8" fill="#1a0f0a"/>
+                            <circle cx="215" cy="110" r="8" fill="#1a0f0a"/>
+                            <path d="M 195,135 Q 207,140 220,135" stroke="#1a0f0a" stroke-width="2" fill="none"/>
+
+                            <circle cx="280" cy="120" r="30" fill="#ffa500"/>
+                            <circle cx="280" cy="110" r="8" fill="#1a0f0a"/>
+                            <circle cx="295" cy="110" r="8" fill="#1a0f0a"/>
+                            <path d="M 275,135 Q 287,140 300,135" stroke="#1a0f0a" stroke-width="2" fill="none"/>
+
+                            <!-- Light bulb -->
+                            <circle cx="200" cy="220" r="40" fill="none" stroke="#ffd700" stroke-width="6"/>
+                            <rect x="185" y="255" width="30" height="20" rx="4" fill="none" stroke="#ffd700" stroke-width="4"/>
+                            <line x1="200" y1="255" x2="200" y2="260" stroke="#ffd700" stroke-width="3"/>
+
+                            <!-- Light rays -->
+                            <line x1="140" y1="220" x2="120" y2="220" stroke="#ffd700" stroke-width="4" stroke-linecap="round"/>
+                            <line x1="260" y1="220" x2="280" y2="220" stroke="#ffd700" stroke-width="4" stroke-linecap="round"/>
+                            <line x1="160" y1="180" x2="145" y2="165" stroke="#ffd700" stroke-width="4" stroke-linecap="round"/>
+                            <line x1="240" y1="180" x2="255" y2="165" stroke="#ffd700" stroke-width="4" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Plan -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Step 4: Plan – Select a Promising Solution</h2>
+                <div class="grid-2">
+                    <div>
+                        <div class="box" style="background: rgba(0, 212, 255, 0.1); border-color: #00d4ff;">
+                            <h3 style="color: #00d4ff;">Purpose</h3>
+                            <p style="font-size: 1.2rem;">Narrow down to the best concept</p>
+                        </div>
+                        <div class="box" style="margin-top: 20px;">
+                            <h3>Key Activities</h3>
+                            <ul class="bullet-list">
+                                <li>Evaluate ideas versus criteria (Pugh matrix)</li>
+                                <li>Identify materials, tools, timeline, and roles</li>
+                                <li>Sketch the key features & assembly steps</li>
+                            </ul>
+                        </div>
+                        <div class="box" style="margin-top: 20px; background: rgba(255, 165, 0, 0.1); border-color: #ffa500;">
+                            <h3 style="color: #ffa500;">Prompt Question</h3>
+                            <p style="font-size: 1.1rem; font-style: italic;">"Which concept best meets our needs?"</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        <svg viewBox="0 0 400 300" style="width: 100%; max-width: 400px;">
+                            <!-- Selection matrix illustration -->
+                            <rect x="50" y="50" width="300" height="200" rx="8" fill="rgba(0, 212, 255, 0.05)" stroke="#00d4ff" stroke-width="3"/>
+
+                            <!-- Winner circle -->
+                            <circle cx="120" cy="120" r="40" fill="rgba(255, 107, 53, 0.2)" stroke="#ff6b35" stroke-width="4"/>
+                            <text x="120" y="130" font-family="Orbitron" font-size="24" fill="#ff6b35" text-anchor="middle" font-weight="bold">1</text>
+
+                            <!-- Checkmarks -->
+                            <path d="M 200,100 L 210,110 L 230,80" stroke="#50fa7b" stroke-width="6" fill="none"/>
+                            <path d="M 200,140 L 210,150 L 230,120" stroke="#50fa7b" stroke-width="6" fill="none"/>
+                            <path d="M 200,180 L 210,190 L 230,160" stroke="#50fa7b" stroke-width="6" fill="none"/>
+
+                            <!-- X marks -->
+                            <path d="M 270,95 L 290,115 M 290,95 L 270,115" stroke="#ff5555" stroke-width="6"/>
+
+                            <text x="200" y="235" font-family="Exo 2" font-size="16" fill="#00d4ff" text-anchor="middle" font-weight="bold">Decision Matrix</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Create -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Step 5: Create – Build a Prototype</h2>
+                <div class="grid-2">
+                    <div>
+                        <div class="box" style="background: rgba(189, 147, 249, 0.1); border-color: #bd93f9;">
+                            <h3 style="color: #bd93f9;">Purpose</h3>
+                            <p style="font-size: 1.2rem;">Turn your plan into a tangible model</p>
+                        </div>
+                        <div class="box" style="margin-top: 20px;">
+                            <h3>Key Activities</h3>
+                            <ul class="bullet-list">
+                                <li>Low-fidelity mock-ups (cardboard, foam, clay)</li>
+                                <li>CAD model export → 3D print / laser-cut parts</li>
+                                <li>Assemble and document build steps</li>
+                            </ul>
+                        </div>
+                        <div class="box" style="margin-top: 20px; background: rgba(255, 165, 0, 0.1); border-color: #ffa500;">
+                            <h3 style="color: #ffa500;">Prompt Question</h3>
+                            <p style="font-size: 1.1rem; font-style: italic;">"Does it look and feel like we expected?"</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        <svg viewBox="0 0 400 300" style="width: 100%; max-width: 400px;">
+                            <!-- Building/prototyping illustration -->
+                            <rect x="80" y="80" width="240" height="180" rx="8" fill="rgba(189, 147, 249, 0.1)" stroke="#bd93f9" stroke-width="3"/>
+
+                            <!-- 3D printer -->
+                            <rect x="120" y="100" width="80" height="60" rx="4" fill="rgba(255, 107, 53, 0.2)" stroke="#ff6b35" stroke-width="3"/>
+                            <rect x="140" y="90" width="40" height="10" fill="#ffa500"/>
+
+                            <!-- Tools -->
+                            <circle cx="240" cy="130" r="20" fill="none" stroke="#ffa500" stroke-width="3"/>
+                            <line x1="240" y1="130" x2="260" y2="150" stroke="#ffa500" stroke-width="4"/>
+
+                            <!-- Parts -->
+                            <rect x="100" y="190" width="30" height="30" rx="4" fill="rgba(80, 250, 123, 0.3)" stroke="#50fa7b" stroke-width="2"/>
+                            <rect x="145" y="190" width="30" height="30" rx="4" fill="rgba(0, 212, 255, 0.3)" stroke="#00d4ff" stroke-width="2"/>
+                            <circle cx="220" cy="205" r="15" fill="rgba(255, 165, 0, 0.3)" stroke="#ffa500" stroke-width="2"/>
+
+                            <text x="200" y="270" font-family="Exo 2" font-size="16" fill="#bd93f9" text-anchor="middle" font-weight="bold">Prototype Building</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Test -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Step 6: Test – Gather Feedback</h2>
+                <div class="grid-2">
+                    <div>
+                        <div class="box" style="background: rgba(255, 149, 0, 0.1); border-color: #ff9500;">
+                            <h3 style="color: #ff9500;">Purpose</h3>
+                            <p style="font-size: 1.2rem;">See how your prototype performs</p>
+                        </div>
+                        <div class="box" style="margin-top: 20px;">
+                            <h3>Key Activities</h3>
+                            <ul class="bullet-list">
+                                <li>Define test criteria (strength, fit, function)</li>
+                                <li>Conduct user trials / performance runs</li>
+                                <li>Record data, observations, and "failure modes"</li>
+                            </ul>
+                        </div>
+                        <div class="box" style="margin-top: 20px; background: rgba(255, 165, 0, 0.1); border-color: #ffa500;">
+                            <h3 style="color: #ffa500;">Prompt Question</h3>
+                            <p style="font-size: 1.1rem; font-style: italic;">"What worked, and what didn't?"</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        <svg viewBox="0 0 400 300" style="width: 100%; max-width: 400px;">
+                            <!-- Testing illustration -->
+                            <rect x="50" y="50" width="300" height="200" rx="8" fill="rgba(255, 149, 0, 0.05)" stroke="#ff9500" stroke-width="3"/>
+
+                            <!-- Test subject (robot) -->
+                            <rect x="140" y="120" width="60" height="80" rx="8" fill="rgba(255, 107, 53, 0.2)" stroke="#ff6b35" stroke-width="3"/>
+                            <circle cx="160" cy="145" r="8" fill="#50fa7b"/>
+                            <circle cx="180" cy="145" r="8" fill="#50fa7b"/>
+                            <rect x="155" y="165" width="30" height="5" rx="2" fill="#ff6b35"/>
+
+                            <!-- Scientists/testers -->
+                            <circle cx="260" cy="130" r="25" fill="#ffa500"/>
+                            <rect x="235" y="155" width="50" height="70" rx="8" fill="#ffa500"/>
+
+                            <!-- Clipboard -->
+                            <rect x="270" y="170" width="30" height="40" rx="2" fill="white" stroke="#ff6b35" stroke-width="2"/>
+                            <line x1="275" y1="180" x2="295" y2="180" stroke="#ff6b35" stroke-width="2"/>
+                            <line x1="275" y1="190" x2="295" y2="190" stroke="#ff6b35" stroke-width="2"/>
+                            <line x1="275" y1="200" x2="295" y2="200" stroke="#ff6b35" stroke-width="2"/>
+
+                            <text x="200" y="270" font-family="Exo 2" font-size="16" fill="#ff9500" text-anchor="middle" font-weight="bold">Testing & Feedback</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Improve -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Step 7: Improve – Refine & Iterate</h2>
+                <div class="grid-2">
+                    <div>
+                        <div class="box" style="background: rgba(255, 107, 53, 0.1); border-color: #ff6b35;">
+                            <h3 style="color: #ff6b35;">Purpose</h3>
+                            <p style="font-size: 1.2rem;">Use test insights to enhance your design</p>
+                        </div>
+                        <div class="box" style="margin-top: 20px;">
+                            <h3>Key Activities</h3>
+                            <ul class="bullet-list">
+                                <li>Update CAD models or prototype builds</li>
+                                <li>Retest the modified version</li>
+                                <li>Track version history & lessons learned</li>
+                            </ul>
+                        </div>
+                        <div class="box" style="margin-top: 20px; background: rgba(255, 165, 0, 0.1); border-color: #ffa500;">
+                            <h3 style="color: #ffa500;">Prompt Question</h3>
+                            <p style="font-size: 1.1rem; font-style: italic;">"How can we make it even better?"</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        <svg viewBox="0 0 400 300" style="width: 100%; max-width: 400px;">
+                            <!-- Iteration illustration - versions -->
+                            <rect x="50" y="100" width="80" height="100" rx="8" fill="rgba(255, 107, 53, 0.1)" stroke="#ff6b35" stroke-width="2"/>
+                            <text x="90" y="160" font-family="Orbitron" font-size="20" fill="#ff6b35" text-anchor="middle" font-weight="bold">v1.0</text>
+
+                            <path d="M 135,150 L 165,150" stroke="#ffa500" stroke-width="4" marker-end="url(#arrow-improve)"/>
+
+                            <rect x="170" y="90" width="90" height="120" rx="8" fill="rgba(255, 165, 0, 0.2)" stroke="#ffa500" stroke-width="3"/>
+                            <text x="215" y="160" font-family="Orbitron" font-size="24" fill="#ffa500" text-anchor="middle" font-weight="bold">v2.0</text>
+
+                            <path d="M 265,150 L 295,150" stroke="#50fa7b" stroke-width="4" marker-end="url(#arrow-improve2)"/>
+
+                            <rect x="300" y="80" width="90" height="140" rx="8" fill="rgba(80, 250, 123, 0.2)" stroke="#50fa7b" stroke-width="4"/>
+                            <text x="345" y="160" font-family="Orbitron" font-size="28" fill="#50fa7b" text-anchor="middle" font-weight="bold">v3.0</text>
+
+                            <defs>
+                                <marker id="arrow-improve" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                                    <polygon points="0 0, 10 5, 0 10" fill="#ffa500"/>
+                                </marker>
+                                <marker id="arrow-improve2" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                                    <polygon points="0 0, 10 5, 0 10" fill="#50fa7b"/>
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Iterative Process -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>The Process is Iterative</h2>
+                <p style="text-align: center; font-size: 1.3rem; margin-bottom: 30px;">Engineering design is a cycle, not a straight line!</p>
+                <div class="diagram-box">
+                    <svg viewBox="0 0 500 500" style="width: 100%; max-width: 500px;">
+                        <!-- Circular process diagram -->
+                        <circle cx="250" cy="250" r="180" fill="none" stroke="#ff6b35" stroke-width="8" stroke-dasharray="5,5"/>
+
+                        <!-- Steps around the circle -->
+                        <circle cx="250" cy="70" r="35" fill="#ff6b35"/>
+                        <text x="250" y="78" font-family="Orbitron" font-size="16" fill="white" text-anchor="middle" font-weight="bold">ASK</text>
+
+                        <circle cx="400" cy="130" r="35" fill="#ffa500"/>
+                        <text x="400" y="135" font-family="Orbitron" font-size="14" fill="white" text-anchor="middle" font-weight="bold">RESEARCH</text>
+
+                        <circle cx="430" cy="280" r="35" fill="#50fa7b"/>
+                        <text x="430" y="288" font-family="Orbitron" font-size="14" fill="white" text-anchor="middle" font-weight="bold">IMAGINE</text>
+
+                        <circle cx="350" cy="400" r="35" fill="#00d4ff"/>
+                        <text x="350" y="408" font-family="Orbitron" font-size="14" fill="white" text-anchor="middle" font-weight="bold">PLAN</text>
+
+                        <circle cx="250" cy="430" r="35" fill="#bd93f9"/>
+                        <text x="250" y="438" font-family="Orbitron" font-size="14" fill="white" text-anchor="middle" font-weight="bold">CREATE</text>
+
+                        <circle cx="150" cy="400" r="35" fill="#ff9500"/>
+                        <text x="150" y="408" font-family="Orbitron" font-size="14" fill="white" text-anchor="middle" font-weight="bold">TEST</text>
+
+                        <circle cx="70" cy="280" r="35" fill="#ff6b35"/>
+                        <text x="70" y="288" font-family="Orbitron" font-size="14" fill="white" text-anchor="middle" font-weight="bold">IMPROVE</text>
+
+                        <!-- Center text -->
+                        <text x="250" y="240" font-family="Orbitron" font-size="24" fill="#ff6b35" text-anchor="middle" font-weight="bold">ENGINEERING</text>
+                        <text x="250" y="270" font-family="Orbitron" font-size="24" fill="#ffa500" text-anchor="middle" font-weight="bold">DESIGN</text>
+                    </svg>
+                </div>
+                <p style="text-align: center; font-size: 1.2rem; margin-top: 25px; color: #ffa500;">
+                    You can jump between steps as you learn and discover new insights!
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 15: Real-World Example -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Real-World Engineering Design</h2>
+                <div class="box" style="background: rgba(255, 107, 53, 0.1); margin-bottom: 25px;">
+                    <h3>Watch: Engineering Design Process in Action</h3>
+                    <p style="font-size: 1.1rem;">See how professional engineers use this process to solve real problems</p>
+                </div>
+                <div style="text-align: center; margin: 30px 0;">
+                    <div style="background: #1a0f0a; border: 3px solid #ff6b35; border-radius: 12px; padding: 80px 40px; font-size: 2rem; color: #ff6b35;">
+                        Video Placeholder
+                    </div>
+                    <p style="margin-top: 15px; font-size: 0.95rem; color: #b8c5d6;">Teacher: Insert relevant engineering design process video here</p>
+                </div>
+                <div class="grid-3">
+                    <div class="box" style="text-align: center;">
+                        <h3 style="font-size: 1.1rem;">Identify</h3>
+                        <p style="font-size: 0.95rem;">What problem are they solving?</p>
+                    </div>
+                    <div class="box" style="text-align: center;">
+                        <h3 style="font-size: 1.1rem;">Process</h3>
+                        <p style="font-size: 0.95rem;">Which steps did they use?</p>
+                    </div>
+                    <div class="box" style="text-align: center;">
+                        <h3 style="font-size: 1.1rem;">Iterate</h3>
+                        <p style="font-size: 0.95rem;">How did they improve?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Recap -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Lesson Recap</h2>
+                <div class="objective-box">
+                    <h3>Today you learned:</h3>
+                    <ul class="bullet-list" style="font-size: 1.05rem;">
+                        <li><span class="checkmark">✓</span> What you'll accomplish in this course (CAD, code, prototypes!)</li>
+                        <li><span class="checkmark">✓</span> Top 5 shop safety rules to keep everyone safe</li>
+                        <li><span class="checkmark">✓</span> The 7 steps of the Engineering Design Process</li>
+                        <li><span class="checkmark">✓</span> How engineers empathize with users (Ask)</li>
+                        <li><span class="checkmark">✓</span> How to research and define problems clearly</li>
+                        <li><span class="checkmark">✓</span> Brainstorming techniques for creative solutions</li>
+                        <li><span class="checkmark">✓</span> How to plan, create, test, and improve designs</li>
+                        <li><span class="checkmark">✓</span> Engineering design is iterative - you keep improving!</li>
+                    </ul>
+                </div>
+                <div style="text-align: center; margin-top: 30px;">
+                    <h3 style="font-size: 1.8rem; color: #50fa7b;">You're Ready to Design!</h3>
+                    <p style="font-size: 1.2rem; margin-top: 15px;">Next: Unit 1.2 - Engineering Design Process Activities</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-number">
+        <span id="current-slide">1</span> / <span id="total-slides">16</span>
+    </div>
+
+    <div class="controls">
+        <button id="prev-btn" onclick="previousSlide()">← Previous</button>
+        <a href="../index.html" class="nav-button">⌂ HOME</a>
+        <button id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>

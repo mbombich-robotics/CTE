@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spaghetti Tower Challenge</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #0a0404 40%, #1a0d08 100%);
+            color: #e0e6f0;
+            height: 100vh;
+        }
+
+        .presentation {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            min-height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 55px 60px 120px 60px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .slide-content {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #ff6b35;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255, 107, 53, 0.5); }
+            to { text-shadow: 0 0 30px rgba(255, 107, 53, 0.8); }
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ff6b35;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ffa500;
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #b8c5d6;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #ffa500;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .objective-box {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(255, 107, 53, 0.05) 100%);
+            border: 3px solid #ff6b35;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 0 30px rgba(255, 107, 53, 0.2);
+        }
+
+        .objective-box h3 {
+            color: #ff6b35;
+            margin-bottom: 12px;
+        }
+
+        .bullet-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .bullet-list li {
+            font-size: 1.15rem;
+            margin: 12px 0;
+            padding-left: 35px;
+            position: relative;
+            color: #b8c5d6;
+            line-height: 1.5;
+        }
+
+        .bullet-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #ffa500;
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .box {
+            background: rgba(255, 107, 53, 0.05);
+            border: 2px solid #ff6b35;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.1);
+        }
+
+        .highlight {
+            color: #ff6b35;
+            font-weight: 700;
+        }
+
+        .warning {
+            color: #ffa500;
+            font-weight: 700;
+        }
+
+        .success {
+            color: #50fa7b;
+            font-weight: 700;
+        }
+
+        .checkmark {
+            color: #50fa7b;
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+
+        .challenge-box {
+            background: linear-gradient(135deg, rgba(255, 165, 0, 0.15) 0%, rgba(255, 165, 0, 0.05) 100%);
+            border: 3px solid #ffa500;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 0 30px rgba(255, 165, 0, 0.2);
+        }
+
+        .challenge-box h3 {
+            color: #ffa500;
+        }
+
+        .homework-box {
+            background: linear-gradient(135deg, rgba(80, 250, 123, 0.15) 0%, rgba(80, 250, 123, 0.05) 100%);
+            border: 3px solid #50fa7b;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 0 30px rgba(80, 250, 123, 0.2);
+        }
+
+        .homework-box h3 {
+            color: #50fa7b;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #ff6b35;
+            color: #000000;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: 900;
+            font-size: 1.2rem;
+            margin-right: 15px;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        button {
+            background: linear-gradient(135deg, #ff6b35 0%, #cc5429 100%);
+            border: none;
+            color: #1a0f0a;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.5);
+        }
+
+        button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .nav-button {
+            background: linear-gradient(135deg, #ff6b35 0%, #cc5429 100%);
+            border: none;
+            color: #1a0f0a;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.5);
+        }
+
+        .slide-number {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            color: #ff6b35;
+            z-index: 1000;
+        }
+
+        .icon-large {
+            font-size: 6rem;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            .slide { padding: 30px; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-content" style="text-align: center;">
+                <h1>Spaghetti Tower Challenge</h1>
+                <p class="subtitle">Lesson 1.3: Structural Engineering</p>
+                <div class="icon-large">🏗️</div>
+                <p style="font-size: 1.5rem; margin-top: 25px; color: #ffa500;">
+                    Build Tall. Build Strong. Build Smart.
+                </p>
+                <p style="font-size: 1rem; margin-top: 15px;">Lesson 1.3 | 50 minutes + homework</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Learning Objectives -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Today's Learning Objectives</h2>
+                <div class="objective-box">
+                    <h3>By the end of today, you will:</h3>
+                    <ul class="bullet-list">
+                        <li>Apply the Engineering Design Process to structural challenges</li>
+                        <li>Work collaboratively in teams of 3-4</li>
+                        <li>Learn about structural stability (base, triangles, weight distribution)</li>
+                        <li>Build, test, and iterate tower designs</li>
+                        <li>Practice time and resource management</li>
+                        <li>Document teamwork and decision-making</li>
+                    </ul>
+                </div>
+                <p style="text-align: center; font-size: 1.3rem; margin-top: 20px; color: #ffa500;">
+                    Teamwork + Engineering = Success!
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 3: The Challenge -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>The Challenge</h2>
+                <div class="challenge-box">
+                    <h3>Build the Tallest Free-Standing Tower!</h3>
+                    <p style="font-size: 1.4rem; margin: 20px 0; text-align: center;">
+                        Using <span class="highlight">20 sticks of spaghetti</span> and <span class="highlight">1 bag of marshmallows</span>
+                    </p>
+                </div>
+                <div class="grid-2">
+                    <div class="box" style="border-color: #ff6b35; background: rgba(255, 107, 53, 0.1);">
+                        <h3>Rules</h3>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>Must be free-standing (no support)</li>
+                            <li>Must stand for 10 seconds</li>
+                            <li>Can break spaghetti into pieces</li>
+                            <li>All materials stay with the tower</li>
+                            <li>Time limit: 18 minutes</li>
+                        </ul>
+                    </div>
+                    <div class="box" style="border-color: #ffa500; background: rgba(255, 165, 0, 0.1);">
+                        <h3 style="color: #ffa500;">Scoring</h3>
+                        <p style="font-size: 1.2rem; margin: 15px 0;">Height measured from base to highest point</p>
+                        <p style="font-size: 1rem; color: #50fa7b;">Tallest tower wins! 🏆</p>
+                    </div>
+                </div>
+                <div class="box" style="margin-top: 20px; background: rgba(255, 85, 85, 0.1); border-color: #ff5555;">
+                    <p style="text-align: center; font-size: 1.1rem;">
+                        <span style="color: #ff5555; font-weight: 700;">Important:</span> Tower must stand unsupported when time is called!
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Team Formation -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Form Your Engineering Teams</h2>
+                <div class="box" style="background: rgba(0, 212, 255, 0.1); border-color: #00d4ff; margin-bottom: 25px;">
+                    <h3 style="color: #00d4ff;">Teams of 3-4 Students</h3>
+                    <p style="font-size: 1.2rem;">Work together! Every voice matters.</p>
+                </div>
+                <div class="grid-2">
+                    <div class="box">
+                        <h3>Team Roles (Optional)</h3>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li><span class="highlight">Designer:</span> Leads planning/sketching</li>
+                            <li><span class="highlight">Builder:</span> Assembles structure</li>
+                            <li><span class="highlight">Tester:</span> Checks stability</li>
+                            <li><span class="highlight">Timekeeper:</span> Manages time</li>
+                        </ul>
+                        <p style="margin-top: 15px; font-size: 0.95rem; color: #b8c5d6;">Everyone participates in all activities!</p>
+                    </div>
+                    <div class="box" style="background: rgba(255, 165, 0, 0.1); border-color: #ffa500;">
+                        <h3 style="color: #ffa500;">Teamwork Skills</h3>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>Listen to all ideas</li>
+                            <li>Build on each other's suggestions</li>
+                            <li>Stay positive</li>
+                            <li>Make decisions together</li>
+                            <li>Help each other succeed</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Structural Engineering Basics -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Structural Engineering Basics</h2>
+                <p style="text-align: center; font-size: 1.2rem; margin-bottom: 25px;">What makes towers strong and stable?</p>
+                <div class="grid-3">
+                    <div class="box" style="border-color: #ff6b35; text-align: center; padding: 30px;">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">📐</div>
+                        <h3>Triangles</h3>
+                        <p style="font-size: 1rem;">Most stable shape in engineering</p>
+                    </div>
+                    <div class="box" style="border-color: #ffa500; text-align: center; padding: 30px;">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">⚖️</div>
+                        <h3>Wide Base</h3>
+                        <p style="font-size: 1rem;">Lower center of gravity = more stable</p>
+                    </div>
+                    <div class="box" style="border-color: #50fa7b; text-align: center; padding: 30px;">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">🎯</div>
+                        <h3>Weight Distribution</h3>
+                        <p style="font-size: 1rem;">Balance weight throughout structure</p>
+                    </div>
+                </div>
+                <div class="box" style="margin-top: 25px;">
+                    <h3>Key Concepts</h3>
+                    <ul class="bullet-list">
+                        <li><span class="highlight">Tension:</span> Forces pulling apart (spaghetti is weak in tension)</li>
+                        <li><span class="highlight">Compression:</span> Forces pushing together (spaghetti is strong in compression)</li>
+                        <li><span class="highlight">Load bearing:</span> Distributing weight to prevent collapse</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Steps 1-3 (Ask, Research, Imagine) -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Planning Phase (5 minutes)</h2>
+                <div class="box" style="background: rgba(255, 107, 53, 0.1); margin-bottom: 20px;">
+                    <h3><span class="step-number">1</span> Ask: What's the challenge?</h3>
+                    <p>Build tallest free-standing tower that lasts 10 seconds</p>
+                </div>
+                <div class="box" style="background: rgba(255, 165, 0, 0.1); border-color: #ffa500; margin-bottom: 20px;">
+                    <h3><span class="step-number">2</span> Research: What do we know?</h3>
+                    <ul class="bullet-list" style="font-size: 1rem;">
+                        <li>Triangles are strongest shapes</li>
+                        <li>Wide base increases stability</li>
+                        <li>Spaghetti is rigid but fragile</li>
+                        <li>Marshmallows are flexible connectors</li>
+                    </ul>
+                </div>
+                <div class="box" style="background: rgba(80, 250, 123, 0.1); border-color: #50fa7b;">
+                    <h3><span class="step-number">3</span> Imagine: Brainstorm designs</h3>
+                    <p style="font-size: 1.1rem; margin-bottom: 15px;">As a team, sketch 2-3 possible tower designs</p>
+                    <p style="font-size: 0.95rem;"><span class="warning">Consider:</span> pyramid, tripod, square base, lattice structure</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Step 4 - Plan -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2><span class="step-number">4</span> Plan: Choose Your Design</h2>
+                <div class="box" style="background: rgba(0, 212, 255, 0.1); border-color: #00d4ff; margin-bottom: 25px;">
+                    <h3 style="color: #00d4ff;">Team Decision Time (3 minutes)</h3>
+                    <p style="font-size: 1.1rem;">Discuss and select your best design</p>
+                </div>
+                <div class="grid-2">
+                    <div class="box">
+                        <h3>Evaluation Questions</h3>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>Will it be stable?</li>
+                            <li>Can we build it in 18 minutes?</li>
+                            <li>Does it use our materials well?</li>
+                            <li>How tall can we make it?</li>
+                        </ul>
+                    </div>
+                    <div class="box">
+                        <h3>Build Strategy</h3>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>Start with base</li>
+                            <li>Build upward in sections</li>
+                            <li>Test stability as you go</li>
+                            <li>Save time for adjustments</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="box" style="margin-top: 20px; background: rgba(255, 165, 0, 0.1); border-color: #ffa500;">
+                    <p style="text-align: center; font-size: 1.2rem;">
+                        <span class="warning">Activity:</span> Draw your final design and assign building tasks
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Step 5 - Create -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2><span class="step-number">5</span> Create: Build Your Tower!</h2>
+                <div class="challenge-box">
+                    <h3>🏗️ BUILD TIME: 18 MINUTES</h3>
+                    <p style="font-size: 1.3rem; margin: 15px 0; text-align: center;">Ready... Set... BUILD!</p>
+                </div>
+                <div class="grid-2">
+                    <div class="box">
+                        <h3>Building Tips</h3>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>Push spaghetti fully into marshmallows</li>
+                            <li>Use fresh marshmallows (not squished)</li>
+                            <li>Build on flat surface</li>
+                            <li>Test frequently</li>
+                            <li>Work carefully but quickly</li>
+                        </ul>
+                    </div>
+                    <div class="box" style="background: rgba(255, 85, 85, 0.1); border-color: #ff5555;">
+                        <h3 style="color: #ff5555;">Common Mistakes</h3>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>Building too fast (collapse!)</li>
+                            <li>Top-heavy design</li>
+                            <li>Weak connections</li>
+                            <li>Using all materials at start</li>
+                            <li>Not testing until the end</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="box" style="margin-top: 20px; border-color: #50fa7b; background: rgba(80, 250, 123, 0.05);">
+                    <p style="text-align: center; font-size: 1.1rem;">
+                        <span class="success">Remember:</span> Communication and teamwork are key!
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Step 6 - Test -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2><span class="step-number">6</span> Test: Does It Stand?</h2>
+                <div class="box" style="background: rgba(255, 149, 0, 0.1); border-color: #ff9500; margin-bottom: 25px;">
+                    <h3 style="color: #ff9500;">Final Test Requirements</h3>
+                    <ul class="bullet-list">
+                        <li>Remove all hands from tower</li>
+                        <li>Tower must stand for 10 seconds</li>
+                        <li>No leaning on walls or tables</li>
+                        <li>Measure from base to highest point</li>
+                    </ul>
+                </div>
+                <div class="grid-2">
+                    <div class="box" style="text-align: center; padding: 40px;">
+                        <div style="font-size: 4rem; margin-bottom: 15px;">📏</div>
+                        <h3>Height Measurement</h3>
+                        <p style="font-size: 1.1rem; margin-top: 10px;">Measured in centimeters or inches</p>
+                    </div>
+                    <div class="box" style="text-align: center; padding: 40px;">
+                        <div style="font-size: 4rem; margin-bottom: 15px;">⏱️</div>
+                        <h3>Stability Test</h3>
+                        <p style="font-size: 1.1rem; margin-top: 10px;">Must stand unsupported for 10 seconds</p>
+                    </div>
+                </div>
+                <div class="box" style="margin-top: 25px;">
+                    <h3>Record Your Results</h3>
+                    <ul class="bullet-list">
+                        <li>Final tower height</li>
+                        <li>Did it stand for 10 seconds? (Yes/No)</li>
+                        <li>Team ranking</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Step 7 - Improve -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2><span class="step-number">7</span> Improve: Reflection & Discussion</h2>
+                <div class="box" style="background: rgba(255, 107, 53, 0.1); margin-bottom: 25px;">
+                    <h3>What Did You Learn?</h3>
+                    <p style="font-size: 1.1rem;">Think about what worked and what you'd change</p>
+                </div>
+                <div class="grid-2">
+                    <div class="box">
+                        <h3>Successes</h3>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>What design elements worked well?</li>
+                            <li>Which building techniques helped?</li>
+                            <li>How did teamwork contribute?</li>
+                            <li>What surprised you?</li>
+                        </ul>
+                    </div>
+                    <div class="box">
+                        <h3>Areas for Improvement</h3>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>What caused problems?</li>
+                            <li>Where did structure fail?</li>
+                            <li>What would you do differently?</li>
+                            <li>How could you make it taller?</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="box" style="margin-top: 25px; background: rgba(255, 165, 0, 0.1); border-color: #ffa500;">
+                    <p style="text-align: center; font-size: 1.2rem;">
+                        <span class="warning">Class Discussion:</span> Share insights and learn from other teams
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Competition Results -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Competition Results</h2>
+                <div class="challenge-box" style="text-align: center; padding: 40px;">
+                    <h3 style="font-size: 2rem; margin-bottom: 20px;">🏆 Winners! 🏆</h3>
+                    <p style="font-size: 1.3rem;">Congratulations to all teams!</p>
+                </div>
+                <div class="box" style="margin-top: 25px;">
+                    <h3>Interesting Observations</h3>
+                    <ul class="bullet-list">
+                        <li>Which designs were most successful?</li>
+                        <li>What patterns do we see in the top towers?</li>
+                        <li>How did different teams approach the same problem?</li>
+                        <li>What engineering principles were demonstrated?</li>
+                    </ul>
+                </div>
+                <div class="box" style="margin-top: 25px; border-color: #50fa7b; background: rgba(80, 250, 123, 0.05);">
+                    <p style="text-align: center; font-size: 1.1rem;">
+                        <span class="success">Key Learning:</span> Multiple solutions can work! Engineering has many valid approaches.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Homework Assignment -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Homework: Engineering Journal Entry</h2>
+                <div class="homework-box">
+                    <h3>📓 Journal Assignment (Due Next Class)</h3>
+                    <p style="font-size: 1.2rem; margin-bottom: 20px;">Reflect on your team's engineering process</p>
+
+                    <h3 style="margin-top: 20px;">Required Sections:</h3>
+                    <ul class="bullet-list">
+                        <li><span class="highlight">Ask:</span> Describe the challenge and constraints</li>
+                        <li><span class="highlight">Research:</span> What structural engineering concepts did you consider?</li>
+                        <li><span class="highlight">Imagine:</span> Describe the 2-3 designs your team brainstormed</li>
+                        <li><span class="highlight">Plan:</span> Which design did you choose? Why? Include a sketch!</li>
+                        <li><span class="highlight">Create:</span> Describe the building process. What challenges arose?</li>
+                        <li><span class="highlight">Test:</span> Record final height and stability results</li>
+                        <li><span class="highlight">Improve:</span> What worked? What would you change if you could rebuild?</li>
+                        <li><span class="highlight">Teamwork:</span> How did your team work together? What went well? What could improve?</li>
+                    </ul>
+                </div>
+                <div class="box" style="margin-top: 25px; border-color: #ffa500; background: rgba(255, 165, 0, 0.1);">
+                    <p style="text-align: center; font-size: 1.1rem;">
+                        <span class="warning">Length:</span> 1-2 pages, typed or handwritten. Include sketches!
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Real-World Connection -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Real-World Structural Engineering</h2>
+                <div class="box" style="background: rgba(0, 212, 255, 0.1); border-color: #00d4ff; margin-bottom: 25px;">
+                    <h3 style="color: #00d4ff;">The principles you used today are the same ones professional engineers use!</h3>
+                </div>
+                <div class="grid-3">
+                    <div class="box" style="text-align: center; padding: 30px;">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">🌉</div>
+                        <h3>Bridges</h3>
+                        <p style="font-size: 0.95rem;">Truss designs use triangles for strength</p>
+                    </div>
+                    <div class="box" style="text-align: center; padding: 30px;">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">🏢</div>
+                        <h3>Skyscrapers</h3>
+                        <p style="font-size: 0.95rem;">Wide bases and internal bracing</p>
+                    </div>
+                    <div class="box" style="text-align: center; padding: 30px;">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">🗼</div>
+                        <h3>Towers</h3>
+                        <p style="font-size: 0.95rem;">Eiffel Tower uses lattice structure</p>
+                    </div>
+                </div>
+                <div class="box" style="margin-top: 25px;">
+                    <h3>Engineering Careers</h3>
+                    <ul class="bullet-list">
+                        <li><span class="highlight">Structural Engineers:</span> Design buildings and bridges</li>
+                        <li><span class="highlight">Civil Engineers:</span> Plan infrastructure projects</li>
+                        <li><span class="highlight">Mechanical Engineers:</span> Design machines and products</li>
+                        <li><span class="highlight">Aerospace Engineers:</span> Build aircraft and spacecraft</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Recap -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Lesson Recap</h2>
+                <div class="objective-box">
+                    <h3>Today you:</h3>
+                    <ul class="bullet-list" style="font-size: 1.05rem;">
+                        <li><span class="checkmark">✓</span> Applied the Engineering Design Process as a team</li>
+                        <li><span class="checkmark">✓</span> Learned about structural engineering principles</li>
+                        <li><span class="checkmark">✓</span> Practiced teamwork and communication</li>
+                        <li><span class="checkmark">✓</span> Built, tested, and evaluated a physical structure</li>
+                        <li><span class="checkmark">✓</span> Made decisions under time and resource constraints</li>
+                        <li><span class="checkmark">✓</span> Experienced real engineering challenges!</li>
+                    </ul>
+                </div>
+                <div style="text-align: center; margin-top: 30px;">
+                    <h3 style="font-size: 1.8rem; color: #50fa7b;">Excellent Engineering!</h3>
+                    <p style="font-size: 1.2rem; margin-top: 15px;">You're mastering the Engineering Design Process!</p>
+                    <p style="font-size: 1rem; margin-top: 10px; color: #ffa500;">Don't forget your homework journal entry!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-number">
+        <span id="current-slide">1</span> / <span id="total-slides">14</span>
+    </div>
+
+    <div class="controls">
+        <button id="prev-btn" onclick="previousSlide()">← Previous</button>
+        <a href="index.html" class="nav-button">⌂ BACK TO UNIT 1</a>
+        <button id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>
