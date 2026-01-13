@@ -813,8 +813,8 @@
                 text: 'Which analog pin is the sensor connected to in this sketch?',
                 category: 'Code Analysis',
                 options: ['A0', 'A1', 'A2', 'A3'],
-                correct: 1,
-                explanation: 'The sensor is connected to analog pin A1, as declared in the line: int sensorPin = A1;'
+                correct: 0,
+                explanation: 'The sensor is connected to analog pin A0, as declared in the line: int sensorPin = A0;'
             },
             q25: {
                 text: 'If the sensor reads 341 and the button is NOT pressed, what will LED2 (pin 9) display?',
@@ -934,7 +934,7 @@
 <span style="color: #ff9500;">int</span> buttonPin = <span style="color: #50fa7b;">2</span>;
 <span style="color: #ff9500;">int</span> ledPin1 = <span style="color: #50fa7b;">13</span>;
 <span style="color: #ff9500;">int</span> ledPin2 = <span style="color: #50fa7b;">9</span>;
-<span style="color: #ff9500;">int</span> sensorPin = <span style="color: #50fa7b;">A1</span>;
+<span style="color: #ff9500;">int</span> sensorPin = <span style="color: #50fa7b;">A0</span>;
 
 <span style="color: #ff9500;">int</span> buttonState = <span style="color: #50fa7b;">0</span>;
 <span style="color: #ff9500;">int</span> sensorValue = <span style="color: #50fa7b;">0</span>;
@@ -1277,7 +1277,7 @@
             const code = `int buttonPin = 2;
 int ledPin1 = 13;
 int ledPin2 = 9;
-int sensorPin = A1;
+int sensorPin = A0;
 
 int buttonState = 0;
 int sensorValue = 0;
