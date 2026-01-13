@@ -300,6 +300,38 @@
             transform: translateY(-3px);
         }
 
+        .code-container {
+            position: relative;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            border: 2px solid #00d4ff;
+            color: #0a0e27;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .copy-button:hover {
+            background: linear-gradient(135deg, #00eeff, #00bbee);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.5);
+        }
+
+        .copy-button.copied {
+            background: linear-gradient(135deg, #50fa7b, #3dd966);
+            border-color: #50fa7b;
+        }
+
         footer {
             text-align: center;
             margin-top: 60px;
@@ -341,7 +373,8 @@
         <div class="instructions">
             <h2>Instructions</h2>
             <p>This quiz covers material from Lessons 2-5 (Arduino Introduction, Variables & Serial Monitor, Digital Input & Control, and Analog Input & PWM).</p>
-            <p><strong>Format:</strong> 20 multiple choice questions</p>
+            <p><strong>Format:</strong> 25 multiple choice questions</p>
+            <p><strong>Questions 21-25:</strong> Code analysis questions based on an Arduino sketch</p>
             <p><strong>Practice Mode:</strong> Take this quiz as many times as you'd like. After submitting, you'll see your score and detailed explanations for any incorrect answers.</p>
         </div>
 
@@ -787,6 +820,166 @@
                     </div>
                 </div>
 
+                <!-- Code Analysis Section -->
+                <div class="instructions" style="margin-top: 40px; background: rgba(255, 149, 0, 0.05); border-color: #ff9500;">
+                    <h2 style="color: #ff9500;">Code Analysis Section</h2>
+                    <p>The following questions (21-25) refer to this Arduino sketch. Study the code carefully before answering.</p>
+                    <p style="margin-top: 10px;"><strong>Optional:</strong> You may upload this code to your Arduino to explore how it works! Use the copy button to copy the sketch to your clipboard.</p>
+                </div>
+
+                <div class="question-card code-container" style="background: linear-gradient(135deg, rgba(255, 149, 0, 0.05) 0%, rgba(26, 31, 58, 0.8) 100%); border-color: #ff9500;">
+                    <button class="copy-button" onclick="copyCode()" id="copyBtn">Copy Code</button>
+                    <pre id="arduinoCode" style="background: #0a0e27; padding: 20px; border-radius: 8px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; line-height: 1.5; color: #e0e6f0; border: 2px solid #00d4ff;">
+<span style="color: #ff9500;">int</span> buttonPin = <span style="color: #50fa7b;">2</span>;
+<span style="color: #ff9500;">int</span> ledPin1 = <span style="color: #50fa7b;">9</span>;
+<span style="color: #ff9500;">int</span> ledPin2 = <span style="color: #50fa7b;">13</span>;
+<span style="color: #ff9500;">int</span> potPin = <span style="color: #50fa7b;">A0</span>;
+
+<span style="color: #ff9500;">int</span> buttonState = <span style="color: #50fa7b;">0</span>;
+<span style="color: #ff9500;">int</span> potValue = <span style="color: #50fa7b;">0</span>;
+<span style="color: #ff9500;">int</span> brightness = <span style="color: #50fa7b;">0</span>;
+
+<span style="color: #ff9500;">void</span> <span style="color: #00d4ff;">setup</span>() {
+  <span style="color: #00d4ff;">pinMode</span>(buttonPin, <span style="color: #ff9500;">INPUT_PULLUP</span>);
+  <span style="color: #00d4ff;">pinMode</span>(ledPin1, <span style="color: #ff9500;">OUTPUT</span>);
+  <span style="color: #00d4ff;">pinMode</span>(ledPin2, <span style="color: #ff9500;">OUTPUT</span>);
+  Serial.<span style="color: #00d4ff;">begin</span>(<span style="color: #50fa7b;">9600</span>);
+}
+
+<span style="color: #ff9500;">void</span> <span style="color: #00d4ff;">loop</span>() {
+  buttonState = <span style="color: #00d4ff;">digitalRead</span>(buttonPin);
+  potValue = <span style="color: #00d4ff;">analogRead</span>(potPin);
+  brightness = <span style="color: #00d4ff;">map</span>(potValue, <span style="color: #50fa7b;">0</span>, <span style="color: #50fa7b;">1023</span>, <span style="color: #50fa7b;">0</span>, <span style="color: #50fa7b;">255</span>);
+
+  Serial.<span style="color: #00d4ff;">print</span>(<span style="color: #50fa7b;">"Button: "</span>);
+  Serial.<span style="color: #00d4ff;">print</span>(buttonState);
+  Serial.<span style="color: #00d4ff;">print</span>(<span style="color: #50fa7b;">" | Pot: "</span>);
+  Serial.<span style="color: #00d4ff;">print</span>(potValue);
+  Serial.<span style="color: #00d4ff;">print</span>(<span style="color: #50fa7b;">" | Brightness: "</span>);
+  Serial.<span style="color: #00d4ff;">println</span>(brightness);
+
+  <span style="color: #ff9500;">if</span> (buttonState == <span style="color: #ff9500;">LOW</span>) {
+    <span style="color: #00d4ff;">analogWrite</span>(ledPin1, brightness);
+    <span style="color: #00d4ff;">digitalWrite</span>(ledPin2, <span style="color: #ff9500;">HIGH</span>);
+  } <span style="color: #ff9500;">else</span> {
+    <span style="color: #00d4ff;">digitalWrite</span>(ledPin1, <span style="color: #ff9500;">LOW</span>);
+    <span style="color: #00d4ff;">analogWrite</span>(ledPin2, brightness / <span style="color: #50fa7b;">2</span>);
+  }
+
+  <span style="color: #00d4ff;">delay</span>(<span style="color: #50fa7b;">100</span>);
+}</pre>
+                </div>
+
+                <!-- Question 21 -->
+                <div class="question-card">
+                    <div class="question-number">Question 21 - Code Analysis</div>
+                    <div class="question-text">What happens to LED1 (pin 9) when the button is NOT pressed?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q21a" name="q21" value="A">
+                        <label for="q21a">A) It glows at full brightness</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q21b" name="q21" value="B">
+                        <label for="q21b">B) It glows at half the potentiometer brightness</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q21c" name="q21" value="C">
+                        <label for="q21c">C) It turns off completely</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q21d" name="q21" value="D">
+                        <label for="q21d">D) It blinks on and off</label>
+                    </div>
+                </div>
+
+                <!-- Question 22 -->
+                <div class="question-card">
+                    <div class="question-number">Question 22 - Code Analysis</div>
+                    <div class="question-text">What is the range of values that the variable brightness can hold after the map() function executes?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q22a" name="q22" value="A">
+                        <label for="q22a">A) 0 to 1023</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q22b" name="q22" value="B">
+                        <label for="q22b">B) 0 to 255</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q22c" name="q22" value="C">
+                        <label for="q22c">C) 0 to 512</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q22d" name="q22" value="D">
+                        <label for="q22d">D) 0 to 100</label>
+                    </div>
+                </div>
+
+                <!-- Question 23 -->
+                <div class="question-card">
+                    <div class="question-number">Question 23 - Code Analysis</div>
+                    <div class="question-text">When the button IS pressed, what happens to LED2 (pin 13)?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q23a" name="q23" value="A">
+                        <label for="q23a">A) It turns off completely</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q23b" name="q23" value="B">
+                        <label for="q23b">B) It glows at half brightness</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q23c" name="q23" value="C">
+                        <label for="q23c">C) It turns on at full brightness</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q23d" name="q23" value="D">
+                        <label for="q23d">D) It glows at the brightness controlled by the potentiometer</label>
+                    </div>
+                </div>
+
+                <!-- Question 24 -->
+                <div class="question-card">
+                    <div class="question-number">Question 24 - Code Analysis</div>
+                    <div class="question-text">Why is INPUT_PULLUP used instead of just INPUT for the button pin?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q24a" name="q24" value="A">
+                        <label for="q24a">A) To make the button more sensitive</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q24b" name="q24" value="B">
+                        <label for="q24b">B) To prevent floating pins and ensure stable HIGH/LOW readings</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q24c" name="q24" value="C">
+                        <label for="q24c">C) To increase the voltage to the button</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q24d" name="q24" value="D">
+                        <label for="q24d">D) INPUT_PULLUP is required for all digital inputs</label>
+                    </div>
+                </div>
+
+                <!-- Question 25 -->
+                <div class="question-card">
+                    <div class="question-number">Question 25 - Code Analysis</div>
+                    <div class="question-text">If the potentiometer reads 512 and the button is NOT pressed, what brightness level is LED2 displaying?</div>
+                    <div class="answer-option">
+                        <input type="radio" id="q25a" name="q25" value="A">
+                        <label for="q25a">A) 64 (approximately)</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q25b" name="q25" value="B">
+                        <label for="q25b">B) 128</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q25c" name="q25" value="C">
+                        <label for="q25c">C) 256</label>
+                    </div>
+                    <div class="answer-option">
+                        <input type="radio" id="q25d" name="q25" value="D">
+                        <label for="q25d">D) 512</label>
+                    </div>
+                </div>
+
                 <button type="submit" class="submit-button">Submit Quiz</button>
             </form>
         </div>
@@ -795,7 +988,7 @@
             <div class="results-section">
                 <div class="score-display">
                     <div class="score-number" id="score-number">0</div>
-                    <div class="score-label">out of 20 correct (<span id="score-percentage">0</span>%)</div>
+                    <div class="score-label">out of 25 correct (<span id="score-percentage">0</span>%)</div>
                 </div>
                 <div class="grade-message" id="grade-message"></div>
 
@@ -914,6 +1107,31 @@
                 correct: 'B',
                 explanation: 'PWM (Pulse Width Modulation) rapidly switches a digital signal on and off to simulate analog output.',
                 options: ['Power Width Modulation', 'Pulse Width Modulation', 'Pin Wave Mode', 'Programmable Wave Method']
+            },
+            q21: {
+                correct: 'C',
+                explanation: 'When the button is NOT pressed (INPUT_PULLUP means buttonState is HIGH), the else block executes, which calls digitalWrite(ledPin1, LOW), turning LED1 off completely.',
+                options: ['It glows at full brightness', 'It glows at half the potentiometer brightness', 'It turns off completely', 'It blinks on and off']
+            },
+            q22: {
+                correct: 'B',
+                explanation: 'The map() function converts potValue from the range 0-1023 to the range 0-255, so brightness will always be between 0 and 255.',
+                options: ['0 to 1023', '0 to 255', '0 to 512', '0 to 100']
+            },
+            q23: {
+                correct: 'C',
+                explanation: 'When the button IS pressed (buttonState == LOW), the if block executes digitalWrite(ledPin2, HIGH), which turns LED2 fully on.',
+                options: ['It turns off completely', 'It glows at half brightness', 'It turns on at full brightness', 'It glows at the brightness controlled by the potentiometer']
+            },
+            q24: {
+                correct: 'B',
+                explanation: 'INPUT_PULLUP activates an internal pull-up resistor that keeps the pin at a stable HIGH state when the button is not pressed. Without it, the pin would "float" and give unpredictable readings.',
+                options: ['To make the button more sensitive', 'To prevent floating pins and ensure stable HIGH/LOW readings', 'To increase the voltage to the button', 'INPUT_PULLUP is required for all digital inputs']
+            },
+            q25: {
+                correct: 'A',
+                explanation: 'When button is NOT pressed (else block), LED2 gets analogWrite(ledPin2, brightness / 2). The potentiometer reading of 512 maps to approximately 127, divided by 2 equals approximately 63-64.',
+                options: ['64 (approximately)', '128', '256', '512']
             }
         };
 
@@ -938,7 +1156,12 @@
             q17: 'What range does analogWrite() accept?',
             q18: 'Which pins support PWM on Arduino Uno?',
             q19: 'What does map(512, 0, 1023, 0, 255) return?',
-            q20: 'What does PWM stand for?'
+            q20: 'What does PWM stand for?',
+            q21: 'What happens to LED1 (pin 9) when the button is NOT pressed?',
+            q22: 'What is the range of values that the variable brightness can hold after the map() function executes?',
+            q23: 'When the button IS pressed, what happens to LED2 (pin 13)?',
+            q24: 'Why is INPUT_PULLUP used instead of just INPUT for the button pin?',
+            q25: 'If the potentiometer reads 512 and the button is NOT pressed, what brightness level is LED2 displaying?'
         };
 
         document.getElementById('quiz-form').addEventListener('submit', function(e) {
@@ -948,7 +1171,7 @@
             let allAnswered = true;
             let unansweredQuestions = [];
 
-            for (let i = 1; i <= 20; i++) {
+            for (let i = 1; i <= 25; i++) {
                 const questionName = 'q' + i;
                 const selectedAnswer = document.querySelector(`input[name="${questionName}"]:checked`);
 
@@ -972,7 +1195,7 @@
             let answeredCount = 0;
 
             // Check each answer
-            for (let i = 1; i <= 20; i++) {
+            for (let i = 1; i <= 25; i++) {
                 const questionName = 'q' + i;
                 const selectedAnswer = document.querySelector(`input[name="${questionName}"]:checked`);
 
@@ -1011,7 +1234,7 @@
             }, 100);
 
             // Display score and percentage
-            const percentage = Math.round((score / 20) * 100);
+            const percentage = Math.round((score / 25) * 100);
             document.getElementById('score-number').textContent = score;
             document.getElementById('score-percentage').textContent = percentage;
 
@@ -1034,13 +1257,13 @@
             const incorrectSection = document.getElementById('incorrect-answers');
             const perfectSection = document.getElementById('perfect-score');
 
-            if (incorrectAnswers.length === 0 && answeredCount === 20) {
+            if (incorrectAnswers.length === 0 && answeredCount === 25) {
                 incorrectSection.style.display = 'none';
                 perfectSection.classList.remove('hidden');
                 perfectSection.innerHTML = `
                     <h3>🎉 Perfect Score! 🎉</h3>
                     <p style="color: #b8c5d6; font-size: 1.2rem; margin-top: 15px;">
-                        You answered all 20 questions correctly! You have mastered the material from Lessons 2-5.
+                        You answered all 25 questions correctly! You have mastered the material from Lessons 2-5.
                     </p>
                 `;
             } else {
@@ -1074,6 +1297,65 @@
 
             // Scroll to top
             window.scrollTo(0, 0);
+        }
+
+        function copyCode() {
+            // Plain text version of the Arduino code (without HTML styling)
+            const code = `int buttonPin = 2;
+int ledPin1 = 9;
+int ledPin2 = 13;
+int potPin = A0;
+
+int buttonState = 0;
+int potValue = 0;
+int brightness = 0;
+
+void setup() {
+  pinMode(buttonPin, INPUT_PULLUP);
+  pinMode(ledPin1, OUTPUT);
+  pinMode(ledPin2, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  buttonState = digitalRead(buttonPin);
+  potValue = analogRead(potPin);
+  brightness = map(potValue, 0, 1023, 0, 255);
+
+  Serial.print("Button: ");
+  Serial.print(buttonState);
+  Serial.print(" | Pot: ");
+  Serial.print(potValue);
+  Serial.print(" | Brightness: ");
+  Serial.println(brightness);
+
+  if (buttonState == LOW) {
+    analogWrite(ledPin1, brightness);
+    digitalWrite(ledPin2, HIGH);
+  } else {
+    digitalWrite(ledPin1, LOW);
+    analogWrite(ledPin2, brightness / 2);
+  }
+
+  delay(100);
+}`;
+
+            // Copy to clipboard
+            navigator.clipboard.writeText(code).then(() => {
+                // Update button to show success
+                const btn = document.getElementById('copyBtn');
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+
+                // Reset button after 2 seconds
+                setTimeout(() => {
+                    btn.textContent = 'Copy Code';
+                    btn.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy code: ', err);
+                alert('Failed to copy code. Please try selecting and copying manually.');
+            });
         }
     </script>
 </body>

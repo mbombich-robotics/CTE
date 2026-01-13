@@ -443,6 +443,39 @@
             cursor: not-allowed;
             opacity: 0.5;
         }
+
+        .code-container {
+            position: relative;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            border: 2px solid #00d4ff;
+            color: #0a0e27;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .copy-button:hover {
+            background: linear-gradient(135deg, #00eeff, #00bbee);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.5);
+        }
+
+        .copy-button.copied {
+            background: linear-gradient(135deg, #50fa7b, #3dd966);
+            border-color: #50fa7b;
+        }
+
         .nav-button {
             background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
             border: none;
@@ -547,9 +580,10 @@
             <h2>Instructions</h2>
             <p>This graded quiz has TWO parts covering material from Lessons 2-5.</p>
             <ul>
-                <li><strong>Part A:</strong> 20 multiple choice questions (20 points)</li>
+                <li><strong>Part A:</strong> 25 multiple choice questions (25 points)</li>
+                <li style="padding-left: 30px;">Questions 21-25: Code analysis based on an Arduino sketch</li>
                 <li><strong>Part B:</strong> Practical coding test - debug Arduino code (10 points)</li>
-                <li><strong>Total Points:</strong> 30 points</li>
+                <li><strong>Total Points:</strong> 35 points</li>
                 <li><strong>Attempts:</strong> You may submit once, with one retake allowed if needed</li>
                 <li><strong>Feedback:</strong> You'll see your score and explanations immediately after submitting</li>
                 <li><strong>Submission:</strong> Your results will be automatically sent to your instructor</li>
@@ -582,7 +616,7 @@
             <div class="results-section">
                 <div class="score-display">
                     <div class="score-number" id="score-number">0</div>
-                    <div class="score-label">out of 20 correct (<span id="score-percentage">0</span>%)</div>
+                    <div class="score-label">out of 25 correct (<span id="score-percentage">0</span>%)</div>
                 </div>
                 <div class="grade-message" id="grade-message"></div>
 
@@ -757,6 +791,41 @@
                 options: ['Power Width Modulation', 'Pulse Width Modulation', 'Pin Wave Mode', 'Programmable Wave Method'],
                 correct: 1,
                 explanation: 'PWM (Pulse Width Modulation) rapidly switches a digital signal on and off to simulate analog output.'
+            },
+            q21: {
+                text: 'What happens to LED1 (pin 13) when the button is pressed?',
+                category: 'Code Analysis',
+                options: ['It turns off completely', 'It glows at the brightness controlled by the potentiometer', 'It turns on at full brightness', 'It blinks on and off'],
+                correct: 1,
+                explanation: 'When the button IS pressed (buttonState == LOW), the if block executes analogWrite(ledPin1, brightness), which sets LED1 to the brightness value mapped from the potentiometer.'
+            },
+            q22: {
+                text: 'What is the value of the variable sensorValue after reading the potentiometer?',
+                category: 'Code Analysis',
+                options: ['0 to 255', '0 to 512', '0 to 1023', '0 to 100'],
+                correct: 2,
+                explanation: 'analogRead() returns a value from 0 to 1023, which is stored in the sensorValue variable before being mapped to brightness.'
+            },
+            q23: {
+                text: 'When the button is NOT pressed, what happens to LED2 (pin 9)?',
+                category: 'Code Analysis',
+                options: ['It turns off completely', 'It glows at triple the potentiometer brightness', 'It glows at brightness * 3 (capped at 255)', 'It turns on at full brightness'],
+                correct: 2,
+                explanation: 'When button is NOT pressed (else block), LED2 gets analogWrite(ledPin2, brightness * 3). However, if brightness * 3 exceeds 255, the Arduino will wrap it or use 255 as the maximum.'
+            },
+            q24: {
+                text: 'Which analog pin is the potentiometer connected to in this sketch?',
+                category: 'Code Analysis',
+                options: ['A0', 'A1', 'A2', 'A3'],
+                correct: 1,
+                explanation: 'The potentiometer is connected to analog pin A1, as declared in the line: int sensorPin = A1;'
+            },
+            q25: {
+                text: 'If the potentiometer reads 341 and the button is NOT pressed, approximately what value is sent to LED2?',
+                category: 'Code Analysis',
+                options: ['85', '170', '255', '341'],
+                correct: 2,
+                explanation: 'Potentiometer reading of 341 maps to approximately 85 (341 * 255 / 1023 ≈ 85). Then brightness * 3 = 85 * 3 = 255. Since 255 is the maximum, LED2 receives 255.'
             }
         };
 
@@ -844,7 +913,67 @@
             });
 
             // Generate HTML for each question
-            shuffledQuestions.forEach(q => {
+            shuffledQuestions.forEach((q, index) => {
+                // Add code analysis section before question 21
+                if (q.number === 21) {
+                    const codeSection = document.createElement('div');
+                    codeSection.className = 'instructions';
+                    codeSection.style.cssText = 'margin-top: 40px; background: rgba(255, 149, 0, 0.05); border-color: #ff9500;';
+                    codeSection.innerHTML = `
+                        <h2 style="color: #ff9500;">Code Analysis Section</h2>
+                        <p>The following questions (21-25) refer to this Arduino sketch. Study the code carefully before answering.</p>
+                        <p style="margin-top: 10px;"><strong>Optional:</strong> You may upload this code to your Arduino to explore how it works! Use the copy button to copy the sketch to your clipboard.</p>
+                    `;
+                    form.appendChild(codeSection);
+
+                    const codeCard = document.createElement('div');
+                    codeCard.className = 'question-card code-container';
+                    codeCard.style.cssText = 'background: linear-gradient(135deg, rgba(255, 149, 0, 0.05) 0%, rgba(26, 31, 58, 0.8) 100%); border-color: #ff9500;';
+                    codeCard.innerHTML = `
+                        <button class="copy-button" onclick="copyCodeAnalysis()" id="copyBtnAnalysis">Copy Code</button>
+                        <pre style="background: #0a0e27; padding: 20px; border-radius: 8px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; line-height: 1.5; color: #e0e6f0; border: 2px solid #00d4ff;">
+<span style="color: #ff9500;">int</span> buttonPin = <span style="color: #50fa7b;">3</span>;
+<span style="color: #ff9500;">int</span> ledPin1 = <span style="color: #50fa7b;">13</span>;
+<span style="color: #ff9500;">int</span> ledPin2 = <span style="color: #50fa7b;">9</span>;
+<span style="color: #ff9500;">int</span> sensorPin = <span style="color: #50fa7b;">A1</span>;
+
+<span style="color: #ff9500;">int</span> buttonState = <span style="color: #50fa7b;">0</span>;
+<span style="color: #ff9500;">int</span> sensorValue = <span style="color: #50fa7b;">0</span>;
+<span style="color: #ff9500;">int</span> brightness = <span style="color: #50fa7b;">0</span>;
+
+<span style="color: #ff9500;">void</span> <span style="color: #00d4ff;">setup</span>() {
+  <span style="color: #00d4ff;">pinMode</span>(buttonPin, <span style="color: #ff9500;">INPUT_PULLUP</span>);
+  <span style="color: #00d4ff;">pinMode</span>(ledPin1, <span style="color: #ff9500;">OUTPUT</span>);
+  <span style="color: #00d4ff;">pinMode</span>(ledPin2, <span style="color: #ff9500;">OUTPUT</span>);
+  Serial.<span style="color: #00d4ff;">begin</span>(<span style="color: #50fa7b;">9600</span>);
+}
+
+<span style="color: #ff9500;">void</span> <span style="color: #00d4ff;">loop</span>() {
+  buttonState = <span style="color: #00d4ff;">digitalRead</span>(buttonPin);
+  sensorValue = <span style="color: #00d4ff;">analogRead</span>(sensorPin);
+  brightness = <span style="color: #00d4ff;">map</span>(sensorValue, <span style="color: #50fa7b;">0</span>, <span style="color: #50fa7b;">1023</span>, <span style="color: #50fa7b;">0</span>, <span style="color: #50fa7b;">255</span>);
+
+  Serial.<span style="color: #00d4ff;">print</span>(<span style="color: #50fa7b;">"Button: "</span>);
+  Serial.<span style="color: #00d4ff;">print</span>(buttonState);
+  Serial.<span style="color: #00d4ff;">print</span>(<span style="color: #50fa7b;">" | Sensor: "</span>);
+  Serial.<span style="color: #00d4ff;">print</span>(sensorValue);
+  Serial.<span style="color: #00d4ff;">print</span>(<span style="color: #50fa7b;">" | Brightness: "</span>);
+  Serial.<span style="color: #00d4ff;">println</span>(brightness);
+
+  <span style="color: #ff9500;">if</span> (buttonState == <span style="color: #ff9500;">LOW</span>) {
+    <span style="color: #00d4ff;">analogWrite</span>(ledPin1, brightness);
+    <span style="color: #00d4ff;">digitalWrite</span>(ledPin2, <span style="color: #ff9500;">LOW</span>);
+  } <span style="color: #ff9500;">else</span> {
+    <span style="color: #00d4ff;">digitalWrite</span>(ledPin1, <span style="color: #ff9500;">LOW</span>);
+    <span style="color: #00d4ff;">analogWrite</span>(ledPin2, brightness * <span style="color: #50fa7b;">3</span>);
+  }
+
+  <span style="color: #00d4ff;">delay</span>(<span style="color: #50fa7b;">100</span>);
+}</pre>
+                    `;
+                    form.appendChild(codeCard);
+                }
+
                 const questionCard = document.createElement('div');
                 questionCard.className = 'question-card';
                 questionCard.innerHTML = `
@@ -1170,7 +1299,7 @@ void loop() {
 
             // Calculate total score
             const totalScore = mcScore + codeGradeResult.score;
-            const maxTotalScore = 30;  // 20 MC + 10 Practical
+            const maxTotalScore = 35;  // 25 MC + 10 Practical
 
             // Submit to Google Sheets
             submitToGoogleSheets(mcScore, answersArray, incorrectAnswers, answeredCount, codeGradeResult, totalScore, maxTotalScore, submittedCode);
@@ -1282,7 +1411,7 @@ void loop() {
                 perfectSection.innerHTML = `
                     <h3>🎉 Perfect Score! 🎉</h3>
                     <p style="color: #b8c5d6; font-size: 1.2rem; margin-top: 15px;">
-                        You answered all 20 questions correctly! You have mastered the material from Lessons 2-5.
+                        You answered all 25 questions correctly! You have mastered the material from Lessons 2-5.
                     </p>
                 `;
             } else {
@@ -1361,6 +1490,65 @@ void loop() {
             generateQuiz();
 
             window.scrollTo(0, 0);
+        }
+
+        function copyCodeAnalysis() {
+            // Plain text version of the Arduino code (without HTML styling)
+            const code = `int buttonPin = 3;
+int ledPin1 = 13;
+int ledPin2 = 9;
+int sensorPin = A1;
+
+int buttonState = 0;
+int sensorValue = 0;
+int brightness = 0;
+
+void setup() {
+  pinMode(buttonPin, INPUT_PULLUP);
+  pinMode(ledPin1, OUTPUT);
+  pinMode(ledPin2, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  buttonState = digitalRead(buttonPin);
+  sensorValue = analogRead(sensorPin);
+  brightness = map(sensorValue, 0, 1023, 0, 255);
+
+  Serial.print("Button: ");
+  Serial.print(buttonState);
+  Serial.print(" | Sensor: ");
+  Serial.print(sensorValue);
+  Serial.print(" | Brightness: ");
+  Serial.println(brightness);
+
+  if (buttonState == LOW) {
+    analogWrite(ledPin1, brightness);
+    digitalWrite(ledPin2, LOW);
+  } else {
+    digitalWrite(ledPin1, LOW);
+    analogWrite(ledPin2, brightness * 3);
+  }
+
+  delay(100);
+}`;
+
+            // Copy to clipboard
+            navigator.clipboard.writeText(code).then(() => {
+                // Update button to show success
+                const btn = document.getElementById('copyBtnAnalysis');
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+
+                // Reset button after 2 seconds
+                setTimeout(() => {
+                    btn.textContent = 'Copy Code';
+                    btn.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy code: ', err);
+                alert('Failed to copy code. Please try selecting and copying manually.');
+            });
         }
     </script>
 </body>
