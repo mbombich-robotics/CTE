@@ -863,7 +863,7 @@
     <span style="color: #00d4ff;">digitalWrite</span>(ledPin2, <span style="color: #ff9500;">HIGH</span>);
   } <span style="color: #ff9500;">else</span> {
     <span style="color: #00d4ff;">digitalWrite</span>(ledPin1, <span style="color: #ff9500;">LOW</span>);
-    <span style="color: #00d4ff;">analogWrite</span>(ledPin2, brightness / <span style="color: #50fa7b;">2</span>);
+    <span style="color: #00d4ff;">digitalWrite</span>(ledPin2, <span style="color: #ff9500;">LOW</span>);
   }
 
   <span style="color: #00d4ff;">delay</span>(<span style="color: #50fa7b;">100</span>);
@@ -961,22 +961,22 @@
                 <!-- Question 25 -->
                 <div class="question-card">
                     <div class="question-number">Question 25 - Code Analysis</div>
-                    <div class="question-text">If the potentiometer reads 512 and the button is NOT pressed, what brightness level is LED2 displaying?</div>
+                    <div class="question-text">When the button is NOT pressed, what happens to LED2 (pin 13)?</div>
                     <div class="answer-option">
                         <input type="radio" id="q25a" name="q25" value="A">
-                        <label for="q25a">A) 64 (approximately)</label>
+                        <label for="q25a">A) It turns off completely</label>
                     </div>
                     <div class="answer-option">
                         <input type="radio" id="q25b" name="q25" value="B">
-                        <label for="q25b">B) 128</label>
+                        <label for="q25b">B) It turns on at full brightness</label>
                     </div>
                     <div class="answer-option">
                         <input type="radio" id="q25c" name="q25" value="C">
-                        <label for="q25c">C) 256</label>
+                        <label for="q25c">C) It blinks on and off</label>
                     </div>
                     <div class="answer-option">
                         <input type="radio" id="q25d" name="q25" value="D">
-                        <label for="q25d">D) 512</label>
+                        <label for="q25d">D) It glows at half the potentiometer brightness</label>
                     </div>
                 </div>
 
@@ -1120,7 +1120,7 @@
             },
             q23: {
                 correct: 'C',
-                explanation: 'When the button IS pressed (buttonState == LOW), the if block executes digitalWrite(ledPin2, HIGH), which turns LED2 fully on.',
+                explanation: 'When the button IS pressed (buttonState == LOW), the if block executes digitalWrite(ledPin2, HIGH), which turns LED2 fully on at maximum brightness.',
                 options: ['It turns off completely', 'It glows at half brightness', 'It turns on at full brightness', 'It glows at the brightness controlled by the potentiometer']
             },
             q24: {
@@ -1130,8 +1130,8 @@
             },
             q25: {
                 correct: 'A',
-                explanation: 'When button is NOT pressed (else block), LED2 gets analogWrite(ledPin2, brightness / 2). The potentiometer reading of 512 maps to approximately 127, divided by 2 equals approximately 63-64.',
-                options: ['64 (approximately)', '128', '256', '512']
+                explanation: 'When button is NOT pressed (else block), LED2 gets digitalWrite(ledPin2, LOW), which turns the LED completely off.',
+                options: ['It turns off completely', 'It turns on at full brightness', 'It blinks on and off', 'It glows at half the potentiometer brightness']
             }
         };
 
@@ -1161,7 +1161,7 @@
             q22: 'What is the range of values that the variable brightness can hold after the map() function executes?',
             q23: 'When the button IS pressed, what happens to LED2 (pin 13)?',
             q24: 'Why is INPUT_PULLUP used instead of just INPUT for the button pin?',
-            q25: 'If the potentiometer reads 512 and the button is NOT pressed, what brightness level is LED2 displaying?'
+            q25: 'When the button is NOT pressed, what happens to LED2 (pin 13)?'
         };
 
         document.getElementById('quiz-form').addEventListener('submit', function(e) {
@@ -1334,7 +1334,7 @@ void loop() {
     digitalWrite(ledPin2, HIGH);
   } else {
     digitalWrite(ledPin1, LOW);
-    analogWrite(ledPin2, brightness / 2);
+    digitalWrite(ledPin2, LOW);
   }
 
   delay(100);

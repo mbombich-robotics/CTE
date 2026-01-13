@@ -791,12 +791,12 @@
             q21: {
                 text: 'What happens to LED1 (pin 13) when the button is pressed?',
                 category: 'Code Analysis',
-                options: ['It turns off completely', 'It glows at the brightness controlled by the potentiometer', 'It turns on at full brightness', 'It blinks on and off'],
-                correct: 1,
-                explanation: 'When the button IS pressed (buttonState == LOW), the if block executes analogWrite(ledPin1, brightness), which sets LED1 to the brightness value mapped from the potentiometer.'
+                options: ['It turns off completely', 'It glows at the brightness controlled by the sensor', 'It turns on at full brightness', 'It blinks on and off'],
+                correct: 2,
+                explanation: 'When the button IS pressed (buttonState == LOW), the if block executes digitalWrite(ledPin1, HIGH), which turns LED1 on at full brightness.'
             },
             q22: {
-                text: 'What is the value of the variable sensorValue after reading the potentiometer?',
+                text: 'What is the value of the variable sensorValue after reading the sensor?',
                 category: 'Code Analysis',
                 options: ['0 to 255', '0 to 512', '0 to 1023', '0 to 100'],
                 correct: 2,
@@ -805,23 +805,23 @@
             q23: {
                 text: 'When the button is NOT pressed, what happens to LED2 (pin 9)?',
                 category: 'Code Analysis',
-                options: ['It turns off completely', 'It glows at triple the potentiometer brightness', 'It glows at brightness * 3 (capped at 255)', 'It turns on at full brightness'],
-                correct: 2,
-                explanation: 'When button is NOT pressed (else block), LED2 gets analogWrite(ledPin2, brightness * 3). However, if brightness * 3 exceeds 255, the Arduino will wrap it or use 255 as the maximum.'
+                options: ['It varies smoothly at half the sensor brightness', 'It turns on at full brightness', 'It turns off completely', 'It blinks rapidly'],
+                correct: 0,
+                explanation: 'When the button is NOT pressed (else block), the code executes analogWrite(ledPin2, brightness / 2), which makes LED2 glow at half the brightness value mapped from the sensor.'
             },
             q24: {
-                text: 'Which analog pin is the potentiometer connected to in this sketch?',
+                text: 'Which analog pin is the sensor connected to in this sketch?',
                 category: 'Code Analysis',
                 options: ['A0', 'A1', 'A2', 'A3'],
                 correct: 1,
-                explanation: 'The potentiometer is connected to analog pin A1, as declared in the line: int sensorPin = A1;'
+                explanation: 'The sensor is connected to analog pin A1, as declared in the line: int sensorPin = A1;'
             },
             q25: {
-                text: 'If the potentiometer reads 341 and the button is NOT pressed, approximately what value is sent to LED2?',
+                text: 'If the sensor reads 341 and the button is NOT pressed, what will LED2 (pin 9) display?',
                 category: 'Code Analysis',
-                options: ['85', '170', '255', '341'],
-                correct: 2,
-                explanation: 'Potentiometer reading of 341 maps to approximately 85 (341 * 255 / 1023 ≈ 85). Then brightness * 3 = 85 * 3 = 255. Since 255 is the maximum, LED2 receives 255.'
+                options: ['A dim glow at approximately 42 brightness', 'Full brightness (HIGH)', 'Off (LOW)', 'A medium glow at 85 brightness'],
+                correct: 0,
+                explanation: 'Sensor value 341 maps to approximately 85 brightness (341 * 255 / 1023). When the button is NOT pressed, LED2 gets analogWrite(brightness / 2), which equals 85 / 2 = 42.5 brightness, producing a dim glow.'
             }
         };
 
@@ -960,11 +960,11 @@
   Serial.<span style="color: #00d4ff;">println</span>(brightness);
 
   <span style="color: #ff9500;">if</span> (buttonState == <span style="color: #ff9500;">LOW</span>) {
-    <span style="color: #00d4ff;">analogWrite</span>(ledPin1, brightness);
+    <span style="color: #00d4ff;">digitalWrite</span>(ledPin1, <span style="color: #ff9500;">HIGH</span>);
     <span style="color: #00d4ff;">digitalWrite</span>(ledPin2, <span style="color: #ff9500;">LOW</span>);
   } <span style="color: #ff9500;">else</span> {
     <span style="color: #00d4ff;">digitalWrite</span>(ledPin1, <span style="color: #ff9500;">LOW</span>);
-    <span style="color: #00d4ff;">analogWrite</span>(ledPin2, brightness * <span style="color: #50fa7b;">3</span>);
+    <span style="color: #00d4ff;">analogWrite</span>(ledPin2, brightness / <span style="color: #50fa7b;">2</span>);
   }
 
   <span style="color: #00d4ff;">delay</span>(<span style="color: #50fa7b;">100</span>);
@@ -1303,11 +1303,11 @@ void loop() {
   Serial.println(brightness);
 
   if (buttonState == LOW) {
-    analogWrite(ledPin1, brightness);
+    digitalWrite(ledPin1, HIGH);
     digitalWrite(ledPin2, LOW);
   } else {
     digitalWrite(ledPin1, LOW);
-    analogWrite(ledPin2, brightness * 3);
+    analogWrite(ledPin2, brightness / 2);
   }
 
   delay(100);
