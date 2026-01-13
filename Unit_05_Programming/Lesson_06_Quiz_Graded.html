@@ -563,7 +563,7 @@
                 Sign in with Google
             </button>
             <div class="warning" style="margin-top: 30px;">
-                ⚠️ This is a graded assessment. You may only retake it once if needed.
+                ⚠️ <strong>Important:</strong> Signing in and viewing the quiz will be logged as an access attempt. You are allowed 2 total submissions.
             </div>
         </div>
 
@@ -635,7 +635,7 @@
     <script>
         // ==================== CONFIGURATION ====================
         // IMPORTANT: Replace this with your Google Apps Script Web App URL after deployment
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzZytMfL-h0EEaA0C5vGHGT_D8_SPGulZztY_pwV2ANWFaN8oGyLlR_vLb5Nb2WACD2KA/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw8qhjF8aWYT0PQwlo5ApMehUEOSzguzcSdfMoxMVkcs9oQvehu6Z6X8PAiL5ZzUEJg/exec';
 
         // Replace with your Google OAuth Client ID
         const GOOGLE_CLIENT_ID = '351912540436-54lj11b56684ni284ngu3afb5gruno05.apps.googleusercontent.com';
@@ -854,6 +854,9 @@
             // Load attempts from localStorage
             const storageKey = `quiz_attempts_${userEmail}`;
             attemptsUsed = parseInt(localStorage.getItem(storageKey) || '0');
+
+            // Log quiz access to Google Sheets
+            logQuizAccess();
 
             // Generate shuffled quiz
             generateQuiz();
@@ -1079,12 +1082,40 @@
             submitToGoogleSheets(mcScore, answersArray, incorrectAnswers, answeredCount, totalScore, maxTotalScore);
         }
 
+        // ==================== QUIZ ACCESS LOGGING ====================
+        async function logQuizAccess() {
+            const timestamp = new Date().toLocaleString();
+
+            const data = {
+                action: 'access',
+                email: userEmail,
+                name: userName,
+                timestamp: timestamp,
+                currentAttempts: attemptsUsed
+            };
+
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                console.log('Quiz access logged');
+            } catch (error) {
+                console.error('Error logging quiz access:', error);
+            }
+        }
+
         // ==================== GOOGLE SHEETS SUBMISSION ====================
         async function submitToGoogleSheets(mcScore, answers, incorrectAnswers, answeredCount, totalScore, maxTotalScore) {
             const timestamp = new Date().toLocaleString();
             const percentage = ((totalScore / maxTotalScore) * 100).toFixed(1);
 
             const data = {
+                action: 'submit',
                 email: userEmail,
                 name: userName,
                 totalScore: totalScore,
