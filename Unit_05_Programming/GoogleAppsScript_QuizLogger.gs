@@ -2,7 +2,7 @@
 // Deploy this as a Web App with "Anyone" access
 
 // CONFIGURATION
-const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID_HERE'; // Replace with your Google Sheets ID
+const SPREADSHEET_ID = '1OhM8cfsis8lWYdgjI_TXh7Kv25yFOK-aiI6GhKG8_GE'; // Replace with your Google Sheets ID
 const ACCESS_LOG_SHEET_NAME = 'Access Log';
 const SUBMISSIONS_SHEET_NAME = 'Quiz Submissions';
 
