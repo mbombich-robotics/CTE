@@ -1,0 +1,1722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Midterm Study Guide - Units 1-5</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0f0f1e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 2rem 3rem;
+            text-align: center;
+            border-bottom: 3px solid #00d4ff;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #00d4ff;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.8), 0 0 40px rgba(0, 212, 255, 0.4);
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #b0b0b0;
+            font-weight: 300;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: rgba(26, 26, 46, 0.5);
+            position: sticky;
+            top: 130px;
+            z-index: 99;
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .nav-tab {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #1e1e3e 0%, #2a2a4e 100%);
+            border: 2px solid #00d4ff;
+            border-radius: 10px;
+            color: #00d4ff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .nav-tab:hover {
+            background: linear-gradient(135deg, #00d4ff 0%, #0095b3 100%);
+            color: #0a0a0a;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, #00d4ff 0%, #0095b3 100%);
+            color: #0a0a0a;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.6);
+        }
+
+        .content {
+            max-width: 1400px;
+            margin: 3rem auto;
+            padding: 0 3rem 3rem 3rem;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            color: #ff9500;
+            text-shadow: 0 0 15px rgba(255, 149, 0, 0.6);
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid #ff9500;
+        }
+
+        .subsection {
+            background: rgba(26, 26, 46, 0.6);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 15px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .subsection-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8rem;
+            color: #00d4ff;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* Flashcard Styles */
+        .flashcards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .flashcard {
+            height: 200px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .flashcard-front {
+            background: linear-gradient(135deg, #1e1e3e 0%, #2a2a4e 100%);
+            border: 2px solid #00d4ff;
+        }
+
+        .flashcard-back {
+            background: linear-gradient(135deg, #2a2a4e 0%, #1e1e3e 100%);
+            border: 2px solid #ff9500;
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-term {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
+            color: #00d4ff;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .flashcard-definition {
+            font-size: 1.1rem;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        .flashcard-hint {
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        /* Practice Question Styles */
+        .practice-questions {
+            margin-top: 2rem;
+        }
+
+        .question-card {
+            background: rgba(30, 30, 62, 0.8);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border-radius: 10px;
+            border-left: 5px solid #00d4ff;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            color: #e0e0e0;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .question-number {
+            background: #00d4ff;
+            color: #0a0a0a;
+            padding: 0.3rem 0.8rem;
+            border-radius: 5px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            margin-right: 1rem;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .option {
+            background: rgba(42, 42, 78, 0.6);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .option input[type="radio"] {
+            margin-right: 1rem;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+        }
+
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 1.1rem;
+        }
+
+        .option.correct {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+        }
+
+        .option.incorrect {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: #ff0000;
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            background: rgba(0, 255, 0, 0.15);
+            border-left: 5px solid #00ff00;
+            color: #00ff00;
+        }
+
+        .feedback.incorrect {
+            background: rgba(255, 0, 0, 0.15);
+            border-left: 5px solid #ff0000;
+            color: #ff6b6b;
+        }
+
+        .check-answer-btn {
+            background: linear-gradient(135deg, #00d4ff 0%, #0095b3 100%);
+            color: #0a0a0a;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .check-answer-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .check-answer-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Code Challenge Styles */
+        .code-challenge {
+            background: rgba(20, 20, 40, 0.9);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 10px;
+            border: 2px solid #ff9500;
+        }
+
+        .code-block {
+            background: #1a1a1a;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            color: #e0e0e0;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border-left: 4px solid #00d4ff;
+        }
+
+        .code-block .comment {
+            color: #6a9955;
+        }
+
+        .code-block .keyword {
+            color: #569cd6;
+        }
+
+        .code-block .function {
+            color: #dcdcaa;
+        }
+
+        .code-block .number {
+            color: #b5cea8;
+        }
+
+        .code-block .string {
+            color: #ce9178;
+        }
+
+        /* Checklist Styles */
+        .checklist {
+            background: rgba(30, 30, 62, 0.6);
+            padding: 2rem;
+            border-radius: 10px;
+            border-left: 5px solid #ff9500;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: rgba(42, 42, 78, 0.4);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checklist-item:hover {
+            background: rgba(42, 42, 78, 0.7);
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            margin-right: 1rem;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .checklist-item label {
+            flex: 1;
+            cursor: pointer;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .checklist-item.checked {
+            opacity: 0.6;
+        }
+
+        .checklist-item.checked label {
+            text-decoration: line-through;
+        }
+
+        /* Key Concepts Box */
+        .key-concepts {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 149, 179, 0.1) 100%);
+            border: 2px solid #00d4ff;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .key-concepts h3 {
+            color: #00d4ff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .key-concepts ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .key-concepts li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .key-concepts li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #00d4ff;
+            font-weight: bold;
+        }
+
+        .score-tracker {
+            position: fixed;
+            top: 250px;
+            right: 2rem;
+            background: rgba(26, 26, 46, 0.95);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 2px solid #00d4ff;
+            min-width: 200px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .score-tracker h3 {
+            color: #00d4ff;
+            font-family: 'Rajdhani', sans-serif;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .score-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .score-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            background: rgba(42, 42, 78, 0.5);
+            border-radius: 5px;
+        }
+
+        .score-stat .label {
+            color: #b0b0b0;
+        }
+
+        .score-stat .value {
+            color: #00d4ff;
+            font-weight: 700;
+        }
+
+        @media (max-width: 1200px) {
+            .score-tracker {
+                position: static;
+                margin: 2rem auto;
+                max-width: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>MIDTERM STUDY GUIDE</h1>
+        <p>Units 1-5 | Applied Engineering & Robotics</p>
+    </div>
+
+    <div class="nav-tabs">
+        <button class="nav-tab active" onclick="showSection('engineering')">Engineering Design</button>
+        <button class="nav-tab" onclick="showSection('safety')">Safety & Shop</button>
+        <button class="nav-tab" onclick="showSection('cad')">CAD & Manufacturing</button>
+        <button class="nav-tab" onclick="showSection('programming')">Programming</button>
+    </div>
+
+    <div class="score-tracker">
+        <h3>Progress Tracker</h3>
+        <div class="score-stats">
+            <div class="score-stat">
+                <span class="label">Questions Attempted:</span>
+                <span class="value" id="attempted">0</span>
+            </div>
+            <div class="score-stat">
+                <span class="label">Correct Answers:</span>
+                <span class="value" id="correct">0</span>
+            </div>
+            <div class="score-stat">
+                <span class="label">Accuracy:</span>
+                <span class="value" id="accuracy">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <!-- ENGINEERING DESIGN SECTION -->
+        <div id="engineering" class="section active">
+            <h2 class="section-title">Engineering Design & Fundamentals</h2>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Key Concepts Flashcards</h3>
+                <div class="flashcards-grid">
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Engineering Design Process</div>
+                                <div class="flashcard-hint">Click to reveal the 7 steps</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    1. Define the Problem<br>
+                                    2. Research & Gather Information<br>
+                                    3. Brainstorm Solutions<br>
+                                    4. Select Best Solution<br>
+                                    5. Build Prototype<br>
+                                    6. Test & Evaluate<br>
+                                    7. Refine & Improve
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Design Brief</div>
+                                <div class="flashcard-hint">Click to see definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    A document that outlines the problem, constraints, criteria, and requirements for an engineering project. It serves as a roadmap for the design process.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Constraints</div>
+                                <div class="flashcard-hint">Click to see definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Limitations or restrictions on a design, such as budget, time, materials, size, weight, or other requirements that must be met.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Prototype</div>
+                                <div class="flashcard-hint">Click to see definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    An early working model of a design used to test and evaluate ideas before final production. It helps identify problems and areas for improvement.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Iteration</div>
+                                <div class="flashcard-hint">Click to see definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    The process of repeatedly refining and improving a design based on testing, feedback, and evaluation. Engineering is inherently iterative.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Accuracy vs. Precision</div>
+                                <div class="flashcard-hint">Click to see difference</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    <strong>Accuracy:</strong> How close a measurement is to the true value.<br><br>
+                                    <strong>Precision:</strong> How consistent repeated measurements are with each other.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Measurement Tools</h3>
+                <div class="key-concepts">
+                    <h3>Essential Measurement Tools</h3>
+                    <ul>
+                        <li><strong>Digital Calipers:</strong> Measure internal/external dimensions and depth with 0.01mm precision</li>
+                        <li><strong>Tape Measure:</strong> Measure longer distances, read fractions and decimal inches</li>
+                        <li><strong>Ruler:</strong> Basic linear measurements for drawings and quick checks</li>
+                        <li><strong>Micrometer:</strong> High-precision measurements (0.001" or 0.01mm) for small parts</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Practice Questions</h3>
+                <div class="practice-questions">
+                    <div class="question-card" data-answer="b">
+                        <div class="question-text">
+                            <span class="question-number">Q1</span>
+                            Which step of the engineering design process involves building a working model to test your solution?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q1" value="a" id="q1a">
+                                <label for="q1a">Research & Gather Information</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q1" value="b" id="q1b">
+                                <label for="q1b">Build Prototype</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q1" value="c" id="q1c">
+                                <label for="q1c">Brainstorm Solutions</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q1" value="d" id="q1d">
+                                <label for="q1d">Test & Evaluate</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q1')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="c">
+                        <div class="question-text">
+                            <span class="question-number">Q2</span>
+                            A design constraint is best defined as:
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q2" value="a" id="q2a">
+                                <label for="q2a">A feature that makes the design better</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q2" value="b" id="q2b">
+                                <label for="q2b">The goal of the engineering project</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q2" value="c" id="q2c">
+                                <label for="q2c">A limitation or restriction on the design</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q2" value="d" id="q2d">
+                                <label for="q2d">A tool used to measure accuracy</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q2')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="a">
+                        <div class="question-text">
+                            <span class="question-number">Q3</span>
+                            If your measurements are very close together but far from the actual value, your measurements are:
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q3" value="a" id="q3a">
+                                <label for="q3a">Precise but not accurate</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3" value="b" id="q3b">
+                                <label for="q3b">Accurate but not precise</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3" value="c" id="q3c">
+                                <label for="q3c">Both accurate and precise</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3" value="d" id="q3d">
+                                <label for="q3d">Neither accurate nor precise</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q3')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SAFETY & SHOP SECTION -->
+        <div id="safety" class="section">
+            <h2 class="section-title">Safety & Shop Practices</h2>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Safety Flashcards</h3>
+                <div class="flashcards-grid">
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">PPE</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Personal Protective Equipment - gear worn to protect against hazards, including safety glasses, gloves, hearing protection, and proper clothing.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Emergency Stop Button</div>
+                                <div class="flashcard-hint">Click for details</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    A large red button (often mushroom-shaped) that immediately cuts power to machinery. Know its location before operating any equipment.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Lockout/Tagout</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Safety procedure ensuring machines are properly shut off and cannot start during maintenance or repair work. Prevents accidental startups.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Pinch Point</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Any point where two or more objects move together and could trap a body part, causing serious injury. Common on rotating machinery.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Housekeeping</div>
+                                <div class="flashcard-hint">Click for importance</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Keeping the work area clean and organized. Good housekeeping prevents trips, falls, and other accidents. Clean as you go!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Safety Data Sheet (SDS)</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Document containing information about chemical hazards, safe handling, first aid, and emergency procedures. Required for all chemicals in the shop.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Key Safety Rules</h3>
+                <div class="key-concepts">
+                    <h3>Non-Negotiable Safety Rules</h3>
+                    <ul>
+                        <li><strong>Eye Protection:</strong> Safety glasses ALWAYS required in the shop</li>
+                        <li><strong>Proper Dress:</strong> No loose clothing, jewelry, or long hair near machinery</li>
+                        <li><strong>One Task:</strong> Never operate machinery while distracted or multitasking</li>
+                        <li><strong>Ask First:</strong> Get instructor approval before using any equipment</li>
+                        <li><strong>Report Hazards:</strong> Immediately report damaged tools, spills, or unsafe conditions</li>
+                        <li><strong>Know Your Limits:</strong> Never hesitate to ask for help or clarification</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Case Study Lessons</h3>
+                <div class="key-concepts">
+                    <h3>Matthew Henne Incident</h3>
+                    <ul>
+                        <li>Young worker injured while operating machinery without proper training</li>
+                        <li>Key lesson: Always receive complete training before operating equipment</li>
+                        <li>Supervisors must ensure workers are competent and supervised</li>
+                    </ul>
+                </div>
+                <div class="key-concepts" style="margin-top: 1.5rem;">
+                    <h3>Lac-Mégantic Rail Disaster</h3>
+                    <ul>
+                        <li>Train derailment caused by inadequate safety procedures and maintenance</li>
+                        <li>Key lesson: Following proper procedures prevents catastrophic failures</li>
+                        <li>Small shortcuts and neglected maintenance can have devastating consequences</li>
+                        <li>Safety culture matters - everyone is responsible</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Practice Questions</h3>
+                <div class="practice-questions">
+                    <div class="question-card" data-answer="d">
+                        <div class="question-text">
+                            <span class="question-number">Q4</span>
+                            Before operating any machinery in the shop, you should ALWAYS:
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q4" value="a" id="q4a">
+                                <label for="q4a">Ask a classmate if they know how to use it</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q4" value="b" id="q4b">
+                                <label for="q4b">Watch a YouTube video tutorial</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q4" value="c" id="q4c">
+                                <label for="q4c">Try it yourself to learn</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q4" value="d" id="q4d">
+                                <label for="q4d">Get instructor approval and proper training</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q4')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="b">
+                        <div class="question-text">
+                            <span class="question-number">Q5</span>
+                            What is the purpose of Lockout/Tagout procedures?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q5" value="a" id="q5a">
+                                <label for="q5a">To prevent theft of tools and equipment</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q5" value="b" id="q5b">
+                                <label for="q5b">To prevent accidental machine startup during maintenance</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q5" value="c" id="q5c">
+                                <label for="q5c">To track who is using which equipment</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q5" value="d" id="q5d">
+                                <label for="q5d">To lock the shop at the end of the day</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q5')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="a">
+                        <div class="question-text">
+                            <span class="question-number">Q6</span>
+                            Good housekeeping in the shop means:
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q6" value="a" id="q6a">
+                                <label for="q6a">Keeping work areas clean and organized to prevent accidents</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q6" value="b" id="q6b">
+                                <label for="q6b">Only cleaning up at the end of the day</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q6" value="c" id="q6c">
+                                <label for="q6c">Leaving cleanup for the janitor</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q6" value="d" id="q6d">
+                                <label for="q6d">Sweeping the floor once per week</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q6')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CAD & MANUFACTURING SECTION -->
+        <div id="cad" class="section">
+            <h2 class="section-title">CAD & Manufacturing</h2>
+
+            <div class="subsection">
+                <h3 class="subsection-title">CAD Fundamentals Flashcards</h3>
+                <div class="flashcards-grid">
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">CAD</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Computer-Aided Design - software used to create precise 2D drawings and 3D models for engineering and manufacturing.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">CAM</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Computer-Aided Manufacturing - software that converts CAD models into toolpaths and G-code instructions for CNC machines.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">G-Code</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Programming language for CNC machines. Contains instructions for tool movements, speeds, and positions (e.g., G00 for rapid movement, G01 for linear cutting).
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Sketch vs. Extrude</div>
+                                <div class="flashcard-hint">Click for difference</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    <strong>Sketch:</strong> 2D drawing on a plane<br><br>
+                                    <strong>Extrude:</strong> Converting a 2D sketch into a 3D solid by adding depth
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Toolpath</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    The path a cutting tool follows to machine a part. Created in CAM software and includes speeds, feeds, and tool movements.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Rapid Prototyping</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Quickly creating physical models from CAD designs using methods like 3D printing, laser cutting, or CNC machining to test and iterate designs.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Simulation</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Virtual testing of toolpaths in CAM software before running on real machine. Helps identify collisions, errors, and problems before wasting material.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Stock Material</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    The raw material (block, sheet, etc.) that will be machined into the final part. Must be properly sized and positioned in CAM setup.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">CAD Drawing Review Checklist</h3>
+                <div class="checklist">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cad1" onchange="toggleChecklist(this)">
+                        <label for="cad1"><strong>All dimensions are properly labeled</strong> - Include all critical measurements with correct units (mm or inches)</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cad2" onchange="toggleChecklist(this)">
+                        <label for="cad2"><strong>Constraints are fully defined</strong> - Sketch should be black (not blue), meaning all geometry is constrained</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cad3" onchange="toggleChecklist(this)">
+                        <label for="cad3"><strong>Origin is properly positioned</strong> - Place origin at a logical reference point for your part</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cad4" onchange="toggleChecklist(this)">
+                        <label for="cad4"><strong>Scale is correct</strong> - Verify actual part size matches intended dimensions</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cad5" onchange="toggleChecklist(this)">
+                        <label for="cad5"><strong>File is saved with correct naming</strong> - Use descriptive names: LastName_PartName_v1.f3d</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cad6" onchange="toggleChecklist(this)">
+                        <label for="cad6"><strong>Model is manufacturable</strong> - Design can actually be made with available tools and methods</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cad7" onchange="toggleChecklist(this)">
+                        <label for="cad7"><strong>Materials and appearance set</strong> - Assign appropriate material properties and colors</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cad8" onchange="toggleChecklist(this)">
+                        <label for="cad8"><strong>No sketch errors or warnings</strong> - Check for yellow warning triangles or error messages</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cad9" onchange="toggleChecklist(this)">
+                        <label for="cad9"><strong>Export format is correct</strong> - Save as .f3d for Fusion 360 or .step for universal format</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cad10" onchange="toggleChecklist(this)">
+                        <label for="cad10"><strong>Document fits requirements</strong> - Double-check against design brief criteria and constraints</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">CNC & Manufacturing Key Concepts</h3>
+                <div class="key-concepts">
+                    <h3>CNC Safety Essentials</h3>
+                    <ul>
+                        <li><strong>E-Stop Location:</strong> Know where emergency stop is before operating machine</li>
+                        <li><strong>Simulation First:</strong> Always simulate toolpaths before running on actual machine</li>
+                        <li><strong>Secure Workpiece:</strong> Material must be firmly clamped - never hold by hand</li>
+                        <li><strong>Tool Height Setting:</strong> Properly set Z-zero reference point for each tool</li>
+                        <li><strong>Clear Work Area:</strong> Remove tools, hands, and obstacles before starting</li>
+                        <li><strong>Monitor Operation:</strong> Stay present and watch the entire machining process</li>
+                    </ul>
+                </div>
+
+                <div class="key-concepts" style="margin-top: 1.5rem;">
+                    <h3>Iterative Design Process</h3>
+                    <ul>
+                        <li><strong>Document Everything:</strong> Keep iteration logs with photos and measurements</li>
+                        <li><strong>Test Fit & Function:</strong> Verify parts work as intended before moving on</li>
+                        <li><strong>Identify Problems:</strong> Note what worked and what didn't</li>
+                        <li><strong>Propose Solutions:</strong> Explain specific changes for next iteration</li>
+                        <li><strong>Implement Improvements:</strong> Make calculated design changes</li>
+                        <li><strong>Re-test:</strong> Verify improvements solved the problems</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Practice Questions</h3>
+                <div class="practice-questions">
+                    <div class="question-card" data-answer="c">
+                        <div class="question-text">
+                            <span class="question-number">Q7</span>
+                            What is the purpose of CAM (Computer-Aided Manufacturing) software?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q7" value="a" id="q7a">
+                                <label for="q7a">To create 3D models and drawings</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q7" value="b" id="q7b">
+                                <label for="q7b">To simulate part stress and strain</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q7" value="c" id="q7c">
+                                <label for="q7c">To generate toolpaths and G-code for CNC machines</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q7" value="d" id="q7d">
+                                <label for="q7d">To render photorealistic images of designs</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q7')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="b">
+                        <div class="question-text">
+                            <span class="question-number">Q8</span>
+                            Before running a CNC program on actual material, you should ALWAYS:
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q8" value="a" id="q8a">
+                                <label for="q8a">Run it at maximum speed to save time</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q8" value="b" id="q8b">
+                                <label for="q8b">Simulate the toolpath to check for errors and collisions</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q8" value="c" id="q8c">
+                                <label for="q8c">Use the most expensive material available</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q8" value="d" id="q8d">
+                                <label for="q8d">Let the machine run unattended</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q8')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="d">
+                        <div class="question-text">
+                            <span class="question-number">Q9</span>
+                            In Fusion 360, a fully constrained sketch appears as what color?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q9" value="a" id="q9a">
+                                <label for="q9a">Blue - indicating under-constrained</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q9" value="b" id="q9b">
+                                <label for="q9b">Red - indicating errors</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q9" value="c" id="q9c">
+                                <label for="q9c">Green - indicating success</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q9" value="d" id="q9d">
+                                <label for="q9d">Black - indicating fully constrained</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q9')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROGRAMMING SECTION -->
+        <div id="programming" class="section">
+            <h2 class="section-title">Arduino Programming & Robotics</h2>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Programming Fundamentals Flashcards</h3>
+                <div class="flashcards-grid">
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Microcontroller</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    A small computer on a single chip containing CPU, memory, and I/O pins. Arduino is a microcontroller board used for physical computing projects.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">setup() vs. loop()</div>
+                                <div class="flashcard-hint">Click for difference</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    <strong>setup():</strong> Runs once when program starts - initialize pins and settings<br><br>
+                                    <strong>loop():</strong> Runs repeatedly forever - main program logic
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Digital vs. Analog</div>
+                                <div class="flashcard-hint">Click for difference</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    <strong>Digital:</strong> Only two states - HIGH (5V) or LOW (0V). Used for buttons, LEDs.<br><br>
+                                    <strong>Analog:</strong> Range of values (0-1023 on Arduino). Used for sensors, PWM.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">PWM</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Pulse Width Modulation - rapidly switching a digital pin on/off to simulate analog output. Controls motor speed and LED brightness (0-255).
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Serial Monitor</div>
+                                <div class="flashcard-hint">Click for purpose</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Tool for debugging and viewing data from Arduino. Use Serial.begin(9600) in setup() and Serial.println() to display values.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Variables</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Named storage locations for data. Common types: int (whole numbers), float (decimals), boolean (true/false), String (text).
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">IR Line Sensor</div>
+                                <div class="flashcard-hint">Click for details</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Infrared sensor that detects dark vs. light surfaces by measuring reflected light. Returns HIGH (white) or LOW (black). Used for line following.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">PID Control</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Proportional-Integral-Derivative control algorithm. Smoothly corrects robot position using error calculation. P=current error, D=rate of change.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Essential Arduino Functions</h3>
+                <div class="key-concepts">
+                    <h3>Core Functions You Must Know</h3>
+                    <ul>
+                        <li><strong>pinMode(pin, mode):</strong> Set pin as INPUT or OUTPUT</li>
+                        <li><strong>digitalWrite(pin, value):</strong> Set digital pin HIGH or LOW</li>
+                        <li><strong>digitalRead(pin):</strong> Read digital pin state (returns HIGH or LOW)</li>
+                        <li><strong>analogWrite(pin, value):</strong> PWM output on pin (0-255)</li>
+                        <li><strong>analogRead(pin):</strong> Read analog pin (returns 0-1023)</li>
+                        <li><strong>delay(ms):</strong> Pause program for milliseconds</li>
+                        <li><strong>map(value, fromLow, fromHigh, toLow, toHigh):</strong> Scale values between ranges</li>
+                        <li><strong>Serial.begin(9600):</strong> Initialize serial communication</li>
+                        <li><strong>Serial.println(data):</strong> Print data to Serial Monitor</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Code Challenges</h3>
+
+                <div class="code-challenge">
+                    <h4 style="color: #00d4ff; margin-bottom: 1rem;">Challenge 1: Spot the Errors</h4>
+                    <p>This code has 5 errors. Can you identify them?</p>
+                    <div class="code-block">
+<span class="keyword">void</span> <span class="function">setup</span>() {
+  Serial.begin(<span class="number">9600</span>)
+  pinMode(<span class="number">13</span> OUTPUT);
+  PinMode(<span class="number">9</span>, <span class="string">"OUTPUT"</span>);
+}
+
+<span class="keyword">void</span> <span class="function">loop</span>() {
+  <span class="keyword">int</span> sensorValue = analogRead(A0);
+  <span class="keyword">int</span> speed = map(sensorValue, <span class="number">0</span>, <span class="number">1023</span>, <span class="number">0</span>, <span class="number">300</span>);
+  analogWrite(<span class="number">9</span>, speed);
+  delay(<span class="number">100</span>)
+}
+                    </div>
+                    <details style="margin-top: 1rem; background: rgba(0,212,255,0.1); padding: 1rem; border-radius: 5px;">
+                        <summary style="cursor: pointer; color: #00d4ff; font-weight: 700;">Click to Reveal Errors</summary>
+                        <ul style="margin-top: 1rem; padding-left: 1.5rem;">
+                            <li>Line 2: Missing semicolon after Serial.begin(9600)</li>
+                            <li>Line 3: Missing comma between 13 and OUTPUT</li>
+                            <li>Line 4: pinMode should be lowercase (case-sensitive!)</li>
+                            <li>Line 4: OUTPUT should not be in quotes (it's a constant, not a string)</li>
+                            <li>Line 10: PWM values must be 0-255, not 0-300 (will cause overflow)</li>
+                            <li>Line 12: Missing semicolon after delay(100)</li>
+                        </ul>
+                    </details>
+                </div>
+
+                <div class="code-challenge">
+                    <h4 style="color: #00d4ff; margin-bottom: 1rem;">Challenge 2: What Does This Do?</h4>
+                    <p>Read the code and predict the LED behavior:</p>
+                    <div class="code-block">
+<span class="keyword">int</span> ledPin = <span class="number">13</span>;
+<span class="keyword">int</span> brightness = <span class="number">0</span>;
+<span class="keyword">int</span> fadeAmount = <span class="number">5</span>;
+
+<span class="keyword">void</span> <span class="function">setup</span>() {
+  pinMode(ledPin, OUTPUT);
+}
+
+<span class="keyword">void</span> <span class="function">loop</span>() {
+  analogWrite(ledPin, brightness);
+  brightness = brightness + fadeAmount;
+
+  <span class="keyword">if</span> (brightness &lt;= <span class="number">0</span> || brightness &gt;= <span class="number">255</span>) {
+    fadeAmount = -fadeAmount;
+  }
+
+  delay(<span class="number">30</span>);
+}
+                    </div>
+                    <details style="margin-top: 1rem; background: rgba(0,212,255,0.1); padding: 1rem; border-radius: 5px;">
+                        <summary style="cursor: pointer; color: #00d4ff; font-weight: 700;">Click to Reveal Answer</summary>
+                        <p style="margin-top: 1rem;">
+                            This code creates a <strong>breathing/fading effect</strong> on the LED. The LED gradually brightens from 0 to 255, then gradually dims back to 0, and repeats.
+                            When brightness reaches the limits (0 or 255), fadeAmount reverses direction (positive becomes negative or vice versa).
+                        </p>
+                    </details>
+                </div>
+
+                <div class="code-challenge">
+                    <h4 style="color: #00d4ff; margin-bottom: 1rem;">Challenge 3: Complete the Line Following Logic</h4>
+                    <p>Fill in the missing motor control logic for bang-bang line following:</p>
+                    <div class="code-block">
+<span class="comment">// IR sensors return LOW when on black line, HIGH when on white</span>
+<span class="keyword">int</span> leftSensor = digitalRead(<span class="number">2</span>);
+<span class="keyword">int</span> rightSensor = digitalRead(<span class="number">3</span>);
+
+<span class="keyword">if</span> (leftSensor == LOW &amp;&amp; rightSensor == LOW) {
+  <span class="comment">// Both on line - GO STRAIGHT</span>
+  <span class="comment">// YOUR CODE HERE</span>
+}
+<span class="keyword">else if</span> (leftSensor == HIGH &amp;&amp; rightSensor == LOW) {
+  <span class="comment">// Left off line - TURN LEFT</span>
+  <span class="comment">// YOUR CODE HERE</span>
+}
+<span class="keyword">else if</span> (leftSensor == LOW &amp;&amp; rightSensor == HIGH) {
+  <span class="comment">// Right off line - TURN RIGHT</span>
+  <span class="comment">// YOUR CODE HERE</span>
+}
+<span class="keyword">else</span> {
+  <span class="comment">// Both off line - STOP</span>
+  <span class="comment">// YOUR CODE HERE</span>
+}
+                    </div>
+                    <details style="margin-top: 1rem; background: rgba(0,212,255,0.1); padding: 1rem; border-radius: 5px;">
+                        <summary style="cursor: pointer; color: #00d4ff; font-weight: 700;">Click to Reveal Solution</summary>
+                        <div class="code-block" style="margin-top: 1rem;">
+<span class="comment">// GO STRAIGHT</span>
+analogWrite(leftMotor, <span class="number">150</span>);
+analogWrite(rightMotor, <span class="number">150</span>);
+
+<span class="comment">// TURN LEFT (slow left motor, keep right motor)</span>
+analogWrite(leftMotor, <span class="number">0</span>);
+analogWrite(rightMotor, <span class="number">150</span>);
+
+<span class="comment">// TURN RIGHT (slow right motor, keep left motor)</span>
+analogWrite(leftMotor, <span class="number">150</span>);
+analogWrite(rightMotor, <span class="number">0</span>);
+
+<span class="comment">// STOP</span>
+analogWrite(leftMotor, <span class="number">0</span>);
+analogWrite(rightMotor, <span class="number">0</span>);
+                        </div>
+                    </details>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Practice Questions</h3>
+                <div class="practice-questions">
+                    <div class="question-card" data-answer="b">
+                        <div class="question-text">
+                            <span class="question-number">Q10</span>
+                            Which function is used to set an Arduino pin as an input or output?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q10" value="a" id="q10a">
+                                <label for="q10a">digitalWrite()</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q10" value="b" id="q10b">
+                                <label for="q10b">pinMode()</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q10" value="c" id="q10c">
+                                <label for="q10c">analogWrite()</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q10" value="d" id="q10d">
+                                <label for="q10d">setPin()</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q10')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="c">
+                        <div class="question-text">
+                            <span class="question-number">Q11</span>
+                            What is the valid range for PWM values using analogWrite()?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q11" value="a" id="q11a">
+                                <label for="q11a">0 to 100</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q11" value="b" id="q11b">
+                                <label for="q11b">0 to 1023</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q11" value="c" id="q11c">
+                                <label for="q11c">0 to 255</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q11" value="d" id="q11d">
+                                <label for="q11d">-255 to 255</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q11')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="a">
+                        <div class="question-text">
+                            <span class="question-number">Q12</span>
+                            In line following, an IR sensor returns LOW when it detects:
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q12" value="a" id="q12a">
+                                <label for="q12a">A dark/black surface (the line)</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q12" value="b" id="q12b">
+                                <label for="q12b">A light/white surface (the background)</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q12" value="c" id="q12c">
+                                <label for="q12c">An error in the sensor</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q12" value="d" id="q12d">
+                                <label for="q12d">No reflection at all</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q12')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="d">
+                        <div class="question-text">
+                            <span class="question-number">Q13</span>
+                            What does the map() function do in Arduino?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q13" value="a" id="q13a">
+                                <label for="q13a">Creates a visual map of pin connections</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q13" value="b" id="q13b">
+                                <label for="q13b">Plots sensor values on a graph</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q13" value="c" id="q13c">
+                                <label for="q13c">Stores data in memory locations</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q13" value="d" id="q13d">
+                                <label for="q13d">Scales a value from one range to another range</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q13')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="b">
+                        <div class="question-text">
+                            <span class="question-number">Q14</span>
+                            In PID control, what does the "P" (Proportional) term represent?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q14" value="a" id="q14a">
+                                <label for="q14a">The past accumulated error</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q14" value="b" id="q14b">
+                                <label for="q14b">The current error (how far off the line)</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q14" value="c" id="q14c">
+                                <label for="q14c">The rate of change of error</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q14" value="d" id="q14d">
+                                <label for="q14d">The power output to motors</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q14')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Flashcards
+        function flipCard(card) {
+            card.classList.toggle('flipped');
+        }
+
+        // Score tracking
+        let attempted = 0;
+        let correct = 0;
+
+        function updateScore() {
+            document.getElementById('attempted').textContent = attempted;
+            document.getElementById('correct').textContent = correct;
+            const accuracy = attempted > 0 ? Math.round((correct / attempted) * 100) : 0;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+        }
+
+        // Question checking
+        function checkAnswer(button, questionName) {
+            const questionCard = button.closest('.question-card');
+            const correctAnswer = questionCard.getAttribute('data-answer');
+            const selectedOption = document.querySelector(`input[name="${questionName}"]:checked`);
+
+            if (!selectedOption) {
+                alert('Please select an answer first!');
+                return;
+            }
+
+            const selectedValue = selectedOption.value;
+            const feedback = questionCard.querySelector('.feedback');
+            const options = questionCard.querySelectorAll('.option');
+
+            // Disable further changes
+            button.disabled = true;
+            document.querySelectorAll(`input[name="${questionName}"]`).forEach(input => {
+                input.disabled = true;
+            });
+
+            // Update score
+            attempted++;
+
+            // Show feedback
+            if (selectedValue === correctAnswer) {
+                correct++;
+                feedback.textContent = 'Correct! Great job!';
+                feedback.className = 'feedback correct show';
+                selectedOption.closest('.option').classList.add('correct');
+            } else {
+                feedback.textContent = 'Incorrect. The correct answer is highlighted in green.';
+                feedback.className = 'feedback incorrect show';
+                selectedOption.closest('.option').classList.add('incorrect');
+
+                // Highlight correct answer
+                options.forEach(option => {
+                    const input = option.querySelector('input');
+                    if (input.value === correctAnswer) {
+                        option.classList.add('correct');
+                    }
+                });
+            }
+
+            updateScore();
+        }
+
+        // Checklist
+        function toggleChecklist(checkbox) {
+            const item = checkbox.closest('.checklist-item');
+            if (checkbox.checked) {
+                item.classList.add('checked');
+            } else {
+                item.classList.remove('checked');
+            }
+        }
+
+        // Initialize
+        updateScore();
+    </script>
+</body>
+</html>
