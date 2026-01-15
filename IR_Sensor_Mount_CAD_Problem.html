@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAD Challenge: IR Sensor Mount | Applied Engineering & Robotics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0f0f1e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 2rem 3rem;
+            text-align: center;
+            border-bottom: 3px solid #00d4ff;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: #00d4ff;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.8);
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #b0b0b0;
+        }
+
+        .overview-box {
+            background: rgba(26, 26, 46, 0.8);
+            border: 2px solid #ff9500;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .overview-box h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2rem;
+            color: #ff9500;
+            margin-bottom: 1rem;
+        }
+
+        .overview-box p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .skills-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .skill-item {
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 4px solid #00d4ff;
+            padding: 1rem;
+            border-radius: 5px;
+        }
+
+        .skill-item::before {
+            content: "✓";
+            color: #00d4ff;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .section {
+            background: rgba(26, 26, 46, 0.6);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .section h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2rem;
+            color: #00d4ff;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .section h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
+            color: #ff9500;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .step {
+            background: rgba(30, 30, 62, 0.6);
+            border-left: 5px solid #00d4ff;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #00d4ff;
+            color: #0a0a0a;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .step-title {
+            font-size: 1.3rem;
+            color: #00d4ff;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+        }
+
+        .step-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #d0d0d0;
+        }
+
+        .step-content ul {
+            margin-left: 2rem;
+            margin-top: 0.8rem;
+        }
+
+        .step-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .important-note {
+            background: rgba(255, 149, 0, 0.15);
+            border: 2px solid #ff9500;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .important-note h4 {
+            color: #ff9500;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .important-note p {
+            line-height: 1.6;
+        }
+
+        .dimension-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: rgba(30, 30, 62, 0.4);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .dimension-table th {
+            background: #00d4ff;
+            color: #0a0a0a;
+            padding: 1rem;
+            text-align: left;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .dimension-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .dimension-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .rubric-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        .rubric-table th {
+            background: linear-gradient(135deg, #00d4ff 0%, #0095b3 100%);
+            color: #0a0a0a;
+            padding: 1rem;
+            text-align: left;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .rubric-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            background: rgba(30, 30, 62, 0.4);
+        }
+
+        .rubric-table tr:hover td {
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .score-badge {
+            display: inline-block;
+            background: #ff9500;
+            color: #0a0a0a;
+            padding: 0.3rem 0.8rem;
+            border-radius: 5px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .checkpoint {
+            background: rgba(0, 255, 0, 0.1);
+            border-left: 5px solid #00ff00;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 5px;
+        }
+
+        .checkpoint::before {
+            content: "✓ CHECKPOINT: ";
+            color: #00ff00;
+            font-weight: 700;
+        }
+
+        .warning-box {
+            background: rgba(255, 0, 0, 0.15);
+            border: 2px solid #ff6b6b;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box h4 {
+            color: #ff6b6b;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .warning-box::before {
+            content: "⚠️ ";
+            font-size: 1.5rem;
+        }
+
+        .tips-box {
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 5px solid #00d4ff;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 5px;
+        }
+
+        .tips-box h4 {
+            color: #00d4ff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .tips-box ul {
+            margin-left: 1.5rem;
+        }
+
+        .tips-box li {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+
+        code {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            font-family: 'JetBrains Mono', monospace;
+            color: #00d4ff;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #888;
+            margin-top: 3rem;
+        }
+
+        .reference-images {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .reference-image {
+            background: rgba(30, 30, 62, 0.4);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .reference-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 212, 255, 0.5);
+            margin-bottom: 0.8rem;
+        }
+
+        .reference-image .caption {
+            font-size: 0.95rem;
+            color: #00d4ff;
+            font-weight: 600;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .large-reference-image {
+            background: rgba(30, 30, 62, 0.4);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .large-reference-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 212, 255, 0.5);
+            margin: 1rem 0;
+        }
+
+        .large-reference-image .caption {
+            font-size: 1.1rem;
+            color: #00d4ff;
+            font-weight: 600;
+            font-family: 'Rajdhani', sans-serif;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CAD CHALLENGE: IR SENSOR MOUNT</h1>
+            <p>Multi-Step Modeling Exercise | Fusion 360</p>
+        </div>
+
+        <div class="overview-box">
+            <h2>Challenge Overview</h2>
+            <p>
+                Design and model a custom mounting bracket for a 5-channel infrared (IR) line-following sensor array.
+                This real-world part will be used on autonomous robots and requires precise dimensioning, proper constraints,
+                and multi-plane modeling techniques.
+            </p>
+            <p>
+                <strong>Total Points: 100</strong> | <strong>Time Estimate:</strong> 50-75 minutes
+            </p>
+
+            <div class="skills-list">
+                <div class="skill-item">2D Sketch with Full Constraints</div>
+                <div class="skill-item">Dimension-Driven Design</div>
+                <div class="skill-item">Extrude Features</div>
+                <div class="skill-item">Multi-Plane Sketching</div>
+                <div class="skill-item">Mirror Geometry</div>
+                <div class="skill-item">Cut Extrusions</div>
+                <div class="skill-item">Component Assembly</div>
+                <div class="skill-item">Constraints & Joints</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Visual Reference: What You're Building</h2>
+            <p style="margin-bottom: 1.5rem;">Here are reference images showing the completed mount from different perspectives. Use these to verify your work as you progress through the challenge.</p>
+
+            <div class="large-reference-image">
+                <div class="caption">First Sketch: Dimensioned Profile (Sketch 1)</div>
+                <img src="CAD_Problem_Images/sketch_1_dimensions.png" alt="First sketch with all dimensions shown">
+                <p style="color: #d0d0d0; font-size: 0.95rem; margin-top: 0.5rem;">This is your target for Part 1. Note the 84mm width, 53mm height, and 3mm wall thicknesses.</p>
+            </div>
+
+            <div class="reference-images">
+                <div class="reference-image">
+                    <img src="CAD_Problem_Images/base_mount_view1.png" alt="U-channel base mount - isometric view">
+                    <div class="caption">Base Mount After First Extrusion</div>
+                </div>
+                <div class="reference-image">
+                    <img src="CAD_Problem_Images/base_mount_view2.png" alt="U-channel base mount - front view">
+                    <div class="caption">Front View of U-Channel</div>
+                </div>
+                <div class="reference-image">
+                    <img src="CAD_Problem_Images/holes_sketch.png" alt="Mounting holes sketch on top flanges">
+                    <div class="caption">Mounting Holes (Sketch 2)</div>
+                </div>
+                <div class="reference-image">
+                    <img src="CAD_Problem_Images/completed_mount.png" alt="Completed mount with holes">
+                    <div class="caption">Completed Mount with Through Holes</div>
+                </div>
+            </div>
+
+            <div class="large-reference-image">
+                <div class="caption">Final Assembly: Mount with IR Sensor</div>
+                <img src="CAD_Problem_Images/assembly_top_view.png" alt="Top view of sensor mounted to bracket">
+                <p style="color: #d0d0d0; font-size: 0.95rem; margin-top: 0.5rem;">The sensor board should sit flat on the flanges with mounting holes aligned perfectly.</p>
+            </div>
+
+            <div class="large-reference-image">
+                <div class="caption">Bottom View: Sensor Pins in U-Channel</div>
+                <img src="CAD_Problem_Images/assembly_bottom_view.png" alt="Bottom view showing sensor pins">
+                <p style="color: #d0d0d0; font-size: 0.95rem; margin-top: 0.5rem;">The IR sensors and pin headers should face downward into the U-channel cavity with proper clearance.</p>
+            </div>
+
+            <div class="important-note">
+                <h4>📸 Using Reference Images</h4>
+                <p>These images show the final product, but don't reveal the "intentional error" dimension. Use them to check:</p>
+                <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+                    <li>Overall geometry and profile shape</li>
+                    <li>General placement of holes</li>
+                    <li>Assembly orientation</li>
+                </ul>
+                <p style="margin-top: 0.5rem;">You'll still need to measure the actual sensor component to find the correct hole spacing!</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Part 1: Base Mount Sketch & Extrusion (70 Points)</h2>
+
+            <div class="step">
+                <span class="step-number">STEP 1</span>
+                <div class="step-title">Create New Component & Sketch</div>
+                <div class="step-content">
+                    <ul>
+                        <li>Create a new component named <code>IR_Sensor_Mount</code></li>
+                        <li>Create a new sketch on the XY plane (bottom plane)</li>
+                        <li>Set document units to millimeters (mm)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">STEP 2</span>
+                <div class="step-title">Draw Base Profile</div>
+                <div class="step-content">
+                    <p>Using the reference dimensions provided, create the U-channel base profile:</p>
+
+                    <h4 style="color: #00d4ff; margin-top: 1rem;">Key Dimensions (Sketch 1):</h4>
+                    <table class="dimension-table">
+                        <tr>
+                            <th>Feature</th>
+                            <th>Dimension</th>
+                            <th>Notes</th>
+                        </tr>
+                        <tr>
+                            <td>Overall Width</td>
+                            <td><strong>84.00 mm</strong></td>
+                            <td>Total width of mount</td>
+                        </tr>
+                        <tr>
+                            <td>Overall Height</td>
+                            <td><strong>53.00 mm</strong></td>
+                            <td>From base to top of flanges</td>
+                        </tr>
+                        <tr>
+                            <td>Base Thickness</td>
+                            <td><strong>3.00 mm</strong></td>
+                            <td>Bottom platform thickness</td>
+                        </tr>
+                        <tr>
+                            <td>Wall Thickness</td>
+                            <td><strong>3.00 mm</strong></td>
+                            <td>Side wall thickness</td>
+                        </tr>
+                        <tr>
+                            <td>Top Flange Width</td>
+                            <td><strong>16.00 mm</strong></td>
+                            <td>Width of mounting flanges</td>
+                        </tr>
+                    </table>
+
+                    <ul style="margin-top: 1rem;">
+                        <li>Draw the right half of the U-channel profile first</li>
+                        <li>Add all dimensional constraints for the right side</li>
+                        <li>Use the <strong>centerline</strong> as your axis of symmetry</li>
+                        <li>Use the <strong>Mirror</strong> command to create the left side geometry</li>
+                        <li>The centerline should be positioned at X = 0 (origin)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="checkpoint">
+                Verify your sketch is fully constrained (all lines appear BLACK, not blue). The sketch should show 0 degrees of freedom.
+            </div>
+
+            <div class="step">
+                <span class="step-number">STEP 3</span>
+                <div class="step-title">Extrude Base Mount (70 Points if Complete)</div>
+                <div class="step-content">
+                    <ul>
+                        <li>Select the entire U-channel profile</li>
+                        <li>Use <strong>Extrude</strong> command</li>
+                        <li>Set distance to <strong>30.00 mm</strong></li>
+                        <li>Operation: <strong>New Body</strong></li>
+                        <li>Direction: Extrude upward (positive Z direction)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="important-note">
+                <h4>Grading Criteria - Part 1:</h4>
+                <p><span class="score-badge">70 Points</span> - Base mount modeled and extruded correctly, dimensions mostly accurate</p>
+                <p><span class="score-badge">75 Points</span> - All of the above + sketch is fully constrained AND all dimensions are labeled</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Part 2: Mounting Holes (80-85 Points)</h2>
+
+            <div class="step">
+                <span class="step-number">STEP 4</span>
+                <div class="step-title">Create Sketch on Top Flange</div>
+                <div class="step-content">
+                    <ul>
+                        <li>Select the <strong>top surface</strong> of one of the mounting flanges (the horizontal "shelf" at the highest point)</li>
+                        <li>Create a new sketch on this plane</li>
+                        <li>You'll be drawing circles for mounting holes</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">STEP 5</span>
+                <div class="step-title">Draw Hole Pattern</div>
+                <div class="step-content">
+                    <p>Create mounting holes for securing the IR sensor board:</p>
+
+                    <h4 style="color: #00d4ff; margin-top: 1rem;">Hole Dimensions (Sketch 2):</h4>
+                    <table class="dimension-table">
+                        <tr>
+                            <th>Feature</th>
+                            <th>Dimension</th>
+                            <th>Notes</th>
+                        </tr>
+                        <tr>
+                            <td>Hole Diameter</td>
+                            <td><strong>Ø 6.00 mm</strong></td>
+                            <td>Size for M5 hardware clearance</td>
+                        </tr>
+                        <tr>
+                            <td>Edge Distance</td>
+                            <td><strong>15.00 mm</strong></td>
+                            <td>From hole center to mount edge</td>
+                        </tr>
+                        <tr>
+                            <td>Hole Spacing</td>
+                            <td><strong>72.00 mm</strong></td>
+                            <td>Center-to-center distance between holes</td>
+                        </tr>
+                    </table>
+
+                    <ul style="margin-top: 1rem;">
+                        <li>Draw two circles (one on each flange)</li>
+                        <li>Position holes with proper edge distance from the ends</li>
+                        <li>Use dimensional constraints for all measurements</li>
+                        <li>Use geometric constraints (horizontal, coincident, etc.)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="checkpoint">
+                Before extruding, verify both circles are fully constrained and positioned correctly on the flanges.
+            </div>
+
+            <div class="step">
+                <span class="step-number">STEP 6</span>
+                <div class="step-title">Cut Holes (80 Points if Complete)</div>
+                <div class="step-content">
+                    <ul>
+                        <li>Select both circles in the sketch</li>
+                        <li>Use <strong>Extrude</strong> command</li>
+                        <li>Set operation to <strong>Cut</strong></li>
+                        <li>Set extent to <strong>All</strong> (cuts through entire mount)</li>
+                        <li>This will create through-holes for mounting hardware</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="important-note">
+                <h4>Grading Criteria - Part 2:</h4>
+                <p><span class="score-badge">80 Points</span> - Mounting holes created and cut through the flanges</p>
+                <p><span class="score-badge">85 Points</span> - All of the above + hole sketch is fully constrained AND dimensioned</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Part 3: IR Sensor Assembly (90 Points)</h2>
+
+            <div class="step">
+                <span class="step-number">STEP 7</span>
+                <div class="step-title">Insert IR Sensor Component</div>
+                <div class="step-content">
+                    <ul>
+                        <li>Use <strong>Insert</strong> → <strong>Insert into Current Design</strong></li>
+                        <li>Locate and insert the IR sensor PCB assembly file (provided by instructor)</li>
+                        <li>The sensor should appear in your workspace as a separate component</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">STEP 8</span>
+                <div class="step-title">Position and Constrain Sensor (90 Points if Complete)</div>
+                <div class="step-content">
+                    <p>Use joints/constraints to properly mount the sensor to your bracket:</p>
+                    <ul>
+                        <li>Create <strong>Rigid Joint</strong> between sensor mounting holes and bracket holes</li>
+                        <li>Align the sensor PCB so it sits flat on the top flanges</li>
+                        <li>The sensor array should be centered within the U-channel</li>
+                        <li>Verify the sensor does not intersect with the mount (check for clearance)</li>
+                        <li>The sensor pins should face downward into the U-channel cavity</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <h4>Common Issue Alert!</h4>
+                <p>At this stage, you may notice the sensor does NOT fit properly. The holes might not align, or there's interference.
+                   <strong>This is intentional!</strong> You'll need to identify and fix the dimensional error in Part 4.</p>
+            </div>
+
+            <div class="important-note">
+                <h4>Grading Criteria - Part 3:</h4>
+                <p><span class="score-badge">90 Points</span> - IR sensor inserted and constrained to the mount (even if fit is imperfect)</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Part 4: Design Correction (100 Points - Perfect Score!)</h2>
+
+            <div class="step">
+                <span class="step-number">STEP 9</span>
+                <div class="step-title">Identify the Problem</div>
+                <div class="step-content">
+                    <p>If the sensor doesn't fit properly, there's likely a dimensional error in your hole spacing or edge distance.</p>
+                    <p>Common issues to check:</p>
+                    <ul>
+                        <li>Are the mounting holes aligned with the sensor's holes?</li>
+                        <li>Is the hole spacing (center-to-center distance) correct?</li>
+                        <li>Are the holes too close or too far from the edges?</li>
+                        <li>Does the sensor PCB width match your mount's flange spacing?</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">STEP 10</span>
+                <div class="step-title">Correct the Dimension (100 Points!)</div>
+                <div class="step-content">
+                    <p>The secret to achieving 100 points:</p>
+                    <div class="tips-box">
+                        <h4>💡 Design Iteration Hint</h4>
+                        <ul>
+                            <li>Measure the actual hole spacing on the IR sensor PCB</li>
+                            <li>Edit Sketch 2 (the hole pattern sketch)</li>
+                            <li>Update ONE dimension that's preventing proper fit</li>
+                            <li>Re-constrain if needed to maintain full constraints</li>
+                            <li>The corrected dimension should allow perfect alignment</li>
+                        </ul>
+                    </div>
+                    <p style="margin-top: 1rem;">
+                        <strong>Hint:</strong> The actual sensor hole spacing is likely <strong>NOT</strong> 72.00 mm.
+                        Use the <strong>Inspect → Measure</strong> tool to find the true distance!
+                    </p>
+                </div>
+            </div>
+
+            <div class="checkpoint">
+                Once corrected, the sensor should fit perfectly with mounting holes aligned and no interference!
+            </div>
+
+            <div class="important-note">
+                <h4>Grading Criteria - Part 4:</h4>
+                <p><span class="score-badge">100 Points</span> - Dimensional error identified and corrected. Sensor fits perfectly with proper constraints.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Complete Grading Rubric</h2>
+
+            <table class="rubric-table">
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">Score</th>
+                        <th style="width: 35%;">Achievement</th>
+                        <th style="width: 50%;">Criteria</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="score-badge">70%</span></td>
+                        <td><strong>Base Mount Complete</strong></td>
+                        <td>
+                            • U-channel base profile drawn<br>
+                            • First extrusion (30mm) completed<br>
+                            • Overall dimensions mostly accurate<br>
+                            • Geometry is recognizable and functional
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="score-badge">75%</span></td>
+                        <td><strong>Fully Constrained Base</strong></td>
+                        <td>
+                            • Everything from 70%<br>
+                            • <strong>PLUS:</strong> First sketch is fully constrained (black lines)<br>
+                            • All critical dimensions are labeled and visible<br>
+                            • Mirror geometry properly applied
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="score-badge">80%</span></td>
+                        <td><strong>Mounting Holes Added</strong></td>
+                        <td>
+                            • Everything from 75%<br>
+                            • <strong>PLUS:</strong> Second sketch created on flange surface<br>
+                            • Holes cut through mount using "All" extrusion<br>
+                            • Holes are positioned and sized reasonably
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="score-badge">85%</span></td>
+                        <td><strong>Fully Constrained Holes</strong></td>
+                        <td>
+                            • Everything from 80%<br>
+                            • <strong>PLUS:</strong> Second sketch is fully constrained<br>
+                            • Hole dimensions are labeled<br>
+                            • Proper geometric constraints used
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="score-badge">90%</span></td>
+                        <td><strong>Sensor Assembly</strong></td>
+                        <td>
+                            • Everything from 85%<br>
+                            • <strong>PLUS:</strong> IR sensor component inserted<br>
+                            • Sensor is constrained/jointed to mount<br>
+                            • Assembly is stable (even if fit isn't perfect)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="score-badge" style="background: #00ff00;">100%</span></td>
+                        <td><strong>Perfect Fit - Design Iteration</strong></td>
+                        <td>
+                            • Everything from 90%<br>
+                            • <strong>PLUS:</strong> Dimensional error identified<br>
+                            • Correct dimension updated in Sketch 2<br>
+                            • Sensor fits perfectly with hole alignment<br>
+                            • No interference or clearance issues<br>
+                            • Demonstrates design iteration skills
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="tips-box" style="margin-top: 2rem;">
+                <h4>📋 Submission Requirements</h4>
+                <ul>
+                    <li>Save your file as: <code>LastName_IR_Sensor_Mount.f3d</code></li>
+                    <li>Ensure all sketches remain visible in the timeline</li>
+                    <li>Do not delete construction geometry or dimension constraints</li>
+                    <li>Include both the mount and sensor assembly in final submission</li>
+                    <li>Export a screenshot showing the completed assembly (isometric view)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Tips for Success</h2>
+
+            <div class="tips-box">
+                <h4>🎯 Constraint Strategies</h4>
+                <ul>
+                    <li><strong>Start with the origin:</strong> Anchor one point to the origin or a construction line</li>
+                    <li><strong>Use construction geometry:</strong> Centerlines make mirroring much easier</li>
+                    <li><strong>Dimension everything:</strong> Don't rely on "eyeballing" - add explicit dimensions</li>
+                    <li><strong>Check your work:</strong> Zoom in and verify dimensions match the specification</li>
+                </ul>
+            </div>
+
+            <div class="tips-box">
+                <h4>🔧 Common Mistakes to Avoid</h4>
+                <ul>
+                    <li><strong>Under-constrained sketches:</strong> Blue lines indicate missing constraints - add them!</li>
+                    <li><strong>Wrong extrusion direction:</strong> Watch the preview arrow - make sure it goes the right way</li>
+                    <li><strong>Wrong plane selection:</strong> Double-check you're sketching on the correct surface</li>
+                    <li><strong>Forgetting to measure:</strong> Use the Measure tool to verify sensor dimensions</li>
+                    <li><strong>Not testing fit:</strong> Always check assembly fit before assuming it's correct</li>
+                </ul>
+            </div>
+
+            <div class="tips-box">
+                <h4>⚡ Time Management</h4>
+                <ul>
+                    <li><strong>Part 1 (Base):</strong> 20-25 minutes - Take your time with constraints</li>
+                    <li><strong>Part 2 (Holes):</strong> 15-20 minutes - Precision matters here</li>
+                    <li><strong>Part 3 (Assembly):</strong> 10-15 minutes - Joint placement is key</li>
+                    <li><strong>Part 4 (Correction):</strong> 10-15 minutes - Measure, edit, verify</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Learning Objectives</h2>
+            <p style="margin-bottom: 1rem;">By completing this challenge, you will demonstrate:</p>
+            <div class="skills-list">
+                <div class="skill-item">Ability to create complex 2D profiles with proper constraints</div>
+                <div class="skill-item">Understanding of extrude operations (new body vs. cut)</div>
+                <div class="skill-item">Competency in multi-plane sketching workflows</div>
+                <div class="skill-item">Skill in using mirror and pattern features</div>
+                <div class="skill-item">Assembly and constraint techniques</div>
+                <div class="skill-item">Design iteration and problem-solving</div>
+                <div class="skill-item">Precision measurement and dimensional accuracy</div>
+                <div class="skill-item">Real-world CAD application for robotics</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Applied Engineering & Robotics | CAD Challenge</p>
+            <p>Vicksburg High School | Mr. Bombich</p>
+        </div>
+    </div>
+</body>
+</html>
