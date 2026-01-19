@@ -1227,6 +1227,15 @@
         <div id="cad" class="section">
             <h2 class="section-title">CAD & Manufacturing</h2>
 
+            <div class="important-note" style="margin: 2rem 0; background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%); border: 2px solid #ff9500;">
+                <h3 style="color: #ff9500; margin-bottom: 1rem;">📐 CAD Practical Challenge</h3>
+                <p style="margin-bottom: 1rem;">The midterm includes a hands-on CAD modeling challenge. Review the instructions and practice before test day:</p>
+                <a href="IR_Sensor_Mount_CAD_Problem.html" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #ff9500 0%, #ff6b00 100%); color: white; padding: 0.8rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 700; font-family: 'Rajdhani', sans-serif; font-size: 1.1rem; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 15px rgba(255, 149, 0, 0.3);">
+                    View CAD Challenge: IR Sensor Mount →
+                </a>
+                <p style="margin-top: 1rem; font-size: 0.95rem; color: #b0b0b0;">This challenge tests your ability to create a precise 3D model from dimensions, apply constraints, and correct intentional design errors.</p>
+            </div>
+
             <div class="subsection">
                 <h3 class="subsection-title">CAD Fundamentals Flashcards</h3>
                 <div class="flashcards-grid">
@@ -2090,6 +2099,194 @@
                     </div>
                 </div>
             </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Code Analysis Challenge (10 Points)</h3>
+                <div class="important-note" style="background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%); border: 2px solid #ff9500;">
+                    <h4 style="color: #ff9500;">📋 Instructions</h4>
+                    <p>Study the following Arduino sketch carefully. The next 5 questions (worth 2 points each) will test your understanding of how this code works. Read through the entire program before answering.</p>
+                </div>
+
+                <div style="background: #0a0e27; padding: 1.5rem; border-radius: 10px; border: 2px solid #00d4ff; margin: 1.5rem 0; overflow-x: auto;">
+                    <pre style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; line-height: 1.6; color: #e0e6f0;"><span style="color: #888;">// Robot Motion Control System</span>
+
+<span style="color: #ff9500;">int</span> leftMotorPin = <span style="color: #50fa7b;">9</span>;
+<span style="color: #ff9500;">int</span> rightMotorPin = <span style="color: #50fa7b;">10</span>;
+<span style="color: #ff9500;">int</span> buttonPin = <span style="color: #50fa7b;">7</span>;
+<span style="color: #ff9500;">int</span> potPin = <span style="color: #50fa7b;">A0</span>;
+
+<span style="color: #ff9500;">int</span> speed = <span style="color: #50fa7b;">0</span>;
+<span style="color: #ff9500;">boolean</span> isRunning = <span style="color: #ff9500;">false</span>;
+
+<span style="color: #ff9500;">void</span> <span style="color: #00d4ff;">setup</span>() {
+  <span style="color: #00d4ff;">pinMode</span>(leftMotorPin, <span style="color: #ff9500;">OUTPUT</span>);
+  <span style="color: #00d4ff;">pinMode</span>(rightMotorPin, <span style="color: #ff9500;">OUTPUT</span>);
+  <span style="color: #00d4ff;">pinMode</span>(buttonPin, <span style="color: #ff9500;">INPUT_PULLUP</span>);
+  Serial.<span style="color: #00d4ff;">begin</span>(<span style="color: #50fa7b;">9600</span>);
+}
+
+<span style="color: #ff9500;">void</span> <span style="color: #00d4ff;">loop</span>() {
+  <span style="color: #ff9500;">if</span> (<span style="color: #00d4ff;">digitalRead</span>(buttonPin) == <span style="color: #ff9500;">LOW</span>) {
+    isRunning = !isRunning;
+    <span style="color: #00d4ff;">delay</span>(<span style="color: #50fa7b;">300</span>);
+  }
+
+  <span style="color: #ff9500;">if</span> (isRunning) {
+    speed = <span style="color: #00d4ff;">analogRead</span>(potPin);
+    speed = <span style="color: #00d4ff;">map</span>(speed, <span style="color: #50fa7b;">0</span>, <span style="color: #50fa7b;">1023</span>, <span style="color: #50fa7b;">100</span>, <span style="color: #50fa7b;">255</span>);
+
+    <span style="color: #00d4ff;">analogWrite</span>(leftMotorPin, speed);
+    <span style="color: #00d4ff;">analogWrite</span>(rightMotorPin, speed);
+
+    Serial.<span style="color: #00d4ff;">print</span>(<span style="color: #50fa7b;">"Motors ON - Speed: "</span>);
+    Serial.<span style="color: #00d4ff;">println</span>(speed);
+  } <span style="color: #ff9500;">else</span> {
+    <span style="color: #00d4ff;">analogWrite</span>(leftMotorPin, <span style="color: #50fa7b;">0</span>);
+    <span style="color: #00d4ff;">analogWrite</span>(rightMotorPin, <span style="color: #50fa7b;">0</span>);
+    Serial.<span style="color: #00d4ff;">println</span>(<span style="color: #50fa7b;">"Motors OFF"</span>);
+  }
+
+  <span style="color: #00d4ff;">delay</span>(<span style="color: #50fa7b;">100</span>);
+}</pre>
+                </div>
+
+                <div class="practice-questions">
+                    <div class="question-card" data-answer="c">
+                        <div class="question-text">
+                            <span class="question-number">Q35</span>
+                            What happens when the button is pressed for the FIRST time?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q35" value="a" id="q35a">
+                                <label for="q35a">The motors turn off</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q35" value="b" id="q35b">
+                                <label for="q35b">The speed is set to maximum (255)</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q35" value="c" id="q35c">
+                                <label for="q35c">isRunning changes from false to true, and motors start</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q35" value="d" id="q35d">
+                                <label for="q35d">The program resets and starts from setup()</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q35')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="b">
+                        <div class="question-text">
+                            <span class="question-number">Q36</span>
+                            What is the range of possible motor speed values in this program?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q36" value="a" id="q36a">
+                                <label for="q36a">0 to 255</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q36" value="b" id="q36b">
+                                <label for="q36b">100 to 255</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q36" value="c" id="q36c">
+                                <label for="q36c">0 to 1023</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q36" value="d" id="q36d">
+                                <label for="q36d">0 to 100</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q36')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="d">
+                        <div class="question-text">
+                            <span class="question-number">Q37</span>
+                            Why is there a delay(300) after detecting the button press?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q37" value="a" id="q37a">
+                                <label for="q37a">To give the motors time to start spinning</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q37" value="b" id="q37b">
+                                <label for="q37b">To wait for the Serial Monitor to display data</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q37" value="c" id="q37c">
+                                <label for="q37c">To allow the potentiometer reading to stabilize</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q37" value="d" id="q37d">
+                                <label for="q37d">To debounce the button and prevent multiple rapid toggles</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q37')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="a">
+                        <div class="question-text">
+                            <span class="question-number">Q38</span>
+                            When the motors are running, what controls their speed?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q38" value="a" id="q38a">
+                                <label for="q38a">The potentiometer position (analogRead from potPin)</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q38" value="b" id="q38b">
+                                <label for="q38b">The button press duration</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q38" value="c" id="q38c">
+                                <label for="q38c">The value of isRunning (true or false)</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q38" value="d" id="q38d">
+                                <label for="q38d">The delay(100) at the end of loop()</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q38')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="c">
+                        <div class="question-text">
+                            <span class="question-number">Q39</span>
+                            What does the expression "isRunning = !isRunning" do?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q39" value="a" id="q39a">
+                                <label for="q39a">Sets isRunning to false permanently</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q39" value="b" id="q39b">
+                                <label for="q39b">Checks if isRunning is not equal to true</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q39" value="c" id="q39c">
+                                <label for="q39c">Toggles isRunning to its opposite value (true↔false)</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q39" value="d" id="q39d">
+                                <label for="q39d">Creates a new variable called "not isRunning"</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q39')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -2156,7 +2353,12 @@
             q31_prog: { explanation: 'analogRead() reads analog pins (A0-A5) and returns 0-1023, representing the voltage from 0V to 5V.' },
             q32_prog: { explanation: 'setup() runs once at startup for initialization. loop() runs forever. Code that should only run once goes in setup().' },
             q33_prog: { explanation: 'map() takes a value and proportionally converts it from one range (input min/max) to another range (output min/max).' },
-            q34_prog: { explanation: 'IR line sensors return LOW when detecting black (low reflectance) and HIGH when detecting white (high reflectance).' }
+            q34_prog: { explanation: 'IR line sensors return LOW when detecting black (low reflectance) and HIGH when detecting white (high reflectance).' },
+            q35: { explanation: 'The boolean variable isRunning starts as false. The ! operator toggles it to true, which triggers the motors to start running.' },
+            q36: { explanation: 'The map() function converts potentiometer readings (0-1023) to the range 100-255. The minimum speed is 100, maximum is 255.' },
+            q37: { explanation: 'Button debouncing prevents mechanical switch bounce from being read as multiple presses. The 300ms delay ensures only one toggle per button press.' },
+            q38: { explanation: 'When isRunning is true, the program reads the potentiometer with analogRead(potPin), maps it to 100-255, and uses that value for motor speed.' },
+            q39: { explanation: 'The ! operator is the "NOT" operator. It flips a boolean to its opposite: !true becomes false, !false becomes true. This creates a toggle effect.' }
         };
 
         // Navigation
