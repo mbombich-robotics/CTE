@@ -47,42 +47,93 @@
             font-weight: 600;
         }
 
-        .student-info {
+        .auth-section {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(26, 31, 58, 0.8) 100%);
+            border: 2px solid #00d4ff;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            max-width: 600px;
+            margin: 40px auto;
+        }
+
+        .auth-section h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .auth-section p {
+            color: #b8c5d6;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .user-info {
+            background: rgba(80, 250, 123, 0.1);
+            border: 2px solid #50fa7b;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .user-info-text {
+            color: #50fa7b;
+            font-size: 1.1rem;
+        }
+
+        .signout-button {
+            background: rgba(255, 85, 85, 0.2);
+            border: 1px solid #ff5555;
+            border-radius: 6px;
+            color: #ff5555;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .signout-button:hover {
+            background: rgba(255, 85, 85, 0.3);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .warning {
             background: rgba(255, 149, 0, 0.1);
             border: 2px solid #ff9500;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 30px;
-        }
-
-        .student-info h2 {
-            font-family: 'Orbitron', sans-serif;
-            color: #ff9500;
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-        }
-
-        .info-field {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .info-field label {
-            font-weight: 600;
-            color: #00d4ff;
-            width: 120px;
-        }
-
-        .info-field input {
-            flex: 1;
-            padding: 10px 15px;
-            border: 2px solid #00d4ff;
             border-radius: 8px;
-            background: rgba(0, 212, 255, 0.1);
-            color: #e0e6f0;
-            font-family: 'Exo 2', sans-serif;
-            font-size: 1rem;
+            padding: 15px;
+            margin-top: 15px;
+            color: #ff9500;
+            font-weight: 600;
+        }
+
+        .submission-status {
+            background: rgba(80, 250, 123, 0.1);
+            border: 2px solid #50fa7b;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .submission-status.error {
+            background: rgba(255, 85, 85, 0.1);
+            border-color: #ff5555;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .instructions {
@@ -482,17 +533,32 @@
             <p class="subtitle">Applied Engineering & Robotics | Units 1-5</p>
         </header>
 
-        <div class="student-info">
-            <h2>Student Information</h2>
-            <div class="info-field">
-                <label for="studentName">Name:</label>
-                <input type="text" id="studentName" placeholder="Enter your full name">
-            </div>
-            <div class="info-field">
-                <label for="studentPeriod">Period:</label>
-                <input type="text" id="studentPeriod" placeholder="Enter your class period">
+        <!-- Authentication Section -->
+        <div id="auth-section" class="auth-section">
+            <h2>Student Authentication</h2>
+            <p>Please sign in with your school Google account to begin the exam.</p>
+            <p>Your results will be automatically submitted when you finish.</p>
+            <div id="google-signin-btn"></div>
+            <div class="warning">
+                <strong>Important:</strong> There are NO RETAKES for this exam. Make sure you are ready before signing in.
             </div>
         </div>
+
+        <!-- User Info (shown after login) -->
+        <div id="user-info" class="user-info hidden">
+            <span class="user-info-text">Signed in as: <strong id="user-email"></strong></span>
+            <button class="signout-button" onclick="signOut()">Sign Out</button>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 14, 39, 0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999;">
+            <div style="border: 4px solid rgba(0, 212, 255, 0.2); border-top: 4px solid #00d4ff; border-radius: 50%; width: 60px; height: 60px; animation: spin 1s linear infinite;"></div>
+            <p style="color: #00d4ff; font-size: 1.3rem; margin-top: 25px; font-weight: 600;">Submitting your exam...</p>
+            <p style="color: #b8c5d6; font-size: 1rem; margin-top: 10px;">Please wait, do not refresh the page</p>
+        </div>
+
+        <!-- Exam Section (hidden until authenticated) -->
+        <div id="exam-section" class="hidden">
 
         <div class="instructions">
             <h2>Exam Instructions</h2>
@@ -1095,7 +1161,7 @@
 
                 <!-- Step 3: Flange Holes -->
                 <h4 style="color: #ff9500; margin: 25px 0 15px 0;">Step 3: Add Flange Mounting Holes</h4>
-                <p style="margin-bottom: 15px; color: #b8c5d6;">Start a new sketch on the bottom of the flange. Add two Ø6.00 mounting holes at the positions shown (20mm and 40mm from the left edge).</p>
+                <p style="margin-bottom: 15px; color: #b8c5d6;">Start a new sketch on the top of the flange. Add two Ø6.00 mounting holes at the positions shown (centered with 40mm spacing).</p>
                 <div class="image-placeholder">
                     <img src="Midterm_CAD_Flange_Holes.png" alt="Flange Hole Positions" style="max-width: 100%; border-radius: 8px;">
                 </div>
@@ -1107,7 +1173,7 @@
                 <!-- Step 5: Mount Anderson Plug -->
                 <h4 style="color: #ff9500; margin: 25px 0 15px 0;">Step 5: Mount the Anderson Power Plug</h4>
                 <p style="margin-bottom: 15px; color: #b8c5d6;">Insert the Anderson Power Plug component from: <code>Common Components / Midterm /</code></p>
-                <p style="margin-bottom: 15px; color: #b8c5d6;">Use joints to mount the plug to the bracket using the two slots and mounting holes.</p>
+                <p style="margin-bottom: 15px; color: #b8c5d6;">Use constraints to mount the plug to the bracket using the two mounting holes.</p>
                 <div class="image-placeholder large">
                     <img src="Midterm_CAD_Assembly.png" alt="Final Assembly with Anderson Plug" style="max-width: 100%; border-radius: 8px;">
                 </div>
@@ -1443,11 +1509,14 @@
                 </div>
             </div>
 
-            <button type="submit" class="submit-button">Submit Exam</button>
+            <button type="submit" class="submit-button" id="exam-submit-btn">Submit Exam</button>
         </form>
 
+        </div><!-- End exam-section -->
+
         <!-- Results Section -->
-        <div class="results-section" id="results">
+        <div class="results-section hidden" id="results">
+            <div id="submission-status"></div>
             <div class="score-display">
                 <h2>Exam Results</h2>
                 <div class="final-score" id="finalScore">--/70</div>
@@ -1489,8 +1558,19 @@
         </div>
     </div>
 
+    <!-- Google Sign-In Library -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
     <script>
-        // Answer key - matches study guide answers exactly
+        // ==================== CONFIGURATION ====================
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx0q6C6Xo1OGzQF2ZRBhWp5lAL1rfnIbAe3AKi9WOFxxnEy_kYTGxUBhEVBLQKybHBq/exec';
+        const GOOGLE_CLIENT_ID = '351912540436-54lj11b56684ni284ngu3afb5gruno05.apps.googleusercontent.com';
+
+        // ==================== GLOBAL STATE ====================
+        let userEmail = '';
+        let userName = '';
+
+        // ==================== ANSWER KEY ====================
         const answers = {
             q1: 'b',   // Build Prototype
             q2: 'c',   // Constraint definition
@@ -1538,13 +1618,86 @@
             codeAnalysis: ['q31', 'q32', 'q33', 'q34', 'q35']
         };
 
+        // ==================== GOOGLE SIGN-IN ====================
+        function initializeGoogleSignIn() {
+            google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: handleCredentialResponse
+            });
+
+            google.accounts.id.renderButton(
+                document.getElementById('google-signin-btn'),
+                { theme: 'outline', size: 'large', text: 'signin_with', width: 280 }
+            );
+        }
+
+        function handleCredentialResponse(response) {
+            // Decode the JWT token to get user info
+            const payload = JSON.parse(atob(response.credential.split('.')[1]));
+            userEmail = payload.email;
+            userName = payload.name;
+
+            // Show exam interface
+            document.getElementById('auth-section').classList.add('hidden');
+            document.getElementById('user-info').classList.remove('hidden');
+            document.getElementById('exam-section').classList.remove('hidden');
+            document.getElementById('user-email').textContent = userEmail;
+
+            // Log exam access to Google Sheets
+            logExamAccess();
+        }
+
+        function signOut() {
+            google.accounts.id.disableAutoSelect();
+            userEmail = '';
+            userName = '';
+
+            document.getElementById('auth-section').classList.remove('hidden');
+            document.getElementById('user-info').classList.add('hidden');
+            document.getElementById('exam-section').classList.add('hidden');
+            document.getElementById('results').classList.add('hidden');
+        }
+
+        // Initialize Google Sign-In when script loads
+        window.onload = function() {
+            if (typeof google !== 'undefined') {
+                initializeGoogleSignIn();
+            }
+        };
+
+        // ==================== EXAM ACCESS LOGGING ====================
+        async function logExamAccess() {
+            const timestamp = new Date().toLocaleString();
+
+            const data = {
+                action: 'access',
+                email: userEmail,
+                name: userName,
+                timestamp: timestamp
+            };
+
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                console.log('Midterm exam access logged');
+            } catch (error) {
+                console.error('Error logging exam access:', error);
+            }
+        }
+
+        // ==================== FORM SUBMISSION ====================
         document.getElementById('exam-form').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            // Check student info
-            const studentName = document.getElementById('studentName').value.trim();
-            if (!studentName) {
-                alert('Please enter your name before submitting.');
+            // Prevent double submission
+            const btn = document.getElementById('exam-submit-btn');
+            if (btn.disabled) {
                 return;
             }
 
@@ -1562,10 +1715,22 @@
                 return;
             }
 
-            // Grade the exam
-            gradeExam();
+            // Disable button and show loading state
+            btn.disabled = true;
+            btn.textContent = 'Submitting Exam...';
+            btn.style.opacity = '0.6';
+            btn.style.cursor = 'not-allowed';
+
+            // Show loading overlay
+            document.getElementById('loading-overlay').classList.remove('hidden');
+
+            // Grade exam (allow UI to update before processing)
+            setTimeout(() => {
+                gradeExam();
+            }, 100);
         });
 
+        // ==================== GRADING ====================
         function gradeExam() {
             let scores = {
                 engineering: 0,
@@ -1575,10 +1740,13 @@
                 codeAnalysis: 0
             };
             let incorrect = [];
+            let answersArray = [];
 
             // Check each answer
             for (let q in answers) {
                 const selected = document.querySelector(`input[name="${q}"]:checked`);
+                const qNum = q.replace('q', '');
+
                 if (selected && selected.value === answers[q]) {
                     // Correct - add 2 points to appropriate category
                     for (let cat in categories) {
@@ -1586,21 +1754,99 @@
                             scores[cat] += 2;
                         }
                     }
+                    answersArray.push({ question: qNum, correct: 1 });
                 } else {
                     // Incorrect
-                    const qNum = q.replace('q', '');
                     incorrect.push({
                         num: qNum,
                         yours: selected ? selected.value.toUpperCase() : 'None',
                         correct: answers[q].toUpperCase()
                     });
+                    answersArray.push({ question: qNum, correct: 0 });
                 }
             }
 
             // Calculate total
             const total = scores.engineering + scores.safety + scores.cad + scores.programming + scores.codeAnalysis;
+            const percentage = ((total / 70) * 100).toFixed(1);
 
-            // Display results
+            // Submit to Google Sheets
+            submitToGoogleSheets(scores, total, percentage, answersArray, incorrect);
+        }
+
+        // ==================== GOOGLE SHEETS SUBMISSION ====================
+        async function submitToGoogleSheets(scores, total, percentage, answersArray, incorrect) {
+            const timestamp = new Date().toLocaleString();
+
+            const data = {
+                action: 'submit',
+                email: userEmail,
+                name: userName,
+                totalScore: total,
+                maxScore: 70,
+                percentage: percentage,
+                engineeringScore: scores.engineering,
+                safetyScore: scores.safety,
+                cadScore: scores.cad,
+                programmingScore: scores.programming,
+                codeAnalysisScore: scores.codeAnalysis,
+                timestamp: timestamp,
+                answers: JSON.stringify(answersArray)
+            };
+
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                // Display results
+                displayResults(scores, total, percentage, incorrect);
+
+            } catch (error) {
+                console.error('Error submitting to Google Sheets:', error);
+
+                // Still show results even if submission fails
+                displayResults(scores, total, percentage, incorrect);
+
+                const statusDiv = document.getElementById('submission-status');
+                statusDiv.className = 'submission-status error';
+                statusDiv.innerHTML = `
+                    <h3 style="color: #ff5555; margin-bottom: 10px;">Warning: Submission Error</h3>
+                    <p>Your exam was graded but there was an error submitting to Google Sheets.</p>
+                    <p>Please screenshot your results and notify your instructor.</p>
+                `;
+            }
+        }
+
+        // ==================== DISPLAY RESULTS ====================
+        function displayResults(scores, total, percentage, incorrect) {
+            // Hide loading overlay
+            document.getElementById('loading-overlay').classList.add('hidden');
+
+            // Hide exam section, show results
+            document.getElementById('exam-section').classList.add('hidden');
+            document.getElementById('results').classList.remove('hidden');
+
+            // Show success status
+            const statusDiv = document.getElementById('submission-status');
+            statusDiv.className = 'submission-status';
+            statusDiv.innerHTML = `
+                <h3 style="color: #50fa7b; margin-bottom: 10px;">Exam Submitted Successfully</h3>
+                <p>Your results have been sent to your instructor.</p>
+                <p style="margin-top: 10px; color: #ff9500;"><strong>Remember:</strong> Submit your CAD file separately as LastName_Midterm_CAD.f3d</p>
+            `;
+
+            // Scroll to results
+            setTimeout(() => {
+                document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+
+            // Display scores
             document.getElementById('finalScore').textContent = `${total}/70`;
             document.getElementById('engScore').textContent = `${scores.engineering}/16`;
             document.getElementById('safetyScore').textContent = `${scores.safety}/16`;
@@ -1612,7 +1858,7 @@
             // Display incorrect answers
             const incorrectList = document.getElementById('incorrectList');
             if (incorrect.length === 0) {
-                incorrectList.innerHTML = '<p style="color: #00ff00; font-size: 1.2rem;">Perfect score on multiple choice! Great job!</p>';
+                incorrectList.innerHTML = '<p style="color: #00ff00; font-size: 1.2rem;">Perfect score on multiple choice! Excellent work!</p>';
             } else {
                 incorrectList.innerHTML = incorrect.map(item => `
                     <div class="incorrect-item">
@@ -1622,10 +1868,6 @@
                     </div>
                 `).join('');
             }
-
-            // Show results section
-            document.getElementById('results').classList.add('show');
-            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
         }
     </script>
 </body>
