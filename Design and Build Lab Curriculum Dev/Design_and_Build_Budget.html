@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design and Build Lab - Budget Proposal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 11px;
+            line-height: 1.4;
+            color: #333;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #1a365d;
+            text-align: center;
+            margin-bottom: 5px;
+            border-bottom: 3px solid #2c5282;
+            padding-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+
+        .section-header {
+            background: #2c5282;
+            color: white;
+            padding: 8px 12px;
+            font-weight: bold;
+            font-size: 13px;
+            margin-top: 15px;
+            margin-bottom: 0;
+            page-break-after: avoid;
+        }
+
+        .subsection-header {
+            background: #4a5568;
+            color: white;
+            padding: 5px 12px;
+            font-weight: bold;
+            font-size: 11px;
+            margin-top: 10px;
+            margin-bottom: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 5px;
+            font-size: 10px;
+        }
+
+        th {
+            background: #e2e8f0;
+            padding: 6px 8px;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #cbd5e0;
+        }
+
+        td {
+            padding: 5px 8px;
+            border: 1px solid #e2e8f0;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) {
+            background: #f7fafc;
+        }
+
+        .qty, .unit-cost, .total-cost {
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .subtotal-row {
+            background: #edf2f7 !important;
+            font-weight: bold;
+        }
+
+        .subtotal-row td {
+            border-top: 2px solid #a0aec0;
+        }
+
+        .summary-table {
+            margin-top: 20px;
+            width: 60%;
+            margin-left: auto;
+        }
+
+        .summary-table th {
+            background: #2c5282;
+            color: white;
+        }
+
+        .summary-table .total-row {
+            background: #1a365d !important;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .summary-table .total-row td {
+            border-color: #1a365d;
+        }
+
+        .grand-total-row {
+            background: #276749 !important;
+            color: white;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .link {
+            color: #2b6cb0;
+            font-size: 9px;
+            word-break: break-all;
+        }
+
+        .note {
+            font-style: italic;
+            color: #718096;
+            font-size: 9px;
+        }
+
+        .project-note {
+            background: #fefcbf;
+            padding: 3px 8px;
+            font-size: 9px;
+            border-left: 3px solid #d69e2e;
+            margin: 5px 0;
+        }
+
+        @media print {
+            body {
+                padding: 10px;
+                font-size: 10px;
+            }
+
+            .section-header {
+                page-break-after: avoid;
+            }
+
+            table {
+                page-break-inside: auto;
+            }
+
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+
+        @page {
+            margin: 0.5in;
+            size: letter;
+        }
+    </style>
+</head>
+<body>
+    <h1>Design and Build Lab</h1>
+    <p class="subtitle">Budget Proposal - Fall 2026</p>
+
+    <!-- COURSE DEVELOPMENT -->
+    <div class="section-header">COURSE DEVELOPMENT</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 45%">Description</th>
+                <th style="width: 8%">Qty</th>
+                <th style="width: 12%">Unit Cost</th>
+                <th style="width: 12%">Total</th>
+                <th style="width: 23%">Supplier</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Course Development Work Day (1 day sub)</td>
+                <td class="qty">1</td>
+                <td class="unit-cost">$148.25</td>
+                <td class="total-cost">$148.25</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Curriculum Revisions (2 days x 2 years x 1 teacher)</td>
+                <td class="qty">1</td>
+                <td class="unit-cost">$594.00</td>
+                <td class="total-cost">$594.00</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Project 1: Fidget Spinner Development (2 days)</td>
+                <td class="qty">1</td>
+                <td class="unit-cost">$306.00</td>
+                <td class="total-cost">$306.00</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Project 2: LED Sign/Wall Art Development (2 days)</td>
+                <td class="qty">1</td>
+                <td class="unit-cost">$306.00</td>
+                <td class="total-cost">$306.00</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Project 3: Acrylic Ornament Development (2 days)</td>
+                <td class="qty">1</td>
+                <td class="unit-cost">$306.00</td>
+                <td class="total-cost">$306.00</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Project 4: Silicone Molds Development (2 days)</td>
+                <td class="qty">1</td>
+                <td class="unit-cost">$306.00</td>
+                <td class="total-cost">$306.00</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Project 5: Plant Watering Development (2 days)</td>
+                <td class="qty">1</td>
+                <td class="unit-cost">$306.00</td>
+                <td class="total-cost">$306.00</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Capstone Project Development (2 days)</td>
+                <td class="qty">1</td>
+                <td class="unit-cost">$306.00</td>
+                <td class="total-cost">$306.00</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Outfeed Table Development (2 days)</td>
+                <td class="qty">1</td>
+                <td class="unit-cost">$306.00</td>
+                <td class="total-cost">$306.00</td>
+                <td></td>
+            </tr>
+            <tr class="subtotal-row">
+                <td colspan="3" style="text-align: right;">Subtotal</td>
+                <td class="total-cost">$2,884.25</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- CAPITAL IMPROVEMENTS -->
+    <div class="section-header">CAPITAL IMPROVEMENTS (Grant-Funded)</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 45%">Description</th>
+                <th style="width: 8%">Qty</th>
+                <th style="width: 12%">Unit Cost</th>
+                <th style="width: 12%">Total</th>
+                <th style="width: 23%">Supplier</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>BambuLab A1 Mini 3D Printer</td>
+                <td class="qty">10</td>
+                <td class="unit-cost">$276.00</td>
+                <td class="total-cost">$2,760.00</td>
+                <td>BambuLab</td>
+            </tr>
+            <tr>
+                <td>Industrial Packing Table 96x30" Maple Top Square Edge</td>
+                <td class="qty">2</td>
+                <td class="unit-cost">$725.00</td>
+                <td class="total-cost">$1,450.00</td>
+                <td>Uline</td>
+            </tr>
+            <tr>
+                <td>Packing Table Locking Drawer 25x22x6"</td>
+                <td class="qty">10</td>
+                <td class="unit-cost">$130.00</td>
+                <td class="total-cost">$1,300.00</td>
+                <td>Uline</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="subsection-header">Table Saw Outfeed Table Build</div>
+    <table>
+        <tbody>
+            <tr>
+                <td style="width: 45%">3/4" Plywood/MDF Sheet (4x8)</td>
+                <td class="qty" style="width: 8%">1</td>
+                <td class="unit-cost" style="width: 12%">$55.00</td>
+                <td class="total-cost" style="width: 12%">$55.00</td>
+                <td style="width: 23%">Local Supplier</td>
+            </tr>
+            <tr>
+                <td>2x4 Lumber (8' lengths)</td>
+                <td class="qty">6</td>
+                <td class="unit-cost">$6.00</td>
+                <td class="total-cost">$36.00</td>
+                <td>Local Supplier</td>
+            </tr>
+            <tr>
+                <td>Locking Casters (3" heavy duty)</td>
+                <td class="qty">4</td>
+                <td class="unit-cost">$12.00</td>
+                <td class="total-cost">$48.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Leveling Feet</td>
+                <td class="qty">4</td>
+                <td class="unit-cost">$4.00</td>
+                <td class="total-cost">$16.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Hardware (screws, bolts, brackets)</td>
+                <td class="qty">1</td>
+                <td class="unit-cost">$25.00</td>
+                <td class="total-cost">$25.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Finish/Sealant</td>
+                <td class="qty">1</td>
+                <td class="unit-cost">$20.00</td>
+                <td class="total-cost">$20.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Creality K1C PEI Build Plate 235x235mm (Ender 3 V3 KE)</td>
+                <td class="qty">10</td>
+                <td class="unit-cost">$20.00</td>
+                <td class="total-cost">$200.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr class="subtotal-row">
+                <td colspan="3" style="text-align: right;">Capital Improvements Subtotal</td>
+                <td class="total-cost">$5,910.00</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- RECURRING CONSUMABLES - 3D Printing -->
+    <div class="section-header">RECURRING CONSUMABLES - 3D Printing</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 45%">Description</th>
+                <th style="width: 8%">Qty</th>
+                <th style="width: 12%">Unit Cost</th>
+                <th style="width: 12%">Total</th>
+                <th style="width: 23%">Supplier</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>PLA Filament 1kg Spool (assorted colors)</td>
+                <td class="qty">40</td>
+                <td class="unit-cost">$18.89</td>
+                <td class="total-cost">$755.60</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>PETG Filament 1kg Spool</td>
+                <td class="qty">10</td>
+                <td class="unit-cost">$22.00</td>
+                <td class="total-cost">$220.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>TPU Flexible Filament 1kg Spool</td>
+                <td class="qty">5</td>
+                <td class="unit-cost">$25.00</td>
+                <td class="total-cost">$125.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Nozzle Assortment (0.4mm, 0.6mm, 0.8mm)</td>
+                <td class="qty">30</td>
+                <td class="unit-cost">$1.50</td>
+                <td class="total-cost">$45.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Isopropyl Alcohol 99% Spray Bottle (32oz)</td>
+                <td class="qty">10</td>
+                <td class="unit-cost">$12.00</td>
+                <td class="total-cost">$120.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr class="subtotal-row">
+                <td colspan="3" style="text-align: right;">Subtotal</td>
+                <td class="total-cost">$1,265.60</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- RECURRING CONSUMABLES - Sheet Materials -->
+    <div class="section-header">RECURRING CONSUMABLES - Sheet Materials</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 45%">Description</th>
+                <th style="width: 8%">Qty</th>
+                <th style="width: 12%">Unit Cost</th>
+                <th style="width: 12%">Total</th>
+                <th style="width: 23%">Supplier</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1/8" Polycarbonate 12x24" (cut from full sheet)</td>
+                <td class="qty">30</td>
+                <td class="unit-cost">$4.25</td>
+                <td class="total-cost">$127.50</td>
+                <td>Alro</td>
+            </tr>
+            <tr>
+                <td>1/4" Polycarbonate (full 4x8 sheets)</td>
+                <td class="qty">4</td>
+                <td class="unit-cost">$155.00</td>
+                <td class="total-cost">$620.00</td>
+                <td>Alro</td>
+            </tr>
+            <tr>
+                <td>Steel 16ga 4x4 sheet (~26 lbs @ $0.60/lb)</td>
+                <td class="qty">10</td>
+                <td class="unit-cost">$15.60</td>
+                <td class="total-cost">$156.00</td>
+                <td>Alro</td>
+            </tr>
+            <tr>
+                <td>Steel 18ga 4x4 sheet (~20 lbs @ $0.60/lb)</td>
+                <td class="qty">10</td>
+                <td class="unit-cost">$12.00</td>
+                <td class="total-cost">$120.00</td>
+                <td>Alro</td>
+            </tr>
+            <tr>
+                <td>24ga Steel <span class="note">(donated)</span></td>
+                <td class="qty">—</td>
+                <td class="unit-cost">$0.00</td>
+                <td class="total-cost">$0.00</td>
+                <td>Alro (Donated)</td>
+            </tr>
+            <tr>
+                <td>Plywood 1/4" Baltic Birch</td>
+                <td class="qty">20</td>
+                <td class="unit-cost">$15.00</td>
+                <td class="total-cost">$300.00</td>
+                <td>Local Supplier</td>
+            </tr>
+            <tr>
+                <td>MDF 1/2"</td>
+                <td class="qty">10</td>
+                <td class="unit-cost">$12.00</td>
+                <td class="total-cost">$120.00</td>
+                <td>Local Supplier</td>
+            </tr>
+            <tr>
+                <td>Acrylic 1/8" (various colors)</td>
+                <td class="qty">15</td>
+                <td class="unit-cost">$12.00</td>
+                <td class="total-cost">$180.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr class="subtotal-row">
+                <td colspan="3" style="text-align: right;">Subtotal</td>
+                <td class="total-cost">$1,623.50</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- RECURRING CONSUMABLES - Electronics -->
+    <div class="section-header">RECURRING CONSUMABLES - Electronics</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 45%">Description</th>
+                <th style="width: 8%">Qty</th>
+                <th style="width: 12%">Unit Cost</th>
+                <th style="width: 12%">Total</th>
+                <th style="width: 23%">Supplier</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>LED Strip Lights 5m rolls 12V</td>
+                <td class="qty">10</td>
+                <td class="unit-cost">$12.00</td>
+                <td class="total-cost">$120.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>LED Assortment (bag of 500)</td>
+                <td class="qty">2</td>
+                <td class="unit-cost">$15.00</td>
+                <td class="total-cost">$30.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Resistor Kit</td>
+                <td class="qty">5</td>
+                <td class="unit-cost">$12.00</td>
+                <td class="total-cost">$60.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Jumper Wire Kits</td>
+                <td class="qty">20</td>
+                <td class="unit-cost">$6.50</td>
+                <td class="total-cost">$130.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Breadboards 400-point</td>
+                <td class="qty">30</td>
+                <td class="unit-cost">$2.50</td>
+                <td class="total-cost">$75.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>USB Cables A-to-B</td>
+                <td class="qty">30</td>
+                <td class="unit-cost">$3.00</td>
+                <td class="total-cost">$90.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>12V Power Supplies</td>
+                <td class="qty">20</td>
+                <td class="unit-cost">$8.00</td>
+                <td class="total-cost">$160.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Zip Ties 7.4" 50LB Black (PLT2S-M0)</td>
+                <td class="qty">100</td>
+                <td class="unit-cost">$0.10</td>
+                <td class="total-cost">$10.00</td>
+                <td>Digikey (298-1051-ND)</td>
+            </tr>
+            <tr>
+                <td>Zip Ties 7.4" 50LB Natural (PLT2S-M)</td>
+                <td class="qty">100</td>
+                <td class="unit-cost">$0.10</td>
+                <td class="total-cost">$10.00</td>
+                <td>Digikey (298-1031-ND)</td>
+            </tr>
+            <tr>
+                <td>Zip Ties 3.9" 18LB Black (PLT1M-M0)</td>
+                <td class="qty">100</td>
+                <td class="unit-cost">$0.05</td>
+                <td class="total-cost">$5.00</td>
+                <td>Digikey (298-10374-ND)</td>
+            </tr>
+            <tr>
+                <td>Zip Ties 3.9" 18LB Natural (PLT1M-M)</td>
+                <td class="qty">100</td>
+                <td class="unit-cost">$0.05</td>
+                <td class="total-cost">$5.00</td>
+                <td>Digikey (298-1021-ND)</td>
+            </tr>
+            <tr class="subtotal-row">
+                <td colspan="3" style="text-align: right;">Subtotal</td>
+                <td class="total-cost">$695.00</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- RECURRING CONSUMABLES - Adhesives & Finishing -->
+    <div class="section-header">RECURRING CONSUMABLES - Adhesives & Finishing</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 45%">Description</th>
+                <th style="width: 8%">Qty</th>
+                <th style="width: 12%">Unit Cost</th>
+                <th style="width: 12%">Total</th>
+                <th style="width: 23%">Supplier</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Epoxy Dispensing Gun (AB Glue)</td>
+                <td class="qty">2</td>
+                <td class="unit-cost">$15.00</td>
+                <td class="total-cost">$30.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>3M Scotch-Weld DP100Plus Epoxy Cartridges</td>
+                <td class="qty">5</td>
+                <td class="unit-cost">$7.00</td>
+                <td class="total-cost">$35.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Hot Glue Sticks (bulk)</td>
+                <td class="qty">500</td>
+                <td class="unit-cost">$0.05</td>
+                <td class="total-cost">$25.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Sandpaper Assortment (80-400 grit)</td>
+                <td class="qty">1</td>
+                <td class="unit-cost">$75.00</td>
+                <td class="total-cost">$75.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Spray Paint (primer + colors)</td>
+                <td class="qty">20</td>
+                <td class="unit-cost">$6.00</td>
+                <td class="total-cost">$120.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr class="subtotal-row">
+                <td colspan="3" style="text-align: right;">Subtotal</td>
+                <td class="total-cost">$285.00</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- RECURRING CONSUMABLES - Safety & PPE -->
+    <div class="section-header">RECURRING CONSUMABLES - Safety & PPE</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 45%">Description</th>
+                <th style="width: 8%">Qty</th>
+                <th style="width: 12%">Unit Cost</th>
+                <th style="width: 12%">Total</th>
+                <th style="width: 23%">Supplier</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Safety Glasses (25-pack)</td>
+                <td class="qty">1</td>
+                <td class="unit-cost">$75.00</td>
+                <td class="total-cost">$75.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Nitrile Gloves (boxes of 100)</td>
+                <td class="qty">10</td>
+                <td class="unit-cost">$12.00</td>
+                <td class="total-cost">$120.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Dust Masks N95 (box of 20)</td>
+                <td class="qty">10</td>
+                <td class="unit-cost">$18.00</td>
+                <td class="total-cost">$180.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Ear Plug Dispenser (200 pairs)</td>
+                <td class="qty">1</td>
+                <td class="unit-cost">$40.00</td>
+                <td class="total-cost">$40.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr class="subtotal-row">
+                <td colspan="3" style="text-align: right;">Subtotal</td>
+                <td class="total-cost">$415.00</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- RECURRING CONSUMABLES - CNC/Plasma -->
+    <div class="section-header">RECURRING CONSUMABLES - CNC/Plasma</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 45%">Description</th>
+                <th style="width: 8%">Qty</th>
+                <th style="width: 12%">Unit Cost</th>
+                <th style="width: 12%">Total</th>
+                <th style="width: 23%">Supplier</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>End Mills <span class="note">(existing)</span></td>
+                <td class="qty">—</td>
+                <td class="unit-cost">$0.00</td>
+                <td class="total-cost">$0.00</td>
+                <td>Existing</td>
+            </tr>
+            <tr>
+                <td>Plasma Consumable Kit</td>
+                <td class="qty">2</td>
+                <td class="unit-cost">$45.00</td>
+                <td class="total-cost">$90.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Anti-Spatter Spray <span class="note">(existing)</span></td>
+                <td class="qty">—</td>
+                <td class="unit-cost">$0.00</td>
+                <td class="total-cost">$0.00</td>
+                <td>Existing</td>
+            </tr>
+            <tr class="subtotal-row">
+                <td colspan="3" style="text-align: right;">Subtotal</td>
+                <td class="total-cost">$90.00</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- PROJECT 1 -->
+    <div class="section-header">PROJECT 1: 3D Printed Fidget Spinner (Individual - 60 students)</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 45%">Description</th>
+                <th style="width: 8%">Qty</th>
+                <th style="width: 12%">Unit Cost</th>
+                <th style="width: 12%">Total</th>
+                <th style="width: 23%">Supplier</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>608 Skateboard Bearings (10-pack)</td>
+                <td class="qty">20</td>
+                <td class="unit-cost">$8.00</td>
+                <td class="total-cost">$160.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>PLA Filament <span class="note">(see consumables)</span></td>
+                <td class="qty">—</td>
+                <td class="unit-cost">—</td>
+                <td class="total-cost">—</td>
+                <td></td>
+            </tr>
+            <tr class="subtotal-row">
+                <td colspan="3" style="text-align: right;">Subtotal</td>
+                <td class="total-cost">$160.00</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- PROJECT 2 -->
+    <div class="section-header">PROJECT 2: LED Sign/Wall Art (Groups - 15-20 teams)</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 45%">Description</th>
+                <th style="width: 8%">Qty</th>
+                <th style="width: 12%">Unit Cost</th>
+                <th style="width: 12%">Total</th>
+                <th style="width: 23%">Supplier</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Soldering Supplies (solder, flux, tip cleaner)</td>
+                <td class="qty">1</td>
+                <td class="unit-cost">$50.00</td>
+                <td class="total-cost">$50.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>LED Strips, Power Supplies, Plywood/Acrylic <span class="note">(see consumables)</span></td>
+                <td class="qty">—</td>
+                <td class="unit-cost">—</td>
+                <td class="total-cost">—</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Sheet Metal, Plasma Consumables <span class="note">(see consumables)</span></td>
+                <td class="qty">—</td>
+                <td class="unit-cost">—</td>
+                <td class="total-cost">—</td>
+                <td></td>
+            </tr>
+            <tr class="subtotal-row">
+                <td colspan="3" style="text-align: right;">Subtotal</td>
+                <td class="total-cost">$50.00</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- PROJECT 3 -->
+    <div class="section-header">PROJECT 3: Custom Acrylic Christmas Ornament (Individual - 60 students)</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 45%">Description</th>
+                <th style="width: 8%">Qty</th>
+                <th style="width: 12%">Unit Cost</th>
+                <th style="width: 12%">Total</th>
+                <th style="width: 23%">Supplier</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>LED Light Base Kit with Remote (12-pack)</td>
+                <td class="qty">5</td>
+                <td class="unit-cost">$28.00</td>
+                <td class="total-cost">$140.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Acrylic Blanks <span class="note">(see consumables)</span></td>
+                <td class="qty">—</td>
+                <td class="unit-cost">—</td>
+                <td class="total-cost">—</td>
+                <td></td>
+            </tr>
+            <tr class="subtotal-row">
+                <td colspan="3" style="text-align: right;">Subtotal</td>
+                <td class="total-cost">$140.00</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- PROJECT 4 -->
+    <div class="section-header">PROJECT 4: Silicone Molds (Individual - 60 students)</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 45%">Description</th>
+                <th style="width: 8%">Qty</th>
+                <th style="width: 12%">Unit Cost</th>
+                <th style="width: 12%">Total</th>
+                <th style="width: 23%">Supplier</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Silicone Mold Making Kit 1 Gallon (~15 molds each)</td>
+                <td class="qty">5</td>
+                <td class="unit-cost">$74.77</td>
+                <td class="total-cost">$373.85</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Mold Release Spray</td>
+                <td class="qty">3</td>
+                <td class="unit-cost">$12.00</td>
+                <td class="total-cost">$36.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Mixing Cups & Stir Sticks (lot)</td>
+                <td class="qty">1</td>
+                <td class="unit-cost">$25.00</td>
+                <td class="total-cost">$25.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>PLA for mold masters <span class="note">(see consumables)</span></td>
+                <td class="qty">—</td>
+                <td class="unit-cost">—</td>
+                <td class="total-cost">—</td>
+                <td></td>
+            </tr>
+            <tr class="subtotal-row">
+                <td colspan="3" style="text-align: right;">Subtotal</td>
+                <td class="total-cost">$434.85</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- PROJECT 5 -->
+    <div class="section-header">PROJECT 5: Automated Plant Watering (Groups - 20 kits)</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 45%">Description</th>
+                <th style="width: 8%">Qty</th>
+                <th style="width: 12%">Unit Cost</th>
+                <th style="width: 12%">Total</th>
+                <th style="width: 23%">Supplier</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Arduino Uno R3 Compatible</td>
+                <td class="qty">20</td>
+                <td class="unit-cost">$8.50</td>
+                <td class="total-cost">$170.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Capacitive Soil Moisture Sensor v1.2</td>
+                <td class="qty">20</td>
+                <td class="unit-cost">$4.25</td>
+                <td class="total-cost">$85.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Mini Submersible Water Pump 3-6V</td>
+                <td class="qty">20</td>
+                <td class="unit-cost">$3.50</td>
+                <td class="total-cost">$70.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>5V Relay Module Single Channel</td>
+                <td class="qty">20</td>
+                <td class="unit-cost">$2.00</td>
+                <td class="total-cost">$40.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Silicone Tubing 1/4" ID (per foot)</td>
+                <td class="qty">60</td>
+                <td class="unit-cost">$0.35</td>
+                <td class="total-cost">$21.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>9V Battery Holder with Switch</td>
+                <td class="qty">20</td>
+                <td class="unit-cost">$1.50</td>
+                <td class="total-cost">$30.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>9V Rechargeable Batteries (2-pack)</td>
+                <td class="qty">20</td>
+                <td class="unit-cost">$12.00</td>
+                <td class="total-cost">$240.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Water Containers 500mL</td>
+                <td class="qty">20</td>
+                <td class="unit-cost">$2.00</td>
+                <td class="total-cost">$40.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Waterproof Silicone Sealant</td>
+                <td class="qty">10</td>
+                <td class="unit-cost">$5.50</td>
+                <td class="total-cost">$55.00</td>
+                <td>Amazon</td>
+            </tr>
+            <tr>
+                <td>Breadboards, Jumpers, USB, Polycarbonate <span class="note">(see consumables)</span></td>
+                <td class="qty">—</td>
+                <td class="unit-cost">—</td>
+                <td class="total-cost">—</td>
+                <td></td>
+            </tr>
+            <tr class="subtotal-row">
+                <td colspan="3" style="text-align: right;">Subtotal</td>
+                <td class="total-cost">$751.00</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- PROJECT 6 -->
+    <div class="section-header">PROJECT 6: Capstone Project (Groups - 15-20 teams)</div>
+    <table>
+        <tbody>
+            <tr>
+                <td style="width: 45%">Materials from existing stock <span class="note">(see consumables)</span></td>
+                <td class="qty" style="width: 8%">—</td>
+                <td class="unit-cost" style="width: 12%">—</td>
+                <td class="total-cost" style="width: 12%">—</td>
+                <td style="width: 23%"></td>
+            </tr>
+            <tr class="subtotal-row">
+                <td colspan="3" style="text-align: right;">Subtotal</td>
+                <td class="total-cost">$0.00</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- BUDGET SUMMARY -->
+    <div class="section-header" style="background: #1a365d; margin-top: 25px;">BUDGET SUMMARY</div>
+    <table class="summary-table">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th style="text-align: right;">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Course Development</td>
+                <td class="total-cost">$2,884.25</td>
+            </tr>
+            <tr>
+                <td>Capital Improvements (Grant-Funded)</td>
+                <td class="total-cost">$5,910.00</td>
+            </tr>
+            <tr>
+                <td>Recurring: 3D Printing</td>
+                <td class="total-cost">$1,265.60</td>
+            </tr>
+            <tr>
+                <td>Recurring: Sheet Materials</td>
+                <td class="total-cost">$1,623.50</td>
+            </tr>
+            <tr>
+                <td>Recurring: Electronics</td>
+                <td class="total-cost">$695.00</td>
+            </tr>
+            <tr>
+                <td>Recurring: Adhesives & Finishing</td>
+                <td class="total-cost">$285.00</td>
+            </tr>
+            <tr>
+                <td>Recurring: Safety & PPE</td>
+                <td class="total-cost">$415.00</td>
+            </tr>
+            <tr>
+                <td>Recurring: CNC/Plasma</td>
+                <td class="total-cost">$90.00</td>
+            </tr>
+            <tr>
+                <td>Project 1: Fidget Spinner</td>
+                <td class="total-cost">$160.00</td>
+            </tr>
+            <tr>
+                <td>Project 2: LED Sign/Wall Art</td>
+                <td class="total-cost">$50.00</td>
+            </tr>
+            <tr>
+                <td>Project 3: Acrylic Ornament</td>
+                <td class="total-cost">$140.00</td>
+            </tr>
+            <tr>
+                <td>Project 4: Silicone Molds</td>
+                <td class="total-cost">$434.85</td>
+            </tr>
+            <tr>
+                <td>Project 5: Plant Watering</td>
+                <td class="total-cost">$751.00</td>
+            </tr>
+            <tr>
+                <td>Project 6: Capstone</td>
+                <td class="total-cost">$0.00</td>
+            </tr>
+            <tr class="total-row">
+                <td><strong>RECURRING COSTS TOTAL</strong></td>
+                <td class="total-cost"><strong>$8,794.20</strong></td>
+            </tr>
+            <tr class="total-row">
+                <td><strong>CAPITAL IMPROVEMENTS TOTAL</strong></td>
+                <td class="total-cost"><strong>$5,910.00</strong></td>
+            </tr>
+            <tr class="grand-total-row">
+                <td><strong>GRAND TOTAL</strong></td>
+                <td class="total-cost"><strong>$14,704.20</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p style="text-align: center; margin-top: 30px; color: #718096; font-size: 10px;">
+        Generated: January 2026 | Design and Build Lab Curriculum Development
+    </p>
+</body>
+</html>
