@@ -1,0 +1,2482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Midterm Study Guide - Units 1-5</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0f0f1e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 2rem 3rem;
+            text-align: center;
+            border-bottom: 3px solid #00d4ff;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #00d4ff;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.8), 0 0 40px rgba(0, 212, 255, 0.4);
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #b0b0b0;
+            font-weight: 300;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: rgba(26, 26, 46, 0.5);
+            position: sticky;
+            top: 130px;
+            z-index: 99;
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .nav-tab {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #1e1e3e 0%, #2a2a4e 100%);
+            border: 2px solid #00d4ff;
+            border-radius: 10px;
+            color: #00d4ff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .nav-tab:hover {
+            background: linear-gradient(135deg, #00d4ff 0%, #0095b3 100%);
+            color: #0a0a0a;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, #00d4ff 0%, #0095b3 100%);
+            color: #0a0a0a;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.6);
+        }
+
+        .content {
+            max-width: 1400px;
+            margin: 3rem auto;
+            padding: 0 3rem 3rem 3rem;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            color: #ff9500;
+            text-shadow: 0 0 15px rgba(255, 149, 0, 0.6);
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid #ff9500;
+        }
+
+        .subsection {
+            background: rgba(26, 26, 46, 0.6);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 15px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .subsection-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8rem;
+            color: #00d4ff;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* Flashcard Styles */
+        .flashcards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .flashcard {
+            height: 200px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .flashcard-front {
+            background: linear-gradient(135deg, #1e1e3e 0%, #2a2a4e 100%);
+            border: 2px solid #00d4ff;
+        }
+
+        .flashcard-back {
+            background: linear-gradient(135deg, #2a2a4e 0%, #1e1e3e 100%);
+            border: 2px solid #ff9500;
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-term {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
+            color: #00d4ff;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .flashcard-definition {
+            font-size: 1.1rem;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        .flashcard-hint {
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        /* Practice Question Styles */
+        .practice-questions {
+            margin-top: 2rem;
+        }
+
+        .question-card {
+            background: rgba(30, 30, 62, 0.8);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border-radius: 10px;
+            border-left: 5px solid #00d4ff;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            color: #e0e0e0;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .question-number {
+            background: #00d4ff;
+            color: #0a0a0a;
+            padding: 0.3rem 0.8rem;
+            border-radius: 5px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            margin-right: 1rem;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .option {
+            background: rgba(42, 42, 78, 0.6);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .option input[type="radio"] {
+            margin-right: 1rem;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+        }
+
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 1.1rem;
+        }
+
+        .option.correct {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+        }
+
+        .option.incorrect {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: #ff0000;
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            background: rgba(0, 255, 0, 0.15);
+            border-left: 5px solid #00ff00;
+            color: #00ff00;
+        }
+
+        .feedback.incorrect {
+            background: rgba(255, 0, 0, 0.15);
+            border-left: 5px solid #ff0000;
+            color: #ff6b6b;
+        }
+
+        .check-answer-btn {
+            background: linear-gradient(135deg, #00d4ff 0%, #0095b3 100%);
+            color: #0a0a0a;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .check-answer-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .check-answer-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Code Challenge Styles */
+        .code-challenge {
+            background: rgba(20, 20, 40, 0.9);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 10px;
+            border: 2px solid #ff9500;
+        }
+
+        .code-block {
+            background: #1a1a1a;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            color: #e0e0e0;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border-left: 4px solid #00d4ff;
+            white-space: pre;
+            line-height: 1.6;
+        }
+
+        .code-block .comment {
+            color: #6a9955;
+        }
+
+        .code-block .keyword {
+            color: #569cd6;
+        }
+
+        .code-block .function {
+            color: #dcdcaa;
+        }
+
+        .code-block .number {
+            color: #b5cea8;
+        }
+
+        .code-block .string {
+            color: #ce9178;
+        }
+
+        /* Checklist Styles */
+        .checklist {
+            background: rgba(30, 30, 62, 0.6);
+            padding: 2rem;
+            border-radius: 10px;
+            border-left: 5px solid #ff9500;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: rgba(42, 42, 78, 0.4);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checklist-item:hover {
+            background: rgba(42, 42, 78, 0.7);
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            margin-right: 1rem;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .checklist-item label {
+            flex: 1;
+            cursor: pointer;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .checklist-item.checked {
+            opacity: 0.6;
+        }
+
+        .checklist-item.checked label {
+            text-decoration: line-through;
+        }
+
+        /* Key Concepts Box */
+        .key-concepts {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 149, 179, 0.1) 100%);
+            border: 2px solid #00d4ff;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .key-concepts h3 {
+            color: #00d4ff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .key-concepts ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .key-concepts li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .key-concepts li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #00d4ff;
+            font-weight: bold;
+        }
+
+        .score-tracker {
+            position: fixed;
+            top: 250px;
+            right: 2rem;
+            background: rgba(26, 26, 46, 0.95);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 2px solid #00d4ff;
+            min-width: 200px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .score-tracker h3 {
+            color: #00d4ff;
+            font-family: 'Rajdhani', sans-serif;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .score-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .score-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            background: rgba(42, 42, 78, 0.5);
+            border-radius: 5px;
+        }
+
+        .score-stat .label {
+            color: #b0b0b0;
+        }
+
+        .score-stat .value {
+            color: #00d4ff;
+            font-weight: 700;
+        }
+
+        @media (max-width: 1200px) {
+            .score-tracker {
+                position: static;
+                margin: 2rem auto;
+                max-width: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>MIDTERM STUDY GUIDE</h1>
+        <p>Units 1-5 | Applied Engineering & Robotics</p>
+    </div>
+
+    <div class="nav-tabs">
+        <button class="nav-tab active" onclick="showSection('engineering')">Engineering Design</button>
+        <button class="nav-tab" onclick="showSection('safety')">Safety & Shop</button>
+        <button class="nav-tab" onclick="showSection('cad')">CAD & Manufacturing</button>
+        <button class="nav-tab" onclick="showSection('programming')">Programming</button>
+    </div>
+
+    <div class="score-tracker">
+        <h3>Progress Tracker</h3>
+        <div class="score-stats">
+            <div class="score-stat">
+                <span class="label">Questions Attempted:</span>
+                <span class="value" id="attempted">0</span>
+            </div>
+            <div class="score-stat">
+                <span class="label">Correct Answers:</span>
+                <span class="value" id="correct">0</span>
+            </div>
+            <div class="score-stat">
+                <span class="label">Accuracy:</span>
+                <span class="value" id="accuracy">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <!-- ENGINEERING DESIGN SECTION -->
+        <div id="engineering" class="section active">
+            <h2 class="section-title">Engineering Design & Fundamentals</h2>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Key Concepts Flashcards</h3>
+                <div class="flashcards-grid">
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Engineering Design Process</div>
+                                <div class="flashcard-hint">Click to reveal the 7 steps</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    1. Define the Problem<br>
+                                    2. Research & Gather Information<br>
+                                    3. Brainstorm Solutions<br>
+                                    4. Select Best Solution<br>
+                                    5. Build Prototype<br>
+                                    6. Test & Evaluate<br>
+                                    7. Refine & Improve
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Design Brief</div>
+                                <div class="flashcard-hint">Click to see definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    A document that outlines the problem, constraints, criteria, and requirements for an engineering project. It serves as a roadmap for the design process.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Constraints</div>
+                                <div class="flashcard-hint">Click to see definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Limitations or restrictions on a design, such as budget, time, materials, size, weight, or other requirements that must be met.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Prototype</div>
+                                <div class="flashcard-hint">Click to see definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    An early working model of a design used to test and evaluate ideas before final production. It helps identify problems and areas for improvement.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Iteration</div>
+                                <div class="flashcard-hint">Click to see definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    The process of repeatedly refining and improving a design based on testing, feedback, and evaluation. Engineering is inherently iterative.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Accuracy vs. Precision</div>
+                                <div class="flashcard-hint">Click to see difference</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    <strong>Accuracy:</strong> How close a measurement is to the true value.<br><br>
+                                    <strong>Precision:</strong> How consistent repeated measurements are with each other.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Measurement Tools</h3>
+                <div class="key-concepts">
+                    <h3>Essential Measurement Tools</h3>
+                    <ul>
+                        <li><strong>Digital Calipers:</strong> Measure internal/external dimensions and depth with 0.01mm precision</li>
+                        <li><strong>Tape Measure:</strong> Measure longer distances, read fractions and decimal inches</li>
+                        <li><strong>Ruler:</strong> Basic linear measurements for drawings and quick checks</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Practice Questions</h3>
+                <div class="practice-questions">
+                    <div class="question-card" data-answer="b">
+                        <div class="question-text">
+                            <span class="question-number">Q1</span>
+                            Which step of the engineering design process involves building a working model to test your solution?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q1" value="a" id="q1a">
+                                <label for="q1a">Research & Gather Information</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q1" value="b" id="q1b">
+                                <label for="q1b">Build Prototype</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q1" value="c" id="q1c">
+                                <label for="q1c">Brainstorm Solutions</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q1" value="d" id="q1d">
+                                <label for="q1d">Test & Evaluate</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q1')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="c">
+                        <div class="question-text">
+                            <span class="question-number">Q2</span>
+                            A design constraint is best defined as:
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q2" value="a" id="q2a">
+                                <label for="q2a">A feature that makes the design better</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q2" value="b" id="q2b">
+                                <label for="q2b">The goal of the engineering project</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q2" value="c" id="q2c">
+                                <label for="q2c">A limitation or restriction on the design</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q2" value="d" id="q2d">
+                                <label for="q2d">A tool used to measure accuracy</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q2')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="a">
+                        <div class="question-text">
+                            <span class="question-number">Q3</span>
+                            If your measurements are very close together but far from the actual value, your measurements are:
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q3" value="a" id="q3a">
+                                <label for="q3a">Precise but not accurate</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3" value="b" id="q3b">
+                                <label for="q3b">Accurate but not precise</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3" value="c" id="q3c">
+                                <label for="q3c">Both accurate and precise</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3" value="d" id="q3d">
+                                <label for="q3d">Neither accurate nor precise</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q3')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="b">
+                        <div class="question-text">
+                            <span class="question-number">Q4</span>
+                            Which tool would be BEST for measuring the internal diameter of a small hole with high precision?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q3_4" value="a" id="q3_4a">
+                                <label for="q3_4a">Tape measure</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3_4" value="b" id="q3_4b">
+                                <label for="q3_4b">Digital calipers</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3_4" value="c" id="q3_4c">
+                                <label for="q3_4c">Ruler with millimeter markings</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3_4" value="d" id="q3_4d">
+                                <label for="q3_4d">Protractor</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q3_4')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="c">
+                        <div class="question-text">
+                            <span class="question-number">Q5</span>
+                            In the engineering design process, what should you do AFTER building a prototype?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q3_5" value="a" id="q3_5a">
+                                <label for="q3_5a">Select the best solution from your brainstorming</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3_5" value="b" id="q3_5b">
+                                <label for="q3_5b">Research and gather more information</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3_5" value="c" id="q3_5c">
+                                <label for="q3_5c">Test and evaluate the prototype</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3_5" value="d" id="q3_5d">
+                                <label for="q3_5d">Create a design brief</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q3_5')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="d">
+                        <div class="question-text">
+                            <span class="question-number">Q6</span>
+                            Why is iteration an important part of the engineering design process?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q3_6" value="a" id="q3_6a">
+                                <label for="q3_6a">Engineers should only build one version of each design</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3_6" value="b" id="q3_6b">
+                                <label for="q3_6b">The first prototype is always perfect</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3_6" value="c" id="q3_6c">
+                                <label for="q3_6c">It helps complete the project faster by skipping testing</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3_6" value="d" id="q3_6d">
+                                <label for="q3_6d">It allows you to refine and improve the design based on testing</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q3_6')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="a">
+                        <div class="question-text">
+                            <span class="question-number">Q7</span>
+                            Which step comes FIRST in the engineering design process?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q3_7" value="a" id="q3_7a">
+                                <label for="q3_7a">Define the problem</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3_7" value="b" id="q3_7b">
+                                <label for="q3_7b">Research and gather information</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3_7" value="c" id="q3_7c">
+                                <label for="q3_7c">Test and evaluate</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3_7" value="d" id="q3_7d">
+                                <label for="q3_7d">Brainstorm solutions</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q3_7')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="b">
+                        <div class="question-text">
+                            <span class="question-number">Q8</span>
+                            What information should a design brief include?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q3_8" value="a" id="q3_8a">
+                                <label for="q3_8a">A detailed materials cost breakdown</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3_8" value="b" id="q3_8b">
+                                <label for="q3_8b">The problem, constraints, criteria, and requirements</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3_8" value="c" id="q3_8c">
+                                <label for="q3_8c">Step-by-step assembly instructions</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3_8" value="d" id="q3_8d">
+                                <label for="q3_8d">Technical drawings and CAD files</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q3_8')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SAFETY & SHOP SECTION -->
+        <div id="safety" class="section">
+            <h2 class="section-title">Safety & Shop Practices</h2>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Safety Flashcards</h3>
+                <div class="flashcards-grid">
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">PPE</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Personal Protective Equipment - gear worn to protect against hazards, including safety glasses, gloves, hearing protection, and proper clothing.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Emergency Stop Button</div>
+                                <div class="flashcard-hint">Click for details</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    A large red button (often mushroom-shaped) that immediately cuts power to machinery. Know its location before operating any equipment.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Lockout/Tagout</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Safety procedure ensuring machines are properly shut off and cannot start during maintenance or repair work. Prevents accidental startups.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Pinch Point</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Any point where two or more objects move together and could trap a body part, causing serious injury. Common on rotating machinery.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Housekeeping</div>
+                                <div class="flashcard-hint">Click for importance</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Keeping the work area clean and organized. Good housekeeping prevents trips, falls, and other accidents. Clean as you go!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Safety Data Sheet (SDS)</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Document containing information about chemical hazards, safe handling, first aid, and emergency procedures. Required for all chemicals in the shop.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Key Safety Rules</h3>
+                <div class="key-concepts">
+                    <h3>Non-Negotiable Safety Rules</h3>
+                    <ul>
+                        <li><strong>Eye Protection:</strong> Safety glasses ALWAYS required in the shop</li>
+                        <li><strong>Proper Dress:</strong> No loose clothing, jewelry, or long hair near machinery</li>
+                        <li><strong>One Task:</strong> Never operate machinery while distracted or multitasking</li>
+                        <li><strong>Ask First:</strong> Get instructor approval before using any equipment</li>
+                        <li><strong>Report Hazards:</strong> Immediately report damaged tools, spills, or unsafe conditions</li>
+                        <li><strong>Know Your Limits:</strong> Never hesitate to ask for help or clarification</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Case Study Lessons</h3>
+                <div class="key-concepts">
+                    <h3>Matthew Henne Incident</h3>
+                    <ul>
+                        <li>Young worker injured while operating machinery without proper training</li>
+                        <li>Employer failed to discipline employee for safety violations and record incidents</li>
+                        <li>Key lesson: Always receive complete training before operating equipment</li>
+                        <li>Supervisors must ensure workers are competent and supervised</li>
+                        <li>Safety violations must be documented and addressed immediately</li>
+                    </ul>
+                </div>
+                <div class="key-concepts" style="margin-top: 1.5rem;">
+                    <h3>Lac-Mégantic Rail Disaster</h3>
+                    <ul>
+                        <li>Train derailment caused by inadequate safety procedures and maintenance</li>
+                        <li>Key lesson: Following proper procedures prevents catastrophic failures</li>
+                        <li>Small shortcuts and neglected maintenance can have devastating consequences</li>
+                        <li>Safety culture matters - everyone is responsible</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Practice Questions</h3>
+                <div class="practice-questions">
+                    <div class="question-card" data-answer="d">
+                        <div class="question-text">
+                            <span class="question-number">Q9</span>
+                            Before operating any machinery in the shop, you should ALWAYS:
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q9" value="a" id="q9a">
+                                <label for="q9a">Ask a classmate if they know how to use it</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q9" value="b" id="q9b">
+                                <label for="q9b">Watch a YouTube video tutorial</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q9" value="c" id="q9c">
+                                <label for="q9c">Try it yourself to learn</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q9" value="d" id="q9d">
+                                <label for="q9d">Get instructor approval and proper training</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q9')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="b">
+                        <div class="question-text">
+                            <span class="question-number">Q10</span>
+                            What is the purpose of Lockout/Tagout procedures?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q10" value="a" id="q10a">
+                                <label for="q10a">To prevent theft of tools and equipment</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q10" value="b" id="q10b">
+                                <label for="q10b">To prevent accidental machine startup during maintenance</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q10" value="c" id="q10c">
+                                <label for="q10c">To track who is using which equipment</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q10" value="d" id="q10d">
+                                <label for="q10d">To lock the shop at the end of the day</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q10')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="a">
+                        <div class="question-text">
+                            <span class="question-number">Q11</span>
+                            Good housekeeping in the shop means:
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q11" value="a" id="q11a">
+                                <label for="q11a">Keeping work areas clean and organized to prevent accidents</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q11" value="b" id="q11b">
+                                <label for="q11b">Only cleaning up at the end of the day</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q11" value="c" id="q11c">
+                                <label for="q11c">Leaving cleanup for the janitor</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q11" value="d" id="q11d">
+                                <label for="q11d">Sweeping the floor once per week</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q11')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="c">
+                        <div class="question-text">
+                            <span class="question-number">Q12</span>
+                            Which of the following is NOT a type of Personal Protective Equipment (PPE)?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q12" value="a" id="q12a">
+                                <label for="q12a">Safety glasses</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q12" value="b" id="q12b">
+                                <label for="q12b">Hearing protection</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q12" value="c" id="q12c">
+                                <label for="q12c">Fire extinguisher</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q12" value="d" id="q12d">
+                                <label for="q12d">Safety gloves</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q12')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="a">
+                        <div class="question-text">
+                            <span class="question-number">Q13</span>
+                            What is a pinch point?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q13" value="a" id="q13a">
+                                <label for="q13a">A point where two or more objects move together and could trap a body part</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q13" value="b" id="q13b">
+                                <label for="q13b">The narrowest part of a machine guard opening</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q13" value="c" id="q13c">
+                                <label for="q13c">A critical measurement on a technical drawing</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q13" value="d" id="q13d">
+                                <label for="q13d">The location where a belt connects to a pulley</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q13')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="b">
+                        <div class="question-text">
+                            <span class="question-number">Q14</span>
+                            From the Matthew Henne case study, what was one of the employer's key failures?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q14" value="a" id="q14a">
+                                <label for="q14a">The employee was not wearing proper PPE at the time of injury</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q14" value="b" id="q14b">
+                                <label for="q14b">Failed to discipline employee for safety violations and record incidents</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q14" value="c" id="q14c">
+                                <label for="q14c">The machinery did not have an emergency stop button</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q14" value="d" id="q14d">
+                                <label for="q14d">The employee was not old enough to work in the shop</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q14')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="d">
+                        <div class="question-text">
+                            <span class="question-number">Q15</span>
+                            What should you do if you notice damaged tools or unsafe conditions in the shop?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q15" value="a" id="q15a">
+                                <label for="q15a">Mark it with tape and continue working in a different area</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q15" value="b" id="q15b">
+                                <label for="q15b">Warn your classmates verbally but keep using the equipment</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q15" value="c" id="q15c">
+                                <label for="q15c">Try to fix it yourself if you know how to use tools</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q15" value="d" id="q15d">
+                                <label for="q15d">Immediately report it to the instructor</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q15')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="a">
+                        <div class="question-text">
+                            <span class="question-number">Q16</span>
+                            What is the key lesson from the Lac-Mégantic rail disaster?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q16" value="a" id="q16a">
+                                <label for="q16a">Following proper procedures prevents catastrophic failures</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q16" value="b" id="q16b">
+                                <label for="q16b">New technology is always more reliable than older systems</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q16" value="c" id="q16c">
+                                <label for="q16c">A single person should never be responsible for critical safety tasks</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q16" value="d" id="q16d">
+                                <label for="q16d">Manual brakes should never be used as primary safety systems</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q16')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CAD & MANUFACTURING SECTION -->
+        <div id="cad" class="section">
+            <h2 class="section-title">CAD & Manufacturing</h2>
+
+            <div class="important-note" style="margin: 2rem 0; background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%); border: 2px solid #ff9500;">
+                <h3 style="color: #ff9500; margin-bottom: 1rem;">📐 CAD Practical Challenge</h3>
+                <p style="margin-bottom: 1rem;">The midterm includes a hands-on CAD modeling challenge. Review the instructions and practice before test day:</p>
+                <a href="IR_Sensor_Mount_CAD_Problem.html" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #ff9500 0%, #ff6b00 100%); color: white; padding: 0.8rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 700; font-family: 'Rajdhani', sans-serif; font-size: 1.1rem; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 15px rgba(255, 149, 0, 0.3);">
+                    View CAD Challenge: IR Sensor Mount →
+                </a>
+                <p style="margin-top: 1rem; font-size: 0.95rem; color: #b0b0b0;">This challenge tests your ability to create a precise 3D model from dimensions, apply constraints, and correct intentional design errors.</p>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">CAD Fundamentals Flashcards</h3>
+                <div class="flashcards-grid">
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">CAD</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Computer-Aided Design - software used to create precise 2D drawings and 3D models for engineering and manufacturing.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">CAM</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Computer-Aided Manufacturing - software that converts CAD models into toolpaths and G-code instructions for CNC machines.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">G-Code</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Programming language for CNC machines. Contains instructions for tool movements, speeds, and positions (e.g., G00 for rapid movement, G01 for linear cutting).
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Sketch vs. Extrude</div>
+                                <div class="flashcard-hint">Click for difference</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    <strong>Sketch:</strong> 2D drawing on a plane<br><br>
+                                    <strong>Extrude:</strong> Converting a 2D sketch into a 3D solid by adding depth
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Toolpath</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    The path a cutting tool follows to machine a part. Created in CAM software and includes speeds, feeds, and tool movements.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Rapid Prototyping</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Quickly creating physical models from CAD designs using methods like 3D printing, laser cutting, or CNC machining to test and iterate designs.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">CAD Drawing Review Checklist</h3>
+                <div class="checklist">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cad1" onchange="toggleChecklist(this)">
+                        <label for="cad1"><strong>All dimensions are properly labeled</strong> - Include all critical measurements with correct units (mm or inches)</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cad2" onchange="toggleChecklist(this)">
+                        <label for="cad2"><strong>Constraints are fully defined</strong> - Sketch should be black (not blue), meaning all geometry is constrained</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cad3" onchange="toggleChecklist(this)">
+                        <label for="cad3"><strong>Origin is properly positioned</strong> - Place origin at a logical reference point for your part</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cad4" onchange="toggleChecklist(this)">
+                        <label for="cad4"><strong>Scale is correct</strong> - Verify actual part size matches intended dimensions</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cad5" onchange="toggleChecklist(this)">
+                        <label for="cad5"><strong>File is saved with correct naming</strong> - Use descriptive names: LastName_PartName_v1.f3d</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cad6" onchange="toggleChecklist(this)">
+                        <label for="cad6"><strong>Model is manufacturable</strong> - Design can actually be made with available tools and methods</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cad7" onchange="toggleChecklist(this)">
+                        <label for="cad7"><strong>Materials and appearance set</strong> - Assign appropriate material properties and colors</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cad8" onchange="toggleChecklist(this)">
+                        <label for="cad8"><strong>No sketch errors or warnings</strong> - Check for yellow warning triangles or error messages</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cad9" onchange="toggleChecklist(this)">
+                        <label for="cad9"><strong>Export format is correct</strong> - Save as .f3d for Fusion 360 or .step for universal format</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cad10" onchange="toggleChecklist(this)">
+                        <label for="cad10"><strong>Document fits requirements</strong> - Double-check against design brief criteria and constraints</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">CNC & Manufacturing Key Concepts</h3>
+                <div class="key-concepts">
+                    <h3>CNC Safety Essentials</h3>
+                    <ul>
+                        <li><strong>E-Stop Location:</strong> Know where emergency stop is before operating machine</li>
+                        <li><strong>Review Toolpath First:</strong> Always review toolpaths before running on actual machine</li>
+                        <li><strong>Secure Workpiece:</strong> Material must be firmly clamped - never hold by hand</li>
+                        <li><strong>Tool Height Setting:</strong> Properly set Z-zero reference point for each tool</li>
+                        <li><strong>Clear Work Area:</strong> Remove tools, hands, and obstacles before starting</li>
+                        <li><strong>Monitor Operation:</strong> Stay present and watch the entire machining process</li>
+                    </ul>
+                </div>
+
+                <div class="key-concepts" style="margin-top: 1.5rem;">
+                    <h3>Iterative Design Process</h3>
+                    <ul>
+                        <li><strong>Document Everything:</strong> Keep iteration logs with photos and measurements</li>
+                        <li><strong>Test Fit & Function:</strong> Verify parts work as intended before moving on</li>
+                        <li><strong>Identify Problems:</strong> Note what worked and what didn't</li>
+                        <li><strong>Propose Solutions:</strong> Explain specific changes for next iteration</li>
+                        <li><strong>Implement Improvements:</strong> Make calculated design changes</li>
+                        <li><strong>Re-test:</strong> Verify improvements solved the problems</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Practice Questions</h3>
+                <div class="practice-questions">
+                    <div class="question-card" data-answer="c">
+                        <div class="question-text">
+                            <span class="question-number">Q17</span>
+                            What is the purpose of CAM (Computer-Aided Manufacturing) software?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q17" value="a" id="q17a">
+                                <label for="q17a">To create 3D models and drawings</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q17" value="b" id="q17b">
+                                <label for="q17b">To simulate part stress and strain</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q17" value="c" id="q17c">
+                                <label for="q17c">To generate toolpaths and G-code for CNC machines</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q17" value="d" id="q17d">
+                                <label for="q17d">To render photorealistic images of designs</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q17')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="b">
+                        <div class="question-text">
+                            <span class="question-number">Q18</span>
+                            Before running a CNC program on actual material, you should ALWAYS:
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q18" value="a" id="q18a">
+                                <label for="q18a">Run it at maximum feed rate to complete the job faster</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q18" value="b" id="q18b">
+                                <label for="q18b">Review the toolpath to check for errors and collisions</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q18" value="c" id="q18c">
+                                <label for="q18c">Use scrap material for the first test run</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q18" value="d" id="q18d">
+                                <label for="q18d">Set up the workpiece and start cutting immediately</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q18')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="d">
+                        <div class="question-text">
+                            <span class="question-number">Q19</span>
+                            In Fusion 360, a fully constrained sketch appears as what color?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q19" value="a" id="q19a">
+                                <label for="q19a">Blue - indicating under-constrained</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q19" value="b" id="q19b">
+                                <label for="q19b">Red - indicating errors</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q19" value="c" id="q19c">
+                                <label for="q19c">Green - indicating success</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q19" value="d" id="q19d">
+                                <label for="q19d">Black - indicating fully constrained</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q19')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="b">
+                        <div class="question-text">
+                            <span class="question-number">Q20</span>
+                            What does CAD stand for?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q20" value="a" id="q20a">
+                                <label for="q20a">Computer-Assisted Drawing</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q20" value="b" id="q20b">
+                                <label for="q20b">Computer-Aided Design</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q20" value="c" id="q20c">
+                                <label for="q20c">Computer-Aided Development</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q20" value="d" id="q20d">
+                                <label for="q20d">Computer-Automated Drafting</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q20')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="a">
+                        <div class="question-text">
+                            <span class="question-number">Q21</span>
+                            What is a toolpath in CNC machining?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q21" value="a" id="q21a">
+                                <label for="q21a">The path a cutting tool follows to machine a part</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q21" value="b" id="q21b">
+                                <label for="q21b">The clearance zone around the cutting tool</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q21" value="c" id="q21c">
+                                <label for="q21c">The setup instructions in the CAM software</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q21" value="d" id="q21d">
+                                <label for="q21d">The library of available cutting tools</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q21')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="c">
+                        <div class="question-text">
+                            <span class="question-number">Q22</span>
+                            In the iterative design process, what should you do after testing a prototype?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q22" value="a" id="q22a">
+                                <label for="q22a">Move immediately to final production</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q22" value="b" id="q22b">
+                                <label for="q22b">Present it to stakeholders without any changes</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q22" value="c" id="q22c">
+                                <label for="q22c">Document results and make improvements to the design</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q22" value="d" id="q22d">
+                                <label for="q22d">Build a second identical prototype for comparison</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q22')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="d">
+                        <div class="question-text">
+                            <span class="question-number">Q23</span>
+                            What is the difference between a 2D sketch and a 3D model in CAD?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q23" value="a" id="q23a">
+                                <label for="q23a">2D sketches can only show one view at a time</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q23" value="b" id="q23b">
+                                <label for="q23b">2D sketches require more complex constraints</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q23" value="c" id="q23c">
+                                <label for="q23c">3D models are automatically created without sketches</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q23" value="d" id="q23d">
+                                <label for="q23d">2D sketch is flat on a plane, 3D model has depth and volume</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q23')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="a">
+                        <div class="question-text">
+                            <span class="question-number">Q24</span>
+                            What is rapid prototyping?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q24" value="a" id="q24a">
+                                <label for="q24a">Quickly creating physical models from CAD designs to test ideas</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q24" value="b" id="q24b">
+                                <label for="q24b">Creating detailed prototypes using only traditional machining</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q24" value="c" id="q24c">
+                                <label for="q24c">Building full-scale production tooling before testing</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q24" value="d" id="q24d">
+                                <label for="q24d">Creating CAD models without physical testing</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q24')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="a">
+                        <div class="question-text">
+                            <span class="question-number">Q25</span>
+                            What is a toolpath in CNC machining?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q25" value="a" id="q25a">
+                                <label for="q25a">The path a cutting tool follows to machine a part</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q25" value="b" id="q25b">
+                                <label for="q25b">The clearance zone around the cutting tool</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q25" value="c" id="q25c">
+                                <label for="q25c">The setup instructions in the CAM software</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q25" value="d" id="q25d">
+                                <label for="q25d">The library of available cutting tools</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q25')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROGRAMMING SECTION -->
+        <div id="programming" class="section">
+            <h2 class="section-title">Arduino Programming & Robotics</h2>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Programming Fundamentals Flashcards</h3>
+                <div class="flashcards-grid">
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Microcontroller</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    A small computer on a single chip containing CPU, memory, and I/O pins. Arduino is a microcontroller board used for physical computing projects.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">setup() vs. loop()</div>
+                                <div class="flashcard-hint">Click for difference</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    <strong>setup():</strong> Runs once when program starts - initialize pins and settings<br><br>
+                                    <strong>loop():</strong> Runs repeatedly forever - main program logic
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Digital vs. Analog</div>
+                                <div class="flashcard-hint">Click for difference</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    <strong>Digital:</strong> Only two states - HIGH (5V) or LOW (0V). Used for buttons, LEDs.<br><br>
+                                    <strong>Analog:</strong> Range of values (0-1023 on Arduino). Used for sensors, PWM.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">PWM</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Pulse Width Modulation - rapidly switching a digital pin on/off to simulate analog output. Controls motor speed and LED brightness (0-255).
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Serial Monitor</div>
+                                <div class="flashcard-hint">Click for purpose</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Tool for debugging and viewing data from Arduino. Use Serial.begin(9600) in setup() and Serial.println() to display values.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">Variables</div>
+                                <div class="flashcard-hint">Click for definition</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Named storage locations for data. Common types: int (whole numbers), float (decimals), boolean (true/false), String (text).
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-term">IR Line Sensor</div>
+                                <div class="flashcard-hint">Click for details</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-definition">
+                                    Infrared sensor that detects dark vs. light surfaces by measuring reflected light. Returns HIGH (white) or LOW (black). Used for line following.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Essential Arduino Functions</h3>
+                <div class="key-concepts">
+                    <h3>Core Functions You Must Know</h3>
+                    <ul>
+                        <li><strong>pinMode(pin, mode):</strong> Set pin as INPUT or OUTPUT</li>
+                        <li><strong>digitalWrite(pin, value):</strong> Set digital pin HIGH or LOW</li>
+                        <li><strong>digitalRead(pin):</strong> Read digital pin state (returns HIGH or LOW)</li>
+                        <li><strong>analogWrite(pin, value):</strong> PWM output on pin (0-255)</li>
+                        <li><strong>analogRead(pin):</strong> Read analog pin (returns 0-1023)</li>
+                        <li><strong>delay(ms):</strong> Pause program for milliseconds</li>
+                        <li><strong>map(value, fromLow, fromHigh, toLow, toHigh):</strong> Scale values between ranges</li>
+                        <li><strong>Serial.begin(9600):</strong> Initialize serial communication</li>
+                        <li><strong>Serial.println(data):</strong> Print data to Serial Monitor</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Code Challenges</h3>
+
+                <div class="code-challenge">
+                    <h4 style="color: #00d4ff; margin-bottom: 1rem;">Challenge 1: Spot the Errors</h4>
+                    <p>This code has 5 errors. Can you identify them?</p>
+                    <div class="code-block">
+<span class="number">1</span>   <span class="keyword">void</span> <span class="function">setup</span>() {
+<span class="number">2</span>     Serial.begin(<span class="number">9600</span>)
+<span class="number">3</span>     pinMode(<span class="number">13</span> OUTPUT);
+<span class="number">4</span>     PinMode(<span class="number">9</span>, <span class="string">"OUTPUT"</span>);
+<span class="number">5</span>   }
+<span class="number">6</span>
+<span class="number">7</span>   <span class="keyword">void</span> <span class="function">loop</span>() {
+<span class="number">8</span>     <span class="keyword">int</span> sensorValue = analogRead(A0);
+<span class="number">9</span>     <span class="keyword">int</span> speed = map(sensorValue, <span class="number">0</span>, <span class="number">1023</span>, <span class="number">0</span>, <span class="number">300</span>);
+<span class="number">10</span>    analogWrite(<span class="number">9</span>, speed);
+<span class="number">11</span>    delay(<span class="number">100</span>)
+<span class="number">12</span>  }
+                    </div>
+                    <details style="margin-top: 1rem; background: rgba(0,212,255,0.1); padding: 1rem; border-radius: 5px;">
+                        <summary style="cursor: pointer; color: #00d4ff; font-weight: 700;">Click to Reveal Errors</summary>
+                        <ul style="margin-top: 1rem; padding-left: 1.5rem;">
+                            <li>Line 2: Missing semicolon after Serial.begin(9600)</li>
+                            <li>Line 3: Missing comma between 13 and OUTPUT</li>
+                            <li>Line 4: pinMode should be lowercase (case-sensitive!)</li>
+                            <li>Line 4: OUTPUT should not be in quotes (it's a constant, not a string)</li>
+                            <li>Line 10: PWM values must be 0-255, not 0-300 (will cause overflow)</li>
+                            <li>Line 12: Missing semicolon after delay(100)</li>
+                        </ul>
+                    </details>
+                </div>
+
+                <div class="code-challenge">
+                    <h4 style="color: #00d4ff; margin-bottom: 1rem;">Challenge 2: What Does This Do?</h4>
+                    <p>Read the code and predict what will be printed to the Serial Monitor:</p>
+                    <div class="code-block">
+<span class="number">1</span>   <span class="keyword">int</span> buttonPin = <span class="number">7</span>;
+<span class="number">2</span>   <span class="keyword">int</span> ledPin = <span class="number">13</span>;
+<span class="number">3</span>
+<span class="number">4</span>   <span class="keyword">void</span> <span class="function">setup</span>() {
+<span class="number">5</span>     Serial.begin(<span class="number">9600</span>);
+<span class="number">6</span>     pinMode(buttonPin, INPUT);
+<span class="number">7</span>     pinMode(ledPin, OUTPUT);
+<span class="number">8</span>   }
+<span class="number">9</span>
+<span class="number">10</span>  <span class="keyword">void</span> <span class="function">loop</span>() {
+<span class="number">11</span>    <span class="keyword">int</span> buttonState = digitalRead(buttonPin);
+<span class="number">12</span>
+<span class="number">13</span>    <span class="keyword">if</span> (buttonState == HIGH) {
+<span class="number">14</span>      digitalWrite(ledPin, HIGH);
+<span class="number">15</span>      Serial.println(<span class="string">"Button Pressed!"</span>);
+<span class="number">16</span>    }
+<span class="number">17</span>    <span class="keyword">else</span> {
+<span class="number">18</span>      digitalWrite(ledPin, LOW);
+<span class="number">19</span>      Serial.println(<span class="string">"Button Not Pressed"</span>);
+<span class="number">20</span>    }
+<span class="number">21</span>
+<span class="number">22</span>    delay(<span class="number">500</span>);
+<span class="number">23</span>  }
+                    </div>
+                    <details style="margin-top: 1rem; background: rgba(0,212,255,0.1); padding: 1rem; border-radius: 5px;">
+                        <summary style="cursor: pointer; color: #00d4ff; font-weight: 700;">Click to Reveal Answer</summary>
+                        <p style="margin-top: 1rem;">
+                            <strong>Behavior:</strong> When the button (on pin 7) is pressed, the LED turns ON and "Button Pressed!" prints to Serial Monitor.
+                            When the button is not pressed, the LED turns OFF and "Button Not Pressed" prints. This repeats every 500 milliseconds (half second).
+                        </p>
+                        <p style="margin-top: 0.5rem;">
+                            <strong>Key Concepts:</strong> digitalRead() to check button state, if/else conditional logic, digitalWrite() to control LED,
+                            Serial.println() for debugging, and delay() for timing.
+                        </p>
+                    </details>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Practice Questions</h3>
+                <div class="practice-questions">
+                    <div class="question-card" data-answer="b">
+                        <div class="question-text">
+                            <span class="question-number">Q26</span>
+                            Which function is used to set an Arduino pin as an input or output?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q26" value="a" id="q26a">
+                                <label for="q26a">digitalWrite()</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q26" value="b" id="q26b">
+                                <label for="q26b">pinMode()</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q26" value="c" id="q26c">
+                                <label for="q26c">analogWrite()</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q26" value="d" id="q26d">
+                                <label for="q26d">digitalMode()</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q26')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="c">
+                        <div class="question-text">
+                            <span class="question-number">Q27</span>
+                            What is the valid range for PWM values using analogWrite()?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q27" value="a" id="q27a">
+                                <label for="q27a">0 to 100</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q27" value="b" id="q27b">
+                                <label for="q27b">0 to 1023</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q27" value="c" id="q27c">
+                                <label for="q27c">0 to 255</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q27" value="d" id="q27d">
+                                <label for="q27d">-255 to 255</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q27')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="b">
+                        <div class="question-text">
+                            <span class="question-number">Q28</span>
+                            What is the main difference between digitalWrite() and analogWrite()?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q28" value="a" id="q28a">
+                                <label for="q28a">digitalWrite() is faster than analogWrite()</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q28" value="b" id="q28b">
+                                <label for="q28b">digitalWrite() outputs HIGH or LOW, analogWrite() outputs PWM values (0-255)</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q28" value="c" id="q28c">
+                                <label for="q28c">digitalWrite() works on all pins, analogWrite() only works on digital pins</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q28" value="d" id="q28d">
+                                <label for="q28d">digitalWrite() is for sensors, analogWrite() is for motors only</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q28')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="d">
+                        <div class="question-text">
+                            <span class="question-number">Q29</span>
+                            What does the map() function do in Arduino?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q29" value="a" id="q29a">
+                                <label for="q29a">Converts analog values to digital values</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q29" value="b" id="q29b">
+                                <label for="q29b">Creates an array of sensor readings over time</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q29" value="c" id="q29c">
+                                <label for="q29c">Assigns pin numbers to variable names</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q29" value="d" id="q29d">
+                                <label for="q29d">Scales a value from one range to another range</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q29')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="a">
+                        <div class="question-text">
+                            <span class="question-number">Q30</span>
+                            What is the purpose of the delay() function?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q30" value="a" id="q30a">
+                                <label for="q30a">To pause the program for a specified number of milliseconds</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q30" value="b" id="q30b">
+                                <label for="q30b">To slow down the processor clock speed</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q30" value="c" id="q30c">
+                                <label for="q30c">To wait for sensor input before continuing</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q30" value="d" id="q30d">
+                                <label for="q30d">To schedule code to run later in the program</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q30')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="c">
+                        <div class="question-text">
+                            <span class="question-number">Q31</span>
+                            What does Serial.println() do?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q31" value="a" id="q31a">
+                                <label for="q31a">Sends data to other Arduino boards over serial connection</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q31" value="b" id="q31b">
+                                <label for="q31b">Displays text on an LCD screen</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q31" value="c" id="q31c">
+                                <label for="q31c">Prints data to the Serial Monitor for debugging</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q31" value="d" id="q31d">
+                                <label for="q31d">Configures the serial communication baud rate</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q31')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="b">
+                        <div class="question-text">
+                            <span class="question-number">Q32</span>
+                            Which function reads an analog sensor value (0-1023)?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q32" value="a" id="q32a">
+                                <label for="q32a">digitalRead()</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q32" value="b" id="q32b">
+                                <label for="q32b">analogRead()</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q32" value="c" id="q32c">
+                                <label for="q32c">analogWrite()</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q32" value="d" id="q32d">
+                                <label for="q32d">sensorRead()</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q32')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="d">
+                        <div class="question-text">
+                            <span class="question-number">Q33</span>
+                            In Arduino, where do you put code that should run only once when the program starts?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q33" value="a" id="q33a">
+                                <label for="q33a">loop()</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q33" value="b" id="q33b">
+                                <label for="q33b">init()</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q33" value="c" id="q33c">
+                                <label for="q33c">begin()</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q33" value="d" id="q33d">
+                                <label for="q33d">setup()</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q33')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="a">
+                        <div class="question-text">
+                            <span class="question-number">Q34</span>
+                            What does the map() function do?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q34" value="a" id="q34a">
+                                <label for="q34a">Scales a value from one range to another range</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q34" value="b" id="q34b">
+                                <label for="q34b">Converts between different data types automatically</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q34" value="c" id="q34c">
+                                <label for="q34c">Applies a function to every element in an array</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q34" value="d" id="q34d">
+                                <label for="q34d">Creates a lookup table for sensor calibration</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q34')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="b">
+                        <div class="question-text">
+                            <span class="question-number">Q35</span>
+                            What value does an IR line sensor return when it detects a black line?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q35" value="a" id="q35a">
+                                <label for="q35a">HIGH</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q35" value="b" id="q35b">
+                                <label for="q35b">LOW</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q35" value="c" id="q35c">
+                                <label for="q35c">It returns HIGH for white surfaces and LOW for black</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q35" value="d" id="q35d">
+                                <label for="q35d">It depends on the sensor calibration setting</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q35')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">Code Analysis Challenge (10 Points)</h3>
+                <div class="important-note" style="background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%); border: 2px solid #ff9500;">
+                    <h4 style="color: #ff9500;">📋 Instructions</h4>
+                    <p>Study the following Arduino sketch carefully. The next 5 questions (worth 2 points each) will test your understanding of how this code works. Read through the entire program before answering.</p>
+                </div>
+
+                <div style="background: #0a0e27; padding: 1.5rem; border-radius: 10px; border: 2px solid #00d4ff; margin: 1.5rem 0; overflow-x: auto;">
+                    <pre style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; line-height: 1.6; color: #e0e6f0;"><span style="color: #888;">// Robot Motion Control System</span>
+
+<span style="color: #ff9500;">int</span> leftMotorPin = <span style="color: #50fa7b;">9</span>;
+<span style="color: #ff9500;">int</span> rightMotorPin = <span style="color: #50fa7b;">10</span>;
+<span style="color: #ff9500;">int</span> buttonPin = <span style="color: #50fa7b;">7</span>;
+<span style="color: #ff9500;">int</span> potPin = <span style="color: #50fa7b;">A0</span>;
+
+<span style="color: #ff9500;">int</span> speed = <span style="color: #50fa7b;">0</span>;
+<span style="color: #ff9500;">boolean</span> isRunning = <span style="color: #ff9500;">false</span>;
+
+<span style="color: #ff9500;">void</span> <span style="color: #00d4ff;">setup</span>() {
+  <span style="color: #00d4ff;">pinMode</span>(leftMotorPin, <span style="color: #ff9500;">OUTPUT</span>);
+  <span style="color: #00d4ff;">pinMode</span>(rightMotorPin, <span style="color: #ff9500;">OUTPUT</span>);
+  <span style="color: #00d4ff;">pinMode</span>(buttonPin, <span style="color: #ff9500;">INPUT_PULLUP</span>);
+  Serial.<span style="color: #00d4ff;">begin</span>(<span style="color: #50fa7b;">9600</span>);
+}
+
+<span style="color: #ff9500;">void</span> <span style="color: #00d4ff;">loop</span>() {
+  <span style="color: #ff9500;">if</span> (<span style="color: #00d4ff;">digitalRead</span>(buttonPin) == <span style="color: #ff9500;">LOW</span>) {
+    isRunning = !isRunning;
+    <span style="color: #00d4ff;">delay</span>(<span style="color: #50fa7b;">300</span>);
+  }
+
+  <span style="color: #ff9500;">if</span> (isRunning) {
+    speed = <span style="color: #00d4ff;">analogRead</span>(potPin);
+    speed = <span style="color: #00d4ff;">map</span>(speed, <span style="color: #50fa7b;">0</span>, <span style="color: #50fa7b;">1023</span>, <span style="color: #50fa7b;">100</span>, <span style="color: #50fa7b;">255</span>);
+
+    <span style="color: #00d4ff;">analogWrite</span>(leftMotorPin, speed);
+    <span style="color: #00d4ff;">analogWrite</span>(rightMotorPin, speed);
+
+    Serial.<span style="color: #00d4ff;">print</span>(<span style="color: #50fa7b;">"Motors ON - Speed: "</span>);
+    Serial.<span style="color: #00d4ff;">println</span>(speed);
+  } <span style="color: #ff9500;">else</span> {
+    <span style="color: #00d4ff;">analogWrite</span>(leftMotorPin, <span style="color: #50fa7b;">0</span>);
+    <span style="color: #00d4ff;">analogWrite</span>(rightMotorPin, <span style="color: #50fa7b;">0</span>);
+    Serial.<span style="color: #00d4ff;">println</span>(<span style="color: #50fa7b;">"Motors OFF"</span>);
+  }
+
+  <span style="color: #00d4ff;">delay</span>(<span style="color: #50fa7b;">100</span>);
+}</pre>
+                </div>
+
+                <div class="practice-questions">
+                    <div class="question-card" data-answer="c">
+                        <div class="question-text">
+                            <span class="question-number">Q36</span>
+                            What happens when the button is pressed for the FIRST time?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q36" value="a" id="q36a">
+                                <label for="q36a">The motors turn off</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q36" value="b" id="q36b">
+                                <label for="q36b">The speed is set to maximum (255)</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q36" value="c" id="q36c">
+                                <label for="q36c">isRunning changes from false to true, and motors start</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q36" value="d" id="q36d">
+                                <label for="q36d">The program resets and starts from setup()</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q36')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="b">
+                        <div class="question-text">
+                            <span class="question-number">Q37</span>
+                            What is the range of possible motor speed values in this program?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q37" value="a" id="q37a">
+                                <label for="q37a">0 to 255</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q37" value="b" id="q37b">
+                                <label for="q37b">100 to 255</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q37" value="c" id="q37c">
+                                <label for="q37c">0 to 1023</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q37" value="d" id="q37d">
+                                <label for="q37d">0 to 100</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q37')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="d">
+                        <div class="question-text">
+                            <span class="question-number">Q38</span>
+                            Why is there a delay(300) after detecting the button press?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q38" value="a" id="q38a">
+                                <label for="q38a">To give the motors time to start spinning</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q38" value="b" id="q38b">
+                                <label for="q38b">To wait for the Serial Monitor to display data</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q38" value="c" id="q38c">
+                                <label for="q38c">To allow the potentiometer reading to stabilize</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q38" value="d" id="q38d">
+                                <label for="q38d">To debounce the button and prevent multiple rapid toggles</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q38')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="a">
+                        <div class="question-text">
+                            <span class="question-number">Q39</span>
+                            When the motors are running, what controls their speed?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q39" value="a" id="q39a">
+                                <label for="q39a">The potentiometer position (analogRead from potPin)</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q39" value="b" id="q39b">
+                                <label for="q39b">The button press duration</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q39" value="c" id="q39c">
+                                <label for="q39c">The value of isRunning (true or false)</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q39" value="d" id="q39d">
+                                <label for="q39d">The delay(100) at the end of loop()</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q39')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+
+                    <div class="question-card" data-answer="c">
+                        <div class="question-text">
+                            <span class="question-number">Q40</span>
+                            What does the expression "isRunning = !isRunning" do?
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q40" value="a" id="q40a">
+                                <label for="q40a">Sets isRunning to false permanently</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q40" value="b" id="q40b">
+                                <label for="q40b">Checks if isRunning is not equal to true</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q40" value="c" id="q40c">
+                                <label for="q40c">Toggles isRunning to its opposite value (true↔false)</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q40" value="d" id="q40d">
+                                <label for="q40d">Creates a new variable called "not isRunning"</label>
+                            </div>
+                        </div>
+                        <button class="check-answer-btn" onclick="checkAnswer(this, 'q40')">Check Answer</button>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Answer key with explanations
+        const answerKey = {
+            q1: { explanation: 'The Engineering Design Process has 7 steps: Define Problem → Research → Brainstorm → Select Best → Prototype → Test → Improve (iterate).' },
+            q2: { explanation: 'A caliper measures precise dimensions like the diameter and thickness of objects with accuracy to 0.01mm or 0.001 inches.' },
+            q3: { explanation: 'The third step is brainstorming - generating many creative solutions without judging them yet. Selection comes after brainstorming.' },
+            q4: { explanation: 'Prototypes test whether your design works in reality. They reveal problems you can\'t see on paper and guide improvements before final production.' },
+            q5: { explanation: 'Testing validates your design. Without it, you can\'t know if the solution actually works or meets requirements.' },
+            q6: { explanation: 'Iteration means improving the design based on test results and repeating the process. It\'s the cycle of test → analyze → improve → retest.' },
+            q7: { explanation: 'After testing, you analyze results, identify problems, and make improvements to the design - then test again. This is iteration.' },
+            q8: { explanation: 'Reviewing the toolpath in CAM software prevents crashes, ensures correct tool paths, and catches errors before wasting material.' },
+            q9: { explanation: 'The employer failed to discipline the employee for previous safety violations and didn\'t properly document incidents, contributing to the accident.' },
+            q10: { explanation: 'All hazards and damaged equipment must be reported immediately to prevent injuries. Never assume someone else will handle it.' },
+            q11: { explanation: 'The Lac-Mégantic disaster shows that shortcuts and neglecting procedures can lead to catastrophic failures. Following safety protocols is critical.' },
+            q12: { explanation: 'CAM generates the toolpaths and G-code that tell CNC machines exactly how to cut the part you designed in CAD.' },
+            q13: { explanation: 'Black lines in Fusion 360 indicate the sketch is fully constrained - all dimensions and positions are defined and won\'t move unexpectedly.' },
+            q14: { explanation: 'Rapid prototyping uses CAD and fabrication tools (3D printing, laser cutting, CNC) to quickly create physical test models from digital designs.' },
+            q15: { explanation: 'pinMode() is called in setup() to configure each pin as INPUT or OUTPUT before you use it.' },
+            q16: { explanation: 'analogRead() reads analog sensors and returns values from 0 (0V) to 1023 (5V), giving you 10-bit resolution.' },
+            q17: { explanation: 'digitalWrite() sends either HIGH (5V/on) or LOW (0V/off). analogWrite() uses PWM to output values 0-255 for variable brightness or speed.' },
+            q18: { explanation: 'map() proportionally converts a value from one range to another. For example, map(512, 0, 1023, 0, 255) converts 512 to approximately 127.' },
+            q19: { explanation: 'IR line sensors detect black surfaces (low reflectance) and return LOW. White surfaces (high reflectance) return HIGH.' },
+            q20: { explanation: 'CAD stands for Computer-Aided Design. "Aided" means the computer assists you, not "Assisted" or "Automated."' },
+            q21: { explanation: 'A toolpath is the precise path the cutting tool follows to machine your part. CAM software generates it from your CAD model.' },
+            q22: { explanation: 'After testing a prototype, document what worked and what didn\'t, then make improvements based on your findings. This is iterative design.' },
+            q23: { explanation: '2D sketches are flat profiles drawn on a plane. 3D models have depth and volume, created by extruding, revolving, or lofting sketches.' },
+            q24: { explanation: 'Rapid prototyping uses CAD and fabrication tools (3D printing, laser cutting, CNC) to quickly create physical test models from digital designs.' },
+            q26: { explanation: 'pinMode() configures pins as INPUT or OUTPUT. digitalWrite() and analogWrite() are for sending signals, not configuring.' },
+            q27: { explanation: 'analogWrite() uses PWM with values 0-255. 0 is off, 255 is full power. This range gives you 256 levels of control.' },
+            q28: { explanation: 'digitalWrite() outputs only HIGH or LOW (digital). analogWrite() outputs PWM values 0-255 (simulated analog) for variable brightness/speed.' },
+            q29: { explanation: 'map() rescales values from one range to another proportionally. Example: map(512, 0, 1023, 0, 255) returns ~127.' },
+            q30: { explanation: 'delay() pauses the program for the specified milliseconds (1000ms = 1 second). The Arduino does nothing during this time.' },
+            q31: { explanation: 'Serial.println() sends data to the Serial Monitor for debugging. It prints the value, then moves to a new line.' },
+            q32: { explanation: 'analogRead() reads analog pins (A0-A5) and returns 0-1023, representing the voltage from 0V to 5V.' },
+            q33: { explanation: 'setup() runs once at startup for initialization. loop() runs forever. Code that should only run once goes in setup().' },
+            q34: { explanation: 'map() takes a value and proportionally converts it from one range (input min/max) to another range (output min/max).' },
+            q35: { explanation: 'IR line sensors return LOW when detecting black (low reflectance) and HIGH when detecting white (high reflectance).' },
+            q4_eng: { explanation: 'Calipers measure precise dimensions with extreme accuracy. Protractors measure angles, not distances.' },
+            q5_eng: { explanation: 'After brainstorming many ideas, you select the best solution based on criteria like cost, feasibility, and effectiveness.' },
+            q6_eng: { explanation: 'Prototypes exist to test ideas and reveal problems. Finding flaws is expected and valuable - it guides improvements.' },
+            q7_eng: { explanation: 'The Improve step comes after testing. You analyze results, modify the design, and test again - this is iteration.' },
+            q8_eng: { explanation: 'A design brief includes problem statement, requirements, constraints, and criteria - not step-by-step build instructions (that\'s the build plan).' },
+            q9_safety: { explanation: 'You must ALWAYS get instructor approval and proper training before using any shop equipment. This is a non-negotiable safety rule.' },
+            q10_safety: { explanation: 'Lockout/Tagout physically prevents machines from starting during maintenance, protecting workers from unexpected machine startup.' },
+            q11_safety: { explanation: 'Housekeeping means keeping work areas clean and organized continuously. Good housekeeping prevents trips, falls, and other accidents.' },
+            q12_safety: { explanation: 'PPE (Personal Protective Equipment) protects your body. Fire extinguishers are safety equipment but aren\'t worn by the person.' },
+            q13_safety: { explanation: 'A pinch point is where moving parts come together and could trap/crush a body part - common on rotating machinery, hinges, and gears.' },
+            q17_cad: { explanation: 'CAM (Computer-Aided Manufacturing) software takes your CAD model and generates toolpaths and G-code to control CNC machines.' },
+            q18_cad: { explanation: 'Always review/simulate the toolpath first to check for errors, collisions, and incorrect movements before cutting actual material.' },
+            q19_cad: { explanation: 'In Fusion 360, fully constrained sketches turn black. Blue means under-constrained (still moveable), red means errors/conflicts.' },
+            q20_cad: { explanation: 'CAD stands for Computer-Aided Design. "Aided" means the computer assists you, not "Assisted" or "Automated."' },
+            q21_cad: { explanation: 'A toolpath is the precise path the cutting tool follows to machine your part. CAM software generates it from your CAD model.' },
+            q22_cad: { explanation: 'After testing a prototype, document what worked and what didn\'t, then make improvements based on your findings. This is iterative design.' },
+            q23_cad: { explanation: '2D sketches are flat profiles drawn on a plane. 3D models have depth and volume, created by extruding, revolving, or lofting sketches.' },
+            q26_prog: { explanation: 'pinMode() configures pins as INPUT or OUTPUT. digitalWrite() and analogWrite() are for sending signals, not configuring.' },
+            q27_prog: { explanation: 'analogWrite() uses PWM with values 0-255. 0 is off, 255 is full power. This range gives you 256 levels of control.' },
+            q28_prog: { explanation: 'digitalWrite() outputs only HIGH or LOW (digital). analogWrite() outputs PWM values 0-255 (simulated analog) for variable brightness/speed.' },
+            q29_prog: { explanation: 'map() rescales values from one range to another proportionally. Example: map(512, 0, 1023, 0, 255) returns ~127.' },
+            q30_prog: { explanation: 'delay() pauses the program for the specified milliseconds (1000ms = 1 second). The Arduino does nothing during this time.' },
+            q31_prog: { explanation: 'Serial.println() sends data to the Serial Monitor for debugging. It prints the value, then moves to a new line.' },
+            q32_prog: { explanation: 'analogRead() reads analog pins (A0-A5) and returns 0-1023, representing the voltage from 0V to 5V.' },
+            q33_prog: { explanation: 'setup() runs once at startup for initialization. loop() runs forever. Code that should only run once goes in setup().' },
+            q34_prog: { explanation: 'map() takes a value and proportionally converts it from one range (input min/max) to another range (output min/max).' },
+            q35_prog: { explanation: 'IR line sensors return LOW when detecting black (low reflectance) and HIGH when detecting white (high reflectance).' },
+            q36: { explanation: 'The boolean variable isRunning starts as false. The ! operator toggles it to true, which triggers the motors to start running.' },
+            q37: { explanation: 'The map() function converts potentiometer readings (0-1023) to the range 100-255. The minimum speed is 100, maximum is 255.' },
+            q38: { explanation: 'Button debouncing prevents mechanical switch bounce from being read as multiple presses. The 300ms delay ensures only one toggle per button press.' },
+            q39: { explanation: 'When isRunning is true, the program reads the potentiometer with analogRead(potPin), maps it to 100-255, and uses that value for motor speed.' },
+            q40: { explanation: 'The ! operator is the "NOT" operator. It flips a boolean to its opposite: !true becomes false, !false becomes true. This creates a toggle effect.' }
+        };
+
+        // Navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Flashcards
+        function flipCard(card) {
+            card.classList.toggle('flipped');
+        }
+
+        // Score tracking
+        let attempted = 0;
+        let correct = 0;
+
+        function updateScore() {
+            document.getElementById('attempted').textContent = attempted;
+            document.getElementById('correct').textContent = correct;
+            const accuracy = attempted > 0 ? Math.round((correct / attempted) * 100) : 0;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+        }
+
+        // Question checking
+        function checkAnswer(button, questionName) {
+            const questionCard = button.closest('.question-card');
+            const correctAnswer = questionCard.getAttribute('data-answer');
+            const selectedOption = document.querySelector(`input[name="${questionName}"]:checked`);
+
+            if (!selectedOption) {
+                alert('Please select an answer first!');
+                return;
+            }
+
+            const selectedValue = selectedOption.value;
+            const feedback = questionCard.querySelector('.feedback');
+            const options = questionCard.querySelectorAll('.option');
+
+            // Disable further changes
+            button.disabled = true;
+            document.querySelectorAll(`input[name="${questionName}"]`).forEach(input => {
+                input.disabled = true;
+            });
+
+            // Update score
+            attempted++;
+
+            // Show feedback
+            if (selectedValue === correctAnswer) {
+                correct++;
+                feedback.innerHTML = '✓ Correct! Great job!';
+                feedback.className = 'feedback correct show';
+                selectedOption.closest('.option').classList.add('correct');
+            } else {
+                const explanation = answerKey[questionName] ? answerKey[questionName].explanation : 'The correct answer is highlighted in green.';
+                feedback.innerHTML = `✗ Incorrect. ${explanation}`;
+                feedback.className = 'feedback incorrect show';
+                selectedOption.closest('.option').classList.add('incorrect');
+
+                // Highlight correct answer
+                options.forEach(option => {
+                    const input = option.querySelector('input');
+                    if (input.value === correctAnswer) {
+                        option.classList.add('correct');
+                    }
+                });
+            }
+
+            updateScore();
+        }
+
+        // Checklist
+        function toggleChecklist(checkbox) {
+            const item = checkbox.closest('.checklist-item');
+            if (checkbox.checked) {
+                item.classList.add('checked');
+            } else {
+                item.classList.remove('checked');
+            }
+        }
+
+        // Initialize
+        updateScore();
+    </script>
+</body>
+</html>

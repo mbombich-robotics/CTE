@@ -1,0 +1,1908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Midterm Exam - Applied Engineering & Robotics</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #ff9500;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px rgba(255, 149, 0, 0.6);
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        .auth-section {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(26, 31, 58, 0.8) 100%);
+            border: 2px solid #00d4ff;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            max-width: 600px;
+            margin: 40px auto;
+        }
+
+        .auth-section h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .auth-section p {
+            color: #b8c5d6;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .user-info {
+            background: rgba(80, 250, 123, 0.1);
+            border: 2px solid #50fa7b;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .user-info-text {
+            color: #50fa7b;
+            font-size: 1.1rem;
+        }
+
+        .signout-button {
+            background: rgba(255, 85, 85, 0.2);
+            border: 1px solid #ff5555;
+            border-radius: 6px;
+            color: #ff5555;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .signout-button:hover {
+            background: rgba(255, 85, 85, 0.3);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .warning {
+            background: rgba(255, 149, 0, 0.1);
+            border: 2px solid #ff9500;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            color: #ff9500;
+            font-weight: 600;
+        }
+
+        .submission-status {
+            background: rgba(80, 250, 123, 0.1);
+            border: 2px solid #50fa7b;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .submission-status.error {
+            background: rgba(255, 85, 85, 0.1);
+            border-color: #ff5555;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .instructions {
+            background: rgba(0, 212, 255, 0.05);
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .instructions h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .instructions p, .instructions li {
+            color: #b8c5d6;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .instructions ul {
+            margin-left: 1.5rem;
+        }
+
+        .point-breakdown {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .point-item {
+            background: rgba(0, 212, 255, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .point-item .pts {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: #ff9500;
+            font-weight: 700;
+        }
+
+        .point-item .desc {
+            font-size: 0.9rem;
+            color: #b8c5d6;
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #ff9500 0%, #ff6b00 100%);
+            color: #0a0a0a;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin: 40px 0 25px 0;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .question-card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(26, 31, 58, 0.8) 100%);
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .question-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: #ff9500;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .question-points {
+            float: right;
+            background: #ff9500;
+            color: #0a0a0a;
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            color: #e0e6f0;
+            margin-bottom: 20px;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .answer-option {
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            padding: 12px 20px;
+            margin: 8px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .answer-option:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: #00d4ff;
+        }
+
+        .answer-option input[type="radio"] {
+            margin-right: 15px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .answer-option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        /* CAD Section Styles */
+        .cad-section {
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.05) 0%, rgba(26, 31, 58, 0.8) 100%);
+            border: 2px solid #ff9500;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .cad-section h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: #ff9500;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+        }
+
+        .image-placeholder {
+            background: rgba(0, 0, 0, 0.3);
+            border: 3px dashed #00d4ff;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-placeholder.large {
+            min-height: 350px;
+        }
+
+        .image-placeholder img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 8px;
+        }
+
+        .image-placeholder .placeholder-text {
+            color: #00d4ff;
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+
+        .cad-instructions {
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 4px solid #00d4ff;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .cad-instructions h4 {
+            color: #00d4ff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .cad-instructions ul {
+            margin-left: 1.5rem;
+        }
+
+        .cad-instructions li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .rubric-mini {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .rubric-item {
+            background: rgba(255, 149, 0, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 149, 0, 0.3);
+        }
+
+        .rubric-item .points {
+            font-family: 'Orbitron', sans-serif;
+            color: #ff9500;
+            font-weight: 700;
+        }
+
+        /* Code Analysis Section */
+        .code-block {
+            background: #0a0e27;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #00d4ff;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .code-block pre {
+            margin: 0;
+            color: #e0e6f0;
+        }
+
+        .submit-button {
+            background: linear-gradient(135deg, #ff9500, #ff6b00);
+            border: 2px solid #ff9500;
+            border-radius: 12px;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            padding: 18px 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 40px auto;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 149, 0, 0.5);
+        }
+
+        .cad-submit-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(80, 250, 123, 0.6);
+        }
+
+        /* Results Section */
+        .results-section {
+            display: none;
+        }
+
+        .results-section.show {
+            display: block;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(26, 31, 58, 0.9) 100%);
+            border: 3px solid #00d4ff;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .score-display h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .final-score {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            color: #ff9500;
+            font-weight: 900;
+        }
+
+        .score-breakdown {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .score-item {
+            background: rgba(0, 212, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .score-item .category {
+            font-size: 0.9rem;
+            color: #b8c5d6;
+            margin-bottom: 5px;
+        }
+
+        .score-item .value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            color: #00d4ff;
+        }
+
+        .incorrect-review {
+            background: rgba(255, 100, 100, 0.1);
+            border: 2px solid #ff6b6b;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .incorrect-review h3 {
+            color: #ff6b6b;
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 20px;
+        }
+
+        .incorrect-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .incorrect-item .q-num {
+            color: #ff9500;
+            font-weight: 700;
+        }
+
+        .incorrect-item .your-answer {
+            color: #ff6b6b;
+        }
+
+        .incorrect-item .correct-answer {
+            color: #00ff00;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .point-breakdown, .score-breakdown, .rubric-mini {
+                grid-template-columns: 1fr;
+            }
+
+            .question-text {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                color: black;
+                padding: 20px;
+            }
+
+            .question-card, .cad-section, .instructions, .student-info {
+                border-color: #333;
+                background: white;
+                page-break-inside: avoid;
+            }
+
+            .section-header {
+                background: #333;
+                color: white;
+            }
+
+            .submit-button, .results-section {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Midterm Examination</h1>
+            <p class="subtitle">Applied Engineering & Robotics | Units 1-5</p>
+        </header>
+
+        <!-- Authentication Section -->
+        <div id="auth-section" class="auth-section">
+            <h2>Student Authentication</h2>
+            <p>Please sign in with your school Google account to begin the exam.</p>
+            <p>Your results will be automatically submitted when you finish.</p>
+            <div id="google-signin-btn"></div>
+            <div class="warning">
+                <strong>Important:</strong> There are NO RETAKES for this exam. Make sure you are ready before signing in.
+            </div>
+        </div>
+
+        <!-- User Info (shown after login) -->
+        <div id="user-info" class="user-info hidden">
+            <span class="user-info-text">Signed in as: <strong id="user-email"></strong></span>
+            <button class="signout-button" onclick="signOut()">Sign Out</button>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 14, 39, 0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999;">
+            <div style="border: 4px solid rgba(0, 212, 255, 0.2); border-top: 4px solid #00d4ff; border-radius: 50%; width: 60px; height: 60px; animation: spin 1s linear infinite;"></div>
+            <p style="color: #00d4ff; font-size: 1.3rem; margin-top: 25px; font-weight: 600;">Submitting your exam...</p>
+            <p style="color: #b8c5d6; font-size: 1rem; margin-top: 10px;">Please wait, do not refresh the page</p>
+        </div>
+
+        <!-- Exam Section (hidden until authenticated) -->
+        <div id="exam-section" class="hidden">
+
+        <div class="instructions">
+            <h2>Exam Instructions</h2>
+            <ul>
+                <li>This exam consists of <strong>multiple choice questions</strong>, a <strong>CAD modeling challenge</strong>, and <strong>code analysis questions</strong>.</li>
+                <li>Each multiple choice question is worth <strong>2 points</strong>.</li>
+                <li>Read each question carefully before selecting your answer.</li>
+                <li>You may use Fusion 360 for the CAD portion of this exam.</li>
+                <li>Submit your CAD file as: <code>LastName_Midterm_CAD.f3d</code></li>
+            </ul>
+            <div class="point-breakdown">
+                <div class="point-item">
+                    <div class="pts">60</div>
+                    <div class="desc">Multiple Choice</div>
+                </div>
+                <div class="point-item">
+                    <div class="pts">30</div>
+                    <div class="desc">CAD Challenge</div>
+                </div>
+                <div class="point-item">
+                    <div class="pts">10</div>
+                    <div class="desc">Code Analysis</div>
+                </div>
+            </div>
+        </div>
+
+        <form id="exam-form">
+            <!-- ==================== UNIT 1: ENGINEERING DESIGN ==================== -->
+            <div class="section-header">Unit 1: Engineering Design Process (16 Points)</div>
+
+            <!-- Q1 - From Study Guide Q1 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 1</div>
+                <div class="question-text">Which step of the engineering design process involves building a working model to test your solution?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q1a" name="q1" value="a">
+                    <label for="q1a">A) Research & Gather Information</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q1b" name="q1" value="b">
+                    <label for="q1b">B) Build Prototype</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q1c" name="q1" value="c">
+                    <label for="q1c">C) Brainstorm Solutions</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q1d" name="q1" value="d">
+                    <label for="q1d">D) Test & Evaluate</label>
+                </div>
+            </div>
+
+            <!-- Q2 - From Study Guide Q2 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 2</div>
+                <div class="question-text">A design constraint is best defined as:</div>
+                <div class="answer-option">
+                    <input type="radio" id="q2a" name="q2" value="a">
+                    <label for="q2a">A) A feature that makes the design better</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q2b" name="q2" value="b">
+                    <label for="q2b">B) The goal of the engineering project</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q2c" name="q2" value="c">
+                    <label for="q2c">C) A limitation or restriction on the design</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q2d" name="q2" value="d">
+                    <label for="q2d">D) A tool used to measure accuracy</label>
+                </div>
+            </div>
+
+            <!-- Q3 - From Study Guide Q3 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 3</div>
+                <div class="question-text">If your measurements are very close together but far from the actual value, your measurements are:</div>
+                <div class="answer-option">
+                    <input type="radio" id="q3a" name="q3" value="a">
+                    <label for="q3a">A) Precise but not accurate</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q3b" name="q3" value="b">
+                    <label for="q3b">B) Accurate but not precise</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q3c" name="q3" value="c">
+                    <label for="q3c">C) Both accurate and precise</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q3d" name="q3" value="d">
+                    <label for="q3d">D) Neither accurate nor precise</label>
+                </div>
+            </div>
+
+            <!-- Q4 - From Study Guide Q4 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 4</div>
+                <div class="question-text">Which tool would be BEST for measuring the internal diameter of a small hole with high precision?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q4a" name="q4" value="a">
+                    <label for="q4a">A) Tape measure</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q4b" name="q4" value="b">
+                    <label for="q4b">B) Digital calipers</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q4c" name="q4" value="c">
+                    <label for="q4c">C) Ruler with millimeter markings</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q4d" name="q4" value="d">
+                    <label for="q4d">D) Protractor</label>
+                </div>
+            </div>
+
+            <!-- Q5 - From Study Guide Q5 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 5</div>
+                <div class="question-text">In the engineering design process, what should you do AFTER building a prototype?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q5a" name="q5" value="a">
+                    <label for="q5a">A) Select the best solution from your brainstorming</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q5b" name="q5" value="b">
+                    <label for="q5b">B) Research and gather more information</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q5c" name="q5" value="c">
+                    <label for="q5c">C) Test and evaluate the prototype</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q5d" name="q5" value="d">
+                    <label for="q5d">D) Create a design brief</label>
+                </div>
+            </div>
+
+            <!-- Q6 - From Study Guide Q6 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 6</div>
+                <div class="question-text">Why is iteration an important part of the engineering design process?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q6a" name="q6" value="a">
+                    <label for="q6a">A) Engineers should only build one version of each design</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q6b" name="q6" value="b">
+                    <label for="q6b">B) The first prototype is always perfect</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q6c" name="q6" value="c">
+                    <label for="q6c">C) It helps complete the project faster by skipping testing</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q6d" name="q6" value="d">
+                    <label for="q6d">D) It allows you to refine and improve the design based on testing</label>
+                </div>
+            </div>
+
+            <!-- Q7 - From Study Guide Q7 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 7</div>
+                <div class="question-text">Which step comes FIRST in the engineering design process?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q7a" name="q7" value="a">
+                    <label for="q7a">A) Define the problem</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q7b" name="q7" value="b">
+                    <label for="q7b">B) Research and gather information</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q7c" name="q7" value="c">
+                    <label for="q7c">C) Test and evaluate</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q7d" name="q7" value="d">
+                    <label for="q7d">D) Brainstorm solutions</label>
+                </div>
+            </div>
+
+            <!-- Q8 - From Study Guide Q8 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 8</div>
+                <div class="question-text">What information should a design brief include?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q8a" name="q8" value="a">
+                    <label for="q8a">A) A detailed materials cost breakdown</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q8b" name="q8" value="b">
+                    <label for="q8b">B) The problem, constraints, criteria, and requirements</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q8c" name="q8" value="c">
+                    <label for="q8c">C) Step-by-step assembly instructions</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q8d" name="q8" value="d">
+                    <label for="q8d">D) Technical drawings and CAD files</label>
+                </div>
+            </div>
+
+            <!-- ==================== UNIT 4: SAFETY & SHOP ==================== -->
+            <div class="section-header">Unit 4: Safety & Shop Procedures (16 Points)</div>
+
+            <!-- Q9 - From Study Guide Q9 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 9</div>
+                <div class="question-text">Before operating any machinery in the shop, you should ALWAYS:</div>
+                <div class="answer-option">
+                    <input type="radio" id="q9a" name="q9" value="a">
+                    <label for="q9a">A) Ask a classmate if they know how to use it</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q9b" name="q9" value="b">
+                    <label for="q9b">B) Watch a YouTube video tutorial</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q9c" name="q9" value="c">
+                    <label for="q9c">C) Try it yourself to learn</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q9d" name="q9" value="d">
+                    <label for="q9d">D) Get instructor approval and proper training</label>
+                </div>
+            </div>
+
+            <!-- Q10 - From Study Guide Q10 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 10</div>
+                <div class="question-text">What is the purpose of Lockout/Tagout procedures?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q10a" name="q10" value="a">
+                    <label for="q10a">A) To prevent theft of tools and equipment</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q10b" name="q10" value="b">
+                    <label for="q10b">B) To prevent accidental machine startup during maintenance</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q10c" name="q10" value="c">
+                    <label for="q10c">C) To track who is using which equipment</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q10d" name="q10" value="d">
+                    <label for="q10d">D) To lock the shop at the end of the day</label>
+                </div>
+            </div>
+
+            <!-- Q11 - From Study Guide Q11 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 11</div>
+                <div class="question-text">Good housekeeping in the shop means:</div>
+                <div class="answer-option">
+                    <input type="radio" id="q11a" name="q11" value="a">
+                    <label for="q11a">A) Keeping work areas clean and organized to prevent accidents</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q11b" name="q11" value="b">
+                    <label for="q11b">B) Only cleaning up at the end of the day</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q11c" name="q11" value="c">
+                    <label for="q11c">C) Leaving cleanup for the janitor</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q11d" name="q11" value="d">
+                    <label for="q11d">D) Sweeping the floor once per week</label>
+                </div>
+            </div>
+
+            <!-- Q12 - From Study Guide Q12 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 12</div>
+                <div class="question-text">Which of the following is NOT a type of Personal Protective Equipment (PPE)?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q12a" name="q12" value="a">
+                    <label for="q12a">A) Safety glasses</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q12b" name="q12" value="b">
+                    <label for="q12b">B) Hearing protection</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q12c" name="q12" value="c">
+                    <label for="q12c">C) Fire extinguisher</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q12d" name="q12" value="d">
+                    <label for="q12d">D) Safety gloves</label>
+                </div>
+            </div>
+
+            <!-- Q13 - From Study Guide Q13 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 13</div>
+                <div class="question-text">What is a pinch point?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q13a" name="q13" value="a">
+                    <label for="q13a">A) A point where two or more objects move together and could trap a body part</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q13b" name="q13" value="b">
+                    <label for="q13b">B) The narrowest part of a machine guard opening</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q13c" name="q13" value="c">
+                    <label for="q13c">C) A critical measurement on a technical drawing</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q13d" name="q13" value="d">
+                    <label for="q13d">D) The location where a belt connects to a pulley</label>
+                </div>
+            </div>
+
+            <!-- Q14 - From Study Guide Q14 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 14</div>
+                <div class="question-text">From the Matthew Henne case study, what was one of the employer's key failures?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q14a" name="q14" value="a">
+                    <label for="q14a">A) The employee was not wearing proper PPE at the time of injury</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q14b" name="q14" value="b">
+                    <label for="q14b">B) Failed to discipline employee for safety violations and record incidents</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q14c" name="q14" value="c">
+                    <label for="q14c">C) The machinery did not have an emergency stop button</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q14d" name="q14" value="d">
+                    <label for="q14d">D) The employee was not old enough to work in the shop</label>
+                </div>
+            </div>
+
+            <!-- Q15 - From Study Guide Q15 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 15</div>
+                <div class="question-text">What should you do if you notice damaged tools or unsafe conditions in the shop?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q15a" name="q15" value="a">
+                    <label for="q15a">A) Mark it with tape and continue working in a different area</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q15b" name="q15" value="b">
+                    <label for="q15b">B) Warn your classmates verbally but keep using the equipment</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q15c" name="q15" value="c">
+                    <label for="q15c">C) Try to fix it yourself if you know how to use tools</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q15d" name="q15" value="d">
+                    <label for="q15d">D) Immediately report it to the instructor</label>
+                </div>
+            </div>
+
+            <!-- Q16 - From Study Guide Q16 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 16</div>
+                <div class="question-text">What is the key lesson from the Lac-Megantic rail disaster?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q16a" name="q16" value="a">
+                    <label for="q16a">A) Following proper procedures prevents catastrophic failures</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q16b" name="q16" value="b">
+                    <label for="q16b">B) New technology is always more reliable than older systems</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q16c" name="q16" value="c">
+                    <label for="q16c">C) A single person should never be responsible for critical safety tasks</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q16d" name="q16" value="d">
+                    <label for="q16d">D) Manual brakes should never be used as primary safety systems</label>
+                </div>
+            </div>
+
+            <!-- ==================== UNITS 2-3: CAD & MANUFACTURING ==================== -->
+            <div class="section-header">Units 2-3: CAD & Manufacturing (16 Points)</div>
+
+            <!-- Q17 - From Study Guide Q17 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 17</div>
+                <div class="question-text">What is the purpose of CAM (Computer-Aided Manufacturing) software?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q17a" name="q17" value="a">
+                    <label for="q17a">A) To create 3D models and drawings</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q17b" name="q17" value="b">
+                    <label for="q17b">B) To simulate part stress and strain</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q17c" name="q17" value="c">
+                    <label for="q17c">C) To generate toolpaths and G-code for CNC machines</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q17d" name="q17" value="d">
+                    <label for="q17d">D) To render photorealistic images of designs</label>
+                </div>
+            </div>
+
+            <!-- Q18 - From Study Guide Q18 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 18</div>
+                <div class="question-text">Before running a CNC program on actual material, you should ALWAYS:</div>
+                <div class="answer-option">
+                    <input type="radio" id="q18a" name="q18" value="a">
+                    <label for="q18a">A) Run it at maximum feed rate to complete the job faster</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q18b" name="q18" value="b">
+                    <label for="q18b">B) Review the toolpath to check for errors and collisions</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q18c" name="q18" value="c">
+                    <label for="q18c">C) Use scrap material for the first test run</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q18d" name="q18" value="d">
+                    <label for="q18d">D) Set up the workpiece and start cutting immediately</label>
+                </div>
+            </div>
+
+            <!-- Q19 - From Study Guide Q19 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 19</div>
+                <div class="question-text">In Fusion 360, a fully constrained sketch appears as what color?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q19a" name="q19" value="a">
+                    <label for="q19a">A) Blue - indicating under-constrained</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q19b" name="q19" value="b">
+                    <label for="q19b">B) Red - indicating errors</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q19c" name="q19" value="c">
+                    <label for="q19c">C) Green - indicating success</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q19d" name="q19" value="d">
+                    <label for="q19d">D) Black - indicating fully constrained</label>
+                </div>
+            </div>
+
+            <!-- Q20 - From Study Guide Q20 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 20</div>
+                <div class="question-text">What does CAD stand for?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q20a" name="q20" value="a">
+                    <label for="q20a">A) Computer-Assisted Drawing</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q20b" name="q20" value="b">
+                    <label for="q20b">B) Computer-Aided Design</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q20c" name="q20" value="c">
+                    <label for="q20c">C) Computer-Aided Development</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q20d" name="q20" value="d">
+                    <label for="q20d">D) Computer-Automated Drafting</label>
+                </div>
+            </div>
+
+            <!-- Q21 - From Study Guide Q21 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 21</div>
+                <div class="question-text">What is a toolpath in CNC machining?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q21a" name="q21" value="a">
+                    <label for="q21a">A) The path a cutting tool follows to machine a part</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q21b" name="q21" value="b">
+                    <label for="q21b">B) The clearance zone around the cutting tool</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q21c" name="q21" value="c">
+                    <label for="q21c">C) The setup instructions in the CAM software</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q21d" name="q21" value="d">
+                    <label for="q21d">D) The library of available cutting tools</label>
+                </div>
+            </div>
+
+            <!-- Q22 - From Study Guide Q22 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 22</div>
+                <div class="question-text">In the iterative design process, what should you do after testing a prototype?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q22a" name="q22" value="a">
+                    <label for="q22a">A) Move immediately to final production</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q22b" name="q22" value="b">
+                    <label for="q22b">B) Present it to stakeholders without any changes</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q22c" name="q22" value="c">
+                    <label for="q22c">C) Document results and make improvements to the design</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q22d" name="q22" value="d">
+                    <label for="q22d">D) Build a second identical prototype for comparison</label>
+                </div>
+            </div>
+
+            <!-- Q23 - From Study Guide Q23 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 23</div>
+                <div class="question-text">What is the difference between a 2D sketch and a 3D model in CAD?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q23a" name="q23" value="a">
+                    <label for="q23a">A) 2D sketches can only show one view at a time</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q23b" name="q23" value="b">
+                    <label for="q23b">B) 2D sketches require more complex constraints</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q23c" name="q23" value="c">
+                    <label for="q23c">C) 3D models are automatically created without sketches</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q23d" name="q23" value="d">
+                    <label for="q23d">D) 2D sketch is flat on a plane, 3D model has depth and volume</label>
+                </div>
+            </div>
+
+            <!-- Q24 - From Study Guide Q24 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 24</div>
+                <div class="question-text">What is rapid prototyping?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q24a" name="q24" value="a">
+                    <label for="q24a">A) Quickly creating physical models from CAD designs to test ideas</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q24b" name="q24" value="b">
+                    <label for="q24b">B) Creating detailed prototypes using only traditional machining</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q24c" name="q24" value="c">
+                    <label for="q24c">C) Building full-scale production tooling before testing</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q24d" name="q24" value="d">
+                    <label for="q24d">D) Creating CAD models without physical testing</label>
+                </div>
+            </div>
+
+            <!-- ==================== CAD PRACTICAL CHALLENGE ==================== -->
+            <div class="section-header">CAD Practical Challenge (30 Points)</div>
+
+            <div class="cad-section">
+                <h3>Anderson Power Plug Mounting Bracket</h3>
+
+                <div class="cad-instructions">
+                    <h4>Your Task:</h4>
+                    <p>Create a mounting bracket for a 12V Anderson Power Plug using Fusion 360. Follow all dimensions exactly as shown in the reference images, then mount the Anderson Plug component to complete the assembly.</p>
+                </div>
+
+                <!-- Completed Model Reference -->
+                <h4 style="color: #00d4ff; margin: 25px 0 15px 0;">Goal: Completed Bracket</h4>
+                <div class="image-placeholder large">
+                    <img src="Midterm_CAD_Completed.png" alt="Completed CAD Model with Fillets" style="max-width: 100%; border-radius: 8px;">
+                </div>
+
+                <!-- Step-by-Step Instructions -->
+                <div class="cad-instructions">
+                    <h4>Step-by-Step Instructions:</h4>
+                </div>
+
+                <!-- Step 1: Main Sketch -->
+                <h4 style="color: #ff9500; margin: 25px 0 15px 0;">Step 1: Create the Main Sketch</h4>
+                <p style="margin-bottom: 15px; color: #b8c5d6;">Create a new sketch on the XY plane. Draw the bracket profile using the dimensions shown below. Include the two Ø5.00 mounting holes and the two slots for the Anderson Plug.</p>
+                <div class="image-placeholder large">
+                    <img src="Midterm_CAD_Sketch_Dimensions.png" alt="Dimensioned Sketch" style="max-width: 100%; border-radius: 8px;">
+                </div>
+
+                <!-- Step 2: Extrude -->
+                <h4 style="color: #ff9500; margin: 25px 0 15px 0;">Step 2: Extrude the Solids</h4>
+                <p style="margin-bottom: 15px; color: #b8c5d6;">Extrude the main bracket body <strong>10mm</strong>. Then extrude the bottom flange <strong>30mm</strong> (total flange thickness).</p>
+                <div class="image-placeholder">
+                    <img src="Midterm_CAD_Step1_Extrusion.png" alt="After Extrusion" style="max-width: 100%; border-radius: 8px;">
+                </div>
+
+                <!-- Step 3: Flange Holes -->
+                <h4 style="color: #ff9500; margin: 25px 0 15px 0;">Step 3: Add Flange Mounting Holes</h4>
+                <p style="margin-bottom: 15px; color: #b8c5d6;">Start a new sketch on the top of the flange. Add two Ø6.00 mounting holes at the positions shown (centered with 40mm spacing).</p>
+                <div class="image-placeholder">
+                    <img src="Midterm_CAD_Flange_Holes.png" alt="Flange Hole Positions" style="max-width: 100%; border-radius: 8px;">
+                </div>
+
+                <!-- Step 4: Fillets -->
+                <h4 style="color: #ff9500; margin: 25px 0 15px 0;">Step 4: Add Fillets</h4>
+                <p style="margin-bottom: 15px; color: #b8c5d6;">Apply <strong>8mm fillets</strong> to all outside corners of the bracket and the inside corner where the upright meets the flange.</p>
+
+                <!-- Step 5: Mount Anderson Plug -->
+                <h4 style="color: #ff9500; margin: 25px 0 15px 0;">Step 5: Mount the Anderson Power Plug</h4>
+                <p style="margin-bottom: 15px; color: #b8c5d6;">Insert the Anderson Power Plug component from: <code>Common Components / Midterm /</code></p>
+                <p style="margin-bottom: 15px; color: #b8c5d6;">Use constraints to mount the plug to the bracket using the two mounting holes.</p>
+                <div class="image-placeholder large">
+                    <img src="Midterm_CAD_Assembly.png" alt="Final Assembly with Anderson Plug" style="max-width: 100%; border-radius: 8px;">
+                </div>
+
+                <div class="cad-instructions" style="margin-top: 25px;">
+                    <h4>Requirements:</h4>
+                    <ul>
+                        <li>Create a new Fusion 360 document</li>
+                        <li>Model must match all given dimensions</li>
+                        <li>All sketches should be fully constrained (black lines)</li>
+                        <li>Apply 8mm fillets to corners and inside edge</li>
+                        <li>Insert and mount the Anderson Plug component</li>
+                        <li>Save as: <code>LastName_Midterm_CAD.f3d</code></li>
+                    </ul>
+                </div>
+
+                <h4 style="color: #00d4ff; margin: 25px 0 15px 0;">Grading Rubric (30 Points)</h4>
+                <div class="rubric-mini">
+                    <div class="rubric-item">
+                        <span class="points">15 pts</span> - Base bracket geometry with correct dimensions
+                    </div>
+                    <div class="rubric-item">
+                        <span class="points">+3 pts</span> - All sketches fully constrained (black lines)
+                    </div>
+                    <div class="rubric-item">
+                        <span class="points">+3 pts</span> - Flange mounting holes positioned correctly
+                    </div>
+                    <div class="rubric-item">
+                        <span class="points">+3 pts</span> - 8mm fillets applied correctly
+                    </div>
+                    <div class="rubric-item">
+                        <span class="points">+3 pts</span> - Anderson Plug mounted to bracket
+                    </div>
+                    <div class="rubric-item" style="background: rgba(255, 149, 0, 0.2); border-color: #ff9500;">
+                        <span class="points">+3 pts BONUS</span> - Identified and corrected the design error to properly fit the Anderson Plug
+                    </div>
+                </div>
+
+                <!-- CAD File Submission Section -->
+                <div class="cad-submission" style="margin-top: 30px; background: rgba(80, 250, 123, 0.1); border: 2px solid #50fa7b; border-radius: 12px; padding: 25px;">
+                    <h4 style="color: #50fa7b; margin-bottom: 15px; font-family: 'Orbitron', sans-serif;">Submit Your CAD File</h4>
+
+                    <div class="cad-instructions" style="border-color: #50fa7b; background: rgba(80, 250, 123, 0.05);">
+                        <h4 style="color: #50fa7b;">Submission Instructions:</h4>
+                        <ol style="margin-left: 1.5rem; color: #b8c5d6; line-height: 1.8;">
+                            <li>In Fusion 360, go to <strong>File → Export</strong></li>
+                            <li>Select <strong>.f3d</strong> as the file type</li>
+                            <li>Name your file: <code style="background: rgba(0,0,0,0.3); padding: 2px 8px; border-radius: 4px;">LastName_Midterm_CAD.f3d</code></li>
+                            <li>Save the file to your computer</li>
+                            <li>Click the button below to upload your file</li>
+                        </ol>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 20px;">
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSc4taeKvkH8jO-Zw16ENUR6yCyZIW3gujVKtECvyEpo__eecg/viewform" target="_blank" class="cad-submit-btn" style="display: inline-block; background: linear-gradient(135deg, #50fa7b, #2d8f4e); border: none; border-radius: 10px; color: #0a0a0a; font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 700; padding: 15px 35px; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 20px rgba(80, 250, 123, 0.3);">
+                            Upload CAD File
+                        </a>
+                        <p style="color: #b8c5d6; font-size: 0.9rem; margin-top: 15px;">Opens Google Forms in a new tab</p>
+                    </div>
+
+                    <div style="margin-top: 20px; padding: 15px; background: rgba(255, 149, 0, 0.1); border: 1px solid rgba(255, 149, 0, 0.3); border-radius: 8px;">
+                        <p style="color: #ff9500; margin: 0; font-size: 0.95rem;">
+                            <strong>Important:</strong> Your submission is private—only your instructor can view uploaded files. Make sure you're signed into your school Google account before uploading.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== UNIT 5: PROGRAMMING ==================== -->
+            <div class="section-header">Unit 5: Programming (12 Points)</div>
+
+            <!-- Q25 - From Study Guide Q26 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 25</div>
+                <div class="question-text">Which function is used to set an Arduino pin as an input or output?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q25a" name="q25" value="a">
+                    <label for="q25a">A) digitalWrite()</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q25b" name="q25" value="b">
+                    <label for="q25b">B) pinMode()</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q25c" name="q25" value="c">
+                    <label for="q25c">C) analogWrite()</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q25d" name="q25" value="d">
+                    <label for="q25d">D) digitalMode()</label>
+                </div>
+            </div>
+
+            <!-- Q26 - From Study Guide Q27 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 26</div>
+                <div class="question-text">What is the valid range for PWM values using analogWrite()?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q26a" name="q26" value="a">
+                    <label for="q26a">A) 0 to 100</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q26b" name="q26" value="b">
+                    <label for="q26b">B) 0 to 1023</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q26c" name="q26" value="c">
+                    <label for="q26c">C) 0 to 255</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q26d" name="q26" value="d">
+                    <label for="q26d">D) -255 to 255</label>
+                </div>
+            </div>
+
+            <!-- Q27 - From Study Guide Q28 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 27</div>
+                <div class="question-text">What is the main difference between digitalWrite() and analogWrite()?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q27a" name="q27" value="a">
+                    <label for="q27a">A) digitalWrite() is faster than analogWrite()</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q27b" name="q27" value="b">
+                    <label for="q27b">B) digitalWrite() outputs HIGH or LOW, analogWrite() outputs PWM values (0-255)</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q27c" name="q27" value="c">
+                    <label for="q27c">C) digitalWrite() works on all pins, analogWrite() only works on digital pins</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q27d" name="q27" value="d">
+                    <label for="q27d">D) digitalWrite() is for sensors, analogWrite() is for motors only</label>
+                </div>
+            </div>
+
+            <!-- Q28 - From Study Guide Q30 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 28</div>
+                <div class="question-text">What is the purpose of the delay() function?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q28a" name="q28" value="a">
+                    <label for="q28a">A) To pause the program for a specified number of milliseconds</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q28b" name="q28" value="b">
+                    <label for="q28b">B) To slow down the processor clock speed</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q28c" name="q28" value="c">
+                    <label for="q28c">C) To wait for sensor input before continuing</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q28d" name="q28" value="d">
+                    <label for="q28d">D) To schedule code to run later in the program</label>
+                </div>
+            </div>
+
+            <!-- Q29 - From Study Guide Q33 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 29</div>
+                <div class="question-text">In Arduino, where do you put code that should run only once when the program starts?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q29a" name="q29" value="a">
+                    <label for="q29a">A) loop()</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q29b" name="q29" value="b">
+                    <label for="q29b">B) init()</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q29c" name="q29" value="c">
+                    <label for="q29c">C) begin()</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q29d" name="q29" value="d">
+                    <label for="q29d">D) setup()</label>
+                </div>
+            </div>
+
+            <!-- Q30 - From Study Guide Q35 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 30</div>
+                <div class="question-text">What value does an IR line sensor return when it detects a black line?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q30a" name="q30" value="a">
+                    <label for="q30a">A) HIGH</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q30b" name="q30" value="b">
+                    <label for="q30b">B) LOW</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q30c" name="q30" value="c">
+                    <label for="q30c">C) It returns HIGH for white surfaces and LOW for black</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q30d" name="q30" value="d">
+                    <label for="q30d">D) It depends on the sensor calibration setting</label>
+                </div>
+            </div>
+
+            <!-- ==================== CODE ANALYSIS ==================== -->
+            <div class="section-header">Code Analysis (10 Points)</div>
+
+            <div class="question-card" style="border-color: #ff9500;">
+                <div class="question-number" style="color: #ff9500;">Code Analysis - Read Carefully</div>
+                <div class="question-text">Study the following Arduino code, then answer Questions 31-35.</div>
+
+                <div class="code-block">
+                    <pre><span style="color: #888;">// Robot Motion Control System</span>
+
+<span style="color: #ff9500;">int</span> leftMotorPin = <span style="color: #50fa7b;">9</span>;
+<span style="color: #ff9500;">int</span> rightMotorPin = <span style="color: #50fa7b;">10</span>;
+<span style="color: #ff9500;">int</span> buttonPin = <span style="color: #50fa7b;">7</span>;
+<span style="color: #ff9500;">int</span> potPin = <span style="color: #50fa7b;">A0</span>;
+
+<span style="color: #ff9500;">int</span> speed = <span style="color: #50fa7b;">0</span>;
+<span style="color: #ff9500;">boolean</span> isRunning = <span style="color: #ff9500;">false</span>;
+
+<span style="color: #ff9500;">void</span> <span style="color: #00d4ff;">setup</span>() {
+  <span style="color: #00d4ff;">pinMode</span>(leftMotorPin, <span style="color: #ff9500;">OUTPUT</span>);
+  <span style="color: #00d4ff;">pinMode</span>(rightMotorPin, <span style="color: #ff9500;">OUTPUT</span>);
+  <span style="color: #00d4ff;">pinMode</span>(buttonPin, <span style="color: #ff9500;">INPUT_PULLUP</span>);
+  Serial.<span style="color: #00d4ff;">begin</span>(<span style="color: #50fa7b;">9600</span>);
+}
+
+<span style="color: #ff9500;">void</span> <span style="color: #00d4ff;">loop</span>() {
+  <span style="color: #ff9500;">if</span> (<span style="color: #00d4ff;">digitalRead</span>(buttonPin) == <span style="color: #ff9500;">LOW</span>) {
+    isRunning = !isRunning;
+    <span style="color: #00d4ff;">delay</span>(<span style="color: #50fa7b;">300</span>);
+  }
+
+  <span style="color: #ff9500;">if</span> (isRunning) {
+    speed = <span style="color: #00d4ff;">analogRead</span>(potPin);
+    speed = <span style="color: #00d4ff;">map</span>(speed, <span style="color: #50fa7b;">0</span>, <span style="color: #50fa7b;">1023</span>, <span style="color: #50fa7b;">100</span>, <span style="color: #50fa7b;">255</span>);
+
+    <span style="color: #00d4ff;">analogWrite</span>(leftMotorPin, speed);
+    <span style="color: #00d4ff;">analogWrite</span>(rightMotorPin, speed);
+
+    Serial.<span style="color: #00d4ff;">print</span>(<span style="color: #50fa7b;">"Motors ON - Speed: "</span>);
+    Serial.<span style="color: #00d4ff;">println</span>(speed);
+  } <span style="color: #ff9500;">else</span> {
+    <span style="color: #00d4ff;">analogWrite</span>(leftMotorPin, <span style="color: #50fa7b;">0</span>);
+    <span style="color: #00d4ff;">analogWrite</span>(rightMotorPin, <span style="color: #50fa7b;">0</span>);
+    Serial.<span style="color: #00d4ff;">println</span>(<span style="color: #50fa7b;">"Motors OFF"</span>);
+  }
+
+  <span style="color: #00d4ff;">delay</span>(<span style="color: #50fa7b;">100</span>);
+}</pre>
+                </div>
+            </div>
+
+            <!-- Q31 - From Study Guide Q36 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 31</div>
+                <div class="question-text">What happens when the button is pressed for the FIRST time?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q31a" name="q31" value="a">
+                    <label for="q31a">A) The motors turn off</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q31b" name="q31" value="b">
+                    <label for="q31b">B) The speed is set to maximum (255)</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q31c" name="q31" value="c">
+                    <label for="q31c">C) isRunning changes from false to true, and motors start</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q31d" name="q31" value="d">
+                    <label for="q31d">D) The program resets and starts from setup()</label>
+                </div>
+            </div>
+
+            <!-- Q32 - From Study Guide Q37 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 32</div>
+                <div class="question-text">What is the range of possible motor speed values in this program?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q32a" name="q32" value="a">
+                    <label for="q32a">A) 0 to 255</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q32b" name="q32" value="b">
+                    <label for="q32b">B) 100 to 255</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q32c" name="q32" value="c">
+                    <label for="q32c">C) 0 to 1023</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q32d" name="q32" value="d">
+                    <label for="q32d">D) 0 to 100</label>
+                </div>
+            </div>
+
+            <!-- Q33 - From Study Guide Q38 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 33</div>
+                <div class="question-text">Why is there a delay(300) after detecting the button press?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q33a" name="q33" value="a">
+                    <label for="q33a">A) To give the motors time to start spinning</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q33b" name="q33" value="b">
+                    <label for="q33b">B) To wait for the Serial Monitor to display data</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q33c" name="q33" value="c">
+                    <label for="q33c">C) To allow the potentiometer reading to stabilize</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q33d" name="q33" value="d">
+                    <label for="q33d">D) To debounce the button and prevent multiple rapid toggles</label>
+                </div>
+            </div>
+
+            <!-- Q34 - From Study Guide Q39 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 34</div>
+                <div class="question-text">When the motors are running, what controls their speed?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q34a" name="q34" value="a">
+                    <label for="q34a">A) The potentiometer position (analogRead from potPin)</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q34b" name="q34" value="b">
+                    <label for="q34b">B) The button press duration</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q34c" name="q34" value="c">
+                    <label for="q34c">C) The value of isRunning (true or false)</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q34d" name="q34" value="d">
+                    <label for="q34d">D) The delay(100) at the end of loop()</label>
+                </div>
+            </div>
+
+            <!-- Q35 - From Study Guide Q40 -->
+            <div class="question-card">
+                <div class="question-number"><span class="question-points">2 pts</span>Question 35</div>
+                <div class="question-text">What does the expression "isRunning = !isRunning" do?</div>
+                <div class="answer-option">
+                    <input type="radio" id="q35a" name="q35" value="a">
+                    <label for="q35a">A) Sets isRunning to false permanently</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q35b" name="q35" value="b">
+                    <label for="q35b">B) Checks if isRunning is not equal to true</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q35c" name="q35" value="c">
+                    <label for="q35c">C) Toggles isRunning to its opposite value (true to false or false to true)</label>
+                </div>
+                <div class="answer-option">
+                    <input type="radio" id="q35d" name="q35" value="d">
+                    <label for="q35d">D) Creates a new variable called "not isRunning"</label>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-button" id="exam-submit-btn">Submit Exam</button>
+        </form>
+
+        </div><!-- End exam-section -->
+
+        <!-- Results Section -->
+        <div class="results-section hidden" id="results">
+            <div id="submission-status"></div>
+            <div class="score-display">
+                <h2>Exam Results</h2>
+                <div class="final-score" id="finalScore">--/70</div>
+                <p style="margin-top: 10px; color: #b8c5d6;">(Multiple Choice + Code Analysis)</p>
+                <p style="margin-top: 5px; color: #ff9500;">CAD score will be graded separately (30 points)</p>
+
+                <div class="score-breakdown">
+                    <div class="score-item">
+                        <div class="category">Engineering Design</div>
+                        <div class="value" id="engScore">--/16</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="category">Safety & Shop</div>
+                        <div class="value" id="safetyScore">--/16</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="category">CAD & Manufacturing</div>
+                        <div class="value" id="cadScore">--/16</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="category">Programming</div>
+                        <div class="value" id="progScore">--/12</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="category">Code Analysis</div>
+                        <div class="value" id="codeScore">--/10</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="category">Total (with CAD)</div>
+                        <div class="value" id="totalWithCAD">--/100</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="incorrect-review" id="incorrectSection">
+                <h3>Review Incorrect Answers</h3>
+                <div id="incorrectList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Google Sign-In Library -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <script>
+        // ==================== CONFIGURATION ====================
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx0q6C6Xo1OGzQF2ZRBhWp5lAL1rfnIbAe3AKi9WOFxxnEy_kYTGxUBhEVBLQKybHBq/exec';
+        const GOOGLE_CLIENT_ID = '351912540436-54lj11b56684ni284ngu3afb5gruno05.apps.googleusercontent.com';
+
+        // ==================== GLOBAL STATE ====================
+        let userEmail = '';
+        let userName = '';
+
+        // ==================== ANSWER KEY ====================
+        const answers = {
+            q1: 'b',   // Build Prototype
+            q2: 'c',   // Constraint definition
+            q3: 'a',   // Precise but not accurate
+            q4: 'b',   // Digital calipers
+            q5: 'c',   // After prototype - test and evaluate
+            q6: 'd',   // Why iteration important
+            q7: 'a',   // First step - define problem
+            q8: 'b',   // Design brief contents
+            q9: 'd',   // Before operating machinery - instructor approval
+            q10: 'b',  // Lockout/Tagout purpose
+            q11: 'a',  // Good housekeeping
+            q12: 'c',  // NOT PPE - fire extinguisher
+            q13: 'a',  // Pinch point definition
+            q14: 'b',  // Matthew Henne - employer failure
+            q15: 'd',  // Damaged tools - report immediately
+            q16: 'a',  // Lac-Megantic lesson
+            q17: 'c',  // CAM purpose
+            q18: 'b',  // Before CNC - review toolpath
+            q19: 'd',  // Fully constrained = black
+            q20: 'b',  // CAD stands for
+            q21: 'a',  // Toolpath definition
+            q22: 'c',  // After testing prototype - document and improve
+            q23: 'd',  // 2D vs 3D difference
+            q24: 'a',  // Rapid prototyping definition
+            q25: 'b',  // pinMode function
+            q26: 'c',  // PWM range 0-255
+            q27: 'b',  // digitalWrite vs analogWrite
+            q28: 'a',  // delay() purpose
+            q29: 'd',  // setup() runs once
+            q30: 'b',  // IR sensor returns LOW for black
+            q31: 'c',  // First button press - isRunning toggles to true
+            q32: 'b',  // Speed range 100-255
+            q33: 'd',  // delay(300) - debounce
+            q34: 'a',  // What controls speed - potentiometer
+            q35: 'c'   // !isRunning - toggle
+        };
+
+        // Question categories for scoring
+        const categories = {
+            engineering: ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8'],
+            safety: ['q9', 'q10', 'q11', 'q12', 'q13', 'q14', 'q15', 'q16'],
+            cad: ['q17', 'q18', 'q19', 'q20', 'q21', 'q22', 'q23', 'q24'],
+            programming: ['q25', 'q26', 'q27', 'q28', 'q29', 'q30'],
+            codeAnalysis: ['q31', 'q32', 'q33', 'q34', 'q35']
+        };
+
+        // ==================== GOOGLE SIGN-IN ====================
+        function initializeGoogleSignIn() {
+            google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: handleCredentialResponse
+            });
+
+            google.accounts.id.renderButton(
+                document.getElementById('google-signin-btn'),
+                { theme: 'outline', size: 'large', text: 'signin_with', width: 280 }
+            );
+        }
+
+        function handleCredentialResponse(response) {
+            // Decode the JWT token to get user info
+            const payload = JSON.parse(atob(response.credential.split('.')[1]));
+            userEmail = payload.email;
+            userName = payload.name;
+
+            // Show exam interface
+            document.getElementById('auth-section').classList.add('hidden');
+            document.getElementById('user-info').classList.remove('hidden');
+            document.getElementById('exam-section').classList.remove('hidden');
+            document.getElementById('user-email').textContent = userEmail;
+
+            // Log exam access to Google Sheets
+            logExamAccess();
+        }
+
+        function signOut() {
+            google.accounts.id.disableAutoSelect();
+            userEmail = '';
+            userName = '';
+
+            document.getElementById('auth-section').classList.remove('hidden');
+            document.getElementById('user-info').classList.add('hidden');
+            document.getElementById('exam-section').classList.add('hidden');
+            document.getElementById('results').classList.add('hidden');
+        }
+
+        // Initialize Google Sign-In when script loads
+        window.onload = function() {
+            if (typeof google !== 'undefined') {
+                initializeGoogleSignIn();
+            }
+        };
+
+        // ==================== EXAM ACCESS LOGGING ====================
+        async function logExamAccess() {
+            const timestamp = new Date().toLocaleString();
+
+            const data = {
+                action: 'access',
+                email: userEmail,
+                name: userName,
+                timestamp: timestamp
+            };
+
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                console.log('Midterm exam access logged');
+            } catch (error) {
+                console.error('Error logging exam access:', error);
+            }
+        }
+
+        // ==================== FORM SUBMISSION ====================
+        document.getElementById('exam-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Prevent double submission
+            const btn = document.getElementById('exam-submit-btn');
+            if (btn.disabled) {
+                return;
+            }
+
+            // Check for unanswered questions
+            let unanswered = [];
+            for (let i = 1; i <= 35; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (!selected) {
+                    unanswered.push(i);
+                }
+            }
+
+            if (unanswered.length > 0) {
+                alert(`Please answer all questions before submitting.\n\nUnanswered: Questions ${unanswered.join(', ')}`);
+                return;
+            }
+
+            // Disable button and show loading state
+            btn.disabled = true;
+            btn.textContent = 'Submitting Exam...';
+            btn.style.opacity = '0.6';
+            btn.style.cursor = 'not-allowed';
+
+            // Show loading overlay
+            document.getElementById('loading-overlay').classList.remove('hidden');
+
+            // Grade exam (allow UI to update before processing)
+            setTimeout(() => {
+                gradeExam();
+            }, 100);
+        });
+
+        // ==================== GRADING ====================
+        function gradeExam() {
+            let scores = {
+                engineering: 0,
+                safety: 0,
+                cad: 0,
+                programming: 0,
+                codeAnalysis: 0
+            };
+            let incorrect = [];
+            let answersArray = [];
+
+            // Check each answer
+            for (let q in answers) {
+                const selected = document.querySelector(`input[name="${q}"]:checked`);
+                const qNum = q.replace('q', '');
+
+                if (selected && selected.value === answers[q]) {
+                    // Correct - add 2 points to appropriate category
+                    for (let cat in categories) {
+                        if (categories[cat].includes(q)) {
+                            scores[cat] += 2;
+                        }
+                    }
+                    answersArray.push({ question: qNum, correct: 1 });
+                } else {
+                    // Incorrect
+                    incorrect.push({
+                        num: qNum,
+                        yours: selected ? selected.value.toUpperCase() : 'None',
+                        correct: answers[q].toUpperCase()
+                    });
+                    answersArray.push({ question: qNum, correct: 0 });
+                }
+            }
+
+            // Calculate total
+            const total = scores.engineering + scores.safety + scores.cad + scores.programming + scores.codeAnalysis;
+            const percentage = ((total / 70) * 100).toFixed(1);
+
+            // Submit to Google Sheets
+            submitToGoogleSheets(scores, total, percentage, answersArray, incorrect);
+        }
+
+        // ==================== GOOGLE SHEETS SUBMISSION ====================
+        async function submitToGoogleSheets(scores, total, percentage, answersArray, incorrect) {
+            const timestamp = new Date().toLocaleString();
+
+            const data = {
+                action: 'submit',
+                email: userEmail,
+                name: userName,
+                totalScore: total,
+                maxScore: 70,
+                percentage: percentage,
+                engineeringScore: scores.engineering,
+                safetyScore: scores.safety,
+                cadScore: scores.cad,
+                programmingScore: scores.programming,
+                codeAnalysisScore: scores.codeAnalysis,
+                timestamp: timestamp,
+                answers: JSON.stringify(answersArray)
+            };
+
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                // Display results
+                displayResults(scores, total, percentage, incorrect);
+
+            } catch (error) {
+                console.error('Error submitting to Google Sheets:', error);
+
+                // Still show results even if submission fails
+                displayResults(scores, total, percentage, incorrect);
+
+                const statusDiv = document.getElementById('submission-status');
+                statusDiv.className = 'submission-status error';
+                statusDiv.innerHTML = `
+                    <h3 style="color: #ff5555; margin-bottom: 10px;">Warning: Submission Error</h3>
+                    <p>Your exam was graded but there was an error submitting to Google Sheets.</p>
+                    <p>Please screenshot your results and notify your instructor.</p>
+                `;
+            }
+        }
+
+        // ==================== DISPLAY RESULTS ====================
+        function displayResults(scores, total, percentage, incorrect) {
+            // Hide loading overlay
+            document.getElementById('loading-overlay').classList.add('hidden');
+
+            // Hide exam section, show results
+            document.getElementById('exam-section').classList.add('hidden');
+            document.getElementById('results').classList.remove('hidden');
+
+            // Show success status
+            const statusDiv = document.getElementById('submission-status');
+            statusDiv.className = 'submission-status';
+            statusDiv.innerHTML = `
+                <h3 style="color: #50fa7b; margin-bottom: 10px;">Exam Submitted Successfully</h3>
+                <p>Your results have been sent to your instructor.</p>
+                <p style="margin-top: 10px; color: #ff9500;"><strong>Remember:</strong> Submit your CAD file separately as LastName_Midterm_CAD.f3d</p>
+            `;
+
+            // Scroll to results
+            setTimeout(() => {
+                document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+
+            // Display scores
+            document.getElementById('finalScore').textContent = `${total}/70`;
+            document.getElementById('engScore').textContent = `${scores.engineering}/16`;
+            document.getElementById('safetyScore').textContent = `${scores.safety}/16`;
+            document.getElementById('cadScore').textContent = `${scores.cad}/16`;
+            document.getElementById('progScore').textContent = `${scores.programming}/12`;
+            document.getElementById('codeScore').textContent = `${scores.codeAnalysis}/10`;
+            document.getElementById('totalWithCAD').textContent = `${total}+CAD/100`;
+
+            // Display incorrect answers
+            const incorrectList = document.getElementById('incorrectList');
+            if (incorrect.length === 0) {
+                incorrectList.innerHTML = '<p style="color: #00ff00; font-size: 1.2rem;">Perfect score on multiple choice! Excellent work!</p>';
+            } else {
+                incorrectList.innerHTML = incorrect.map(item => `
+                    <div class="incorrect-item">
+                        <span class="q-num">Question ${item.num}</span> -
+                        <span class="your-answer">Your answer: ${item.yours}</span> |
+                        <span class="correct-answer">Correct: ${item.correct}</span>
+                    </div>
+                `).join('');
+            }
+        }
+    </script>
+</body>
+</html>
