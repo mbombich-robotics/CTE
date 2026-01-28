@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Midterm Exam Instructions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0f0f1e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .slide-container {
+            max-width: 1200px;
+            width: 100%;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 3px solid #00d4ff;
+            border-radius: 20px;
+            padding: 3rem 4rem;
+            box-shadow: 0 10px 50px rgba(0, 212, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #ff9500 0%, #00d4ff 50%, #ff9500 100%);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #00d4ff;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.8), 0 0 40px rgba(0, 212, 255, 0.4);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            color: #ff9500;
+            font-weight: 600;
+            font-family: 'Rajdhani', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .instructions-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .section-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8rem;
+            color: #ff9500;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-title::before {
+            content: "▸";
+            font-size: 2rem;
+            color: #00d4ff;
+        }
+
+        .instruction-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .instruction-item {
+            background: rgba(26, 26, 46, 0.6);
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            border-left: 5px solid #00d4ff;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .instruction-item:hover {
+            background: rgba(26, 26, 46, 0.9);
+            border-left-color: #ff9500;
+            transform: translateX(5px);
+        }
+
+        .instruction-item.allowed {
+            border-left-color: #00ff88;
+        }
+
+        .instruction-item.required {
+            border-left-color: #ff9500;
+        }
+
+        .instruction-item.prohibited {
+            border-left-color: #ff4444;
+        }
+
+        .icon {
+            font-size: 1.8rem;
+            flex-shrink: 0;
+            margin-top: 0.2rem;
+        }
+
+        .icon.check { color: #00ff88; }
+        .icon.warning { color: #ff9500; }
+        .icon.stop { color: #ff4444; }
+
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .footer p {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
+            color: #00d4ff;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .slide-container {
+                padding: 2rem;
+            }
+
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .instruction-item {
+                font-size: 1rem;
+                padding: 1.2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="header">
+            <h1>Midterm Exam</h1>
+            <p>Instructions - Read Carefully</p>
+        </div>
+
+        <div class="instructions-section">
+            <div class="section-title">Before You Begin</div>
+            <div class="instruction-list">
+                <div class="instruction-item allowed">
+                    <span class="icon check">✓</span>
+                    <span>You <strong>may open Arduino IDE and Fusion 360</strong> prior to starting the exam</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="instructions-section">
+            <div class="section-title">During the Exam</div>
+            <div class="instruction-list">
+                <div class="instruction-item prohibited">
+                    <span class="icon stop">⊗</span>
+                    <span><strong>Do not navigate to any page except Google Classroom</strong></span>
+                </div>
+                <div class="instruction-item allowed">
+                    <span class="icon check">✓</span>
+                    <span>You <strong>may use the Arduino Toolbox</strong> at any time</span>
+                </div>
+                <div class="instruction-item allowed">
+                    <span class="icon check">✓</span>
+                    <span>You <strong>may connect your Arduino Uno</strong> and run the code in the exam</span>
+                </div>
+                <div class="instruction-item required">
+                    <span class="icon warning">!</span>
+                    <span><strong>Stay quiet</strong> during and after the exam</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="instructions-section">
+            <div class="section-title">After You Finish</div>
+            <div class="instruction-list">
+                <div class="instruction-item allowed">
+                    <span class="icon check">✓</span>
+                    <span>You may <strong>sit quietly at your desk</strong> and read or study written material for another class</span>
+                </div>
+                <div class="instruction-item allowed">
+                    <span class="icon check">✓</span>
+                    <span>You may go to the <strong>shop for light 5S activities and snacks</strong> — proceed there quietly and <strong>grab your safety glasses</strong></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Good Luck! 🤖</p>
+        </div>
+    </div>
+</body>
+</html>
