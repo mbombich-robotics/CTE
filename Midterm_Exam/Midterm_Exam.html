@@ -402,13 +402,7 @@
         }
 
         /* Results Section */
-        .results-section {
-            display: none;
-        }
-
-        .results-section.show {
-            display: block;
-        }
+        /* Results Section - visibility controlled by .hidden class */
 
         .score-display {
             background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(26, 31, 58, 0.9) 100%);
@@ -572,7 +566,7 @@
                 <li>Each multiple choice question is worth <strong>2 points</strong>.</li>
                 <li>Read each question carefully before selecting your answer.</li>
                 <li>You may use Fusion 360 for the CAD portion of this exam.</li>
-                <li>Submit your CAD file as: <code>LastName_Midterm_CAD.f3d</code></li>
+                <li>Submit your CAD file as: <code>LastName_Midterm_CAD.f3z</code></li>
             </ul>
             <div class="point-breakdown">
                 <div class="point-item">
@@ -1191,7 +1185,7 @@
                         <li>All sketches should be fully constrained (black lines)</li>
                         <li>Apply 8mm fillets to corners and inside edge</li>
                         <li>Insert and mount the Anderson Plug component</li>
-                        <li>Save as: <code>LastName_Midterm_CAD.f3d</code></li>
+                        <li>Save as: <code>LastName_Midterm_CAD.f3z</code></li>
                     </ul>
                 </div>
 
@@ -1224,9 +1218,10 @@
                     <div class="cad-instructions" style="border-color: #50fa7b; background: rgba(80, 250, 123, 0.05);">
                         <h4 style="color: #50fa7b;">Submission Instructions:</h4>
                         <ol style="margin-left: 1.5rem; color: #b8c5d6; line-height: 1.8;">
+                            <li><strong>Save your file first</strong> (File → Save) - Export requires the file to be saved</li>
                             <li>In Fusion 360, go to <strong>File → Export</strong></li>
-                            <li>Select <strong>.f3d</strong> as the file type</li>
-                            <li>Name your file: <code style="background: rgba(0,0,0,0.3); padding: 2px 8px; border-radius: 4px;">LastName_Midterm_CAD.f3d</code></li>
+                            <li>Select <strong>.f3z</strong> as the file type</li>
+                            <li>Name your file: <code style="background: rgba(0,0,0,0.3); padding: 2px 8px; border-radius: 4px;">LastName_Midterm_CAD.f3z</code></li>
                             <li>Save the file to your computer</li>
                             <li>Click the button below to upload your file</li>
                         </ol>
@@ -1635,7 +1630,7 @@
             q27: 'b',  // digitalWrite vs analogWrite
             q28: 'a',  // delay() purpose
             q29: 'd',  // setup() runs once
-            q30: 'b',  // IR sensor returns LOW for black
+            q30: ['b', 'c'],  // IR sensor returns LOW for black (both B and C are correct)
             q31: 'c',  // First button press - isRunning toggles to true
             q32: 'b',  // Speed range 100-255
             q33: 'd',  // delay(300) - debounce
@@ -1781,7 +1776,15 @@
                 const selected = document.querySelector(`input[name="${q}"]:checked`);
                 const qNum = q.replace('q', '');
 
-                if (selected && selected.value === answers[q]) {
+                // Check if answer is correct (handles both single answer and array of valid answers)
+                const correctAnswer = answers[q];
+                const isCorrect = selected && (
+                    Array.isArray(correctAnswer)
+                        ? correctAnswer.includes(selected.value)
+                        : selected.value === correctAnswer
+                );
+
+                if (isCorrect) {
                     // Correct - add 2 points to appropriate category
                     for (let cat in categories) {
                         if (categories[cat].includes(q)) {
@@ -1791,10 +1794,13 @@
                     answersArray.push({ question: qNum, correct: 1 });
                 } else {
                     // Incorrect
+                    const correctDisplay = Array.isArray(correctAnswer)
+                        ? correctAnswer.map(a => a.toUpperCase()).join(' or ')
+                        : correctAnswer.toUpperCase();
                     incorrect.push({
                         num: qNum,
                         yours: selected ? selected.value.toUpperCase() : 'None',
-                        correct: answers[q].toUpperCase()
+                        correct: correctDisplay
                     });
                     answersArray.push({ question: qNum, correct: 0 });
                 }
@@ -1872,7 +1878,7 @@
             statusDiv.innerHTML = `
                 <h3 style="color: #50fa7b; margin-bottom: 10px;">Exam Submitted Successfully</h3>
                 <p>Your results have been sent to your instructor.</p>
-                <p style="margin-top: 10px; color: #ff9500;"><strong>Remember:</strong> Submit your CAD file separately as LastName_Midterm_CAD.f3d</p>
+                <p style="margin-top: 10px; color: #ff9500;"><strong>Remember:</strong> Submit your CAD file separately as LastName_Midterm_CAD.f3z</p>
             `;
 
             // Scroll to results

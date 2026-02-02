@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRC Robotics Project - Student Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #1a73e8;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 3px solid #1a73e8;
+        }
+
+        h2 {
+            color: #1a73e8;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8f0fe;
+        }
+
+        h3 {
+            color: #333;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        .highlight-box {
+            background: #e8f0fe;
+            border-left: 4px solid #1a73e8;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .highlight-box.warning {
+            background: #fff3e0;
+            border-left-color: #ff9800;
+        }
+
+        .highlight-box.success {
+            background: #e8f5e9;
+            border-left-color: #4caf50;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #1a73e8;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .points {
+            font-weight: bold;
+            color: #1a73e8;
+        }
+
+        ul, ol {
+            margin: 15px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .timeline {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .phase {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .phase-title {
+            font-weight: bold;
+            color: #1a73e8;
+            margin-bottom: 10px;
+        }
+
+        .phase-weeks {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .do-dont {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .do-box, .dont-box {
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .do-box {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+        }
+
+        .dont-box {
+            background: #ffebee;
+            border: 2px solid #f44336;
+        }
+
+        .do-box h4 {
+            color: #4caf50;
+            margin-bottom: 10px;
+        }
+
+        .dont-box h4 {
+            color: #f44336;
+            margin-bottom: 10px;
+        }
+
+        .checklist {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .checklist li {
+            list-style: none;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .checklist li:before {
+            content: "☐";
+            position: absolute;
+            left: 0;
+            font-size: 1.2em;
+        }
+
+        .examples {
+            background: #f0f4f8;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .good-example {
+            color: #2e7d32;
+        }
+
+        .bad-example {
+            color: #c62828;
+            text-decoration: line-through;
+        }
+
+        .grade-summary {
+            background: linear-gradient(135deg, #1a73e8, #4285f4);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .grade-summary h3 {
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .total-points {
+            font-size: 3em;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e8f0fe;
+            color: #666;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                padding: 20px;
+            }
+            h2 {
+                page-break-after: avoid;
+            }
+            table, .timeline, .do-dont {
+                page-break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .timeline, .do-dont {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>FRC Robotics Project</h1>
+        <p class="subtitle">Your 9-Week Engineering Journey</p>
+
+        <div class="highlight-box">
+            <strong>What is this?</strong> For the next 9 weeks, your coursework IS your FIRST Robotics Competition experience. You'll apply the engineering design process to build a competition robot while documenting your individual contributions.
+        </div>
+
+        <h2>Your Subsystem Team</h2>
+        <p>You're part of a team responsible for one major component of the robot:</p>
+
+        <table>
+            <tr><th>Team</th><th>Responsibility</th></tr>
+            <tr><td>Drivetrain</td><td>Robot mobility, steering, speed</td></tr>
+            <tr><td>Intake/Collector</td><td>Picking up game pieces</td></tr>
+            <tr><td>Shooter/Launcher</td><td>Scoring game pieces</td></tr>
+            <tr><td>Climber</td><td>End-game hanging mechanism</td></tr>
+            <tr><td>Autonomous/Vision</td><td>Camera navigation, auto routines</td></tr>
+            <tr><td>Integration/Electrical</td><td>Wiring, pneumatics, systems</td></tr>
+        </table>
+
+        <div class="highlight-box warning">
+            <strong>Important:</strong> Your grade comes from documenting <strong>YOUR personal contributions</strong> - not just what the team accomplished.
+        </div>
+
+        <h2>The 9-Week Schedule</h2>
+
+        <div class="timeline">
+            <div class="phase">
+                <div class="phase-title">Research</div>
+                <div class="phase-weeks">Weeks 1-2</div>
+                <p>Learn the game, research solutions, brainstorm ideas</p>
+            </div>
+            <div class="phase">
+                <div class="phase-title">Design</div>
+                <div class="phase-weeks">Weeks 3-4</div>
+                <p>Sketch, CAD, evaluate options, make decisions</p>
+            </div>
+            <div class="phase">
+                <div class="phase-title">Build & Test</div>
+                <div class="phase-weeks">Weeks 5-6</div>
+                <p>Prototype, test, document failures, iterate</p>
+            </div>
+        </div>
+        <div class="timeline">
+            <div class="phase">
+                <div class="phase-title">Integration</div>
+                <div class="phase-weeks">Weeks 7-8</div>
+                <p>Connect subsystems, solve problems, refine</p>
+            </div>
+            <div class="phase">
+                <div class="phase-title">Competition Prep</div>
+                <div class="phase-weeks">Week 9</div>
+                <p>Portfolio, presentation, get ready to compete!</p>
+            </div>
+        </div>
+
+        <h2>What You'll Turn In</h2>
+
+        <h3>Every Week: Weekly Reflection (20 points)</h3>
+        <p><strong>Due: Every Friday</strong></p>
+
+        <div class="checklist">
+            <ul>
+                <li>3+ specific tasks you completed (with dates)</li>
+                <li>2+ photos showing YOUR work</li>
+                <li>Challenges you faced and how you solved them</li>
+                <li>3 goals for next week</li>
+            </ul>
+        </div>
+
+        <h3>Major Deliverables</h3>
+
+        <table>
+            <tr>
+                <th>Week</th>
+                <th>Deliverable</th>
+                <th>Points</th>
+            </tr>
+            <tr><td>1</td><td>Game Analysis Report</td><td class="points">50</td></tr>
+            <tr><td>2</td><td>Subsystem Research Report</td><td class="points">50</td></tr>
+            <tr><td>3</td><td>Design Contribution (CAD/Sketches)</td><td class="points">75</td></tr>
+            <tr><td>4</td><td>Design Decision Matrix</td><td class="points">50</td></tr>
+            <tr><td>5</td><td>Prototype Documentation</td><td class="points">75</td></tr>
+            <tr><td>6</td><td>Testing & Iteration Log</td><td class="points">50</td></tr>
+            <tr><td>7</td><td>Integration Report</td><td class="points">50</td></tr>
+            <tr><td>8</td><td>Technical Contribution Summary</td><td class="points">75</td></tr>
+            <tr><td>9</td><td>Engineer Portfolio Entry</td><td class="points">100</td></tr>
+            <tr><td>9</td><td>Final Presentation (5 min)</td><td class="points">100</td></tr>
+        </table>
+
+        <div class="grade-summary">
+            <h3>Total Points Available</h3>
+            <div class="total-points">900</div>
+            <p>Weekly Reflections (180) + Deliverables (675) + Participation (45)</p>
+        </div>
+
+        <h2>Tips for Success</h2>
+
+        <div class="do-dont">
+            <div class="do-box">
+                <h4>DO:</h4>
+                <ul>
+                    <li>Take photos every day you work</li>
+                    <li>Write reflections the same day</li>
+                    <li>Use specific language: "I wired the limit switch"</li>
+                    <li>Document failures - judges love iteration!</li>
+                    <li>Ask questions when stuck</li>
+                </ul>
+            </div>
+            <div class="dont-box">
+                <h4>DON'T:</h4>
+                <ul>
+                    <li>Wait until Friday to remember</li>
+                    <li>Copy your teammate's reflections</li>
+                    <li>Say "we" when you mean "I"</li>
+                    <li>Skip the photo evidence</li>
+                    <li>Leave things until last minute</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2>Writing About YOUR Work</h2>
+
+        <div class="examples">
+            <p><strong>Good examples:</strong></p>
+            <ul>
+                <li class="good-example">"I designed the intake roller spacing in CAD"</li>
+                <li class="good-example">"I wired the limit switches on the arm"</li>
+                <li class="good-example">"I tested 5 different wheel materials for traction"</li>
+                <li class="good-example">"I wrote the autonomous routine for picking up balls"</li>
+            </ul>
+        </div>
+
+        <div class="examples">
+            <p><strong>Avoid these:</strong></p>
+            <ul>
+                <li class="bad-example">"Helped the team"</li>
+                <li class="bad-example">"Worked on the robot"</li>
+                <li class="bad-example">"We built stuff"</li>
+                <li class="bad-example">"Did some wiring"</li>
+            </ul>
+        </div>
+
+        <h2>Photo Evidence Ideas</h2>
+        <ul>
+            <li>You at the workstation (have a teammate take it)</li>
+            <li>Parts you fabricated or assembled</li>
+            <li>Wiring you completed</li>
+            <li>CAD screenshots with your name visible</li>
+            <li>Test setups you created</li>
+            <li>Before/after comparisons</li>
+        </ul>
+
+        <div class="highlight-box success">
+            <strong>Pro tip:</strong> Take photos WHILE you're working. It's hard to recreate evidence later. Your phone's camera roll with timestamps is your friend!
+        </div>
+
+        <h2>Using the Portfolio Website</h2>
+        <ol>
+            <li>Go to the URL your teacher provides</li>
+            <li>Enter your name, email, team, and class period</li>
+            <li>Use the Dashboard to track progress and see what's due</li>
+            <li>Submit Weekly Reflections every Friday</li>
+            <li>Complete Deliverables by their due dates</li>
+            <li>Use the AI tools to polish your final portfolio</li>
+        </ol>
+
+        <h2>What You'll Get Out of This</h2>
+        <ul>
+            <li><strong>Real engineering skills</strong> - Design, build, test, iterate</li>
+            <li><strong>A competition robot</strong> - That you helped create</li>
+            <li><strong>A professional portfolio</strong> - To show colleges and employers</li>
+            <li><strong>Presentation experience</strong> - Practice technical communication</li>
+            <li><strong>Teamwork skills</strong> - While proving YOUR contributions</li>
+        </ul>
+
+        <div class="footer">
+            <p><strong>Questions?</strong> Ask your teacher or check the portfolio website.</p>
+            <p>Let's build something great!</p>
+        </div>
+    </div>
+</body>
+</html>

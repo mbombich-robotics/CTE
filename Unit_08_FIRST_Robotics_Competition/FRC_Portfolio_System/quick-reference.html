@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRC Portfolio - Quick Reference</title>
+    <style>
+        @page {
+            size: letter;
+            margin: 0.5in;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 11px;
+            line-height: 1.4;
+            color: #333;
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 0.5in;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #1a73e8;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .header h1 {
+            color: #1a73e8;
+            font-size: 20px;
+            margin-bottom: 3px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 12px;
+            border-left: 4px solid #1a73e8;
+        }
+
+        .section.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .section h2 {
+            color: #1a73e8;
+            font-size: 13px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+        }
+
+        th {
+            background: #1a73e8;
+            color: white;
+            padding: 5px 8px;
+            text-align: left;
+            font-size: 9px;
+        }
+
+        td {
+            padding: 4px 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:nth-child(even) {
+            background: #f0f4f8;
+        }
+
+        .points {
+            font-weight: bold;
+            color: #1a73e8;
+            text-align: center;
+        }
+
+        ul {
+            margin-left: 15px;
+        }
+
+        li {
+            margin-bottom: 3px;
+        }
+
+        .checklist li {
+            list-style: none;
+            margin-left: 0;
+            padding-left: 18px;
+            position: relative;
+        }
+
+        .checklist li:before {
+            content: "☐";
+            position: absolute;
+            left: 0;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .good {
+            background: #e8f5e9;
+            border-left-color: #4caf50;
+        }
+
+        .bad {
+            background: #ffebee;
+            border-left-color: #f44336;
+        }
+
+        .good h3, .good-text {
+            color: #2e7d32;
+        }
+
+        .bad h3, .bad-text {
+            color: #c62828;
+        }
+
+        .mini-section {
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .mini-section h3 {
+            font-size: 11px;
+            margin-bottom: 5px;
+        }
+
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            text-align: center;
+            font-size: 9px;
+        }
+
+        .schedule-item {
+            background: white;
+            padding: 6px 4px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        .schedule-item strong {
+            display: block;
+            color: #1a73e8;
+            font-size: 10px;
+        }
+
+        .total-box {
+            background: linear-gradient(135deg, #1a73e8, #4285f4);
+            color: white;
+            text-align: center;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        .total-box .big {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 9px;
+            color: #666;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>FRC Portfolio Quick Reference</h1>
+        <p>Keep this at your workstation!</p>
+    </div>
+
+    <div class="grid">
+        <!-- Weekly Reflection Checklist -->
+        <div class="section">
+            <h2>Weekly Reflection (Due Fridays)</h2>
+            <ul class="checklist">
+                <li>3+ tasks with dates ("I designed...", "I built...")</li>
+                <li>2+ photos of MY work</li>
+                <li>Challenges I faced</li>
+                <li>How I solved them</li>
+                <li>3 specific goals for next week</li>
+            </ul>
+            <p style="margin-top: 8px; font-weight: bold; color: #1a73e8;">= 20 points each week</p>
+        </div>
+
+        <!-- Deliverables Schedule -->
+        <div class="section">
+            <h2>Major Deliverables</h2>
+            <table>
+                <tr><th>Wk</th><th>Deliverable</th><th>Pts</th></tr>
+                <tr><td>1</td><td>Game Analysis Report</td><td class="points">50</td></tr>
+                <tr><td>2</td><td>Subsystem Research</td><td class="points">50</td></tr>
+                <tr><td>3</td><td>Design Contribution</td><td class="points">75</td></tr>
+                <tr><td>4</td><td>Decision Matrix</td><td class="points">50</td></tr>
+                <tr><td>5</td><td>Prototype Docs</td><td class="points">75</td></tr>
+                <tr><td>6</td><td>Testing Log</td><td class="points">50</td></tr>
+                <tr><td>7</td><td>Integration Report</td><td class="points">50</td></tr>
+                <tr><td>8</td><td>Technical Summary</td><td class="points">75</td></tr>
+                <tr><td>9</td><td>Portfolio + Presentation</td><td class="points">200</td></tr>
+            </table>
+        </div>
+
+        <!-- Good vs Bad Examples -->
+        <div class="section full-width">
+            <h2>Writing About YOUR Work</h2>
+            <div class="two-col">
+                <div class="mini-section good">
+                    <h3>Good Examples:</h3>
+                    <ul>
+                        <li>"I designed the intake roller spacing in CAD"</li>
+                        <li>"I wired the limit switches on the arm"</li>
+                        <li>"I tested 5 different wheel materials"</li>
+                        <li>"I wrote the autonomous pickup routine"</li>
+                    </ul>
+                </div>
+                <div class="mini-section bad">
+                    <h3>Avoid These:</h3>
+                    <ul>
+                        <li class="bad-text">"Helped the team"</li>
+                        <li class="bad-text">"Worked on the robot"</li>
+                        <li class="bad-text">"We built stuff"</li>
+                        <li class="bad-text">"Did some wiring"</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Photo Evidence -->
+        <div class="section">
+            <h2>Photo Evidence Ideas</h2>
+            <ul>
+                <li>You at your workstation</li>
+                <li>Parts YOU fabricated/assembled</li>
+                <li>Wiring YOU completed</li>
+                <li>YOUR CAD screenshots</li>
+                <li>Test setups you created</li>
+                <li>Before/after comparisons</li>
+            </ul>
+            <p style="margin-top: 8px; font-size: 10px; font-style: italic;">
+                Tip: Take photos WHILE working. Check timestamps!
+            </p>
+        </div>
+
+        <!-- 9-Week Timeline -->
+        <div class="section">
+            <h2>9-Week Timeline</h2>
+            <div class="schedule-grid">
+                <div class="schedule-item">
+                    <strong>1-2</strong>
+                    Research
+                </div>
+                <div class="schedule-item">
+                    <strong>3-4</strong>
+                    Design
+                </div>
+                <div class="schedule-item">
+                    <strong>5-6</strong>
+                    Build/Test
+                </div>
+                <div class="schedule-item">
+                    <strong>7-8</strong>
+                    Integrate
+                </div>
+                <div class="schedule-item">
+                    <strong>9</strong>
+                    Present
+                </div>
+            </div>
+            <div class="total-box">
+                <div class="big">900</div>
+                <div>Total Points Available</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Questions? Ask your teacher. Remember: Document YOUR contributions, not just team work!
+    </div>
+</body>
+</html>

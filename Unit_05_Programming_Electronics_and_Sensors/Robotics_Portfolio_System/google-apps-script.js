@@ -1,0 +1,686 @@
+/**
+ * FRC Portfolio - Google Apps Script Backend
+ *
+ * SETUP INSTRUCTIONS:
+ * 1. Create a new Google Sheet
+ * 2. Go to Extensions > Apps Script
+ * 3. Delete the default code and paste this entire file
+ * 4. Save the project (give it a name like "FRC Portfolio Backend")
+ * 5. Click "Deploy" > "New deployment"
+ * 6. Select "Web app" as the type
+ * 7. Set "Execute as" to "Me"
+ * 8. Set "Who has access" to "Anyone" (or "Anyone with Google account" for more security)
+ * 9. Click "Deploy" and authorize when prompted
+ * 10. Copy the Web App URL and paste it into app.js CONFIG.SHEETS_API_URL
+ *
+ * The script will automatically create the necessary sheets on first run.
+ */
+
+// ============================================
+// CONFIGURATION
+// ============================================
+const SHEET_NAMES = {
+  STUDENTS: 'Students',
+  REFLECTIONS: 'Weekly Reflections',
+  DELIVERABLES: 'Deliverables',
+  EVIDENCE: 'Evidence',
+  LOG: 'Activity Log'
+};
+
+// ============================================
+// WEB APP ENDPOINTS
+// ============================================
+
+/**
+ * Handle GET requests (load data)
+ */
+function doGet(e) {
+  try {
+    const action = e.parameter.action;
+
+    switch (action) {
+      case 'load':
+        return jsonResponse(loadStudentData(e.parameter.email));
+
+      case 'team':
+        return jsonResponse(loadTeamData(e.parameter.team, e.parameter.period));
+
+      case 'all':
+        return jsonResponse(loadAllData());
+
+      case 'export':
+        return jsonResponse(exportAllData());
+
+      default:
+        return jsonResponse({ error: 'Unknown action', validActions: ['load', 'team', 'all', 'export'] });
+    }
+  } catch (error) {
+    return jsonResponse({ error: error.toString() });
+  }
+}
+
+/**
+ * Handle POST requests (save data)
+ */
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+    const action = data.action;
+
+    switch (action) {
+      case 'sync':
+        return jsonResponse(syncStudentData(data));
+
+      case 'register':
+        return jsonResponse(registerStudent(data.student));
+
+      case 'submitReflection':
+        return jsonResponse(submitReflection(data));
+
+      case 'submitDeliverable':
+        return jsonResponse(submitDeliverable(data));
+
+      default:
+        return jsonResponse({ error: 'Unknown action' });
+    }
+  } catch (error) {
+    logActivity('ERROR', error.toString());
+    return jsonResponse({ error: error.toString() });
+  }
+}
+
+/**
+ * Return JSON response
+ */
+function jsonResponse(data) {
+  return ContentService
+    .createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+// ============================================
+// DATA OPERATIONS
+// ============================================
+
+/**
+ * Initialize sheets if they don't exist
+ */
+function initializeSheets() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  // Students sheet
+  let studentsSheet = ss.getSheetByName(SHEET_NAMES.STUDENTS);
+  if (!studentsSheet) {
+    studentsSheet = ss.insertSheet(SHEET_NAMES.STUDENTS);
+    studentsSheet.getRange(1, 1, 1, 8).setValues([[
+      'Email', 'Name', 'Team', 'Period', 'Created At', 'Last Sync', 'Total Points', 'Status'
+    ]]);
+    studentsSheet.getRange(1, 1, 1, 8).setFontWeight('bold').setBackground('#1a73e8').setFontColor('white');
+    studentsSheet.setFrozenRows(1);
+  }
+
+  // Weekly Reflections sheet
+  let reflectionsSheet = ss.getSheetByName(SHEET_NAMES.REFLECTIONS);
+  if (!reflectionsSheet) {
+    reflectionsSheet = ss.insertSheet(SHEET_NAMES.REFLECTIONS);
+    reflectionsSheet.getRange(1, 1, 1, 10).setValues([[
+      'Email', 'Name', 'Week', 'Contributions', 'Evidence Links', 'Challenges', 'Solutions', 'Goals', 'Submitted At', 'Points'
+    ]]);
+    reflectionsSheet.getRange(1, 1, 1, 10).setFontWeight('bold').setBackground('#34a853').setFontColor('white');
+    reflectionsSheet.setFrozenRows(1);
+  }
+
+  // Deliverables sheet
+  let deliverablesSheet = ss.getSheetByName(SHEET_NAMES.DELIVERABLES);
+  if (!deliverablesSheet) {
+    deliverablesSheet = ss.insertSheet(SHEET_NAMES.DELIVERABLES);
+    deliverablesSheet.getRange(1, 1, 1, 10).setValues([[
+      'Email', 'Name', 'Deliverable ID', 'Title', 'Content', 'Links', 'Self Assessment', 'Status', 'Submitted At', 'Grade'
+    ]]);
+    deliverablesSheet.getRange(1, 1, 1, 10).setFontWeight('bold').setBackground('#fbbc04').setFontColor('black');
+    deliverablesSheet.setFrozenRows(1);
+  }
+
+  // Activity Log sheet
+  let logSheet = ss.getSheetByName(SHEET_NAMES.LOG);
+  if (!logSheet) {
+    logSheet = ss.insertSheet(SHEET_NAMES.LOG);
+    logSheet.getRange(1, 1, 1, 4).setValues([[
+      'Timestamp', 'Type', 'Email', 'Details'
+    ]]);
+    logSheet.getRange(1, 1, 1, 4).setFontWeight('bold').setBackground('#5f6368').setFontColor('white');
+    logSheet.setFrozenRows(1);
+  }
+
+  return { success: true };
+}
+
+/**
+ * Sync all student data
+ */
+function syncStudentData(data) {
+  initializeSheets();
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  // Update student record
+  updateStudentRecord(data.student);
+
+  // Sync weekly reflections
+  if (data.weeklyReflections) {
+    Object.entries(data.weeklyReflections).forEach(([week, reflection]) => {
+      if (reflection.submitted) {
+        saveReflection(data.student, week, reflection);
+      }
+    });
+  }
+
+  // Sync deliverables
+  if (data.deliverables) {
+    Object.entries(data.deliverables).forEach(([id, deliverable]) => {
+      if (deliverable.status === 'completed') {
+        saveDeliverable(data.student, id, deliverable);
+      }
+    });
+  }
+
+  logActivity('SYNC', data.student.email, `Synced at ${data.timestamp}`);
+
+  return { success: true, timestamp: new Date().toISOString() };
+}
+
+/**
+ * Update or create student record
+ */
+function updateStudentRecord(student) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(SHEET_NAMES.STUDENTS);
+  const data = sheet.getDataRange().getValues();
+
+  // Find existing row
+  let rowIndex = -1;
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][0] === student.email) {
+      rowIndex = i + 1;
+      break;
+    }
+  }
+
+  const now = new Date().toISOString();
+
+  if (rowIndex > 0) {
+    // Update existing
+    sheet.getRange(rowIndex, 6).setValue(now); // Last Sync
+  } else {
+    // Create new
+    sheet.appendRow([
+      student.email,
+      student.name,
+      student.team,
+      student.period,
+      student.createdAt || now,
+      now,
+      0,
+      'Active'
+    ]);
+  }
+}
+
+/**
+ * Save weekly reflection
+ */
+function saveReflection(student, week, reflection) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(SHEET_NAMES.REFLECTIONS);
+  const data = sheet.getDataRange().getValues();
+
+  // Check if reflection already exists
+  let rowIndex = -1;
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][0] === student.email && data[i][2] == week) {
+      rowIndex = i + 1;
+      break;
+    }
+  }
+
+  const contributions = (reflection.contributions || [])
+    .map(c => `${c.date}: ${c.task}`)
+    .join('\n');
+
+  const goals = (reflection.goals || []).join('\n');
+
+  const rowData = [
+    student.email,
+    student.name,
+    week,
+    contributions,
+    reflection.evidenceLinks || '',
+    reflection.challenges || '',
+    reflection.solutions || '',
+    goals,
+    reflection.submittedAt || new Date().toISOString(),
+    20 // Points for weekly reflection
+  ];
+
+  if (rowIndex > 0) {
+    sheet.getRange(rowIndex, 1, 1, rowData.length).setValues([rowData]);
+  } else {
+    sheet.appendRow(rowData);
+  }
+}
+
+/**
+ * Save deliverable
+ */
+function saveDeliverable(student, id, deliverable) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(SHEET_NAMES.DELIVERABLES);
+  const data = sheet.getDataRange().getValues();
+
+  // Deliverable titles
+  const titles = {
+    1: 'Game Analysis Report',
+    2: 'Subsystem Research Report',
+    3: 'Design Contribution',
+    4: 'Design Decision Matrix',
+    5: 'Prototype Documentation',
+    6: 'Testing & Iteration Log',
+    7: 'Integration Report',
+    8: 'Technical Contribution Summary',
+    9: 'Engineer Portfolio Entry',
+    10: 'Final Presentation'
+  };
+
+  // Check if deliverable already exists
+  let rowIndex = -1;
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][0] === student.email && data[i][2] == id) {
+      rowIndex = i + 1;
+      break;
+    }
+  }
+
+  const rowData = [
+    student.email,
+    student.name,
+    id,
+    titles[id] || `Deliverable ${id}`,
+    deliverable.content || '',
+    deliverable.links || '',
+    deliverable.selfAssessment || '',
+    deliverable.status,
+    deliverable.submittedAt || new Date().toISOString(),
+    '' // Grade (teacher fills in)
+  ];
+
+  if (rowIndex > 0) {
+    sheet.getRange(rowIndex, 1, 1, rowData.length).setValues([rowData]);
+  } else {
+    sheet.appendRow(rowData);
+  }
+}
+
+/**
+ * Load student data
+ */
+function loadStudentData(email) {
+  initializeSheets();
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  // Load student info
+  const studentsSheet = ss.getSheetByName(SHEET_NAMES.STUDENTS);
+  const studentsData = studentsSheet.getDataRange().getValues();
+  let student = null;
+
+  for (let i = 1; i < studentsData.length; i++) {
+    if (studentsData[i][0] === email) {
+      student = {
+        email: studentsData[i][0],
+        name: studentsData[i][1],
+        team: studentsData[i][2],
+        period: studentsData[i][3],
+        createdAt: studentsData[i][4],
+        totalPoints: studentsData[i][6]
+      };
+      break;
+    }
+  }
+
+  if (!student) {
+    return { error: 'Student not found' };
+  }
+
+  // Load reflections
+  const reflectionsSheet = ss.getSheetByName(SHEET_NAMES.REFLECTIONS);
+  const reflectionsData = reflectionsSheet.getDataRange().getValues();
+  const weeklyReflections = {};
+
+  for (let i = 1; i < reflectionsData.length; i++) {
+    if (reflectionsData[i][0] === email) {
+      const week = reflectionsData[i][2];
+      weeklyReflections[week] = {
+        contributions: reflectionsData[i][3],
+        evidenceLinks: reflectionsData[i][4],
+        challenges: reflectionsData[i][5],
+        solutions: reflectionsData[i][6],
+        goals: reflectionsData[i][7],
+        submittedAt: reflectionsData[i][8],
+        submitted: true
+      };
+    }
+  }
+
+  // Load deliverables
+  const deliverablesSheet = ss.getSheetByName(SHEET_NAMES.DELIVERABLES);
+  const deliverablesData = deliverablesSheet.getDataRange().getValues();
+  const deliverables = {};
+
+  for (let i = 1; i < deliverablesData.length; i++) {
+    if (deliverablesData[i][0] === email) {
+      const id = deliverablesData[i][2];
+      deliverables[id] = {
+        content: deliverablesData[i][4],
+        links: deliverablesData[i][5],
+        selfAssessment: deliverablesData[i][6],
+        status: deliverablesData[i][7],
+        submittedAt: deliverablesData[i][8],
+        grade: deliverablesData[i][9]
+      };
+    }
+  }
+
+  return { student, weeklyReflections, deliverables };
+}
+
+/**
+ * Load team data
+ */
+function loadTeamData(team, period) {
+  initializeSheets();
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  const studentsSheet = ss.getSheetByName(SHEET_NAMES.STUDENTS);
+  const reflectionsSheet = ss.getSheetByName(SHEET_NAMES.REFLECTIONS);
+  const deliverablesSheet = ss.getSheetByName(SHEET_NAMES.DELIVERABLES);
+
+  const studentsData = studentsSheet.getDataRange().getValues();
+  const reflectionsData = reflectionsSheet.getDataRange().getValues();
+  const deliverablesData = deliverablesSheet.getDataRange().getValues();
+
+  const members = [];
+
+  for (let i = 1; i < studentsData.length; i++) {
+    if (studentsData[i][2] === team && studentsData[i][3] === period) {
+      const email = studentsData[i][0];
+
+      // Count reflections
+      let reflectionCount = 0;
+      for (let j = 1; j < reflectionsData.length; j++) {
+        if (reflectionsData[j][0] === email) reflectionCount++;
+      }
+
+      // Count deliverables
+      let deliverableCount = 0;
+      for (let j = 1; j < deliverablesData.length; j++) {
+        if (deliverablesData[j][0] === email && deliverablesData[j][7] === 'completed') {
+          deliverableCount++;
+        }
+      }
+
+      // Calculate points
+      let points = reflectionCount * 20;
+      const pointValues = { 1: 50, 2: 50, 3: 75, 4: 50, 5: 75, 6: 50, 7: 50, 8: 75, 9: 100, 10: 100 };
+      for (let j = 1; j < deliverablesData.length; j++) {
+        if (deliverablesData[j][0] === email && deliverablesData[j][7] === 'completed') {
+          const id = deliverablesData[j][2];
+          points += pointValues[id] || 0;
+        }
+      }
+
+      members.push({
+        name: studentsData[i][1],
+        initials: studentsData[i][1].split(' ').map(n => n[0]).join('').toUpperCase(),
+        reflections: reflectionCount,
+        deliverables: deliverableCount,
+        points: points
+      });
+    }
+  }
+
+  const teamNames = {
+    'drivetrain': 'Drivetrain',
+    'intake': 'Intake/Collector',
+    'shooter': 'Shooter/Launcher',
+    'climber': 'Climber',
+    'autonomous': 'Autonomous/Vision',
+    'integration': 'Integration/Electrical'
+  };
+
+  const totalPossible = 900;
+  const avgPoints = members.length > 0
+    ? Math.round(members.reduce((sum, m) => sum + m.points, 0) / members.length)
+    : 0;
+
+  return {
+    teamName: teamNames[team] || team,
+    members: members,
+    totalProgress: Math.round((avgPoints / totalPossible) * 100)
+  };
+}
+
+/**
+ * Load all data (for teacher dashboard)
+ */
+function loadAllData() {
+  initializeSheets();
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  const students = ss.getSheetByName(SHEET_NAMES.STUDENTS).getDataRange().getValues();
+  const reflections = ss.getSheetByName(SHEET_NAMES.REFLECTIONS).getDataRange().getValues();
+  const deliverables = ss.getSheetByName(SHEET_NAMES.DELIVERABLES).getDataRange().getValues();
+
+  return {
+    students: students.slice(1), // Remove header
+    reflections: reflections.slice(1),
+    deliverables: deliverables.slice(1),
+    summary: {
+      totalStudents: students.length - 1,
+      totalReflections: reflections.length - 1,
+      totalDeliverables: deliverables.length - 1
+    }
+  };
+}
+
+/**
+ * Export all data as formatted report
+ */
+function exportAllData() {
+  const data = loadAllData();
+
+  // Group by student
+  const studentReports = {};
+
+  data.students.forEach(s => {
+    studentReports[s[0]] = {
+      name: s[1],
+      team: s[2],
+      period: s[3],
+      reflections: [],
+      deliverables: []
+    };
+  });
+
+  data.reflections.forEach(r => {
+    if (studentReports[r[0]]) {
+      studentReports[r[0]].reflections.push({
+        week: r[2],
+        contributions: r[3],
+        submittedAt: r[8]
+      });
+    }
+  });
+
+  data.deliverables.forEach(d => {
+    if (studentReports[d[0]]) {
+      studentReports[d[0]].deliverables.push({
+        title: d[3],
+        status: d[7],
+        submittedAt: d[8],
+        grade: d[9]
+      });
+    }
+  });
+
+  return {
+    exportedAt: new Date().toISOString(),
+    reports: studentReports
+  };
+}
+
+/**
+ * Log activity
+ */
+function logActivity(type, email, details) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName(SHEET_NAMES.LOG);
+    if (sheet) {
+      sheet.appendRow([
+        new Date().toISOString(),
+        type,
+        email || '',
+        details || ''
+      ]);
+    }
+  } catch (e) {
+    console.error('Failed to log activity:', e);
+  }
+}
+
+// ============================================
+// TEACHER UTILITIES
+// ============================================
+
+/**
+ * Create a summary report
+ * Run this from Apps Script editor to generate a summary
+ */
+function generateSummaryReport() {
+  const data = loadAllData();
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  // Create or get summary sheet
+  let summarySheet = ss.getSheetByName('Summary Report');
+  if (summarySheet) {
+    summarySheet.clear();
+  } else {
+    summarySheet = ss.insertSheet('Summary Report');
+  }
+
+  // Header
+  summarySheet.getRange(1, 1).setValue('FRC Portfolio Summary Report');
+  summarySheet.getRange(1, 1).setFontSize(18).setFontWeight('bold');
+  summarySheet.getRange(2, 1).setValue(`Generated: ${new Date().toLocaleString()}`);
+
+  // Stats
+  summarySheet.getRange(4, 1, 1, 2).setValues([['Total Students', data.summary.totalStudents]]);
+  summarySheet.getRange(5, 1, 1, 2).setValues([['Total Reflections', data.summary.totalReflections]]);
+  summarySheet.getRange(6, 1, 1, 2).setValues([['Total Deliverables', data.summary.totalDeliverables]]);
+
+  // Student progress table
+  summarySheet.getRange(8, 1).setValue('Student Progress');
+  summarySheet.getRange(8, 1).setFontWeight('bold');
+
+  const headers = ['Name', 'Team', 'Period', 'Reflections', 'Deliverables', 'Est. Points'];
+  summarySheet.getRange(9, 1, 1, headers.length).setValues([headers]);
+  summarySheet.getRange(9, 1, 1, headers.length).setFontWeight('bold').setBackground('#e8eaed');
+
+  let row = 10;
+  data.students.forEach(student => {
+    const email = student[0];
+    const reflectionCount = data.reflections.filter(r => r[0] === email).length;
+    const deliverableCount = data.deliverables.filter(d => d[0] === email && d[7] === 'completed').length;
+
+    // Estimate points
+    const pointValues = { 1: 50, 2: 50, 3: 75, 4: 50, 5: 75, 6: 50, 7: 50, 8: 75, 9: 100, 10: 100 };
+    let points = reflectionCount * 20;
+    data.deliverables.filter(d => d[0] === email && d[7] === 'completed').forEach(d => {
+      points += pointValues[d[2]] || 0;
+    });
+
+    summarySheet.getRange(row, 1, 1, 6).setValues([[
+      student[1], // Name
+      student[2], // Team
+      student[3], // Period
+      reflectionCount,
+      deliverableCount,
+      points
+    ]]);
+    row++;
+  });
+
+  // Auto-resize columns
+  summarySheet.autoResizeColumns(1, 6);
+
+  SpreadsheetApp.getUi().alert('Summary report generated! Check the "Summary Report" sheet.');
+}
+
+/**
+ * Send reminder emails to students with missing work
+ * Customize and run from Apps Script editor
+ */
+function sendReminderEmails() {
+  // This is a template - customize before using
+  const ui = SpreadsheetApp.getUi();
+  const response = ui.alert(
+    'Send Reminders',
+    'This will send reminder emails to students with missing work. Continue?',
+    ui.ButtonSet.YES_NO
+  );
+
+  if (response !== ui.Button.YES) return;
+
+  const data = loadAllData();
+  const currentWeek = Math.ceil((new Date() - new Date('2025-01-06')) / (1000 * 60 * 60 * 24 * 7));
+
+  data.students.forEach(student => {
+    const email = student[0];
+    const name = student[1];
+
+    // Check for missing reflections
+    const submittedWeeks = data.reflections
+      .filter(r => r[0] === email)
+      .map(r => r[2]);
+
+    const missingWeeks = [];
+    for (let w = 1; w < currentWeek; w++) {
+      if (!submittedWeeks.includes(w)) {
+        missingWeeks.push(w);
+      }
+    }
+
+    if (missingWeeks.length > 0) {
+      // Uncomment to actually send emails:
+      // MailApp.sendEmail({
+      //   to: email,
+      //   subject: 'FRC Portfolio Reminder - Missing Reflections',
+      //   body: `Hi ${name},\n\nYou have missing weekly reflections for weeks: ${missingWeeks.join(', ')}.\n\nPlease submit them as soon as possible.\n\nYour Teacher`
+      // });
+
+      console.log(`Would email ${email}: Missing weeks ${missingWeeks.join(', ')}`);
+    }
+  });
+
+  ui.alert('Reminder check complete. Check the execution log for details.');
+}
+
+/**
+ * Create menu when spreadsheet opens
+ */
+function onOpen() {
+  const ui = SpreadsheetApp.getUi();
+  ui.createMenu('FRC Portfolio')
+    .addItem('Initialize Sheets', 'initializeSheets')
+    .addItem('Generate Summary Report', 'generateSummaryReport')
+    .addItem('Send Reminder Emails', 'sendReminderEmails')
+    .addToUi();
+}
