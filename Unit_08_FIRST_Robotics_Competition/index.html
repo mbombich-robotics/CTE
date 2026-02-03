@@ -3,57 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unit 8: FIRST Robotics Competition</title>
+    <title>Unit 8: FIRST Robotics Competition | Applied Engineering & Robotics</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            font-family: 'Exo 2', sans-serif;
+            background: #1a1a1a;
             color: #f5f5f5;
-            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
             min-height: 100vh;
         }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
+
+        /* Top Title Bar */
+        .top-bar {
+            background: linear-gradient(135deg, #8B0000 0%, #c41e3a 50%, #8B0000 100%);
+            height: 80px;
+            border-bottom: 3px solid #ffffff;
+            box-shadow: 0 4px 20px rgba(196, 30, 58, 0.5);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            z-index: 100;
         }
-        .header {
+
+        .circuit-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.15;
+            background-image:
+                linear-gradient(90deg, transparent 0%, transparent calc(50% - 1px), rgba(255,255,255,0.6) calc(50% - 1px), rgba(255,255,255,0.6) calc(50% + 1px), transparent calc(50% + 1px)),
+                linear-gradient(90deg, transparent 0%, transparent calc(20% - 1px), rgba(255,255,255,0.4) calc(20% - 1px), rgba(255,255,255,0.4) calc(20% + 1px), transparent calc(20% + 1px)),
+                linear-gradient(0deg, transparent 0%, transparent calc(30% - 1px), rgba(255,255,255,0.4) calc(30% - 1px), rgba(255,255,255,0.4) calc(30% + 1px), transparent calc(30% + 1px));
+            background-size: 100% 100%;
+        }
+
+        .top-bar-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .school-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+        }
+
+        .course-title-compact {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Layout */
+        .layout-container {
+            display: flex;
+            flex: 1;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #0d0d0d;
+            border-right: 3px solid #c41e3a;
+            padding: 30px 0;
+            overflow-y: auto;
+            height: calc(100vh - 80px);
+            position: sticky;
+            top: 0;
+        }
+
+        .sidebar-section {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-header {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 15px 25px 10px;
+            font-weight: 700;
+        }
+
+        .unit-link {
+            display: block;
+            padding: 12px 25px;
+            color: #b0b0b0;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .unit-link:hover {
+            background: rgba(196, 30, 58, 0.1);
+            border-left-color: #c41e3a;
+            color: #ffffff;
+        }
+
+        .unit-link.active {
+            background: rgba(196, 30, 58, 0.2);
+            border-left-color: #c41e3a;
+            color: #ffffff;
+        }
+
+        .unit-number {
+            font-family: 'Rajdhani', sans-serif;
+            color: #c41e3a;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        .coming-soon-badge {
+            float: right;
+            font-size: 0.7rem;
+            background: rgba(136, 136, 136, 0.2);
+            color: #888;
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid #444;
+        }
+
+        .unit-link.coming-soon {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 60px 80px;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        }
+
+        .unit-header {
+            max-width: 1000px;
+            margin: 0 auto 50px;
             text-align: center;
-            margin-bottom: 50px;
             padding-bottom: 30px;
             border-bottom: 3px solid #c41e3a;
         }
-        h1 {
-            font-size: 3em;
+
+        .unit-header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
             color: #c41e3a;
             margin-bottom: 10px;
             text-shadow: 0 2px 10px rgba(196, 30, 58, 0.5);
         }
-        .subtitle {
+
+        .unit-header .subtitle {
             font-size: 1.2em;
             color: #aaa;
         }
+
         .intro {
             background: rgba(255, 255, 255, 0.05);
             padding: 30px;
             border-radius: 12px;
             margin-bottom: 40px;
             border-left: 4px solid #c41e3a;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
         }
+
         .intro h2 {
             color: #c41e3a;
             margin-bottom: 15px;
         }
+
+        .intro p {
+            line-height: 1.7;
+            color: #ccc;
+        }
+
+        .intro ul {
+            margin-left: 25px;
+            line-height: 2;
+            color: #ccc;
+        }
+
         .cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
-            margin-top: 40px;
+            margin: 40px auto;
+            max-width: 1000px;
         }
+
         .card {
             background: rgba(255, 255, 255, 0.08);
             padding: 30px;
@@ -64,104 +228,217 @@
             color: inherit;
             display: block;
         }
+
         .card:hover {
             border-color: #c41e3a;
             background: rgba(255, 255, 255, 0.12);
             transform: translateY(-5px);
             box-shadow: 0 10px 30px rgba(196, 30, 58, 0.3);
         }
+
         .card h3 {
             color: #c41e3a;
             font-size: 1.5em;
             margin-bottom: 15px;
         }
+
         .card p {
             line-height: 1.6;
             color: #ccc;
         }
-        .back-link {
-            display: inline-block;
-            margin-bottom: 30px;
-            color: #c41e3a;
-            text-decoration: none;
-            font-size: 1.1em;
-            transition: all 0.3s ease;
-        }
-        .back-link:hover {
-            color: #ff4d6a;
-            transform: translateX(-5px);
-        }
+
         .icon {
             font-size: 2em;
             margin-bottom: 10px;
         }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: #0d0d0d;
+            border-top: 3px solid #c41e3a;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        footer .mascot {
+            color: #ffffff;
+            margin: 8px 0;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+
+            .main-content {
+                padding: 40px 40px;
+            }
+
+            .unit-header h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .layout-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .main-content {
+                padding: 30px 20px;
+            }
+
+            .unit-header h1 {
+                font-size: 2rem;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <a href="../index.html" class="back-link">← Back to Course Home</a>
-
-        <div class="header">
-            <h1>Unit 8: FIRST Robotics Competition</h1>
-            <p class="subtitle">9-Week Engineering Design Project</p>
-        </div>
-
-        <div class="intro">
-            <h2>About This Unit</h2>
-            <p>
-                Students participating in the FIRST Robotics Competition will use their team experience as coursework for this marking period.
-                You'll apply the full engineering design process while building a competition robot, documenting your individual contributions through
-                a comprehensive portfolio system.
-            </p>
-        </div>
-
-        <div class="cards">
-            <a href="FRC_Robotics_Deliverables.md" class="card">
-                <div class="icon">📋</div>
-                <h3>Course Overview</h3>
-                <p>Complete deliverables schedule, weekly reflections, grading rubrics, and anti-coattail measures.</p>
-            </a>
-
-            <a href="FRC_Portfolio_System/index.html" class="card">
-                <div class="icon">💻</div>
-                <h3>Portfolio System</h3>
-                <p>Web-based portfolio for documenting your work, submitting reflections, and tracking progress.</p>
-            </a>
-
-            <a href="FRC_Portfolio_System/student-guide.html" class="card">
-                <div class="icon">📖</div>
-                <h3>Student Guide</h3>
-                <p>Everything you need to know about expectations, deliverables, and tips for success.</p>
-            </a>
-
-            <a href="FRC_Portfolio_System/quick-reference.html" class="card">
-                <div class="icon">⚡</div>
-                <h3>Quick Reference</h3>
-                <p>One-page printable reference with key dates, requirements, and weekly checklist.</p>
-            </a>
-
-            <a href="FRC_Portfolio_System/RUBRICS.md" class="card">
-                <div class="icon">✓</div>
-                <h3>Grading Rubrics</h3>
-                <p>Detailed rubrics for weekly reflections and all major deliverables.</p>
-            </a>
-
-            <a href="FRC_Portfolio_System/SETUP_INSTRUCTIONS.md" class="card">
-                <div class="icon">⚙️</div>
-                <h3>Setup Instructions</h3>
-                <p>For teachers: How to deploy the portfolio system and configure Google Sheets integration.</p>
-            </a>
-        </div>
-
-        <div class="intro" style="margin-top: 50px;">
-            <h2>Point Distribution</h2>
-            <p style="margin-bottom: 15px;"><strong>Total: 900 points</strong></p>
-            <ul style="margin-left: 25px; line-height: 2;">
-                <li>Weekly Reflections (9 weeks × 20 pts): 180 points</li>
-                <li>Major Deliverables (10 total): 675 points</li>
-                <li>Participation & Professionalism: 45 points</li>
-            </ul>
+    <!-- Top Title Bar -->
+    <div class="top-bar">
+        <div class="circuit-overlay"></div>
+        <div class="top-bar-content">
+            <div class="school-badge">VHS Bulldogs</div>
+            <div class="course-title-compact">Applied Engineering & Robotics</div>
         </div>
     </div>
+
+    <!-- Main Layout -->
+    <div class="layout-container">
+        <!-- Left Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-header">Navigation</div>
+
+                <a href="../index.html" class="unit-link">
+                    <span class="unit-number">⌂</span> Course Overview
+                </a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-header">Course Units</div>
+
+                <a href="../Unit_01_Engineering_Design_Process/index.html" class="unit-link">
+                    <span class="unit-number">Unit 1</span> Engineering Design Process
+                </a>
+
+                <a href="#unit2" class="unit-link coming-soon">
+                    <span class="unit-number">Unit 2</span> CAD Fundamentals
+                    <span class="coming-soon-badge">Soon</span>
+                </a>
+
+                <a href="../Unit_03_Rapid_Prototyping_and_Manufacturing/index.html" class="unit-link">
+                    <span class="unit-number">Unit 3</span> Rapid Prototyping & Manufacturing
+                </a>
+
+                <a href="#unit4" class="unit-link coming-soon">
+                    <span class="unit-number">Unit 4</span> Shop Safety
+                    <span class="coming-soon-badge">Soon</span>
+                </a>
+
+                <a href="../Unit_05_Programming_Electronics_and_Sensors/index.html" class="unit-link">
+                    <span class="unit-number">Unit 5</span> Programming, Electronics & Sensors
+                </a>
+
+                <a href="#unit6" class="unit-link coming-soon">
+                    <span class="unit-number">Unit 6</span> Project Presentation
+                    <span class="coming-soon-badge">Soon</span>
+                </a>
+
+                <a href="#unit7" class="unit-link coming-soon">
+                    <span class="unit-number">Unit 7</span> Career Readiness
+                    <span class="coming-soon-badge">Soon</span>
+                </a>
+
+                <a href="index.html" class="unit-link active">
+                    <span class="unit-number">Unit 8</span> FIRST Robotics Competition
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="unit-header">
+                <h1>Unit 8: FIRST Robotics Competition</h1>
+                <p class="subtitle">9-Week Engineering Design Project</p>
+            </div>
+
+            <div class="intro">
+                <h2>About This Unit</h2>
+                <p>
+                    Students participating in the FIRST Robotics Competition will use their team experience as coursework for this marking period.
+                    You'll apply the full engineering design process while building a competition robot, documenting your individual contributions through
+                    a comprehensive portfolio system.
+                </p>
+            </div>
+
+            <div class="cards">
+                <a href="FRC_Robotics_Deliverables.md" class="card">
+                    <div class="icon">📋</div>
+                    <h3>Course Overview</h3>
+                    <p>Complete deliverables schedule, weekly reflections, grading rubrics, and anti-coattail measures.</p>
+                </a>
+
+                <a href="FRC_Portfolio_System/index.html" class="card">
+                    <div class="icon">💻</div>
+                    <h3>Portfolio System</h3>
+                    <p>Web-based portfolio for documenting your work, submitting reflections, and tracking progress.</p>
+                </a>
+
+                <a href="FRC_Portfolio_System/student-guide.html" class="card">
+                    <div class="icon">📖</div>
+                    <h3>Student Guide</h3>
+                    <p>Everything you need to know about expectations, deliverables, and tips for success.</p>
+                </a>
+
+                <a href="FRC_Portfolio_System/quick-reference.html" class="card">
+                    <div class="icon">⚡</div>
+                    <h3>Quick Reference</h3>
+                    <p>One-page printable reference with key dates, requirements, and weekly checklist.</p>
+                </a>
+
+                <a href="FRC_Portfolio_System/RUBRICS.md" class="card">
+                    <div class="icon">✓</div>
+                    <h3>Grading Rubrics</h3>
+                    <p>Detailed rubrics for weekly reflections and all major deliverables.</p>
+                </a>
+
+                <a href="FRC_Portfolio_System/SETUP_INSTRUCTIONS.md" class="card">
+                    <div class="icon">⚙️</div>
+                    <h3>Setup Instructions</h3>
+                    <p>For teachers: How to deploy the portfolio system and configure Google Sheets integration.</p>
+                </a>
+            </div>
+
+            <div class="intro">
+                <h2>Point Distribution</h2>
+                <p style="margin-bottom: 15px;"><strong>Total: 900 points</strong></p>
+                <ul>
+                    <li>Weekly Reflections (9 weeks × 20 pts): 180 points</li>
+                    <li>Major Deliverables (10 total): 675 points</li>
+                    <li>Participation & Professionalism: 45 points</li>
+                </ul>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="mascot">GO BULLDOGS!</div>
+        <p>Vicksburg High School | Applied Engineering & Robotics</p>
+        <p>Mr. Bombich | Room 70 | mbombich@vicksburgschools.org</p>
+    </footer>
 </body>
 </html>
