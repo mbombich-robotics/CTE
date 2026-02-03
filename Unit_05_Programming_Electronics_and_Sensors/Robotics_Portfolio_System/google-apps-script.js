@@ -1,11 +1,11 @@
 /**
- * FRC Portfolio - Google Apps Script Backend
+ * Robotics Portfolio - Google Apps Script Backend
  *
  * SETUP INSTRUCTIONS:
  * 1. Create a new Google Sheet
  * 2. Go to Extensions > Apps Script
  * 3. Delete the default code and paste this entire file
- * 4. Save the project (give it a name like "FRC Portfolio Backend")
+ * 4. Save the project (give it a name like "Robotics Portfolio Backend")
  * 5. Click "Deploy" > "New deployment"
  * 6. Select "Web app" as the type
  * 7. Set "Execute as" to "Me"
@@ -622,7 +622,7 @@ function generateSummaryReport() {
   }
 
   // Header
-  summarySheet.getRange(1, 1).setValue('FRC Portfolio Summary Report');
+  summarySheet.getRange(1, 1).setValue('Robotics Portfolio Summary Report');
   summarySheet.getRange(1, 1).setFontSize(18).setFontWeight('bold');
   summarySheet.getRange(2, 1).setValue(`Generated: ${new Date().toLocaleString()}`);
 
@@ -685,7 +685,7 @@ function sendReminderEmails() {
   if (response !== ui.Button.YES) return;
 
   const data = loadAllData();
-  const currentWeek = Math.ceil((new Date() - new Date('2025-01-06')) / (1000 * 60 * 60 * 24 * 7));
+  const currentWeek = Math.ceil((new Date() - new Date('2026-02-02')) / (1000 * 60 * 60 * 24 * 7));
 
   data.students.forEach(student => {
     const email = student[0];
@@ -707,7 +707,7 @@ function sendReminderEmails() {
       // Uncomment to actually send emails:
       // MailApp.sendEmail({
       //   to: email,
-      //   subject: 'FRC Portfolio Reminder - Missing Reflections',
+      //   subject: 'Robotics Portfolio Reminder - Missing Reflections',
       //   body: `Hi ${name},\n\nYou have missing weekly reflections for weeks: ${missingWeeks.join(', ')}.\n\nPlease submit them as soon as possible.\n\nYour Teacher`
       // });
 
@@ -723,7 +723,7 @@ function sendReminderEmails() {
  */
 function onOpen() {
   const ui = SpreadsheetApp.getUi();
-  ui.createMenu('FRC Portfolio')
+  ui.createMenu('Robotics Portfolio')
     .addItem('Initialize Sheets', 'initializeSheets')
     .addItem('Generate Summary Report', 'generateSummaryReport')
     .addItem('Send Reminder Emails', 'sendReminderEmails')

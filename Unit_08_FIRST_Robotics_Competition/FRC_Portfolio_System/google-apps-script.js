@@ -685,7 +685,7 @@ function sendReminderEmails() {
   if (response !== ui.Button.YES) return;
 
   const data = loadAllData();
-  const currentWeek = Math.ceil((new Date() - new Date('2025-01-06')) / (1000 * 60 * 60 * 24 * 7));
+  const currentWeek = Math.ceil((new Date() - new Date('2026-02-02')) / (1000 * 60 * 60 * 24 * 7));
 
   data.students.forEach(student => {
     const email = student[0];
