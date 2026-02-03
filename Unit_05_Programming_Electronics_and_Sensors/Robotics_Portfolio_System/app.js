@@ -5,7 +5,7 @@
 // ============================================
 const CONFIG = {
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
-    SHEETS_API_URL: 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL',
+    SHEETS_API_URL: 'https://script.google.com/a/macros/vicksburgschools.org/s/AKfycbx5Py_7Oq8_mFjRmrX0gzlOEaMEG-P-pPZKdwrY7h-4YUZu0xtA-2nlXqnwXpD-TgzJ/exec',
 
     // Google OAuth Client ID
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
