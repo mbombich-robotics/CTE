@@ -11,7 +11,7 @@ const CONFIG = {
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
 
     // Semester start date (adjust for your semester)
-    SEMESTER_START: new Date('2025-01-06'),
+    SEMESTER_START: new Date('2026-02-02'),
 
     // Point values
     POINTS: {
@@ -324,16 +324,18 @@ async function saveToCloud() {
     setSaveIndicator('saving');
 
     try {
+        // Strip base64 image data from evidence before sending — Sheets cells have a character limit
+        const evidenceMeta = state.evidence.map(({ type, week, filename, uploadedAt }) => ({ type, week, filename, uploadedAt }));
+
         await fetch(CONFIG.SHEETS_API_URL, {
             method: 'POST',
             mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 action: 'sync',
                 student: state.student,
                 weeklyReflections: state.weeklyReflections,
                 deliverables: state.deliverables,
-                evidence: state.evidence,
+                evidence: evidenceMeta,
                 timestamp: new Date().toISOString()
             })
         });
@@ -725,6 +727,23 @@ function loadReflectionData(data) {
     (data.goals || []).forEach((goal, index) => {
         if (goalInputs[index]) goalInputs[index].value = goal;
     });
+
+    // Restore evidence thumbnails for the selected week from state
+    const preview = document.getElementById('evidencePreview');
+    preview.innerHTML = '';
+    state.evidence
+        .filter(ev => ev.week === state.selectedWeek && ev.data)
+        .forEach(ev => {
+            const thumb = document.createElement('div');
+            thumb.className = 'evidence-thumb';
+            thumb.innerHTML = `
+                <img src="${ev.data}" alt="Evidence">
+                <button type="button" class="remove-btn" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            preview.appendChild(thumb);
+        });
 }
 
 function clearReflectionForm() {
