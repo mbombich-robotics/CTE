@@ -815,22 +815,47 @@
                     <div style="position: relative;">
                         <button onclick="copyStarterCode()" style="position: absolute; top: 10px; right: 10px; background: #00d4ff; color: #0a0e27; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 0.9rem; z-index: 10;">📋 Copy Code</button>
                         <div class="code-block" id="starter-code" style="font-size: 0.7rem; max-height: 280px; overflow-y: auto; margin-top: 0;"><span class="code-comment">// Lesson 6: Basic Robot Motion Control</span>
-<span class="code-comment">// 3-pin motor controller (INA, INB, PWM)</span>
-<span class="code-keyword">const int</span> LEFT_MOTOR_INA = <span class="code-number">8</span>;
-<span class="code-keyword">const int</span> LEFT_MOTOR_INB = <span class="code-number">7</span>;
-<span class="code-keyword">const int</span> LEFT_MOTOR_PWM = <span class="code-number">5</span>;
+<span class="code-comment">// Motor pin definitions - 3-pin motor controller (INA, INB, PWM)</span>
+<span class="code-keyword">const int</span> LEFT_MOTOR_INA  = <span class="code-number">8</span>;   <span class="code-comment">// Left Motor Direction A</span>
+<span class="code-keyword">const int</span> LEFT_MOTOR_INB  = <span class="code-number">7</span>;   <span class="code-comment">// Left Motor Direction B</span>
+<span class="code-keyword">const int</span> LEFT_MOTOR_PWM  = <span class="code-number">5</span>;   <span class="code-comment">// Left Motor Speed (PWM)</span>
 
-<span class="code-keyword">const int</span> RIGHT_MOTOR_INA = <span class="code-number">6</span>;
-<span class="code-keyword">const int</span> RIGHT_MOTOR_INB = <span class="code-number">4</span>;
-<span class="code-keyword">const int</span> RIGHT_MOTOR_PWM = <span class="code-number">3</span>;
+<span class="code-keyword">const int</span> RIGHT_MOTOR_INA = <span class="code-number">6</span>;   <span class="code-comment">// Right Motor Direction A</span>
+<span class="code-keyword">const int</span> RIGHT_MOTOR_INB = <span class="code-number">4</span>;   <span class="code-comment">// Right Motor Direction B</span>
+<span class="code-keyword">const int</span> RIGHT_MOTOR_PWM = <span class="code-number">3</span>;   <span class="code-comment">// Right Motor Speed (PWM)</span>
+
+<span class="code-comment">// IR sensor pin definitions</span>
+<span class="code-keyword">const int</span> IR_1 = A2;              <span class="code-comment">// IR 1 sensor input</span>
+<span class="code-keyword">const int</span> IR_2 = <span class="code-number">0</span>;               <span class="code-comment">// IR 2 sensor input</span>
+<span class="code-keyword">const int</span> IR_3 = <span class="code-number">2</span>;               <span class="code-comment">// IR 3 sensor input</span>
+<span class="code-keyword">const int</span> IR_4 = <span class="code-number">1</span>;               <span class="code-comment">// IR 4 sensor input</span>
+<span class="code-keyword">const int</span> IR_5 = A3;              <span class="code-comment">// IR 5 sensor input</span>
 
 <span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  <span class="code-function">Serial.begin</span>(<span class="code-number">9600</span>);
+
+  <span class="code-comment">// Set motor pins as outputs</span>
   <span class="code-function">pinMode</span>(LEFT_MOTOR_INA, OUTPUT);
   <span class="code-function">pinMode</span>(LEFT_MOTOR_INB, OUTPUT);
   <span class="code-function">pinMode</span>(LEFT_MOTOR_PWM, OUTPUT);
   <span class="code-function">pinMode</span>(RIGHT_MOTOR_INA, OUTPUT);
   <span class="code-function">pinMode</span>(RIGHT_MOTOR_INB, OUTPUT);
   <span class="code-function">pinMode</span>(RIGHT_MOTOR_PWM, OUTPUT);
+
+  <span class="code-comment">// Set IR sensor pins as inputs</span>
+  <span class="code-function">pinMode</span>(IR_1, INPUT);
+  <span class="code-function">pinMode</span>(IR_2, INPUT);
+  <span class="code-function">pinMode</span>(IR_3, INPUT);
+  <span class="code-function">pinMode</span>(IR_4, INPUT);
+  <span class="code-function">pinMode</span>(IR_5, INPUT);
+
+  <span class="code-comment">// Safe startup: motors off, coast</span>
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_INA, LOW);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_INB, LOW);
+  <span class="code-function">analogWrite</span>(LEFT_MOTOR_PWM, <span class="code-number">0</span>);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_INA, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_INB, LOW);
+  <span class="code-function">analogWrite</span>(RIGHT_MOTOR_PWM, <span class="code-number">0</span>);
 }
 
 <span class="code-keyword">void</span> <span class="code-function">moveForward</span>(<span class="code-keyword">int</span> speed) {
@@ -879,12 +904,15 @@
 }
 
 <span class="code-keyword">void</span> <span class="code-function">loop</span>() {
-  <span class="code-function">moveForward</span>(<span class="code-number">150</span>);
-  <span class="code-function">delay</span>(<span class="code-number">2000</span>);
-  <span class="code-function">stopMotors</span>();
-  <span class="code-function">delay</span>(<span class="code-number">1000</span>);
-  <span class="code-comment">// Add your code here!</span>
-  <span class="code-function">delay</span>(<span class="code-number">5000</span>);
+  <span class="code-comment">// Read IR sensors, print as 5-bit pattern (IR5 IR4 IR3 IR2 IR1)</span>
+  <span class="code-comment">// Open Serial Monitor at 9600 baud to see values</span>
+  <span class="code-keyword">if</span> (<span class="code-function">digitalRead</span>(IR_5) == HIGH) { <span class="code-function">Serial.print</span>(<span class="code-comment">"1"</span>); } <span class="code-keyword">else</span> { <span class="code-function">Serial.print</span>(<span class="code-comment">"0"</span>); }
+  <span class="code-keyword">if</span> (<span class="code-function">digitalRead</span>(IR_4) == HIGH) { <span class="code-function">Serial.print</span>(<span class="code-comment">"1"</span>); } <span class="code-keyword">else</span> { <span class="code-function">Serial.print</span>(<span class="code-comment">"0"</span>); }
+  <span class="code-keyword">if</span> (<span class="code-function">digitalRead</span>(IR_3) == HIGH) { <span class="code-function">Serial.print</span>(<span class="code-comment">"1"</span>); } <span class="code-keyword">else</span> { <span class="code-function">Serial.print</span>(<span class="code-comment">"0"</span>); }
+  <span class="code-keyword">if</span> (<span class="code-function">digitalRead</span>(IR_2) == HIGH) { <span class="code-function">Serial.print</span>(<span class="code-comment">"1"</span>); } <span class="code-keyword">else</span> { <span class="code-function">Serial.print</span>(<span class="code-comment">"0"</span>); }
+  <span class="code-keyword">if</span> (<span class="code-function">digitalRead</span>(IR_1) == HIGH) { <span class="code-function">Serial.println</span>(<span class="code-comment">"1"</span>); } <span class="code-keyword">else</span> { <span class="code-function">Serial.println</span>(<span class="code-comment">"0"</span>); }
+
+  <span class="code-function">delay</span>(<span class="code-number">500</span>);
 }</div>
                     </div>
                 </div>
@@ -1048,43 +1076,61 @@
 // Starter Code for Lab Exercises
 
 // Motor pin definitions - 3-pin motor controller (INA, INB, PWM)
-const int LEFT_MOTOR_INA = 8;
-const int LEFT_MOTOR_INB = 7;
-const int LEFT_MOTOR_PWM = 5;
+const int LEFT_MOTOR_INA  = 8;   // Left Motor Direction A
+const int LEFT_MOTOR_INB  = 7;   // Left Motor Direction B
+const int LEFT_MOTOR_PWM  = 5;   // Left Motor Speed (PWM)
 
-const int RIGHT_MOTOR_INA = 6;
-const int RIGHT_MOTOR_INB = 4;
-const int RIGHT_MOTOR_PWM = 3;
+const int RIGHT_MOTOR_INA = 6;   // Right Motor Direction A
+const int RIGHT_MOTOR_INB = 4;   // Right Motor Direction B
+const int RIGHT_MOTOR_PWM = 3;   // Right Motor Speed (PWM)
+
+// IR sensor pin definitions
+const int IR_1 = A2;             // IR 1 sensor input
+const int IR_2 = 0;              // IR 2 sensor input
+const int IR_3 = 2;              // IR 3 sensor input
+const int IR_4 = 1;              // IR 4 sensor input
+const int IR_5 = A3;             // IR 5 sensor input
 
 void setup() {
+  Serial.begin(9600);
+
+  // Set motor pins as outputs
   pinMode(LEFT_MOTOR_INA, OUTPUT);
   pinMode(LEFT_MOTOR_INB, OUTPUT);
   pinMode(LEFT_MOTOR_PWM, OUTPUT);
-
   pinMode(RIGHT_MOTOR_INA, OUTPUT);
   pinMode(RIGHT_MOTOR_INB, OUTPUT);
   pinMode(RIGHT_MOTOR_PWM, OUTPUT);
+
+  // Set IR sensor pins as inputs
+  pinMode(IR_1, INPUT);
+  pinMode(IR_2, INPUT);
+  pinMode(IR_3, INPUT);
+  pinMode(IR_4, INPUT);
+  pinMode(IR_5, INPUT);
+
+  // Safe startup: motors off, coast
+  digitalWrite(LEFT_MOTOR_INA, LOW);
+  digitalWrite(LEFT_MOTOR_INB, LOW);
+  analogWrite(LEFT_MOTOR_PWM, 0);
+  digitalWrite(RIGHT_MOTOR_INA, LOW);
+  digitalWrite(RIGHT_MOTOR_INB, LOW);
+  analogWrite(RIGHT_MOTOR_PWM, 0);
 }
 
 void moveForward(int speed) {
-  // Left motor forward
   digitalWrite(LEFT_MOTOR_INA, LOW);
   digitalWrite(LEFT_MOTOR_INB, HIGH);
   analogWrite(LEFT_MOTOR_PWM, speed);
-
-  // Right motor forward
   digitalWrite(RIGHT_MOTOR_INA, LOW);
   digitalWrite(RIGHT_MOTOR_INB, HIGH);
   analogWrite(RIGHT_MOTOR_PWM, speed);
 }
 
 void moveBackward(int speed) {
-  // Left motor backward
   digitalWrite(LEFT_MOTOR_INA, HIGH);
   digitalWrite(LEFT_MOTOR_INB, LOW);
   analogWrite(LEFT_MOTOR_PWM, speed);
-
-  // Right motor backward
   digitalWrite(RIGHT_MOTOR_INA, HIGH);
   digitalWrite(RIGHT_MOTOR_INB, LOW);
   analogWrite(RIGHT_MOTOR_PWM, speed);
@@ -1095,7 +1141,6 @@ void turnLeft() {
   digitalWrite(LEFT_MOTOR_INA, HIGH);
   digitalWrite(LEFT_MOTOR_INB, LOW);
   analogWrite(LEFT_MOTOR_PWM, 150);
-
   digitalWrite(RIGHT_MOTOR_INA, LOW);
   digitalWrite(RIGHT_MOTOR_INB, HIGH);
   analogWrite(RIGHT_MOTOR_PWM, 150);
@@ -1106,18 +1151,14 @@ void turnRight() {
   digitalWrite(LEFT_MOTOR_INA, LOW);
   digitalWrite(LEFT_MOTOR_INB, HIGH);
   analogWrite(LEFT_MOTOR_PWM, 150);
-
   digitalWrite(RIGHT_MOTOR_INA, HIGH);
   digitalWrite(RIGHT_MOTOR_INB, LOW);
   analogWrite(RIGHT_MOTOR_PWM, 150);
 }
 
 void stopMotors() {
-  // Stop both motors by setting PWM to 0
   analogWrite(LEFT_MOTOR_PWM, 0);
   analogWrite(RIGHT_MOTOR_PWM, 0);
-
-  // Set direction pins to LOW (coast mode)
   digitalWrite(LEFT_MOTOR_INA, LOW);
   digitalWrite(LEFT_MOTOR_INB, LOW);
   digitalWrite(RIGHT_MOTOR_INA, LOW);
@@ -1125,12 +1166,15 @@ void stopMotors() {
 }
 
 void loop() {
-  moveForward(150);
-  delay(2000);
-  stopMotors();
-  delay(1000);
-  // Add your code here!
-  delay(5000);
+  // Read IR sensors, print as 5-bit pattern (IR5 IR4 IR3 IR2 IR1)
+  // Open Serial Monitor at 9600 baud to see values
+  if (digitalRead(IR_5) == HIGH) { Serial.print("1"); } else { Serial.print("0"); }
+  if (digitalRead(IR_4) == HIGH) { Serial.print("1"); } else { Serial.print("0"); }
+  if (digitalRead(IR_3) == HIGH) { Serial.print("1"); } else { Serial.print("0"); }
+  if (digitalRead(IR_2) == HIGH) { Serial.print("1"); } else { Serial.print("0"); }
+  if (digitalRead(IR_1) == HIGH) { Serial.println("1"); } else { Serial.println("0"); }
+
+  delay(500);
 }`;
 
             navigator.clipboard.writeText(codeText).then(function() {

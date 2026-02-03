@@ -642,23 +642,22 @@
                     <p style="margin: 10px 0;">All sensor pins must be configured as <span class="highlight">INPUT</span> before reading.</p>
                 </div>
 
-                <div class="code-block"><span class="code-comment">// IR Sensor pin definitions</span>
-<span class="code-keyword">const int</span> SENSOR_1 = <span class="code-number">6</span>;   <span class="code-comment">// Far left</span>
-<span class="code-keyword">const int</span> SENSOR_2 = <span class="code-number">7</span>;   <span class="code-comment">// Left</span>
-<span class="code-keyword">const int</span> SENSOR_3 = <span class="code-number">8</span>;   <span class="code-comment">// Center</span>
-<span class="code-keyword">const int</span> SENSOR_4 = <span class="code-number">9</span>;   <span class="code-comment">// Right</span>
-<span class="code-keyword">const int</span> SENSOR_5 = <span class="code-number">10</span>;  <span class="code-comment">// Far right</span>
+                <div class="code-block"><span class="code-comment">// IR sensor pin definitions</span>
+<span class="code-keyword">const int</span> IR_1 = A2;              <span class="code-comment">// IR 1 sensor input</span>
+<span class="code-keyword">const int</span> IR_2 = <span class="code-number">0</span>;               <span class="code-comment">// IR 2 sensor input</span>
+<span class="code-keyword">const int</span> IR_3 = <span class="code-number">2</span>;               <span class="code-comment">// IR 3 sensor input</span>
+<span class="code-keyword">const int</span> IR_4 = <span class="code-number">1</span>;               <span class="code-comment">// IR 4 sensor input</span>
+<span class="code-keyword">const int</span> IR_5 = A3;              <span class="code-comment">// IR 5 sensor input</span>
 
 <span class="code-keyword">void</span> <span class="code-function">setup</span>() {
-  <span class="code-comment">// Configure all sensor pins as inputs</span>
-  <span class="code-function">pinMode</span>(SENSOR_1, INPUT);
-  <span class="code-function">pinMode</span>(SENSOR_2, INPUT);
-  <span class="code-function">pinMode</span>(SENSOR_3, INPUT);
-  <span class="code-function">pinMode</span>(SENSOR_4, INPUT);
-  <span class="code-function">pinMode</span>(SENSOR_5, INPUT);
+  <span class="code-function">Serial.begin</span>(<span class="code-number">9600</span>);
 
-  <span class="code-comment">// Initialize serial communication for debugging</span>
-  Serial.<span class="code-function">begin</span>(<span class="code-number">9600</span>);
+  <span class="code-comment">// Configure all sensor pins as inputs</span>
+  <span class="code-function">pinMode</span>(IR_1, INPUT);
+  <span class="code-function">pinMode</span>(IR_2, INPUT);
+  <span class="code-function">pinMode</span>(IR_3, INPUT);
+  <span class="code-function">pinMode</span>(IR_4, INPUT);
+  <span class="code-function">pinMode</span>(IR_5, INPUT);
 }</div>
 
                 <div class="concept-box">
@@ -668,11 +667,11 @@
 
                 <div class="code-block"><span class="code-keyword">void</span> <span class="code-function">loop</span>() {
   <span class="code-comment">// Read all 5 sensors</span>
-  <span class="code-keyword">int</span> s1 = <span class="code-function">digitalRead</span>(SENSOR_1);
-  <span class="code-keyword">int</span> s2 = <span class="code-function">digitalRead</span>(SENSOR_2);
-  <span class="code-keyword">int</span> s3 = <span class="code-function">digitalRead</span>(SENSOR_3);
-  <span class="code-keyword">int</span> s4 = <span class="code-function">digitalRead</span>(SENSOR_4);
-  <span class="code-keyword">int</span> s5 = <span class="code-function">digitalRead</span>(SENSOR_5);
+  <span class="code-keyword">int</span> s1 = <span class="code-function">digitalRead</span>(IR_1);
+  <span class="code-keyword">int</span> s2 = <span class="code-function">digitalRead</span>(IR_2);
+  <span class="code-keyword">int</span> s3 = <span class="code-function">digitalRead</span>(IR_3);
+  <span class="code-keyword">int</span> s4 = <span class="code-function">digitalRead</span>(IR_4);
+  <span class="code-keyword">int</span> s5 = <span class="code-function">digitalRead</span>(IR_5);
 
   <span class="code-comment">// Now we can use these values...</span>
 }</div>
@@ -757,27 +756,15 @@
                     </ul>
                 </div>
 
-                <div class="code-block"><span class="code-comment">// Print individual sensor values</span>
+                <div class="code-block"><span class="code-comment">// Print IR sensors as a 5-bit pattern (IR5 IR4 IR3 IR2 IR1)</span>
 <span class="code-keyword">void</span> <span class="code-function">loop</span>() {
-  <span class="code-keyword">int</span> s1 = <span class="code-function">digitalRead</span>(SENSOR_1);
-  <span class="code-keyword">int</span> s2 = <span class="code-function">digitalRead</span>(SENSOR_2);
-  <span class="code-keyword">int</span> s3 = <span class="code-function">digitalRead</span>(SENSOR_3);
-  <span class="code-keyword">int</span> s4 = <span class="code-function">digitalRead</span>(SENSOR_4);
-  <span class="code-keyword">int</span> s5 = <span class="code-function">digitalRead</span>(SENSOR_5);
+  <span class="code-keyword">if</span> (<span class="code-function">digitalRead</span>(IR_5) == HIGH) { Serial.<span class="code-function">print</span>(<span class="code-string">"1"</span>); } <span class="code-keyword">else</span> { Serial.<span class="code-function">print</span>(<span class="code-string">"0"</span>); }
+  <span class="code-keyword">if</span> (<span class="code-function">digitalRead</span>(IR_4) == HIGH) { Serial.<span class="code-function">print</span>(<span class="code-string">"1"</span>); } <span class="code-keyword">else</span> { Serial.<span class="code-function">print</span>(<span class="code-string">"0"</span>); }
+  <span class="code-keyword">if</span> (<span class="code-function">digitalRead</span>(IR_3) == HIGH) { Serial.<span class="code-function">print</span>(<span class="code-string">"1"</span>); } <span class="code-keyword">else</span> { Serial.<span class="code-function">print</span>(<span class="code-string">"0"</span>); }
+  <span class="code-keyword">if</span> (<span class="code-function">digitalRead</span>(IR_2) == HIGH) { Serial.<span class="code-function">print</span>(<span class="code-string">"1"</span>); } <span class="code-keyword">else</span> { Serial.<span class="code-function">print</span>(<span class="code-string">"0"</span>); }
+  <span class="code-keyword">if</span> (<span class="code-function">digitalRead</span>(IR_1) == HIGH) { Serial.<span class="code-function">println</span>(<span class="code-string">"1"</span>); } <span class="code-keyword">else</span> { Serial.<span class="code-function">println</span>(<span class="code-string">"0"</span>); }  <span class="code-comment">// println adds newline</span>
 
-  <span class="code-comment">// Print with labels</span>
-  Serial.<span class="code-function">print</span>(<span class="code-string">"S1:"</span>);
-  Serial.<span class="code-function">print</span>(s1);
-  Serial.<span class="code-function">print</span>(<span class="code-string">" S2:"</span>);
-  Serial.<span class="code-function">print</span>(s2);
-  Serial.<span class="code-function">print</span>(<span class="code-string">" S3:"</span>);
-  Serial.<span class="code-function">print</span>(s3);
-  Serial.<span class="code-function">print</span>(<span class="code-string">" S4:"</span>);
-  Serial.<span class="code-function">print</span>(s4);
-  Serial.<span class="code-function">print</span>(<span class="code-string">" S5:"</span>);
-  Serial.<span class="code-function">println</span>(s5);  <span class="code-comment">// println adds newline</span>
-
-  <span class="code-function">delay</span>(<span class="code-number">100</span>);  <span class="code-comment">// Small delay for readability</span>
+  <span class="code-function">delay</span>(<span class="code-number">500</span>);
 }</div>
 
                 <div class="concept-box">
@@ -845,43 +832,34 @@
             <div class="content">
                 <div class="code-block" style="font-size: 0.85rem;"><span class="code-comment">// Complete IR Sensor Reading Example</span>
 
-<span class="code-comment">// Pin definitions</span>
-<span class="code-keyword">const int</span> SENSOR_1 = <span class="code-number">6</span>;
-<span class="code-keyword">const int</span> SENSOR_2 = <span class="code-number">7</span>;
-<span class="code-keyword">const int</span> SENSOR_3 = <span class="code-number">8</span>;
-<span class="code-keyword">const int</span> SENSOR_4 = <span class="code-number">9</span>;
-<span class="code-keyword">const int</span> SENSOR_5 = <span class="code-number">10</span>;
+<span class="code-comment">// IR sensor pin definitions</span>
+<span class="code-keyword">const int</span> IR_1 = A2;              <span class="code-comment">// IR 1 sensor input</span>
+<span class="code-keyword">const int</span> IR_2 = <span class="code-number">0</span>;               <span class="code-comment">// IR 2 sensor input</span>
+<span class="code-keyword">const int</span> IR_3 = <span class="code-number">2</span>;               <span class="code-comment">// IR 3 sensor input</span>
+<span class="code-keyword">const int</span> IR_4 = <span class="code-number">1</span>;               <span class="code-comment">// IR 4 sensor input</span>
+<span class="code-keyword">const int</span> IR_5 = A3;              <span class="code-comment">// IR 5 sensor input</span>
 
 <span class="code-keyword">void</span> <span class="code-function">setup</span>() {
-  <span class="code-comment">// Set all sensor pins as inputs</span>
-  <span class="code-function">pinMode</span>(SENSOR_1, INPUT);
-  <span class="code-function">pinMode</span>(SENSOR_2, INPUT);
-  <span class="code-function">pinMode</span>(SENSOR_3, INPUT);
-  <span class="code-function">pinMode</span>(SENSOR_4, INPUT);
-  <span class="code-function">pinMode</span>(SENSOR_5, INPUT);
-
-  <span class="code-comment">// Start serial communication</span>
-  Serial.<span class="code-function">begin</span>(<span class="code-number">9600</span>);
+  <span class="code-function">Serial.begin</span>(<span class="code-number">9600</span>);
   Serial.<span class="code-function">println</span>(<span class="code-string">"IR Sensor Test Starting..."</span>);
+
+  <span class="code-comment">// Set all sensor pins as inputs</span>
+  <span class="code-function">pinMode</span>(IR_1, INPUT);
+  <span class="code-function">pinMode</span>(IR_2, INPUT);
+  <span class="code-function">pinMode</span>(IR_3, INPUT);
+  <span class="code-function">pinMode</span>(IR_4, INPUT);
+  <span class="code-function">pinMode</span>(IR_5, INPUT);
 }
 
 <span class="code-keyword">void</span> <span class="code-function">loop</span>() {
-  <span class="code-comment">// Read all sensors</span>
-  <span class="code-keyword">int</span> s1 = <span class="code-function">digitalRead</span>(SENSOR_1);
-  <span class="code-keyword">int</span> s2 = <span class="code-function">digitalRead</span>(SENSOR_2);
-  <span class="code-keyword">int</span> s3 = <span class="code-function">digitalRead</span>(SENSOR_3);
-  <span class="code-keyword">int</span> s4 = <span class="code-function">digitalRead</span>(SENSOR_4);
-  <span class="code-keyword">int</span> s5 = <span class="code-function">digitalRead</span>(SENSOR_5);
+  <span class="code-comment">// Read and print as 5-bit pattern (IR5 IR4 IR3 IR2 IR1)</span>
+  <span class="code-keyword">if</span> (<span class="code-function">digitalRead</span>(IR_5) == HIGH) { Serial.<span class="code-function">print</span>(<span class="code-string">"1"</span>); } <span class="code-keyword">else</span> { Serial.<span class="code-function">print</span>(<span class="code-string">"0"</span>); }
+  <span class="code-keyword">if</span> (<span class="code-function">digitalRead</span>(IR_4) == HIGH) { Serial.<span class="code-function">print</span>(<span class="code-string">"1"</span>); } <span class="code-keyword">else</span> { Serial.<span class="code-function">print</span>(<span class="code-string">"0"</span>); }
+  <span class="code-keyword">if</span> (<span class="code-function">digitalRead</span>(IR_3) == HIGH) { Serial.<span class="code-function">print</span>(<span class="code-string">"1"</span>); } <span class="code-keyword">else</span> { Serial.<span class="code-function">print</span>(<span class="code-string">"0"</span>); }
+  <span class="code-keyword">if</span> (<span class="code-function">digitalRead</span>(IR_2) == HIGH) { Serial.<span class="code-function">print</span>(<span class="code-string">"1"</span>); } <span class="code-keyword">else</span> { Serial.<span class="code-function">print</span>(<span class="code-string">"0"</span>); }
+  <span class="code-keyword">if</span> (<span class="code-function">digitalRead</span>(IR_1) == HIGH) { Serial.<span class="code-function">println</span>(<span class="code-string">"1"</span>); } <span class="code-keyword">else</span> { Serial.<span class="code-function">println</span>(<span class="code-string">"0"</span>); }
 
-  <span class="code-comment">// Print pattern</span>
-  Serial.<span class="code-function">print</span>(<span class="code-string">"Pattern: "</span>);
-  Serial.<span class="code-function">print</span>(s1);
-  Serial.<span class="code-function">print</span>(s2);
-  Serial.<span class="code-function">print</span>(s3);
-  Serial.<span class="code-function">print</span>(s4);
-  Serial.<span class="code-function">println</span>(s5);
-
-  <span class="code-function">delay</span>(<span class="code-number">200</span>);  <span class="code-comment">// Update 5 times per second</span>
+  <span class="code-function">delay</span>(<span class="code-number">500</span>);
 }</div>
 
                 <div class="success-box">
@@ -909,23 +887,33 @@
                     <div style="position: relative;">
                         <button onclick="copyStarterCode()" style="position: absolute; top: 10px; right: 10px; background: #00d4ff; color: #0a0e27; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 0.9rem; z-index: 10;">Copy Code</button>
                         <div class="code-block" id="starter-code" style="font-size: 0.7rem; max-height: 200px; overflow-y: auto; margin-top: 0;"><span class="code-comment">// Lesson 7: IR Sensor Reading</span>
-<span class="code-keyword">const int</span> SENSOR_1 = <span class="code-number">6</span>;
-<span class="code-keyword">const int</span> SENSOR_2 = <span class="code-number">7</span>;
-<span class="code-keyword">const int</span> SENSOR_3 = <span class="code-number">8</span>;
-<span class="code-keyword">const int</span> SENSOR_4 = <span class="code-number">9</span>;
-<span class="code-keyword">const int</span> SENSOR_5 = <span class="code-number">10</span>;
+<span class="code-comment">// IR sensor pin definitions</span>
+<span class="code-keyword">const int</span> IR_1 = A2;              <span class="code-comment">// IR 1 sensor input</span>
+<span class="code-keyword">const int</span> IR_2 = <span class="code-number">0</span>;               <span class="code-comment">// IR 2 sensor input</span>
+<span class="code-keyword">const int</span> IR_3 = <span class="code-number">2</span>;               <span class="code-comment">// IR 3 sensor input</span>
+<span class="code-keyword">const int</span> IR_4 = <span class="code-number">1</span>;               <span class="code-comment">// IR 4 sensor input</span>
+<span class="code-keyword">const int</span> IR_5 = A3;              <span class="code-comment">// IR 5 sensor input</span>
 
 <span class="code-keyword">void</span> <span class="code-function">setup</span>() {
-  <span class="code-function">pinMode</span>(SENSOR_1, INPUT);
-  <span class="code-function">pinMode</span>(SENSOR_2, INPUT);
-  <span class="code-function">pinMode</span>(SENSOR_3, INPUT);
-  <span class="code-function">pinMode</span>(SENSOR_4, INPUT);
-  <span class="code-function">pinMode</span>(SENSOR_5, INPUT);
-  Serial.<span class="code-function">begin</span>(<span class="code-number">9600</span>);
+  <span class="code-function">Serial.begin</span>(<span class="code-number">9600</span>);
+  Serial.<span class="code-function">println</span>(<span class="code-string">"IR Sensor Test Starting..."</span>);
+
+  <span class="code-function">pinMode</span>(IR_1, INPUT);
+  <span class="code-function">pinMode</span>(IR_2, INPUT);
+  <span class="code-function">pinMode</span>(IR_3, INPUT);
+  <span class="code-function">pinMode</span>(IR_4, INPUT);
+  <span class="code-function">pinMode</span>(IR_5, INPUT);
 }
 
 <span class="code-keyword">void</span> <span class="code-function">loop</span>() {
-  <span class="code-comment">// Your code here!</span>
+  <span class="code-comment">// Read and print as 5-bit pattern (IR5 IR4 IR3 IR2 IR1)</span>
+  <span class="code-keyword">if</span> (<span class="code-function">digitalRead</span>(IR_5) == HIGH) { Serial.<span class="code-function">print</span>(<span class="code-string">"1"</span>); } <span class="code-keyword">else</span> { Serial.<span class="code-function">print</span>(<span class="code-string">"0"</span>); }
+  <span class="code-keyword">if</span> (<span class="code-function">digitalRead</span>(IR_4) == HIGH) { Serial.<span class="code-function">print</span>(<span class="code-string">"1"</span>); } <span class="code-keyword">else</span> { Serial.<span class="code-function">print</span>(<span class="code-string">"0"</span>); }
+  <span class="code-keyword">if</span> (<span class="code-function">digitalRead</span>(IR_3) == HIGH) { Serial.<span class="code-function">print</span>(<span class="code-string">"1"</span>); } <span class="code-keyword">else</span> { Serial.<span class="code-function">print</span>(<span class="code-string">"0"</span>); }
+  <span class="code-keyword">if</span> (<span class="code-function">digitalRead</span>(IR_2) == HIGH) { Serial.<span class="code-function">print</span>(<span class="code-string">"1"</span>); } <span class="code-keyword">else</span> { Serial.<span class="code-function">print</span>(<span class="code-string">"0"</span>); }
+  <span class="code-keyword">if</span> (<span class="code-function">digitalRead</span>(IR_1) == HIGH) { Serial.<span class="code-function">println</span>(<span class="code-string">"1"</span>); } <span class="code-keyword">else</span> { Serial.<span class="code-function">println</span>(<span class="code-string">"0"</span>); }
+
+  <span class="code-function">delay</span>(<span class="code-number">500</span>);
 }</div>
                     </div>
                 </div>
@@ -975,11 +963,11 @@
 
                 <div class="code-block" style="font-size: 0.75rem;"><span class="code-comment">// Example pattern detection</span>
 <span class="code-keyword">void</span> <span class="code-function">loop</span>() {
-  <span class="code-keyword">int</span> s1 = <span class="code-function">digitalRead</span>(SENSOR_1);
-  <span class="code-keyword">int</span> s2 = <span class="code-function">digitalRead</span>(SENSOR_2);
-  <span class="code-keyword">int</span> s3 = <span class="code-function">digitalRead</span>(SENSOR_3);
-  <span class="code-keyword">int</span> s4 = <span class="code-function">digitalRead</span>(SENSOR_4);
-  <span class="code-keyword">int</span> s5 = <span class="code-function">digitalRead</span>(SENSOR_5);
+  <span class="code-keyword">int</span> s1 = <span class="code-function">digitalRead</span>(IR_1);
+  <span class="code-keyword">int</span> s2 = <span class="code-function">digitalRead</span>(IR_2);
+  <span class="code-keyword">int</span> s3 = <span class="code-function">digitalRead</span>(IR_3);
+  <span class="code-keyword">int</span> s4 = <span class="code-function">digitalRead</span>(IR_4);
+  <span class="code-keyword">int</span> s5 = <span class="code-function">digitalRead</span>(IR_5);
 
   <span class="code-comment">// Check for center line</span>
   <span class="code-keyword">if</span> (s1 == <span class="code-number">1</span> && s2 == <span class="code-number">1</span> && s3 == <span class="code-number">0</span> && s4 == <span class="code-number">1</span> && s5 == <span class="code-number">1</span>) {
@@ -1112,32 +1100,35 @@
             const codeText = `// Lesson 7: IR Sensor Fundamentals and Reading
 // Starter Code for Lab Exercises
 
-// IR Sensor pin definitions
-const int SENSOR_1 = 6;   // Far left
-const int SENSOR_2 = 7;   // Left
-const int SENSOR_3 = 8;   // Center
-const int SENSOR_4 = 9;   // Right
-const int SENSOR_5 = 10;  // Far right
+// IR sensor pin definitions
+const int IR_1 = A2;             // IR 1 sensor input
+const int IR_2 = 0;              // IR 2 sensor input
+const int IR_3 = 2;              // IR 3 sensor input
+const int IR_4 = 1;              // IR 4 sensor input
+const int IR_5 = A3;             // IR 5 sensor input
 
 void setup() {
-  // Set all sensor pins as inputs
-  pinMode(SENSOR_1, INPUT);
-  pinMode(SENSOR_2, INPUT);
-  pinMode(SENSOR_3, INPUT);
-  pinMode(SENSOR_4, INPUT);
-  pinMode(SENSOR_5, INPUT);
-
-  // Start serial communication for debugging
   Serial.begin(9600);
   Serial.println("IR Sensor Test Starting...");
+
+  // Set IR sensor pins as inputs
+  pinMode(IR_1, INPUT);
+  pinMode(IR_2, INPUT);
+  pinMode(IR_3, INPUT);
+  pinMode(IR_4, INPUT);
+  pinMode(IR_5, INPUT);
 }
 
 void loop() {
-  // TODO: Read all sensors
-  // TODO: Print sensor values to Serial Monitor
-  // TODO: Add your code here!
+  // Read and print IR sensors as a 5-bit pattern (IR5 IR4 IR3 IR2 IR1)
+  // Open Serial Monitor (9600 baud) to see sensor values
+  if (digitalRead(IR_5) == HIGH) { Serial.print("1"); } else { Serial.print("0"); }
+  if (digitalRead(IR_4) == HIGH) { Serial.print("1"); } else { Serial.print("0"); }
+  if (digitalRead(IR_3) == HIGH) { Serial.print("1"); } else { Serial.print("0"); }
+  if (digitalRead(IR_2) == HIGH) { Serial.print("1"); } else { Serial.print("0"); }
+  if (digitalRead(IR_1) == HIGH) { Serial.println("1"); } else { Serial.println("0"); }
 
-  delay(200);  // Small delay for readability
+  delay(500);
 }`;
 
             navigator.clipboard.writeText(codeText).then(function() {
