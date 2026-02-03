@@ -112,10 +112,10 @@ function initializeSheets() {
   let studentsSheet = ss.getSheetByName(SHEET_NAMES.STUDENTS);
   if (!studentsSheet) {
     studentsSheet = ss.insertSheet(SHEET_NAMES.STUDENTS);
-    studentsSheet.getRange(1, 1, 1, 8).setValues([[
-      'Email', 'Name', 'Team', 'Period', 'Created At', 'Last Sync', 'Total Points', 'Status'
+    studentsSheet.getRange(1, 1, 1, 9).setValues([[
+      'Email', 'Name', 'Team', 'Period', 'Created At', 'Last Sync', 'Total Points', 'Status', 'Full State JSON'
     ]]);
-    studentsSheet.getRange(1, 1, 1, 8).setFontWeight('bold').setBackground('#1a73e8').setFontColor('white');
+    studentsSheet.getRange(1, 1, 1, 9).setFontWeight('bold').setBackground('#1a73e8').setFontColor('white');
     studentsSheet.setFrozenRows(1);
   }
 
@@ -162,10 +162,11 @@ function syncStudentData(data) {
   initializeSheets();
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
-  // Update student record
+  // Update student record and store full state JSON in column 9
   updateStudentRecord(data.student);
+  saveFullState(data.student.email, data);
 
-  // Sync weekly reflections
+  // Sync submitted reflections to teacher-visible sheet
   if (data.weeklyReflections) {
     Object.entries(data.weeklyReflections).forEach(([week, reflection]) => {
       if (reflection.submitted) {
@@ -174,7 +175,7 @@ function syncStudentData(data) {
     });
   }
 
-  // Sync deliverables
+  // Sync completed deliverables to teacher-visible sheet
   if (data.deliverables) {
     Object.entries(data.deliverables).forEach(([id, deliverable]) => {
       if (deliverable.status === 'completed') {
@@ -186,6 +187,32 @@ function syncStudentData(data) {
   logActivity('SYNC', data.student.email, `Synced at ${data.timestamp}`);
 
   return { success: true, timestamp: new Date().toISOString() };
+}
+
+/**
+ * Save full application state as JSON (column 9 of Students sheet)
+ * This preserves drafts, evidence, code snippets — everything the student needs to restore.
+ */
+function saveFullState(email, data) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(SHEET_NAMES.STUDENTS);
+  const sheetData = sheet.getDataRange().getValues();
+
+  const stateJson = JSON.stringify({
+    student: data.student,
+    weeklyReflections: data.weeklyReflections || {},
+    deliverables: data.deliverables || {},
+    evidence: data.evidence || [],
+    codeSnippets: data.codeSnippets || [],
+    lastSynced: data.timestamp || new Date().toISOString()
+  });
+
+  for (let i = 1; i < sheetData.length; i++) {
+    if (sheetData[i][0] === email) {
+      sheet.getRange(i + 1, 9).setValue(stateJson);
+      return;
+    }
+  }
 }
 
 /**
@@ -326,14 +353,24 @@ function loadStudentData(email) {
   initializeSheets();
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
-  // Load student info
   const studentsSheet = ss.getSheetByName(SHEET_NAMES.STUDENTS);
   const studentsData = studentsSheet.getDataRange().getValues();
-  let student = null;
 
+  // Find student row and check for full state JSON (column 9)
   for (let i = 1; i < studentsData.length; i++) {
     if (studentsData[i][0] === email) {
-      student = {
+      // If full state JSON exists, return it directly (includes drafts, evidence, etc.)
+      if (studentsData[i][8] && studentsData[i][8].trim()) {
+        try {
+          const fullState = JSON.parse(studentsData[i][8]);
+          return fullState;
+        } catch (e) {
+          // JSON parse failed — fall through to sheet-based load
+        }
+      }
+
+      // Fallback: reconstruct from individual sheets (submitted/completed only)
+      const student = {
         email: studentsData[i][0],
         name: studentsData[i][1],
         team: studentsData[i][2],
@@ -341,54 +378,62 @@ function loadStudentData(email) {
         createdAt: studentsData[i][4],
         totalPoints: studentsData[i][6]
       };
-      break;
+
+      const reflectionsSheet = ss.getSheetByName(SHEET_NAMES.REFLECTIONS);
+      const reflectionsData = reflectionsSheet.getDataRange().getValues();
+      const weeklyReflections = {};
+
+      for (let j = 1; j < reflectionsData.length; j++) {
+        if (reflectionsData[j][0] === email) {
+          const week = reflectionsData[j][2];
+          // Parse contributions back into array format
+          const contribLines = (reflectionsData[j][3] || '').split('\n').filter(l => l.trim());
+          const contributions = contribLines.map(line => {
+            const colonIdx = line.indexOf(':');
+            return colonIdx > 0
+              ? { date: line.substring(0, colonIdx).trim(), task: line.substring(colonIdx + 1).trim() }
+              : { date: '', task: line.trim() };
+          });
+          // Parse goals back into array
+          const goals = (reflectionsData[j][7] || '').split('\n').filter(l => l.trim());
+
+          weeklyReflections[week] = {
+            week: parseInt(week),
+            contributions,
+            evidenceLinks: reflectionsData[j][4] || '',
+            challenges: reflectionsData[j][5] || '',
+            solutions: reflectionsData[j][6] || '',
+            goals,
+            submittedAt: reflectionsData[j][8],
+            submitted: true
+          };
+        }
+      }
+
+      const deliverablesSheet = ss.getSheetByName(SHEET_NAMES.DELIVERABLES);
+      const deliverablesData = deliverablesSheet.getDataRange().getValues();
+      const deliverables = {};
+
+      for (let j = 1; j < deliverablesData.length; j++) {
+        if (deliverablesData[j][0] === email) {
+          const id = deliverablesData[j][2];
+          deliverables[id] = {
+            content: deliverablesData[j][4],
+            links: deliverablesData[j][5],
+            selfAssessment: deliverablesData[j][6],
+            status: deliverablesData[j][7],
+            submittedAt: deliverablesData[j][8],
+            grade: deliverablesData[j][9]
+          };
+        }
+      }
+
+      return { student, weeklyReflections, deliverables, evidence: [], codeSnippets: [] };
     }
   }
 
-  if (!student) {
-    return { error: 'Student not found' };
-  }
-
-  // Load reflections
-  const reflectionsSheet = ss.getSheetByName(SHEET_NAMES.REFLECTIONS);
-  const reflectionsData = reflectionsSheet.getDataRange().getValues();
-  const weeklyReflections = {};
-
-  for (let i = 1; i < reflectionsData.length; i++) {
-    if (reflectionsData[i][0] === email) {
-      const week = reflectionsData[i][2];
-      weeklyReflections[week] = {
-        contributions: reflectionsData[i][3],
-        evidenceLinks: reflectionsData[i][4],
-        challenges: reflectionsData[i][5],
-        solutions: reflectionsData[i][6],
-        goals: reflectionsData[i][7],
-        submittedAt: reflectionsData[i][8],
-        submitted: true
-      };
-    }
-  }
-
-  // Load deliverables
-  const deliverablesSheet = ss.getSheetByName(SHEET_NAMES.DELIVERABLES);
-  const deliverablesData = deliverablesSheet.getDataRange().getValues();
-  const deliverables = {};
-
-  for (let i = 1; i < deliverablesData.length; i++) {
-    if (deliverablesData[i][0] === email) {
-      const id = deliverablesData[i][2];
-      deliverables[id] = {
-        content: deliverablesData[i][4],
-        links: deliverablesData[i][5],
-        selfAssessment: deliverablesData[i][6],
-        status: deliverablesData[i][7],
-        submittedAt: deliverablesData[i][8],
-        grade: deliverablesData[i][9]
-      };
-    }
-  }
-
-  return { student, weeklyReflections, deliverables };
+  // Student not found at all
+  return { error: 'Student not found' };
 }
 
 /**

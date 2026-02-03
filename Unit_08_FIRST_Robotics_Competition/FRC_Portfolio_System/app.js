@@ -1,4 +1,4 @@
-// FRC Engineering Portfolio - Main Application
+// FRC Engineering Portfolio - Main Application (Google Auth Edition)
 
 // ============================================
 // CONFIGURATION - UPDATE THESE VALUES
@@ -7,14 +7,20 @@ const CONFIG = {
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL',
 
+    // Google OAuth Client ID
+    GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
+
     // Semester start date (adjust for your semester)
     SEMESTER_START: new Date('2025-01-06'),
 
     // Point values
     POINTS: {
         WEEKLY_REFLECTION: 20,
-        TOTAL_POSSIBLE: 900 // Adjusted to round number
-    }
+        TOTAL_POSSIBLE: 900
+    },
+
+    // Auto-save interval in milliseconds
+    AUTO_SAVE_INTERVAL: 30000
 };
 
 // ============================================
@@ -184,90 +190,158 @@ let state = {
     selectedWeek: 1
 };
 
+let autoSaveTimer = null;
+let isDirty = false;
+
 // ============================================
-// INITIALIZATION
+// GOOGLE SIGN-IN INITIALIZATION
 // ============================================
-document.addEventListener('DOMContentLoaded', () => {
-    loadState();
+window.onload = function () {
+    google.accounts.id.initialize({
+        client_id: CONFIG.GOOGLE_CLIENT_ID,
+        callback: handleCredentialResponse
+    });
+
+    google.accounts.id.renderButton(
+        document.getElementById('googleSignInBtn'),
+        { theme: 'outline', size: 'large', width: 300, text: 'signin_with' }
+    );
+
+    // Show sign-in modal on page load
+    document.getElementById('signinModal').classList.add('active');
+
+    // Init navigation and static components immediately
     initNavigation();
-    initSetupForm();
-    initWeeklyReflectionForm();
     initDeliverables();
-    initEvidenceUpload();
     initAIFeatures();
-    updateUI();
 
-    // Check if student needs to set up
-    if (!state.student) {
-        showSetupModal();
-    }
-});
+    // Wire sign-out button
+    document.getElementById('signOutBtn').addEventListener('click', signOut);
+};
 
 // ============================================
-// STATE MANAGEMENT
+// GOOGLE AUTH HANDLERS
 // ============================================
-function loadState() {
-    const saved = localStorage.getItem('frc_portfolio_state');
-    if (saved) {
-        state = JSON.parse(saved);
-    }
-    calculateCurrentWeek();
+function handleCredentialResponse(response) {
+    const payload = decodeJwtPayload(response.credential);
+    const email = payload.email;
+    const name = payload.name;
+
+    // Dismiss sign-in modal
+    document.getElementById('signinModal').classList.remove('active');
+
+    // Attempt cloud load
+    loadStudentFromCloud(email).then(cloudData => {
+        if (cloudData && cloudData.student) {
+            // Returning student
+            state = cloudData;
+            state.student.name = name;
+            calculateCurrentWeek();
+            hideAllModals();
+            onAuthenticated();
+        } else {
+            // New student — show profile modal
+            document.getElementById('profileEmail').textContent = email;
+            document.getElementById('profileModal').classList.add('active');
+            state.student = { email, name };
+            initProfileForm();
+        }
+    });
 }
 
-function saveState() {
-    localStorage.setItem('frc_portfolio_state', JSON.stringify(state));
-    syncToGoogleSheets();
+function decodeJwtPayload(token) {
+    const base64 = token.split('.')[1];
+    const jsonPayload = decodeURIComponent(
+        atob(base64).split('').map(c =>
+            '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+        ).join('')
+    );
+    return JSON.parse(jsonPayload);
 }
 
-function calculateCurrentWeek() {
-    const now = new Date();
-    const diffTime = now - CONFIG.SEMESTER_START;
-    const diffWeeks = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 7));
-    state.currentWeek = Math.min(Math.max(1, diffWeeks), 9);
+function signOut() {
+    const email = state.student ? state.student.email : '';
+    google.accounts.id.revoke(email, () => {
+        stopAutoSave();
+        state = {
+            student: null,
+            weeklyReflections: {},
+            deliverables: {},
+            evidence: [],
+            currentWeek: 1,
+            selectedWeek: 1
+        };
+        isDirty = false;
+
+        // Reset sidebar
+        document.getElementById('saveStatus').style.display = 'none';
+        document.getElementById('signOutBtn').style.display = 'none';
+        document.getElementById('studentName').textContent = 'Not Signed In';
+        document.getElementById('teamBadge').textContent = 'No Team';
+        document.getElementById('avatarInitials').textContent = '--';
+        document.getElementById('progressFill').style.width = '0%';
+        document.getElementById('progressText').textContent = '0 / 900 pts';
+
+        // Re-render sign-in button and show modal
+        google.accounts.id.renderButton(
+            document.getElementById('googleSignInBtn'),
+            { theme: 'outline', size: 'large', width: 300, text: 'signin_with' }
+        );
+        document.getElementById('signinModal').classList.add('active');
+
+        showToast('You have been signed out.', 'info');
+    });
 }
 
 // ============================================
-// GOOGLE SHEETS INTEGRATION
+// CLOUD STORAGE
 // ============================================
-async function syncToGoogleSheets() {
+async function loadStudentFromCloud(email) {
     if (CONFIG.SHEETS_API_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL') {
-        console.log('Google Sheets not configured - data saved locally only');
-        return;
+        console.log('Google Sheets not configured — starting fresh');
+        return null;
     }
 
     try {
-        const response = await fetch(CONFIG.SHEETS_API_URL, {
+        const response = await fetch(
+            CONFIG.SHEETS_API_URL + '?action=load&email=' + encodeURIComponent(email)
+        );
+        const data = await response.json();
+        return (data && data.student) ? data : null;
+    } catch (error) {
+        console.error('Failed to load from cloud:', error);
+        return null;
+    }
+}
+
+async function saveToCloud() {
+    if (CONFIG.SHEETS_API_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL') {
+        console.log('Google Sheets not configured — cannot save');
+        return;
+    }
+    if (!state.student) return;
+
+    setSaveIndicator('saving');
+
+    try {
+        await fetch(CONFIG.SHEETS_API_URL, {
             method: 'POST',
             mode: 'no-cors',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 action: 'sync',
                 student: state.student,
                 weeklyReflections: state.weeklyReflections,
                 deliverables: state.deliverables,
+                evidence: state.evidence,
                 timestamp: new Date().toISOString()
             })
         });
-        console.log('Synced to Google Sheets');
+        isDirty = false;
+        setSaveIndicator('saved');
     } catch (error) {
-        console.error('Failed to sync to Google Sheets:', error);
-    }
-}
-
-async function loadFromGoogleSheets() {
-    if (CONFIG.SHEETS_API_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL') {
-        return null;
-    }
-
-    try {
-        const response = await fetch(`${CONFIG.SHEETS_API_URL}?action=load&email=${state.student.email}`);
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Failed to load from Google Sheets:', error);
-        return null;
+        console.error('Save to cloud failed:', error);
+        setSaveIndicator('error');
     }
 }
 
@@ -277,7 +351,9 @@ async function loadTeamData() {
     }
 
     try {
-        const response = await fetch(`${CONFIG.SHEETS_API_URL}?action=team&team=${state.student.team}&period=${state.student.period}`);
+        const response = await fetch(
+            CONFIG.SHEETS_API_URL + '?action=team&team=' + state.student.team + '&period=' + state.student.period
+        );
         const data = await response.json();
         return data;
     } catch (error) {
@@ -303,72 +379,133 @@ function getMockTeamData() {
 }
 
 // ============================================
+// AUTO-SAVE
+// ============================================
+function startAutoSave() {
+    stopAutoSave();
+    autoSaveTimer = setInterval(() => {
+        if (isDirty) saveToCloud();
+    }, CONFIG.AUTO_SAVE_INTERVAL);
+}
+
+function stopAutoSave() {
+    if (autoSaveTimer) {
+        clearInterval(autoSaveTimer);
+        autoSaveTimer = null;
+    }
+}
+
+function markDirty() {
+    isDirty = true;
+    setSaveIndicator('pending');
+}
+
+function setSaveIndicator(status) {
+    const statusDiv = document.getElementById('saveStatus');
+    const icon = document.getElementById('saveIcon');
+    const text = document.getElementById('saveText');
+    statusDiv.style.display = 'block';
+
+    const styles = {
+        saving:  { cls: 'fas fa-sync-alt fa-spin', color: '#1a73e8', label: 'Saving...' },
+        saved:   { cls: 'fas fa-check-circle',     color: '#4caf50', label: 'Saved' },
+        pending: { cls: 'fas fa-circle',           color: '#fbbc04', label: 'Unsaved changes' },
+        error:   { cls: 'fas fa-exclamation-circle', color: '#ea4335', label: 'Save failed' }
+    };
+
+    const s = styles[status] || styles.pending;
+    icon.className = s.cls;
+    icon.style.color = s.color;
+    text.textContent = s.label;
+    text.style.color = s.color;
+}
+
+// ============================================
+// PROFILE SETUP (first sign-in only)
+// ============================================
+function initProfileForm() {
+    const form = document.getElementById('profileForm');
+    const fresh = form.cloneNode(true);
+    form.parentNode.replaceChild(fresh, form);
+
+    fresh.addEventListener('submit', (e) => {
+        e.preventDefault();
+        state.student = {
+            name: state.student.name,
+            email: state.student.email,
+            team: document.getElementById('setupTeam').value,
+            period: document.getElementById('setupPeriod').value,
+            createdAt: new Date().toISOString()
+        };
+        document.getElementById('profileModal').classList.remove('active');
+        onAuthenticated();
+        showToast('Welcome! Your portfolio is ready.', 'success');
+    });
+}
+
+// ============================================
+// ON AUTHENTICATED — called after sign-in is fully resolved
+// ============================================
+function onAuthenticated() {
+    document.getElementById('signOutBtn').style.display = 'inline-flex';
+
+    initWeeklyReflectionForm();
+    initEvidenceUpload();
+    attachDirtyListeners();
+
+    calculateCurrentWeek();
+    updateUI();
+
+    startAutoSave();
+    markDirty(); // ensure first state is persisted
+}
+
+// ============================================
+// DIRTY TRACKING
+// ============================================
+function attachDirtyListeners() {
+    document.querySelectorAll('input, textarea, select').forEach(el => {
+        el.addEventListener('input',  markDirty);
+        el.addEventListener('change', markDirty);
+    });
+
+    const contribList = document.getElementById('contributionList');
+    if (contribList) {
+        new MutationObserver(() => {
+            contribList.querySelectorAll('input').forEach(input => {
+                if (!input.dataset.dirtyListened) {
+                    input.addEventListener('input', markDirty);
+                    input.dataset.dirtyListened = 'true';
+                }
+            });
+        }).observe(contribList, { childList: true, subtree: true });
+    }
+}
+
+// ============================================
 // NAVIGATION
 // ============================================
 function initNavigation() {
-    const navItems = document.querySelectorAll('.nav-item');
-    navItems.forEach(item => {
+    document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', () => {
-            const page = item.dataset.page;
-            navigateTo(page);
+            navigateTo(item.dataset.page);
         });
     });
 }
 
 function navigateTo(pageId) {
-    // Update nav
     document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.toggle('active', item.dataset.page === pageId);
     });
-
-    // Update pages
     document.querySelectorAll('.page').forEach(page => {
         page.classList.toggle('active', page.id === `${pageId}Page`);
     });
 
-    // Load page-specific data
     switch (pageId) {
-        case 'team':
-            loadTeamView();
-            break;
-        case 'evidence':
-            loadEvidenceGallery();
-            break;
-        case 'portfolio':
-            loadPortfolioPreview();
-            break;
+        case 'team':      loadTeamView();         break;
+        case 'evidence':  loadEvidenceGallery();  break;
+        case 'portfolio': loadPortfolioPreview(); break;
     }
-}
-
-// ============================================
-// SETUP FORM
-// ============================================
-function initSetupForm() {
-    const form = document.getElementById('setupForm');
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        state.student = {
-            name: document.getElementById('setupName').value,
-            email: document.getElementById('setupEmail').value,
-            team: document.getElementById('setupTeam').value,
-            period: document.getElementById('setupPeriod').value,
-            createdAt: new Date().toISOString()
-        };
-
-        saveState();
-        hideSetupModal();
-        updateUI();
-        showToast('Welcome! Your portfolio is ready.', 'success');
-    });
-}
-
-function showSetupModal() {
-    document.getElementById('setupModal').classList.add('active');
-}
-
-function hideSetupModal() {
-    document.getElementById('setupModal').classList.remove('active');
 }
 
 // ============================================
@@ -377,60 +514,48 @@ function hideSetupModal() {
 function updateUI() {
     if (!state.student) return;
 
-    // Update student info
     document.getElementById('avatarInitials').textContent = getInitials(state.student.name);
     document.getElementById('studentName').textContent = state.student.name;
     document.getElementById('teamBadge').textContent = formatTeamName(state.student.team);
 
-    // Update dashboard stats
     const completedDeliverables = Object.values(state.deliverables).filter(d => d.status === 'completed').length;
-    const completedReflections = Object.keys(state.weeklyReflections).length;
+    const completedReflections = Object.keys(state.weeklyReflections).filter(k => state.weeklyReflections[k].submitted).length;
 
     document.getElementById('completedCount').textContent = completedDeliverables + completedReflections;
     document.getElementById('pendingCount').textContent = (10 - completedDeliverables) + (9 - completedReflections);
     document.getElementById('totalPoints').textContent = calculatePoints();
     document.getElementById('currentWeek').textContent = state.currentWeek;
 
-    // Update progress bar
     const progress = calculateProgress();
     document.getElementById('progressFill').style.width = `${progress}%`;
     document.getElementById('progressText').textContent = `${calculatePoints()} / ${CONFIG.POINTS.TOTAL_POSSIBLE} pts`;
 
-    // Update timeline
     updateTimeline();
-
-    // Update upcoming items
     updateUpcoming();
-
-    // Update week buttons
     updateWeekButtons();
-
-    // Update deliverables list
     updateDeliverablesList();
 }
 
 function calculatePoints() {
     let points = 0;
-
-    // Weekly reflections
     Object.keys(state.weeklyReflections).forEach(week => {
-        if (state.weeklyReflections[week].submitted) {
-            points += CONFIG.POINTS.WEEKLY_REFLECTION;
-        }
+        if (state.weeklyReflections[week].submitted) points += CONFIG.POINTS.WEEKLY_REFLECTION;
     });
-
-    // Deliverables
     DELIVERABLES.forEach(d => {
-        if (state.deliverables[d.id]?.status === 'completed') {
-            points += d.points;
-        }
+        if (state.deliverables[d.id]?.status === 'completed') points += d.points;
     });
-
     return points;
 }
 
 function calculateProgress() {
     return Math.round((calculatePoints() / CONFIG.POINTS.TOTAL_POSSIBLE) * 100);
+}
+
+function calculateCurrentWeek() {
+    const now = new Date();
+    const diffTime = now - CONFIG.SEMESTER_START;
+    const diffWeeks = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 7));
+    state.currentWeek = Math.min(Math.max(1, diffWeeks), 9);
 }
 
 function updateTimeline() {
@@ -469,36 +594,18 @@ function updateUpcoming() {
     const list = document.getElementById('upcomingList');
     const upcoming = [];
 
-    // Check weekly reflection
     if (!state.weeklyReflections[state.currentWeek]?.submitted) {
-        upcoming.push({
-            title: `Week ${state.currentWeek} Reflection`,
-            due: 'Friday',
-            points: 20,
-            overdue: false
-        });
+        upcoming.push({ title: `Week ${state.currentWeek} Reflection`, due: 'Friday', points: 20, overdue: false });
     }
 
-    // Check current week deliverable
     const currentDeliverable = DELIVERABLES.find(d => d.week === state.currentWeek);
     if (currentDeliverable && state.deliverables[currentDeliverable.id]?.status !== 'completed') {
-        upcoming.push({
-            title: currentDeliverable.title,
-            due: `End of Week ${state.currentWeek}`,
-            points: currentDeliverable.points,
-            overdue: false
-        });
+        upcoming.push({ title: currentDeliverable.title, due: `End of Week ${state.currentWeek}`, points: currentDeliverable.points, overdue: false });
     }
 
-    // Check overdue items
     for (let week = 1; week < state.currentWeek; week++) {
         if (!state.weeklyReflections[week]?.submitted) {
-            upcoming.unshift({
-                title: `Week ${week} Reflection`,
-                due: 'OVERDUE',
-                points: 20,
-                overdue: true
-            });
+            upcoming.unshift({ title: `Week ${week} Reflection`, due: 'OVERDUE', points: 20, overdue: true });
         }
     }
 
@@ -516,8 +623,7 @@ function updateUpcoming() {
 function updateWeekButtons() {
     document.querySelectorAll('.week-btn').forEach(btn => {
         const week = parseInt(btn.dataset.week);
-        const isCompleted = state.weeklyReflections[week]?.submitted;
-        btn.classList.toggle('completed', isCompleted);
+        btn.classList.toggle('completed', !!state.weeklyReflections[week]?.submitted);
         btn.classList.toggle('active', week === state.selectedWeek);
     });
 }
@@ -528,7 +634,6 @@ function updateDeliverablesList() {
     list.innerHTML = DELIVERABLES.map(d => {
         const status = state.deliverables[d.id]?.status || 'pending';
         const isCurrent = d.week === state.currentWeek;
-
         return `
             <div class="deliverable-card ${status} ${isCurrent ? 'current' : ''}" data-id="${d.id}">
                 <div class="deliverable-number">${status === 'completed' ? '<i class="fas fa-check"></i>' : d.id}</div>
@@ -545,11 +650,8 @@ function updateDeliverablesList() {
         `;
     }).join('');
 
-    // Add click handlers
     list.querySelectorAll('.deliverable-card').forEach(card => {
-        card.addEventListener('click', () => {
-            openDeliverableForm(parseInt(card.dataset.id));
-        });
+        card.addEventListener('click', () => openDeliverableForm(parseInt(card.dataset.id)));
     });
 }
 
@@ -557,33 +659,25 @@ function updateDeliverablesList() {
 // WEEKLY REFLECTION FORM
 // ============================================
 function initWeeklyReflectionForm() {
-    // Week button clicks
     document.querySelectorAll('.week-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            selectWeek(parseInt(btn.dataset.week));
-        });
+        btn.addEventListener('click', () => selectWeek(parseInt(btn.dataset.week)));
     });
 
-    // Add contribution button
     document.getElementById('addContribution').addEventListener('click', addContributionRow);
-
-    // Form submission
     document.getElementById('weeklyReflectionForm').addEventListener('submit', submitWeeklyReflection);
-
-    // Save draft button
     document.getElementById('saveReflectionDraft').addEventListener('click', saveReflectionDraft);
+
+    selectWeek(state.currentWeek);
 }
 
 function selectWeek(week) {
     state.selectedWeek = week;
     document.getElementById('reflectionWeek').value = week;
 
-    // Update button states
     document.querySelectorAll('.week-btn').forEach(btn => {
         btn.classList.toggle('active', parseInt(btn.dataset.week) === week);
     });
 
-    // Load existing data
     const existingData = state.weeklyReflections[week];
     if (existingData) {
         loadReflectionData(existingData);
@@ -607,7 +701,6 @@ function addContributionRow() {
 }
 
 function loadReflectionData(data) {
-    // Load contributions
     const contribList = document.getElementById('contributionList');
     contribList.innerHTML = '';
 
@@ -622,30 +715,21 @@ function loadReflectionData(data) {
         contribList.appendChild(item);
     });
 
-    // Ensure at least 3 rows
-    while (contribList.children.length < 3) {
-        addContributionRow();
-    }
+    while (contribList.children.length < 3) addContributionRow();
 
-    // Load other fields
     document.getElementById('evidenceLinks').value = data.evidenceLinks || '';
     document.getElementById('challenges').value = data.challenges || '';
     document.getElementById('solutions').value = data.solutions || '';
 
-    // Load goals
     const goalInputs = document.querySelectorAll('.goal-input');
     (data.goals || []).forEach((goal, index) => {
-        if (goalInputs[index]) {
-            goalInputs[index].value = goal;
-        }
+        if (goalInputs[index]) goalInputs[index].value = goal;
     });
 }
 
 function clearReflectionForm() {
     document.getElementById('weeklyReflectionForm').reset();
-
-    const contribList = document.getElementById('contributionList');
-    contribList.innerHTML = `
+    document.getElementById('contributionList').innerHTML = `
         <div class="contribution-item">
             <input type="date" class="contrib-date" required>
             <input type="text" class="contrib-task" placeholder="I designed the..." required>
@@ -659,33 +743,24 @@ function clearReflectionForm() {
             <input type="text" class="contrib-task" placeholder="I researched/documented..." required>
         </div>
     `;
-
     document.getElementById('evidencePreview').innerHTML = '';
 }
 
 function getReflectionFormData() {
-    const week = state.selectedWeek;
-
-    // Gather contributions
     const contributions = [];
     document.querySelectorAll('.contribution-item').forEach(item => {
         const date = item.querySelector('.contrib-date').value;
         const task = item.querySelector('.contrib-task').value;
-        if (date && task) {
-            contributions.push({ date, task });
-        }
+        if (date && task) contributions.push({ date, task });
     });
 
-    // Gather goals
     const goals = [];
     document.querySelectorAll('.goal-input').forEach(input => {
-        if (input.value) {
-            goals.push(input.value);
-        }
+        if (input.value) goals.push(input.value);
     });
 
     return {
-        week,
+        week: state.selectedWeek,
         contributions,
         evidenceLinks: document.getElementById('evidenceLinks').value,
         challenges: document.getElementById('challenges').value,
@@ -699,22 +774,20 @@ function saveReflectionDraft() {
     const data = getReflectionFormData();
     data.submitted = false;
     state.weeklyReflections[data.week] = data;
-    saveState();
+    markDirty();
     showToast('Draft saved!', 'success');
 }
 
 function submitWeeklyReflection(e) {
     e.preventDefault();
-
     const data = getReflectionFormData();
 
-    // Validate
     if (data.contributions.length < 3) {
         showToast('Please add at least 3 contributions', 'error');
         return;
     }
 
-    // Check for "I" statements
+    // FRC-specific: catch "we" statements
     const hasWeStatements = data.contributions.some(c =>
         c.task.toLowerCase().startsWith('we ') ||
         c.task.toLowerCase().includes(' we ')
@@ -727,7 +800,7 @@ function submitWeeklyReflection(e) {
     data.submitted = true;
     data.submittedAt = new Date().toISOString();
     state.weeklyReflections[data.week] = data;
-    saveState();
+    saveToCloud(); // immediate save on submission
     updateUI();
     showToast(`Week ${data.week} reflection submitted! (+20 pts)`, 'success');
 }
@@ -746,12 +819,10 @@ function initEvidenceUpload() {
         uploadZone.style.borderColor = 'var(--primary)';
         uploadZone.style.background = 'var(--primary-light)';
     });
-
     uploadZone.addEventListener('dragleave', () => {
         uploadZone.style.borderColor = '';
         uploadZone.style.background = '';
     });
-
     uploadZone.addEventListener('drop', (e) => {
         e.preventDefault();
         uploadZone.style.borderColor = '';
@@ -759,9 +830,7 @@ function initEvidenceUpload() {
         handleFiles(e.dataTransfer.files);
     });
 
-    fileInput.addEventListener('change', () => {
-        handleFiles(fileInput.files);
-    });
+    fileInput.addEventListener('change', () => handleFiles(fileInput.files));
 }
 
 function handleFiles(files) {
@@ -782,7 +851,6 @@ function handleFiles(files) {
             `;
             preview.appendChild(thumb);
 
-            // Store in state
             state.evidence.push({
                 type: 'weekly',
                 week: state.selectedWeek,
@@ -790,6 +858,7 @@ function handleFiles(files) {
                 filename: file.name,
                 uploadedAt: new Date().toISOString()
             });
+            markDirty();
         };
         reader.readAsDataURL(file);
     });
@@ -860,6 +929,11 @@ function openDeliverableForm(id) {
         </form>
     `;
 
+    // Attach dirty listeners to dynamically created inputs
+    content.querySelectorAll('textarea, input').forEach(el => {
+        el.addEventListener('input', markDirty);
+    });
+
     document.getElementById('deliverableForm').addEventListener('submit', (e) => {
         e.preventDefault();
         submitDeliverable(id);
@@ -869,8 +943,6 @@ function openDeliverableForm(id) {
 }
 
 function saveDeliverableDraft(id) {
-    const deliverable = DELIVERABLES.find(d => d.id === id);
-
     state.deliverables[id] = {
         ...state.deliverables[id],
         content: document.getElementById('deliverableContent').value,
@@ -879,8 +951,7 @@ function saveDeliverableDraft(id) {
         status: 'in-progress',
         updatedAt: new Date().toISOString()
     };
-
-    saveState();
+    markDirty();
     updateUI();
     showToast('Draft saved!', 'success');
 }
@@ -902,7 +973,7 @@ function submitDeliverable(id) {
         submittedAt: new Date().toISOString()
     };
 
-    saveState();
+    saveToCloud(); // immediate save on submission
     updateUI();
     document.getElementById('deliverableModal').classList.remove('active');
     showToast(`${deliverable.title} submitted! (+${deliverable.points} pts)`, 'success');
@@ -918,8 +989,7 @@ async function loadTeamView() {
     document.getElementById('teamProgressFill').style.width = `${teamData.totalProgress}%`;
     document.getElementById('teamProgressText').textContent = `${teamData.totalProgress}% Complete`;
 
-    const membersContainer = document.getElementById('teamMembers');
-    membersContainer.innerHTML = teamData.members.map(member => `
+    document.getElementById('teamMembers').innerHTML = teamData.members.map(member => `
         <div class="member-card">
             <div class="member-header">
                 <div class="member-avatar">${member.initials}</div>
@@ -957,7 +1027,7 @@ function loadEvidenceGallery() {
         return;
     }
 
-    gallery.innerHTML = state.evidence.map((item, index) => `
+    gallery.innerHTML = state.evidence.map(item => `
         <div class="gallery-item" data-type="${item.type}">
             <img src="${item.data}" alt="${item.filename}">
             <div class="gallery-item-info">
@@ -967,19 +1037,13 @@ function loadEvidenceGallery() {
         </div>
     `).join('');
 
-    // Filter buttons
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-
             const filter = btn.dataset.filter;
             document.querySelectorAll('.gallery-item').forEach(item => {
-                if (filter === 'all' || item.dataset.type === filter) {
-                    item.style.display = '';
-                } else {
-                    item.style.display = 'none';
-                }
+                item.style.display = (filter === 'all' || item.dataset.type === filter) ? '' : 'none';
             });
         });
     });
@@ -990,16 +1054,12 @@ function loadEvidenceGallery() {
 // ============================================
 function initAIFeatures() {
     document.querySelectorAll('.ai-option').forEach(option => {
-        option.addEventListener('click', () => {
-            const action = option.dataset.action;
-            handleAIAction(action);
-        });
+        option.addEventListener('click', () => handleAIAction(option.dataset.action));
     });
 
     document.getElementById('generateQuestions').addEventListener('click', generatePracticeQuestions);
     document.getElementById('generateTeamPortfolio').addEventListener('click', generateTeamPortfolio);
 
-    // Export buttons
     document.getElementById('exportHTML').addEventListener('click', exportPortfolioHTML);
     document.getElementById('exportPDF').addEventListener('click', () => showToast('PDF export coming soon!', 'info'));
     document.getElementById('exportWord').addEventListener('click', () => showToast('Word export coming soon!', 'info'));
@@ -1047,7 +1107,7 @@ I worked on: ${formatTeamName(state.student?.team || 'a subsystem')}
 
 Key accomplishments to summarize:
 ${Object.values(state.weeklyReflections).map(r =>
-    r.contributions?.map(c => `- ${c.task}`).join('\n')
+    (r.contributions || []).map(c => `- ${c.task}`).join('\n')
 ).join('\n')}
 
 Make it professional, highlighting technical skills and problem-solving abilities.`;
@@ -1112,7 +1172,7 @@ function loadPortfolioPreview() {
     ).length;
 
     if (completedDeliverables < 3) {
-        preview.innerHTML = `<p class="placeholder-text">Complete at least 3 deliverables to preview your portfolio...</p>`;
+        preview.innerHTML = '<p class="placeholder-text">Complete at least 3 deliverables to preview your portfolio...</p>';
         return;
     }
 
@@ -1225,6 +1285,10 @@ function generateFullPortfolioHTML() {
 // ============================================
 // UTILITIES
 // ============================================
+function hideAllModals() {
+    document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+}
+
 function getInitials(name) {
     if (!name) return '--';
     return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
@@ -1243,12 +1307,7 @@ function formatTeamName(team) {
 }
 
 function formatStatus(status) {
-    const labels = {
-        'pending': 'Not Started',
-        'in-progress': 'In Progress',
-        'completed': 'Completed',
-        'graded': 'Graded'
-    };
+    const labels = { pending: 'Not Started', 'in-progress': 'In Progress', completed: 'Completed', graded: 'Graded' };
     return labels[status] || status;
 }
 
@@ -1268,7 +1327,7 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 
-// Make showToast globally available for inline onclick handlers
+// Expose for inline onclick handlers
 window.showToast = showToast;
 window.saveDeliverableDraft = saveDeliverableDraft;
 window.generatePracticeQuestions = generatePracticeQuestions;

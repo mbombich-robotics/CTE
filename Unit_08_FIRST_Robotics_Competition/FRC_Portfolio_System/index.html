@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FRC Engineering Portfolio</title>
+    <meta name="google-signin-client_id" content="1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
     <nav class="sidebar">
@@ -17,6 +19,9 @@
             <div class="avatar" id="avatarInitials">--</div>
             <div class="student-name" id="studentName">Not Signed In</div>
             <div class="team-badge" id="teamBadge">No Team</div>
+            <button class="btn btn-small btn-secondary" id="signOutBtn" style="margin-top: 10px; display: none; font-size: 11px; padding: 5px 10px;">
+                <i class="fas fa-sign-out-alt"></i> Sign Out
+            </button>
         </div>
         <ul class="nav-menu">
             <li class="nav-item active" data-page="dashboard">
@@ -49,24 +54,36 @@
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill" style="width: 0%"></div>
             </div>
-            <span class="progress-text" id="progressText">0 / 855 pts</span>
+            <span class="progress-text" id="progressText">0 / 900 pts</span>
+        </div>
+        <div class="save-status" id="saveStatus" style="padding: 10px 20px; font-size: 12px; color: var(--gray-500); text-align: center; display: none;">
+            <i class="fas fa-check-circle" id="saveIcon"></i>
+            <span id="saveText">Saved</span>
         </div>
     </nav>
 
     <main class="content">
-        <!-- Setup Modal -->
-        <div class="modal" id="setupModal">
+        <!-- Sign-In Modal (shown on first visit) -->
+        <div class="modal" id="signinModal">
             <div class="modal-content">
-                <h2><i class="fas fa-user-plus"></i> Welcome to FRC Portfolio</h2>
-                <p>Let's set up your portfolio. This information will be saved to your class database.</p>
-                <form id="setupForm">
+                <h2><i class="fas fa-robot"></i> FRC Engineering Portfolio</h2>
+                <p style="margin-bottom: 30px; color: var(--gray-600);">Sign in with your school Google account to get started.</p>
+                <div id="googleSignInBtn" style="display: flex; justify-content: center;"></div>
+                <p style="margin-top: 20px; font-size: 13px; color: var(--gray-500); text-align: center;">
+                    Use your school Google account (@yourschool.edu)
+                </p>
+            </div>
+        </div>
+
+        <!-- Profile Setup Modal (shown once after first sign-in) -->
+        <div class="modal" id="profileModal">
+            <div class="modal-content">
+                <h2><i class="fas fa-user-plus"></i> Finish Setting Up</h2>
+                <p style="margin-bottom: 20px; color: var(--gray-600);">Just a couple more things and you're ready to go.</p>
+                <form id="profileForm">
                     <div class="form-group">
-                        <label for="setupName">Your Full Name</label>
-                        <input type="text" id="setupName" required placeholder="Enter your name">
-                    </div>
-                    <div class="form-group">
-                        <label for="setupEmail">School Email</label>
-                        <input type="email" id="setupEmail" required placeholder="your.email@school.edu">
+                        <label>Signed In As</label>
+                        <div id="profileEmail" style="padding: 10px; background: var(--gray-100); border-radius: 8px; color: var(--gray-600); font-size: 14px;"></div>
                     </div>
                     <div class="form-group">
                         <label for="setupTeam">Subsystem Team</label>
@@ -92,7 +109,7 @@
                             <option value="period6">Period 6</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
                         <i class="fas fa-rocket"></i> Start My Portfolio
                     </button>
                 </form>
