@@ -2,11 +2,11 @@
 // Starter Code for Lab Exercises
 
 // IR Sensor pin definitions
-const int SENSOR_1 = 6;   // Far left
-const int SENSOR_2 = 7;   // Left
-const int SENSOR_3 = 8;   // Center
-const int SENSOR_4 = 9;   // Right
-const int SENSOR_5 = 10;  // Far right
+const int SENSOR_1 = A2;   // Far left
+const int SENSOR_2 = 0;    // Left
+const int SENSOR_3 = 2;    // Center
+const int SENSOR_4 = 1;    // Right
+const int SENSOR_5 = A3;   // Far right
 
 void setup() {
   // Set all sensor pins as inputs

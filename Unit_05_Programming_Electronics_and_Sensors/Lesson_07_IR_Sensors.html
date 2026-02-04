@@ -516,27 +516,27 @@
 
                 <div class="sensor-array">
                     <div class="sensor">
-                        <div class="sensor-label">Pin 6</div>
+                        <div class="sensor-label">Pin A2</div>
                         <div class="sensor-led"></div>
                         <div style="font-size: 0.7rem; color: #b8c5d6;">S1 (Left)</div>
                     </div>
                     <div class="sensor">
-                        <div class="sensor-label">Pin 7</div>
+                        <div class="sensor-label">Pin 0</div>
                         <div class="sensor-led"></div>
                         <div style="font-size: 0.7rem; color: #b8c5d6;">S2</div>
                     </div>
                     <div class="sensor">
-                        <div class="sensor-label">Pin 8</div>
+                        <div class="sensor-label">Pin 2</div>
                         <div class="sensor-led"></div>
                         <div style="font-size: 0.7rem; color: #b8c5d6;">S3 (Center)</div>
                     </div>
                     <div class="sensor">
-                        <div class="sensor-label">Pin 9</div>
+                        <div class="sensor-label">Pin 1</div>
                         <div class="sensor-led"></div>
                         <div style="font-size: 0.7rem; color: #b8c5d6;">S4</div>
                     </div>
                     <div class="sensor">
-                        <div class="sensor-label">Pin 10</div>
+                        <div class="sensor-label">Pin A3</div>
                         <div class="sensor-led"></div>
                         <div style="font-size: 0.7rem; color: #b8c5d6;">S5 (Right)</div>
                     </div>
@@ -552,30 +552,34 @@
                         </tr>
                         <tr>
                             <td><strong>S1</strong></td>
-                            <td>D6</td>
+                            <td>A2</td>
                             <td>Far Left</td>
                         </tr>
                         <tr>
                             <td><strong>S2</strong></td>
-                            <td>D7</td>
+                            <td>0</td>
                             <td>Left</td>
                         </tr>
                         <tr>
                             <td><strong>S3</strong></td>
-                            <td>D8</td>
+                            <td>2</td>
                             <td>Center</td>
                         </tr>
                         <tr>
                             <td><strong>S4</strong></td>
-                            <td>D9</td>
+                            <td>1</td>
                             <td>Right</td>
                         </tr>
                         <tr>
                             <td><strong>S5</strong></td>
-                            <td>D10</td>
+                            <td>A3</td>
                             <td>Far Right</td>
                         </tr>
                     </table>
+                </div>
+
+                <div class="warning-box">
+                    <strong>⚠ TX/RX Pin Conflict:</strong> Pins 0 and 1 (S2 and S4) are also the Arduino's TX/RX pins used by <code>Serial</code>. While these sensors are connected, <code>Serial.println()</code> output in the Serial Monitor may be garbled or missing. Disconnect S2 and S4 if you need clean serial output for debugging.
                 </div>
             </div>
         </div>
@@ -644,11 +648,11 @@
                 </div>
 
                 <div class="code-block"><span class="code-comment">// IR Sensor pin definitions</span>
-<span class="code-keyword">const int</span> SENSOR_1 = <span class="code-number">6</span>;   <span class="code-comment">// Far left</span>
-<span class="code-keyword">const int</span> SENSOR_2 = <span class="code-number">7</span>;   <span class="code-comment">// Left</span>
-<span class="code-keyword">const int</span> SENSOR_3 = <span class="code-number">8</span>;   <span class="code-comment">// Center</span>
-<span class="code-keyword">const int</span> SENSOR_4 = <span class="code-number">9</span>;   <span class="code-comment">// Right</span>
-<span class="code-keyword">const int</span> SENSOR_5 = <span class="code-number">10</span>;  <span class="code-comment">// Far right</span>
+<span class="code-keyword">const int</span> SENSOR_1 = <span class="code-number">A2</span>;   <span class="code-comment">// Far left</span>
+<span class="code-keyword">const int</span> SENSOR_2 = <span class="code-number">0</span>;    <span class="code-comment">// Left</span>
+<span class="code-keyword">const int</span> SENSOR_3 = <span class="code-number">2</span>;    <span class="code-comment">// Center</span>
+<span class="code-keyword">const int</span> SENSOR_4 = <span class="code-number">1</span>;    <span class="code-comment">// Right</span>
+<span class="code-keyword">const int</span> SENSOR_5 = <span class="code-number">A3</span>;   <span class="code-comment">// Far right</span>
 
 <span class="code-keyword">void</span> <span class="code-function">setup</span>() {
   <span class="code-comment">// Configure all sensor pins as inputs</span>
@@ -702,13 +706,13 @@
                         <td class="pattern-display" style="font-size: 1rem; letter-spacing: 5px;">01111</td>
                         <td><span style="color: #ff6b7a;">LOW</span> HIGH HIGH HIGH HIGH</td>
                         <td>Far left</td>
-                        <td style="color: #ff6b7a;">Turn right sharply</td>
+                        <td style="color: #ff6b7a;">Turn left sharply</td>
                     </tr>
                     <tr>
                         <td class="pattern-display" style="font-size: 1rem; letter-spacing: 5px;">10111</td>
                         <td>HIGH <span style="color: #ff6b7a;">LOW</span> HIGH HIGH HIGH</td>
                         <td>Slightly left</td>
-                        <td style="color: #f1fa8c;">Turn right slightly</td>
+                        <td style="color: #f1fa8c;">Turn left slightly</td>
                     </tr>
                     <tr>
                         <td class="pattern-display" style="font-size: 1rem; letter-spacing: 5px;">11011</td>
@@ -720,13 +724,13 @@
                         <td class="pattern-display" style="font-size: 1rem; letter-spacing: 5px;">11101</td>
                         <td>HIGH HIGH HIGH <span style="color: #ff6b7a;">LOW</span> HIGH</td>
                         <td>Slightly right</td>
-                        <td style="color: #f1fa8c;">Turn left slightly</td>
+                        <td style="color: #f1fa8c;">Turn right slightly</td>
                     </tr>
                     <tr>
                         <td class="pattern-display" style="font-size: 1rem; letter-spacing: 5px;">11110</td>
                         <td>HIGH HIGH HIGH HIGH <span style="color: #ff6b7a;">LOW</span></td>
                         <td>Far right</td>
-                        <td style="color: #ff6b7a;">Turn left sharply</td>
+                        <td style="color: #ff6b7a;">Turn right sharply</td>
                     </tr>
                     <tr>
                         <td class="pattern-display" style="font-size: 1rem; letter-spacing: 5px;">11111</td>
@@ -847,11 +851,11 @@
                 <div class="code-block" style="font-size: 0.85rem;"><span class="code-comment">// Complete IR Sensor Reading Example</span>
 
 <span class="code-comment">// Pin definitions</span>
-<span class="code-keyword">const int</span> SENSOR_1 = <span class="code-number">6</span>;
-<span class="code-keyword">const int</span> SENSOR_2 = <span class="code-number">7</span>;
-<span class="code-keyword">const int</span> SENSOR_3 = <span class="code-number">8</span>;
-<span class="code-keyword">const int</span> SENSOR_4 = <span class="code-number">9</span>;
-<span class="code-keyword">const int</span> SENSOR_5 = <span class="code-number">10</span>;
+<span class="code-keyword">const int</span> SENSOR_1 = <span class="code-number">A2</span>;
+<span class="code-keyword">const int</span> SENSOR_2 = <span class="code-number">0</span>;
+<span class="code-keyword">const int</span> SENSOR_3 = <span class="code-number">2</span>;
+<span class="code-keyword">const int</span> SENSOR_4 = <span class="code-number">1</span>;
+<span class="code-keyword">const int</span> SENSOR_5 = <span class="code-number">A3</span>;
 
 <span class="code-keyword">void</span> <span class="code-function">setup</span>() {
   <span class="code-comment">// Set all sensor pins as inputs</span>
@@ -910,11 +914,11 @@
                     <div style="position: relative;">
                         <button onclick="copyStarterCode()" style="position: absolute; top: 10px; right: 10px; background: #00d4ff; color: #0a0e27; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 0.9rem; z-index: 10;">Copy Code</button>
                         <div class="code-block" id="starter-code" style="font-size: 0.7rem; max-height: 200px; overflow-y: auto; margin-top: 0;"><span class="code-comment">// Lesson 7: IR Sensor Reading</span>
-<span class="code-keyword">const int</span> SENSOR_1 = <span class="code-number">6</span>;
-<span class="code-keyword">const int</span> SENSOR_2 = <span class="code-number">7</span>;
-<span class="code-keyword">const int</span> SENSOR_3 = <span class="code-number">8</span>;
-<span class="code-keyword">const int</span> SENSOR_4 = <span class="code-number">9</span>;
-<span class="code-keyword">const int</span> SENSOR_5 = <span class="code-number">10</span>;
+<span class="code-keyword">const int</span> SENSOR_1 = <span class="code-number">A2</span>;
+<span class="code-keyword">const int</span> SENSOR_2 = <span class="code-number">0</span>;
+<span class="code-keyword">const int</span> SENSOR_3 = <span class="code-number">2</span>;
+<span class="code-keyword">const int</span> SENSOR_4 = <span class="code-number">1</span>;
+<span class="code-keyword">const int</span> SENSOR_5 = <span class="code-number">A3</span>;
 
 <span class="code-keyword">void</span> <span class="code-function">setup</span>() {
   <span class="code-function">pinMode</span>(SENSOR_1, INPUT);
@@ -1114,11 +1118,11 @@
 // Starter Code for Lab Exercises
 
 // IR Sensor pin definitions
-const int SENSOR_1 = 6;   // Far left
-const int SENSOR_2 = 7;   // Left
-const int SENSOR_3 = 8;   // Center
-const int SENSOR_4 = 9;   // Right
-const int SENSOR_5 = 10;  // Far right
+const int SENSOR_1 = A2;   // Far left
+const int SENSOR_2 = 0;    // Left
+const int SENSOR_3 = 2;    // Center
+const int SENSOR_4 = 1;    // Right
+const int SENSOR_5 = A3;   // Far right
 
 void setup() {
   // Set all sensor pins as inputs

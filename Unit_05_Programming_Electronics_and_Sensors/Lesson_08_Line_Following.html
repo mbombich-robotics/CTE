@@ -558,32 +558,32 @@
                         <td style="color: #ff6b7a;">LOW</td>
                         <td style="color: #50fa7b;">HIGH</td>
                         <td style="color: #50fa7b;">HIGH</td>
-                        <td><strong>Line on Left</strong></td>
-                        <td style="color: #f1fa8c;">Turn Left</td>
+                        <td><strong>Line Far Left</strong></td>
+                        <td style="color: #ff6b7a;">Turn Left sharply</td>
                     </tr>
                     <tr>
                         <td style="font-family: 'JetBrains Mono', monospace;">0 0 1</td>
                         <td style="color: #ff6b7a;">LOW</td>
                         <td style="color: #ff6b7a;">LOW</td>
                         <td style="color: #50fa7b;">HIGH</td>
-                        <td><strong>Line Far Left</strong></td>
-                        <td style="color: #ff6b7a;">Turn Left</td>
+                        <td><strong>Line Slightly Left</strong></td>
+                        <td style="color: #f1fa8c;">Turn Left</td>
                     </tr>
                     <tr>
                         <td style="font-family: 'JetBrains Mono', monospace;">1 1 0</td>
                         <td style="color: #50fa7b;">HIGH</td>
                         <td style="color: #50fa7b;">HIGH</td>
                         <td style="color: #ff6b7a;">LOW</td>
-                        <td><strong>Line on Right</strong></td>
-                        <td style="color: #f1fa8c;">Turn Right</td>
+                        <td><strong>Line Far Right</strong></td>
+                        <td style="color: #ff6b7a;">Turn Right sharply</td>
                     </tr>
                     <tr>
                         <td style="font-family: 'JetBrains Mono', monospace;">1 0 0</td>
                         <td style="color: #50fa7b;">HIGH</td>
                         <td style="color: #ff6b7a;">LOW</td>
                         <td style="color: #ff6b7a;">LOW</td>
-                        <td><strong>Line Far Right</strong></td>
-                        <td style="color: #ff6b7a;">Turn Right</td>
+                        <td><strong>Line Slightly Right</strong></td>
+                        <td style="color: #f1fa8c;">Turn Right</td>
                     </tr>
                     <tr>
                         <td style="font-family: 'JetBrains Mono', monospace;">1 1 1</td>
@@ -612,7 +612,7 @@
                     <p style="font-size: 1.2rem; margin: 15px 0;">If the <span class="highlight">center sensor</span> detects the line (LOW), the robot should <span class="emphasis">go straight</span>.</p>
                 </div>
 
-                <div class="code-block"><span class="code-comment">// Read center sensor (S3 on pin 8)</span>
+                <div class="code-block"><span class="code-comment">// Read center sensor (S3 on pin 2)</span>
 <span class="code-keyword">int</span> centerSensor = <span class="code-function">digitalRead</span>(SENSOR_3);
 
 <span class="code-keyword">if</span> (centerSensor == <span class="code-number">LOW</span>) {
@@ -657,9 +657,9 @@
                 </div>
 
                 <div class="code-block"><span class="code-comment">// Read left and right sensors</span>
-<span class="code-keyword">int</span> leftSensor = <span class="code-function">digitalRead</span>(SENSOR_2);   <span class="code-comment">// Pin 7</span>
-<span class="code-keyword">int</span> rightSensor = <span class="code-function">digitalRead</span>(SENSOR_4);  <span class="code-comment">// Pin 9</span>
-<span class="code-keyword">int</span> centerSensor = <span class="code-function">digitalRead</span>(SENSOR_3);  <span class="code-comment">// Pin 8</span>
+<span class="code-keyword">int</span> leftSensor = <span class="code-function">digitalRead</span>(SENSOR_2);   <span class="code-comment">// Pin 0</span>
+<span class="code-keyword">int</span> rightSensor = <span class="code-function">digitalRead</span>(SENSOR_4);  <span class="code-comment">// Pin 1</span>
+<span class="code-keyword">int</span> centerSensor = <span class="code-function">digitalRead</span>(SENSOR_3);  <span class="code-comment">// Pin 2</span>
 
 <span class="code-keyword">if</span> (centerSensor == <span class="code-number">LOW</span>) {
   <span class="code-comment">// Line is centered - go straight</span>
@@ -786,23 +786,27 @@
             <div class="content">
                 <div class="code-block" style="font-size: 0.75rem; max-height: 400px;"><span class="code-comment">// 3-Sensor Line Following Robot</span>
 
-<span class="code-comment">// Motor pins</span>
-<span class="code-keyword">const int</span> LEFT_MOTOR_PIN1 = <span class="code-number">2</span>;
-<span class="code-keyword">const int</span> LEFT_MOTOR_PIN2 = <span class="code-number">3</span>;
-<span class="code-keyword">const int</span> RIGHT_MOTOR_PIN1 = <span class="code-number">4</span>;
-<span class="code-keyword">const int</span> RIGHT_MOTOR_PIN2 = <span class="code-number">5</span>;
+<span class="code-comment">// Motor pins - 3-pin motor controller (INA, INB, PWM)</span>
+<span class="code-keyword">const int</span> LEFT_MOTOR_INA = <span class="code-number">8</span>;
+<span class="code-keyword">const int</span> LEFT_MOTOR_INB = <span class="code-number">7</span>;
+<span class="code-keyword">const int</span> LEFT_MOTOR_PWM = <span class="code-number">5</span>;
+<span class="code-keyword">const int</span> RIGHT_MOTOR_INA = <span class="code-number">6</span>;
+<span class="code-keyword">const int</span> RIGHT_MOTOR_INB = <span class="code-number">4</span>;
+<span class="code-keyword">const int</span> RIGHT_MOTOR_PWM = <span class="code-number">3</span>;
 
 <span class="code-comment">// Sensor pins (using 3 sensors)</span>
-<span class="code-keyword">const int</span> SENSOR_LEFT = <span class="code-number">7</span>;      <span class="code-comment">// S2</span>
-<span class="code-keyword">const int</span> SENSOR_CENTER = <span class="code-number">8</span>;    <span class="code-comment">// S3</span>
-<span class="code-keyword">const int</span> SENSOR_RIGHT = <span class="code-number">9</span>;     <span class="code-comment">// S4</span>
+<span class="code-keyword">const int</span> SENSOR_LEFT = <span class="code-number">0</span>;       <span class="code-comment">// S2</span>
+<span class="code-keyword">const int</span> SENSOR_CENTER = <span class="code-number">2</span>;     <span class="code-comment">// S3</span>
+<span class="code-keyword">const int</span> SENSOR_RIGHT = <span class="code-number">1</span>;      <span class="code-comment">// S4</span>
 
 <span class="code-keyword">void</span> <span class="code-function">setup</span>() {
   <span class="code-comment">// Motor pins as outputs</span>
-  <span class="code-function">pinMode</span>(LEFT_MOTOR_PIN1, OUTPUT);
-  <span class="code-function">pinMode</span>(LEFT_MOTOR_PIN2, OUTPUT);
-  <span class="code-function">pinMode</span>(RIGHT_MOTOR_PIN1, OUTPUT);
-  <span class="code-function">pinMode</span>(RIGHT_MOTOR_PIN2, OUTPUT);
+  <span class="code-function">pinMode</span>(LEFT_MOTOR_INA, OUTPUT);
+  <span class="code-function">pinMode</span>(LEFT_MOTOR_INB, OUTPUT);
+  <span class="code-function">pinMode</span>(LEFT_MOTOR_PWM, OUTPUT);
+  <span class="code-function">pinMode</span>(RIGHT_MOTOR_INA, OUTPUT);
+  <span class="code-function">pinMode</span>(RIGHT_MOTOR_INB, OUTPUT);
+  <span class="code-function">pinMode</span>(RIGHT_MOTOR_PWM, OUTPUT);
 
   <span class="code-comment">// Sensor pins as inputs</span>
   <span class="code-function">pinMode</span>(SENSOR_LEFT, INPUT);
@@ -837,31 +841,39 @@
 
 <span class="code-comment">// Motor control functions (from Lesson 6)</span>
 <span class="code-keyword">void</span> <span class="code-function">moveForward</span>(<span class="code-keyword">int</span> speed) {
-  <span class="code-function">analogWrite</span>(LEFT_MOTOR_PIN1, speed);
-  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
-  <span class="code-function">analogWrite</span>(RIGHT_MOTOR_PIN1, speed);
-  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, LOW);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_INA, LOW);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_INB, HIGH);
+  <span class="code-function">analogWrite</span>(LEFT_MOTOR_PWM, speed);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_INA, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_INB, HIGH);
+  <span class="code-function">analogWrite</span>(RIGHT_MOTOR_PWM, speed);
 }
 
 <span class="code-keyword">void</span> <span class="code-function">turnLeft</span>() {
-  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, LOW);
-  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, HIGH);
-  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, HIGH);
-  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, LOW);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_INA, HIGH);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_INB, LOW);
+  <span class="code-function">analogWrite</span>(LEFT_MOTOR_PWM, <span class="code-number">150</span>);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_INA, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_INB, HIGH);
+  <span class="code-function">analogWrite</span>(RIGHT_MOTOR_PWM, <span class="code-number">150</span>);
 }
 
 <span class="code-keyword">void</span> <span class="code-function">turnRight</span>() {
-  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, HIGH);
-  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
-  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, LOW);
-  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, HIGH);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_INA, LOW);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_INB, HIGH);
+  <span class="code-function">analogWrite</span>(LEFT_MOTOR_PWM, <span class="code-number">150</span>);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_INA, HIGH);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_INB, LOW);
+  <span class="code-function">analogWrite</span>(RIGHT_MOTOR_PWM, <span class="code-number">150</span>);
 }
 
 <span class="code-keyword">void</span> <span class="code-function">stopMotors</span>() {
-  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, LOW);
-  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
-  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, LOW);
-  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, LOW);
+  <span class="code-function">analogWrite</span>(LEFT_MOTOR_PWM, <span class="code-number">0</span>);
+  <span class="code-function">analogWrite</span>(RIGHT_MOTOR_PWM, <span class="code-number">0</span>);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_INA, LOW);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_INB, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_INA, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_INB, LOW);
 }</div>
             </div>
         </div>
@@ -942,22 +954,26 @@
                         <button onclick="copyStarterCode()" style="position: absolute; top: 10px; right: 10px; background: #00d4ff; color: #0a0e27; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 0.9rem; z-index: 10;">Copy Code</button>
                         <div class="code-block" id="starter-code" style="font-size: 0.65rem; max-height: 250px; overflow-y: auto; margin-top: 0;"><span class="code-comment">// Lesson 8: Basic Line Following - Starter Code</span>
 
-<span class="code-comment">// Motor pins</span>
-<span class="code-keyword">const int</span> LEFT_MOTOR_PIN1 = <span class="code-number">2</span>;
-<span class="code-keyword">const int</span> LEFT_MOTOR_PIN2 = <span class="code-number">3</span>;
-<span class="code-keyword">const int</span> RIGHT_MOTOR_PIN1 = <span class="code-number">4</span>;
-<span class="code-keyword">const int</span> RIGHT_MOTOR_PIN2 = <span class="code-number">5</span>;
+<span class="code-comment">// Motor pins - 3-pin motor controller (INA, INB, PWM)</span>
+<span class="code-keyword">const int</span> LEFT_MOTOR_INA = <span class="code-number">8</span>;
+<span class="code-keyword">const int</span> LEFT_MOTOR_INB = <span class="code-number">7</span>;
+<span class="code-keyword">const int</span> LEFT_MOTOR_PWM = <span class="code-number">5</span>;
+<span class="code-keyword">const int</span> RIGHT_MOTOR_INA = <span class="code-number">6</span>;
+<span class="code-keyword">const int</span> RIGHT_MOTOR_INB = <span class="code-number">4</span>;
+<span class="code-keyword">const int</span> RIGHT_MOTOR_PWM = <span class="code-number">3</span>;
 
 <span class="code-comment">// Sensor pins</span>
-<span class="code-keyword">const int</span> SENSOR_LEFT = <span class="code-number">7</span>;
-<span class="code-keyword">const int</span> SENSOR_CENTER = <span class="code-number">8</span>;
-<span class="code-keyword">const int</span> SENSOR_RIGHT = <span class="code-number">9</span>;
+<span class="code-keyword">const int</span> SENSOR_LEFT = <span class="code-number">0</span>;
+<span class="code-keyword">const int</span> SENSOR_CENTER = <span class="code-number">2</span>;
+<span class="code-keyword">const int</span> SENSOR_RIGHT = <span class="code-number">1</span>;
 
 <span class="code-keyword">void</span> <span class="code-function">setup</span>() {
-  <span class="code-function">pinMode</span>(LEFT_MOTOR_PIN1, OUTPUT);
-  <span class="code-function">pinMode</span>(LEFT_MOTOR_PIN2, OUTPUT);
-  <span class="code-function">pinMode</span>(RIGHT_MOTOR_PIN1, OUTPUT);
-  <span class="code-function">pinMode</span>(RIGHT_MOTOR_PIN2, OUTPUT);
+  <span class="code-function">pinMode</span>(LEFT_MOTOR_INA, OUTPUT);
+  <span class="code-function">pinMode</span>(LEFT_MOTOR_INB, OUTPUT);
+  <span class="code-function">pinMode</span>(LEFT_MOTOR_PWM, OUTPUT);
+  <span class="code-function">pinMode</span>(RIGHT_MOTOR_INA, OUTPUT);
+  <span class="code-function">pinMode</span>(RIGHT_MOTOR_INB, OUTPUT);
+  <span class="code-function">pinMode</span>(RIGHT_MOTOR_PWM, OUTPUT);
   <span class="code-function">pinMode</span>(SENSOR_LEFT, INPUT);
   <span class="code-function">pinMode</span>(SENSOR_CENTER, INPUT);
   <span class="code-function">pinMode</span>(SENSOR_RIGHT, INPUT);
@@ -972,31 +988,39 @@
 
 <span class="code-comment">// Motor control functions</span>
 <span class="code-keyword">void</span> <span class="code-function">moveForward</span>(<span class="code-keyword">int</span> speed) {
-  <span class="code-function">analogWrite</span>(LEFT_MOTOR_PIN1, speed);
-  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
-  <span class="code-function">analogWrite</span>(RIGHT_MOTOR_PIN1, speed);
-  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, LOW);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_INA, LOW);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_INB, HIGH);
+  <span class="code-function">analogWrite</span>(LEFT_MOTOR_PWM, speed);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_INA, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_INB, HIGH);
+  <span class="code-function">analogWrite</span>(RIGHT_MOTOR_PWM, speed);
 }
 
 <span class="code-keyword">void</span> <span class="code-function">turnLeft</span>() {
-  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, LOW);
-  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, HIGH);
-  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, HIGH);
-  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, LOW);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_INA, HIGH);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_INB, LOW);
+  <span class="code-function">analogWrite</span>(LEFT_MOTOR_PWM, <span class="code-number">150</span>);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_INA, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_INB, HIGH);
+  <span class="code-function">analogWrite</span>(RIGHT_MOTOR_PWM, <span class="code-number">150</span>);
 }
 
 <span class="code-keyword">void</span> <span class="code-function">turnRight</span>() {
-  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, HIGH);
-  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
-  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, LOW);
-  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, HIGH);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_INA, LOW);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_INB, HIGH);
+  <span class="code-function">analogWrite</span>(LEFT_MOTOR_PWM, <span class="code-number">150</span>);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_INA, HIGH);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_INB, LOW);
+  <span class="code-function">analogWrite</span>(RIGHT_MOTOR_PWM, <span class="code-number">150</span>);
 }
 
 <span class="code-keyword">void</span> <span class="code-function">stopMotors</span>() {
-  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, LOW);
-  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
-  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, LOW);
-  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, LOW);
+  <span class="code-function">analogWrite</span>(LEFT_MOTOR_PWM, <span class="code-number">0</span>);
+  <span class="code-function">analogWrite</span>(RIGHT_MOTOR_PWM, <span class="code-number">0</span>);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_INA, LOW);
+  <span class="code-function">digitalWrite</span>(LEFT_MOTOR_INB, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_INA, LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_INB, LOW);
 }</div>
                     </div>
                 </div>
@@ -1170,23 +1194,29 @@
             const codeText = `// Lesson 8: Basic Line Following
 // Starter Code for Lab Exercises
 
-// Motor pin definitions
-const int LEFT_MOTOR_PIN1 = 2;
-const int LEFT_MOTOR_PIN2 = 3;
-const int RIGHT_MOTOR_PIN1 = 4;
-const int RIGHT_MOTOR_PIN2 = 5;
+// Motor pin definitions - 3-pin motor controller (INA, INB, PWM)
+const int LEFT_MOTOR_INA = 8;
+const int LEFT_MOTOR_INB = 7;
+const int LEFT_MOTOR_PWM = 5;
+
+const int RIGHT_MOTOR_INA = 6;
+const int RIGHT_MOTOR_INB = 4;
+const int RIGHT_MOTOR_PWM = 3;
 
 // Sensor pin definitions (3-sensor approach)
-const int SENSOR_LEFT = 7;    // S2
-const int SENSOR_CENTER = 8;  // S3
-const int SENSOR_RIGHT = 9;   // S4
+const int SENSOR_LEFT = 0;    // S2
+const int SENSOR_CENTER = 2;  // S3
+const int SENSOR_RIGHT = 1;   // S4
 
 void setup() {
-  // Set motor pins as outputs
-  pinMode(LEFT_MOTOR_PIN1, OUTPUT);
-  pinMode(LEFT_MOTOR_PIN2, OUTPUT);
-  pinMode(RIGHT_MOTOR_PIN1, OUTPUT);
-  pinMode(RIGHT_MOTOR_PIN2, OUTPUT);
+  // Set all motor pins as outputs
+  pinMode(LEFT_MOTOR_INA, OUTPUT);
+  pinMode(LEFT_MOTOR_INB, OUTPUT);
+  pinMode(LEFT_MOTOR_PWM, OUTPUT);
+
+  pinMode(RIGHT_MOTOR_INA, OUTPUT);
+  pinMode(RIGHT_MOTOR_INB, OUTPUT);
+  pinMode(RIGHT_MOTOR_PWM, OUTPUT);
 
   // Set sensor pins as inputs
   pinMode(SENSOR_LEFT, INPUT);
@@ -1224,31 +1254,49 @@ void loop() {
 
 // Motor control functions
 void moveForward(int speed) {
-  analogWrite(LEFT_MOTOR_PIN1, speed);
-  digitalWrite(LEFT_MOTOR_PIN2, LOW);
-  analogWrite(RIGHT_MOTOR_PIN1, speed);
-  digitalWrite(RIGHT_MOTOR_PIN2, LOW);
+  // Left motor forward
+  digitalWrite(LEFT_MOTOR_INA, LOW);
+  digitalWrite(LEFT_MOTOR_INB, HIGH);
+  analogWrite(LEFT_MOTOR_PWM, speed);
+
+  // Right motor forward
+  digitalWrite(RIGHT_MOTOR_INA, LOW);
+  digitalWrite(RIGHT_MOTOR_INB, HIGH);
+  analogWrite(RIGHT_MOTOR_PWM, speed);
 }
 
 void turnLeft() {
-  digitalWrite(LEFT_MOTOR_PIN1, LOW);
-  digitalWrite(LEFT_MOTOR_PIN2, HIGH);
-  digitalWrite(RIGHT_MOTOR_PIN1, HIGH);
-  digitalWrite(RIGHT_MOTOR_PIN2, LOW);
+  // Left motor backward, right motor forward
+  digitalWrite(LEFT_MOTOR_INA, HIGH);
+  digitalWrite(LEFT_MOTOR_INB, LOW);
+  analogWrite(LEFT_MOTOR_PWM, 150);
+
+  digitalWrite(RIGHT_MOTOR_INA, LOW);
+  digitalWrite(RIGHT_MOTOR_INB, HIGH);
+  analogWrite(RIGHT_MOTOR_PWM, 150);
 }
 
 void turnRight() {
-  digitalWrite(LEFT_MOTOR_PIN1, HIGH);
-  digitalWrite(LEFT_MOTOR_PIN2, LOW);
-  digitalWrite(RIGHT_MOTOR_PIN1, LOW);
-  digitalWrite(RIGHT_MOTOR_PIN2, HIGH);
+  // Left motor forward, right motor backward
+  digitalWrite(LEFT_MOTOR_INA, LOW);
+  digitalWrite(LEFT_MOTOR_INB, HIGH);
+  analogWrite(LEFT_MOTOR_PWM, 150);
+
+  digitalWrite(RIGHT_MOTOR_INA, HIGH);
+  digitalWrite(RIGHT_MOTOR_INB, LOW);
+  analogWrite(RIGHT_MOTOR_PWM, 150);
 }
 
 void stopMotors() {
-  digitalWrite(LEFT_MOTOR_PIN1, LOW);
-  digitalWrite(LEFT_MOTOR_PIN2, LOW);
-  digitalWrite(RIGHT_MOTOR_PIN1, LOW);
-  digitalWrite(RIGHT_MOTOR_PIN2, LOW);
+  // Stop both motors by setting PWM to 0
+  analogWrite(LEFT_MOTOR_PWM, 0);
+  analogWrite(RIGHT_MOTOR_PWM, 0);
+
+  // Set direction pins to LOW (coast mode)
+  digitalWrite(LEFT_MOTOR_INA, LOW);
+  digitalWrite(LEFT_MOTOR_INB, LOW);
+  digitalWrite(RIGHT_MOTOR_INA, LOW);
+  digitalWrite(RIGHT_MOTOR_INB, LOW);
 }`;
 
             navigator.clipboard.writeText(codeText).then(function() {
