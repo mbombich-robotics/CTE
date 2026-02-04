@@ -10,10 +10,12 @@ const int RIGHT_MOTOR_INA = 6;
 const int RIGHT_MOTOR_INB = 4;
 const int RIGHT_MOTOR_PWM = 3;
 
-// Sensor pin definitions (3-sensor approach)
-const int SENSOR_LEFT = 0;    // S2
-const int SENSOR_CENTER = 2;  // S3
-const int SENSOR_RIGHT = 1;   // S4
+// Sensor pin definitions
+const int SENSOR_1 = A2;   // S1 - Far left
+const int SENSOR_2 = 0;    // S2 - Left
+const int SENSOR_3 = 2;    // S3 - Center
+const int SENSOR_4 = 1;    // S4 - Right
+const int SENSOR_5 = A3;   // S5 - Far right
 
 void setup() {
   // Set all motor pins as outputs
@@ -26,36 +28,40 @@ void setup() {
   pinMode(RIGHT_MOTOR_PWM, OUTPUT);
 
   // Set sensor pins as inputs
-  pinMode(SENSOR_LEFT, INPUT);
-  pinMode(SENSOR_CENTER, INPUT);
-  pinMode(SENSOR_RIGHT, INPUT);
+  pinMode(SENSOR_1, INPUT);
+  pinMode(SENSOR_2, INPUT);
+  pinMode(SENSOR_3, INPUT);
+  pinMode(SENSOR_4, INPUT);
+  pinMode(SENSOR_5, INPUT);
 
   // Optional: Serial for debugging
   Serial.begin(9600);
 }
 
 void loop() {
-  // TODO: Read all three sensors
-  // int left = digitalRead(SENSOR_LEFT);
-  // int center = digitalRead(SENSOR_CENTER);
-  // int right = digitalRead(SENSOR_RIGHT);
+  // Step 1: Read all 5 sensors
+  // digitalRead() returns LOW (0) when the sensor detects the black line
+  int s1 = digitalRead(SENSOR_1);  // Far left
+  int s2 = digitalRead(SENSOR_2);  // Left
+  int s3 = digitalRead(SENSOR_3);  // Center
+  int s4 = digitalRead(SENSOR_4);  // Right
+  int s5 = digitalRead(SENSOR_5);  // Far right
 
-  // TODO: Add your decision logic here!
-  // if (center == LOW) {
-  //   // Line is centered
-  //   moveForward(150);
+  // Step 2: Add your decision logic here!
+  // Start simple: check the center sensor first, then left and right
+  // Hint: if (s3 == LOW) means the center sensor detects the line
+
+  // if (s3 == LOW) {
+  //   moveForward(150);       // Line is centered - go straight!
   // }
-  // else if (left == LOW) {
-  //   // Line is on left
-  //   turnLeft();
+  // else if (s2 == LOW || s1 == LOW) {
+  //   turnLeft();             // Line is on the left - turn left
   // }
-  // else if (right == LOW) {
-  //   // Line is on right
-  //   turnRight();
+  // else if (s4 == LOW || s5 == LOW) {
+  //   turnRight();            // Line is on the right - turn right
   // }
   // else {
-  //   // No line detected
-  //   stopMotors();
+  //   stopMotors();           // No line detected - stop
   // }
 }
 

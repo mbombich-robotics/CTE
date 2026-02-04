@@ -963,9 +963,11 @@
 <span class="code-keyword">const int</span> RIGHT_MOTOR_PWM = <span class="code-number">3</span>;
 
 <span class="code-comment">// Sensor pins</span>
-<span class="code-keyword">const int</span> SENSOR_LEFT = <span class="code-number">0</span>;
-<span class="code-keyword">const int</span> SENSOR_CENTER = <span class="code-number">2</span>;
-<span class="code-keyword">const int</span> SENSOR_RIGHT = <span class="code-number">1</span>;
+<span class="code-keyword">const int</span> SENSOR_1 = <span class="code-number">A2</span>;   <span class="code-comment">// S1 - Far left</span>
+<span class="code-keyword">const int</span> SENSOR_2 = <span class="code-number">0</span>;    <span class="code-comment">// S2 - Left</span>
+<span class="code-keyword">const int</span> SENSOR_3 = <span class="code-number">2</span>;    <span class="code-comment">// S3 - Center</span>
+<span class="code-keyword">const int</span> SENSOR_4 = <span class="code-number">1</span>;    <span class="code-comment">// S4 - Right</span>
+<span class="code-keyword">const int</span> SENSOR_5 = <span class="code-number">A3</span>;   <span class="code-comment">// S5 - Far right</span>
 
 <span class="code-keyword">void</span> <span class="code-function">setup</span>() {
   <span class="code-function">pinMode</span>(LEFT_MOTOR_INA, OUTPUT);
@@ -974,16 +976,38 @@
   <span class="code-function">pinMode</span>(RIGHT_MOTOR_INA, OUTPUT);
   <span class="code-function">pinMode</span>(RIGHT_MOTOR_INB, OUTPUT);
   <span class="code-function">pinMode</span>(RIGHT_MOTOR_PWM, OUTPUT);
-  <span class="code-function">pinMode</span>(SENSOR_LEFT, INPUT);
-  <span class="code-function">pinMode</span>(SENSOR_CENTER, INPUT);
-  <span class="code-function">pinMode</span>(SENSOR_RIGHT, INPUT);
+  <span class="code-function">pinMode</span>(SENSOR_1, INPUT);
+  <span class="code-function">pinMode</span>(SENSOR_2, INPUT);
+  <span class="code-function">pinMode</span>(SENSOR_3, INPUT);
+  <span class="code-function">pinMode</span>(SENSOR_4, INPUT);
+  <span class="code-function">pinMode</span>(SENSOR_5, INPUT);
 }
 
 <span class="code-keyword">void</span> <span class="code-function">loop</span>() {
-  <span class="code-comment">// TODO: Read sensor values</span>
+  <span class="code-comment">// Step 1: Read all 5 sensors</span>
+  <span class="code-comment">// digitalRead() returns LOW (0) when sensor detects the black line</span>
+  <span class="code-keyword">int</span> s1 = <span class="code-function">digitalRead</span>(SENSOR_1);  <span class="code-comment">// Far left</span>
+  <span class="code-keyword">int</span> s2 = <span class="code-function">digitalRead</span>(SENSOR_2);  <span class="code-comment">// Left</span>
+  <span class="code-keyword">int</span> s3 = <span class="code-function">digitalRead</span>(SENSOR_3);  <span class="code-comment">// Center</span>
+  <span class="code-keyword">int</span> s4 = <span class="code-function">digitalRead</span>(SENSOR_4);  <span class="code-comment">// Right</span>
+  <span class="code-keyword">int</span> s5 = <span class="code-function">digitalRead</span>(SENSOR_5);  <span class="code-comment">// Far right</span>
 
-  <span class="code-comment">// TODO: Add decision logic here</span>
+  <span class="code-comment">// Step 2: Add your decision logic here!</span>
+  <span class="code-comment">// Start simple: check center first, then left and right</span>
+  <span class="code-comment">// Hint: if (s3 == LOW) means the center sensor detects the line</span>
 
+  <span class="code-comment">// if (s3 == LOW) {</span>
+  <span class="code-comment">//   moveForward(150);       // Line is centered - go straight!</span>
+  <span class="code-comment">// }</span>
+  <span class="code-comment">// else if (s2 == LOW || s1 == LOW) {</span>
+  <span class="code-comment">//   turnLeft();             // Line is on the left - turn left</span>
+  <span class="code-comment">// }</span>
+  <span class="code-comment">// else if (s4 == LOW || s5 == LOW) {</span>
+  <span class="code-comment">//   turnRight();            // Line is on the right - turn right</span>
+  <span class="code-comment">// }</span>
+  <span class="code-comment">// else {</span>
+  <span class="code-comment">//   stopMotors();           // No line detected - stop</span>
+  <span class="code-comment">// }</span>
 }
 
 <span class="code-comment">// Motor control functions</span>
@@ -1203,10 +1227,12 @@ const int RIGHT_MOTOR_INA = 6;
 const int RIGHT_MOTOR_INB = 4;
 const int RIGHT_MOTOR_PWM = 3;
 
-// Sensor pin definitions (3-sensor approach)
-const int SENSOR_LEFT = 0;    // S2
-const int SENSOR_CENTER = 2;  // S3
-const int SENSOR_RIGHT = 1;   // S4
+// Sensor pin definitions
+const int SENSOR_1 = A2;   // S1 - Far left
+const int SENSOR_2 = 0;    // S2 - Left
+const int SENSOR_3 = 2;    // S3 - Center
+const int SENSOR_4 = 1;    // S4 - Right
+const int SENSOR_5 = A3;   // S5 - Far right
 
 void setup() {
   // Set all motor pins as outputs
@@ -1219,36 +1245,40 @@ void setup() {
   pinMode(RIGHT_MOTOR_PWM, OUTPUT);
 
   // Set sensor pins as inputs
-  pinMode(SENSOR_LEFT, INPUT);
-  pinMode(SENSOR_CENTER, INPUT);
-  pinMode(SENSOR_RIGHT, INPUT);
+  pinMode(SENSOR_1, INPUT);
+  pinMode(SENSOR_2, INPUT);
+  pinMode(SENSOR_3, INPUT);
+  pinMode(SENSOR_4, INPUT);
+  pinMode(SENSOR_5, INPUT);
 
   // Optional: Serial for debugging
   Serial.begin(9600);
 }
 
 void loop() {
-  // TODO: Read all three sensors
-  // int left = digitalRead(SENSOR_LEFT);
-  // int center = digitalRead(SENSOR_CENTER);
-  // int right = digitalRead(SENSOR_RIGHT);
+  // Step 1: Read all 5 sensors
+  // digitalRead() returns LOW (0) when the sensor detects the black line
+  int s1 = digitalRead(SENSOR_1);  // Far left
+  int s2 = digitalRead(SENSOR_2);  // Left
+  int s3 = digitalRead(SENSOR_3);  // Center
+  int s4 = digitalRead(SENSOR_4);  // Right
+  int s5 = digitalRead(SENSOR_5);  // Far right
 
-  // TODO: Add your decision logic here!
-  // if (center == LOW) {
-  //   // Line is centered
-  //   moveForward(150);
+  // Step 2: Add your decision logic here!
+  // Start simple: check the center sensor first, then left and right
+  // Hint: if (s3 == LOW) means the center sensor detects the line
+
+  // if (s3 == LOW) {
+  //   moveForward(150);       // Line is centered - go straight!
   // }
-  // else if (left == LOW) {
-  //   // Line is on left
-  //   turnLeft();
+  // else if (s2 == LOW || s1 == LOW) {
+  //   turnLeft();             // Line is on the left - turn left
   // }
-  // else if (right == LOW) {
-  //   // Line is on right
-  //   turnRight();
+  // else if (s4 == LOW || s5 == LOW) {
+  //   turnRight();            // Line is on the right - turn right
   // }
   // else {
-  //   // No line detected
-  //   stopMotors();
+  //   stopMotors();           // No line detected - stop
   // }
 }
 
