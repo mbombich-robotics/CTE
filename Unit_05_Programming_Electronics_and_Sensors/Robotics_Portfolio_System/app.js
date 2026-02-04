@@ -629,6 +629,7 @@ async function saveToCloud() {
     }
     if (!state.student) return;
 
+    captureReflectionFormData();
     setSaveIndicator('saving');
 
     try {
@@ -969,6 +970,7 @@ function initWeeklyReflectionForm() {
 }
 
 function selectWeek(week) {
+    captureReflectionFormData();
     state.selectedWeek = week;
     document.getElementById('reflectionWeek').value = week;
     updateWeekButtons();
@@ -1081,6 +1083,17 @@ function getReflectionFormData() {
         goals,
         updatedAt: new Date().toISOString()
     };
+}
+
+function captureReflectionFormData() {
+    if (!state.selectedWeek) return;
+    const data = getReflectionFormData();
+    const existing = state.weeklyReflections[state.selectedWeek];
+    if (existing) {
+        data.submitted = existing.submitted;
+        data.submittedAt = existing.submittedAt;
+    }
+    state.weeklyReflections[state.selectedWeek] = data;
 }
 
 function saveReflectionDraft() {
