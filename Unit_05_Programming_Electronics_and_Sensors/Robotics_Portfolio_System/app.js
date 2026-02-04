@@ -499,6 +499,7 @@ let state = {
 
 let autoSaveTimer = null;
 let isDirty = false;
+let formInitialized = false; // Track if reflection form has been populated
 
 // ============================================
 // GOOGLE SIGN-IN INITIALIZATION
@@ -580,6 +581,7 @@ function signOut() {
             selectedWeek: 1
         };
         isDirty = false;
+        formInitialized = false;
 
         // Reset sidebar
         document.getElementById('saveStatus').style.display = 'none';
@@ -970,7 +972,11 @@ function initWeeklyReflectionForm() {
 }
 
 function selectWeek(week) {
-    captureReflectionFormData();
+    // Only capture form data if form has been populated (not on initial load)
+    if (formInitialized) {
+        captureReflectionFormData();
+    }
+
     state.selectedWeek = week;
     document.getElementById('reflectionWeek').value = week;
     updateWeekButtons();
@@ -982,6 +988,9 @@ function selectWeek(week) {
     } else {
         clearReflectionForm();
     }
+
+    // Mark form as initialized after first load
+    formInitialized = true;
 }
 
 function addContributionRow() {
