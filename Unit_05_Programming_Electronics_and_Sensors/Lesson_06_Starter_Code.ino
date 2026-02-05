@@ -10,16 +10,7 @@ const int RIGHT_MOTOR_INA = 6;   // Right Motor Direction A
 const int RIGHT_MOTOR_INB = 4;   // Right Motor Direction B
 const int RIGHT_MOTOR_PWM = 3;   // Right Motor Speed (PWM)
 
-// IR sensor pin definitions
-const int IR_1 = A2;             // IR 1 sensor input
-const int IR_2 = 0;              // IR 2 sensor input
-const int IR_3 = 2;              // IR 3 sensor input
-const int IR_4 = 1;              // IR 4 sensor input
-const int IR_5 = A3;             // IR 5 sensor input
-
 void setup() {
-  Serial.begin(9600);
-
   // Set all motor pins as outputs
   pinMode(LEFT_MOTOR_INA, OUTPUT);
   pinMode(LEFT_MOTOR_INB, OUTPUT);
@@ -28,13 +19,6 @@ void setup() {
   pinMode(RIGHT_MOTOR_INA, OUTPUT);
   pinMode(RIGHT_MOTOR_INB, OUTPUT);
   pinMode(RIGHT_MOTOR_PWM, OUTPUT);
-
-  // Set IR sensor pins as inputs
-  pinMode(IR_1, INPUT);
-  pinMode(IR_2, INPUT);
-  pinMode(IR_3, INPUT);
-  pinMode(IR_4, INPUT);
-  pinMode(IR_5, INPUT);
 
   // Safe startup: motors off, coast
   digitalWrite(LEFT_MOTOR_INA, LOW);
@@ -108,37 +92,13 @@ void stopMotors() {
 // ===== MAIN PROGRAM =====
 
 void loop() {
-  // Read and print IR sensors as a 5-bit pattern (IR5 IR4 IR3 IR2 IR1)
-  // Open Serial Monitor (9600 baud) to see sensor values
-  if (digitalRead(IR_5) == HIGH) {
-    Serial.print("1");
-  } else {
-    Serial.print("0");
-  }
+  // Test movement: Move forward for 2 seconds
+  moveForward(150);
+  delay(2000);
+  stopMotors();
+  delay(1000);  // Pause between movements
 
-  if (digitalRead(IR_4) == HIGH) {
-    Serial.print("1");
-  } else {
-    Serial.print("0");
-  }
+  // Add your code here for the lab exercises!
 
-  if (digitalRead(IR_3) == HIGH) {
-    Serial.print("1");
-  } else {
-    Serial.print("0");
-  }
-
-  if (digitalRead(IR_2) == HIGH) {
-    Serial.print("1");
-  } else {
-    Serial.print("0");
-  }
-
-  if (digitalRead(IR_1) == HIGH) {
-    Serial.println("1");
-  } else {
-    Serial.println("0");
-  }
-
-  delay(500);
+  delay(5000);  // Wait before repeating
 }
