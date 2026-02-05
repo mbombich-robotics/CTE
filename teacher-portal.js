@@ -117,6 +117,9 @@ function initEventListeners() {
 
     // Sign out
     document.getElementById('signOutBtn').addEventListener('click', signOut);
+
+    // Grade entry
+    initGradeEntry();
 }
 
 // ============================================
@@ -673,4 +676,235 @@ function debounce(func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
     };
+}
+
+// ============================================
+// GRADE ENTRY
+// ============================================
+function initGradeEntry() {
+    document.getElementById('gradeEntryBtn').addEventListener('click', openGradeEntry);
+    document.getElementById('closeGradeModal').addEventListener('click', closeGradeEntry);
+    document.getElementById('gradeEntryModal').addEventListener('click', (e) => {
+        if (e.target.id === 'gradeEntryModal') closeGradeEntry();
+    });
+    document.getElementById('assignmentType').addEventListener('change', updateAssignmentSelect);
+    document.getElementById('assignmentSelect').addEventListener('change', loadGradeTable);
+    document.getElementById('gradePeriodFilter').addEventListener('change', loadGradeTable);
+    document.getElementById('saveAllGradesBtn').addEventListener('click', saveAllGrades);
+}
+
+function openGradeEntry() {
+    updateAssignmentSelect();
+    document.getElementById('gradeEntryModal').classList.add('active');
+}
+
+function closeGradeEntry() {
+    document.getElementById('gradeEntryModal').classList.remove('active');
+}
+
+function updateAssignmentSelect() {
+    const type = document.getElementById('assignmentType').value;
+    const select = document.getElementById('assignmentSelect');
+    const course = CONFIG.COURSES[state.activeCourse];
+
+    select.innerHTML = '';
+
+    if (type === 'reflection') {
+        for (let week = 1; week <= course.totalReflections; week++) {
+            const option = document.createElement('option');
+            option.value = week;
+            option.textContent = `Week ${week} Reflection (20 pts)`;
+            select.appendChild(option);
+        }
+    } else {
+        // Deliverables
+        const deliverableNames = state.activeCourse === 'robotics'
+            ? {
+                1: 'Line Following Practical #1',
+                2: 'Line Following Final Practical',
+                3: 'Ultrasonic Sensor Lab Report',
+                4: 'Scanner Assembly',
+                5: 'Scanning Practical',
+                6: 'Claw Design Document',
+                7: 'Claw Control Code',
+                8: 'Claw Practical',
+                9: 'Final Robot Demonstration'
+            }
+            : {
+                1: 'Game Analysis Report',
+                2: 'Subsystem Research Report',
+                3: 'Design Contribution',
+                4: 'Design Decision Matrix',
+                5: 'Prototype Documentation',
+                6: 'Testing & Iteration Log',
+                7: 'Integration Report',
+                8: 'Technical Contribution Summary',
+                9: 'Engineer Portfolio Entry',
+                10: 'Final Presentation'
+            };
+
+        for (let id = 1; id <= course.totalDeliverables; id++) {
+            const option = document.createElement('option');
+            option.value = id;
+            const pts = course.deliverablePoints[id];
+            option.textContent = `${deliverableNames[id]} (${pts} pts)`;
+            select.appendChild(option);
+        }
+    }
+
+    loadGradeTable();
+}
+
+function loadGradeTable() {
+    const type = document.getElementById('assignmentType').value;
+    const assignmentId = parseInt(document.getElementById('assignmentSelect').value);
+    const periodFilter = document.getElementById('gradePeriodFilter').value;
+    const course = CONFIG.COURSES[state.activeCourse];
+    const tbody = document.getElementById('gradeTableBody');
+
+    // Update header info
+    const maxPoints = type === 'reflection' ? 20 : course.deliverablePoints[assignmentId];
+    document.getElementById('gradeAssignmentTitle').textContent =
+        type === 'reflection' ? `Week ${assignmentId} Reflection` : document.getElementById('assignmentSelect').selectedOptions[0].text.split(' (')[0];
+    document.getElementById('gradeAssignmentPoints').textContent = `Max: ${maxPoints} pts`;
+
+    // Filter and sort students alphabetically
+    let filteredStudents = [...state.students];
+    if (periodFilter !== 'all') {
+        filteredStudents = filteredStudents.filter(s => s.period === periodFilter);
+    }
+    filteredStudents.sort((a, b) => a.name.localeCompare(b.name));
+
+    if (filteredStudents.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No students found.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = filteredStudents.map(student => {
+        let status = 'Not Submitted';
+        let selfScore = '-';
+        let existingGrade = '';
+        let existingFeedback = '';
+
+        if (type === 'reflection') {
+            const submitted = state.rawData.reflections?.find(r => r[0] === student.email && r[2] == assignmentId);
+            const draft = student.fullState?.weeklyReflections?.[assignmentId];
+
+            if (submitted) {
+                status = '<span class="status-badge status-on-track">Submitted</span>';
+                // Try to get rubric score from submitted data or fullState
+                if (draft?.rubric?.total) {
+                    selfScore = `${draft.rubric.total}/16`;
+                }
+                // Get existing grade/feedback from submissions (if stored)
+                existingGrade = submitted[9] || ''; // Column J - grade
+                existingFeedback = submitted[10] || ''; // Column K - feedback
+            } else if (draft && !draft.submitted && (draft.contributions?.length > 0 || draft.challenges)) {
+                status = '<span class="status-badge status-behind">Draft</span>';
+                if (draft.rubric?.total) {
+                    selfScore = `${draft.rubric.total}/16`;
+                }
+            } else {
+                status = '<span class="status-badge status-very-behind">Missing</span>';
+            }
+        } else {
+            const submitted = state.rawData.deliverables?.find(d => d[0] === student.email && d[2] == assignmentId);
+            const draft = student.fullState?.deliverables?.[assignmentId];
+
+            if (submitted && submitted[7] === 'completed') {
+                status = '<span class="status-badge status-on-track">Completed</span>';
+                existingGrade = submitted[9] || '';
+                existingFeedback = submitted[10] || '';
+            } else if (draft && draft.status === 'in-progress') {
+                status = '<span class="status-badge status-behind">In Progress</span>';
+            } else {
+                status = '<span class="status-badge status-very-behind">Not Started</span>';
+            }
+        }
+
+        return `
+            <tr data-email="${student.email}">
+                <td>
+                    <div class="student-name">
+                        <div class="avatar">${getInitials(student.name)}</div>
+                        ${student.name}
+                    </div>
+                </td>
+                <td>${formatPeriod(student.period)}</td>
+                <td>${status}</td>
+                <td>${selfScore}</td>
+                <td>
+                    <input type="number" class="grade-input" data-email="${student.email}"
+                           value="${existingGrade}" min="0" max="${maxPoints}"
+                           style="width: 80px; padding: 6px 8px; border: 1px solid var(--gray-300); border-radius: 6px;">
+                </td>
+                <td>
+                    <input type="text" class="feedback-input" data-email="${student.email}"
+                           value="${existingFeedback}" placeholder="Add feedback..."
+                           style="width: 100%; padding: 6px 8px; border: 1px solid var(--gray-300); border-radius: 6px;">
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+async function saveAllGrades() {
+    const type = document.getElementById('assignmentType').value;
+    const assignmentId = parseInt(document.getElementById('assignmentSelect').value);
+    const course = CONFIG.COURSES[state.activeCourse];
+
+    const grades = [];
+    document.querySelectorAll('#gradeTableBody tr').forEach(row => {
+        const email = row.dataset.email;
+        if (!email) return;
+
+        const gradeInput = row.querySelector('.grade-input');
+        const feedbackInput = row.querySelector('.feedback-input');
+
+        if (gradeInput.value !== '' || feedbackInput.value !== '') {
+            grades.push({
+                email,
+                type,
+                assignmentId,
+                grade: gradeInput.value,
+                feedback: feedbackInput.value
+            });
+        }
+    });
+
+    if (grades.length === 0) {
+        alert('No grades to save.');
+        return;
+    }
+
+    const btn = document.getElementById('saveAllGradesBtn');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    btn.disabled = true;
+
+    try {
+        await fetch(course.apiUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({
+                action: 'saveGrades',
+                grades: grades
+            })
+        });
+
+        btn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+        setTimeout(() => {
+            btn.innerHTML = '<i class="fas fa-save"></i> Save All Grades';
+            btn.disabled = false;
+        }, 2000);
+
+        // Reload data to show updated grades
+        loadCourseData();
+    } catch (error) {
+        console.error('Failed to save grades:', error);
+        btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error';
+        setTimeout(() => {
+            btn.innerHTML = '<i class="fas fa-save"></i> Save All Grades';
+            btn.disabled = false;
+        }, 2000);
+    }
 }

@@ -80,6 +80,9 @@ function doPost(e) {
       case 'submitDeliverable':
         return jsonResponse(submitDeliverable(data));
 
+      case 'saveGrades':
+        return jsonResponse(saveGrades(data.grades));
+
       default:
         return jsonResponse({ error: 'Unknown action' });
     }
@@ -359,10 +362,41 @@ function loadStudentData(email) {
   // Find student row and check for full state JSON (column 9)
   for (let i = 1; i < studentsData.length; i++) {
     if (studentsData[i][0] === email) {
-      // If full state JSON exists, return it directly (includes drafts, evidence, etc.)
+      // If full state JSON exists, return it with merged teacher grades/feedback
       if (studentsData[i][8] && studentsData[i][8].trim()) {
         try {
           const fullState = JSON.parse(studentsData[i][8]);
+
+          // Merge in teacher grades/feedback from the sheets
+          const reflectionsSheet = ss.getSheetByName(SHEET_NAMES.REFLECTIONS);
+          const reflectionsData = reflectionsSheet.getDataRange().getValues();
+
+          for (let j = 1; j < reflectionsData.length; j++) {
+            if (reflectionsData[j][0] === email) {
+              const week = reflectionsData[j][2];
+              if (fullState.weeklyReflections && fullState.weeklyReflections[week]) {
+                // Grade in column K (index 10), Feedback in column L (index 11)
+                fullState.weeklyReflections[week].teacherGrade = reflectionsData[j][10] || undefined;
+                fullState.weeklyReflections[week].teacherFeedback = reflectionsData[j][11] || '';
+              }
+            }
+          }
+
+          // Also merge deliverable grades/feedback
+          const deliverablesSheet = ss.getSheetByName(SHEET_NAMES.DELIVERABLES);
+          const deliverablesData = deliverablesSheet.getDataRange().getValues();
+
+          for (let j = 1; j < deliverablesData.length; j++) {
+            if (deliverablesData[j][0] === email) {
+              const id = deliverablesData[j][2];
+              if (fullState.deliverables && fullState.deliverables[id]) {
+                // Grade in column J (index 9), Feedback in column K (index 10)
+                fullState.deliverables[id].teacherGrade = deliverablesData[j][9] || undefined;
+                fullState.deliverables[id].teacherFeedback = deliverablesData[j][10] || '';
+              }
+            }
+          }
+
           return fullState;
         } catch (e) {
           // JSON parse failed — fall through to sheet-based load
@@ -405,7 +439,10 @@ function loadStudentData(email) {
             solutions: reflectionsData[j][6] || '',
             goals,
             submittedAt: reflectionsData[j][8],
-            submitted: true
+            submitted: true,
+            // Grade in column K (index 10), Feedback in column L (index 11)
+            teacherGrade: reflectionsData[j][10] || undefined,
+            teacherFeedback: reflectionsData[j][11] || ''
           };
         }
       }
@@ -423,7 +460,9 @@ function loadStudentData(email) {
             selfAssessment: deliverablesData[j][6],
             status: deliverablesData[j][7],
             submittedAt: deliverablesData[j][8],
-            grade: deliverablesData[j][9]
+            // Grade in column J (index 9), Feedback in column K (index 10)
+            grade: deliverablesData[j][9],
+            teacherFeedback: deliverablesData[j][10] || ''
           };
         }
       }
@@ -579,6 +618,62 @@ function exportAllData() {
     exportedAt: new Date().toISOString(),
     reports: studentReports
   };
+}
+
+/**
+ * Save grades and feedback from teacher portal
+ */
+function saveGrades(grades) {
+  initializeSheets();
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  grades.forEach(gradeData => {
+    const { email, type, assignmentId, grade, feedback } = gradeData;
+
+    if (type === 'reflection') {
+      const sheet = ss.getSheetByName(SHEET_NAMES.REFLECTIONS);
+      const data = sheet.getDataRange().getValues();
+
+      // Ensure we have grade and feedback columns (K=11, L=12) - J is Points
+      const headerRow = data[0];
+      if (headerRow.length < 12 || headerRow[10] !== 'Grade') {
+        sheet.getRange(1, 11).setValue('Grade');
+      }
+      if (headerRow.length < 12 || headerRow[11] !== 'Feedback') {
+        sheet.getRange(1, 12).setValue('Feedback');
+      }
+
+      // Find the reflection row
+      for (let i = 1; i < data.length; i++) {
+        if (data[i][0] === email && data[i][2] == assignmentId) {
+          if (grade !== '') sheet.getRange(i + 1, 11).setValue(parseFloat(grade));
+          if (feedback !== '') sheet.getRange(i + 1, 12).setValue(feedback);
+          break;
+        }
+      }
+    } else if (type === 'deliverable') {
+      const sheet = ss.getSheetByName(SHEET_NAMES.DELIVERABLES);
+      const data = sheet.getDataRange().getValues();
+
+      // Ensure we have feedback column (J=Grade already exists, K=11 for Feedback)
+      const headerRow = data[0];
+      if (headerRow.length < 11 || headerRow[10] !== 'Feedback') {
+        sheet.getRange(1, 11).setValue('Feedback');
+      }
+
+      // Find the deliverable row
+      for (let i = 1; i < data.length; i++) {
+        if (data[i][0] === email && data[i][2] == assignmentId) {
+          if (grade !== '') sheet.getRange(i + 1, 10).setValue(parseFloat(grade));
+          if (feedback !== '') sheet.getRange(i + 1, 11).setValue(feedback);
+          break;
+        }
+      }
+    }
+  });
+
+  logActivity('GRADES', 'teacher', `Saved ${grades.length} grades`);
+  return { success: true, count: grades.length };
 }
 
 /**

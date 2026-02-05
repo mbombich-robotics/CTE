@@ -610,6 +610,10 @@
             <button class="btn btn-secondary btn-small" id="exportBtn">
                 <i class="fas fa-download"></i> Export CSV
             </button>
+
+            <button class="btn btn-primary btn-small" id="gradeEntryBtn">
+                <i class="fas fa-edit"></i> Grade Entry
+            </button>
         </div>
 
         <!-- Table -->
@@ -685,6 +689,74 @@
 
                 <div class="detail-panel" id="evidencePanel">
                     <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grade Entry Modal -->
+    <div class="modal" id="gradeEntryModal">
+        <div class="modal-content" style="max-width: 1000px;">
+            <div class="modal-header">
+                <h2><i class="fas fa-edit"></i> Grade Entry</h2>
+                <button class="modal-close" id="closeGradeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="grade-controls" style="margin-bottom: 20px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--gray-600); margin-bottom: 4px;">Assignment Type:</label>
+                        <select id="assignmentType" style="padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 8px; min-width: 180px;">
+                            <option value="reflection">Weekly Reflections</option>
+                            <option value="deliverable">Deliverables</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--gray-600); margin-bottom: 4px;">Assignment:</label>
+                        <select id="assignmentSelect" style="padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 8px; min-width: 200px;">
+                            <!-- Populated by JS -->
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--gray-600); margin-bottom: 4px;">Filter Period:</label>
+                        <select id="gradePeriodFilter" style="padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 8px;">
+                            <option value="all">All Periods</option>
+                            <option value="hour1">1st Hour</option>
+                            <option value="hour2">2nd Hour</option>
+                            <option value="hour3">3rd Hour</option>
+                            <option value="hour4">4th Hour</option>
+                            <option value="hour5">5th Hour</option>
+                            <option value="hour6">6th Hour</option>
+                            <option value="hour7">7th Hour</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-secondary btn-small" id="saveAllGradesBtn">
+                        <i class="fas fa-save"></i> Save All Grades
+                    </button>
+                </div>
+
+                <div class="grade-info" style="background: var(--primary-light); padding: 12px 16px; border-radius: 8px; margin-bottom: 16px;">
+                    <strong id="gradeAssignmentTitle">Select an assignment</strong>
+                    <span id="gradeAssignmentPoints" style="float: right; color: var(--primary);">Max: -- pts</span>
+                </div>
+
+                <div class="grade-table-container" style="max-height: 500px; overflow-y: auto;">
+                    <table class="student-table" id="gradeTable">
+                        <thead style="position: sticky; top: 0; background: white;">
+                            <tr>
+                                <th style="width: 200px;">Student</th>
+                                <th>Period</th>
+                                <th>Status</th>
+                                <th>Self-Score</th>
+                                <th style="width: 100px;">Adjusted Score</th>
+                                <th style="width: 300px;">Feedback</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gradeTableBody">
+                            <tr>
+                                <td colspan="6" class="empty-state">Select an assignment to start grading.</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

@@ -5,7 +5,7 @@
 // ============================================
 const CONFIG = {
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
-    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyn2W1iQxkKT5MbzSxROvod3pdT7omegWkvOQkoWv7jJVI9Ff2eox_i30EE1-8TNZ0G/exec',
+    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbwZ0Dp2s7ykmPxYpWNbWyK3d9LM0EWcQqRMArLjz56xcgwxjU_o3XL1x5nR2VwMqIYP/exec',
 
     // Google OAuth Client ID
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -999,6 +999,14 @@ function initWeeklyReflectionForm() {
     document.getElementById('weeklyReflectionForm').addEventListener('submit', submitWeeklyReflection);
     document.getElementById('saveReflectionDraft').addEventListener('click', saveReflectionDraft);
 
+    // Rubric change listeners for live score updates
+    document.querySelectorAll('.rubric-options input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            updateRubricScore();
+            markDirty();
+        });
+    });
+
     selectWeek(state.currentWeek);
 }
 
@@ -1064,6 +1072,23 @@ function loadReflectionData(data) {
         if (goalInputs[index]) goalInputs[index].value = goal;
     });
 
+    // Restore rubric selections
+    if (data.rubric) {
+        const rubricFields = ['Detail', 'Evidence', 'ProblemSolving', 'Goals'];
+        rubricFields.forEach(field => {
+            const value = data.rubric[field.toLowerCase()] || data.rubric[field.charAt(0).toLowerCase() + field.slice(1)];
+            if (value) {
+                const radio = document.querySelector(`input[name="rubric${field}"][value="${value}"]`);
+                if (radio) radio.checked = true;
+            }
+        });
+        updateRubricScore();
+    } else {
+        // Clear rubric if no data
+        document.querySelectorAll('.rubric-options input[type="radio"]').forEach(r => r.checked = false);
+        updateRubricScore();
+    }
+
     // Restore evidence thumbnails for the selected week from state
     const preview = document.getElementById('evidencePreview');
     preview.innerHTML = '';
@@ -1080,6 +1105,26 @@ function loadReflectionData(data) {
             `;
             preview.appendChild(thumb);
         });
+
+    // Hide validation errors when loading
+    document.getElementById('validationErrors').style.display = 'none';
+
+    // Show teacher feedback if available
+    showTeacherFeedback(data);
+}
+
+function showTeacherFeedback(data) {
+    const feedbackCard = document.getElementById('teacherFeedbackCard');
+    const gradeDisplay = document.getElementById('teacherGradeDisplay');
+    const feedbackText = document.getElementById('teacherFeedbackText');
+
+    if (data.submitted && (data.teacherGrade !== undefined || data.teacherFeedback)) {
+        feedbackCard.style.display = 'block';
+        gradeDisplay.textContent = data.teacherGrade !== undefined ? data.teacherGrade : '--';
+        feedbackText.textContent = data.teacherFeedback || 'No written feedback yet.';
+    } else {
+        feedbackCard.style.display = 'none';
+    }
 }
 
 function clearReflectionForm() {
@@ -1099,6 +1144,16 @@ function clearReflectionForm() {
         </div>
     `;
     document.getElementById('evidencePreview').innerHTML = '';
+
+    // Clear rubric selections
+    document.querySelectorAll('.rubric-options input[type="radio"]').forEach(r => r.checked = false);
+    updateRubricScore();
+
+    // Hide validation errors
+    document.getElementById('validationErrors').style.display = 'none';
+
+    // Hide teacher feedback
+    document.getElementById('teacherFeedbackCard').style.display = 'none';
 }
 
 function getReflectionFormData() {
@@ -1114,6 +1169,15 @@ function getReflectionFormData() {
         if (input.value) goals.push(input.value);
     });
 
+    // Get rubric scores
+    const rubric = {
+        detail: parseInt(document.querySelector('input[name="rubricDetail"]:checked')?.value) || 0,
+        evidence: parseInt(document.querySelector('input[name="rubricEvidence"]:checked')?.value) || 0,
+        problemSolving: parseInt(document.querySelector('input[name="rubricProblemSolving"]:checked')?.value) || 0,
+        goals: parseInt(document.querySelector('input[name="rubricGoals"]:checked')?.value) || 0
+    };
+    rubric.total = rubric.detail + rubric.evidence + rubric.problemSolving + rubric.goals;
+
     return {
         week: state.selectedWeek,
         contributions,
@@ -1121,6 +1185,7 @@ function getReflectionFormData() {
         challenges: document.getElementById('challenges').value,
         solutions: document.getElementById('solutions').value,
         goals,
+        rubric,
         updatedAt: new Date().toISOString()
     };
 }
@@ -1144,12 +1209,92 @@ function saveReflectionDraft() {
     showToast('Draft saved!', 'success');
 }
 
+function validateReflection(data) {
+    const errors = [];
+    const MIN_TASK_LENGTH = 15;
+    const MIN_TEXT_LENGTH = 30;
+    const MIN_GOAL_LENGTH = 10;
+
+    // Check contributions count
+    if (data.contributions.length < 3) {
+        errors.push('Add at least 3 work contributions');
+    }
+
+    // Check contribution task lengths
+    data.contributions.forEach((c, i) => {
+        if (c.task.length < MIN_TASK_LENGTH) {
+            errors.push(`Contribution ${i + 1} needs more detail (${c.task.length}/${MIN_TASK_LENGTH} characters)`);
+        }
+    });
+
+    // Check challenges and solutions
+    if (data.challenges.length < MIN_TEXT_LENGTH) {
+        errors.push(`Challenges needs more detail (${data.challenges.length}/${MIN_TEXT_LENGTH} characters)`);
+    }
+    if (data.solutions.length < MIN_TEXT_LENGTH) {
+        errors.push(`Solutions needs more detail (${data.solutions.length}/${MIN_TEXT_LENGTH} characters)`);
+    }
+
+    // Check goals
+    data.goals.forEach((g, i) => {
+        if (g.length < MIN_GOAL_LENGTH) {
+            errors.push(`Goal ${i + 1} needs more detail (${g.length}/${MIN_GOAL_LENGTH} characters)`);
+        }
+    });
+
+    // Check evidence - require at least 1 photo OR a link
+    const hasPhotos = state.evidence.filter(e => e.week === state.selectedWeek).length > 0;
+    const hasLinks = data.evidenceLinks.trim().length > 0;
+    if (!hasPhotos && !hasLinks) {
+        errors.push('Add at least 1 evidence photo or link');
+    }
+
+    // Check rubric is completed
+    if (data.rubric.total === 0) {
+        errors.push('Complete the self-assessment rubric');
+    }
+
+    return errors;
+}
+
+function showValidationErrors(errors) {
+    const container = document.getElementById('validationErrors');
+    const list = document.getElementById('errorList');
+
+    if (errors.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+
+    list.innerHTML = errors.map(e => `<li>${e}</li>`).join('');
+    container.style.display = 'block';
+    container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function updateRubricScore() {
+    const detail = parseInt(document.querySelector('input[name="rubricDetail"]:checked')?.value) || 0;
+    const evidence = parseInt(document.querySelector('input[name="rubricEvidence"]:checked')?.value) || 0;
+    const problemSolving = parseInt(document.querySelector('input[name="rubricProblemSolving"]:checked')?.value) || 0;
+    const goals = parseInt(document.querySelector('input[name="rubricGoals"]:checked')?.value) || 0;
+    const total = detail + evidence + problemSolving + goals;
+
+    const scoreEl = document.getElementById('rubricScore');
+    if (scoreEl) {
+        scoreEl.innerHTML = `<strong>Self-Assessment Total:</strong> ${total} / 16 points`;
+        scoreEl.style.color = total >= 12 ? 'var(--success)' : total >= 8 ? 'var(--warning)' : 'var(--gray-600)';
+    }
+}
+
 function submitWeeklyReflection(e) {
     e.preventDefault();
     const data = getReflectionFormData();
 
-    if (data.contributions.length < 3) {
-        showToast('Please add at least 3 contributions', 'error');
+    // Validate
+    const errors = validateReflection(data);
+    showValidationErrors(errors);
+
+    if (errors.length > 0) {
+        showToast('Please fix the errors before submitting', 'error');
         return;
     }
 
@@ -1158,6 +1303,10 @@ function submitWeeklyReflection(e) {
     state.weeklyReflections[data.week] = data;
     saveToCloud(); // immediate save on submission
     updateUI();
+
+    // Hide validation errors on success
+    document.getElementById('validationErrors').style.display = 'none';
+
     showToast(`Week ${data.week} reflection submitted! (+20 pts)`, 'success');
 }
 

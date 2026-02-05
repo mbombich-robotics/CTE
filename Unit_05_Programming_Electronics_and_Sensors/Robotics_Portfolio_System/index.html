@@ -215,6 +215,20 @@
                 <!-- Shows current week's topic -->
             </div>
 
+            <div id="teacherFeedbackCard" class="card" style="display: none; background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-left: 4px solid var(--success);">
+                <h3 style="color: var(--success); margin-bottom: 12px;"><i class="fas fa-comment-dots"></i> Teacher Feedback</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <div>
+                        <span style="font-weight: 600;">Your Score:</span>
+                        <span id="teacherGradeDisplay" style="font-size: 24px; font-weight: 700; color: var(--success); margin-left: 8px;">--</span>
+                        <span style="color: var(--gray-600);">/ 20 pts</span>
+                    </div>
+                </div>
+                <div id="teacherFeedbackText" style="background: white; padding: 12px 16px; border-radius: 8px; color: var(--gray-700); font-style: italic;">
+                    No feedback yet.
+                </div>
+            </div>
+
             <div class="card reflection-form-card">
                 <form id="weeklyReflectionForm">
                     <input type="hidden" id="reflectionWeek" value="1">
@@ -284,6 +298,71 @@
                             <input type="text" class="goal-input" placeholder="Goal 2: I will test..." required>
                             <input type="text" class="goal-input" placeholder="Goal 3: I will document..." required>
                         </div>
+                    </div>
+
+                    <div class="form-section" style="background: var(--primary-light); border-radius: 12px; padding: 20px;">
+                        <h3><i class="fas fa-clipboard-check"></i> Self-Assessment</h3>
+                        <p class="form-hint">Rate the quality of your work honestly. Your teacher will review these ratings.</p>
+
+                        <div class="rubric-grid" style="display: grid; gap: 16px; margin-top: 16px;">
+                            <div class="rubric-item">
+                                <label style="font-weight: 500; display: block; margin-bottom: 8px;">
+                                    My task descriptions are specific and detailed (not vague)
+                                </label>
+                                <div class="rubric-options" style="display: flex; gap: 8px;">
+                                    <label class="rubric-option"><input type="radio" name="rubricDetail" value="1" required> <span>1 - Minimal</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricDetail" value="2"> <span>2 - Basic</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricDetail" value="3"> <span>3 - Good</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricDetail" value="4"> <span>4 - Excellent</span></label>
+                                </div>
+                            </div>
+
+                            <div class="rubric-item">
+                                <label style="font-weight: 500; display: block; margin-bottom: 8px;">
+                                    I included clear photo evidence of my work
+                                </label>
+                                <div class="rubric-options" style="display: flex; gap: 8px;">
+                                    <label class="rubric-option"><input type="radio" name="rubricEvidence" value="1" required> <span>1 - None</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricEvidence" value="2"> <span>2 - Some</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricEvidence" value="3"> <span>3 - Good</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricEvidence" value="4"> <span>4 - Excellent</span></label>
+                                </div>
+                            </div>
+
+                            <div class="rubric-item">
+                                <label style="font-weight: 500; display: block; margin-bottom: 8px;">
+                                    I explained my debugging/problem-solving process
+                                </label>
+                                <div class="rubric-options" style="display: flex; gap: 8px;">
+                                    <label class="rubric-option"><input type="radio" name="rubricProblemSolving" value="1" required> <span>1 - Minimal</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricProblemSolving" value="2"> <span>2 - Basic</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricProblemSolving" value="3"> <span>3 - Good</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricProblemSolving" value="4"> <span>4 - Excellent</span></label>
+                                </div>
+                            </div>
+
+                            <div class="rubric-item">
+                                <label style="font-weight: 500; display: block; margin-bottom: 8px;">
+                                    My goals are specific and achievable
+                                </label>
+                                <div class="rubric-options" style="display: flex; gap: 8px;">
+                                    <label class="rubric-option"><input type="radio" name="rubricGoals" value="1" required> <span>1 - Vague</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricGoals" value="2"> <span>2 - Basic</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricGoals" value="3"> <span>3 - Good</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricGoals" value="4"> <span>4 - Excellent</span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="rubricScore" style="margin-top: 16px; padding: 12px; background: white; border-radius: 8px; text-align: center; display: none;">
+                            <span style="font-size: 14px; color: var(--gray-600);">Self-Assessment Score:</span>
+                            <span id="rubricScoreValue" style="font-size: 20px; font-weight: 700; color: var(--primary); margin-left: 8px;">0/16</span>
+                        </div>
+                    </div>
+
+                    <div id="validationErrors" style="background: #fee2e2; color: #991b1b; padding: 16px; border-radius: 8px; margin-bottom: 16px; display: none;">
+                        <strong><i class="fas fa-exclamation-triangle"></i> Please fix the following:</strong>
+                        <ul id="errorList" style="margin: 8px 0 0 20px;"></ul>
                     </div>
 
                     <div class="form-actions">

@@ -1199,6 +1199,38 @@ textarea {
     }
 }
 
+/* Rubric Styles */
+.rubric-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: white;
+    border: 2px solid var(--gray-200);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 13px;
+}
+
+.rubric-option:hover {
+    border-color: var(--primary);
+}
+
+.rubric-option input[type="radio"] {
+    width: auto;
+    margin: 0;
+}
+
+.rubric-option:has(input:checked) {
+    border-color: var(--primary);
+    background: var(--primary-light);
+}
+
+.rubric-option span {
+    white-space: nowrap;
+}
+
 /* Print Styles */
 @media print {
     .sidebar,
