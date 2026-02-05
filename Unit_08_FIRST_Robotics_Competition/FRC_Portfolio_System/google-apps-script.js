@@ -146,6 +146,17 @@ function initializeSheets() {
     deliverablesSheet.setFrozenRows(1);
   }
 
+  // Evidence sheet
+  let evidenceSheet = ss.getSheetByName(SHEET_NAMES.EVIDENCE);
+  if (!evidenceSheet) {
+    evidenceSheet = ss.insertSheet(SHEET_NAMES.EVIDENCE);
+    evidenceSheet.getRange(1, 1, 1, 6).setValues([[
+      'Email', 'Name', 'Week', 'Filename', 'Uploaded At', 'Image Data'
+    ]]);
+    evidenceSheet.getRange(1, 1, 1, 6).setFontWeight('bold').setBackground('#ea4335').setFontColor('white');
+    evidenceSheet.setFrozenRows(1);
+  }
+
   // Activity Log sheet
   let logSheet = ss.getSheetByName(SHEET_NAMES.LOG);
   if (!logSheet) {
@@ -189,6 +200,13 @@ function syncStudentData(data) {
     });
   }
 
+  // Sync all evidence photos to Evidence sheet (one row per photo)
+  if (data.evidence && data.evidence.length > 0) {
+    data.evidence.forEach(evidence => {
+      saveEvidence(data.student, evidence);
+    });
+  }
+
   logActivity('SYNC', data.student.email, `Synced at ${data.timestamp}`);
 
   return { success: true, timestamp: new Date().toISOString(), backendVersion: BACKEND_VERSION };
@@ -196,7 +214,8 @@ function syncStudentData(data) {
 
 /**
  * Save full application state as JSON (column 9 of Students sheet)
- * This preserves drafts, evidence, code snippets — everything the student needs to restore.
+ * This preserves drafts, code snippets — everything the student needs to restore.
+ * Evidence photos are stored separately in the Evidence sheet to avoid cell size limits.
  */
 function saveFullState(email, data) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -207,7 +226,6 @@ function saveFullState(email, data) {
     student: data.student,
     weeklyReflections: data.weeklyReflections || {},
     deliverables: data.deliverables || {},
-    evidence: data.evidence || [],
     codeSnippets: data.codeSnippets || [],
     lastSynced: data.timestamp || new Date().toISOString()
   });
@@ -352,6 +370,43 @@ function saveDeliverable(student, id, deliverable) {
 }
 
 /**
+ * Save evidence photo (one row per photo in Evidence sheet)
+ */
+function saveEvidence(student, evidence) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(SHEET_NAMES.EVIDENCE);
+  const data = sheet.getDataRange().getValues();
+
+  // Check if this evidence item already exists (match by email, filename, uploadedAt)
+  let rowIndex = -1;
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][0] === student.email &&
+        data[i][3] === evidence.filename &&
+        data[i][4] === evidence.uploadedAt) {
+      rowIndex = i + 1;
+      break;
+    }
+  }
+
+  const rowData = [
+    student.email,
+    student.name,
+    evidence.week || '',
+    evidence.filename || '',
+    evidence.uploadedAt || new Date().toISOString(),
+    evidence.data || '' // Base64 image data
+  ];
+
+  if (rowIndex > 0) {
+    // Update existing
+    sheet.getRange(rowIndex, 1, 1, rowData.length).setValues([rowData]);
+  } else {
+    // Append new
+    sheet.appendRow(rowData);
+  }
+}
+
+/**
  * Load student data
  */
 function loadStudentData(email) {
@@ -396,6 +451,23 @@ function loadStudentData(email) {
                 fullState.deliverables[id].teacherGrade = deliverablesData[j][9] || undefined;
                 fullState.deliverables[id].teacherFeedback = deliverablesData[j][10] || '';
               }
+            }
+          }
+
+          // Load evidence photos from Evidence sheet
+          const evidenceSheet = ss.getSheetByName(SHEET_NAMES.EVIDENCE);
+          const evidenceData = evidenceSheet.getDataRange().getValues();
+          fullState.evidence = [];
+
+          for (let j = 1; j < evidenceData.length; j++) {
+            if (evidenceData[j][0] === email) {
+              fullState.evidence.push({
+                type: 'weekly',
+                week: evidenceData[j][2],
+                filename: evidenceData[j][3],
+                uploadedAt: evidenceData[j][4],
+                data: evidenceData[j][5] // Base64 image data
+              });
             }
           }
 
@@ -469,7 +541,24 @@ function loadStudentData(email) {
         }
       }
 
-      return { student, weeklyReflections, deliverables, evidence: [] };
+      // Load evidence photos from Evidence sheet
+      const evidenceSheet = ss.getSheetByName(SHEET_NAMES.EVIDENCE);
+      const evidenceData = evidenceSheet.getDataRange().getValues();
+      const evidence = [];
+
+      for (let j = 1; j < evidenceData.length; j++) {
+        if (evidenceData[j][0] === email) {
+          evidence.push({
+            type: 'weekly',
+            week: evidenceData[j][2],
+            filename: evidenceData[j][3],
+            uploadedAt: evidenceData[j][4],
+            data: evidenceData[j][5] // Base64 image data
+          });
+        }
+      }
+
+      return { student, weeklyReflections, deliverables, evidence };
     }
   }
 
