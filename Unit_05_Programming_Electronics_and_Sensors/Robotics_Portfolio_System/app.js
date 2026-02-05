@@ -544,6 +544,7 @@ function handleCredentialResponse(response) {
             // Returning student
             state = cloudData;
             state.student.name = name; // refresh display name
+            restoreEvidenceLocal();
             calculateCurrentWeek();
             hideAllModals();
             onAuthenticated();
@@ -635,9 +636,6 @@ async function saveToCloud() {
     setSaveIndicator('saving');
 
     try {
-        // Strip base64 image data from evidence before sending — Sheets cells have a character limit
-        const evidenceMeta = state.evidence.map(({ type, week, filename, uploadedAt }) => ({ type, week, filename, uploadedAt }));
-
         await fetch(CONFIG.SHEETS_API_URL, {
             method: 'POST',
             mode: 'no-cors',
@@ -646,7 +644,7 @@ async function saveToCloud() {
                 student: state.student,
                 weeklyReflections: state.weeklyReflections,
                 deliverables: state.deliverables,
-                evidence: evidenceMeta,
+                evidence: state.evidence,
                 codeSnippets: state.codeSnippets,
                 timestamp: new Date().toISOString()
             })
@@ -673,6 +671,39 @@ function stopAutoSave() {
     if (autoSaveTimer) {
         clearInterval(autoSaveTimer);
         autoSaveTimer = null;
+    }
+}
+
+function saveEvidenceLocal() {
+    if (state.student && state.evidence.length > 0) {
+        try {
+            localStorage.setItem('evidence_' + state.student.email, JSON.stringify(state.evidence));
+        } catch (e) {
+            console.warn('localStorage full — evidence not saved locally:', e);
+        }
+    }
+}
+
+function restoreEvidenceLocal() {
+    if (!state.student) return;
+    try {
+        const stored = localStorage.getItem('evidence_' + state.student.email);
+        if (!stored) return;
+        const localEvidence = JSON.parse(stored);
+        // Restore base64 data for any items missing it (stripped during cloud sync)
+        state.evidence.forEach(item => {
+            if (!item.data) {
+                const match = localEvidence.find(l => l.filename === item.filename && l.uploadedAt === item.uploadedAt);
+                if (match) item.data = match.data;
+            }
+        });
+        // Add any local items not yet in cloud state
+        localEvidence.forEach(localItem => {
+            const exists = state.evidence.some(e => e.filename === localItem.filename && e.uploadedAt === localItem.uploadedAt);
+            if (!exists) state.evidence.push(localItem);
+        });
+    } catch (e) {
+        console.warn('Failed to restore evidence from localStorage:', e);
     }
 }
 
@@ -1181,6 +1212,7 @@ function handleFiles(files) {
                 uploadedAt: new Date().toISOString()
             });
             markDirty();
+            saveEvidenceLocal();
         };
         reader.readAsDataURL(file);
     });

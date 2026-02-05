@@ -549,6 +549,29 @@ function openStudentDetail(email) {
         deliverablesPanel.innerHTML = '<p class="empty-state">No deliverables yet.</p>';
     }
 
+    // Evidence panel
+    const evidencePanel = document.getElementById('evidencePanel');
+    const evidenceItems = student.fullState?.evidence || [];
+    const evidenceWithData = evidenceItems.filter(e => e.data);
+
+    if (evidenceWithData.length === 0) {
+        evidencePanel.innerHTML = '<p class="empty-state">No evidence photos uploaded.</p>';
+    } else {
+        evidencePanel.innerHTML = `
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;">
+                ${evidenceWithData.map(item => `
+                    <div style="background: var(--gray-50); border-radius: 8px; overflow: hidden; border: 1px solid var(--gray-200);">
+                        <img src="${item.data}" alt="${item.filename}" style="width: 100%; height: 160px; object-fit: cover; display: block;">
+                        <div style="padding: 8px; font-size: 12px; color: var(--gray-600);">
+                            <div style="font-weight: 500;">${item.filename}</div>
+                            <div>Week ${item.week} &middot; ${new Date(item.uploadedAt).toLocaleDateString()}</div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
     // Show modal
     document.getElementById('studentModal').classList.add('active');
 
