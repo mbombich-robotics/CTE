@@ -1059,28 +1059,57 @@ function handleFiles(files) {
 
         const reader = new FileReader();
         reader.onload = (e) => {
-            const thumb = document.createElement('div');
-            thumb.className = 'evidence-thumb';
-            thumb.innerHTML = `
-                <img src="${e.target.result}" alt="Evidence">
-                <button type="button" class="remove-btn" onclick="this.parentElement.remove()">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-            preview.appendChild(thumb);
+            // Compress image before storing to reduce localStorage usage
+            compressImage(e.target.result, (compressedData) => {
+                const thumb = document.createElement('div');
+                thumb.className = 'evidence-thumb';
+                thumb.innerHTML = `
+                    <img src="${compressedData}" alt="Evidence">
+                    <button type="button" class="remove-btn" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                preview.appendChild(thumb);
 
-            state.evidence.push({
-                type: 'weekly',
-                week: state.selectedWeek,
-                data: e.target.result,
-                filename: file.name,
-                uploadedAt: new Date().toISOString()
+                state.evidence.push({
+                    type: 'weekly',
+                    week: state.selectedWeek,
+                    data: compressedData,
+                    filename: file.name,
+                    uploadedAt: new Date().toISOString()
+                });
+                markDirty();
+                saveEvidenceLocal();
             });
-            markDirty();
-            saveEvidenceLocal();
         };
         reader.readAsDataURL(file);
     });
+}
+
+function compressImage(dataURL, callback) {
+    const img = new Image();
+    img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Scale down to max 1200px width while maintaining aspect ratio
+        const maxWidth = 1200;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Export as JPEG at 80% quality (significantly smaller than PNG)
+        callback(canvas.toDataURL('image/jpeg', 0.8));
+    };
+    img.src = dataURL;
 }
 
 // ============================================
