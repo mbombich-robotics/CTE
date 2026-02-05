@@ -3,17 +3,21 @@
 // Complete the TODOs to implement a working PID line follower
 
 // ===== MOTOR PIN DEFINITIONS =====
-const int LEFT_MOTOR_PIN1 = 2;
-const int LEFT_MOTOR_PIN2 = 3;
-const int RIGHT_MOTOR_PIN1 = 4;
-const int RIGHT_MOTOR_PIN2 = 5;
+// 3-pin motor controller (INA, INB, PWM)
+const int LEFT_MOTOR_INA = 8;
+const int LEFT_MOTOR_INB = 7;
+const int LEFT_MOTOR_PWM = 5;
+
+const int RIGHT_MOTOR_INA = 6;
+const int RIGHT_MOTOR_INB = 4;
+const int RIGHT_MOTOR_PWM = 3;
 
 // ===== SENSOR PIN DEFINITIONS =====
-const int SENSOR_1 = 6;   // Far left
-const int SENSOR_2 = 7;   // Left
-const int SENSOR_3 = 8;   // Center
-const int SENSOR_4 = 9;   // Right
-const int SENSOR_5 = 10;  // Far right
+const int SENSOR_1 = A2;   // Far left
+const int SENSOR_2 = 0;    // Left
+const int SENSOR_3 = 2;    // Center
+const int SENSOR_4 = 1;    // Right
+const int SENSOR_5 = A3;   // Far right
 
 // ===== PID CONSTANTS =====
 // These values are a starting point - you will tune them!
@@ -26,10 +30,13 @@ int lastError = 0;          // Stores previous error for derivative calculation
 
 void setup() {
   // Configure motor pins as outputs
-  pinMode(LEFT_MOTOR_PIN1, OUTPUT);
-  pinMode(LEFT_MOTOR_PIN2, OUTPUT);
-  pinMode(RIGHT_MOTOR_PIN1, OUTPUT);
-  pinMode(RIGHT_MOTOR_PIN2, OUTPUT);
+  pinMode(LEFT_MOTOR_INA, OUTPUT);
+  pinMode(LEFT_MOTOR_INB, OUTPUT);
+  pinMode(LEFT_MOTOR_PWM, OUTPUT);
+
+  pinMode(RIGHT_MOTOR_INA, OUTPUT);
+  pinMode(RIGHT_MOTOR_INB, OUTPUT);
+  pinMode(RIGHT_MOTOR_PWM, OUTPUT);
 
   // Configure sensor pins as inputs
   pinMode(SENSOR_1, INPUT);
@@ -158,23 +165,27 @@ void setMotorSpeeds(int leftSpeed, int rightSpeed) {
   // ===== LEFT MOTOR =====
   if (leftSpeed >= 0) {
     // Forward direction
-    analogWrite(LEFT_MOTOR_PIN1, leftSpeed);
-    digitalWrite(LEFT_MOTOR_PIN2, LOW);
+    digitalWrite(LEFT_MOTOR_INA, LOW);
+    digitalWrite(LEFT_MOTOR_INB, HIGH);
+    analogWrite(LEFT_MOTOR_PWM, leftSpeed);
   } else {
     // Reverse direction (negative speed)
-    digitalWrite(LEFT_MOTOR_PIN1, LOW);
-    analogWrite(LEFT_MOTOR_PIN2, -leftSpeed);  // Make positive
+    digitalWrite(LEFT_MOTOR_INA, HIGH);
+    digitalWrite(LEFT_MOTOR_INB, LOW);
+    analogWrite(LEFT_MOTOR_PWM, -leftSpeed);  // Make positive
   }
 
   // ===== RIGHT MOTOR =====
   if (rightSpeed >= 0) {
     // Forward direction
-    analogWrite(RIGHT_MOTOR_PIN1, rightSpeed);
-    digitalWrite(RIGHT_MOTOR_PIN2, LOW);
+    digitalWrite(RIGHT_MOTOR_INA, LOW);
+    digitalWrite(RIGHT_MOTOR_INB, HIGH);
+    analogWrite(RIGHT_MOTOR_PWM, rightSpeed);
   } else {
     // Reverse direction (negative speed)
-    digitalWrite(RIGHT_MOTOR_PIN1, LOW);
-    analogWrite(RIGHT_MOTOR_PIN2, -rightSpeed);  // Make positive
+    digitalWrite(RIGHT_MOTOR_INA, HIGH);
+    digitalWrite(RIGHT_MOTOR_INB, LOW);
+    analogWrite(RIGHT_MOTOR_PWM, -rightSpeed);  // Make positive
   }
 }
 

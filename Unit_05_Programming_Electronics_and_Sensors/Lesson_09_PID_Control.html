@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
     <title>Lesson 9: PID Control for Line Following</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -976,20 +977,24 @@
 <span class="code-keyword">void</span> <span class="code-function">setMotorSpeeds</span>(<span class="code-keyword">int</span> leftSpeed, <span class="code-keyword">int</span> rightSpeed) {
   <span class="code-comment">// Left motor</span>
   <span class="code-keyword">if</span> (leftSpeed >= <span class="code-number">0</span>) {
-    <span class="code-function">analogWrite</span>(LEFT_MOTOR_PIN1, leftSpeed);
-    <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN2, LOW);
+    <span class="code-function">digitalWrite</span>(LEFT_MOTOR_INA, LOW);
+    <span class="code-function">digitalWrite</span>(LEFT_MOTOR_INB, HIGH);
+    <span class="code-function">analogWrite</span>(LEFT_MOTOR_PWM, leftSpeed);
   } <span class="code-keyword">else</span> {
-    <span class="code-function">digitalWrite</span>(LEFT_MOTOR_PIN1, LOW);
-    <span class="code-function">analogWrite</span>(LEFT_MOTOR_PIN2, -leftSpeed);
+    <span class="code-function">digitalWrite</span>(LEFT_MOTOR_INA, HIGH);
+    <span class="code-function">digitalWrite</span>(LEFT_MOTOR_INB, LOW);
+    <span class="code-function">analogWrite</span>(LEFT_MOTOR_PWM, -leftSpeed);
   }
 
   <span class="code-comment">// Right motor</span>
   <span class="code-keyword">if</span> (rightSpeed >= <span class="code-number">0</span>) {
-    <span class="code-function">analogWrite</span>(RIGHT_MOTOR_PIN1, rightSpeed);
-    <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN2, LOW);
+    <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_INA, LOW);
+    <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_INB, HIGH);
+    <span class="code-function">analogWrite</span>(RIGHT_MOTOR_PWM, rightSpeed);
   } <span class="code-keyword">else</span> {
-    <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_PIN1, LOW);
-    <span class="code-function">analogWrite</span>(RIGHT_MOTOR_PIN2, -rightSpeed);
+    <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_INA, HIGH);
+    <span class="code-function">digitalWrite</span>(RIGHT_MOTOR_INB, LOW);
+    <span class="code-function">analogWrite</span>(RIGHT_MOTOR_PWM, -rightSpeed);
   }
 }
 
@@ -1339,18 +1344,21 @@
             const codeText = `// Lesson 9: PID Control for Line Following
 // Starter Code for Lab Exercises
 
-// Motor pin definitions
-const int LEFT_MOTOR_PIN1 = 2;
-const int LEFT_MOTOR_PIN2 = 3;
-const int RIGHT_MOTOR_PIN1 = 4;
-const int RIGHT_MOTOR_PIN2 = 5;
+// Motor pin definitions - 3-pin motor controller (INA, INB, PWM)
+const int LEFT_MOTOR_INA = 8;
+const int LEFT_MOTOR_INB = 7;
+const int LEFT_MOTOR_PWM = 5;
+
+const int RIGHT_MOTOR_INA = 6;
+const int RIGHT_MOTOR_INB = 4;
+const int RIGHT_MOTOR_PWM = 3;
 
 // Sensor pin definitions (all 5 sensors)
-const int SENSOR_1 = 6;   // Far left
-const int SENSOR_2 = 7;   // Left
-const int SENSOR_3 = 8;   // Center
-const int SENSOR_4 = 9;   // Right
-const int SENSOR_5 = 10;  // Far right
+const int SENSOR_1 = A2;   // Far left
+const int SENSOR_2 = 0;    // Left
+const int SENSOR_3 = 2;    // Center
+const int SENSOR_4 = 1;    // Right
+const int SENSOR_5 = A3;   // Far right
 
 // PID Constants - tune these!
 const float Kp = 30.0;      // Proportional constant
@@ -1362,10 +1370,13 @@ int lastError = 0;          // For derivative calculation
 
 void setup() {
   // Set motor pins as outputs
-  pinMode(LEFT_MOTOR_PIN1, OUTPUT);
-  pinMode(LEFT_MOTOR_PIN2, OUTPUT);
-  pinMode(RIGHT_MOTOR_PIN1, OUTPUT);
-  pinMode(RIGHT_MOTOR_PIN2, OUTPUT);
+  pinMode(LEFT_MOTOR_INA, OUTPUT);
+  pinMode(LEFT_MOTOR_INB, OUTPUT);
+  pinMode(LEFT_MOTOR_PWM, OUTPUT);
+
+  pinMode(RIGHT_MOTOR_INA, OUTPUT);
+  pinMode(RIGHT_MOTOR_INB, OUTPUT);
+  pinMode(RIGHT_MOTOR_PWM, OUTPUT);
 
   // Set sensor pins as inputs
   pinMode(SENSOR_1, INPUT);
@@ -1433,20 +1444,24 @@ int getPositionError() {
 void setMotorSpeeds(int leftSpeed, int rightSpeed) {
   // Left motor
   if (leftSpeed >= 0) {
-    analogWrite(LEFT_MOTOR_PIN1, leftSpeed);
-    digitalWrite(LEFT_MOTOR_PIN2, LOW);
+    digitalWrite(LEFT_MOTOR_INA, LOW);
+    digitalWrite(LEFT_MOTOR_INB, HIGH);
+    analogWrite(LEFT_MOTOR_PWM, leftSpeed);
   } else {
-    digitalWrite(LEFT_MOTOR_PIN1, LOW);
-    analogWrite(LEFT_MOTOR_PIN2, -leftSpeed);
+    digitalWrite(LEFT_MOTOR_INA, HIGH);
+    digitalWrite(LEFT_MOTOR_INB, LOW);
+    analogWrite(LEFT_MOTOR_PWM, -leftSpeed);
   }
 
   // Right motor
   if (rightSpeed >= 0) {
-    analogWrite(RIGHT_MOTOR_PIN1, rightSpeed);
-    digitalWrite(RIGHT_MOTOR_PIN2, LOW);
+    digitalWrite(RIGHT_MOTOR_INA, LOW);
+    digitalWrite(RIGHT_MOTOR_INB, HIGH);
+    analogWrite(RIGHT_MOTOR_PWM, rightSpeed);
   } else {
-    digitalWrite(RIGHT_MOTOR_PIN1, LOW);
-    analogWrite(RIGHT_MOTOR_PIN2, -rightSpeed);
+    digitalWrite(RIGHT_MOTOR_INA, HIGH);
+    digitalWrite(RIGHT_MOTOR_INB, LOW);
+    analogWrite(RIGHT_MOTOR_PWM, -rightSpeed);
   }
 }`;
 

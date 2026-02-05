@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
     <title>Lesson 7: IR Sensor Fundamentals and Reading</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -515,27 +516,27 @@
 
                 <div class="sensor-array">
                     <div class="sensor">
-                        <div class="sensor-label">Pin 6</div>
+                        <div class="sensor-label">Pin A2</div>
                         <div class="sensor-led"></div>
                         <div style="font-size: 0.7rem; color: #b8c5d6;">S1 (Left)</div>
                     </div>
                     <div class="sensor">
-                        <div class="sensor-label">Pin 7</div>
+                        <div class="sensor-label">Pin 0</div>
                         <div class="sensor-led"></div>
                         <div style="font-size: 0.7rem; color: #b8c5d6;">S2</div>
                     </div>
                     <div class="sensor">
-                        <div class="sensor-label">Pin 8</div>
+                        <div class="sensor-label">Pin 2</div>
                         <div class="sensor-led"></div>
                         <div style="font-size: 0.7rem; color: #b8c5d6;">S3 (Center)</div>
                     </div>
                     <div class="sensor">
-                        <div class="sensor-label">Pin 9</div>
+                        <div class="sensor-label">Pin 1</div>
                         <div class="sensor-led"></div>
                         <div style="font-size: 0.7rem; color: #b8c5d6;">S4</div>
                     </div>
                     <div class="sensor">
-                        <div class="sensor-label">Pin 10</div>
+                        <div class="sensor-label">Pin A3</div>
                         <div class="sensor-led"></div>
                         <div style="font-size: 0.7rem; color: #b8c5d6;">S5 (Right)</div>
                     </div>
@@ -551,30 +552,34 @@
                         </tr>
                         <tr>
                             <td><strong>S1</strong></td>
-                            <td>D6</td>
+                            <td>A2</td>
                             <td>Far Left</td>
                         </tr>
                         <tr>
                             <td><strong>S2</strong></td>
-                            <td>D7</td>
+                            <td>0</td>
                             <td>Left</td>
                         </tr>
                         <tr>
                             <td><strong>S3</strong></td>
-                            <td>D8</td>
+                            <td>2</td>
                             <td>Center</td>
                         </tr>
                         <tr>
                             <td><strong>S4</strong></td>
-                            <td>D9</td>
+                            <td>1</td>
                             <td>Right</td>
                         </tr>
                         <tr>
                             <td><strong>S5</strong></td>
-                            <td>D10</td>
+                            <td>A3</td>
                             <td>Far Right</td>
                         </tr>
                     </table>
+                </div>
+
+                <div class="warning-box">
+                    <strong>⚠ TX/RX Pin Conflict:</strong> Pins 0 and 1 (S2 and S4) are also the Arduino's TX/RX pins used by <code>Serial</code>. While these sensors are connected, <code>Serial.println()</code> output in the Serial Monitor may be garbled or missing. Disconnect S2 and S4 if you need clean serial output for debugging.
                 </div>
             </div>
         </div>
@@ -691,40 +696,40 @@
 
                 <table style="font-size: 0.9rem;">
                     <tr>
-                        <th>Pattern</th>
-                        <th>Binary</th>
+                        <th>Pattern (S1-S5)</th>
+                        <th>S1 S2 S3 S4 S5</th>
                         <th>Line Position</th>
                         <th>Action</th>
                     </tr>
                     <tr>
-                        <td class="pattern-display" style="font-size: 1rem; letter-spacing: 5px;">00100</td>
-                        <td>LOW LOW LOW HIGH HIGH</td>
+                        <td class="pattern-display" style="font-size: 1rem; letter-spacing: 5px;">01111</td>
+                        <td><span style="color: #ff6b7a;">LOW</span> HIGH HIGH HIGH HIGH</td>
+                        <td>Far left</td>
+                        <td style="color: #ff6b7a;">Turn left sharply</td>
+                    </tr>
+                    <tr>
+                        <td class="pattern-display" style="font-size: 1rem; letter-spacing: 5px;">10111</td>
+                        <td>HIGH <span style="color: #ff6b7a;">LOW</span> HIGH HIGH HIGH</td>
+                        <td>Slightly left</td>
+                        <td style="color: #f1fa8c;">Turn left slightly</td>
+                    </tr>
+                    <tr>
+                        <td class="pattern-display" style="font-size: 1rem; letter-spacing: 5px;">11011</td>
+                        <td>HIGH HIGH <span style="color: #ff6b7a;">LOW</span> HIGH HIGH</td>
                         <td>Centered</td>
                         <td style="color: #50fa7b;">Go straight</td>
                     </tr>
                     <tr>
-                        <td class="pattern-display" style="font-size: 1rem; letter-spacing: 5px;">01100</td>
-                        <td>LOW HIGH LOW HIGH HIGH</td>
-                        <td>Slightly left</td>
+                        <td class="pattern-display" style="font-size: 1rem; letter-spacing: 5px;">11101</td>
+                        <td>HIGH HIGH HIGH <span style="color: #ff6b7a;">LOW</span> HIGH</td>
+                        <td>Slightly right</td>
                         <td style="color: #f1fa8c;">Turn right slightly</td>
                     </tr>
                     <tr>
-                        <td class="pattern-display" style="font-size: 1rem; letter-spacing: 5px;">00110</td>
-                        <td>LOW LOW HIGH HIGH HIGH</td>
-                        <td>Slightly right</td>
-                        <td style="color: #f1fa8c;">Turn left slightly</td>
-                    </tr>
-                    <tr>
-                        <td class="pattern-display" style="font-size: 1rem; letter-spacing: 5px;">11000</td>
-                        <td>HIGH HIGH LOW LOW LOW</td>
-                        <td>Far left</td>
-                        <td style="color: #ff6b7a;">Turn right sharply</td>
-                    </tr>
-                    <tr>
-                        <td class="pattern-display" style="font-size: 1rem; letter-spacing: 5px;">00011</td>
-                        <td>LOW LOW LOW HIGH HIGH</td>
+                        <td class="pattern-display" style="font-size: 1rem; letter-spacing: 5px;">11110</td>
+                        <td>HIGH HIGH HIGH HIGH <span style="color: #ff6b7a;">LOW</span></td>
                         <td>Far right</td>
-                        <td style="color: #ff6b7a;">Turn left sharply</td>
+                        <td style="color: #ff6b7a;">Turn right sharply</td>
                     </tr>
                     <tr>
                         <td class="pattern-display" style="font-size: 1rem; letter-spacing: 5px;">11111</td>
