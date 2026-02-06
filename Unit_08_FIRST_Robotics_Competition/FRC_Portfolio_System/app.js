@@ -1886,7 +1886,7 @@ function showCelebration(message) {
     `;
 
     overlay.innerHTML = `
-        <div style="font-size: 120px; animation: dance 0.5s ease-in-out infinite;">🤖</div>
+        <div style="font-size: 120px; animation: egyptian 0.6s ease-in-out infinite;">🤖</div>
         <div style="color: white; font-size: 28px; font-weight: bold; margin-top: 20px; text-align: center; padding: 0 20px;">
             ${message}
         </div>
@@ -1895,14 +1895,14 @@ function showCelebration(message) {
         </div>
     `;
 
-    // Add dance animation style
+    // Add Egyptian walk animation style
     const style = document.createElement('style');
     style.textContent = `
-        @keyframes dance {
-            0%, 100% { transform: rotate(-10deg) translateY(0); }
-            25% { transform: rotate(10deg) translateY(-20px); }
-            50% { transform: rotate(-10deg) translateY(0); }
-            75% { transform: rotate(10deg) translateY(-20px); }
+        @keyframes egyptian {
+            0%, 100% { transform: translateX(-30px) skewY(-5deg); }
+            25% { transform: translateX(0px) skewY(5deg) scaleX(-1); }
+            50% { transform: translateX(30px) skewY(-5deg); }
+            75% { transform: translateX(0px) skewY(5deg) scaleX(-1); }
         }
         @keyframes fadeIn {
             from { opacity: 0; }
