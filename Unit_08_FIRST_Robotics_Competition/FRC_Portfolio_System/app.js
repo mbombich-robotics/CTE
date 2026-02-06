@@ -1043,16 +1043,18 @@ function loadReflectionData(data) {
     showTeacherFeedback(data);
 
     // Restore evidence thumbnails for the selected week from state
+    // Supports both legacy base64 (ev.data) and Drive-based (ev.thumbnailLink)
     const preview = document.getElementById('evidencePreview');
     preview.innerHTML = '';
     state.evidence
-        .filter(ev => ev.week === state.selectedWeek && ev.data)
+        .filter(ev => ev.week === state.selectedWeek && (ev.data || ev.thumbnailLink))
         .forEach(ev => {
+            const imgSrc = ev.thumbnailLink || ev.data;
             const thumb = document.createElement('div');
             thumb.className = 'evidence-thumb';
             thumb.innerHTML = `
-                <img src="${ev.data}" alt="Evidence">
-                <button type="button" class="remove-btn" onclick="this.parentElement.remove()">
+                <img src="${imgSrc}" alt="Evidence" onerror="this.src='https://via.placeholder.com/150?text=Photo'">
+                <button type="button" class="remove-btn" onclick="removeEvidence('${ev.driveId || ''}', this.parentElement)">
                     <i class="fas fa-times"></i>
                 </button>
             `;
