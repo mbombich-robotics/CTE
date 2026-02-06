@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.6.2',
+    VERSION: 'v2.7.0',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -566,26 +566,39 @@ function openStudentDetail(email) {
     if (evidenceItems.length === 0) {
         evidencePanel.innerHTML = '<p class="empty-state">No evidence photos uploaded.</p>';
     } else {
+        // Check if any items have Drive links (new system) vs base64 (legacy)
+        const hasDriveLinks = evidenceItems.some(item => item.thumbnailLink || item.webViewLink);
+
         evidencePanel.innerHTML = `
             <p style="margin-bottom: 12px; color: var(--gray-600); font-size: 13px;">
                 <i class="fas fa-info-circle"></i> ${evidenceItems.length} photo(s) uploaded.
-                Images are stored on student devices due to size limits.
+                ${hasDriveLinks ? 'Click images to view full size in Google Drive.' : 'Legacy images stored on student devices.'}
             </p>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;">
-                ${evidenceItems.map(item => `
-                    <div style="background: var(--gray-50); border-radius: 8px; overflow: hidden; border: 1px solid var(--gray-200);">
-                        ${item.data
-                            ? `<img src="${item.data}" alt="${item.filename}" style="width: 100%; height: 120px; object-fit: cover; display: block;">`
-                            : `<div style="width: 100%; height: 120px; background: var(--gray-200); display: flex; align-items: center; justify-content: center; color: var(--gray-500);">
-                                <i class="fas fa-image" style="font-size: 32px;"></i>
-                               </div>`
-                        }
-                        <div style="padding: 8px; font-size: 12px; color: var(--gray-600);">
-                            <div style="font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${item.filename || 'Photo'}">${item.filename || 'Photo'}</div>
-                            <div>Week ${item.week || '?'} &middot; ${item.uploadedAt ? new Date(item.uploadedAt).toLocaleDateString() : 'Unknown date'}</div>
+                ${evidenceItems.map(item => {
+                    const imgSrc = item.thumbnailLink || item.data || null;
+                    const viewLink = item.webViewLink || '#';
+                    const hasImage = imgSrc !== null;
+
+                    return `
+                        <div style="background: var(--gray-50); border-radius: 8px; overflow: hidden; border: 1px solid var(--gray-200);">
+                            ${hasImage
+                                ? `<a href="${viewLink}" target="_blank" style="display: block;">
+                                     <img src="${imgSrc}" alt="${item.filename || 'Evidence'}"
+                                          style="width: 100%; height: 120px; object-fit: cover; display: block;"
+                                          onerror="this.parentElement.innerHTML='<div style=\\'width:100%;height:120px;background:var(--gray-200);display:flex;align-items:center;justify-content:center;color:var(--gray-500);\\'><i class=\\'fas fa-exclamation-triangle\\' style=\\'font-size:24px;\\'></i></div>'">
+                                   </a>`
+                                : `<div style="width: 100%; height: 120px; background: var(--gray-200); display: flex; align-items: center; justify-content: center; color: var(--gray-500);">
+                                    <i class="fas fa-image" style="font-size: 32px;"></i>
+                                   </div>`
+                            }
+                            <div style="padding: 8px; font-size: 12px; color: var(--gray-600);">
+                                <div style="font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${item.filename || 'Photo'}">${item.filename || 'Photo'}</div>
+                                <div>Week ${item.week || '?'} &middot; ${item.uploadedAt ? new Date(item.uploadedAt).toLocaleDateString() : 'Unknown date'}</div>
+                            </div>
                         </div>
-                    </div>
-                `).join('')}
+                    `;
+                }).join('')}
             </div>
         `;
     }

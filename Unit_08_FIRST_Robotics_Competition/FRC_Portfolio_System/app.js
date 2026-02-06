@@ -5,7 +5,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.6.1',
+    VERSION: 'v2.7.0',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbw3hcXITZjbdg39X9ELIBT_qSHcsAIMicS9AsHda4uHPFMwzjDjPeUej6zNr7KFxXQG/exec',
@@ -196,6 +196,8 @@ let state = {
 let autoSaveTimer = null;
 let isDirty = false;
 let formInitialized = false; // Track if reflection form has been populated
+let tokenClient = null; // Google OAuth2 token client
+let accessToken = null; // Store access token for Drive API
 
 // ============================================
 // GOOGLE SIGN-IN INITIALIZATION
@@ -205,15 +207,28 @@ window.onload = function () {
     const versionEl = document.getElementById('appVersion');
     if (versionEl) versionEl.textContent = CONFIG.VERSION;
 
-    google.accounts.id.initialize({
+    // Initialize the token client for OAuth2 (needed for Drive API)
+    tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: CONFIG.GOOGLE_CLIENT_ID,
-        callback: handleCredentialResponse
+        scope: 'email profile https://www.googleapis.com/auth/drive.file',
+        callback: handleTokenResponse
     });
 
-    google.accounts.id.renderButton(
-        document.getElementById('googleSignInBtn'),
-        { theme: 'outline', size: 'large', width: 300, text: 'signin_with' }
-    );
+    // Create custom sign-in button
+    const signInBtn = document.getElementById('googleSignInBtn');
+    signInBtn.innerHTML = `
+        <button class="google-signin-btn" style="
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 24px; border: 1px solid #dadce0; border-radius: 4px;
+            background: white; cursor: pointer; font-size: 14px; font-family: 'Roboto', sans-serif;
+        ">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width: 18px; height: 18px;">
+            <span style="color: #3c4043;">Sign in with Google</span>
+        </button>
+    `;
+    signInBtn.querySelector('button').addEventListener('click', () => {
+        tokenClient.requestAccessToken();
+    });
 
     // Show sign-in modal on page load
     document.getElementById('signinModal').classList.add('active');
@@ -225,21 +240,50 @@ window.onload = function () {
 
     // Wire sign-out button
     document.getElementById('signOutBtn').addEventListener('click', signOut);
+
+    // Load gapi client for Drive API
+    if (typeof gapi !== 'undefined') {
+        gapi.load('client', initGapiClient);
+    }
 };
+
+async function initGapiClient() {
+    await gapi.client.init({});
+    console.log('Google API client initialized');
+}
 
 // ============================================
 // GOOGLE AUTH HANDLERS
 // ============================================
-function handleCredentialResponse(response) {
-    const payload = decodeJwtPayload(response.credential);
-    const email = payload.email;
-    const name = payload.name;
+async function handleTokenResponse(tokenResponse) {
+    if (tokenResponse.error) {
+        console.error('Token error:', tokenResponse.error);
+        showToast('Sign-in failed: ' + tokenResponse.error, 'error');
+        return;
+    }
 
-    // Dismiss sign-in modal
-    document.getElementById('signinModal').classList.remove('active');
+    // Store access token for Drive API
+    accessToken = tokenResponse.access_token;
 
-    // Attempt cloud load
-    loadStudentFromCloud(email).then(cloudData => {
+    // Set token for gapi client
+    if (typeof gapi !== 'undefined' && gapi.client) {
+        gapi.client.setToken({ access_token: accessToken });
+    }
+
+    // Fetch user info using the access token
+    try {
+        const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+            headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        const userInfo = await userInfoResponse.json();
+        const email = userInfo.email;
+        const name = userInfo.name;
+
+        // Dismiss sign-in modal
+        document.getElementById('signinModal').classList.remove('active');
+
+        // Attempt cloud load
+        const cloudData = await loadStudentFromCloud(email);
         if (cloudData && cloudData.student) {
             // Returning student
             state = cloudData;
@@ -255,17 +299,155 @@ function handleCredentialResponse(response) {
             state.student = { email, name };
             initProfileForm();
         }
-    });
+    } catch (error) {
+        console.error('Failed to get user info:', error);
+        showToast('Failed to get user info', 'error');
+    }
 }
 
-function decodeJwtPayload(token) {
-    const base64 = token.split('.')[1];
-    const jsonPayload = decodeURIComponent(
-        atob(base64).split('').map(c =>
-            '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-        ).join('')
-    );
-    return JSON.parse(jsonPayload);
+// ============================================
+// GOOGLE DRIVE FUNCTIONS
+// ============================================
+const DRIVE_FOLDER_NAME = 'FRC Portfolio Evidence';
+let driveFolderId = null;
+
+async function getOrCreateDriveFolder() {
+    if (driveFolderId) return driveFolderId;
+    if (!accessToken) {
+        console.error('No access token for Drive');
+        return null;
+    }
+
+    try {
+        // Search for existing folder
+        const searchResponse = await fetch(
+            `https://www.googleapis.com/drive/v3/files?q=name='${DRIVE_FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`,
+            { headers: { Authorization: `Bearer ${accessToken}` } }
+        );
+        const searchResult = await searchResponse.json();
+
+        if (searchResult.files && searchResult.files.length > 0) {
+            driveFolderId = searchResult.files[0].id;
+            console.log('Found existing Drive folder:', driveFolderId);
+            return driveFolderId;
+        }
+
+        // Create new folder
+        const createResponse = await fetch('https://www.googleapis.com/drive/v3/files', {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: DRIVE_FOLDER_NAME,
+                mimeType: 'application/vnd.google-apps.folder'
+            })
+        });
+        const folder = await createResponse.json();
+        driveFolderId = folder.id;
+        console.log('Created Drive folder:', driveFolderId);
+
+        // Set folder sharing to domain with link
+        await setDomainSharing(driveFolderId);
+
+        return driveFolderId;
+    } catch (error) {
+        console.error('Failed to get/create Drive folder:', error);
+        return null;
+    }
+}
+
+async function uploadToDrive(file, weekNumber) {
+    const folderId = await getOrCreateDriveFolder();
+    if (!folderId) {
+        showToast('Could not access Google Drive', 'error');
+        return null;
+    }
+
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const filename = `Week${weekNumber}_${timestamp}_${file.name}`;
+
+    try {
+        // Create file metadata
+        const metadata = {
+            name: filename,
+            parents: [folderId]
+        };
+
+        // Use multipart upload
+        const form = new FormData();
+        form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+        form.append('file', file);
+
+        const uploadResponse = await fetch(
+            'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink,webContentLink',
+            {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${accessToken}` },
+                body: form
+            }
+        );
+        const uploadedFile = await uploadResponse.json();
+
+        if (uploadedFile.error) {
+            console.error('Drive upload error:', uploadedFile.error);
+            showToast('Upload failed: ' + uploadedFile.error.message, 'error');
+            return null;
+        }
+
+        // Set file sharing to domain with link
+        await setDomainSharing(uploadedFile.id);
+
+        console.log('Uploaded to Drive:', uploadedFile);
+        return {
+            id: uploadedFile.id,
+            name: uploadedFile.name,
+            webViewLink: uploadedFile.webViewLink,
+            thumbnailLink: `https://drive.google.com/thumbnail?id=${uploadedFile.id}&sz=w400`
+        };
+    } catch (error) {
+        console.error('Drive upload failed:', error);
+        showToast('Upload failed', 'error');
+        return null;
+    }
+}
+
+async function setDomainSharing(fileId) {
+    try {
+        await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                role: 'reader',
+                type: 'domain',
+                domain: 'vicksburgschools.org' // Your school domain
+            })
+        });
+        console.log('Set domain sharing for:', fileId);
+    } catch (error) {
+        console.error('Failed to set sharing:', error);
+        // Fall back to "anyone with link" if domain sharing fails
+        try {
+            await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    role: 'reader',
+                    type: 'anyone'
+                })
+            });
+            console.log('Fell back to anyone-with-link sharing for:', fileId);
+        } catch (e) {
+            console.error('Failed to set any sharing:', e);
+        }
+    }
 }
 
 function signOut() {
@@ -1077,39 +1259,60 @@ function initEvidenceUpload() {
     fileInput.addEventListener('change', () => handleFiles(fileInput.files));
 }
 
-function handleFiles(files) {
+async function handleFiles(files) {
     const preview = document.getElementById('evidencePreview');
 
-    Array.from(files).forEach(file => {
-        if (!file.type.startsWith('image/')) return;
+    for (const file of Array.from(files)) {
+        if (!file.type.startsWith('image/')) continue;
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            // Compress image before storing to reduce localStorage usage
-            compressImage(e.target.result, (compressedData) => {
-                const thumb = document.createElement('div');
-                thumb.className = 'evidence-thumb';
-                thumb.innerHTML = `
-                    <img src="${compressedData}" alt="Evidence">
-                    <button type="button" class="remove-btn" onclick="this.parentElement.remove()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                `;
-                preview.appendChild(thumb);
+        // Show uploading placeholder
+        const thumb = document.createElement('div');
+        thumb.className = 'evidence-thumb uploading';
+        thumb.innerHTML = `
+            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--gray-100);">
+                <i class="fas fa-spinner fa-spin" style="font-size: 24px; color: var(--gray-400);"></i>
+            </div>
+        `;
+        preview.appendChild(thumb);
 
-                state.evidence.push({
-                    type: 'weekly',
-                    week: state.selectedWeek,
-                    data: compressedData,
-                    filename: file.name,
-                    uploadedAt: new Date().toISOString()
-                });
-                markDirty();
-                saveEvidenceLocal();
+        // Upload to Google Drive
+        const driveFile = await uploadToDrive(file, state.selectedWeek);
+
+        if (driveFile) {
+            // Success - update thumbnail with Drive image
+            thumb.classList.remove('uploading');
+            thumb.innerHTML = `
+                <img src="${driveFile.thumbnailLink}" alt="Evidence" onerror="this.src='https://via.placeholder.com/150?text=Photo'">
+                <button type="button" class="remove-btn" onclick="removeEvidence('${driveFile.id}', this.parentElement)">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+
+            state.evidence.push({
+                type: 'weekly',
+                week: state.selectedWeek,
+                driveId: driveFile.id,
+                filename: driveFile.name,
+                thumbnailLink: driveFile.thumbnailLink,
+                webViewLink: driveFile.webViewLink,
+                uploadedAt: new Date().toISOString()
             });
-        };
-        reader.readAsDataURL(file);
-    });
+            markDirty();
+            showToast('Photo uploaded to Google Drive', 'success');
+        } else {
+            // Failed - remove placeholder
+            thumb.remove();
+        }
+    }
+}
+
+function removeEvidence(driveId, element) {
+    // Remove from state
+    state.evidence = state.evidence.filter(e => e.driveId !== driveId);
+    // Remove from DOM
+    element.remove();
+    markDirty();
+    // Note: We don't delete from Drive - student keeps ownership
 }
 
 function compressImage(dataURL, callback) {
@@ -1301,15 +1504,23 @@ function loadEvidenceGallery() {
         return;
     }
 
-    gallery.innerHTML = state.evidence.map(item => `
-        <div class="gallery-item" data-type="${item.type}">
-            <img src="${item.data}" alt="${item.filename}">
-            <div class="gallery-item-info">
-                <div class="date">${new Date(item.uploadedAt).toLocaleDateString()}</div>
-                <div class="caption">Week ${item.week}</div>
+    gallery.innerHTML = state.evidence.map(item => {
+        // Support both new Drive-based and legacy base64 evidence
+        const imgSrc = item.thumbnailLink || item.data || 'https://via.placeholder.com/150?text=Photo';
+        const viewLink = item.webViewLink || '#';
+
+        return `
+            <div class="gallery-item" data-type="${item.type}">
+                <a href="${viewLink}" target="_blank" title="View full size">
+                    <img src="${imgSrc}" alt="${item.filename || 'Evidence'}" onerror="this.src='https://via.placeholder.com/150?text=Photo'">
+                </a>
+                <div class="gallery-item-info">
+                    <div class="date">${item.uploadedAt ? new Date(item.uploadedAt).toLocaleDateString() : 'Unknown'}</div>
+                    <div class="caption">Week ${item.week || '?'}</div>
+                </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.addEventListener('click', () => {
