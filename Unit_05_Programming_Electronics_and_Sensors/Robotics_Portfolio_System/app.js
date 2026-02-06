@@ -51,26 +51,26 @@ const DELIVERABLES = [
         week: 1,
         points: 50,
         phase: 'linefollow',
-        description: 'Navigate a test track demonstrating line following capability.',
+        description: 'Complete Track #1 with curves in under 1 minute.',
+        timeLimit: 60, // seconds
         requirements: [
-            'Robot follows line through curves',
-            'Handles intersections appropriately',
-            'Recovers from minor errors',
-            'Completes track within time limit'
+            'Tune the line following IR sensor for your track',
+            'Follow the line through curves',
+            'Complete Track #1 in under 1 minute'
         ]
     },
     {
         id: 2,
-        title: 'Line Following Final Practical',
+        title: 'Line Following Practical #2',
         week: 2,
         points: 75,
         phase: 'linefollow',
-        description: 'Timed run on standardized track with advanced features.',
+        description: 'Complete Track #2 with sharp curves in under 2 minutes.',
+        timeLimit: 120, // seconds
         requirements: [
-            'Complete track with minimal errors',
-            'Best of 3 attempts scored',
-            'Points for speed and consistency',
-            'Bonus for handling edge cases'
+            'Navigate a longer track with sharp curves',
+            'Complete Track #2 in under 2 minutes',
+            'Best of 3 attempts scored'
         ]
     },
     {
@@ -1689,6 +1689,21 @@ function openDeliverableForm(id) {
         </div>
 
         <form id="deliverableForm" style="margin-top: 20px;">
+            ${deliverable.timeLimit ? `
+            <div class="form-group">
+                <label for="completionTime">Completion Time (seconds)</label>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <input type="number" id="completionTime" min="0" max="${deliverable.timeLimit * 2}" step="1"
+                           value="${existing.completionTime || ''}"
+                           placeholder="e.g. 45"
+                           style="width: 120px;">
+                    <span style="color: var(--gray-500); font-size: 14px;">
+                        Time limit: ${deliverable.timeLimit} seconds (${Math.floor(deliverable.timeLimit / 60)}:${String(deliverable.timeLimit % 60).padStart(2, '0')})
+                    </span>
+                </div>
+            </div>
+            ` : ''}
+
             <div class="form-group">
                 <label for="deliverableContent">Your Submission</label>
                 <textarea id="deliverableContent" rows="8" placeholder="Describe what you did, paste your code, explain your process...">${existing.content || ''}</textarea>
@@ -1710,8 +1725,8 @@ function openDeliverableForm(id) {
         </form>
     `;
 
-    // Attach dirty listeners to the new textareas inside the modal
-    content.querySelectorAll('textarea').forEach(el => {
+    // Attach dirty listeners to form inputs
+    content.querySelectorAll('textarea, input').forEach(el => {
         el.addEventListener('input', markDirty);
     });
 
@@ -1724,10 +1739,12 @@ function openDeliverableForm(id) {
 }
 
 function saveDeliverableDraft(id) {
+    const completionTimeEl = document.getElementById('completionTime');
     state.deliverables[id] = {
         ...state.deliverables[id],
         content: document.getElementById('deliverableContent').value,
         links: document.getElementById('deliverableLinks').value,
+        completionTime: completionTimeEl ? parseInt(completionTimeEl.value) || null : null,
         status: 'in-progress',
         updatedAt: new Date().toISOString()
     };
@@ -1739,6 +1756,7 @@ function saveDeliverableDraft(id) {
 function submitDeliverable(id) {
     const deliverable = DELIVERABLES.find(d => d.id === id);
     const content = document.getElementById('deliverableContent').value;
+    const completionTimeEl = document.getElementById('completionTime');
 
     if (!content || content.length < 50) {
         showToast('Please provide more detail (at least 50 characters)', 'error');
@@ -1748,6 +1766,7 @@ function submitDeliverable(id) {
     state.deliverables[id] = {
         content,
         links: document.getElementById('deliverableLinks').value,
+        completionTime: completionTimeEl ? parseInt(completionTimeEl.value) || null : null,
         status: 'completed',
         submittedAt: new Date().toISOString()
     };
