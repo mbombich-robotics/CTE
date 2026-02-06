@@ -146,14 +146,14 @@ function initializeSheets() {
     deliverablesSheet.setFrozenRows(1);
   }
 
-  // Evidence sheet
+  // Evidence sheet - supports both legacy base64 and new Drive-based storage
   let evidenceSheet = ss.getSheetByName(SHEET_NAMES.EVIDENCE);
   if (!evidenceSheet) {
     evidenceSheet = ss.insertSheet(SHEET_NAMES.EVIDENCE);
-    evidenceSheet.getRange(1, 1, 1, 6).setValues([[
-      'Email', 'Name', 'Week', 'Filename', 'Uploaded At', 'Image Data'
+    evidenceSheet.getRange(1, 1, 1, 9).setValues([[
+      'Email', 'Name', 'Week', 'Filename', 'Uploaded At', 'Image Data', 'Drive ID', 'Thumbnail Link', 'Web View Link'
     ]]);
-    evidenceSheet.getRange(1, 1, 1, 6).setFontWeight('bold').setBackground('#ea4335').setFontColor('white');
+    evidenceSheet.getRange(1, 1, 1, 9).setFontWeight('bold').setBackground('#ea4335').setFontColor('white');
     evidenceSheet.setFrozenRows(1);
   }
 
@@ -371,20 +371,29 @@ function saveDeliverable(student, id, deliverable) {
 
 /**
  * Save evidence photo (one row per photo in Evidence sheet)
+ * Supports both legacy base64 and new Drive-based storage
  */
 function saveEvidence(student, evidence) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName(SHEET_NAMES.EVIDENCE);
   const data = sheet.getDataRange().getValues();
 
-  // Check if this evidence item already exists (match by email, filename, uploadedAt)
+  // Check if this evidence item already exists
+  // For Drive-based: match by email + driveId (most reliable)
+  // For legacy base64: match by email + filename + uploadedAt
   let rowIndex = -1;
   for (let i = 1; i < data.length; i++) {
-    if (data[i][0] === student.email &&
-        data[i][3] === evidence.filename &&
-        data[i][4] === evidence.uploadedAt) {
-      rowIndex = i + 1;
-      break;
+    if (data[i][0] === student.email) {
+      // Drive-based: check driveId (column 7, index 6)
+      if (evidence.driveId && data[i][6] === evidence.driveId) {
+        rowIndex = i + 1;
+        break;
+      }
+      // Legacy base64: check filename + uploadedAt
+      if (!evidence.driveId && data[i][3] === evidence.filename && data[i][4] === evidence.uploadedAt) {
+        rowIndex = i + 1;
+        break;
+      }
     }
   }
 
@@ -394,7 +403,10 @@ function saveEvidence(student, evidence) {
     evidence.week || '',
     evidence.filename || '',
     evidence.uploadedAt || new Date().toISOString(),
-    evidence.data || '' // Base64 image data
+    evidence.data || '',           // Base64 image data (legacy)
+    evidence.driveId || '',        // Google Drive file ID
+    evidence.thumbnailLink || '',  // Drive thumbnail URL
+    evidence.webViewLink || ''     // Drive web view URL
   ];
 
   if (rowIndex > 0) {
@@ -455,19 +467,25 @@ function loadStudentData(email) {
           }
 
           // Load evidence photos from Evidence sheet
+          // Supports both legacy base64 and new Drive-based storage
           const evidenceSheet = ss.getSheetByName(SHEET_NAMES.EVIDENCE);
           const evidenceData = evidenceSheet.getDataRange().getValues();
           fullState.evidence = [];
 
           for (let j = 1; j < evidenceData.length; j++) {
             if (evidenceData[j][0] === email) {
-              fullState.evidence.push({
+              const evidenceItem = {
                 type: 'weekly',
                 week: evidenceData[j][2],
                 filename: evidenceData[j][3],
                 uploadedAt: evidenceData[j][4],
-                data: evidenceData[j][5] // Base64 image data
-              });
+                data: evidenceData[j][5] || ''  // Base64 image data (legacy)
+              };
+              // Add Drive fields if they exist (columns 7-9)
+              if (evidenceData[j][6]) evidenceItem.driveId = evidenceData[j][6];
+              if (evidenceData[j][7]) evidenceItem.thumbnailLink = evidenceData[j][7];
+              if (evidenceData[j][8]) evidenceItem.webViewLink = evidenceData[j][8];
+              fullState.evidence.push(evidenceItem);
             }
           }
 
@@ -542,19 +560,25 @@ function loadStudentData(email) {
       }
 
       // Load evidence photos from Evidence sheet
+      // Supports both legacy base64 and new Drive-based storage
       const evidenceSheet = ss.getSheetByName(SHEET_NAMES.EVIDENCE);
       const evidenceData = evidenceSheet.getDataRange().getValues();
       const evidence = [];
 
       for (let j = 1; j < evidenceData.length; j++) {
         if (evidenceData[j][0] === email) {
-          evidence.push({
+          const evidenceItem = {
             type: 'weekly',
             week: evidenceData[j][2],
             filename: evidenceData[j][3],
             uploadedAt: evidenceData[j][4],
-            data: evidenceData[j][5] // Base64 image data
-          });
+            data: evidenceData[j][5] || ''  // Base64 image data (legacy)
+          };
+          // Add Drive fields if they exist (columns 7-9)
+          if (evidenceData[j][6]) evidenceItem.driveId = evidenceData[j][6];
+          if (evidenceData[j][7]) evidenceItem.thumbnailLink = evidenceData[j][7];
+          if (evidenceData[j][8]) evidenceItem.webViewLink = evidenceData[j][8];
+          evidence.push(evidenceItem);
         }
       }
 
