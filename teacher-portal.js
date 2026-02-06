@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.7.5',
+    VERSION: 'v2.8.0',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -512,6 +512,8 @@ function openStudentDetail(email) {
         const hasDraft = draft && !draft.submitted && (draft.contributions?.length > 0 || draft.challenges);
 
         if (submitted) {
+            const existingGrade = draft?.teacherGrade ?? submitted[10] ?? '';
+            const existingFeedback = draft?.teacherFeedback ?? submitted[11] ?? '';
             reflectionsPanel.innerHTML += `
                 <div class="item-card">
                     <div class="item-header">
@@ -523,6 +525,18 @@ function openStudentDetail(email) {
                         ${(submitted[3] || '').replace(/\n/g, '<br>')}
                         ${submitted[5] ? `<br><br><strong>Challenges:</strong> ${submitted[5]}` : ''}
                         ${submitted[6] ? `<br><strong>Solutions:</strong> ${submitted[6]}` : ''}
+                    </div>
+                    <div class="grade-section" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gray-200);">
+                        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 8px;">
+                            <label style="font-size: 13px; font-weight: 500;">Grade:</label>
+                            <input type="number" class="grade-input" data-type="reflection" data-id="${week}" data-email="${email}"
+                                   value="${existingGrade}" min="0" max="20" step="1"
+                                   style="width: 60px; padding: 4px 8px; border: 1px solid var(--gray-300); border-radius: 4px;">
+                            <span style="color: var(--gray-500); font-size: 12px;">/ 20 pts</span>
+                        </div>
+                        <textarea class="feedback-input" data-type="reflection" data-id="${week}" data-email="${email}"
+                                  placeholder="Feedback for student..."
+                                  style="width: 100%; padding: 8px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 13px; resize: vertical; min-height: 60px;">${existingFeedback}</textarea>
                     </div>
                 </div>
             `;
@@ -570,6 +584,9 @@ function openStudentDetail(email) {
         const draft = student.fullState?.deliverables?.[id];
 
         if (submitted && submitted[7] === 'completed') {
+            const existingGrade = draft?.teacherGrade ?? submitted[9] ?? '';
+            const existingFeedback = draft?.teacherFeedback ?? submitted[10] ?? '';
+            const maxPoints = course.deliverablePoints?.[id] || 50;
             deliverablesPanel.innerHTML += `
                 <div class="item-card">
                     <div class="item-header">
@@ -579,6 +596,18 @@ function openStudentDetail(email) {
                     <div class="item-content">
                         ${(submitted[4] || '').substring(0, 300)}${submitted[4]?.length > 300 ? '...' : ''}
                         ${submitted[5] ? `<br><br><strong>Links:</strong> ${submitted[5]}` : ''}
+                    </div>
+                    <div class="grade-section" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gray-200);">
+                        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 8px;">
+                            <label style="font-size: 13px; font-weight: 500;">Grade:</label>
+                            <input type="number" class="grade-input" data-type="deliverable" data-id="${id}" data-email="${email}"
+                                   value="${existingGrade}" min="0" max="${maxPoints}" step="1"
+                                   style="width: 60px; padding: 4px 8px; border: 1px solid var(--gray-300); border-radius: 4px;">
+                            <span style="color: var(--gray-500); font-size: 12px;">/ ${maxPoints} pts</span>
+                        </div>
+                        <textarea class="feedback-input" data-type="deliverable" data-id="${id}" data-email="${email}"
+                                  placeholder="Feedback for student..."
+                                  style="width: 100%; padding: 8px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 13px; resize: vertical; min-height: 60px;">${existingFeedback}</textarea>
                     </div>
                 </div>
             `;
@@ -660,6 +689,64 @@ function closeModal() {
     document.getElementById('studentModal').classList.remove('active');
 }
 
+async function saveStudentGrades() {
+    const grades = [];
+    const course = CONFIG.COURSES[state.activeCourse];
+
+    // Collect all grade inputs
+    document.querySelectorAll('.grade-input').forEach(input => {
+        const feedbackEl = document.querySelector(
+            `.feedback-input[data-type="${input.dataset.type}"][data-id="${input.dataset.id}"][data-email="${input.dataset.email}"]`
+        );
+
+        if (input.value || feedbackEl?.value) {
+            grades.push({
+                email: input.dataset.email,
+                type: input.dataset.type,
+                assignmentId: parseInt(input.dataset.id),
+                grade: input.value,
+                feedback: feedbackEl?.value || ''
+            });
+        }
+    });
+
+    if (grades.length === 0) {
+        showToast('No grades to save', 'info');
+        return;
+    }
+
+    // Show loading state
+    const saveBtn = document.getElementById('saveGradesBtn');
+    const originalText = saveBtn.innerHTML;
+    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    saveBtn.disabled = true;
+
+    try {
+        const response = await fetch(course.apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'saveGrades',
+                grades: grades
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            showToast(`Saved ${grades.length} grade(s)`, 'success');
+        } else {
+            showToast('Failed to save grades: ' + (result.error || 'Unknown error'), 'error');
+        }
+    } catch (error) {
+        console.error('Save grades error:', error);
+        showToast('Failed to save grades', 'error');
+    } finally {
+        saveBtn.innerHTML = originalText;
+        saveBtn.disabled = false;
+    }
+}
+
 // ============================================
 // EXPORT
 // ============================================
@@ -698,6 +785,31 @@ function exportCSV() {
 // ============================================
 // UTILITIES
 // ============================================
+function showToast(message, type = 'info') {
+    // Remove existing toast
+    const existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        font-size: 14px;
+        z-index: 1000;
+        animation: slideIn 0.3s ease;
+        background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+    `;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    setTimeout(() => toast.remove(), 3000);
+}
+
 function getInitials(name) {
     if (!name) return '??';
     return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
