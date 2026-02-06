@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.7.2',
+    VERSION: 'v2.7.3',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -64,9 +64,11 @@ let state = {
 // INITIALIZATION
 // ============================================
 window.onload = function() {
-    // Display app version
+    // Display app version (header and sign-in screen)
     const versionEl = document.getElementById('appVersion');
     if (versionEl) versionEl.textContent = CONFIG.VERSION;
+    const signinVersionEl = document.getElementById('signinVersion');
+    if (signinVersionEl) signinVersionEl.textContent = CONFIG.VERSION;
 
     calculateCurrentWeek();
     initEventListeners();
