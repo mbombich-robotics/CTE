@@ -19,6 +19,8 @@
 // ============================================
 // CONFIGURATION
 // ============================================
+const BACKEND_VERSION = 'v2.6.0';
+
 const SHEET_NAMES = {
   STUDENTS: 'Students',
   REFLECTIONS: 'Weekly Reflections',
@@ -189,7 +191,7 @@ function syncStudentData(data) {
 
   logActivity('SYNC', data.student.email, `Synced at ${data.timestamp}`);
 
-  return { success: true, timestamp: new Date().toISOString() };
+  return { success: true, timestamp: new Date().toISOString(), backendVersion: BACKEND_VERSION };
 }
 
 /**

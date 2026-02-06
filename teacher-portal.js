@@ -5,6 +5,9 @@
 // CONFIGURATION
 // ============================================
 const CONFIG = {
+    // App version - update when deploying changes
+    VERSION: 'v2.6.0',
+
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
 
@@ -18,7 +21,7 @@ const CONFIG = {
     COURSES: {
         robotics: {
             name: 'Robotics Portfolio',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbyn2W1iQxkKT5MbzSxROvod3pdT7omegWkvOQkoWv7jJVI9Ff2eox_i30EE1-8TNZ0G/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbw0NQcfP2Z6AwSgXKSe9V4jLohnVrwxTpk320zU2M8GjSSF42T4Msq3xc5N89nCIddY/exec',
             hasTeams: false,
             totalDeliverables: 9,
             totalReflections: 9,
@@ -27,7 +30,7 @@ const CONFIG = {
         },
         frc: {
             name: 'FRC Portfolio',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbzGI3QuFKuLXs0dSfrdFtPVi2CS_iennJCpmE2dMSZGs4h-BKCTyJatKpjtKIAALtIm/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbw3hcXITZjbdg39X9ELIBT_qSHcsAIMicS9AsHda4uHPFMwzjDjPeUej6zNr7KFxXQG/exec',
             hasTeams: true,
             teams: ['drivetrain', 'intake', 'shooter', 'climber', 'autonomous', 'integration'],
             totalDeliverables: 10,
@@ -61,6 +64,10 @@ let state = {
 // INITIALIZATION
 // ============================================
 window.onload = function() {
+    // Display app version
+    const versionEl = document.getElementById('appVersion');
+    if (versionEl) versionEl.textContent = CONFIG.VERSION;
+
     calculateCurrentWeek();
     initGoogleSignIn();
     initEventListeners();

@@ -4,8 +4,11 @@
 // CONFIGURATION - UPDATE THESE VALUES
 // ============================================
 const CONFIG = {
+    // App version - update when deploying changes
+    VERSION: 'v2.6.0',
+
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
-    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbwZ0Dp2s7ykmPxYpWNbWyK3d9LM0EWcQqRMArLjz56xcgwxjU_o3XL1x5nR2VwMqIYP/exec',
+    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbw0NQcfP2Z6AwSgXKSe9V4jLohnVrwxTpk320zU2M8GjSSF42T4Msq3xc5N89nCIddY/exec',
 
     // Google OAuth Client ID
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -505,6 +508,10 @@ let formInitialized = false; // Track if reflection form has been populated
 // GOOGLE SIGN-IN INITIALIZATION
 // ============================================
 window.onload = function () {
+    // Display app version
+    const versionEl = document.getElementById('appVersion');
+    if (versionEl) versionEl.textContent = CONFIG.VERSION;
+
     google.accounts.id.initialize({
         client_id: CONFIG.GOOGLE_CLIENT_ID,
         callback: handleCredentialResponse
