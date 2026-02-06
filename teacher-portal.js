@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.7.4',
+    VERSION: 'v2.7.5',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -628,8 +628,8 @@ function openStudentDetail(email) {
                                 ? `<a href="${viewLink}" target="_blank" style="display: block; cursor: pointer; position: relative;"${viewLink !== '#' ? '' : ' onclick="return false;"'}>
                                      <img src="${imgSrc}" alt="${item.filename || 'Evidence'}"
                                           style="width: 100%; height: 120px; object-fit: cover; display: block;"
-                                          onerror="this.parentElement.innerHTML='<div style=\\'width:100%;height:120px;background:var(--gray-200);display:flex;align-items:center;justify-content:center;color:var(--gray-500);\\'><i class=\\'fas fa-exclamation-triangle\\' style=\\'font-size:24px;\\'></i></div>'">
-                                     ${viewLink !== '#' ? '<div style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.6);color:white;padding:2px 6px;border-radius:4px;font-size:10px;"><i class=\\'fas fa-external-link-alt\\'></i></div>' : ''}
+                                          onerror="this.style.display='none'">
+                                     ${viewLink !== '#' ? '<div style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.6);color:white;padding:2px 6px;border-radius:4px;font-size:10px;"><i class="fas fa-external-link-alt"></i></div>' : ''}
                                    </a>`
                                 : `<div style="width: 100%; height: 120px; background: var(--gray-200); display: flex; align-items: center; justify-content: center; color: var(--gray-500);">
                                     <i class="fas fa-image" style="font-size: 32px;"></i>
