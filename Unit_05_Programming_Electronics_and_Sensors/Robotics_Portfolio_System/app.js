@@ -744,7 +744,8 @@ async function uploadToDrive(file, weekNumber) {
             id: uploadedFile.id,
             name: uploadedFile.name,
             webViewLink: uploadedFile.webViewLink,
-            thumbnailLink: `https://drive.google.com/thumbnail?id=${uploadedFile.id}&sz=w400`
+            // Use uc?export=view format - works better for embedding public images
+            thumbnailLink: `https://drive.google.com/uc?export=view&id=${uploadedFile.id}`
         };
     } catch (error) {
         console.error('Drive upload failed:', error);
