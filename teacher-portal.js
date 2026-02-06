@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.7.1',
+    VERSION: 'v2.7.2',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -69,9 +69,20 @@ window.onload = function() {
     if (versionEl) versionEl.textContent = CONFIG.VERSION;
 
     calculateCurrentWeek();
-    initGoogleSignIn();
     initEventListeners();
+
+    // Wait for Google Identity Services to load
+    waitForGoogleSignIn();
 };
+
+function waitForGoogleSignIn() {
+    if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+        initGoogleSignIn();
+    } else {
+        // Google script not loaded yet, retry
+        setTimeout(waitForGoogleSignIn, 100);
+    }
+}
 
 function calculateCurrentWeek() {
     const now = new Date();
