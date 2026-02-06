@@ -3,6 +3,9 @@
 // ============================================
 // CONFIGURATION - UPDATE THESE VALUES
 // ============================================
+// Placeholder image (data URI - won't be blocked by firewalls)
+const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iI2UwZTBlMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5QaG90bzwvdGV4dD48L3N2Zz4=';
+
 const CONFIG = {
     // App version - update when deploying changes
     VERSION: 'v2.7.0',
@@ -418,7 +421,7 @@ async function uploadToDrive(file, weekNumber) {
         form.append('file', file);
 
         const uploadResponse = await fetch(
-            'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink,webContentLink',
+            'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink,webContentLink,thumbnailLink',
             {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${accessToken}` },
@@ -437,12 +440,17 @@ async function uploadToDrive(file, weekNumber) {
         await setDomainSharing(uploadedFile.id);
 
         console.log('Uploaded to Drive:', uploadedFile);
+
+        // Use thumbnailLink from API if available, otherwise construct URL
+        // lh3 format works best for embedding shared images
+        const thumbUrl = uploadedFile.thumbnailLink ||
+            `https://lh3.googleusercontent.com/d/${uploadedFile.id}=w400`;
+
         return {
             id: uploadedFile.id,
             name: uploadedFile.name,
             webViewLink: uploadedFile.webViewLink,
-            // Use uc?export=view format - works better for embedding public images
-            thumbnailLink: `https://drive.google.com/uc?export=view&id=${uploadedFile.id}`
+            thumbnailLink: thumbUrl
         };
     } catch (error) {
         console.error('Drive upload failed:', error);
@@ -1065,7 +1073,7 @@ function loadReflectionData(data) {
             const thumb = document.createElement('div');
             thumb.className = 'evidence-thumb';
             thumb.innerHTML = `
-                <img src="${imgSrc}" alt="Evidence" onerror="this.src='https://via.placeholder.com/150?text=Photo'">
+                <img src="${imgSrc}" alt="Evidence" onerror="this.src='${PLACEHOLDER_IMG}'">
                 <button type="button" class="remove-btn" onclick="removeEvidence('${ev.driveId || ''}', this.parentElement)">
                     <i class="fas fa-times"></i>
                 </button>
@@ -1329,7 +1337,7 @@ async function handleFiles(files) {
             // Success - update thumbnail with Drive image
             thumb.classList.remove('uploading');
             thumb.innerHTML = `
-                <img src="${driveFile.thumbnailLink}" alt="Evidence" onerror="this.src='https://via.placeholder.com/150?text=Photo'">
+                <img src="${driveFile.thumbnailLink}" alt="Evidence" onerror="this.src='${PLACEHOLDER_IMG}'">
                 <button type="button" class="remove-btn" onclick="removeEvidence('${driveFile.id}', this.parentElement)">
                     <i class="fas fa-times"></i>
                 </button>
@@ -1553,13 +1561,13 @@ function loadEvidenceGallery() {
 
     gallery.innerHTML = state.evidence.map(item => {
         // Support both new Drive-based and legacy base64 evidence
-        const imgSrc = item.thumbnailLink || item.data || 'https://via.placeholder.com/150?text=Photo';
+        const imgSrc = item.thumbnailLink || item.data || '${PLACEHOLDER_IMG}';
         const viewLink = item.webViewLink || '#';
 
         return `
             <div class="gallery-item" data-type="${item.type}">
                 <a href="${viewLink}" target="_blank" title="View full size">
-                    <img src="${imgSrc}" alt="${item.filename || 'Evidence'}" onerror="this.src='https://via.placeholder.com/150?text=Photo'">
+                    <img src="${imgSrc}" alt="${item.filename || 'Evidence'}" onerror="this.src='${PLACEHOLDER_IMG}'">
                 </a>
                 <div class="gallery-item-info">
                     <div class="date">${item.uploadedAt ? new Date(item.uploadedAt).toLocaleDateString() : 'Unknown'}</div>
