@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.8.0',
+    VERSION: 'v2.8.1',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -745,6 +745,121 @@ async function saveStudentGrades() {
         saveBtn.innerHTML = originalText;
         saveBtn.disabled = false;
     }
+}
+
+// ============================================
+// GRADE REPORT
+// ============================================
+function showGradeReport() {
+    document.getElementById('gradeReportModal').classList.add('active');
+    updateGradeReport();
+}
+
+function closeGradeReport() {
+    document.getElementById('gradeReportModal').classList.remove('active');
+}
+
+function updateGradeReport() {
+    const course = CONFIG.COURSES[state.activeCourse];
+    const periodFilter = document.getElementById('reportPeriodFilter').value;
+    const typeFilter = document.getElementById('reportTypeFilter').value;
+
+    // Filter students by period
+    let students = state.students;
+    if (periodFilter !== 'all') {
+        students = students.filter(s => s.period === periodFilter);
+    }
+
+    // Sort by name
+    students = [...students].sort((a, b) => a.name.localeCompare(b.name));
+
+    const thead = document.getElementById('gradeReportHead');
+    const tbody = document.getElementById('gradeReportBody');
+
+    // Build headers based on type filter
+    let headers = ['Name', 'Period'];
+    if (typeFilter === 'reflections' || typeFilter === 'all') {
+        for (let w = 1; w <= course.totalReflections; w++) {
+            headers.push(`W${w}`);
+        }
+    }
+    if (typeFilter === 'deliverables' || typeFilter === 'all') {
+        for (let d = 1; d <= course.totalDeliverables; d++) {
+            headers.push(`D${d}`);
+        }
+    }
+    headers.push('Total');
+
+    thead.innerHTML = `<tr>${headers.map(h => `<th style="position: sticky; top: 0; background: var(--gray-100); padding: 8px; text-align: left; font-size: 12px;">${h}</th>`).join('')}</tr>`;
+
+    // Build rows
+    tbody.innerHTML = students.map(student => {
+        const email = student.email;
+        let row = [`<td style="padding: 6px 8px; white-space: nowrap;">${student.name}</td>`];
+        row.push(`<td style="padding: 6px 8px;">${formatPeriod(student.period)}</td>`);
+
+        let total = 0;
+        let maxTotal = 0;
+
+        // Reflection grades
+        if (typeFilter === 'reflections' || typeFilter === 'all') {
+            for (let w = 1; w <= course.totalReflections; w++) {
+                const reflection = student.fullState?.weeklyReflections?.[w];
+                const submitted = state.rawData.reflections?.find(r => r[0] === email && r[2] == w);
+                const grade = reflection?.teacherGrade ?? submitted?.[10] ?? '';
+
+                if (grade !== '' && grade !== undefined) {
+                    total += parseFloat(grade) || 0;
+                }
+                if (submitted) {
+                    maxTotal += 20; // 20 pts per reflection
+                }
+
+                const cellStyle = grade !== '' ? '' : (submitted ? 'color: var(--warning);' : 'color: var(--gray-300);');
+                row.push(`<td style="padding: 6px 8px; text-align: center; ${cellStyle}">${grade !== '' && grade !== undefined ? grade : (submitted ? '-' : '')}</td>`);
+            }
+        }
+
+        // Deliverable grades
+        if (typeFilter === 'deliverables' || typeFilter === 'all') {
+            for (let d = 1; d <= course.totalDeliverables; d++) {
+                const deliverable = student.fullState?.deliverables?.[d];
+                const submitted = state.rawData.deliverables?.find(del => del[0] === email && del[2] == d && del[7] === 'completed');
+                const grade = deliverable?.teacherGrade ?? submitted?.[9] ?? '';
+                const maxPts = course.deliverablePoints?.[d] || 50;
+
+                if (grade !== '' && grade !== undefined) {
+                    total += parseFloat(grade) || 0;
+                }
+                if (submitted) {
+                    maxTotal += maxPts;
+                }
+
+                const cellStyle = grade !== '' ? '' : (submitted ? 'color: var(--warning);' : 'color: var(--gray-300);');
+                row.push(`<td style="padding: 6px 8px; text-align: center; ${cellStyle}">${grade !== '' && grade !== undefined ? grade : (submitted ? '-' : '')}</td>`);
+            }
+        }
+
+        row.push(`<td style="padding: 6px 8px; text-align: center; font-weight: 600;">${total}${maxTotal > 0 ? '/' + maxTotal : ''}</td>`);
+
+        return `<tr>${row.join('')}</tr>`;
+    }).join('');
+}
+
+function copyGradeReport() {
+    const table = document.getElementById('gradeReportTable');
+    const rows = Array.from(table.querySelectorAll('tr'));
+
+    const text = rows.map(row => {
+        const cells = Array.from(row.querySelectorAll('th, td'));
+        return cells.map(cell => cell.textContent.trim()).join('\t');
+    }).join('\n');
+
+    navigator.clipboard.writeText(text).then(() => {
+        showToast('Grade report copied to clipboard!', 'success');
+    }).catch(() => {
+        showToast('Failed to copy', 'error');
+    });
 }
 
 // ============================================
