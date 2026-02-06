@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.8.1',
+    VERSION: 'v2.8.2',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -21,7 +21,7 @@ const CONFIG = {
     COURSES: {
         robotics: {
             name: 'Robotics Portfolio',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbw0NQcfP2Z6AwSgXKSe9V4jLohnVrwxTpk320zU2M8GjSSF42T4Msq3xc5N89nCIddY/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbzb2829BkiyRjajOetOpMf1lnpFYGZqPVXgXO-bQMK9c92uhi6EtCepIW4g7BZrQHM8/exec',
             hasTeams: false,
             totalDeliverables: 9,
             totalReflections: 9,
@@ -30,7 +30,7 @@ const CONFIG = {
         },
         frc: {
             name: 'FRC Portfolio',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbw3hcXITZjbdg39X9ELIBT_qSHcsAIMicS9AsHda4uHPFMwzjDjPeUej6zNr7KFxXQG/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbzd05rASsoTJ-UnpvyoKpWEIuMQQfUWiONFBp4Q_NG-GElUaVPUfBFfym6h6XRPfp0u/exec',
             hasTeams: true,
             teams: ['drivetrain', 'intake', 'shooter', 'climber', 'autonomous', 'integration'],
             totalDeliverables: 10,
