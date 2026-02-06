@@ -5,7 +5,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.6.0',
+    VERSION: 'v2.6.1',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbw0NQcfP2Z6AwSgXKSe9V4jLohnVrwxTpk320zU2M8GjSSF42T4Msq3xc5N89nCIddY/exec',
@@ -642,25 +642,44 @@ async function saveToCloud() {
     captureReflectionFormData();
     setSaveIndicator('saving');
 
+    // Prepare evidence without base64 data to reduce payload size
+    const evidenceForSync = (state.evidence || []).map(e => ({
+        ...e,
+        data: undefined // Strip base64 data for cloud sync
+    }));
+
     try {
-        await fetch(CONFIG.SHEETS_API_URL, {
+        const response = await fetch(CONFIG.SHEETS_API_URL, {
             method: 'POST',
-            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'text/plain' // Required for Google Apps Script CORS
+            },
             body: JSON.stringify({
                 action: 'sync',
                 student: state.student,
                 weeklyReflections: state.weeklyReflections,
                 deliverables: state.deliverables,
-                evidence: state.evidence,
+                evidence: evidenceForSync,
                 codeSnippets: state.codeSnippets,
                 timestamp: new Date().toISOString()
             })
         });
-        isDirty = false;
-        setSaveIndicator('saved');
+
+        const result = await response.json();
+
+        if (result.success) {
+            isDirty = false;
+            setSaveIndicator('saved');
+            console.log('Synced successfully:', result.timestamp, 'Backend:', result.backendVersion);
+        } else {
+            console.error('Sync returned error:', result.error);
+            setSaveIndicator('error');
+            showToast('Sync failed: ' + (result.error || 'Unknown error'), 'error');
+        }
     } catch (error) {
         console.error('Save to cloud failed:', error);
         setSaveIndicator('error');
+        showToast('Connection error - changes saved locally', 'warning');
     }
 }
 
