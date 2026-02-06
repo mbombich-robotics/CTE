@@ -722,6 +722,7 @@ async function saveStudentGrades() {
     saveBtn.disabled = true;
 
     try {
+        console.log('Saving grades:', grades);
         const response = await fetch(course.apiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -731,7 +732,18 @@ async function saveStudentGrades() {
             })
         });
 
-        const result = await response.json();
+        console.log('Response status:', response.status);
+        const text = await response.text();
+        console.log('Response text:', text);
+
+        let result;
+        try {
+            result = JSON.parse(text);
+        } catch (e) {
+            console.error('Failed to parse response:', text);
+            showToast('Server error - check console', 'error');
+            return;
+        }
 
         if (result.success) {
             showToast(`Saved ${grades.length} grade(s)`, 'success');
@@ -740,7 +752,7 @@ async function saveStudentGrades() {
         }
     } catch (error) {
         console.error('Save grades error:', error);
-        showToast('Failed to save grades', 'error');
+        showToast('Failed to save grades: ' + error.message, 'error');
     } finally {
         saveBtn.innerHTML = originalText;
         saveBtn.disabled = false;
