@@ -1562,7 +1562,7 @@ function submitWeeklyReflection(e) {
     // Hide validation errors on success
     document.getElementById('validationErrors').style.display = 'none';
 
-    showToast(`Week ${data.week} reflection submitted! (+20 pts)`, 'success');
+    showCelebration(`Week ${data.week} Reflection Submitted!`);
 }
 
 // ============================================
@@ -1820,7 +1820,7 @@ function submitDeliverable(id) {
     saveToCloud(); // immediate save on submission
     updateUI();
     document.getElementById('deliverableModal').classList.remove('active');
-    showToast(`${deliverable.title} submitted! (+${deliverable.points} pts)`, 'success');
+    showCelebration(`${deliverable.title} Submitted!`);
 }
 
 // ============================================
@@ -1957,6 +1957,61 @@ function showToast(message, type = 'info') {
     setTimeout(() => {
         toast.style.animation = 'slideIn 0.3s ease reverse';
         setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+function showCelebration(message) {
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s ease;
+    `;
+
+    overlay.innerHTML = `
+        <div style="font-size: 120px; animation: dance 0.5s ease-in-out infinite;">🤖</div>
+        <div style="color: white; font-size: 28px; font-weight: bold; margin-top: 20px; text-align: center; padding: 0 20px;">
+            ${message}
+        </div>
+        <div style="color: #10b981; font-size: 18px; margin-top: 10px;">
+            <i class="fas fa-check-circle"></i> Submitted successfully!
+        </div>
+    `;
+
+    // Add dance animation style
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes dance {
+            0%, 100% { transform: rotate(-10deg) translateY(0); }
+            25% { transform: rotate(10deg) translateY(-20px); }
+            50% { transform: rotate(-10deg) translateY(0); }
+            75% { transform: rotate(10deg) translateY(-20px); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    `;
+    document.head.appendChild(style);
+    document.body.appendChild(overlay);
+
+    // Click to dismiss or auto-dismiss after 3 seconds
+    overlay.addEventListener('click', () => overlay.remove());
+    setTimeout(() => {
+        if (overlay.parentNode) {
+            overlay.style.animation = 'fadeIn 0.3s ease reverse';
+            setTimeout(() => overlay.remove(), 300);
+        }
     }, 3000);
 }
 
