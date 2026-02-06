@@ -210,6 +210,10 @@ window.onload = function () {
     const versionEl = document.getElementById('appVersion');
     if (versionEl) versionEl.textContent = CONFIG.VERSION;
 
+    // Display version on sign-in modal
+    const signinVersionEl = document.getElementById('signinVersion');
+    if (signinVersionEl) signinVersionEl.textContent = `Version ${CONFIG.VERSION}`;
+
     // Show sign-in modal on page load
     document.getElementById('signinModal').classList.add('active');
 
