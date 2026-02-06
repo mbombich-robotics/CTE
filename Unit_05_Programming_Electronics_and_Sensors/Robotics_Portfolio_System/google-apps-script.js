@@ -155,6 +155,13 @@ function initializeSheets() {
     ]]);
     evidenceSheet.getRange(1, 1, 1, 9).setFontWeight('bold').setBackground('#ea4335').setFontColor('white');
     evidenceSheet.setFrozenRows(1);
+  } else {
+    // Update existing sheet headers if Drive columns are missing
+    const headers = evidenceSheet.getRange(1, 1, 1, 9).getValues()[0];
+    if (!headers[6] || headers[6] !== 'Drive ID') {
+      evidenceSheet.getRange(1, 7, 1, 3).setValues([['Drive ID', 'Thumbnail Link', 'Web View Link']]);
+      evidenceSheet.getRange(1, 7, 1, 3).setFontWeight('bold').setBackground('#ea4335').setFontColor('white');
+    }
   }
 
   // Activity Log sheet

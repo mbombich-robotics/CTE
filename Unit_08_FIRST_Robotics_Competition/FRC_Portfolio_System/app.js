@@ -533,6 +533,13 @@ async function loadStudentFromCloud(email) {
             CONFIG.SHEETS_API_URL + '?action=load&email=' + encodeURIComponent(email)
         );
         const data = await response.json();
+        // Debug: log evidence data to help troubleshoot
+        if (data && data.evidence) {
+            console.log('📷 Evidence loaded from cloud:', data.evidence.length, 'items');
+            data.evidence.forEach((e, i) => {
+                console.log(`  [${i}] driveId: ${e.driveId || 'NONE'}, thumbnailLink: ${e.thumbnailLink ? 'YES' : 'NONE'}`);
+            });
+        }
         return (data && data.student) ? data : null;
     } catch (error) {
         console.error('Failed to load from cloud:', error);
