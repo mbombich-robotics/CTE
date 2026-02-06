@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.8.3',
+    VERSION: 'v2.8.4',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -307,10 +307,14 @@ function processStudentData() {
         // Count reflections (from Weekly Reflections sheet + drafts from JSON)
         let submittedReflections = 0;
         let draftReflections = 0;
+        let ungradedReflections = 0;
 
         // Count from sheet data
         if (state.rawData.reflections) {
-            submittedReflections = state.rawData.reflections.filter(r => r[0] === email).length;
+            const studentReflections = state.rawData.reflections.filter(r => r[0] === email);
+            submittedReflections = studentReflections.length;
+            // Count ungraded (column K = index 10 is Grade)
+            ungradedReflections = studentReflections.filter(r => !r[10] && r[10] !== 0).length;
         }
 
         // Count drafts from JSON
@@ -325,11 +329,15 @@ function processStudentData() {
         // Count deliverables
         let completedDeliverables = 0;
         let draftDeliverables = 0;
+        let ungradedDeliverables = 0;
 
         if (state.rawData.deliverables) {
-            completedDeliverables = state.rawData.deliverables.filter(
+            const studentDeliverables = state.rawData.deliverables.filter(
                 d => d[0] === email && d[7] === 'completed'
-            ).length;
+            );
+            completedDeliverables = studentDeliverables.length;
+            // Count ungraded (column J = index 9 is Grade)
+            ungradedDeliverables = studentDeliverables.filter(d => !d[9] && d[9] !== 0).length;
         }
 
         if (fullState && fullState.deliverables) {
@@ -368,9 +376,12 @@ function processStudentData() {
             period,
             submittedReflections,
             draftReflections,
+            ungradedReflections,
             totalReflections: submittedReflections + draftReflections,
             completedDeliverables,
             draftDeliverables,
+            ungradedDeliverables,
+            ungradedTotal: ungradedReflections + ungradedDeliverables,
             points,
             progress,
             status,
@@ -445,6 +456,7 @@ function renderStudentTable(students) {
             </td>
             <td>
                 <span class="status-badge status-${s.status}">${formatStatus(s.status)}</span>
+                ${s.ungradedTotal > 0 ? `<span class="status-badge" style="background: #fef3c7; color: #92400e; margin-left: 4px;" title="${s.ungradedTotal} item(s) need grading"><i class="fas fa-pen"></i> ${s.ungradedTotal}</span>` : ''}
             </td>
         </tr>
     `).join('');
@@ -747,7 +759,10 @@ async function saveStudentGrades() {
         }
 
         if (result.success) {
-            showToast(`Saved ${grades.length} grade(s)`, 'success');
+            showToast(`Saved ${grades.length} grade(s) - refreshing data...`, 'success');
+            // Refresh data to show updated grades
+            await loadCourseData();
+            closeModal();
         } else {
             showToast('Failed to save grades: ' + (result.error || 'Unknown error'), 'error');
         }
