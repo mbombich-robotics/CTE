@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.7.3',
+    VERSION: 'v2.7.4',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -64,25 +64,54 @@ let state = {
 // INITIALIZATION
 // ============================================
 window.onload = function() {
-    // Display app version (header and sign-in screen)
-    const versionEl = document.getElementById('appVersion');
-    if (versionEl) versionEl.textContent = CONFIG.VERSION;
-    const signinVersionEl = document.getElementById('signinVersion');
-    if (signinVersionEl) signinVersionEl.textContent = CONFIG.VERSION;
+    try {
+        // Display app version (header and sign-in screen)
+        const versionEl = document.getElementById('appVersion');
+        if (versionEl) versionEl.textContent = CONFIG.VERSION;
+        const signinVersionEl = document.getElementById('signinVersion');
+        if (signinVersionEl) signinVersionEl.textContent = CONFIG.VERSION;
 
-    calculateCurrentWeek();
-    initEventListeners();
+        calculateCurrentWeek();
+        initEventListeners();
 
-    // Wait for Google Identity Services to load
-    waitForGoogleSignIn();
+        // Wait for Google Identity Services to load
+        console.log('Teacher Portal: Waiting for Google Sign-In...');
+        waitForGoogleSignIn();
+    } catch (error) {
+        console.error('Teacher Portal initialization error:', error);
+    }
 };
+
+let googleRetryCount = 0;
+const MAX_GOOGLE_RETRIES = 50; // 5 seconds max
 
 function waitForGoogleSignIn() {
     if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+        console.log('Teacher Portal: Google loaded, initializing sign-in...');
         initGoogleSignIn();
-    } else {
-        // Google script not loaded yet, retry
+    } else if (googleRetryCount < MAX_GOOGLE_RETRIES) {
+        googleRetryCount++;
+        if (googleRetryCount % 10 === 0) {
+            console.log('Teacher Portal: Still waiting for Google... attempt', googleRetryCount);
+        }
         setTimeout(waitForGoogleSignIn, 100);
+    } else {
+        // Show error message after timeout
+        console.error('Google Identity Services failed to load after 5 seconds');
+        console.log('google object:', typeof google, google);
+        const signInBtn = document.getElementById('googleSignInBtn');
+        if (signInBtn) {
+            signInBtn.innerHTML = `
+                <div style="color: #ef4444; text-align: center; padding: 20px;">
+                    <i class="fas fa-exclamation-circle"></i><br>
+                    Google Sign-In failed to load.<br>
+                    <small style="color: #6b7280;">Check if ad blocker is enabled</small><br>
+                    <button onclick="location.reload()" style="margin-top: 12px; padding: 8px 16px; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; background: white;">
+                        Retry
+                    </button>
+                </div>
+            `;
+        }
     }
 }
 
