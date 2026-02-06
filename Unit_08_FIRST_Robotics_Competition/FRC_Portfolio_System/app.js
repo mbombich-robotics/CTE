@@ -202,11 +202,60 @@ let accessToken = null; // Store access token for Drive API
 // ============================================
 // GOOGLE SIGN-IN INITIALIZATION
 // ============================================
+let googleRetryCount = 0;
+const MAX_GOOGLE_RETRIES = 50; // 5 seconds max
+
 window.onload = function () {
     // Display app version
     const versionEl = document.getElementById('appVersion');
     if (versionEl) versionEl.textContent = CONFIG.VERSION;
 
+    // Show sign-in modal on page load
+    document.getElementById('signinModal').classList.add('active');
+
+    // Init navigation and static components immediately
+    initNavigation();
+    initDeliverables();
+    initAIFeatures();
+
+    // Wire sign-out button
+    document.getElementById('signOutBtn').addEventListener('click', signOut);
+
+    // Load gapi client for Drive API
+    if (typeof gapi !== 'undefined') {
+        gapi.load('client', initGapiClient);
+    }
+
+    // Wait for Google Identity Services to load
+    waitForGoogleSignIn();
+};
+
+function waitForGoogleSignIn() {
+    if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
+        initGoogleOAuth();
+    } else if (googleRetryCount < MAX_GOOGLE_RETRIES) {
+        googleRetryCount++;
+        setTimeout(waitForGoogleSignIn, 100);
+    } else {
+        // Show error message after timeout
+        const signInBtn = document.getElementById('googleSignInBtn');
+        if (signInBtn) {
+            signInBtn.innerHTML = `
+                <div style="color: #ef4444; text-align: center; padding: 20px;">
+                    <i class="fas fa-exclamation-circle"></i><br>
+                    Google Sign-In failed to load.<br>
+                    <small style="color: #6b7280;">Check if ad blocker is enabled</small><br>
+                    <button onclick="location.reload()" style="margin-top: 12px; padding: 8px 16px; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; background: white;">
+                        Retry
+                    </button>
+                </div>
+            `;
+        }
+        console.error('Google Identity Services failed to load after 5 seconds');
+    }
+}
+
+function initGoogleOAuth() {
     // Initialize the token client for OAuth2 (needed for Drive API)
     tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: CONFIG.GOOGLE_CLIENT_ID,
@@ -229,23 +278,7 @@ window.onload = function () {
     signInBtn.querySelector('button').addEventListener('click', () => {
         tokenClient.requestAccessToken();
     });
-
-    // Show sign-in modal on page load
-    document.getElementById('signinModal').classList.add('active');
-
-    // Init navigation and static components immediately
-    initNavigation();
-    initDeliverables();
-    initAIFeatures();
-
-    // Wire sign-out button
-    document.getElementById('signOutBtn').addEventListener('click', signOut);
-
-    // Load gapi client for Drive API
-    if (typeof gapi !== 'undefined') {
-        gapi.load('client', initGapiClient);
-    }
-};
+}
 
 async function initGapiClient() {
     await gapi.client.init({});
