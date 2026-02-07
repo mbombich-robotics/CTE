@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.8.8',
+    VERSION: 'v2.8.9',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -660,22 +660,23 @@ function openStudentDetail(email) {
             </p>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;">
                 ${evidenceItems.map(item => {
-                    // For Drive files, show clickable card (embedding doesn't work with domain sharing)
-                    // For legacy base64, show the actual image
-                    const isLegacyBase64 = item.data && item.data.startsWith('data:');
+                    // Try to show thumbnail, fall back to placeholder on error
                     const fileId = item.driveId;
                     const viewLink = item.webViewLink || (fileId ? 'https://drive.google.com/file/d/' + fileId + '/view' : '#');
+                    // Use stored thumbnailLink, or construct from fileId, or use base64 data
+                    let imgSrc = item.thumbnailLink || (fileId ? 'https://drive.google.com/uc?export=view&id=' + fileId : null) || item.data || null;
 
                     return `
                         <div style="background: var(--gray-50); border-radius: 8px; overflow: hidden; border: 1px solid var(--gray-200);">
-                            ${isLegacyBase64
-                                ? `<img src="${item.data}" alt="${item.filename || 'Evidence'}"
-                                        style="width: 100%; height: 120px; object-fit: cover; display: block;">`
-                                : `<a href="${viewLink}" target="_blank" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 120px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none;">
-                                     <i class="fas fa-image" style="font-size: 32px; margin-bottom: 8px;"></i>
-                                     <span style="font-size: 12px; font-weight: 500;">Click to View</span>
-                                   </a>`
-                            }
+                            <a href="${viewLink}" target="_blank" style="display: block; position: relative; height: 120px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                ${imgSrc ? `<img src="${imgSrc}" alt="${item.filename || 'Evidence'}"
+                                    style="width: 100%; height: 120px; object-fit: cover; display: block;"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">` : ''}
+                                <div style="display: ${imgSrc ? 'none' : 'flex'}; position: absolute; inset: 0; flex-direction: column; align-items: center; justify-content: center; color: white;">
+                                    <i class="fas fa-image" style="font-size: 32px; margin-bottom: 8px;"></i>
+                                    <span style="font-size: 12px; font-weight: 500;">Click to View</span>
+                                </div>
+                            </a>
                             <div style="padding: 8px; font-size: 12px; color: var(--gray-600);">
                                 <div style="font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${item.filename || 'Photo'}">${item.filename || 'Photo'}</div>
                                 <div>Week ${item.week || '?'} &middot; ${item.uploadedAt ? new Date(item.uploadedAt).toLocaleDateString() : 'Unknown date'}</div>
