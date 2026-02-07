@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.7.1',
+    VERSION: 'v2.8.0',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbxqtaLGqa765XpAO5PxsD42k_0eEhVyss7IOFur2l1qUTBG_VhBtCwrIR8slo6jS1RP/exec',
@@ -1100,6 +1100,63 @@ function updateUI() {
     updateWeekButtons();
     updateDeliverablesList();
     updateWeekTopic();
+    updateFeedbackNotification();
+}
+
+function updateFeedbackNotification() {
+    const notification = document.getElementById('feedbackNotification');
+    const list = document.getElementById('feedbackNotificationList');
+
+    const gradedItems = [];
+
+    // Check reflections for teacher feedback
+    Object.entries(state.weeklyReflections).forEach(([week, reflection]) => {
+        if (reflection.submitted && (reflection.teacherGrade !== undefined || reflection.teacherFeedback)) {
+            gradedItems.push({
+                type: 'reflection',
+                week: week,
+                label: `Week ${week} Reflection`,
+                grade: reflection.teacherGrade,
+                hasFeedback: !!reflection.teacherFeedback
+            });
+        }
+    });
+
+    // Check deliverables for teacher feedback
+    Object.entries(state.deliverables).forEach(([id, deliverable]) => {
+        if (deliverable.status === 'completed' && (deliverable.teacherGrade !== undefined || deliverable.teacherFeedback)) {
+            const title = DELIVERABLES.find(d => d.id == id)?.title || `Deliverable ${id}`;
+            gradedItems.push({
+                type: 'deliverable',
+                id: id,
+                label: title,
+                grade: deliverable.teacherGrade,
+                hasFeedback: !!deliverable.teacherFeedback
+            });
+        }
+    });
+
+    if (gradedItems.length === 0) {
+        notification.style.display = 'none';
+        return;
+    }
+
+    notification.style.display = 'block';
+    list.innerHTML = gradedItems.map(item => `
+        <a href="#" onclick="event.preventDefault(); ${item.type === 'reflection' ? `navigateTo('reflections'); selectWeek(${item.week});` : `navigateTo('deliverables'); openDeliverable(${item.id});`}"
+           style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: white; border-radius: 8px; text-decoration: none; color: inherit;">
+            <i class="fas ${item.type === 'reflection' ? 'fa-calendar-check' : 'fa-file-alt'}" style="color: var(--success);"></i>
+            <div style="flex: 1;">
+                <div style="font-weight: 500;">${item.label}</div>
+                <div style="font-size: 12px; color: var(--gray-500);">
+                    ${item.grade !== undefined ? `Grade: ${item.grade}` : ''}
+                    ${item.grade !== undefined && item.hasFeedback ? ' • ' : ''}
+                    ${item.hasFeedback ? 'Written feedback available' : ''}
+                </div>
+            </div>
+            <i class="fas fa-chevron-right" style="color: var(--gray-400);"></i>
+        </a>
+    `).join('');
 }
 
 function getCurrentPhase() {

@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.0';
+const BACKEND_VERSION = 'v2.9.1';
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
@@ -128,17 +128,25 @@ function initializeSheets() {
   let reflectionsSheet = ss.getSheetByName(SHEET_NAMES.REFLECTIONS);
   if (!reflectionsSheet) {
     reflectionsSheet = ss.insertSheet(SHEET_NAMES.REFLECTIONS);
-    reflectionsSheet.getRange(1, 1, 1, 11).setValues([[
-      'Email', 'Name', 'Week', 'Contributions', 'Evidence Links', 'Challenges', 'Solutions', 'Goals', 'Submitted At', 'Points', 'Self Assessment'
+    reflectionsSheet.getRange(1, 1, 1, 13).setValues([[
+      'Email', 'Name', 'Week', 'Contributions', 'Evidence Links', 'Challenges', 'Solutions', 'Goals', 'Submitted At', 'Points', 'Self Assessment', 'Grade', 'Feedback'
     ]]);
-    reflectionsSheet.getRange(1, 1, 1, 11).setFontWeight('bold').setBackground('#34a853').setFontColor('white');
+    reflectionsSheet.getRange(1, 1, 1, 13).setFontWeight('bold').setBackground('#34a853').setFontColor('white');
     reflectionsSheet.setFrozenRows(1);
   } else {
-    // Add Self Assessment column if missing
-    const headers = reflectionsSheet.getRange(1, 1, 1, 11).getValues()[0];
+    // Add missing columns if needed
+    const headers = reflectionsSheet.getRange(1, 1, 1, 13).getValues()[0];
     if (!headers[10] || headers[10] !== 'Self Assessment') {
       reflectionsSheet.getRange(1, 11).setValue('Self Assessment');
       reflectionsSheet.getRange(1, 11).setFontWeight('bold').setBackground('#34a853').setFontColor('white');
+    }
+    if (!headers[11] || headers[11] !== 'Grade') {
+      reflectionsSheet.getRange(1, 12).setValue('Grade');
+      reflectionsSheet.getRange(1, 12).setFontWeight('bold').setBackground('#34a853').setFontColor('white');
+    }
+    if (!headers[12] || headers[12] !== 'Feedback') {
+      reflectionsSheet.getRange(1, 13).setValue('Feedback');
+      reflectionsSheet.getRange(1, 13).setFontWeight('bold').setBackground('#34a853').setFontColor('white');
     }
   }
 
@@ -552,9 +560,9 @@ function loadStudentData(email) {
             goals,
             submittedAt: reflectionsData[j][8],
             submitted: true,
-            // Grade in column K (index 10), Feedback in column L (index 11)
-            teacherGrade: reflectionsData[j][10] || undefined,
-            teacherFeedback: reflectionsData[j][11] || ''
+            // Grade in column L (index 11), Feedback in column M (index 12)
+            teacherGrade: reflectionsData[j][11] || undefined,
+            teacherFeedback: reflectionsData[j][12] || ''
           };
         }
       }

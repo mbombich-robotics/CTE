@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.3',
+    VERSION: 'v2.9.4',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -21,7 +21,7 @@ const CONFIG = {
     COURSES: {
         robotics: {
             name: 'Robotics Portfolio',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbzb43UO2oDLD_oSptV0mUmav06_nsrUb6U5IXtvYla1Xg-sA7H9hOZ0pOU4ctyDq95d/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbzgNC4PLuovXjUdE82l1poRty9Z4pRsLEHKn_41VCuW293yYr4E5nnnQFojk12cmogg/exec',
             hasTeams: false,
             totalDeliverables: 9,
             totalReflections: 9,
@@ -30,7 +30,7 @@ const CONFIG = {
         },
         frc: {
             name: 'FRC Portfolio',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbxDjQo0V-SGWvB_HON8vlRe3E4jULe5FuEgM2RxJ-nfx7ZlkOsBRBjVRnnyomqfEwjM/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbwAEdutybvBc1XI16_xTq46ZPjeFhpY8bTiv57vnULRNheEYLhpx9d2lOXAV1XkdCXI/exec',
             hasTeams: true,
             teams: ['drivetrain', 'intake', 'shooter', 'climber', 'autonomous', 'integration'],
             totalDeliverables: 10,
@@ -854,7 +854,7 @@ function updateGradeReport() {
             for (let w = 1; w <= course.totalReflections; w++) {
                 const reflection = student.fullState?.weeklyReflections?.[w];
                 const submitted = state.rawData.reflections?.find(r => r[0] === email && r[2] == w);
-                const grade = reflection?.teacherGrade ?? submitted?.[10] ?? '';
+                const grade = reflection?.teacherGrade ?? submitted?.[11] ?? '';
 
                 if (grade !== '' && grade !== undefined) {
                     total += parseFloat(grade) || 0;
