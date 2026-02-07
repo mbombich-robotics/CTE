@@ -21,7 +21,7 @@ const CONFIG = {
     COURSES: {
         robotics: {
             name: 'Robotics Portfolio',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbwSfdrMWuL_0Pr3cJH5t4xTccCQP8VgSO3fbun502PkZtCyLXQFztpVVuDlrYWcmX_t/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbw9J67m4uMfEQKkjFFaSMokJ4rD9D8YALhesQyJigV7PnuAKNfwSPXoTczRiwoa_ZYR/exec',
             hasTeams: false,
             totalDeliverables: 9,
             totalReflections: 9,
@@ -30,7 +30,7 @@ const CONFIG = {
         },
         frc: {
             name: 'FRC Portfolio',
-            apiUrl: 'https://script.google.com/macros/s/AKfycby7y4nPfyFI998q8hXt1fRBryfoYh54lYIbSk2RW5nExtfb39o8YModoLQi0Pe4XMg/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbxew61rdK96nV99SHdgzBLiAlGI_f5Xe5OlxsuSZq4B6_4gIaNVi5BOd5XcF2fRwPsh/exec',
             hasTeams: true,
             teams: ['drivetrain', 'intake', 'shooter', 'climber', 'autonomous', 'integration'],
             totalDeliverables: 10,

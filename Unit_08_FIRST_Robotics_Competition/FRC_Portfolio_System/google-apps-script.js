@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.2';
+const BACKEND_VERSION = 'v2.9.3';
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
@@ -928,6 +928,7 @@ function sendReminderEmails() {
 
   const data = loadAllData();
   const currentWeek = Math.ceil((new Date() - new Date('2026-02-02')) / (1000 * 60 * 60 * 24 * 7));
+  let emailsSent = 0;
 
   data.students.forEach(student => {
     const email = student[0];
@@ -946,18 +947,18 @@ function sendReminderEmails() {
     }
 
     if (missingWeeks.length > 0) {
-      // Uncomment to actually send emails:
-      // MailApp.sendEmail({
-      //   to: email,
-      //   subject: 'FRC Portfolio Reminder - Missing Reflections',
-      //   body: `Hi ${name},\n\nYou have missing weekly reflections for weeks: ${missingWeeks.join(', ')}.\n\nPlease submit them as soon as possible.\n\nYour Teacher`
-      // });
+      MailApp.sendEmail({
+        to: email,
+        subject: 'FRC Portfolio Reminder - Missing Reflections',
+        body: `Hi ${name},\n\nYou have missing weekly reflections for weeks: ${missingWeeks.join(', ')}.\n\nPlease submit them as soon as possible.\n\nMr. B`
+      });
 
-      console.log(`Would email ${email}: Missing weeks ${missingWeeks.join(', ')}`);
+      console.log(`Emailed ${email}: Missing weeks ${missingWeeks.join(', ')}`);
+      emailsSent++;
     }
   });
 
-  ui.alert('Reminder check complete. Check the execution log for details.');
+  ui.alert(`Sent ${emailsSent} reminder emails. Check the execution log for details.`);
 }
 
 /**
