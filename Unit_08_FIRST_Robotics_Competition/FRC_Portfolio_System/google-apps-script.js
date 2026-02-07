@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.1';
+const BACKEND_VERSION = 'v2.9.2';
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
@@ -249,6 +249,7 @@ function saveFullState(email, data) {
     weeklyReflections: data.weeklyReflections || {},
     deliverables: data.deliverables || {},
     codeSnippets: data.codeSnippets || [],
+    viewedFeedback: data.viewedFeedback || [],
     lastSynced: data.timestamp || new Date().toISOString()
   });
 
