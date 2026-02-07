@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.6',
+    VERSION: 'v2.9.7',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -830,8 +830,12 @@ function updateGradeReport() {
         students = students.filter(s => s.period === periodFilter);
     }
 
-    // Sort by name
-    students = [...students].sort((a, b) => a.name.localeCompare(b.name));
+    // Sort by last name
+    students = [...students].sort((a, b) => {
+        const aLast = a.name.split(' ').pop() || a.name;
+        const bLast = b.name.split(' ').pop() || b.name;
+        return aLast.localeCompare(bLast);
+    });
 
     const thead = document.getElementById('gradeReportHead');
     const tbody = document.getElementById('gradeReportBody');
