@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.0',
+    VERSION: 'v2.9.1',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -624,7 +624,7 @@ function openStudentDetail(email) {
                     </div>
                     <div class="item-content">
                         ${(submitted[4] || '').substring(0, 300)}${submitted[4]?.length > 300 ? '...' : ''}
-                        ${submitted[6] ? `<br><br><strong>Self-Assessment:</strong> ${submitted[6]}` : ''}
+                        ${submitted[6] !== '' && submitted[6] !== null && submitted[6] !== undefined ? `<br><br><strong>Self-Assessment:</strong> ${submitted[6]}/10` : ''}
                         ${submitted[5] ? `<br><br><strong>Links:</strong> ${submitted[5]}` : ''}
                     </div>
                     <div class="grade-section" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gray-200);">
