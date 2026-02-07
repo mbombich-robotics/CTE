@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.2',
+    VERSION: 'v2.9.3',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -330,8 +330,8 @@ function processStudentData() {
         if (state.rawData.reflections) {
             const studentReflections = state.rawData.reflections.filter(r => r[0] === email);
             submittedReflections = studentReflections.length;
-            // Count ungraded (column K = index 10 is Grade)
-            ungradedReflections = studentReflections.filter(r => !r[10] && r[10] !== 0).length;
+            // Count ungraded (column L = index 11 is Grade)
+            ungradedReflections = studentReflections.filter(r => !r[11] && r[11] !== 0).length;
         }
 
         // Count drafts from JSON
