@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.3';
+const BACKEND_VERSION = 'v2.9.4';
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
@@ -940,7 +940,7 @@ function sendReminderEmails() {
       .map(r => r[2]);
 
     const missingWeeks = [];
-    for (let w = 1; w < currentWeek; w++) {
+    for (let w = 1; w <= currentWeek; w++) {
       if (!submittedWeeks.includes(w)) {
         missingWeeks.push(w);
       }
