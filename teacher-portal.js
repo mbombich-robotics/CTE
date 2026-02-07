@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.4',
+    VERSION: 'v2.9.5',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -365,14 +365,26 @@ function processStudentData() {
             });
         }
 
-        // Calculate points
-        let points = submittedReflections * 20;
+        // Calculate points using actual grades when available
+        let points = 0;
+        if (state.rawData.reflections) {
+            state.rawData.reflections
+                .filter(r => r[0] === email)
+                .forEach(r => {
+                    // Use teacher grade (column L = index 11) if available, otherwise default 20
+                    const grade = r[11];
+                    points += (grade !== '' && grade !== undefined && grade !== null) ? Number(grade) : 20;
+                });
+        }
         if (state.rawData.deliverables) {
             state.rawData.deliverables
                 .filter(d => d[0] === email && d[7] === 'completed')
                 .forEach(d => {
                     const id = d[2];
-                    points += course.deliverablePoints[id] || 0;
+                    // Use teacher grade (column J = index 9) if available, otherwise default points
+                    const grade = d[9];
+                    const defaultPoints = course.deliverablePoints[id] || 0;
+                    points += (grade !== '' && grade !== undefined && grade !== null) ? Number(grade) : defaultPoints;
                 });
         }
 
