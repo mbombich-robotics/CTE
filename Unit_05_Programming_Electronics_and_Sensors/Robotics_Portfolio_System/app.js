@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.8.1',
+    VERSION: 'v2.8.2',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbzgNC4PLuovXjUdE82l1poRty9Z4pRsLEHKn_41VCuW293yYr4E5nnnQFojk12cmogg/exec',
@@ -499,6 +499,7 @@ let state = {
     deliverables: {},
     evidence: [],
     codeSnippets: [],
+    viewedFeedback: [],  // Track which feedback notifications have been viewed
     currentWeek: 1,
     selectedWeek: 1
 };
@@ -1106,33 +1107,42 @@ function updateUI() {
 function updateFeedbackNotification() {
     const notification = document.getElementById('feedbackNotification');
     const list = document.getElementById('feedbackNotificationList');
+    const viewed = state.viewedFeedback || [];
 
     const gradedItems = [];
 
     // Check reflections for teacher feedback
     Object.entries(state.weeklyReflections).forEach(([week, reflection]) => {
         if (reflection.submitted && (reflection.teacherGrade !== undefined || reflection.teacherFeedback)) {
-            gradedItems.push({
-                type: 'reflection',
-                week: week,
-                label: `Week ${week} Reflection`,
-                grade: reflection.teacherGrade,
-                hasFeedback: !!reflection.teacherFeedback
-            });
+            const key = `reflection-${week}`;
+            if (!viewed.includes(key)) {
+                gradedItems.push({
+                    type: 'reflection',
+                    key: key,
+                    week: week,
+                    label: `Week ${week} Reflection`,
+                    grade: reflection.teacherGrade,
+                    hasFeedback: !!reflection.teacherFeedback
+                });
+            }
         }
     });
 
     // Check deliverables for teacher feedback
     Object.entries(state.deliverables).forEach(([id, deliverable]) => {
         if (deliverable.status === 'completed' && (deliverable.teacherGrade !== undefined || deliverable.teacherFeedback)) {
-            const title = DELIVERABLES.find(d => d.id == id)?.title || `Deliverable ${id}`;
-            gradedItems.push({
-                type: 'deliverable',
-                id: id,
-                label: title,
-                grade: deliverable.teacherGrade,
-                hasFeedback: !!deliverable.teacherFeedback
-            });
+            const key = `deliverable-${id}`;
+            if (!viewed.includes(key)) {
+                const title = DELIVERABLES.find(d => d.id == id)?.title || `Deliverable ${id}`;
+                gradedItems.push({
+                    type: 'deliverable',
+                    key: key,
+                    id: id,
+                    label: title,
+                    grade: deliverable.teacherGrade,
+                    hasFeedback: !!deliverable.teacherFeedback
+                });
+            }
         }
     });
 
@@ -1143,7 +1153,7 @@ function updateFeedbackNotification() {
 
     notification.style.display = 'block';
     list.innerHTML = gradedItems.map(item => `
-        <a href="#" onclick="event.preventDefault(); ${item.type === 'reflection' ? `navigateTo('weekly'); selectWeek(${item.week});` : `navigateTo('deliverables'); openDeliverable(${item.id});`}"
+        <a href="#" onclick="event.preventDefault(); markFeedbackViewed('${item.key}'); ${item.type === 'reflection' ? `navigateTo('weekly'); selectWeek(${item.week});` : `navigateTo('deliverables'); openDeliverable(${item.id});`}"
            style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: white; border-radius: 8px; text-decoration: none; color: inherit;">
             <i class="fas ${item.type === 'reflection' ? 'fa-calendar-check' : 'fa-file-alt'}" style="color: var(--success);"></i>
             <div style="flex: 1;">
@@ -1157,6 +1167,14 @@ function updateFeedbackNotification() {
             <i class="fas fa-chevron-right" style="color: var(--gray-400);"></i>
         </a>
     `).join('');
+}
+
+function markFeedbackViewed(key) {
+    if (!state.viewedFeedback) state.viewedFeedback = [];
+    if (!state.viewedFeedback.includes(key)) {
+        state.viewedFeedback.push(key);
+        markDirty();
+    }
 }
 
 function getCurrentPhase() {
@@ -1508,6 +1526,9 @@ function captureReflectionFormData() {
     if (existing) {
         data.submitted = existing.submitted;
         data.submittedAt = existing.submittedAt;
+        // Preserve teacher feedback (read-only from student perspective)
+        data.teacherGrade = existing.teacherGrade;
+        data.teacherFeedback = existing.teacherFeedback;
     }
     state.weeklyReflections[state.selectedWeek] = data;
 }
@@ -1515,6 +1536,12 @@ function captureReflectionFormData() {
 function saveReflectionDraft() {
     const data = getReflectionFormData();
     data.submitted = false;
+    // Preserve teacher feedback (read-only from student perspective)
+    const existing = state.weeklyReflections[data.week];
+    if (existing) {
+        data.teacherGrade = existing.teacherGrade;
+        data.teacherFeedback = existing.teacherFeedback;
+    }
     state.weeklyReflections[data.week] = data;
     markDirty();
     showToast('Draft saved!', 'success');
@@ -1611,6 +1638,12 @@ function submitWeeklyReflection(e) {
 
     data.submitted = true;
     data.submittedAt = new Date().toISOString();
+    // Preserve teacher feedback (read-only from student perspective)
+    const existing = state.weeklyReflections[data.week];
+    if (existing) {
+        data.teacherGrade = existing.teacherGrade;
+        data.teacherFeedback = existing.teacherFeedback;
+    }
     state.weeklyReflections[data.week] = data;
     saveToCloud(); // immediate save on submission
     updateUI();
