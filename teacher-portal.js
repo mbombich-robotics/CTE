@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.5',
+    VERSION: 'v2.9.6',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -21,7 +21,7 @@ const CONFIG = {
     COURSES: {
         robotics: {
             name: 'Robotics Portfolio',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbwMg3tgXhLjmJ4P6ZxxjG1WJIatd3VgBoutK4TWrTnE09V9N361r0ykXkRpwM6HXJa6/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbzmA0eLDydJ3PVCKxUKQgDoqNJdyApIw_h_M8aquvgoVhlZBUvppUP1SVxWYe7R9Zud/exec',
             hasTeams: false,
             totalDeliverables: 9,
             totalReflections: 9,
@@ -30,7 +30,7 @@ const CONFIG = {
         },
         frc: {
             name: 'FRC Portfolio',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbzBtILavHzLiEkMLJjl3avFnIAgp5SE1SJZMw7IHXiOMDOT78BhMJ6-DgLAHVe4pX4q/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbwJ6FjTC7DH5GugnekkUMms4s9Ne0Fa8IkepLmW8IN7IMDA--qicbP0F3WOzQJH694V/exec',
             hasTeams: true,
             teams: ['drivetrain', 'intake', 'shooter', 'climber', 'autonomous', 'integration'],
             totalDeliverables: 10,
@@ -955,6 +955,52 @@ function exportCSV() {
     a.download = `${course.name.replace(/\s+/g, '_')}_Progress_${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     URL.revokeObjectURL(url);
+}
+
+// ============================================
+// REMINDER EMAILS
+// ============================================
+async function sendReminderEmails() {
+    const btn = document.getElementById('sendRemindersBtn');
+    const behind = parseInt(document.getElementById('studentsBehind').textContent) || 0;
+
+    if (behind === 0) {
+        showToast('No students behind - no reminders to send!', 'info');
+        return;
+    }
+
+    if (!confirm(`Send reminder emails to students with missing reflections?\n\nThis will email all students who haven't submitted their weekly reflections.`)) {
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+    try {
+        const course = CONFIG.COURSES[state.activeCourse];
+        const response = await fetch(course.apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({
+                action: 'sendReminders',
+                semesterStart: CONFIG.SEMESTER_START.toISOString()
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            showToast(`Sent ${result.emailsSent} reminder email${result.emailsSent !== 1 ? 's' : ''}!`, 'success');
+        } else {
+            showToast('Failed to send reminders: ' + (result.error || 'Unknown error'), 'error');
+        }
+    } catch (error) {
+        console.error('Failed to send reminders:', error);
+        showToast('Failed to send reminders: ' + error.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-envelope"></i> Send Reminders';
+    }
 }
 
 // ============================================

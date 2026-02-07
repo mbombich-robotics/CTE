@@ -563,12 +563,15 @@
                     <div class="stat-label">Submitted This Week</div>
                 </div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" style="flex-wrap: wrap;">
                 <div class="stat-icon behind"><i class="fas fa-exclamation-circle"></i></div>
-                <div>
+                <div style="flex: 1;">
                     <div class="stat-value" id="studentsBehind">-</div>
                     <div class="stat-label">Students Behind</div>
                 </div>
+                <button id="sendRemindersBtn" onclick="sendReminderEmails()" title="Send reminder emails to students with missing work" style="padding: 8px 12px; background: var(--danger); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-envelope"></i> Send Reminders
+                </button>
             </div>
             <div class="stat-card">
                 <div class="stat-icon progress"><i class="fas fa-chart-line"></i></div>

@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.4';
+const BACKEND_VERSION = 'v2.9.5';
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
@@ -84,6 +84,9 @@ function doPost(e) {
 
       case 'saveGrades':
         return jsonResponse(saveGrades(data.grades));
+
+      case 'sendReminders':
+        return jsonResponse(sendRemindersWeb(data.semesterStart));
 
       default:
         return jsonResponse({ error: 'Unknown action' });
@@ -911,6 +914,47 @@ function generateSummaryReport() {
 }
 
 /**
+ * Send reminder emails via web request (called from teacher portal)
+ */
+function sendRemindersWeb(semesterStart) {
+  const data = loadAllData();
+  const startDate = semesterStart ? new Date(semesterStart) : new Date('2026-02-02');
+  const currentWeek = Math.ceil((new Date() - startDate) / (1000 * 60 * 60 * 24 * 7));
+  let emailsSent = 0;
+  const emailedStudents = [];
+
+  data.students.forEach(student => {
+    const email = student[0];
+    const name = student[1];
+
+    const submittedWeeks = data.reflections
+      .filter(r => r[0] === email)
+      .map(r => r[2]);
+
+    const missingWeeks = [];
+    for (let w = 1; w <= currentWeek; w++) {
+      if (!submittedWeeks.includes(w)) {
+        missingWeeks.push(w);
+      }
+    }
+
+    if (missingWeeks.length > 0) {
+      MailApp.sendEmail({
+        to: email,
+        subject: 'Robotics Portfolio Reminder - Missing Reflections',
+        body: `Hi ${name},\n\nYou have missing weekly reflections for weeks: ${missingWeeks.join(', ')}.\n\nPlease submit them as soon as possible.\n\nPortfolio: https://mbombich-robotics.github.io/lessons/Unit_05_Programming_Electronics_and_Sensors/Robotics_Portfolio_System/index.html\n\nMr. B`
+      });
+
+      emailsSent++;
+      emailedStudents.push({ name, email, missingWeeks });
+    }
+  });
+
+  logActivity('REMINDERS', 'teacher', `Sent ${emailsSent} reminder emails via portal`);
+  return { success: true, emailsSent, emailedStudents };
+}
+
+/**
  * Send reminder emails to students with missing work
  * Customize and run from Apps Script editor
  */
@@ -949,7 +993,7 @@ function sendReminderEmails() {
       MailApp.sendEmail({
         to: email,
         subject: 'Robotics Portfolio Reminder - Missing Reflections',
-        body: `Hi ${name},\n\nYou have missing weekly reflections for weeks: ${missingWeeks.join(', ')}.\n\nPlease submit them as soon as possible.\n\nMr. B`
+        body: `Hi ${name},\n\nYou have missing weekly reflections for weeks: ${missingWeeks.join(', ')}.\n\nPlease submit them as soon as possible.\n\nPortfolio: https://mbombich-robotics.github.io/lessons/Unit_05_Programming_Electronics_and_Sensors/Robotics_Portfolio_System/index.html\n\nMr. B`
       });
 
       console.log(`Emailed ${email}: Missing weeks ${missingWeeks.join(', ')}`);
