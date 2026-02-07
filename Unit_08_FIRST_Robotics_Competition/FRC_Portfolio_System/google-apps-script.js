@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.8.1';
+const BACKEND_VERSION = 'v2.9.0';
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
@@ -128,11 +128,18 @@ function initializeSheets() {
   let reflectionsSheet = ss.getSheetByName(SHEET_NAMES.REFLECTIONS);
   if (!reflectionsSheet) {
     reflectionsSheet = ss.insertSheet(SHEET_NAMES.REFLECTIONS);
-    reflectionsSheet.getRange(1, 1, 1, 10).setValues([[
-      'Email', 'Name', 'Week', 'Contributions', 'Evidence Links', 'Challenges', 'Solutions', 'Goals', 'Submitted At', 'Points'
+    reflectionsSheet.getRange(1, 1, 1, 11).setValues([[
+      'Email', 'Name', 'Week', 'Contributions', 'Evidence Links', 'Challenges', 'Solutions', 'Goals', 'Submitted At', 'Points', 'Self Assessment'
     ]]);
-    reflectionsSheet.getRange(1, 1, 1, 10).setFontWeight('bold').setBackground('#34a853').setFontColor('white');
+    reflectionsSheet.getRange(1, 1, 1, 11).setFontWeight('bold').setBackground('#34a853').setFontColor('white');
     reflectionsSheet.setFrozenRows(1);
+  } else {
+    // Add Self Assessment column if missing
+    const headers = reflectionsSheet.getRange(1, 1, 1, 11).getValues()[0];
+    if (!headers[10] || headers[10] !== 'Self Assessment') {
+      reflectionsSheet.getRange(1, 11).setValue('Self Assessment');
+      reflectionsSheet.getRange(1, 11).setFontWeight('bold').setBackground('#34a853').setFontColor('white');
+    }
   }
 
   // Deliverables sheet
@@ -305,6 +312,11 @@ function saveReflection(student, week, reflection) {
 
   const goals = (reflection.goals || []).join('\n');
 
+  // Calculate rubric total if available
+  const rubricTotal = reflection.rubric ?
+    (reflection.rubric.detail || 0) + (reflection.rubric.evidence || 0) +
+    (reflection.rubric.problemSolving || 0) + (reflection.rubric.goals || 0) : '';
+
   const rowData = [
     student.email,
     student.name,
@@ -315,7 +327,8 @@ function saveReflection(student, week, reflection) {
     reflection.solutions || '',
     goals,
     reflection.submittedAt || new Date().toISOString(),
-    20 // Points for weekly reflection
+    20, // Points for weekly reflection
+    rubricTotal // Self-assessment score (column K)
   ];
 
   if (rowIndex > 0) {
@@ -451,9 +464,9 @@ function loadStudentData(email) {
             if (reflectionsData[j][0] === email) {
               const week = reflectionsData[j][2];
               if (fullState.weeklyReflections && fullState.weeklyReflections[week]) {
-                // Grade in column K (index 10), Feedback in column L (index 11)
-                fullState.weeklyReflections[week].teacherGrade = reflectionsData[j][10] || undefined;
-                fullState.weeklyReflections[week].teacherFeedback = reflectionsData[j][11] || '';
+                // Grade in column L (index 11), Feedback in column M (index 12)
+                fullState.weeklyReflections[week].teacherGrade = reflectionsData[j][11] || undefined;
+                fullState.weeklyReflections[week].teacherFeedback = reflectionsData[j][12] || '';
               }
             }
           }
@@ -759,19 +772,20 @@ function saveGrades(grades) {
       const data = sheet.getDataRange().getValues();
 
       // Ensure we have grade and feedback columns (K=11, L=12) - J is Points
+      // Ensure we have grade and feedback columns (L=12, M=13) - K is Self Assessment
       const headerRow = data[0];
-      if (headerRow.length < 12 || headerRow[10] !== 'Grade') {
-        sheet.getRange(1, 11).setValue('Grade');
+      if (headerRow.length < 13 || headerRow[11] !== 'Grade') {
+        sheet.getRange(1, 12).setValue('Grade');
       }
-      if (headerRow.length < 12 || headerRow[11] !== 'Feedback') {
-        sheet.getRange(1, 12).setValue('Feedback');
+      if (headerRow.length < 13 || headerRow[12] !== 'Feedback') {
+        sheet.getRange(1, 13).setValue('Feedback');
       }
 
       // Find the reflection row
       for (let i = 1; i < data.length; i++) {
         if (data[i][0] === email && data[i][2] == assignmentId) {
-          if (grade !== '') sheet.getRange(i + 1, 11).setValue(parseFloat(grade));
-          if (feedback !== '') sheet.getRange(i + 1, 12).setValue(feedback);
+          if (grade !== '') sheet.getRange(i + 1, 12).setValue(parseFloat(grade));
+          if (feedback !== '') sheet.getRange(i + 1, 13).setValue(feedback);
           break;
         }
       }

@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.1',
+    VERSION: 'v2.9.2',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -21,7 +21,7 @@ const CONFIG = {
     COURSES: {
         robotics: {
             name: 'Robotics Portfolio',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbxvrkQFUzfOkJtrAQUQOCejWPTFFwU3YpqMD2jOi8QrLOEtIkY1R8DvdYdPy8CZ8VBF/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbzb43UO2oDLD_oSptV0mUmav06_nsrUb6U5IXtvYla1Xg-sA7H9hOZ0pOU4ctyDq95d/exec',
             hasTeams: false,
             totalDeliverables: 9,
             totalReflections: 9,
@@ -30,7 +30,7 @@ const CONFIG = {
         },
         frc: {
             name: 'FRC Portfolio',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbyRhmp0AcGAHd9434gYViQZ6fFeP7OGQmcOoI7MYlRWDo4e0MN6XE2EqWIvBJNqiGYY/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbxDjQo0V-SGWvB_HON8vlRe3E4jULe5FuEgM2RxJ-nfx7ZlkOsBRBjVRnnyomqfEwjM/exec',
             hasTeams: true,
             teams: ['drivetrain', 'intake', 'shooter', 'climber', 'autonomous', 'integration'],
             totalDeliverables: 10,
@@ -541,13 +541,15 @@ function openStudentDetail(email) {
         const hasDraft = draft && !draft.submitted && (draft.contributions?.length > 0 || draft.challenges);
 
         if (submitted) {
-            const existingGrade = draft?.teacherGrade ?? submitted[10] ?? '';
-            const existingFeedback = draft?.teacherFeedback ?? submitted[11] ?? '';
+            const selfAssessment = submitted[10]; // Column K - Self Assessment (rubric total /16)
+            const existingGrade = draft?.teacherGrade ?? submitted[11] ?? '';
+            const existingFeedback = draft?.teacherFeedback ?? submitted[12] ?? '';
             reflectionsPanel.innerHTML += `
                 <div class="item-card">
                     <div class="item-header">
                         <span class="item-title">Week ${week}</span>
                         <span class="item-status status-badge status-on-track">Submitted</span>
+                        ${selfAssessment ? `<span style="margin-left: auto; font-size: 12px; color: var(--gray-600);">Self: ${selfAssessment}/16</span>` : ''}
                     </div>
                     <div class="item-content">
                         <strong>Contributions:</strong><br>
