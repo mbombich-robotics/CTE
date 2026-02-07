@@ -1760,6 +1760,17 @@ function openDeliverableForm(id) {
                 <textarea id="deliverableLinks" rows="3" placeholder="https://drive.google.com/...">${existing.links || ''}</textarea>
             </div>
 
+            <div class="form-group">
+                <label for="deliverableSelfAssessment">Self-Assessment (1-10)</label>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <input type="number" id="deliverableSelfAssessment" min="1" max="10" value="${existing.selfAssessment || ''}"
+                           style="width: 80px;" placeholder="1-10">
+                    <span style="color: var(--gray-500); font-size: 13px;">
+                        How well did you meet the requirements?
+                    </span>
+                </div>
+            </div>
+
             <div class="form-actions">
                 <button type="button" class="btn btn-secondary" onclick="saveDeliverableDraft(${id})">
                     <i class="fas fa-save"></i> Save Draft
@@ -1790,6 +1801,7 @@ function saveDeliverableDraft(id) {
         ...state.deliverables[id],
         content: document.getElementById('deliverableContent').value,
         links: document.getElementById('deliverableLinks').value,
+        selfAssessment: document.getElementById('deliverableSelfAssessment').value,
         completionTime: completionTimeEl ? parseInt(completionTimeEl.value) || null : null,
         status: 'in-progress',
         updatedAt: new Date().toISOString()
@@ -1812,6 +1824,7 @@ function submitDeliverable(id) {
     state.deliverables[id] = {
         content,
         links: document.getElementById('deliverableLinks').value,
+        selfAssessment: document.getElementById('deliverableSelfAssessment').value,
         completionTime: completionTimeEl ? parseInt(completionTimeEl.value) || null : null,
         status: 'completed',
         submittedAt: new Date().toISOString()
