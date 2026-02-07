@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.8.9',
+    VERSION: 'v2.9.0',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -21,7 +21,7 @@ const CONFIG = {
     COURSES: {
         robotics: {
             name: 'Robotics Portfolio',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbw1vqNAufhi-isjRhCJ7Gg5mB_TYcbJjudSFL5UAJXg56wi1EDjvG6SsvUMVlz2QVo/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbxvrkQFUzfOkJtrAQUQOCejWPTFFwU3YpqMD2jOi8QrLOEtIkY1R8DvdYdPy8CZ8VBF/exec',
             hasTeams: false,
             totalDeliverables: 9,
             totalReflections: 9,
@@ -30,7 +30,7 @@ const CONFIG = {
         },
         frc: {
             name: 'FRC Portfolio',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbw9qWig19L5NMo6TIuNz-nNZ_Tc9PAbobY3fMXskZil3byNoS_pXHJnUxRef6V1bNrq/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbyRhmp0AcGAHd9434gYViQZ6fFeP7OGQmcOoI7MYlRWDo4e0MN6XE2EqWIvBJNqiGYY/exec',
             hasTeams: true,
             teams: ['drivetrain', 'intake', 'shooter', 'climber', 'autonomous', 'integration'],
             totalDeliverables: 10,
@@ -302,6 +302,23 @@ function processStudentData() {
             } catch (e) {
                 // JSON parse failed
             }
+        }
+
+        // Merge evidence from Evidence sheet (not stored in fullState JSON due to size)
+        if (state.rawData.evidence) {
+            const studentEvidence = state.rawData.evidence
+                .filter(e => e[0] === email)
+                .map(e => ({
+                    week: e[2],
+                    filename: e[3],
+                    uploadedAt: e[4],
+                    data: e[5] || '',
+                    driveId: e[6] || '',
+                    thumbnailLink: e[7] || '',
+                    webViewLink: e[8] || ''
+                }));
+            if (!fullState) fullState = {};
+            fullState.evidence = studentEvidence;
         }
 
         // Count reflections (from Weekly Reflections sheet + drafts from JSON)

@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.8.0';
+const BACKEND_VERSION = 'v2.8.1';
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
@@ -683,11 +683,13 @@ function loadAllData() {
   const students = ss.getSheetByName(SHEET_NAMES.STUDENTS).getDataRange().getValues();
   const reflections = ss.getSheetByName(SHEET_NAMES.REFLECTIONS).getDataRange().getValues();
   const deliverables = ss.getSheetByName(SHEET_NAMES.DELIVERABLES).getDataRange().getValues();
+  const evidence = ss.getSheetByName(SHEET_NAMES.EVIDENCE).getDataRange().getValues();
 
   return {
     students: students.slice(1), // Remove header
     reflections: reflections.slice(1),
     deliverables: deliverables.slice(1),
+    evidence: evidence.slice(1),
     summary: {
       totalStudents: students.length - 1,
       totalReflections: reflections.length - 1,
