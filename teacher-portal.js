@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.8.6',
+    VERSION: 'v2.8.7',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -660,13 +660,18 @@ function openStudentDetail(email) {
             </p>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;">
                 ${evidenceItems.map(item => {
-                    // Convert lh3 URLs to drive.google.com/thumbnail format for reliability
-                    let imgSrc = item.thumbnailLink || item.data || null;
-                    if (imgSrc && imgSrc.includes('lh3.googleusercontent.com/d/')) {
-                        const match = imgSrc.match(/lh3\.googleusercontent\.com\/d\/([^=]+)/);
-                        if (match) imgSrc = 'https://drive.google.com/thumbnail?id=' + match[1] + '&sz=w400';
+                    // Use driveId with uc?export=view format, or extract ID from URLs
+                    let imgSrc = item.data || null;
+                    let fileId = item.driveId;
+                    if (!fileId && item.thumbnailLink) {
+                        const lh3Match = item.thumbnailLink.match(/lh3\.googleusercontent\.com\/d\/([^=]+)/);
+                        const thumbMatch = item.thumbnailLink.match(/[?&]id=([^&]+)/);
+                        fileId = lh3Match ? lh3Match[1] : (thumbMatch ? thumbMatch[1] : null);
                     }
-                    const viewLink = item.webViewLink || '#';
+                    if (fileId) {
+                        imgSrc = 'https://drive.google.com/uc?export=view&id=' + fileId;
+                    }
+                    const viewLink = item.webViewLink || (fileId ? 'https://drive.google.com/file/d/' + fileId + '/view' : '#');
                     const hasImage = imgSrc !== null;
 
                     return `
