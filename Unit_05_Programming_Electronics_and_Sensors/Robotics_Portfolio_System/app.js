@@ -8,10 +8,10 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.8.0',
+    VERSION: 'v2.8.1',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
-    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbxqtaLGqa765XpAO5PxsD42k_0eEhVyss7IOFur2l1qUTBG_VhBtCwrIR8slo6jS1RP/exec',
+    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbzgNC4PLuovXjUdE82l1poRty9Z4pRsLEHKn_41VCuW293yYr4E5nnnQFojk12cmogg/exec',
 
     // Google OAuth Client ID
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -1143,7 +1143,7 @@ function updateFeedbackNotification() {
 
     notification.style.display = 'block';
     list.innerHTML = gradedItems.map(item => `
-        <a href="#" onclick="event.preventDefault(); ${item.type === 'reflection' ? `navigateTo('reflections'); selectWeek(${item.week});` : `navigateTo('deliverables'); openDeliverable(${item.id});`}"
+        <a href="#" onclick="event.preventDefault(); ${item.type === 'reflection' ? `navigateTo('weekly'); selectWeek(${item.week});` : `navigateTo('deliverables'); openDeliverable(${item.id});`}"
            style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: white; border-radius: 8px; text-decoration: none; color: inherit;">
             <i class="fas ${item.type === 'reflection' ? 'fa-calendar-check' : 'fa-file-alt'}" style="color: var(--success);"></i>
             <div style="flex: 1;">
