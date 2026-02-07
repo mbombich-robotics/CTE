@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.8.2',
+    VERSION: 'v2.8.3',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbzgNC4PLuovXjUdE82l1poRty9Z4pRsLEHKn_41VCuW293yYr4E5nnnQFojk12cmogg/exec',
@@ -1068,6 +1068,7 @@ function navigateTo(pageId) {
         page.classList.toggle('active', page.id === `${pageId}Page`);
     });
 
+    if (pageId === 'dashboard') updateUI();
     if (pageId === 'evidence') loadEvidenceGallery();
     if (pageId === 'code') loadCodeSnippets();
 }
@@ -1187,10 +1188,26 @@ function getCurrentPhase() {
 function calculatePoints() {
     let points = 0;
     Object.keys(state.weeklyReflections).forEach(week => {
-        if (state.weeklyReflections[week].submitted) points += CONFIG.POINTS.WEEKLY_REFLECTION;
+        const reflection = state.weeklyReflections[week];
+        if (reflection.submitted) {
+            // Use teacher grade if available, otherwise use default points
+            if (reflection.teacherGrade !== undefined) {
+                points += Number(reflection.teacherGrade) || 0;
+            } else {
+                points += CONFIG.POINTS.WEEKLY_REFLECTION;
+            }
+        }
     });
     DELIVERABLES.forEach(d => {
-        if (state.deliverables[d.id]?.status === 'completed') points += d.points;
+        const deliverable = state.deliverables[d.id];
+        if (deliverable?.status === 'completed') {
+            // Use teacher grade if available, otherwise use default points
+            if (deliverable.teacherGrade !== undefined) {
+                points += Number(deliverable.teacherGrade) || 0;
+            } else {
+                points += d.points;
+            }
+        }
     });
     return points;
 }
