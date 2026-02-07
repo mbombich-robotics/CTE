@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.7.0',
+    VERSION: 'v2.7.1',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbzvU4t4q7i5kvzQaVuCcXVNx6Dy6kR-AjDp85pciV07hgICHCGOmGaSe8c50Zu4lhdL/exec',
@@ -441,10 +441,9 @@ async function uploadToDrive(file, weekNumber) {
 
         console.log('Uploaded to Drive:', uploadedFile);
 
-        // Use thumbnailLink from API if available, otherwise construct URL
-        // lh3 format works best for embedding shared images
-        const thumbUrl = uploadedFile.thumbnailLink ||
-            `https://lh3.googleusercontent.com/d/${uploadedFile.id}=w400`;
+        // Construct thumbnail URL using Google's thumbnail endpoint
+        // This format works reliably for domain-shared files
+        const thumbUrl = `https://drive.google.com/thumbnail?id=${uploadedFile.id}&sz=w400`;
 
         return {
             id: uploadedFile.id,

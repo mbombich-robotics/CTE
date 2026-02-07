@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.8.5',
+    VERSION: 'v2.8.6',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -660,7 +660,12 @@ function openStudentDetail(email) {
             </p>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;">
                 ${evidenceItems.map(item => {
-                    const imgSrc = item.thumbnailLink || item.data || null;
+                    // Convert lh3 URLs to drive.google.com/thumbnail format for reliability
+                    let imgSrc = item.thumbnailLink || item.data || null;
+                    if (imgSrc && imgSrc.includes('lh3.googleusercontent.com/d/')) {
+                        const match = imgSrc.match(/lh3\.googleusercontent\.com\/d\/([^=]+)/);
+                        if (match) imgSrc = 'https://drive.google.com/thumbnail?id=' + match[1] + '&sz=w400';
+                    }
                     const viewLink = item.webViewLink || '#';
                     const hasImage = imgSrc !== null;
 
