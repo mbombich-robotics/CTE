@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.8.7',
+    VERSION: 'v2.8.8',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -660,32 +660,21 @@ function openStudentDetail(email) {
             </p>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;">
                 ${evidenceItems.map(item => {
-                    // Use driveId with uc?export=view format, or extract ID from URLs
-                    let imgSrc = item.data || null;
-                    let fileId = item.driveId;
-                    if (!fileId && item.thumbnailLink) {
-                        const lh3Match = item.thumbnailLink.match(/lh3\.googleusercontent\.com\/d\/([^=]+)/);
-                        const thumbMatch = item.thumbnailLink.match(/[?&]id=([^&]+)/);
-                        fileId = lh3Match ? lh3Match[1] : (thumbMatch ? thumbMatch[1] : null);
-                    }
-                    if (fileId) {
-                        imgSrc = 'https://drive.google.com/uc?export=view&id=' + fileId;
-                    }
+                    // For Drive files, show clickable card (embedding doesn't work with domain sharing)
+                    // For legacy base64, show the actual image
+                    const isLegacyBase64 = item.data && item.data.startsWith('data:');
+                    const fileId = item.driveId;
                     const viewLink = item.webViewLink || (fileId ? 'https://drive.google.com/file/d/' + fileId + '/view' : '#');
-                    const hasImage = imgSrc !== null;
 
                     return `
                         <div style="background: var(--gray-50); border-radius: 8px; overflow: hidden; border: 1px solid var(--gray-200);">
-                            ${hasImage
-                                ? `<a href="${viewLink}" target="_blank" style="display: block; cursor: pointer; position: relative;"${viewLink !== '#' ? '' : ' onclick="return false;"'}>
-                                     <img src="${imgSrc}" alt="${item.filename || 'Evidence'}"
-                                          style="width: 100%; height: 120px; object-fit: cover; display: block;"
-                                          onerror="this.style.display='none'">
-                                     ${viewLink !== '#' ? '<div style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.6);color:white;padding:2px 6px;border-radius:4px;font-size:10px;"><i class="fas fa-external-link-alt"></i></div>' : ''}
+                            ${isLegacyBase64
+                                ? `<img src="${item.data}" alt="${item.filename || 'Evidence'}"
+                                        style="width: 100%; height: 120px; object-fit: cover; display: block;">`
+                                : `<a href="${viewLink}" target="_blank" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 120px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none;">
+                                     <i class="fas fa-image" style="font-size: 32px; margin-bottom: 8px;"></i>
+                                     <span style="font-size: 12px; font-weight: 500;">Click to View</span>
                                    </a>`
-                                : `<div style="width: 100%; height: 120px; background: var(--gray-200); display: flex; align-items: center; justify-content: center; color: var(--gray-500);">
-                                    <i class="fas fa-image" style="font-size: 32px;"></i>
-                                   </div>`
                             }
                             <div style="padding: 8px; font-size: 12px; color: var(--gray-600);">
                                 <div style="font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${item.filename || 'Photo'}">${item.filename || 'Photo'}</div>
