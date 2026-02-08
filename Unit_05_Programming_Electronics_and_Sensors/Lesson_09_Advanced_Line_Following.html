@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 9: Advanced Line Following</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .slide {
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            background: rgba(26, 31, 58, 0.95);
+            border-radius: 20px;
+            border: 3px solid #00d4ff;
+            box-shadow: 0 20px 80px rgba(0, 212, 255, 0.3);
+            padding: 60px;
+            display: none;
+            flex-direction: column;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .lesson-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: #00d4ff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            color: #00d4ff;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            color: #00d4ff;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: #ff9500;
+            margin: 25px 0 15px 0;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #b8c5d6;
+            text-align: center;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 20px 0;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .concept-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 149, 0, 0.05) 100%);
+            border: 2px solid rgba(255, 149, 0, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, rgba(80, 250, 123, 0.1) 0%, rgba(80, 250, 123, 0.05) 100%);
+            border: 2px solid rgba(80, 250, 123, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+
+        .code-block {
+            background: #0d1117;
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 40px 25px 25px 25px;
+            margin: 15px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            line-height: 1.5;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+            position: relative;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 350px;
+            white-space: pre;
+        }
+
+        .code-block::before {
+            content: 'Arduino Code';
+            position: absolute;
+            top: 8px;
+            left: 20px;
+            background: transparent;
+            padding: 0;
+            font-size: 0.7rem;
+            color: #00d4ff;
+            font-weight: 700;
+            opacity: 0.6;
+        }
+
+        .code-comment {
+            color: #6c6c6c;
+        }
+
+        .code-keyword {
+            color: #ff6ac1;
+        }
+
+        .code-function {
+            color: #5af78e;
+        }
+
+        .code-number {
+            color: #f1fa8c;
+        }
+
+        .code-string {
+            color: #e9c46a;
+        }
+
+        ul, ol {
+            margin-left: 30px;
+            line-height: 2;
+        }
+
+        li {
+            margin: 10px 0;
+            font-size: 1.1rem;
+        }
+
+        .highlight {
+            color: #00d4ff;
+            font-weight: 700;
+        }
+
+        .emphasis {
+            color: #ff9500;
+            font-weight: 700;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1rem;
+        }
+
+        th {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            padding: 15px;
+            text-align: left;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        td {
+            padding: 12px 15px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        tr:nth-child(even) {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .diagram {
+            background: rgba(10, 14, 39, 0.5);
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+        }
+
+        .arrow {
+            color: #ff9500;
+            font-size: 1.5rem;
+            margin: 10px 0;
+        }
+
+        /* Navigation */
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .nav-btn:hover {
+            background: linear-gradient(135deg, #00eeff, #00bbee);
+            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(0, 212, 255, 0.2);
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            border: 2px solid rgba(0, 212, 255, 0.5);
+        }
+
+        .flowchart {
+            background: rgba(10, 14, 39, 0.5);
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .flow-step {
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .flow-decision {
+            background: rgba(255, 149, 0, 0.1);
+            border: 2px solid rgba(255, 149, 0, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        /* Lesson Navigation */
+        .lesson-nav {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .nav-button {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            color: #0a0e27;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .nav-button.home {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #ffffff;
+            color: #ffffff;
+        }
+
+        .nav-button.home:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-button.next {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.1));
+            border-color: #00d4ff;
+            color: #00d4ff;
+        }
+
+        .nav-button.next:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(0, 212, 255, 0.2));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .next-lesson-preview {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 212, 255, 0.05));
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .next-lesson-preview h3 {
+            color: #00d4ff;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-header">
+                <div class="lesson-label">Unit 5: Introduction to Programming &bull; Lesson 9</div>
+                <h1>Advanced Line Following</h1>
+                <p class="subtitle">Speed Lookup Table with PWM Ramping</p>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3 style="text-align: center; color: #00d4ff; margin-top: 0;">What You'll Learn Today</h3>
+                    <ul style="font-size: 1.2rem; line-height: 2.2;">
+                        <li>How a 2D speed lookup table works</li>
+                        <li>12-bit PWM for finer motor control</li>
+                        <li>PWM ramping to protect motors</li>
+                        <li>Systematic tuning of 9 sensor positions</li>
+                        <li>DEBUG mode for motor verification</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: How the Speed Lookup Table Works -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>How the Speed Lookup Table Works</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3 style="margin-top: 0;">The Approach</h3>
+                    <p style="font-size: 1.1rem; margin: 15px 0;">Instead of if/else with fixed turn functions, every sensor position maps to specific left AND right motor speeds in a <span class="highlight">2D array</span>. This gives you independent control of each motor at every position.</p>
+                </div>
+
+                <table style="font-size: 0.85rem; text-align: center;">
+                    <tr>
+                        <th>Array Index</th>
+                        <th>0</th>
+                        <th>1</th>
+                        <th>2</th>
+                        <th>3</th>
+                        <th>4</th>
+                        <th>5</th>
+                        <th>6</th>
+                        <th>7</th>
+                        <th>8</th>
+                        <th>9</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Sensor</strong></td>
+                        <td>IR1</td>
+                        <td>IR1+2</td>
+                        <td>IR2</td>
+                        <td>IR2+3</td>
+                        <td style="background: rgba(80, 250, 123, 0.2); color: #50fa7b;">IR3</td>
+                        <td>IR3+4</td>
+                        <td>IR4</td>
+                        <td>IR4+5</td>
+                        <td>IR5</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Position</strong></td>
+                        <td style="color: #ff6b6b;">Far L</td>
+                        <td style="color: #ff9500;">L</td>
+                        <td style="color: #f1fa8c;">Slight L</td>
+                        <td>Near C</td>
+                        <td style="background: rgba(80, 250, 123, 0.2); color: #50fa7b;">Center</td>
+                        <td>Near C</td>
+                        <td style="color: #f1fa8c;">Slight R</td>
+                        <td style="color: #ff9500;">R</td>
+                        <td style="color: #ff6b6b;">Far R</td>
+                        <td style="color: #888;">Lost</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Row 0: Right Motor</strong></td>
+                        <td>IR1_M0</td>
+                        <td>IR12_M0</td>
+                        <td>IR2_M0</td>
+                        <td>IR23_M0</td>
+                        <td>IR3_M0</td>
+                        <td>IR34_M0</td>
+                        <td>IR4_M0</td>
+                        <td>IR45_M0</td>
+                        <td>IR5_M0</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Row 1: Left Motor</strong></td>
+                        <td>IR1_M1</td>
+                        <td>IR12_M1</td>
+                        <td>IR2_M1</td>
+                        <td>IR23_M1</td>
+                        <td>IR3_M1</td>
+                        <td>IR34_M1</td>
+                        <td>IR4_M1</td>
+                        <td>IR45_M1</td>
+                        <td>IR5_M1</td>
+                        <td>0</td>
+                    </tr>
+                </table>
+
+                <div class="concept-box">
+                    <h3 style="margin-top: 0;">Key Concepts</h3>
+                    <ul style="font-size: 1rem;">
+                        <li><span class="highlight">speed_array[2][10]</span> &mdash; Row 0 = one motor, Row 1 = other motor</li>
+                        <li><span class="highlight">12-bit PWM (0-4095)</span> vs 8-bit (0-255) &mdash; 16x more precision</li>
+                        <li><span class="highlight">PWM_MAX_CHG</span> limits how fast motors can change speed (prevents current surges)</li>
+                        <li><span class="emphasis">Negative values</span> = reverse direction</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: The Code -->
+        <div class="slide" id="slide-alt-code">
+            <div class="slide-content">
+                <h2 style="color: #c41e3a; font-family: 'Orbitron', sans-serif; font-size: 1.6rem; margin-bottom: 20px;">Advanced Line Following Code</h2>
+
+                <div class="concept-box" style="margin-bottom: 10px; padding: 15px;">
+                    <h3 style="margin-top: 0; font-size: 1.1rem;">About This Code</h3>
+                    <ul style="font-size: 0.95rem; line-height: 1.8;">
+                        <li><span class="highlight">speed_array[2][10]</span> &mdash; A 2D array that holds motor speeds for each sensor position</li>
+                        <li><span class="highlight">DEBUG mode</span> &mdash; Enabled by default; set to 0 to run normally</li>
+                        <li><span class="highlight">PWM ramping</span> &mdash; Gradually changes speed to protect motors</li>
+                        <li><span class="highlight">5-sensor IR array</span> &mdash; Uses all 5 sensors for smoother line detection</li>
+                    </ul>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="color: #aaa; font-size: 0.9rem;">advanced_line_following.ino</span>
+                    <button onclick="copyAdvancedCode()" style="background: #c41e3a; color: #fff; border: none; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-family: 'Exo 2', sans-serif; font-size: 0.85rem; font-weight: 600;">Copy Code</button>
+                </div>
+                <div class="code-block" style="font-size: 0.55rem; max-height: 420px; overflow-y: auto; margin-top: 0;"><span class="code-comment">// VHS Advanced Line Follower Code</span>
+<span class="code-comment">// Speed lookup table approach with PWM ramping</span>
+<span class="code-comment">// Coded for Arduino Nano RP2040 Connect</span>
+
+<span class="code-keyword">#include</span> <span class="code-string">&lt;stdlib.h&gt;</span>
+<span class="code-keyword">#include</span> <span class="code-string">&lt;Arduino.h&gt;</span>
+
+<span class="code-comment">// Uncomment the following line to enable DEBUG mode</span>
+<span class="code-keyword">#define</span> DEBUG <span class="code-number">1</span>
+
+<span class="code-comment">// DEBUG motor speeds (test one motor at a time, 500-1000)</span>
+<span class="code-keyword">#define</span> DEBUG_RM_PWM <span class="code-number">0</span>
+<span class="code-keyword">#define</span> DEBUG_LM_PWM <span class="code-number">0</span>
+
+<span class="code-keyword">#define</span> ANL_WR_LEN <span class="code-number">12</span>         <span class="code-comment">// 12-bit PWM resolution</span>
+<span class="code-keyword">#define</span> PWM_STEPS <span class="code-number">4095</span>        <span class="code-comment">// 2^12 - 1</span>
+<span class="code-keyword">#define</span> PWM_MAX_CHG <span class="code-number">400</span>       <span class="code-comment">// Max PWM change per loop</span>
+<span class="code-keyword">#define</span> MAX_PWM <span class="code-number">1000</span>          <span class="code-comment">// Maximum allowed PWM</span>
+
+<span class="code-comment">// Motor speeds for each sensor position (FILL THESE IN!)</span>
+<span class="code-keyword">#define</span> IR1_M0 <span class="code-number">0</span>        <span class="code-comment">// Far left</span>
+<span class="code-keyword">#define</span> IR1_M1 <span class="code-number">0</span>
+<span class="code-keyword">#define</span> IR12_M0 <span class="code-number">0</span>       <span class="code-comment">// Left + center-left</span>
+<span class="code-keyword">#define</span> IR12_M1 <span class="code-number">0</span>
+<span class="code-keyword">#define</span> IR2_M0 <span class="code-number">0</span>        <span class="code-comment">// Slight left</span>
+<span class="code-keyword">#define</span> IR2_M1 <span class="code-number">0</span>
+<span class="code-keyword">#define</span> IR23_M0 <span class="code-number">0</span>       <span class="code-comment">// Near center (left)</span>
+<span class="code-keyword">#define</span> IR23_M1 <span class="code-number">0</span>
+<span class="code-keyword">#define</span> IR3_M0 <span class="code-number">0</span>        <span class="code-comment">// Centered</span>
+<span class="code-keyword">#define</span> IR3_M1 <span class="code-number">0</span>
+<span class="code-keyword">#define</span> IR34_M0 <span class="code-number">0</span>       <span class="code-comment">// Near center (right)</span>
+<span class="code-keyword">#define</span> IR34_M1 <span class="code-number">0</span>
+<span class="code-keyword">#define</span> IR4_M0 <span class="code-number">0</span>        <span class="code-comment">// Slight right</span>
+<span class="code-keyword">#define</span> IR4_M1 <span class="code-number">0</span>
+<span class="code-keyword">#define</span> IR45_M0 <span class="code-number">0</span>       <span class="code-comment">// Right + far-right</span>
+<span class="code-keyword">#define</span> IR45_M1 <span class="code-number">0</span>
+<span class="code-keyword">#define</span> IR5_M0 <span class="code-number">0</span>        <span class="code-comment">// Far right</span>
+<span class="code-keyword">#define</span> IR5_M1 <span class="code-number">0</span>
+
+<span class="code-keyword">int</span> speed_array[<span class="code-number">2</span>][<span class="code-number">10</span>] = {
+  {IR1_M0, IR12_M0, IR2_M0, IR23_M0, IR3_M0, IR34_M0, IR4_M0, IR45_M0, IR5_M0, <span class="code-number">0</span>},
+  {IR1_M1, IR12_M1, IR2_M1, IR23_M1, IR3_M1, IR34_M1, IR4_M1, IR45_M1, IR5_M1, <span class="code-number">0</span>},
+};
+
+<span class="code-comment">// Pin definitions</span>
+<span class="code-keyword">const</span> <span class="code-keyword">uint8_t</span> MTR_R_INA = <span class="code-number">6</span>;
+<span class="code-keyword">const</span> <span class="code-keyword">uint8_t</span> MTR_R_INB = <span class="code-number">4</span>;
+<span class="code-keyword">const</span> <span class="code-keyword">uint8_t</span> MTR_R_PWM = <span class="code-number">3</span>;
+<span class="code-keyword">const</span> <span class="code-keyword">uint8_t</span> MTR_L_INA = <span class="code-number">8</span>;
+<span class="code-keyword">const</span> <span class="code-keyword">uint8_t</span> MTR_L_INB = <span class="code-number">7</span>;
+<span class="code-keyword">const</span> <span class="code-keyword">uint8_t</span> MTR_L_PWM = <span class="code-number">5</span>;
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> IR_1 = <span class="code-number">A2</span>;
+<span class="code-keyword">const</span> <span class="code-keyword">uint8_t</span> IR_2 = <span class="code-number">0</span>;
+<span class="code-keyword">const</span> <span class="code-keyword">uint8_t</span> IR_3 = <span class="code-number">2</span>;
+<span class="code-keyword">const</span> <span class="code-keyword">uint8_t</span> IR_4 = <span class="code-number">1</span>;
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> IR_5 = <span class="code-number">A3</span>;
+
+<span class="code-keyword">int</span> last_speed_r = <span class="code-number">0</span>;
+<span class="code-keyword">int</span> last_speed_l = <span class="code-number">0</span>;
+<span class="code-keyword">int</span> last_target_r = <span class="code-number">0</span>;
+<span class="code-keyword">int</span> last_target_l = <span class="code-number">0</span>;
+<span class="code-keyword">int</span> max_pwm_chg = PWM_MAX_CHG;
+<span class="code-keyword">int</span> decode_error_count = <span class="code-number">0</span>;
+<span class="code-keyword">int</span> ir_pos;
+
+<span class="code-keyword">void</span> <span class="code-function">setMotor</span>(<span class="code-keyword">int</span> speed_r, <span class="code-keyword">int</span> speed_l) {
+  speed_r = <span class="code-function">constrain</span>(speed_r, -PWM_STEPS, PWM_STEPS);
+  speed_l = <span class="code-function">constrain</span>(speed_l, -PWM_STEPS, PWM_STEPS);
+
+  <span class="code-keyword">if</span> (last_speed_r &gt; speed_r) {
+    last_speed_r = last_speed_r - max_pwm_chg;
+    <span class="code-keyword">if</span> (last_speed_r &lt; speed_r) last_speed_r = speed_r;
+  } <span class="code-keyword">else if</span> (last_speed_r &lt; speed_r) {
+    last_speed_r = last_speed_r + max_pwm_chg;
+    <span class="code-keyword">if</span> (last_speed_r &gt; speed_r) last_speed_r = speed_r;
+  }
+
+  <span class="code-keyword">if</span> (last_speed_l &gt; speed_l) {
+    last_speed_l = last_speed_l - max_pwm_chg;
+    <span class="code-keyword">if</span> (last_speed_l &lt; speed_l) last_speed_l = speed_l;
+  } <span class="code-keyword">else if</span> (last_speed_l &lt; speed_l) {
+    last_speed_l = last_speed_l + max_pwm_chg;
+    <span class="code-keyword">if</span> (last_speed_l &gt; speed_l) last_speed_l = speed_l;
+  }
+
+  <span class="code-keyword">if</span> (last_speed_r &gt; <span class="code-number">0</span>) {
+    <span class="code-function">digitalWrite</span>(MTR_R_INA, LOW);
+    <span class="code-function">digitalWrite</span>(MTR_R_INB, HIGH);
+  } <span class="code-keyword">else</span> {
+    <span class="code-function">digitalWrite</span>(MTR_R_INA, HIGH);
+    <span class="code-function">digitalWrite</span>(MTR_R_INB, LOW);
+  }
+  <span class="code-function">analogWrite</span>(MTR_R_PWM, <span class="code-function">abs</span>(last_speed_r));
+
+  <span class="code-keyword">if</span> (last_speed_l &gt; <span class="code-number">0</span>) {
+    <span class="code-function">digitalWrite</span>(MTR_L_INA, LOW);
+    <span class="code-function">digitalWrite</span>(MTR_L_INB, HIGH);
+  } <span class="code-keyword">else</span> {
+    <span class="code-function">digitalWrite</span>(MTR_L_INA, HIGH);
+    <span class="code-function">digitalWrite</span>(MTR_L_INB, LOW);
+  }
+  <span class="code-function">analogWrite</span>(MTR_L_PWM, <span class="code-function">abs</span>(last_speed_l));
+}
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  Serial.<span class="code-function">begin</span>(<span class="code-number">9600</span>);
+  <span class="code-function">analogWriteResolution</span>(ANL_WR_LEN);
+  <span class="code-function">pinMode</span>(MTR_R_INA, OUTPUT);
+  <span class="code-function">pinMode</span>(MTR_R_INB, OUTPUT);
+  <span class="code-function">pinMode</span>(MTR_L_INA, OUTPUT);
+  <span class="code-function">pinMode</span>(MTR_L_INB, OUTPUT);
+  <span class="code-function">pinMode</span>(IR_1, INPUT);
+  <span class="code-function">pinMode</span>(IR_2, INPUT);
+  <span class="code-function">pinMode</span>(IR_3, INPUT);
+  <span class="code-function">pinMode</span>(IR_4, INPUT);
+  <span class="code-function">pinMode</span>(IR_5, INPUT);
+  <span class="code-function">digitalWrite</span>(MTR_R_INA, LOW);
+  <span class="code-function">digitalWrite</span>(MTR_R_INB, LOW);
+  <span class="code-function">analogWrite</span>(MTR_R_PWM, <span class="code-number">0</span>);
+  <span class="code-function">digitalWrite</span>(MTR_L_INA, LOW);
+  <span class="code-function">digitalWrite</span>(MTR_L_INB, LOW);
+  <span class="code-function">analogWrite</span>(MTR_L_PWM, <span class="code-number">0</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-keyword">int</span> ir_val_1, ir_val_2, ir_val_3, ir_val_4, ir_val_5;
+  <span class="code-keyword">int</span> decode_error = <span class="code-number">0</span>;
+
+  ir_val_1 = <span class="code-function">digitalRead</span>(IR_1);
+  ir_val_2 = <span class="code-function">digitalRead</span>(IR_2);
+  ir_val_3 = <span class="code-function">digitalRead</span>(IR_3);
+  ir_val_4 = <span class="code-function">digitalRead</span>(IR_4);
+  ir_val_5 = <span class="code-function">digitalRead</span>(IR_5);
+
+  <span class="code-comment">// Decode sensor pattern to position 0-9</span>
+  <span class="code-keyword">if</span> (ir_val_1 == LOW) {
+    <span class="code-keyword">if</span> (ir_val_3 == HIGH &amp;&amp; ir_val_4 == HIGH &amp;&amp; ir_val_5 == HIGH) {
+      ir_pos = (ir_val_2 == LOW) ? <span class="code-number">1</span> : <span class="code-number">0</span>;
+    } <span class="code-keyword">else</span> { decode_error = <span class="code-number">1</span>; }
+  }
+  <span class="code-keyword">else if</span> (ir_val_2 == LOW) {
+    <span class="code-keyword">if</span> (ir_val_4 == HIGH &amp;&amp; ir_val_5 == HIGH) {
+      ir_pos = (ir_val_3 == LOW) ? <span class="code-number">3</span> : <span class="code-number">2</span>;
+    } <span class="code-keyword">else</span> { decode_error = <span class="code-number">1</span>; }
+  }
+  <span class="code-keyword">else if</span> (ir_val_3 == LOW) {
+    <span class="code-keyword">if</span> (ir_val_5 == HIGH) {
+      ir_pos = (ir_val_4 == LOW) ? <span class="code-number">5</span> : <span class="code-number">4</span>;
+    } <span class="code-keyword">else</span> { decode_error = <span class="code-number">1</span>; }
+  }
+  <span class="code-keyword">else if</span> (ir_val_4 == LOW) {
+    ir_pos = (ir_val_5 == LOW) ? <span class="code-number">7</span> : <span class="code-number">6</span>;
+  }
+  <span class="code-keyword">else if</span> (ir_val_5 == LOW) {
+    ir_pos = <span class="code-number">8</span>;
+  }
+  <span class="code-keyword">else</span> {
+    ir_pos = <span class="code-number">9</span>;
+  }
+
+  <span class="code-keyword">if</span> (decode_error != <span class="code-number">0</span>) decode_error_count++;
+
+<span class="code-keyword">#ifndef</span> DEBUG
+  last_target_r = speed_array[<span class="code-number">0</span>][ir_pos];
+  last_target_l = speed_array[<span class="code-number">1</span>][ir_pos];
+<span class="code-keyword">#endif</span>
+
+<span class="code-keyword">#ifdef</span> DEBUG
+  last_target_r = DEBUG_RM_PWM;
+  last_target_l = DEBUG_LM_PWM;
+  Serial.<span class="code-function">print</span>(<span class="code-string">"ir_pos = "</span>);
+  Serial.<span class="code-function">print</span>(ir_pos);
+  Serial.<span class="code-function">print</span>(<span class="code-string">" target_r = "</span>);
+  Serial.<span class="code-function">print</span>(last_target_r);
+  Serial.<span class="code-function">print</span>(<span class="code-string">" target_l = "</span>);
+  Serial.<span class="code-function">println</span>(last_target_l);
+<span class="code-keyword">#endif</span>
+
+  <span class="code-function">setMotor</span>(last_target_r, last_target_l);
+}</div>
+
+                <div class="warning-box">
+                    <h3 style="margin-top: 0;">How to Use This Code</h3>
+                    <ol style="font-size: 1rem; line-height: 2;">
+                        <li>Upload the code and open Serial Monitor (9600 baud)</li>
+                        <li>With <code>#define DEBUG 1</code>, the robot will run at fixed PWM values &mdash; use this to verify motor wiring</li>
+                        <li>Comment out <code>#define DEBUG 1</code> to enable normal line following</li>
+                        <li>Fill in your speed values in the <code>#define</code> section at the top</li>
+                        <li>Test on your track and adjust speeds as needed</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Tuning the Advanced Code -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Tuning the Advanced Code</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box" style="padding: 15px;">
+                    <h3 style="margin-top: 0; font-size: 1.1rem;">Sensor Position Map</h3>
+                    <table style="font-size: 0.8rem; text-align: center; margin: 10px 0;">
+                        <tr>
+                            <th>Array Index</th>
+                            <th>0</th>
+                            <th>1</th>
+                            <th>2</th>
+                            <th>3</th>
+                            <th>4</th>
+                            <th>5</th>
+                            <th>6</th>
+                            <th>7</th>
+                            <th>8</th>
+                            <th>9</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Sensor</strong></td>
+                            <td>IR1</td>
+                            <td>IR1+2</td>
+                            <td>IR2</td>
+                            <td>IR2+3</td>
+                            <td style="background: rgba(80, 250, 123, 0.2); color: #50fa7b;">IR3</td>
+                            <td>IR3+4</td>
+                            <td>IR4</td>
+                            <td>IR4+5</td>
+                            <td>IR5</td>
+                            <td>None</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Position</strong></td>
+                            <td style="color: #ff6b6b;">Far L</td>
+                            <td style="color: #ff9500;">L</td>
+                            <td style="color: #f1fa8c;">Slight L</td>
+                            <td>Near C</td>
+                            <td style="background: rgba(80, 250, 123, 0.2); color: #50fa7b;">Center</td>
+                            <td>Near C</td>
+                            <td style="color: #f1fa8c;">Slight R</td>
+                            <td style="color: #ff9500;">R</td>
+                            <td style="color: #ff6b6b;">Far R</td>
+                            <td style="color: #888;">Lost</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="concept-box">
+                    <h3 style="margin-top: 0;">Step-by-Step Tuning Guide</h3>
+                    <ol style="line-height: 2; font-size: 0.95rem; margin-left: 10px;">
+                        <li><strong>Test motors in DEBUG mode:</strong> Keep <code>#define DEBUG 1</code>. Set <code>DEBUG_RM_PWM</code> to 500 and <code>DEBUG_LM_PWM</code> to 0. Upload. Verify one motor spins forward. Swap the values and check the other motor.</li>
+                        <li><strong>Note motor directions:</strong> If a motor spins backward, you'll need negative values for that motor in the speed_array to make it go forward.</li>
+                        <li><strong>Disable DEBUG:</strong> Comment out <code>#define DEBUG 1</code> (add <code>//</code> in front) to enable normal line following mode.</li>
+                        <li><strong>Set center speed first:</strong> Set <code>IR3_M0</code> and <code>IR3_M1</code> both to 600. The robot should drive straight when centered on the line.</li>
+                        <li><strong>Set "no line" speed:</strong> Change the last column (the two 0s in the array) to <code>IR3_M0</code> and <code>IR3_M1</code> so the robot drives straight when it loses the line.</li>
+                        <li><strong>Set slight off-center (IR2/IR4):</strong> Keep the on-track motor at ~600, reduce the other to ~300.</li>
+                        <li><strong>Set far off-center (IR1/IR5):</strong> Most aggressive correction. Try 800 vs 100, or even negative values for hard turns.</li>
+                        <li><strong>Fill transitional positions:</strong> Set IR12, IR23, IR34, IR45 to values between their neighbors.</li>
+                        <li><strong>Adjust responsiveness:</strong> If the robot oscillates, reduce <code>PWM_MAX_CHG</code>. If too sluggish, increase it.</li>
+                        <li><strong>Test and iterate:</strong> Test on curves. Adjust speeds as needed. Change ONE value at a time!</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Testing and Next Steps -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Testing and Next Steps</h2>
+            </div>
+            <div class="content">
+                <div class="warning-box">
+                    <h3 style="margin-top: 0;">Common Problems and Solutions</h3>
+                    <table style="font-size: 0.9rem;">
+                        <tr>
+                            <th>Problem</th>
+                            <th>Possible Solution</th>
+                        </tr>
+                        <tr>
+                            <td>Robot goes straight off the line</td>
+                            <td>Check sensor readings</td>
+                        </tr>
+                        <tr>
+                            <td>Robot spins in circles</td>
+                            <td>Verify motor wiring</td>
+                        </tr>
+                        <tr>
+                            <td>Robot oscillates wildly</td>
+                            <td>Reduce PWM_MAX_CHG or motor speeds</td>
+                        </tr>
+                        <tr>
+                            <td>Robot can't follow curves</td>
+                            <td>Reduce speed or increase correction values</td>
+                        </tr>
+                        <tr>
+                            <td>Sensors not detecting line</td>
+                            <td>Check sensor height (2-10mm)</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="concept-box">
+                    <h3 style="margin-top: 0;">Advanced Tips</h3>
+                    <ul style="font-size: 1rem;">
+                        <li>Put robot on reflective surface with wheels barely off ground to test</li>
+                        <li>Slide electrical tape under sensors to watch motor response</li>
+                        <li>Use Serial Monitor to see ir_pos values as you move tape</li>
+                        <li>Start with conservative speeds, increase gradually</li>
+                    </ul>
+                </div>
+
+                <div class="next-lesson-preview">
+                    <h3>Next Lesson: PID Control for Line Following</h3>
+                    <p style="font-size: 1.1rem; line-height: 1.6;">
+                        Ready for even smoother control? In Lesson 10, you'll learn PID (Proportional-Integral-Derivative) control, which uses proportional corrections based on how far the robot is from the line. Instead of fixed speed values, the motor speeds adjust continuously for the smoothest possible line following.
+                    </p>
+                </div>
+
+                <div class="lesson-nav">
+                    <a href="../index.html" class="nav-button home">
+                        <span>Back to Lessons</span>
+                    </a>
+                    <a href="Lesson_10_PID_Control.html" class="nav-button next">
+                        <span>Next: PID Control</span>
+                        <span>&rarr;</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">5</span>
+    </div>
+
+    <div class="nav-container">
+        <button class="nav-btn" id="prev-btn" onclick="prevSlide()">&#8592; Previous</button>
+        <a href="index.html" class="nav-button">&#8962; BACK TO UNIT 5</a>
+        <button class="nav-btn" id="next-btn" onclick="nextSlide()">Next &#8594;</button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = document.querySelectorAll('.slide').length;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+
+            if (n > totalSlides) currentSlide = totalSlides;
+            if (n < 1) currentSlide = 1;
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('current-slide').textContent = currentSlide;
+
+            // Update button states
+            document.getElementById('prev-btn').disabled = currentSlide === 1;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides;
+        }
+
+        function nextSlide() {
+            currentSlide++;
+            showSlide(currentSlide);
+        }
+
+        function prevSlide() {
+            currentSlide--;
+            showSlide(currentSlide);
+        }
+
+        // Copy advanced code function
+        function copyAdvancedCode() {
+            var codeText = "// VHS Advanced Line Follower Code\n// Speed lookup table approach with PWM ramping\n// Coded for Arduino Nano RP2040 Connect\n\n#include <stdlib.h>\n#include <Arduino.h>\n\n// Uncomment the following line to enable DEBUG mode\n#define DEBUG 1\n\n// DEBUG motor speeds (test one motor at a time, 500-1000)\n#define DEBUG_RM_PWM 0\n#define DEBUG_LM_PWM 0\n\n#define ANL_WR_LEN 12         // 12-bit PWM resolution\n#define PWM_STEPS 4095        // 2^12 - 1\n#define PWM_MAX_CHG 400       // Max PWM change per loop\n#define MAX_PWM 1000          // Maximum allowed PWM\n\n// Motor speeds for each sensor position (FILL THESE IN!)\n#define IR1_M0 0        // Far left\n#define IR1_M1 0\n#define IR12_M0 0       // Left + center-left\n#define IR12_M1 0\n#define IR2_M0 0        // Slight left\n#define IR2_M1 0\n#define IR23_M0 0       // Near center (left)\n#define IR23_M1 0\n#define IR3_M0 0        // Centered\n#define IR3_M1 0\n#define IR34_M0 0       // Near center (right)\n#define IR34_M1 0\n#define IR4_M0 0        // Slight right\n#define IR4_M1 0\n#define IR45_M0 0       // Right + far-right\n#define IR45_M1 0\n#define IR5_M0 0        // Far right\n#define IR5_M1 0\n\nint speed_array[2][10] = {\n  {IR1_M0, IR12_M0, IR2_M0, IR23_M0, IR3_M0, IR34_M0, IR4_M0, IR45_M0, IR5_M0, 0},\n  {IR1_M1, IR12_M1, IR2_M1, IR23_M1, IR3_M1, IR34_M1, IR4_M1, IR45_M1, IR5_M1, 0},\n};\n\n// Pin definitions\nconst uint8_t MTR_R_INA = 6;\nconst uint8_t MTR_R_INB = 4;\nconst uint8_t MTR_R_PWM = 3;\nconst uint8_t MTR_L_INA = 8;\nconst uint8_t MTR_L_INB = 7;\nconst uint8_t MTR_L_PWM = 5;\nconst int IR_1 = A2;\nconst uint8_t IR_2 = 0;\nconst uint8_t IR_3 = 2;\nconst uint8_t IR_4 = 1;\nconst int IR_5 = A3;\n\nint last_speed_r = 0;\nint last_speed_l = 0;\nint last_target_r = 0;\nint last_target_l = 0;\nint max_pwm_chg = PWM_MAX_CHG;\nint decode_error_count = 0;\nint ir_pos;\n\nvoid setMotor(int speed_r, int speed_l) {\n  speed_r = constrain(speed_r, -PWM_STEPS, PWM_STEPS);\n  speed_l = constrain(speed_l, -PWM_STEPS, PWM_STEPS);\n  \n  if (last_speed_r > speed_r) {\n    last_speed_r = last_speed_r - max_pwm_chg;\n    if (last_speed_r < speed_r) last_speed_r = speed_r;\n  } else if (last_speed_r < speed_r) {\n    last_speed_r = last_speed_r + max_pwm_chg;\n    if (last_speed_r > speed_r) last_speed_r = speed_r;\n  }\n\n  if (last_speed_l > speed_l) {\n    last_speed_l = last_speed_l - max_pwm_chg;\n    if (last_speed_l < speed_l) last_speed_l = speed_l;\n  } else if (last_speed_l < speed_l) {\n    last_speed_l = last_speed_l + max_pwm_chg;\n    if (last_speed_l > speed_l) last_speed_l = speed_l;\n  }\n\n  if (last_speed_r > 0) {\n    digitalWrite(MTR_R_INA, LOW);\n    digitalWrite(MTR_R_INB, HIGH);\n  } else {\n    digitalWrite(MTR_R_INA, HIGH);\n    digitalWrite(MTR_R_INB, LOW);\n  }\n  analogWrite(MTR_R_PWM, abs(last_speed_r));\n\n  if (last_speed_l > 0) {\n    digitalWrite(MTR_L_INA, LOW);\n    digitalWrite(MTR_L_INB, HIGH);\n  } else {\n    digitalWrite(MTR_L_INA, HIGH);\n    digitalWrite(MTR_L_INB, LOW);\n  }\n  analogWrite(MTR_L_PWM, abs(last_speed_l));\n}\n\nvoid setup() {\n  Serial.begin(9600);\n  analogWriteResolution(ANL_WR_LEN);\n  pinMode(MTR_R_INA, OUTPUT);\n  pinMode(MTR_R_INB, OUTPUT);\n  pinMode(MTR_L_INA, OUTPUT);\n  pinMode(MTR_L_INB, OUTPUT);\n  pinMode(IR_1, INPUT);\n  pinMode(IR_2, INPUT);\n  pinMode(IR_3, INPUT);\n  pinMode(IR_4, INPUT);\n  pinMode(IR_5, INPUT);\n  digitalWrite(MTR_R_INA, LOW);\n  digitalWrite(MTR_R_INB, LOW);\n  analogWrite(MTR_R_PWM, 0);\n  digitalWrite(MTR_L_INA, LOW);\n  digitalWrite(MTR_L_INB, LOW);\n  analogWrite(MTR_L_PWM, 0);\n}\n\nvoid loop() {\n  int ir_val_1, ir_val_2, ir_val_3, ir_val_4, ir_val_5;\n  int decode_error = 0;\n\n  ir_val_1 = digitalRead(IR_1);\n  ir_val_2 = digitalRead(IR_2);\n  ir_val_3 = digitalRead(IR_3);\n  ir_val_4 = digitalRead(IR_4);\n  ir_val_5 = digitalRead(IR_5);\n\n  // Decode sensor pattern to position 0-9\n  if (ir_val_1 == LOW) {\n    if (ir_val_3 == HIGH && ir_val_4 == HIGH && ir_val_5 == HIGH) {\n      ir_pos = (ir_val_2 == LOW) ? 1 : 0;\n    } else { decode_error = 1; }\n  }\n  else if (ir_val_2 == LOW) {\n    if (ir_val_4 == HIGH && ir_val_5 == HIGH) {\n      ir_pos = (ir_val_3 == LOW) ? 3 : 2;\n    } else { decode_error = 1; }\n  }\n  else if (ir_val_3 == LOW) {\n    if (ir_val_5 == HIGH) {\n      ir_pos = (ir_val_4 == LOW) ? 5 : 4;\n    } else { decode_error = 1; }\n  }\n  else if (ir_val_4 == LOW) {\n    ir_pos = (ir_val_5 == LOW) ? 7 : 6;\n  }\n  else if (ir_val_5 == LOW) {\n    ir_pos = 8;\n  }\n  else {\n    ir_pos = 9;\n  }\n\n  if (decode_error != 0) decode_error_count++;\n\n#ifndef DEBUG\n  last_target_r = speed_array[0][ir_pos];\n  last_target_l = speed_array[1][ir_pos];\n#endif\n\n#ifdef DEBUG\n  last_target_r = DEBUG_RM_PWM;\n  last_target_l = DEBUG_LM_PWM;\n  Serial.print(\"ir_pos = \");\n  Serial.print(ir_pos);\n  Serial.print(\" target_r = \");\n  Serial.print(last_target_r);\n  Serial.print(\" target_l = \");\n  Serial.println(last_target_l);\n#endif\n\n  setMotor(last_target_r, last_target_l);\n}";
+
+            navigator.clipboard.writeText(codeText).then(function() {
+                var btn = document.querySelector('#slide-alt-code button');
+                var original = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = '#2e7d32';
+                setTimeout(function() {
+                    btn.textContent = original;
+                    btn.style.background = '#c41e3a';
+                }, 1500);
+            }, function(err) {
+                alert('Copy failed. Try selecting the code manually.');
+            });
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight') nextSlide();
+            if (event.key === 'ArrowLeft') prevSlide();
+        });
+
+        // Initialize
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>
