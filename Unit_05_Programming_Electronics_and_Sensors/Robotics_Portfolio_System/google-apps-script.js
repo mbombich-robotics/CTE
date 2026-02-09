@@ -358,18 +358,17 @@ function saveDeliverable(student, id, deliverable) {
   const sheet = ss.getSheetByName(SHEET_NAMES.DELIVERABLES);
   const data = sheet.getDataRange().getValues();
 
-  // Deliverable titles
+  // Deliverable titles for Robotics class
   const titles = {
-    1: 'Game Analysis Report',
-    2: 'Subsystem Research Report',
-    3: 'Design Contribution',
-    4: 'Design Decision Matrix',
-    5: 'Prototype Documentation',
-    6: 'Testing & Iteration Log',
-    7: 'Integration Report',
-    8: 'Technical Contribution Summary',
-    9: 'Engineer Portfolio Entry',
-    10: 'Final Presentation'
+    1: 'Line Following Practical #1',
+    2: 'Line Following Practical #2',
+    3: 'Ultrasonic Sensor Lab Report',
+    4: 'Scanner Assembly',
+    5: 'Scanning Practical',
+    6: 'Claw Design Document',
+    7: 'Claw Control Code',
+    8: 'Claw Practical',
+    9: 'Final Robot Demonstration'
   };
 
   // Check if deliverable already exists
