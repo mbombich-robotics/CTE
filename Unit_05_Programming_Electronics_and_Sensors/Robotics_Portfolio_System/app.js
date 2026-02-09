@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.8.4',
+    VERSION: 'v2.8.5',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbzmA0eLDydJ3PVCKxUKQgDoqNJdyApIw_h_M8aquvgoVhlZBUvppUP1SVxWYe7R9Zud/exec',
@@ -1220,7 +1220,8 @@ function calculateProgress() {
 function calculateCurrentWeek() {
     const now = new Date();
     const diffTime = now - CONFIG.SEMESTER_START;
-    const diffWeeks = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 7));
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const diffWeeks = Math.floor(diffDays / 7) + 1;
     state.currentWeek = Math.min(Math.max(1, diffWeeks), 9);
 }
 
@@ -1260,6 +1261,11 @@ function updateUpcoming() {
     for (let week = 1; week < state.currentWeek; week++) {
         if (!state.weeklyReflections[week]?.submitted) {
             upcoming.unshift({ title: `Week ${week} Reflection`, due: 'OVERDUE', points: 20, overdue: true });
+        }
+        // Check for overdue deliverables from previous weeks
+        const overdueDeliverable = DELIVERABLES.find(d => d.week === week);
+        if (overdueDeliverable && state.deliverables[overdueDeliverable.id]?.status !== 'completed') {
+            upcoming.unshift({ title: overdueDeliverable.title, due: 'OVERDUE', points: overdueDeliverable.points, overdue: true });
         }
     }
 

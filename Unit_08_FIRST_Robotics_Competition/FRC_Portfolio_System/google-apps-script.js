@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.5';
+const BACKEND_VERSION = 'v2.9.8';
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
@@ -920,7 +920,9 @@ function generateSummaryReport() {
 function sendRemindersWeb(semesterStart) {
   const data = loadAllData();
   const startDate = semesterStart ? new Date(semesterStart) : new Date('2026-02-02');
-  const currentWeek = Math.ceil((new Date() - startDate) / (1000 * 60 * 60 * 24 * 7));
+  const diffTime = new Date() - startDate;
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  const currentWeek = Math.floor(diffDays / 7) + 1;
   let emailsSent = 0;
   const emailedStudents = [];
 

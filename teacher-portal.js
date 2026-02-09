@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.7',
+    VERSION: 'v2.9.8',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -21,7 +21,7 @@ const CONFIG = {
     COURSES: {
         robotics: {
             name: 'Robotics Portfolio',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbzmA0eLDydJ3PVCKxUKQgDoqNJdyApIw_h_M8aquvgoVhlZBUvppUP1SVxWYe7R9Zud/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbxDnmEX2IL9bqw12k8ls06VCi5_4rtUAyTMbaJqrSZ_aj6XeLnQlz5BIhJIeAGKKKzc/exec',
             hasTeams: false,
             totalDeliverables: 9,
             totalReflections: 9,
@@ -30,7 +30,7 @@ const CONFIG = {
         },
         frc: {
             name: 'FRC Portfolio',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbwJ6FjTC7DH5GugnekkUMms4s9Ne0Fa8IkepLmW8IN7IMDA--qicbP0F3WOzQJH694V/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbx-fG_4HtrYxYc2tFv_B0Lv1ltKtp6xxmBxoHWbX6TNtozUFL26FXC-NoQui53sHcJX/exec',
             hasTeams: true,
             teams: ['drivetrain', 'intake', 'shooter', 'climber', 'autonomous', 'integration'],
             totalDeliverables: 10,
@@ -118,7 +118,8 @@ function waitForGoogleSignIn() {
 function calculateCurrentWeek() {
     const now = new Date();
     const diffTime = now - CONFIG.SEMESTER_START;
-    const diffWeeks = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 7));
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const diffWeeks = Math.floor(diffDays / 7) + 1;
     state.currentWeek = Math.min(Math.max(1, diffWeeks), 9);
 }
 
@@ -388,8 +389,20 @@ function processStudentData() {
                 });
         }
 
-        // Determine status
-        const expectedReflections = Math.min(state.currentWeek, course.totalReflections);
+        // Determine status - only count reflections as expected if past their Friday 3pm deadline
+        let expectedReflections = 0;
+        for (let week = 1; week <= Math.min(state.currentWeek, course.totalReflections); week++) {
+            // Calculate Friday 3pm deadline for this week
+            const weekStart = new Date(CONFIG.SEMESTER_START);
+            weekStart.setDate(weekStart.getDate() + (week - 1) * 7);
+            const fridayDeadline = new Date(weekStart);
+            fridayDeadline.setDate(fridayDeadline.getDate() + 4); // Friday (Mon=0, Tue=1, ..., Fri=4)
+            fridayDeadline.setHours(15, 0, 0, 0); // 3pm
+
+            if (new Date() > fridayDeadline) {
+                expectedReflections++;
+            }
+        }
         const reflectionsBehind = expectedReflections - submittedReflections;
 
         let status = 'on-track';
