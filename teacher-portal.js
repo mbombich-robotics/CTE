@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.8',
+    VERSION: 'v2.9.9',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -389,8 +389,9 @@ function processStudentData() {
                 });
         }
 
-        // Determine status - only count reflections as expected if past their Friday 3pm deadline
+        // Determine status - count reflections and deliverables as expected if past their Friday 3pm deadline
         let expectedReflections = 0;
+        let expectedDeliverables = 0;
         for (let week = 1; week <= Math.min(state.currentWeek, course.totalReflections); week++) {
             // Calculate Friday 3pm deadline for this week
             const weekStart = new Date(CONFIG.SEMESTER_START);
@@ -401,13 +402,19 @@ function processStudentData() {
 
             if (new Date() > fridayDeadline) {
                 expectedReflections++;
+                // Deliverables are due same week (1-9 match weeks 1-9)
+                if (week <= course.totalDeliverables) {
+                    expectedDeliverables++;
+                }
             }
         }
         const reflectionsBehind = expectedReflections - submittedReflections;
+        const deliverablesBehind = expectedDeliverables - completedDeliverables;
+        const totalBehind = reflectionsBehind + deliverablesBehind;
 
         let status = 'on-track';
-        if (reflectionsBehind >= 3) status = 'very-behind';
-        else if (reflectionsBehind >= 1) status = 'behind';
+        if (totalBehind >= 4) status = 'very-behind';
+        else if (totalBehind >= 1) status = 'behind';
 
         const progress = Math.round((points / course.totalPoints) * 100);
 
