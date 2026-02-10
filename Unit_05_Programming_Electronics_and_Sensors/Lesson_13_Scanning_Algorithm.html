@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 13: Scanning Algorithm & Obstacle Detection</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .slide {
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            background: rgba(26, 31, 58, 0.95);
+            border-radius: 20px;
+            border: 3px solid #00d4ff;
+            box-shadow: 0 20px 80px rgba(0, 212, 255, 0.3);
+            padding: 60px;
+            display: none;
+            flex-direction: column;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .slide-header { text-align: center; margin-bottom: 40px; }
+
+        .lesson-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: #00d4ff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            color: #00d4ff;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            color: #00d4ff;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: #ff9500;
+            margin: 25px 0 15px 0;
+        }
+
+        .subtitle { font-size: 1.3rem; color: #b8c5d6; text-align: center; }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 20px 0;
+        }
+
+        .column { display: flex; flex-direction: column; }
+
+        .concept-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 149, 0, 0.05) 100%);
+            border: 2px solid rgba(255, 149, 0, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, rgba(80, 250, 123, 0.1) 0%, rgba(80, 250, 123, 0.05) 100%);
+            border: 2px solid rgba(80, 250, 123, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+
+        .code-block {
+            background: #0d1117;
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 40px 25px 25px 25px;
+            margin: 15px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+            position: relative;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 400px;
+            white-space: pre;
+        }
+
+        .code-block::before {
+            content: 'Arduino Code';
+            position: absolute;
+            top: 8px;
+            left: 20px;
+            font-size: 0.7rem;
+            color: #00d4ff;
+            font-weight: 700;
+            opacity: 0.6;
+        }
+
+        .code-comment { color: #6c6c6c; }
+        .code-keyword { color: #ff6ac1; }
+        .code-function { color: #5af78e; }
+        .code-number { color: #f1fa8c; }
+        .code-string { color: #f1fa8c; }
+
+        ul, ol { margin-left: 30px; line-height: 2; }
+        li { margin: 10px 0; font-size: 1.1rem; }
+
+        .highlight { color: #00d4ff; font-weight: 700; }
+        .emphasis { color: #ff9500; font-weight: 700; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1rem;
+        }
+
+        th {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            padding: 15px;
+            text-align: left;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        td {
+            padding: 12px 15px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        tr:nth-child(even) { background: rgba(0, 212, 255, 0.05); }
+
+        .diagram {
+            background: rgba(10, 14, 39, 0.5);
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .nav-btn:hover {
+            background: linear-gradient(135deg, #00eeff, #00bbee);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(0, 212, 255, 0.2);
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            border: 2px solid rgba(0, 212, 255, 0.5);
+        }
+
+        .lesson-nav {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .nav-button {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            color: #0a0e27;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .nav-button:hover { transform: translateY(-2px); }
+
+        .nav-button.home {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #ffffff;
+            color: #ffffff;
+        }
+
+        .nav-button.next {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.1));
+            border: 2px solid #00d4ff;
+            color: #00d4ff;
+        }
+
+        .next-lesson-preview {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 212, 255, 0.05));
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 15px;
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid #00d4ff;
+            color: #00d4ff;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .copy-btn:hover { background: rgba(0, 212, 255, 0.4); }
+
+        /* Scan visualization */
+        .scan-visual {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 30px;
+            background: rgba(10, 14, 39, 0.5);
+            border-radius: 15px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            margin: 20px 0;
+        }
+
+        .scan-display {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            height: 150px;
+        }
+
+        .scan-bar {
+            width: 25px;
+            background: linear-gradient(180deg, #00d4ff, #0066aa);
+            border-radius: 4px 4px 0 0;
+            transition: height 0.3s ease;
+            position: relative;
+        }
+
+        .scan-bar.nearest {
+            background: linear-gradient(180deg, #ff6b6b, #cc0000);
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
+        }
+
+        .scan-bar.clearest {
+            background: linear-gradient(180deg, #50fa7b, #00aa44);
+            box-shadow: 0 0 15px rgba(80, 250, 123, 0.5);
+        }
+
+        .scan-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            color: #888;
+        }
+
+        .array-visual {
+            display: flex;
+            gap: 5px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .array-cell {
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid #00d4ff;
+            padding: 8px 12px;
+            border-radius: 5px;
+            text-align: center;
+            min-width: 50px;
+        }
+
+        .array-cell.highlight-min {
+            background: rgba(255, 107, 107, 0.3);
+            border-color: #ff6b6b;
+        }
+
+        .array-cell.highlight-max {
+            background: rgba(80, 250, 123, 0.3);
+            border-color: #50fa7b;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-header">
+                <div class="lesson-label">Unit 5: Programming • Lesson 13 • Week 5</div>
+                <h1>Scanning Algorithm</h1>
+                <p class="subtitle">Finding Obstacles & Making Decisions</p>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3 style="text-align: center; color: #00d4ff; margin-top: 0;">What You'll Learn Today</h3>
+                    <ul style="font-size: 1.2rem; line-height: 2.2;">
+                        <li>Storing scan data in arrays</li>
+                        <li>Finding minimum and maximum values</li>
+                        <li>Identifying nearest obstacle and its direction</li>
+                        <li>Determining the clearest path for navigation</li>
+                        <li>Making autonomous navigation decisions</li>
+                    </ul>
+                </div>
+                <div class="warning-box" style="margin-top: 20px;">
+                    <h3 style="color: #ff9500; margin-top: 0;">Week 5 Deliverable: Scanning Practical</h3>
+                    <p>Due Friday: Robot scans environment, identifies obstacles, and determines clearest path (75 points)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: The Problem -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>The Navigation Challenge</h2>
+            </div>
+            <div class="content">
+                <div class="scan-visual">
+                    <p style="color: #b8c5d6; margin-bottom: 10px;">Sample Scan Data (distances at different angles)</p>
+                    <div class="scan-display">
+                        <div class="scan-bar" style="height: 80px;"><span class="scan-label">0°</span></div>
+                        <div class="scan-bar" style="height: 95px;"><span class="scan-label">20°</span></div>
+                        <div class="scan-bar nearest" style="height: 35px;"><span class="scan-label">40°</span></div>
+                        <div class="scan-bar" style="height: 60px;"><span class="scan-label">60°</span></div>
+                        <div class="scan-bar" style="height: 75px;"><span class="scan-label">80°</span></div>
+                        <div class="scan-bar clearest" style="height: 140px;"><span class="scan-label">100°</span></div>
+                        <div class="scan-bar" style="height: 120px;"><span class="scan-label">120°</span></div>
+                        <div class="scan-bar" style="height: 90px;"><span class="scan-label">140°</span></div>
+                        <div class="scan-bar" style="height: 70px;"><span class="scan-label">160°</span></div>
+                        <div class="scan-bar" style="height: 85px;"><span class="scan-label">180°</span></div>
+                    </div>
+                    <p style="margin-top: 30px;">
+                        <span style="color: #ff6b6b;">■</span> Nearest obstacle (40°) &nbsp;&nbsp;
+                        <span style="color: #50fa7b;">■</span> Clearest path (100°)
+                    </p>
+                </div>
+
+                <div class="concept-box">
+                    <h3 style="color: #00d4ff; margin-top: 0;">Key Questions to Answer</h3>
+                    <ul>
+                        <li>Where is the <span class="emphasis">nearest obstacle</span>? (avoid collision)</li>
+                        <li>Where is the <span class="highlight">clearest path</span>? (navigate forward)</li>
+                        <li>Which way should the robot turn?</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Arrays Review -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Storing Data in Arrays</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3 style="color: #00d4ff; margin-top: 0;">What is an Array?</h3>
+                    <p>An array is a collection of variables stored under one name, accessed by index number.</p>
+                </div>
+
+                <div class="code-block"><span class="code-comment">// Declare an array to hold 19 distance readings (0°, 10°, 20°... 180°)</span>
+<span class="code-keyword">int</span> distances[<span class="code-number">19</span>];
+
+<span class="code-comment">// Store a value at index 0 (angle 0°)</span>
+distances[<span class="code-number">0</span>] = <span class="code-number">45</span>;  <span class="code-comment">// 45 cm at 0 degrees</span>
+
+<span class="code-comment">// Store a value at index 9 (angle 90°)</span>
+distances[<span class="code-number">9</span>] = <span class="code-number">120</span>; <span class="code-comment">// 120 cm at 90 degrees</span>
+
+<span class="code-comment">// Read a value</span>
+<span class="code-keyword">int</span> center = distances[<span class="code-number">9</span>];  <span class="code-comment">// Gets 120</span></div>
+
+                <div class="array-visual" style="justify-content: center; margin-top: 20px;">
+                    <div class="array-cell">45<br><small>idx 0</small></div>
+                    <div class="array-cell">52<br><small>idx 1</small></div>
+                    <div class="array-cell">38<br><small>idx 2</small></div>
+                    <div class="array-cell">...<br><small></small></div>
+                    <div class="array-cell highlight-max">120<br><small>idx 9</small></div>
+                    <div class="array-cell">...<br><small></small></div>
+                    <div class="array-cell">67<br><small>idx 18</small></div>
+                </div>
+
+                <div class="warning-box" style="margin-top: 20px;">
+                    <p><strong>Remember:</strong> Array indices start at 0! An array of 19 elements has indices 0-18.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Filling the Array -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Filling the Scan Array</h2>
+            </div>
+            <div class="content">
+                <div class="code-block"><button class="copy-btn" onclick="copyCode1()">Copy</button><span class="code-keyword">#include</span> <span class="code-string">&lt;Servo.h&gt;</span>
+
+<span class="code-keyword">const int</span> NUM_READINGS = <span class="code-number">19</span>;  <span class="code-comment">// 0° to 180° in 10° steps</span>
+<span class="code-keyword">int</span> distances[NUM_READINGS];  <span class="code-comment">// Array to store readings</span>
+
+<span class="code-function">Servo</span> scanServo;
+<span class="code-keyword">const int</span> servoPin = <span class="code-number">4</span>;
+<span class="code-keyword">const int</span> trigPin = <span class="code-number">2</span>;
+<span class="code-keyword">const int</span> echoPin = <span class="code-number">3</span>;
+
+<span class="code-keyword">void</span> <span class="code-function">performScan</span>() {
+  <span class="code-keyword">int</span> index = <span class="code-number">0</span>;
+
+  <span class="code-comment">// Scan from 0° to 180° in 10° steps</span>
+  <span class="code-keyword">for</span> (<span class="code-keyword">int</span> angle = <span class="code-number">0</span>; angle <= <span class="code-number">180</span>; angle += <span class="code-number">10</span>) {
+    scanServo.<span class="code-function">write</span>(angle);
+    <span class="code-function">delay</span>(<span class="code-number">50</span>);  <span class="code-comment">// Wait for servo</span>
+
+    distances[index] = <span class="code-function">getDistance</span>();
+    index++;
+  }
+}
+
+<span class="code-comment">// After scan: distances[0] = reading at 0°</span>
+<span class="code-comment">//             distances[9] = reading at 90°</span>
+<span class="code-comment">//             distances[18] = reading at 180°</span></div>
+
+                <div class="concept-box" style="margin-top: 15px;">
+                    <h3 style="color: #00d4ff; margin-top: 0;">Index to Angle Conversion</h3>
+                    <p style="font-size: 1.1rem; text-align: center;">
+                        <span class="highlight">angle = index × 10</span> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                        <span class="highlight">index = angle ÷ 10</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Finding Minimum -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Finding the Nearest Obstacle</h2>
+            </div>
+            <div class="content">
+                <div class="two-column">
+                    <div class="column">
+                        <h3>The Algorithm</h3>
+                        <ol>
+                            <li>Assume the first reading is the minimum</li>
+                            <li>Loop through all readings</li>
+                            <li>If current reading is smaller, update minimum</li>
+                            <li>Track the index where minimum was found</li>
+                            <li>Convert index to angle</li>
+                        </ol>
+                    </div>
+                    <div class="column">
+                        <div class="array-visual" style="flex-wrap: wrap; justify-content: center;">
+                            <div class="array-cell">45</div>
+                            <div class="array-cell">52</div>
+                            <div class="array-cell highlight-min">23</div>
+                            <div class="array-cell">67</div>
+                            <div class="array-cell">89</div>
+                        </div>
+                        <p style="text-align: center; margin-top: 15px; color: #ff6b6b;">
+                            Minimum: 23 cm at index 2 (20°)
+                        </p>
+                    </div>
+                </div>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode2()">Copy</button><span class="code-keyword">void</span> <span class="code-function">findNearest</span>(<span class="code-keyword">int</span>* minDist, <span class="code-keyword">int</span>* minAngle) {
+  *minDist = distances[<span class="code-number">0</span>];
+  <span class="code-keyword">int</span> minIndex = <span class="code-number">0</span>;
+
+  <span class="code-keyword">for</span> (<span class="code-keyword">int</span> i = <span class="code-number">1</span>; i < NUM_READINGS; i++) {
+    <span class="code-keyword">if</span> (distances[i] < *minDist && distances[i] > <span class="code-number">0</span>) {
+      *minDist = distances[i];
+      minIndex = i;
+    }
+  }
+
+  *minAngle = minIndex * <span class="code-number">10</span>;  <span class="code-comment">// Convert index to angle</span>
+}
+
+<span class="code-comment">// Usage:</span>
+<span class="code-keyword">int</span> nearestDist, nearestAngle;
+<span class="code-function">findNearest</span>(&nearestDist, &nearestAngle);
+<span class="code-function">Serial</span>.<span class="code-function">print</span>(<span class="code-string">"Nearest: "</span>);
+<span class="code-function">Serial</span>.<span class="code-function">print</span>(nearestDist);
+<span class="code-function">Serial</span>.<span class="code-function">print</span>(<span class="code-string">"cm at "</span>);
+<span class="code-function">Serial</span>.<span class="code-function">print</span>(nearestAngle);
+<span class="code-function">Serial</span>.<span class="code-function">println</span>(<span class="code-string">"°"</span>);</div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Finding Maximum -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Finding the Clearest Path</h2>
+            </div>
+            <div class="content">
+                <div class="code-block"><button class="copy-btn" onclick="copyCode3()">Copy</button><span class="code-keyword">void</span> <span class="code-function">findClearest</span>(<span class="code-keyword">int</span>* maxDist, <span class="code-keyword">int</span>* maxAngle) {
+  *maxDist = distances[<span class="code-number">0</span>];
+  <span class="code-keyword">int</span> maxIndex = <span class="code-number">0</span>;
+
+  <span class="code-keyword">for</span> (<span class="code-keyword">int</span> i = <span class="code-number">1</span>; i < NUM_READINGS; i++) {
+    <span class="code-keyword">if</span> (distances[i] > *maxDist) {
+      *maxDist = distances[i];
+      maxIndex = i;
+    }
+  }
+
+  *maxAngle = maxIndex * <span class="code-number">10</span>;  <span class="code-comment">// Convert index to angle</span>
+}
+
+<span class="code-comment">// Usage:</span>
+<span class="code-keyword">int</span> clearestDist, clearestAngle;
+<span class="code-function">findClearest</span>(&clearestDist, &clearestAngle);
+<span class="code-function">Serial</span>.<span class="code-function">print</span>(<span class="code-string">"Clearest path: "</span>);
+<span class="code-function">Serial</span>.<span class="code-function">print</span>(clearestDist);
+<span class="code-function">Serial</span>.<span class="code-function">print</span>(<span class="code-string">"cm at "</span>);
+<span class="code-function">Serial</span>.<span class="code-function">print</span>(clearestAngle);
+<span class="code-function">Serial</span>.<span class="code-function">println</span>(<span class="code-string">"°"</span>);</div>
+
+                <div class="concept-box" style="margin-top: 20px;">
+                    <h3 style="color: #00d4ff; margin-top: 0;">Why Find the Maximum?</h3>
+                    <p>The direction with the <span class="emphasis">largest distance reading</span> has the most open space - that's where the robot should go!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Making Decisions -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Making Navigation Decisions</h2>
+            </div>
+            <div class="content">
+                <div class="diagram" style="font-size: 0.95rem;">
+                    <pre style="text-align: left; display: inline-block;">
+Robot Field of View:
+
+         90° (straight ahead)
+              ↑
+              │
+    ←─────────┼─────────→
+  0°          │          180°
+  (right)     │          (left)
+
+Decision Logic:
+  • clearestAngle < 80°  → Turn RIGHT
+  • clearestAngle > 100° → Turn LEFT
+  • else                 → Go FORWARD
+                    </pre>
+                </div>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode4()">Copy</button><span class="code-keyword">void</span> <span class="code-function">makeDecision</span>(<span class="code-keyword">int</span> clearestAngle, <span class="code-keyword">int</span> clearestDist) {
+  <span class="code-function">Serial</span>.<span class="code-function">print</span>(<span class="code-string">"Decision: "</span>);
+
+  <span class="code-keyword">if</span> (clearestDist < <span class="code-number">15</span>) {
+    <span class="code-comment">// Too close everywhere - back up!</span>
+    <span class="code-function">Serial</span>.<span class="code-function">println</span>(<span class="code-string">"REVERSE - too close!"</span>);
+  }
+  <span class="code-keyword">else if</span> (clearestAngle < <span class="code-number">80</span>) {
+    <span class="code-function">Serial</span>.<span class="code-function">println</span>(<span class="code-string">"TURN RIGHT"</span>);
+  }
+  <span class="code-keyword">else if</span> (clearestAngle > <span class="code-number">100</span>) {
+    <span class="code-function">Serial</span>.<span class="code-function">println</span>(<span class="code-string">"TURN LEFT"</span>);
+  }
+  <span class="code-keyword">else</span> {
+    <span class="code-function">Serial</span>.<span class="code-function">println</span>(<span class="code-string">"GO FORWARD"</span>);
+  }
+}</div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Complete Scanner Code -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Complete Scanner Code</h2>
+            </div>
+            <div class="content">
+                <div class="code-block" style="max-height: 500px; font-size: 0.85rem;"><button class="copy-btn" onclick="copyCode5()">Copy</button><span class="code-keyword">#include</span> <span class="code-string">&lt;Servo.h&gt;</span>
+
+<span class="code-keyword">const int</span> NUM_READINGS = <span class="code-number">19</span>;
+<span class="code-keyword">int</span> distances[NUM_READINGS];
+
+<span class="code-function">Servo</span> scanServo;
+<span class="code-keyword">const int</span> servoPin = <span class="code-number">4</span>, trigPin = <span class="code-number">2</span>, echoPin = <span class="code-number">3</span>;
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  <span class="code-function">Serial</span>.<span class="code-function">begin</span>(<span class="code-number">115200</span>);
+  scanServo.<span class="code-function">attach</span>(servoPin);
+  <span class="code-function">pinMode</span>(trigPin, <span class="code-keyword">OUTPUT</span>);
+  <span class="code-function">pinMode</span>(echoPin, <span class="code-keyword">INPUT</span>);
+  scanServo.<span class="code-function">write</span>(<span class="code-number">90</span>);
+  <span class="code-function">delay</span>(<span class="code-number">500</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-function">performScan</span>();
+  <span class="code-function">printScanData</span>();
+
+  <span class="code-keyword">int</span> minDist, minAngle, maxDist, maxAngle;
+  <span class="code-function">findNearest</span>(&minDist, &minAngle);
+  <span class="code-function">findClearest</span>(&maxDist, &maxAngle);
+
+  <span class="code-function">Serial</span>.<span class="code-function">print</span>(<span class="code-string">"Nearest: "</span>); <span class="code-function">Serial</span>.<span class="code-function">print</span>(minDist);
+  <span class="code-function">Serial</span>.<span class="code-function">print</span>(<span class="code-string">"cm at "</span>); <span class="code-function">Serial</span>.<span class="code-function">print</span>(minAngle); <span class="code-function">Serial</span>.<span class="code-function">println</span>(<span class="code-string">"°"</span>);
+
+  <span class="code-function">Serial</span>.<span class="code-function">print</span>(<span class="code-string">"Clearest: "</span>); <span class="code-function">Serial</span>.<span class="code-function">print</span>(maxDist);
+  <span class="code-function">Serial</span>.<span class="code-function">print</span>(<span class="code-string">"cm at "</span>); <span class="code-function">Serial</span>.<span class="code-function">print</span>(maxAngle); <span class="code-function">Serial</span>.<span class="code-function">println</span>(<span class="code-string">"°"</span>);
+
+  <span class="code-function">makeDecision</span>(maxAngle, maxDist);
+  <span class="code-function">Serial</span>.<span class="code-function">println</span>(<span class="code-string">"-------------------"</span>);
+
+  scanServo.<span class="code-function">write</span>(<span class="code-number">90</span>);  <span class="code-comment">// Return to center</span>
+  <span class="code-function">delay</span>(<span class="code-number">2000</span>);
+}</div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Serial Output Format -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Expected Serial Output</h2>
+            </div>
+            <div class="content">
+                <div class="diagram" style="text-align: left; font-size: 0.9rem;">
+                    <pre>
+Scan Data:
+  0°: 45cm  10°: 52cm  20°: 38cm  30°: 41cm  40°: 23cm
+ 50°: 35cm  60°: 67cm  70°: 89cm  80°: 95cm  90°: 110cm
+100°: 145cm 110°: 132cm 120°: 98cm 130°: 76cm 140°: 65cm
+150°: 54cm 160°: 48cm 170°: 42cm 180°: 39cm
+
+Nearest: 23cm at 40°
+Clearest: 145cm at 100°
+Decision: GO FORWARD
+-------------------
+                    </pre>
+                </div>
+
+                <div class="two-column" style="margin-top: 20px;">
+                    <div class="column">
+                        <div class="concept-box">
+                            <h3 style="color: #00d4ff; margin-top: 0;">Reading the Output</h3>
+                            <ul>
+                                <li>Scan data shows all 19 readings</li>
+                                <li>Nearest = smallest value (obstacle)</li>
+                                <li>Clearest = largest value (open path)</li>
+                                <li>Decision tells robot what to do</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="warning-box">
+                            <h3 style="color: #ff9500; margin-top: 0;">Practical Grading</h3>
+                            <p>Your output must clearly show:</p>
+                            <ul>
+                                <li>Distance at each angle</li>
+                                <li>Nearest obstacle + direction</li>
+                                <li>Clearest path + direction</li>
+                                <li>Navigation decision</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Lab Exercise -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Lab Exercise: Obstacle Course</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3 style="color: #00d4ff; margin-top: 0;">Setup</h3>
+                    <p>Place your robot in an area with several obstacles (boxes, books, etc.) at varying distances and directions.</p>
+                </div>
+
+                <div class="two-column" style="margin-top: 20px;">
+                    <div class="column">
+                        <h3>Test Scenarios</h3>
+                        <ol>
+                            <li><strong>Clear ahead:</strong> Verify "GO FORWARD"</li>
+                            <li><strong>Obstacle on left:</strong> Verify "TURN RIGHT"</li>
+                            <li><strong>Obstacle on right:</strong> Verify "TURN LEFT"</li>
+                            <li><strong>Surrounded:</strong> Verify "REVERSE"</li>
+                            <li><strong>Multiple obstacles:</strong> Verify correct path found</li>
+                        </ol>
+                    </div>
+                    <div class="column">
+                        <h3>Checklist</h3>
+                        <ul>
+                            <li>☐ Scanner sweeps full 180°</li>
+                            <li>☐ All readings appear in Serial Monitor</li>
+                            <li>☐ Nearest obstacle correctly identified</li>
+                            <li>☐ Clearest path correctly identified</li>
+                            <li>☐ Decision matches the situation</li>
+                            <li>☐ Output is clearly formatted</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Deliverable -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Week 5 Deliverable: Scanning Practical</h2>
+            </div>
+            <div class="content">
+                <div class="success-box">
+                    <h3 style="color: #50fa7b; margin-top: 0;">Practical Exercise (75 points)</h3>
+                </div>
+
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Requirements</h3>
+                        <ul>
+                            <li><strong>Scan Environment (20 pts)</strong>
+                                <ul style="font-size: 0.95rem;">
+                                    <li>Complete 180° sweep</li>
+                                    <li>Distance readings at each angle</li>
+                                </ul>
+                            </li>
+                            <li><strong>Identify Obstacles (25 pts)</strong>
+                                <ul style="font-size: 0.95rem;">
+                                    <li>Find nearest obstacle distance</li>
+                                    <li>Report obstacle direction (angle)</li>
+                                </ul>
+                            </li>
+                            <li><strong>Determine Path (20 pts)</strong>
+                                <ul style="font-size: 0.95rem;">
+                                    <li>Find clearest path distance</li>
+                                    <li>Report path direction</li>
+                                </ul>
+                            </li>
+                            <li><strong>Output Format (10 pts)</strong>
+                                <ul style="font-size: 0.95rem;">
+                                    <li>Clear, readable Serial output</li>
+                                    <li>Decision displayed</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3>Demonstration</h3>
+                        <p>You will demonstrate your scanner in class with obstacles placed by the teacher.</p>
+
+                        <div class="warning-box" style="margin-top: 20px;">
+                            <h3 style="color: #ff9500; margin-top: 0;">Grading</h3>
+                            <table style="font-size: 0.9rem;">
+                                <tr><th>Criteria</th><th>Points</th></tr>
+                                <tr><td>Scan completes</td><td>20</td></tr>
+                                <tr><td>Nearest found</td><td>25</td></tr>
+                                <tr><td>Clearest found</td><td>20</td></tr>
+                                <tr><td>Output format</td><td>10</td></tr>
+                                <tr><th>Total</th><th>75</th></tr>
+                            </table>
+                        </div>
+
+                        <p style="margin-top: 15px;"><strong>Due:</strong> Friday at 3:00 PM<br>
+                        Submit code via Portfolio → Deliverable 5</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Summary -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Summary & What's Next</h2>
+            </div>
+            <div class="content">
+                <div class="two-column">
+                    <div class="column">
+                        <div class="concept-box">
+                            <h3 style="color: #00d4ff; margin-top: 0;">Today You Learned</h3>
+                            <ul>
+                                <li>Store scan data in arrays</li>
+                                <li>Find minimum (nearest obstacle)</li>
+                                <li>Find maximum (clearest path)</li>
+                                <li>Convert array index to angle</li>
+                                <li>Make navigation decisions based on data</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="next-lesson-preview">
+                            <h3 style="color: #00d4ff; margin-top: 0;">Weeks 6-8: Servo Claw</h3>
+                            <ul>
+                                <li>Design a gripper mechanism</li>
+                                <li>Control claw open/close</li>
+                                <li>Pick and place objects</li>
+                                <li>Integrate with scanner!</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="success-box" style="margin-top: 20px;">
+                    <p style="text-align: center; font-size: 1.2rem;">
+                        <strong>Phase 2 Complete!</strong> You've built an autonomous scanning system.
+                        Next up: giving your robot arms!
+                    </p>
+                </div>
+
+                <div class="lesson-nav">
+                    <a href="index.html" class="nav-button home">
+                        <span>←</span>
+                        <span>Back to Lessons</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">12</span>
+    </div>
+
+    <div class="nav-container">
+        <button class="nav-btn" id="prev-btn" onclick="prevSlide()">← Previous</button>
+        <a href="index.html" class="nav-button">⌂ BACK TO UNIT 5</a>
+        <button class="nav-btn" id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = document.querySelectorAll('.slide').length;
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            if (n > totalSlides) currentSlide = totalSlides;
+            if (n < 1) currentSlide = 1;
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+            document.getElementById('current-slide').textContent = currentSlide;
+            document.getElementById('prev-btn').disabled = currentSlide === 1;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides;
+        }
+
+        function nextSlide() { currentSlide++; showSlide(currentSlide); }
+        function prevSlide() { currentSlide--; showSlide(currentSlide); }
+
+        function copyCode1() {
+            const code = `#include <Servo.h>
+
+const int NUM_READINGS = 19;
+int distances[NUM_READINGS];
+
+Servo scanServo;
+const int servoPin = 4;
+const int trigPin = 2;
+const int echoPin = 3;
+
+void performScan() {
+  int index = 0;
+
+  for (int angle = 0; angle <= 180; angle += 10) {
+    scanServo.write(angle);
+    delay(50);
+
+    distances[index] = getDistance();
+    index++;
+  }
+}`;
+            navigator.clipboard.writeText(code).then(() => alert('✅ Code copied!'));
+        }
+
+        function copyCode2() {
+            const code = `void findNearest(int* minDist, int* minAngle) {
+  *minDist = distances[0];
+  int minIndex = 0;
+
+  for (int i = 1; i < NUM_READINGS; i++) {
+    if (distances[i] < *minDist && distances[i] > 0) {
+      *minDist = distances[i];
+      minIndex = i;
+    }
+  }
+
+  *minAngle = minIndex * 10;
+}`;
+            navigator.clipboard.writeText(code).then(() => alert('✅ Code copied!'));
+        }
+
+        function copyCode3() {
+            const code = `void findClearest(int* maxDist, int* maxAngle) {
+  *maxDist = distances[0];
+  int maxIndex = 0;
+
+  for (int i = 1; i < NUM_READINGS; i++) {
+    if (distances[i] > *maxDist) {
+      *maxDist = distances[i];
+      maxIndex = i;
+    }
+  }
+
+  *maxAngle = maxIndex * 10;
+}`;
+            navigator.clipboard.writeText(code).then(() => alert('✅ Code copied!'));
+        }
+
+        function copyCode4() {
+            const code = `void makeDecision(int clearestAngle, int clearestDist) {
+  Serial.print("Decision: ");
+
+  if (clearestDist < 15) {
+    Serial.println("REVERSE - too close!");
+  }
+  else if (clearestAngle < 80) {
+    Serial.println("TURN RIGHT");
+  }
+  else if (clearestAngle > 100) {
+    Serial.println("TURN LEFT");
+  }
+  else {
+    Serial.println("GO FORWARD");
+  }
+}`;
+            navigator.clipboard.writeText(code).then(() => alert('✅ Code copied!'));
+        }
+
+        function copyCode5() {
+            const code = `#include <Servo.h>
+
+const int NUM_READINGS = 19;
+int distances[NUM_READINGS];
+
+Servo scanServo;
+const int servoPin = 4, trigPin = 2, echoPin = 3;
+
+void setup() {
+  Serial.begin(115200);
+  scanServo.attach(servoPin);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  scanServo.write(90);
+  delay(500);
+}
+
+void loop() {
+  performScan();
+  printScanData();
+
+  int minDist, minAngle, maxDist, maxAngle;
+  findNearest(&minDist, &minAngle);
+  findClearest(&maxDist, &maxAngle);
+
+  Serial.print("Nearest: "); Serial.print(minDist);
+  Serial.print("cm at "); Serial.print(minAngle); Serial.println("°");
+
+  Serial.print("Clearest: "); Serial.print(maxDist);
+  Serial.print("cm at "); Serial.print(maxAngle); Serial.println("°");
+
+  makeDecision(maxAngle, maxDist);
+  Serial.println("-------------------");
+
+  scanServo.write(90);
+  delay(2000);
+}
+
+long getDistance() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  long duration = pulseIn(echoPin, HIGH, 30000);
+  return duration / 58;
+}
+
+void performScan() {
+  int index = 0;
+  for (int angle = 0; angle <= 180; angle += 10) {
+    scanServo.write(angle);
+    delay(50);
+    distances[index] = getDistance();
+    index++;
+  }
+}
+
+void printScanData() {
+  Serial.println("Scan Data:");
+  for (int i = 0; i < NUM_READINGS; i++) {
+    Serial.print(i * 10);
+    Serial.print("°: ");
+    Serial.print(distances[i]);
+    Serial.print("cm ");
+    if ((i + 1) % 5 == 0) Serial.println();
+  }
+}
+
+void findNearest(int* minDist, int* minAngle) {
+  *minDist = distances[0];
+  int minIndex = 0;
+  for (int i = 1; i < NUM_READINGS; i++) {
+    if (distances[i] < *minDist && distances[i] > 0) {
+      *minDist = distances[i];
+      minIndex = i;
+    }
+  }
+  *minAngle = minIndex * 10;
+}
+
+void findClearest(int* maxDist, int* maxAngle) {
+  *maxDist = distances[0];
+  int maxIndex = 0;
+  for (int i = 1; i < NUM_READINGS; i++) {
+    if (distances[i] > *maxDist) {
+      *maxDist = distances[i];
+      maxIndex = i;
+    }
+  }
+  *maxAngle = maxIndex * 10;
+}
+
+void makeDecision(int clearestAngle, int clearestDist) {
+  Serial.print("Decision: ");
+  if (clearestDist < 15) {
+    Serial.println("REVERSE - too close!");
+  } else if (clearestAngle < 80) {
+    Serial.println("TURN RIGHT");
+  } else if (clearestAngle > 100) {
+    Serial.println("TURN LEFT");
+  } else {
+    Serial.println("GO FORWARD");
+  }
+}`;
+            navigator.clipboard.writeText(code).then(() => alert('✅ Code copied!'));
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight') nextSlide();
+            if (event.key === 'ArrowLeft') prevSlide();
+        });
+
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

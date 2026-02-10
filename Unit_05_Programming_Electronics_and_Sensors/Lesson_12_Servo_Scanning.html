@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 12: Servo Control & Scanning Mechanism</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .slide {
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            background: rgba(26, 31, 58, 0.95);
+            border-radius: 20px;
+            border: 3px solid #00d4ff;
+            box-shadow: 0 20px 80px rgba(0, 212, 255, 0.3);
+            padding: 60px;
+            display: none;
+            flex-direction: column;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .slide-header { text-align: center; margin-bottom: 40px; }
+
+        .lesson-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: #00d4ff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            color: #00d4ff;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            color: #00d4ff;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: #ff9500;
+            margin: 25px 0 15px 0;
+        }
+
+        .subtitle { font-size: 1.3rem; color: #b8c5d6; text-align: center; }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 20px 0;
+        }
+
+        .column { display: flex; flex-direction: column; }
+
+        .concept-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 149, 0, 0.05) 100%);
+            border: 2px solid rgba(255, 149, 0, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, rgba(80, 250, 123, 0.1) 0%, rgba(80, 250, 123, 0.05) 100%);
+            border: 2px solid rgba(80, 250, 123, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+
+        .code-block {
+            background: #0d1117;
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 40px 25px 25px 25px;
+            margin: 15px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+            position: relative;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 400px;
+            white-space: pre;
+        }
+
+        .code-block::before {
+            content: 'Arduino Code';
+            position: absolute;
+            top: 8px;
+            left: 20px;
+            font-size: 0.7rem;
+            color: #00d4ff;
+            font-weight: 700;
+            opacity: 0.6;
+        }
+
+        .code-comment { color: #6c6c6c; }
+        .code-keyword { color: #ff6ac1; }
+        .code-function { color: #5af78e; }
+        .code-number { color: #f1fa8c; }
+        .code-string { color: #f1fa8c; }
+
+        ul, ol { margin-left: 30px; line-height: 2; }
+        li { margin: 10px 0; font-size: 1.1rem; }
+
+        .highlight { color: #00d4ff; font-weight: 700; }
+        .emphasis { color: #ff9500; font-weight: 700; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1rem;
+        }
+
+        th {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            padding: 15px;
+            text-align: left;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        td {
+            padding: 12px 15px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        tr:nth-child(even) { background: rgba(0, 212, 255, 0.05); }
+
+        .diagram {
+            background: rgba(10, 14, 39, 0.5);
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .nav-btn:hover {
+            background: linear-gradient(135deg, #00eeff, #00bbee);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(0, 212, 255, 0.2);
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            border: 2px solid rgba(0, 212, 255, 0.5);
+        }
+
+        .lesson-nav {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .nav-button {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            color: #0a0e27;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .nav-button:hover { transform: translateY(-2px); }
+
+        .nav-button.home {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #ffffff;
+            color: #ffffff;
+        }
+
+        .nav-button.next {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.1));
+            border: 2px solid #00d4ff;
+            color: #00d4ff;
+        }
+
+        .next-lesson-preview {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 212, 255, 0.05));
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 15px;
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid #00d4ff;
+            color: #00d4ff;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .copy-btn:hover { background: rgba(0, 212, 255, 0.4); }
+
+        /* Servo visualization */
+        .servo-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 50px;
+            margin: 30px 0;
+            padding: 30px;
+            background: rgba(10, 14, 39, 0.5);
+            border-radius: 15px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .servo-body {
+            width: 80px;
+            height: 50px;
+            background: linear-gradient(135deg, #333 0%, #555 100%);
+            border-radius: 5px;
+            position: relative;
+            border: 2px solid #00d4ff;
+        }
+
+        .servo-horn {
+            position: absolute;
+            width: 60px;
+            height: 8px;
+            background: #fff;
+            top: -4px;
+            left: 50%;
+            transform-origin: left center;
+            border-radius: 4px;
+            animation: servoSweep 3s ease-in-out infinite;
+        }
+
+        @keyframes servoSweep {
+            0%, 100% { transform: rotate(-90deg); }
+            50% { transform: rotate(90deg); }
+        }
+
+        .pwm-visual {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pwm-bar {
+            width: 200px;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #00d4ff;
+        }
+
+        .pwm-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #50fa7b);
+            animation: pwmPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pwmPulse {
+            0%, 100% { width: 5%; }
+            50% { width: 12%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-header">
+                <div class="lesson-label">Unit 5: Programming • Lesson 12 • Week 4</div>
+                <h1>Servo Control & Scanning</h1>
+                <p class="subtitle">Building a Rotating Sensor Platform</p>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3 style="text-align: center; color: #00d4ff; margin-top: 0;">What You'll Learn Today</h3>
+                    <ul style="font-size: 1.2rem; line-height: 2.2;">
+                        <li>How servo motors work and their control signals</li>
+                        <li>Using the Servo library for precise position control</li>
+                        <li>Building a scanning mount for the ultrasonic sensor</li>
+                        <li>Implementing smooth sweeping motion</li>
+                        <li>Combining servo and ultrasonic sensor code</li>
+                    </ul>
+                </div>
+                <div class="warning-box" style="margin-top: 20px;">
+                    <h3 style="color: #ff9500; margin-top: 0;">Week 4 Deliverable: Scanner Assembly</h3>
+                    <p>Due Friday: Physical scanner mechanism + sweep code + optional CAD design (50 points + 15 bonus)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: How Servos Work -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>How Servo Motors Work</h2>
+            </div>
+            <div class="content">
+                <div class="servo-visual">
+                    <div style="text-align: center;">
+                        <div class="servo-body">
+                            <div class="servo-horn"></div>
+                        </div>
+                        <p style="margin-top: 15px; color: #b8c5d6;">Servo sweeping 0° to 180°</p>
+                    </div>
+                    <div class="pwm-visual">
+                        <div class="pwm-bar">
+                            <div class="pwm-fill"></div>
+                        </div>
+                        <p style="color: #b8c5d6;">PWM Signal (pulse width varies)</p>
+                    </div>
+                </div>
+
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Inside a Servo</h3>
+                        <ul>
+                            <li><span class="highlight">DC Motor:</span> Provides rotation</li>
+                            <li><span class="highlight">Gearbox:</span> Increases torque, reduces speed</li>
+                            <li><span class="highlight">Potentiometer:</span> Senses current position</li>
+                            <li><span class="highlight">Control Circuit:</span> Compares desired vs actual position</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <div class="concept-box">
+                            <h3 style="color: #00d4ff; margin-top: 0;">Key Specs: SG90 Servo</h3>
+                            <table style="font-size: 0.9rem;">
+                                <tr><td>Operating Voltage</td><td>4.8V - 6V</td></tr>
+                                <tr><td>Rotation Range</td><td>0° - 180°</td></tr>
+                                <tr><td>Speed</td><td>0.1 sec/60°</td></tr>
+                                <tr><td>Torque</td><td>1.8 kg·cm</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: PWM Control -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>PWM Position Control</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3 style="color: #00d4ff; margin-top: 0; text-align: center;">Pulse Width = Position</h3>
+                    <p style="text-align: center; font-size: 1.2rem; margin: 15px 0;">
+                        The servo reads the width of the HIGH pulse to determine where to move
+                    </p>
+                </div>
+
+                <div class="diagram" style="font-size: 0.95rem;">
+                    <pre style="text-align: left; display: inline-block;">
+Position     Pulse Width     Angle
+─────────────────────────────────────
+Minimum      1.0 ms          0°
+Center       1.5 ms          90°
+Maximum      2.0 ms          180°
+
+PWM Signal (20ms period = 50Hz):
+         ┌──┐                         ┌──┐
+0°:      │  │                         │  │
+    ─────┘  └─────────────────────────┘  └─────
+         1ms        19ms
+
+         ┌────┐                       ┌────┐
+90°:     │    │                       │    │
+    ─────┘    └───────────────────────┘    └───
+         1.5ms      18.5ms
+
+         ┌──────┐                     ┌──────┐
+180°:    │      │                     │      │
+    ─────┘      └─────────────────────┘      └─
+         2ms        18ms
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Wiring -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Wiring the Servo</h2>
+            </div>
+            <div class="content">
+                <div class="diagram" style="font-size: 1rem;">
+                    <pre style="text-align: left; display: inline-block;">
+   SG90 Servo                 Arduino RP2040
+  ┌─────────┐                ┌─────────────┐
+  │  Brown  │───────────────→│  GND        │
+  │  Red    │───────────────→│  5V         │
+  │  Orange │───────────────→│  Pin 4      │
+  └─────────┘                └─────────────┘
+
+Wire Colors (Standard):
+  • Brown/Black = Ground (GND)
+  • Red = Power (5V)
+  • Orange/Yellow/White = Signal (PWM)
+                    </pre>
+                </div>
+
+                <div class="two-column">
+                    <div class="column">
+                        <div class="warning-box">
+                            <h3 style="color: #ff9500; margin-top: 0;">Power Warning</h3>
+                            <ul>
+                                <li>Servos draw significant current (up to 500mA)</li>
+                                <li>For multiple servos, use external 5V supply</li>
+                                <li>Always connect grounds together</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="concept-box">
+                            <h3 style="color: #00d4ff; margin-top: 0;">Pin Choice</h3>
+                            <p>The Servo library handles PWM timing internally. You can use almost any digital pin - we'll use pin 4.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Servo Library Basics -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Using the Servo Library</h2>
+            </div>
+            <div class="content">
+                <div class="code-block"><button class="copy-btn" onclick="copyCode1()">Copy</button><span class="code-keyword">#include</span> <span class="code-string">&lt;Servo.h&gt;</span>
+
+<span class="code-function">Servo</span> myServo;  <span class="code-comment">// Create servo object</span>
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  myServo.<span class="code-function">attach</span>(<span class="code-number">4</span>);  <span class="code-comment">// Attach servo to pin 4</span>
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  myServo.<span class="code-function">write</span>(<span class="code-number">0</span>);    <span class="code-comment">// Move to 0 degrees</span>
+  <span class="code-function">delay</span>(<span class="code-number">1000</span>);
+
+  myServo.<span class="code-function">write</span>(<span class="code-number">90</span>);   <span class="code-comment">// Move to 90 degrees (center)</span>
+  <span class="code-function">delay</span>(<span class="code-number">1000</span>);
+
+  myServo.<span class="code-function">write</span>(<span class="code-number">180</span>);  <span class="code-comment">// Move to 180 degrees</span>
+  <span class="code-function">delay</span>(<span class="code-number">1000</span>);
+}</div>
+
+                <div class="two-column" style="margin-top: 20px;">
+                    <div class="column">
+                        <h3>Key Functions</h3>
+                        <ul>
+                            <li><span class="highlight">attach(pin)</span> - Connect servo to a pin</li>
+                            <li><span class="highlight">write(angle)</span> - Move to angle (0-180)</li>
+                            <li><span class="highlight">read()</span> - Get current angle</li>
+                            <li><span class="highlight">detach()</span> - Release the servo</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <div class="concept-box">
+                            <h3 style="color: #00d4ff; margin-top: 0;">Note</h3>
+                            <p>The servo moves as fast as it can to the target position. For smooth motion, we need to move in small increments with delays.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Smooth Sweep -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Smooth Sweeping Motion</h2>
+            </div>
+            <div class="content">
+                <div class="code-block"><button class="copy-btn" onclick="copyCode2()">Copy</button><span class="code-keyword">#include</span> <span class="code-string">&lt;Servo.h&gt;</span>
+
+<span class="code-function">Servo</span> scanServo;
+<span class="code-keyword">const int</span> servoPin = <span class="code-number">4</span>;
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  scanServo.<span class="code-function">attach</span>(servoPin);
+  scanServo.<span class="code-function">write</span>(<span class="code-number">90</span>);  <span class="code-comment">// Start at center</span>
+  <span class="code-function">delay</span>(<span class="code-number">500</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Sweep from 0 to 180</span>
+  <span class="code-keyword">for</span> (<span class="code-keyword">int</span> angle = <span class="code-number">0</span>; angle <= <span class="code-number">180</span>; angle += <span class="code-number">1</span>) {
+    scanServo.<span class="code-function">write</span>(angle);
+    <span class="code-function">delay</span>(<span class="code-number">15</span>);  <span class="code-comment">// Wait for servo to reach position</span>
+  }
+
+  <span class="code-comment">// Sweep from 180 back to 0</span>
+  <span class="code-keyword">for</span> (<span class="code-keyword">int</span> angle = <span class="code-number">180</span>; angle >= <span class="code-number">0</span>; angle -= <span class="code-number">1</span>) {
+    scanServo.<span class="code-function">write</span>(angle);
+    <span class="code-function">delay</span>(<span class="code-number">15</span>);
+  }
+}</div>
+
+                <div class="concept-box" style="margin-top: 20px;">
+                    <h3 style="color: #00d4ff; margin-top: 0;">Understanding the Sweep</h3>
+                    <ul>
+                        <li><span class="highlight">angle += 1</span>: Move 1 degree at a time for smooth motion</li>
+                        <li><span class="highlight">delay(15)</span>: Give servo time to reach each position</li>
+                        <li>Full sweep takes: 181 positions × 15ms = ~2.7 seconds each direction</li>
+                        <li>Adjust delay for faster/slower sweep (try 10-30ms)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Building the Scanner -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Building the Scanner Assembly</h2>
+            </div>
+            <div class="content">
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Components Needed</h3>
+                        <ul>
+                            <li>SG90 or MG90S servo motor</li>
+                            <li>HC-SR04 ultrasonic sensor</li>
+                            <li>Servo horn (cross or single arm)</li>
+                            <li>Mounting bracket or 3D printed holder</li>
+                            <li>Small screws or hot glue</li>
+                            <li>Jumper wires</li>
+                        </ul>
+
+                        <div class="warning-box" style="margin-top: 20px;">
+                            <h3 style="color: #ff9500; margin-top: 0;">Mount Tips</h3>
+                            <ul>
+                                <li>Keep sensor centered over servo axis</li>
+                                <li>Secure all wires away from moving parts</li>
+                                <li>Test range of motion before final mounting</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="diagram" style="font-size: 0.9rem;">
+                            <pre style="text-align: left; display: inline-block;">
+Assembly Overview:
+
+     ┌─────────────┐
+     │  HC-SR04    │  ← Ultrasonic sensor
+     │  [  ] [  ]  │
+     └──────┬──────┘
+            │
+     ┌──────┴──────┐
+     │  Bracket    │  ← Mounting bracket
+     └──────┬──────┘
+            │
+     ┌──────┴──────┐
+     │    Servo    │  ← Servo motor
+     │   [horn]    │
+     └─────────────┘
+            │
+     ═══════════════  ← Robot chassis
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Combined Code -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Combining Servo + Ultrasonic</h2>
+            </div>
+            <div class="content">
+                <div class="code-block" style="max-height: 450px;"><button class="copy-btn" onclick="copyCode3()">Copy</button><span class="code-keyword">#include</span> <span class="code-string">&lt;Servo.h&gt;</span>
+
+<span class="code-comment">// Pin definitions</span>
+<span class="code-keyword">const int</span> servoPin = <span class="code-number">4</span>;
+<span class="code-keyword">const int</span> trigPin = <span class="code-number">2</span>;
+<span class="code-keyword">const int</span> echoPin = <span class="code-number">3</span>;
+
+<span class="code-function">Servo</span> scanServo;
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  <span class="code-function">Serial</span>.<span class="code-function">begin</span>(<span class="code-number">115200</span>);
+  scanServo.<span class="code-function">attach</span>(servoPin);
+  <span class="code-function">pinMode</span>(trigPin, <span class="code-keyword">OUTPUT</span>);
+  <span class="code-function">pinMode</span>(echoPin, <span class="code-keyword">INPUT</span>);
+  scanServo.<span class="code-function">write</span>(<span class="code-number">90</span>);
+  <span class="code-function">delay</span>(<span class="code-number">500</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Sweep and scan</span>
+  <span class="code-keyword">for</span> (<span class="code-keyword">int</span> angle = <span class="code-number">0</span>; angle <= <span class="code-number">180</span>; angle += <span class="code-number">10</span>) {
+    scanServo.<span class="code-function">write</span>(angle);
+    <span class="code-function">delay</span>(<span class="code-number">50</span>);  <span class="code-comment">// Wait for servo</span>
+
+    <span class="code-keyword">long</span> distance = <span class="code-function">getDistance</span>();
+
+    <span class="code-function">Serial</span>.<span class="code-function">print</span>(<span class="code-string">"Angle: "</span>);
+    <span class="code-function">Serial</span>.<span class="code-function">print</span>(angle);
+    <span class="code-function">Serial</span>.<span class="code-function">print</span>(<span class="code-string">"° Distance: "</span>);
+    <span class="code-function">Serial</span>.<span class="code-function">print</span>(distance);
+    <span class="code-function">Serial</span>.<span class="code-function">println</span>(<span class="code-string">" cm"</span>);
+  }
+  <span class="code-function">delay</span>(<span class="code-number">500</span>);
+}
+
+<span class="code-keyword">long</span> <span class="code-function">getDistance</span>() {
+  <span class="code-function">digitalWrite</span>(trigPin, <span class="code-keyword">LOW</span>);
+  <span class="code-function">delayMicroseconds</span>(<span class="code-number">2</span>);
+  <span class="code-function">digitalWrite</span>(trigPin, <span class="code-keyword">HIGH</span>);
+  <span class="code-function">delayMicroseconds</span>(<span class="code-number">10</span>);
+  <span class="code-function">digitalWrite</span>(trigPin, <span class="code-keyword">LOW</span>);
+  <span class="code-keyword">long</span> duration = <span class="code-function">pulseIn</span>(echoPin, <span class="code-keyword">HIGH</span>, <span class="code-number">30000</span>);
+  <span class="code-keyword">return</span> duration / <span class="code-number">58</span>;
+}</div>
+            </div>
+        </div>
+
+        <!-- Slide 9: CAD Bonus -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Bonus: CAD Design (+15 points)</h2>
+            </div>
+            <div class="content">
+                <div class="success-box">
+                    <h3 style="color: #50fa7b; margin-top: 0;">Design Your Own Mount</h3>
+                    <p>Create a custom 3D-printable bracket for extra credit!</p>
+                </div>
+
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Design Requirements</h3>
+                        <ul>
+                            <li>Hold HC-SR04 sensor securely</li>
+                            <li>Attach to servo horn</li>
+                            <li>Allow 180° rotation clearance</li>
+                            <li>Keep sensor face perpendicular to ground</li>
+                        </ul>
+
+                        <h3 style="margin-top: 20px;">Tools</h3>
+                        <ul>
+                            <li><span class="highlight">TinkerCAD</span> - Easy, browser-based</li>
+                            <li><span class="highlight">Fusion 360</span> - More advanced</li>
+                            <li><span class="highlight">OnShape</span> - Free, cloud-based</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <div class="concept-box">
+                            <h3 style="color: #00d4ff; margin-top: 0;">Key Measurements</h3>
+                            <table style="font-size: 0.9rem;">
+                                <tr><th>Part</th><th>Dimension</th></tr>
+                                <tr><td>HC-SR04 width</td><td>45mm</td></tr>
+                                <tr><td>HC-SR04 height</td><td>20mm</td></tr>
+                                <tr><td>HC-SR04 depth</td><td>15mm</td></tr>
+                                <tr><td>Servo horn hole</td><td>2mm dia</td></tr>
+                                <tr><td>Mounting holes</td><td>M2 screws</td></tr>
+                            </table>
+                        </div>
+
+                        <div class="warning-box">
+                            <p><strong>Submit:</strong> STL file + screenshot of design in CAD software</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Lab Exercise -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Lab Exercise: Build & Test</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3 style="color: #00d4ff; margin-top: 0;">Today's Goals</h3>
+                    <ol style="font-size: 1.1rem;">
+                        <li>Wire up the servo motor and test basic movement</li>
+                        <li>Mount the ultrasonic sensor on the servo</li>
+                        <li>Upload the combined scan code</li>
+                        <li>Verify readings at different angles</li>
+                        <li>Adjust sweep speed and step size as needed</li>
+                    </ol>
+                </div>
+
+                <div class="two-column" style="margin-top: 20px;">
+                    <div class="column">
+                        <h3>Test Checklist</h3>
+                        <ul>
+                            <li>☐ Servo moves smoothly 0° to 180°</li>
+                            <li>☐ No binding or scraping</li>
+                            <li>☐ Sensor readings appear in Serial Monitor</li>
+                            <li>☐ Distance values are reasonable</li>
+                            <li>☐ Wires don't tangle during rotation</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <div class="warning-box">
+                            <h3 style="color: #ff9500; margin-top: 0;">Troubleshooting</h3>
+                            <ul>
+                                <li><span class="emphasis">Servo jitters:</span> Check power supply</li>
+                                <li><span class="emphasis">No movement:</span> Verify signal wire</li>
+                                <li><span class="emphasis">Limited range:</span> Check for obstructions</li>
+                                <li><span class="emphasis">Bad readings:</span> Sensor may be loose</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Deliverable -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Week 4 Deliverable: Scanner Assembly</h2>
+            </div>
+            <div class="content">
+                <div class="success-box">
+                    <h3 style="color: #50fa7b; margin-top: 0;">What to Submit (50 points + 15 bonus)</h3>
+                </div>
+
+                <div class="two-column">
+                    <div class="column">
+                        <h3>1. Physical Assembly (20 pts)</h3>
+                        <ul>
+                            <li>Servo mounted securely</li>
+                            <li>Sensor attached and aligned</li>
+                            <li>Wires managed properly</li>
+                            <li>Full rotation without obstruction</li>
+                        </ul>
+
+                        <h3 style="margin-top: 20px;">2. Working Code (20 pts)</h3>
+                        <ul>
+                            <li>Servo sweeps smoothly</li>
+                            <li>Distance readings at each angle</li>
+                            <li>Serial output shows angle + distance</li>
+                            <li>Code is commented</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3>3. Documentation (10 pts)</h3>
+                        <ul>
+                            <li>Photo of completed assembly</li>
+                            <li>Screenshot of Serial Monitor output</li>
+                            <li>Brief description of how it works</li>
+                        </ul>
+
+                        <h3 style="margin-top: 20px;">4. CAD Bonus (+15 pts)</h3>
+                        <ul>
+                            <li>Custom bracket design in CAD</li>
+                            <li>STL file submitted</li>
+                            <li>Extra credit if 3D printed!</li>
+                        </ul>
+
+                        <div class="warning-box" style="margin-top: 20px;">
+                            <p><strong>Due:</strong> Friday at 3:00 PM</p>
+                            <p>Submit via Robotics Portfolio → Deliverable 4</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Summary -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Summary & Next Steps</h2>
+            </div>
+            <div class="content">
+                <div class="two-column">
+                    <div class="column">
+                        <div class="concept-box">
+                            <h3 style="color: #00d4ff; margin-top: 0;">Today You Learned</h3>
+                            <ul>
+                                <li>Servos use PWM pulse width for position</li>
+                                <li>1ms = 0°, 1.5ms = 90°, 2ms = 180°</li>
+                                <li>Servo library: attach(), write(), read()</li>
+                                <li>Smooth sweeps use for loops with delays</li>
+                                <li>Combined servo + ultrasonic = scanner!</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="next-lesson-preview">
+                            <h3 style="color: #00d4ff; margin-top: 0;">Next Week: Scanning Algorithm</h3>
+                            <ul>
+                                <li>Storing scan data in arrays</li>
+                                <li>Finding nearest obstacle</li>
+                                <li>Determining clearest path</li>
+                                <li>Making navigation decisions</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lesson-nav">
+                    <a href="index.html" class="nav-button home">
+                        <span>←</span>
+                        <span>Back to Lessons</span>
+                    </a>
+                    <a href="Lesson_13_Scanning_Algorithm.html" class="nav-button next">
+                        <span>Next: Scanning Algorithm</span>
+                        <span>→</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">12</span>
+    </div>
+
+    <div class="nav-container">
+        <button class="nav-btn" id="prev-btn" onclick="prevSlide()">← Previous</button>
+        <a href="index.html" class="nav-button">⌂ BACK TO UNIT 5</a>
+        <button class="nav-btn" id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = document.querySelectorAll('.slide').length;
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            if (n > totalSlides) currentSlide = totalSlides;
+            if (n < 1) currentSlide = 1;
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+            document.getElementById('current-slide').textContent = currentSlide;
+            document.getElementById('prev-btn').disabled = currentSlide === 1;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides;
+        }
+
+        function nextSlide() { currentSlide++; showSlide(currentSlide); }
+        function prevSlide() { currentSlide--; showSlide(currentSlide); }
+
+        function copyCode1() {
+            const code = `#include <Servo.h>
+
+Servo myServo;
+
+void setup() {
+  myServo.attach(4);
+}
+
+void loop() {
+  myServo.write(0);
+  delay(1000);
+  myServo.write(90);
+  delay(1000);
+  myServo.write(180);
+  delay(1000);
+}`;
+            navigator.clipboard.writeText(code).then(() => alert('✅ Code copied!'));
+        }
+
+        function copyCode2() {
+            const code = `#include <Servo.h>
+
+Servo scanServo;
+const int servoPin = 4;
+
+void setup() {
+  scanServo.attach(servoPin);
+  scanServo.write(90);
+  delay(500);
+}
+
+void loop() {
+  for (int angle = 0; angle <= 180; angle += 1) {
+    scanServo.write(angle);
+    delay(15);
+  }
+  for (int angle = 180; angle >= 0; angle -= 1) {
+    scanServo.write(angle);
+    delay(15);
+  }
+}`;
+            navigator.clipboard.writeText(code).then(() => alert('✅ Code copied!'));
+        }
+
+        function copyCode3() {
+            const code = `#include <Servo.h>
+
+const int servoPin = 4;
+const int trigPin = 2;
+const int echoPin = 3;
+
+Servo scanServo;
+
+void setup() {
+  Serial.begin(115200);
+  scanServo.attach(servoPin);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  scanServo.write(90);
+  delay(500);
+}
+
+void loop() {
+  for (int angle = 0; angle <= 180; angle += 10) {
+    scanServo.write(angle);
+    delay(50);
+
+    long distance = getDistance();
+
+    Serial.print("Angle: ");
+    Serial.print(angle);
+    Serial.print("° Distance: ");
+    Serial.print(distance);
+    Serial.println(" cm");
+  }
+  delay(500);
+}
+
+long getDistance() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  long duration = pulseIn(echoPin, HIGH, 30000);
+  return duration / 58;
+}`;
+            navigator.clipboard.writeText(code).then(() => alert('✅ Code copied!'));
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight') nextSlide();
+            if (event.key === 'ArrowLeft') prevSlide();
+        });
+
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

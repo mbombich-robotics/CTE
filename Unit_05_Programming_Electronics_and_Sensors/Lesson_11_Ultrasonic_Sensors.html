@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 11: Ultrasonic Sensor Fundamentals</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .slide {
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            background: rgba(26, 31, 58, 0.95);
+            border-radius: 20px;
+            border: 3px solid #00d4ff;
+            box-shadow: 0 20px 80px rgba(0, 212, 255, 0.3);
+            padding: 60px;
+            display: none;
+            flex-direction: column;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .lesson-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: #00d4ff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            color: #00d4ff;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            color: #00d4ff;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: #ff9500;
+            margin: 25px 0 15px 0;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #b8c5d6;
+            text-align: center;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 20px 0;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .concept-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 149, 0, 0.05) 100%);
+            border: 2px solid rgba(255, 149, 0, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, rgba(80, 250, 123, 0.1) 0%, rgba(80, 250, 123, 0.05) 100%);
+            border: 2px solid rgba(80, 250, 123, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+
+        .code-block {
+            background: #0d1117;
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 40px 25px 25px 25px;
+            margin: 15px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+            position: relative;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 400px;
+            white-space: pre;
+        }
+
+        .code-block::before {
+            content: 'Arduino Code';
+            position: absolute;
+            top: 8px;
+            left: 20px;
+            background: transparent;
+            padding: 0;
+            font-size: 0.7rem;
+            color: #00d4ff;
+            font-weight: 700;
+            opacity: 0.6;
+        }
+
+        .code-comment { color: #6c6c6c; }
+        .code-keyword { color: #ff6ac1; }
+        .code-function { color: #5af78e; }
+        .code-number { color: #f1fa8c; }
+        .code-string { color: #f1fa8c; }
+
+        ul, ol {
+            margin-left: 30px;
+            line-height: 2;
+        }
+
+        li {
+            margin: 10px 0;
+            font-size: 1.1rem;
+        }
+
+        .highlight {
+            color: #00d4ff;
+            font-weight: 700;
+        }
+
+        .emphasis {
+            color: #ff9500;
+            font-weight: 700;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1rem;
+        }
+
+        th {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            padding: 15px;
+            text-align: left;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        td {
+            padding: 12px 15px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        tr:nth-child(even) {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .diagram {
+            background: rgba(10, 14, 39, 0.5);
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+        }
+
+        .arrow {
+            color: #ff9500;
+            font-size: 1.5rem;
+            margin: 10px 0;
+        }
+
+        /* Navigation */
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .nav-btn:hover {
+            background: linear-gradient(135deg, #00eeff, #00bbee);
+            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(0, 212, 255, 0.2);
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            border: 2px solid rgba(0, 212, 255, 0.5);
+        }
+
+        /* Lesson Navigation */
+        .lesson-nav {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .nav-button {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            color: #0a0e27;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .nav-button.home {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #ffffff;
+            color: #ffffff;
+        }
+
+        .nav-button.home:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-button.next {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.1));
+            border: 2px solid #00d4ff;
+            color: #00d4ff;
+        }
+
+        .nav-button.next:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(0, 212, 255, 0.2));
+        }
+
+        .next-lesson-preview {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 212, 255, 0.05));
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 15px;
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid #00d4ff;
+            color: #00d4ff;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-family: 'Exo 2', sans-serif;
+        }
+
+        .copy-btn:hover {
+            background: rgba(0, 212, 255, 0.4);
+        }
+
+        /* Ultrasonic visualization */
+        .ultrasonic-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+            padding: 30px;
+            background: rgba(10, 14, 39, 0.5);
+            border-radius: 15px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .sensor-icon {
+            width: 100px;
+            height: 60px;
+            background: linear-gradient(135deg, #333 0%, #555 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            border: 2px solid #00d4ff;
+        }
+
+        .sensor-eye {
+            width: 20px;
+            height: 20px;
+            background: #00d4ff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
+        }
+
+        .wave-animation {
+            width: 150px;
+            height: 60px;
+            position: relative;
+        }
+
+        .wave {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #00d4ff;
+            border-radius: 50%;
+            animation: pulse 1.5s ease-out infinite;
+        }
+
+        .wave:nth-child(2) { animation-delay: 0.5s; }
+        .wave:nth-child(3) { animation-delay: 1s; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(4); opacity: 0; }
+        }
+
+        .object-icon {
+            width: 40px;
+            height: 80px;
+            background: #ff9500;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-header">
+                <div class="lesson-label">Unit 5: Programming • Lesson 11 • Week 3</div>
+                <h1>Ultrasonic Sensor Fundamentals</h1>
+                <p class="subtitle">Measuring Distance with Sound Waves</p>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3 style="text-align: center; color: #00d4ff; margin-top: 0;">What You'll Learn Today</h3>
+                    <ul style="font-size: 1.2rem; line-height: 2.2;">
+                        <li>How ultrasonic sensors measure distance using sound</li>
+                        <li>Understanding the HC-SR04 sensor pins and wiring</li>
+                        <li>Converting time-of-flight to distance in centimeters</li>
+                        <li>Writing Arduino code to read distance values</li>
+                        <li>Debugging with Serial Monitor output</li>
+                    </ul>
+                </div>
+                <div class="warning-box" style="margin-top: 20px;">
+                    <h3 style="color: #ff9500; margin-top: 0;">Week 3 Deliverable: Ultrasonic Sensor Lab Report</h3>
+                    <p>Due Friday: Wiring diagram, commented code, and distance accuracy data table (40 points)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: How Ultrasonic Sensors Work -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>How Ultrasonic Sensors Work</h2>
+            </div>
+            <div class="content">
+                <div class="ultrasonic-visual">
+                    <div class="sensor-icon">
+                        <div class="sensor-eye"></div>
+                        <div class="sensor-eye"></div>
+                    </div>
+                    <div class="wave-animation">
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                    </div>
+                    <div class="object-icon"></div>
+                </div>
+
+                <div class="two-column">
+                    <div class="column">
+                        <h3>The Physics</h3>
+                        <ul>
+                            <li><span class="highlight">Transmitter:</span> Sends ultrasonic pulse (40kHz)</li>
+                            <li><span class="highlight">Sound travels:</span> ~343 m/s in air</li>
+                            <li><span class="highlight">Pulse bounces:</span> Off objects and returns</li>
+                            <li><span class="highlight">Receiver:</span> Detects the echo</li>
+                            <li><span class="highlight">Timer:</span> Measures round-trip time</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <div class="concept-box">
+                            <h3 style="color: #00d4ff; margin-top: 0;">Distance Formula</h3>
+                            <p style="font-size: 1.3rem; text-align: center; margin: 20px 0;">
+                                Distance = <span class="emphasis">Time × Speed ÷ 2</span>
+                            </p>
+                            <p style="text-align: center; color: #b8c5d6;">
+                                We divide by 2 because sound travels TO the object AND back
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: HC-SR04 Sensor Overview -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>The HC-SR04 Sensor</h2>
+            </div>
+            <div class="content">
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Sensor Specifications</h3>
+                        <table>
+                            <tr><th>Property</th><th>Value</th></tr>
+                            <tr><td>Operating Voltage</td><td>5V DC</td></tr>
+                            <tr><td>Operating Current</td><td>15mA</td></tr>
+                            <tr><td>Measuring Range</td><td>2cm - 400cm</td></tr>
+                            <tr><td>Accuracy</td><td>±3mm</td></tr>
+                            <tr><td>Measuring Angle</td><td>15° cone</td></tr>
+                            <tr><td>Trigger Pulse</td><td>10µs minimum</td></tr>
+                        </table>
+                    </div>
+                    <div class="column">
+                        <h3>The 4 Pins</h3>
+                        <div class="concept-box">
+                            <ul style="line-height: 2.5;">
+                                <li><span class="highlight">VCC:</span> 5V power supply</li>
+                                <li><span class="highlight">GND:</span> Ground connection</li>
+                                <li><span class="highlight">TRIG:</span> Trigger input (start measurement)</li>
+                                <li><span class="highlight">ECHO:</span> Echo output (pulse width = time)</li>
+                            </ul>
+                        </div>
+                        <div class="warning-box">
+                            <p><strong>Important:</strong> The ECHO pin outputs 5V. Some boards need a voltage divider!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Wiring Diagram -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Wiring the HC-SR04</h2>
+            </div>
+            <div class="content">
+                <div class="diagram" style="font-size: 1rem;">
+                    <pre style="text-align: left; display: inline-block;">
+   HC-SR04                    Arduino RP2040
+  ┌─────────┐                ┌─────────────┐
+  │  VCC    │───────────────→│  5V         │
+  │  GND    │───────────────→│  GND        │
+  │  TRIG   │───────────────→│  Pin 2      │
+  │  ECHO   │───────────────→│  Pin 3      │
+  └─────────┘                └─────────────┘
+                    </pre>
+                </div>
+
+                <div class="two-column">
+                    <div class="column">
+                        <div class="concept-box">
+                            <h3 style="color: #00d4ff; margin-top: 0;">Pin Choices</h3>
+                            <ul>
+                                <li>TRIG can be any digital output pin</li>
+                                <li>ECHO can be any digital input pin</li>
+                                <li>We'll use pins 2 and 3 in our examples</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="warning-box">
+                            <h3 style="color: #ff9500; margin-top: 0;">Wiring Tips</h3>
+                            <ul>
+                                <li>Double-check VCC and GND - reversed power can damage the sensor</li>
+                                <li>Use short, solid jumper wires for reliable connections</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Timing Diagram -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>How the Timing Works</h2>
+            </div>
+            <div class="content">
+                <div class="diagram">
+                    <pre style="text-align: left; display: inline-block; font-size: 0.9rem;">
+TRIG Pin:
+         ┌────┐
+─────────┘    └─────────────────────────────────────────
+         │10µs│
+
+ECHO Pin:
+                   ┌─────────────────────┐
+───────────────────┘                     └───────────────
+                   │←── pulse width ────→│
+                   │   (proportional     │
+                   │    to distance)     │
+
+Timeline:
+1. Arduino sends 10µs HIGH pulse on TRIG
+2. Sensor sends 8 ultrasonic pulses at 40kHz
+3. ECHO goes HIGH
+4. Sound bounces off object
+5. ECHO goes LOW when echo received
+6. Pulse width = round-trip time
+                    </pre>
+                </div>
+
+                <div class="concept-box">
+                    <p style="font-size: 1.1rem; text-align: center;">
+                        <span class="highlight">pulseIn()</span> function measures how long ECHO stays HIGH in microseconds
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: The Math -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Converting Time to Distance</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3 style="color: #00d4ff; margin-top: 0; text-align: center;">Speed of Sound</h3>
+                    <p style="font-size: 1.5rem; text-align: center; margin: 20px 0;">
+                        343 meters/second = <span class="highlight">0.0343 cm/µs</span>
+                    </p>
+                </div>
+
+                <div class="two-column" style="margin-top: 30px;">
+                    <div class="column">
+                        <h3>The Calculation</h3>
+                        <div class="diagram" style="text-align: left; padding: 20px;">
+                            <p>1. Get duration in microseconds</p>
+                            <p style="color: #ff9500;">   duration = pulseIn(echoPin, HIGH)</p>
+                            <p style="margin-top: 15px;">2. Calculate distance</p>
+                            <p style="color: #ff9500;">   distance = duration × 0.0343 / 2</p>
+                            <p style="margin-top: 15px;">3. Simplified formula:</p>
+                            <p style="color: #50fa7b; font-size: 1.2rem;">   distance = duration / 58</p>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <h3>Example</h3>
+                        <div class="success-box">
+                            <p>If pulseIn() returns <span class="highlight">1160 µs</span>:</p>
+                            <ul style="margin-top: 15px;">
+                                <li>1160 × 0.0343 = 39.8 cm (round trip)</li>
+                                <li>39.8 ÷ 2 = <span class="emphasis">19.9 cm</span></li>
+                                <li>Or: 1160 ÷ 58 = <span class="emphasis">20 cm</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Basic Code -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Basic Distance Reading Code</h2>
+            </div>
+            <div class="content">
+                <div class="code-block"><button class="copy-btn" onclick="copyCode1()">Copy</button><span class="code-comment">// HC-SR04 Ultrasonic Sensor - Basic Distance Reading</span>
+
+<span class="code-keyword">const int</span> trigPin = <span class="code-number">2</span>;
+<span class="code-keyword">const int</span> echoPin = <span class="code-number">3</span>;
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  <span class="code-function">Serial</span>.<span class="code-function">begin</span>(<span class="code-number">115200</span>);
+  <span class="code-function">pinMode</span>(trigPin, <span class="code-keyword">OUTPUT</span>);
+  <span class="code-function">pinMode</span>(echoPin, <span class="code-keyword">INPUT</span>);
+  <span class="code-function">Serial</span>.<span class="code-function">println</span>(<span class="code-string">"Ultrasonic Sensor Ready!"</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-keyword">long</span> distance = <span class="code-function">getDistance</span>();
+
+  <span class="code-function">Serial</span>.<span class="code-function">print</span>(<span class="code-string">"Distance: "</span>);
+  <span class="code-function">Serial</span>.<span class="code-function">print</span>(distance);
+  <span class="code-function">Serial</span>.<span class="code-function">println</span>(<span class="code-string">" cm"</span>);
+
+  <span class="code-function">delay</span>(<span class="code-number">100</span>);
+}
+
+<span class="code-keyword">long</span> <span class="code-function">getDistance</span>() {
+  <span class="code-comment">// Send trigger pulse</span>
+  <span class="code-function">digitalWrite</span>(trigPin, <span class="code-keyword">LOW</span>);
+  <span class="code-function">delayMicroseconds</span>(<span class="code-number">2</span>);
+  <span class="code-function">digitalWrite</span>(trigPin, <span class="code-keyword">HIGH</span>);
+  <span class="code-function">delayMicroseconds</span>(<span class="code-number">10</span>);
+  <span class="code-function">digitalWrite</span>(trigPin, <span class="code-keyword">LOW</span>);
+
+  <span class="code-comment">// Read echo pulse duration</span>
+  <span class="code-keyword">long</span> duration = <span class="code-function">pulseIn</span>(echoPin, <span class="code-keyword">HIGH</span>);
+
+  <span class="code-comment">// Convert to distance in cm</span>
+  <span class="code-keyword">long</span> distance = duration / <span class="code-number">58</span>;
+
+  <span class="code-keyword">return</span> distance;
+}</div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Understanding the Code -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Understanding the Code</h2>
+            </div>
+            <div class="content">
+                <div class="two-column">
+                    <div class="column">
+                        <h3>The Trigger Sequence</h3>
+                        <div class="code-block" style="max-height: 200px;"><span class="code-function">digitalWrite</span>(trigPin, <span class="code-keyword">LOW</span>);
+<span class="code-function">delayMicroseconds</span>(<span class="code-number">2</span>);
+<span class="code-function">digitalWrite</span>(trigPin, <span class="code-keyword">HIGH</span>);
+<span class="code-function">delayMicroseconds</span>(<span class="code-number">10</span>);
+<span class="code-function">digitalWrite</span>(trigPin, <span class="code-keyword">LOW</span>);</div>
+                        <ul>
+                            <li>Start LOW to ensure clean pulse</li>
+                            <li>Go HIGH for exactly 10µs</li>
+                            <li>Return to LOW to complete trigger</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3>Reading the Echo</h3>
+                        <div class="code-block" style="max-height: 100px;"><span class="code-keyword">long</span> duration = <span class="code-function">pulseIn</span>(echoPin, <span class="code-keyword">HIGH</span>);</div>
+                        <div class="concept-box">
+                            <p><span class="highlight">pulseIn(pin, HIGH)</span> waits for the pin to go HIGH, then times how long it stays HIGH before going LOW again.</p>
+                            <p style="margin-top: 10px;">Returns the pulse width in <span class="emphasis">microseconds</span>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Adding Error Handling -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Handling Edge Cases</h2>
+            </div>
+            <div class="content">
+                <div class="warning-box">
+                    <h3 style="color: #ff9500; margin-top: 0;">What Can Go Wrong?</h3>
+                    <ul>
+                        <li><span class="emphasis">Out of range:</span> Object too far (>400cm) or too close (<2cm)</li>
+                        <li><span class="emphasis">No echo:</span> Sound absorbed or deflected away</li>
+                        <li><span class="emphasis">Timeout:</span> pulseIn() waits forever by default</li>
+                    </ul>
+                </div>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode2()">Copy</button><span class="code-keyword">long</span> <span class="code-function">getDistanceSafe</span>() {
+  <span class="code-comment">// Send trigger pulse</span>
+  <span class="code-function">digitalWrite</span>(trigPin, <span class="code-keyword">LOW</span>);
+  <span class="code-function">delayMicroseconds</span>(<span class="code-number">2</span>);
+  <span class="code-function">digitalWrite</span>(trigPin, <span class="code-keyword">HIGH</span>);
+  <span class="code-function">delayMicroseconds</span>(<span class="code-number">10</span>);
+  <span class="code-function">digitalWrite</span>(trigPin, <span class="code-keyword">LOW</span>);
+
+  <span class="code-comment">// Read echo with timeout (30ms = ~500cm max)</span>
+  <span class="code-keyword">long</span> duration = <span class="code-function">pulseIn</span>(echoPin, <span class="code-keyword">HIGH</span>, <span class="code-number">30000</span>);
+
+  <span class="code-comment">// Check for timeout (returns 0)</span>
+  <span class="code-keyword">if</span> (duration == <span class="code-number">0</span>) {
+    <span class="code-keyword">return</span> -<span class="code-number">1</span>;  <span class="code-comment">// Error: no echo received</span>
+  }
+
+  <span class="code-keyword">long</span> distance = duration / <span class="code-number">58</span>;
+
+  <span class="code-comment">// Validate range</span>
+  <span class="code-keyword">if</span> (distance < <span class="code-number">2</span> || distance > <span class="code-number">400</span>) {
+    <span class="code-keyword">return</span> -<span class="code-number">1</span>;  <span class="code-comment">// Out of valid range</span>
+  }
+
+  <span class="code-keyword">return</span> distance;
+}</div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Lab Exercise -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Lab Exercise: Distance Accuracy Test</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box">
+                    <h3 style="color: #00d4ff; margin-top: 0;">Your Task</h3>
+                    <p>Test your ultrasonic sensor's accuracy at different distances and record the results.</p>
+                </div>
+
+                <div class="two-column" style="margin-top: 20px;">
+                    <div class="column">
+                        <h3>Procedure</h3>
+                        <ol>
+                            <li>Wire up the HC-SR04 sensor</li>
+                            <li>Upload the basic distance code</li>
+                            <li>Use a ruler to measure actual distances</li>
+                            <li>Compare sensor readings to actual</li>
+                            <li>Record data at 5, 10, 20, 50, 100 cm</li>
+                            <li>Take 3 readings at each distance</li>
+                        </ol>
+                    </div>
+                    <div class="column">
+                        <h3>Data Table Template</h3>
+                        <table style="font-size: 0.9rem;">
+                            <tr>
+                                <th>Actual (cm)</th>
+                                <th>Reading 1</th>
+                                <th>Reading 2</th>
+                                <th>Reading 3</th>
+                                <th>Avg Error</th>
+                            </tr>
+                            <tr><td>5</td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>10</td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>20</td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>50</td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>100</td><td></td><td></td><td></td><td></td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Deliverable Requirements -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Week 3 Deliverable: Lab Report</h2>
+            </div>
+            <div class="content">
+                <div class="success-box">
+                    <h3 style="color: #50fa7b; margin-top: 0;">What to Submit (40 points)</h3>
+                </div>
+
+                <div class="two-column">
+                    <div class="column">
+                        <h3>1. Wiring Diagram (10 pts)</h3>
+                        <ul>
+                            <li>Hand-drawn or digital</li>
+                            <li>Label all connections</li>
+                            <li>Show pin numbers clearly</li>
+                        </ul>
+
+                        <h3 style="margin-top: 20px;">2. Code with Comments (15 pts)</h3>
+                        <ul>
+                            <li>Working distance measurement code</li>
+                            <li>Comments explaining each section</li>
+                            <li>Error handling included</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3>3. Accuracy Data Table (15 pts)</h3>
+                        <ul>
+                            <li>Measurements at 5 different distances</li>
+                            <li>3 readings per distance</li>
+                            <li>Calculate average error</li>
+                            <li>Brief analysis: Is the sensor accurate?</li>
+                        </ul>
+
+                        <div class="warning-box" style="margin-top: 20px;">
+                            <p><strong>Due:</strong> Friday at 3:00 PM</p>
+                            <p>Submit via Robotics Portfolio → Deliverable 3</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Summary & Next Steps -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Summary & Next Steps</h2>
+            </div>
+            <div class="content">
+                <div class="two-column">
+                    <div class="column">
+                        <div class="concept-box">
+                            <h3 style="color: #00d4ff; margin-top: 0;">Today You Learned</h3>
+                            <ul>
+                                <li>Ultrasonic sensors use sound to measure distance</li>
+                                <li>HC-SR04 has 4 pins: VCC, GND, TRIG, ECHO</li>
+                                <li>Send 10µs pulse on TRIG to start measurement</li>
+                                <li>pulseIn() measures ECHO pulse width</li>
+                                <li>Distance = duration ÷ 58 (in cm)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="next-lesson-preview">
+                            <h3 style="color: #00d4ff; margin-top: 0;">Next Week: Servo Control</h3>
+                            <ul>
+                                <li>How servo motors work</li>
+                                <li>PWM position control</li>
+                                <li>Building a scanning mount</li>
+                                <li>Sweeping the sensor side-to-side</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lesson-nav">
+                    <a href="index.html" class="nav-button home">
+                        <span>←</span>
+                        <span>Back to Lessons</span>
+                    </a>
+                    <a href="Lesson_12_Servo_Scanning.html" class="nav-button next">
+                        <span>Next: Servo Control & Scanning</span>
+                        <span>→</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">12</span>
+    </div>
+
+    <div class="nav-container">
+        <button class="nav-btn" id="prev-btn" onclick="prevSlide()">← Previous</button>
+        <a href="index.html" class="nav-button">⌂ BACK TO UNIT 5</a>
+        <button class="nav-btn" id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = document.querySelectorAll('.slide').length;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+
+            if (n > totalSlides) currentSlide = totalSlides;
+            if (n < 1) currentSlide = 1;
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('current-slide').textContent = currentSlide;
+
+            document.getElementById('prev-btn').disabled = currentSlide === 1;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides;
+        }
+
+        function nextSlide() {
+            currentSlide++;
+            showSlide(currentSlide);
+        }
+
+        function prevSlide() {
+            currentSlide--;
+            showSlide(currentSlide);
+        }
+
+        function copyCode1() {
+            const code = `// HC-SR04 Ultrasonic Sensor - Basic Distance Reading
+
+const int trigPin = 2;
+const int echoPin = 3;
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  Serial.println("Ultrasonic Sensor Ready!");
+}
+
+void loop() {
+  long distance = getDistance();
+
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  delay(100);
+}
+
+long getDistance() {
+  // Send trigger pulse
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  // Read echo pulse duration
+  long duration = pulseIn(echoPin, HIGH);
+
+  // Convert to distance in cm
+  long distance = duration / 58;
+
+  return distance;
+}`;
+            navigator.clipboard.writeText(code).then(() => alert('✅ Code copied!'));
+        }
+
+        function copyCode2() {
+            const code = `long getDistanceSafe() {
+  // Send trigger pulse
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  // Read echo with timeout (30ms = ~500cm max)
+  long duration = pulseIn(echoPin, HIGH, 30000);
+
+  // Check for timeout (returns 0)
+  if (duration == 0) {
+    return -1;  // Error: no echo received
+  }
+
+  long distance = duration / 58;
+
+  // Validate range
+  if (distance < 2 || distance > 400) {
+    return -1;  // Out of valid range
+  }
+
+  return distance;
+}`;
+            navigator.clipboard.writeText(code).then(() => alert('✅ Code copied!'));
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight') nextSlide();
+            if (event.key === 'ArrowLeft') prevSlide();
+        });
+
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>
