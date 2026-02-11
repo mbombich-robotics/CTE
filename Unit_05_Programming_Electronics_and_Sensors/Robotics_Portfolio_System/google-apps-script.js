@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.8';
+const BACKEND_VERSION = 'v2.9.9';
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
