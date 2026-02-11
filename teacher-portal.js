@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.9',
+    VERSION: 'v2.9.10',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -576,19 +576,21 @@ function openStudentDetail(email) {
             const selfAssessment = submitted[10]; // Column K - Self Assessment (rubric total /16)
             const existingGrade = draft?.teacherGrade ?? submitted[11] ?? '';
             const existingFeedback = draft?.teacherFeedback ?? submitted[12] ?? '';
+            const isUngraded = existingGrade === '' || existingGrade === null || existingGrade === undefined;
+            const contentId = `reflection-content-${week}`;
+            const fullContent = `<strong>Contributions:</strong><br>${(submitted[3] || '').replace(/\n/g, '<br>')}${submitted[5] ? `<br><br><strong>Challenges:</strong> ${submitted[5]}` : ''}${submitted[6] ? `<br><strong>Solutions:</strong> ${submitted[6]}` : ''}`;
+            const needsExpand = fullContent.length > 400;
             reflectionsPanel.innerHTML += `
-                <div class="item-card">
+                <div class="item-card" style="${isUngraded ? 'border-left: 4px solid var(--warning);' : ''}">
                     <div class="item-header">
                         <span class="item-title">Week ${week}</span>
-                        <span class="item-status status-badge status-on-track">Submitted</span>
+                        <span class="item-status status-badge ${isUngraded ? 'status-behind' : 'status-on-track'}">${isUngraded ? 'Needs Grading' : 'Graded'}</span>
                         ${selfAssessment ? `<span style="margin-left: auto; font-size: 12px; color: var(--gray-600);">Self: ${selfAssessment}/16</span>` : ''}
                     </div>
-                    <div class="item-content">
-                        <strong>Contributions:</strong><br>
-                        ${(submitted[3] || '').replace(/\n/g, '<br>')}
-                        ${submitted[5] ? `<br><br><strong>Challenges:</strong> ${submitted[5]}` : ''}
-                        ${submitted[6] ? `<br><strong>Solutions:</strong> ${submitted[6]}` : ''}
+                    <div class="item-content" id="${contentId}" style="${needsExpand ? 'max-height: 150px; overflow: hidden; position: relative;' : ''}">
+                        ${fullContent}
                     </div>
+                    ${needsExpand ? `<button onclick="toggleContent('${contentId}')" style="margin-top: 8px; padding: 4px 12px; background: var(--gray-100); border: 1px solid var(--gray-300); border-radius: 4px; cursor: pointer; font-size: 12px; color: var(--primary);">Show More</button>` : ''}
                     <div class="grade-section" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gray-200);">
                         <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 8px;">
                             <label style="font-size: 13px; font-weight: 500;">Grade:</label>
@@ -650,17 +652,24 @@ function openStudentDetail(email) {
             const existingGrade = draft?.teacherGrade ?? submitted[9] ?? '';
             const existingFeedback = draft?.teacherFeedback ?? submitted[10] ?? '';
             const maxPoints = course.deliverablePoints?.[id] || 50;
+            const isUngraded = existingGrade === '' || existingGrade === null || existingGrade === undefined;
+            const contentId = `deliverable-content-${id}`;
+            const content = submitted[4] || '';
+            const selfAssessmentText = submitted[6] !== '' && submitted[6] !== null && submitted[6] !== undefined ? `<br><br><strong>Self-Assessment:</strong> ${submitted[6]}/10` : '';
+            const linksText = submitted[5] ? `<br><br><strong>Links:</strong> ${submitted[5]}` : '';
+            const fullContent = content + selfAssessmentText + linksText;
+            const needsExpand = content.length > 300;
+            const previewContent = needsExpand ? content.substring(0, 300) + '...' + selfAssessmentText + linksText : fullContent;
             deliverablesPanel.innerHTML += `
-                <div class="item-card">
+                <div class="item-card" style="${isUngraded ? 'border-left: 4px solid var(--warning);' : ''}">
                     <div class="item-header">
                         <span class="item-title">${submitted[3] || `Deliverable ${id}`}</span>
-                        <span class="item-status status-badge status-on-track">Completed</span>
+                        <span class="item-status status-badge ${isUngraded ? 'status-behind' : 'status-on-track'}">${isUngraded ? 'Needs Grading' : 'Graded'}</span>
                     </div>
-                    <div class="item-content">
-                        ${(submitted[4] || '').substring(0, 300)}${submitted[4]?.length > 300 ? '...' : ''}
-                        ${submitted[6] !== '' && submitted[6] !== null && submitted[6] !== undefined ? `<br><br><strong>Self-Assessment:</strong> ${submitted[6]}/10` : ''}
-                        ${submitted[5] ? `<br><br><strong>Links:</strong> ${submitted[5]}` : ''}
+                    <div class="item-content" id="${contentId}" data-expanded="false">
+                        ${previewContent}
                     </div>
+                    ${needsExpand ? `<button onclick="toggleDeliverableContent('${contentId}', ${id})" style="margin-top: 8px; padding: 4px 12px; background: var(--gray-100); border: 1px solid var(--gray-300); border-radius: 4px; cursor: pointer; font-size: 12px; color: var(--primary);">Show More</button>` : ''}
                     <div class="grade-section" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gray-200);">
                         <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 8px;">
                             <label style="font-size: 13px; font-weight: 500;">Grade:</label>
@@ -751,6 +760,57 @@ function openStudentDetail(email) {
 
 function closeModal() {
     document.getElementById('studentModal').classList.remove('active');
+}
+
+// Toggle reflection content expansion
+function toggleContent(contentId) {
+    const element = document.getElementById(contentId);
+    const button = element.nextElementSibling;
+
+    if (element.style.maxHeight === '150px') {
+        element.style.maxHeight = 'none';
+        element.style.overflow = 'visible';
+        button.textContent = 'Show Less';
+    } else {
+        element.style.maxHeight = '150px';
+        element.style.overflow = 'hidden';
+        button.textContent = 'Show More';
+    }
+}
+
+// Toggle deliverable content expansion
+function toggleDeliverableContent(contentId, deliverableId) {
+    const element = document.getElementById(contentId);
+    const button = element.nextElementSibling;
+    const isExpanded = element.dataset.expanded === 'true';
+
+    if (!isExpanded) {
+        // Find the student and get full content
+        const modalEmail = document.querySelector('#studentModal .item-card .grade-input')?.dataset.email;
+        if (!modalEmail) return;
+
+        const submitted = state.rawData.deliverables?.find(d => d[0] === modalEmail && d[2] == deliverableId);
+        if (!submitted) return;
+
+        const content = submitted[4] || '';
+        const selfAssessmentText = submitted[6] !== '' && submitted[6] !== null && submitted[6] !== undefined ? `<br><br><strong>Self-Assessment:</strong> ${submitted[6]}/10` : '';
+        const linksText = submitted[5] ? `<br><br><strong>Links:</strong> ${submitted[5]}` : '';
+
+        element.innerHTML = content + selfAssessmentText + linksText;
+        element.dataset.expanded = 'true';
+        button.textContent = 'Show Less';
+    } else {
+        const submitted = state.rawData.deliverables?.find(d => d[2] == deliverableId);
+        if (!submitted) return;
+
+        const content = submitted[4] || '';
+        const selfAssessmentText = submitted[6] !== '' && submitted[6] !== null && submitted[6] !== undefined ? `<br><br><strong>Self-Assessment:</strong> ${submitted[6]}/10` : '';
+        const linksText = submitted[5] ? `<br><br><strong>Links:</strong> ${submitted[5]}` : '';
+
+        element.innerHTML = content.substring(0, 300) + '...' + selfAssessmentText + linksText;
+        element.dataset.expanded = 'false';
+        button.textContent = 'Show More';
+    }
 }
 
 async function saveStudentGrades() {

@@ -7,11 +7,15 @@
 | Robotics Student Portal (app.js) | v2.8.5 |
 | Robotics Backend (google-apps-script.js) | v2.9.9 |
 | FRC Backend (google-apps-script.js) | v2.9.8 |
-| Teacher Portal (teacher-portal.js) | v2.9.9 |
+| Teacher Portal (teacher-portal.js) | v2.9.10 |
 
 ---
 
 ## 2026-02-09
+
+### Teacher Portal v2.9.10
+- **Highlight ungraded items**: Reflections and deliverables without grades now have an orange left border and "Needs Grading" badge
+- **Expandable content**: Long text now has "Show More/Less" button to view full content for grading
 
 ### Robotics Backend v2.9.9 / Teacher Portal v2.9.9
 - **Fixed Robotics deliverable titles**: Backend was incorrectly using FRC deliverable titles ("Game Analysis Report", "Subsystem Research Report") instead of Robotics titles ("Line Following Practical #1", "Line Following Final Practical", etc.)
