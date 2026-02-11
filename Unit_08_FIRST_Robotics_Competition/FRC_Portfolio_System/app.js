@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.7.1',
+    VERSION: 'v2.7.2',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbzvU4t4q7i5kvzQaVuCcXVNx6Dy6kR-AjDp85pciV07hgICHCGOmGaSe8c50Zu4lhdL/exec',
@@ -192,6 +192,8 @@ let state = {
     weeklyReflections: {},
     deliverables: {},
     evidence: [],
+    codeSnippets: [],
+    viewedFeedback: [],  // Track which feedback notifications have been viewed
     currentWeek: 1,
     selectedWeek: 1
 };
@@ -835,10 +837,26 @@ function updateUI() {
 function calculatePoints() {
     let points = 0;
     Object.keys(state.weeklyReflections).forEach(week => {
-        if (state.weeklyReflections[week].submitted) points += CONFIG.POINTS.WEEKLY_REFLECTION;
+        const reflection = state.weeklyReflections[week];
+        if (reflection.submitted) {
+            // Use teacher grade if available, otherwise use default points
+            if (reflection.teacherGrade !== undefined) {
+                points += Number(reflection.teacherGrade) || 0;
+            } else {
+                points += CONFIG.POINTS.WEEKLY_REFLECTION;
+            }
+        }
     });
     DELIVERABLES.forEach(d => {
-        if (state.deliverables[d.id]?.status === 'completed') points += d.points;
+        const deliverable = state.deliverables[d.id];
+        if (deliverable?.status === 'completed') {
+            // Use teacher grade if available, otherwise use default points
+            if (deliverable.teacherGrade !== undefined) {
+                points += Number(deliverable.teacherGrade) || 0;
+            } else {
+                points += d.points;
+            }
+        }
     });
     return points;
 }
