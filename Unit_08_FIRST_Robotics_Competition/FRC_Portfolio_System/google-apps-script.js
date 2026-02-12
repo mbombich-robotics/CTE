@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.8';
+const BACKEND_VERSION = 'v2.9.10';
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
@@ -926,30 +926,66 @@ function sendRemindersWeb(semesterStart) {
   let emailsSent = 0;
   const emailedStudents = [];
 
+  // FRC Deliverable titles by ID (each corresponds to its week number)
+  const deliverableTitles = {
+    1: 'Game Analysis Report',
+    2: 'Subsystem Research Report',
+    3: 'Design Contribution',
+    4: 'Design Decision Matrix',
+    5: 'Prototype Documentation',
+    6: 'Testing & Iteration Log',
+    7: 'Integration Report',
+    8: 'Technical Contribution Summary',
+    9: 'Engineer Portfolio Entry',
+    10: 'Final Presentation'
+  };
+
   data.students.forEach(student => {
     const email = student[0];
     const name = student[1];
 
+    // Check missing reflections
     const submittedWeeks = data.reflections
       .filter(r => r[0] === email)
       .map(r => r[2]);
 
-    const missingWeeks = [];
+    const missingReflections = [];
     for (let w = 1; w <= currentWeek; w++) {
       if (!submittedWeeks.includes(w)) {
-        missingWeeks.push(w);
+        missingReflections.push(w);
       }
     }
 
-    if (missingWeeks.length > 0) {
+    // Check missing deliverables (each deliverable ID matches its due week)
+    const completedDeliverables = data.deliverables
+      .filter(d => d[0] === email && d[7] === 'completed')
+      .map(d => d[2]);
+
+    const missingDeliverables = [];
+    for (let id = 1; id <= currentWeek && id <= 10; id++) {
+      if (!completedDeliverables.includes(id)) {
+        missingDeliverables.push(deliverableTitles[id] || `Deliverable ${id}`);
+      }
+    }
+
+    if (missingReflections.length > 0 || missingDeliverables.length > 0) {
+      let body = `Hi ${name},\n\nYou have missing portfolio work:\n`;
+      if (missingReflections.length > 0) {
+        body += `\nMissing Reflections: Weeks ${missingReflections.join(', ')}`;
+      }
+      if (missingDeliverables.length > 0) {
+        body += `\nMissing Deliverables:\n- ${missingDeliverables.join('\n- ')}`;
+      }
+      body += `\n\nPlease submit them as soon as possible.\n\nPortfolio: https://mbombich-robotics.github.io/lessons/Unit_08_FIRST_Robotics_Competition/FRC_Portfolio_System/index.html\n\nMr. B`;
+
       MailApp.sendEmail({
         to: email,
-        subject: 'FRC Portfolio Reminder - Missing Reflections',
-        body: `Hi ${name},\n\nYou have missing weekly reflections for weeks: ${missingWeeks.join(', ')}.\n\nPlease submit them as soon as possible.\n\nPortfolio: https://mbombich-robotics.github.io/lessons/Unit_08_FIRST_Robotics_Competition/FRC_Portfolio_System/index.html\n\nMr. B`
+        subject: 'FRC Portfolio Reminder - Missing Work',
+        body: body
       });
 
       emailsSent++;
-      emailedStudents.push({ name, email, missingWeeks });
+      emailedStudents.push({ name, email, missingReflections, missingDeliverables });
     }
   });
 
