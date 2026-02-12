@@ -5,9 +5,25 @@
 | Component | Current Version |
 |-----------|----------------|
 | Robotics Student Portal (app.js) | v2.8.5 |
-| Robotics Backend (google-apps-script.js) | v2.9.10 |
-| FRC Backend (google-apps-script.js) | v2.9.10 |
-| Teacher Portal (teacher-portal.js) | v2.9.10 |
+| Robotics Backend (google-apps-script.js) | v2.9.12a (test) |
+| FRC Backend (google-apps-script.js) | v2.9.12a (test) |
+| Teacher Portal (teacher-portal.js) | v2.9.11 |
+
+---
+
+## 2026-02-12
+
+### Backend v2.9.12a (test) - AI Feedback
+- **AI-powered submission review**: Students can click "AI Review" button to get Gemini-powered feedback on their reflections and deliverables before submitting
+- Evaluates: Specificity, Detail, Completeness, and Insight (scored 1-4 each)
+- Provides letter grade (A-D), strengths, actionable improvements, and example rewrites
+- Tone adjusts automatically: encouraging for minimal submissions, professional for stronger work
+- **Test mode**: AI Review button only appears on `test.html` portal pages
+- Requires `GEMINI_API_KEY` in Apps Script > Project Settings > Script Properties
+
+### Backend v2.9.11 / Teacher Portal v2.9.11
+- **Resubmitted indicator**: When a student resubmits content after it has been graded, the teacher portal shows a red "Resubmitted" badge instead of "Graded"
+- **Added `Graded At` timestamp column**: Both Reflections and Deliverables sheets now track when grades were entered, enabling resubmission detection
 
 ---
 

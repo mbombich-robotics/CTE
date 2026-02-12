@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+    <title>Robotics Portfolio</title>
+    <meta name="google-signin-client_id" content="1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js" async defer></script>
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="logo">
+            <i class="fas fa-microchip"></i>
+            <span>Robotics Portfolio</span>
+        </div>
+        <div class="student-info" id="studentInfo">
+            <div class="avatar" id="avatarInitials">--</div>
+            <div class="student-name" id="studentName">Not Signed In</div>
+            <div class="project-badge" id="projectBadge">No Project</div>
+            <button class="btn btn-small btn-secondary" id="signOutBtn" style="margin-top: 10px; display: none; font-size: 11px; padding: 5px 10px;">
+                <i class="fas fa-sign-out-alt"></i> Sign Out
+            </button>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active" data-page="dashboard">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </li>
+            <li class="nav-item" data-page="weekly">
+                <i class="fas fa-calendar-week"></i>
+                <span>Weekly Reflections</span>
+            </li>
+            <li class="nav-item" data-page="deliverables">
+                <i class="fas fa-tasks"></i>
+                <span>Deliverables</span>
+            </li>
+            <li class="nav-item" data-page="code">
+                <i class="fas fa-code"></i>
+                <span>Code Library</span>
+            </li>
+            <li class="nav-item" data-page="evidence">
+                <i class="fas fa-camera"></i>
+                <span>Evidence Gallery</span>
+            </li>
+            <li class="nav-item" data-page="resources">
+                <i class="fas fa-book"></i>
+                <span>Resources</span>
+            </li>
+        </ul>
+        <div class="progress-summary">
+            <h4>Progress</h4>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            <span class="progress-text" id="progressText">0 / 800 pts</span>
+        </div>
+        <div class="save-status" id="saveStatus" style="padding: 10px 20px; font-size: 12px; color: var(--gray-500); text-align: center; display: none;">
+            <i class="fas fa-check-circle" id="saveIcon"></i>
+            <span id="saveText">Saved</span>
+        </div>
+        <div class="version-info" id="versionInfo" style="padding: 8px 20px; font-size: 11px; color: var(--gray-400); text-align: center; border-top: 1px solid var(--gray-200); margin-top: auto;">
+            <span id="appVersion">--</span>
+        </div>
+    </nav>
+
+    <main class="content">
+        <!-- Sign-In Modal (shown on first visit) -->
+        <div class="modal" id="signinModal">
+            <div class="modal-content">
+                <h2><i class="fas fa-microchip"></i> Robotics Portfolio</h2>
+                <p style="margin-bottom: 30px; color: var(--gray-600);">Sign in with your school Google account to get started.</p>
+                <div id="googleSignInBtn" style="display: flex; justify-content: center;"></div>
+                <p style="margin-top: 20px; font-size: 13px; color: var(--gray-500); text-align: center;">
+                    Use your school Google account (@yourschool.edu)
+                </p>
+                <p id="signinVersion" style="margin-top: 30px; font-size: 11px; color: var(--gray-400); text-align: center;"></p>
+            </div>
+        </div>
+
+        <!-- Profile Setup Modal (shown once after first sign-in) -->
+        <div class="modal" id="profileModal">
+            <div class="modal-content">
+                <h2><i class="fas fa-user-plus"></i> Finish Setting Up</h2>
+                <p style="margin-bottom: 20px; color: var(--gray-600);">Just a couple more things and you're ready to go.</p>
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label>Signed In As</label>
+                        <div id="profileEmail" style="padding: 10px; background: var(--gray-100); border-radius: 8px; color: var(--gray-600); font-size: 14px;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="setupPeriod">Class Period</label>
+                        <select id="setupPeriod" required>
+                            <option value="">Select your hour...</option>
+                            <option value="hour1">1st Hour</option>
+                            <option value="hour2">2nd Hour</option>
+                            <option value="hour3">3rd Hour</option>
+                            <option value="hour4">4th Hour</option>
+                            <option value="hour5">5th Hour</option>
+                            <option value="hour6">6th Hour</option>
+                            <option value="hour7">7th Hour</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        <i class="fas fa-rocket"></i> Start My Portfolio
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div class="page active" id="dashboardPage">
+            <header class="page-header">
+                <h1>Dashboard</h1>
+                <p class="subtitle">Track your robotics journey</p>
+            </header>
+
+            <div class="dashboard-grid">
+                <div class="card stat-card">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-content">
+                        <span class="stat-value" id="completedCount">0</span>
+                        <span class="stat-label">Completed</span>
+                    </div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-icon pending"><i class="fas fa-clock"></i></div>
+                    <div class="stat-content">
+                        <span class="stat-value" id="pendingCount">9</span>
+                        <span class="stat-label">Pending</span>
+                    </div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-icon points"><i class="fas fa-star"></i></div>
+                    <div class="stat-content">
+                        <span class="stat-value" id="totalPoints">0</span>
+                        <span class="stat-label">Points Earned</span>
+                    </div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-icon week"><i class="fas fa-calendar"></i></div>
+                    <div class="stat-content">
+                        <span class="stat-value" id="currentWeek">1</span>
+                        <span class="stat-label">Current Week</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Teacher Feedback Notification -->
+            <div id="feedbackNotification" class="card" style="display: none; background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-left: 4px solid var(--success); margin-bottom: 20px;">
+                <h3 style="color: var(--success); margin-bottom: 12px;"><i class="fas fa-comment-dots"></i> New Teacher Feedback</h3>
+                <div id="feedbackNotificationList" style="display: flex; flex-direction: column; gap: 8px;">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <div class="dashboard-main">
+                <div class="card upcoming-card">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Due This Week</h3>
+                    <div class="upcoming-list" id="upcomingList">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div class="card project-phases-card">
+                    <h3><i class="fas fa-road"></i> Project Phases</h3>
+                    <div class="project-phases" id="projectPhases">
+                        <div class="phase-item" data-phase="linefollow">
+                            <div class="phase-icon"><i class="fas fa-route"></i></div>
+                            <div class="phase-info">
+                                <div class="phase-title">Line Following</div>
+                                <div class="phase-weeks">Weeks 1-2</div>
+                            </div>
+                            <div class="phase-status" id="phaseLineFollow">In Progress</div>
+                        </div>
+                        <div class="phase-item" data-phase="scanner">
+                            <div class="phase-icon"><i class="fas fa-radar"></i></div>
+                            <div class="phase-info">
+                                <div class="phase-title">Ultrasonic Scanner</div>
+                                <div class="phase-weeks">Weeks 3-5</div>
+                            </div>
+                            <div class="phase-status" id="phaseScanner">Upcoming</div>
+                        </div>
+                        <div class="phase-item" data-phase="claw">
+                            <div class="phase-icon"><i class="fas fa-hand-rock"></i></div>
+                            <div class="phase-info">
+                                <div class="phase-title">Servo Claw</div>
+                                <div class="phase-weeks">Weeks 6-8</div>
+                            </div>
+                            <div class="phase-status" id="phaseClaw">Upcoming</div>
+                        </div>
+                        <div class="phase-item" data-phase="final">
+                            <div class="phase-icon"><i class="fas fa-trophy"></i></div>
+                            <div class="phase-info">
+                                <div class="phase-title">Final Demo</div>
+                                <div class="phase-weeks">Week 9</div>
+                            </div>
+                            <div class="phase-status" id="phaseFinal">Upcoming</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weekly Reflections Page -->
+        <div class="page" id="weeklyPage">
+            <header class="page-header">
+                <h1>Weekly Reflections</h1>
+                <p class="subtitle">Document your progress every week (20 pts each)</p>
+            </header>
+
+            <div class="week-selector">
+                <button class="week-btn" data-week="1">Week 1</button>
+                <button class="week-btn" data-week="2">Week 2</button>
+                <button class="week-btn" data-week="3">Week 3</button>
+                <button class="week-btn" data-week="4">Week 4</button>
+                <button class="week-btn" data-week="5">Week 5</button>
+                <button class="week-btn" data-week="6">Week 6</button>
+                <button class="week-btn" data-week="7">Week 7</button>
+                <button class="week-btn" data-week="8">Week 8</button>
+                <button class="week-btn" data-week="9">Week 9</button>
+            </div>
+
+            <div class="week-topic" id="weekTopic">
+                <!-- Shows current week's topic -->
+            </div>
+
+            <div id="teacherFeedbackCard" class="card" style="display: none; background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-left: 4px solid var(--success);">
+                <h3 style="color: var(--success); margin-bottom: 12px;"><i class="fas fa-comment-dots"></i> Teacher Feedback</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <div>
+                        <span style="font-weight: 600;">Your Score:</span>
+                        <span id="teacherGradeDisplay" style="font-size: 24px; font-weight: 700; color: var(--success); margin-left: 8px;">--</span>
+                        <span style="color: var(--gray-600);">/ 20 pts</span>
+                    </div>
+                </div>
+                <div id="teacherFeedbackText" style="background: white; padding: 12px 16px; border-radius: 8px; color: var(--gray-700); font-style: italic;">
+                    No feedback yet.
+                </div>
+            </div>
+
+            <div class="card reflection-form-card">
+                <form id="weeklyReflectionForm">
+                    <input type="hidden" id="reflectionWeek" value="1">
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-list-check"></i> My Work This Week (5 pts)</h3>
+                        <p class="form-hint">List at least 3 specific tasks YOU completed. Use "I" statements.</p>
+
+                        <div class="contribution-list" id="contributionList">
+                            <div class="contribution-item">
+                                <input type="date" class="contrib-date" required>
+                                <input type="text" class="contrib-task" placeholder="I wired the..." required>
+                            </div>
+                            <div class="contribution-item">
+                                <input type="date" class="contrib-date" required>
+                                <input type="text" class="contrib-task" placeholder="I coded the..." required>
+                            </div>
+                            <div class="contribution-item">
+                                <input type="date" class="contrib-date" required>
+                                <input type="text" class="contrib-task" placeholder="I tested/debugged..." required>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-small" id="addContribution">
+                            <i class="fas fa-plus"></i> Add Another
+                        </button>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-camera"></i> Evidence of Work (5 pts)</h3>
+                        <p class="form-hint">Upload at least 2 photos/screenshots of YOUR work.</p>
+
+                        <div class="evidence-upload">
+                            <div class="upload-zone" id="uploadZone">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Drag & drop images or click to browse</p>
+                                <input type="file" id="evidenceFiles" multiple accept="image/*" hidden>
+                            </div>
+                            <div class="evidence-preview" id="evidencePreview"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="evidenceLinks">Or paste image URLs / Google Drive links</label>
+                            <textarea id="evidenceLinks" rows="2" placeholder="https://drive.google.com/..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-bug"></i> Challenges & Debugging (5 pts)</h3>
+
+                        <div class="form-group">
+                            <label for="challenges">What problems did you encounter?</label>
+                            <textarea id="challenges" rows="3" required placeholder="My sensor wasn't reading correctly because..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="solutions">How did you solve them?</label>
+                            <textarea id="solutions" rows="3" required placeholder="I fixed it by changing... / I asked for help with..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-bullseye"></i> Next Week's Goals (5 pts)</h3>
+                        <p class="form-hint">List 3 specific, measurable goals for next week.</p>
+
+                        <div class="goals-list">
+                            <input type="text" class="goal-input" placeholder="Goal 1: I will finish..." required>
+                            <input type="text" class="goal-input" placeholder="Goal 2: I will test..." required>
+                            <input type="text" class="goal-input" placeholder="Goal 3: I will document..." required>
+                        </div>
+                    </div>
+
+                    <div class="form-section" style="background: var(--primary-light); border-radius: 12px; padding: 20px;">
+                        <h3><i class="fas fa-clipboard-check"></i> Self-Assessment</h3>
+                        <p class="form-hint">Rate the quality of your work honestly. Your teacher will review these ratings.</p>
+
+                        <div class="rubric-grid" style="display: grid; gap: 16px; margin-top: 16px;">
+                            <div class="rubric-item">
+                                <label style="font-weight: 500; display: block; margin-bottom: 8px;">
+                                    My task descriptions are specific and detailed (not vague)
+                                </label>
+                                <div class="rubric-options" style="display: flex; gap: 8px;">
+                                    <label class="rubric-option"><input type="radio" name="rubricDetail" value="1" required> <span>1 - Minimal</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricDetail" value="2"> <span>2 - Basic</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricDetail" value="3"> <span>3 - Good</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricDetail" value="4"> <span>4 - Excellent</span></label>
+                                </div>
+                            </div>
+
+                            <div class="rubric-item">
+                                <label style="font-weight: 500; display: block; margin-bottom: 8px;">
+                                    I included clear photo evidence of my work
+                                </label>
+                                <div class="rubric-options" style="display: flex; gap: 8px;">
+                                    <label class="rubric-option"><input type="radio" name="rubricEvidence" value="1" required> <span>1 - None</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricEvidence" value="2"> <span>2 - Some</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricEvidence" value="3"> <span>3 - Good</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricEvidence" value="4"> <span>4 - Excellent</span></label>
+                                </div>
+                            </div>
+
+                            <div class="rubric-item">
+                                <label style="font-weight: 500; display: block; margin-bottom: 8px;">
+                                    I explained my debugging/problem-solving process
+                                </label>
+                                <div class="rubric-options" style="display: flex; gap: 8px;">
+                                    <label class="rubric-option"><input type="radio" name="rubricProblemSolving" value="1" required> <span>1 - Minimal</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricProblemSolving" value="2"> <span>2 - Basic</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricProblemSolving" value="3"> <span>3 - Good</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricProblemSolving" value="4"> <span>4 - Excellent</span></label>
+                                </div>
+                            </div>
+
+                            <div class="rubric-item">
+                                <label style="font-weight: 500; display: block; margin-bottom: 8px;">
+                                    My goals are specific and achievable
+                                </label>
+                                <div class="rubric-options" style="display: flex; gap: 8px;">
+                                    <label class="rubric-option"><input type="radio" name="rubricGoals" value="1" required> <span>1 - Vague</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricGoals" value="2"> <span>2 - Basic</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricGoals" value="3"> <span>3 - Good</span></label>
+                                    <label class="rubric-option"><input type="radio" name="rubricGoals" value="4"> <span>4 - Excellent</span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="rubricScore" style="margin-top: 16px; padding: 12px; background: white; border-radius: 8px; text-align: center; display: none;">
+                            <span style="font-size: 14px; color: var(--gray-600);">Self-Assessment Score:</span>
+                            <span id="rubricScoreValue" style="font-size: 20px; font-weight: 700; color: var(--primary); margin-left: 8px;">0/16</span>
+                        </div>
+                    </div>
+
+                    <div id="validationErrors" style="background: #fee2e2; color: #991b1b; padding: 16px; border-radius: 8px; margin-bottom: 16px; display: none;">
+                        <strong><i class="fas fa-exclamation-triangle"></i> Please fix the following:</strong>
+                        <ul id="errorList" style="margin: 8px 0 0 20px;"></ul>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="saveReflectionDraft">
+                            <i class="fas fa-save"></i> Save Draft
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Submit Reflection
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Deliverables Page -->
+        <div class="page" id="deliverablesPage">
+            <header class="page-header">
+                <h1>Deliverables</h1>
+                <p class="subtitle">Complete these assignments throughout the 9 weeks</p>
+            </header>
+
+            <div class="phase-tabs">
+                <button class="phase-tab active" data-phase="all">All</button>
+                <button class="phase-tab" data-phase="linefollow">Line Following</button>
+                <button class="phase-tab" data-phase="scanner">Scanner</button>
+                <button class="phase-tab" data-phase="claw">Claw</button>
+                <button class="phase-tab" data-phase="final">Final</button>
+            </div>
+
+            <div class="deliverables-list" id="deliverablesList">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Deliverable Form Modal -->
+        <div class="modal" id="deliverableModal">
+            <div class="modal-content modal-large">
+                <button class="modal-close" id="closeDeliverableModal">&times;</button>
+                <div id="deliverableFormContent">
+                    <!-- Dynamically populated based on deliverable type -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Library Page -->
+        <div class="page" id="codePage">
+            <header class="page-header">
+                <h1>Code Library</h1>
+                <p class="subtitle">Save and organize your code snippets</p>
+            </header>
+
+            <div class="card">
+                <h3><i class="fas fa-plus-circle"></i> Add Code Snippet</h3>
+                <form id="codeSnippetForm">
+                    <div class="form-group">
+                        <label for="snippetTitle">Title</label>
+                        <input type="text" id="snippetTitle" placeholder="e.g., Ultrasonic Distance Function" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="snippetCategory">Category</label>
+                        <select id="snippetCategory" required>
+                            <option value="">Select category...</option>
+                            <option value="linefollow">Line Following</option>
+                            <option value="ultrasonic">Ultrasonic Sensor</option>
+                            <option value="servo">Servo Control</option>
+                            <option value="claw">Claw Mechanism</option>
+                            <option value="motors">Motor Control</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="snippetCode">Code</label>
+                        <textarea id="snippetCode" rows="10" placeholder="// Paste your code here..." style="font-family: monospace;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="snippetNotes">Notes (what does this do?)</label>
+                        <textarea id="snippetNotes" rows="2" placeholder="This function calculates..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Snippet
+                    </button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3><i class="fas fa-folder-open"></i> My Code Snippets</h3>
+                <div class="snippets-list" id="snippetsList">
+                    <p class="placeholder-text">No code snippets saved yet. Add your first one above!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evidence Gallery Page -->
+        <div class="page" id="evidencePage">
+            <header class="page-header">
+                <h1>Evidence Gallery</h1>
+                <p class="subtitle">All your documented work in one place</p>
+            </header>
+
+            <div class="gallery-filters">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="weekly">Weekly</button>
+                <button class="filter-btn" data-filter="deliverable">Deliverables</button>
+            </div>
+
+            <div class="evidence-gallery" id="evidenceGallery">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Resources Page -->
+        <div class="page" id="resourcesPage">
+            <header class="page-header">
+                <h1>Resources</h1>
+                <p class="subtitle">Helpful references and starter code</p>
+            </header>
+
+            <div class="resources-grid">
+                <div class="card resource-card">
+                    <h3><i class="fas fa-route"></i> Line Following</h3>
+                    <ul>
+                        <li><a href="#" onclick="showResource('pid')">PID Control Basics</a></li>
+                        <li><a href="#" onclick="showResource('ir')">IR Sensor Calibration</a></li>
+                        <li><a href="#" onclick="showResource('lineCode')">Sample Line Following Code</a></li>
+                    </ul>
+                </div>
+
+                <div class="card resource-card">
+                    <h3><i class="fas fa-satellite-dish"></i> Ultrasonic Sensor</h3>
+                    <ul>
+                        <li><a href="#" onclick="showResource('ultrasonic')">HC-SR04 Wiring Guide</a></li>
+                        <li><a href="#" onclick="showResource('ultraCode')">Distance Measurement Code</a></li>
+                        <li><a href="#" onclick="showResource('scanCode')">Scanning Sweep Code</a></li>
+                    </ul>
+                </div>
+
+                <div class="card resource-card">
+                    <h3><i class="fas fa-cogs"></i> Servo & Claw</h3>
+                    <ul>
+                        <li><a href="#" onclick="showResource('servo')">Servo Motor Basics</a></li>
+                        <li><a href="#" onclick="showResource('servoCode')">Servo Control Code</a></li>
+                        <li><a href="#" onclick="showResource('clawCode')">Claw Functions Code</a></li>
+                    </ul>
+                </div>
+
+                <div class="card resource-card">
+                    <h3><i class="fas fa-tools"></i> Troubleshooting</h3>
+                    <ul>
+                        <li><a href="#" onclick="showResource('debug')">Common Problems & Fixes</a></li>
+                        <li><a href="#" onclick="showResource('serial')">Using Serial Monitor</a></li>
+                        <li><a href="#" onclick="showResource('wiring')">Wiring Checklist</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Resource Modal -->
+            <div class="modal" id="resourceModal">
+                <div class="modal-content modal-large">
+                    <button class="modal-close" onclick="document.getElementById('resourceModal').classList.remove('active')">&times;</button>
+                    <div id="resourceContent">
+                        <!-- Resource content loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>

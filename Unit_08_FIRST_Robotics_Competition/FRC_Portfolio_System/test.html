@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+    <title>FRC Engineering Portfolio</title>
+    <meta name="google-signin-client_id" content="1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js" async defer></script>
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="logo">
+            <i class="fas fa-robot"></i>
+            <span>FRC Portfolio</span>
+        </div>
+        <div class="student-info" id="studentInfo">
+            <div class="avatar" id="avatarInitials">--</div>
+            <div class="student-name" id="studentName">Not Signed In</div>
+            <div class="team-badge" id="teamBadge">No Team</div>
+            <button class="btn btn-small btn-secondary" id="signOutBtn" style="margin-top: 10px; display: none; font-size: 11px; padding: 5px 10px;">
+                <i class="fas fa-sign-out-alt"></i> Sign Out
+            </button>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active" data-page="dashboard">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </li>
+            <li class="nav-item" data-page="weekly">
+                <i class="fas fa-calendar-week"></i>
+                <span>Weekly Reflections</span>
+            </li>
+            <li class="nav-item" data-page="deliverables">
+                <i class="fas fa-tasks"></i>
+                <span>Deliverables</span>
+            </li>
+            <li class="nav-item" data-page="evidence">
+                <i class="fas fa-camera"></i>
+                <span>Evidence Gallery</span>
+            </li>
+            <li class="nav-item" data-page="team">
+                <i class="fas fa-users"></i>
+                <span>Team View</span>
+            </li>
+            <li class="nav-item" data-page="portfolio">
+                <i class="fas fa-file-alt"></i>
+                <span>Final Portfolio</span>
+            </li>
+        </ul>
+        <div class="progress-summary">
+            <h4>Progress</h4>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            <span class="progress-text" id="progressText">0 / 900 pts</span>
+        </div>
+        <div class="save-status" id="saveStatus" style="padding: 10px 20px; font-size: 12px; color: var(--gray-500); text-align: center; display: none;">
+            <i class="fas fa-check-circle" id="saveIcon"></i>
+            <span id="saveText">Saved</span>
+        </div>
+        <div class="version-info" id="versionInfo" style="padding: 8px 20px; font-size: 11px; color: var(--gray-400); text-align: center; border-top: 1px solid var(--gray-200); margin-top: auto;">
+            <span id="appVersion">--</span>
+        </div>
+    </nav>
+
+    <main class="content">
+        <!-- Sign-In Modal (shown on first visit) -->
+        <div class="modal" id="signinModal">
+            <div class="modal-content">
+                <h2><i class="fas fa-robot"></i> FRC Engineering Portfolio</h2>
+                <p style="margin-bottom: 30px; color: var(--gray-600);">Sign in with your school Google account to get started.</p>
+                <div id="googleSignInBtn" style="display: flex; justify-content: center;"></div>
+                <p style="margin-top: 20px; font-size: 13px; color: var(--gray-500); text-align: center;">
+                    Use your school Google account (@yourschool.edu)
+                </p>
+                <p id="signinVersion" style="margin-top: 30px; font-size: 11px; color: var(--gray-400); text-align: center;"></p>
+            </div>
+        </div>
+
+        <!-- Profile Setup Modal (shown once after first sign-in) -->
+        <div class="modal" id="profileModal">
+            <div class="modal-content">
+                <h2><i class="fas fa-user-plus"></i> Finish Setting Up</h2>
+                <p style="margin-bottom: 20px; color: var(--gray-600);">Just a couple more things and you're ready to go.</p>
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label>Signed In As</label>
+                        <div id="profileEmail" style="padding: 10px; background: var(--gray-100); border-radius: 8px; color: var(--gray-600); font-size: 14px;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="setupTeam">Subsystem Team</label>
+                        <select id="setupTeam" required>
+                            <option value="">Select your team...</option>
+                            <option value="drivetrain">Drivetrain</option>
+                            <option value="intake">Intake/Collector</option>
+                            <option value="shooter">Shooter/Launcher</option>
+                            <option value="climber">Climber</option>
+                            <option value="autonomous">Autonomous/Vision</option>
+                            <option value="integration">Integration/Electrical</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="setupPeriod">Class Period</label>
+                        <select id="setupPeriod" required>
+                            <option value="">Select your hour...</option>
+                            <option value="hour1">1st Hour</option>
+                            <option value="hour2">2nd Hour</option>
+                            <option value="hour3">3rd Hour</option>
+                            <option value="hour4">4th Hour</option>
+                            <option value="hour5">5th Hour</option>
+                            <option value="hour6">6th Hour</option>
+                            <option value="hour7">7th Hour</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        <i class="fas fa-rocket"></i> Start My Portfolio
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div class="page active" id="dashboardPage">
+            <header class="page-header">
+                <h1>Dashboard</h1>
+                <p class="subtitle">Track your engineering journey</p>
+            </header>
+
+            <div class="dashboard-grid">
+                <div class="card stat-card">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-content">
+                        <span class="stat-value" id="completedCount">0</span>
+                        <span class="stat-label">Completed</span>
+                    </div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-icon pending"><i class="fas fa-clock"></i></div>
+                    <div class="stat-content">
+                        <span class="stat-value" id="pendingCount">10</span>
+                        <span class="stat-label">Pending</span>
+                    </div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-icon points"><i class="fas fa-star"></i></div>
+                    <div class="stat-content">
+                        <span class="stat-value" id="totalPoints">0</span>
+                        <span class="stat-label">Points Earned</span>
+                    </div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-icon week"><i class="fas fa-calendar"></i></div>
+                    <div class="stat-content">
+                        <span class="stat-value" id="currentWeek">1</span>
+                        <span class="stat-label">Current Week</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-main">
+                <div class="card upcoming-card">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Due This Week</h3>
+                    <div class="upcoming-list" id="upcomingList">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div class="card timeline-card">
+                    <h3><i class="fas fa-road"></i> 9-Week Timeline</h3>
+                    <div class="timeline" id="timeline">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weekly Reflections Page -->
+        <div class="page" id="weeklyPage">
+            <header class="page-header">
+                <h1>Weekly Reflections</h1>
+                <p class="subtitle">Document your contributions every week (20 pts each)</p>
+            </header>
+
+            <div class="week-selector">
+                <button class="week-btn" data-week="1">Week 1</button>
+                <button class="week-btn" data-week="2">Week 2</button>
+                <button class="week-btn" data-week="3">Week 3</button>
+                <button class="week-btn" data-week="4">Week 4</button>
+                <button class="week-btn" data-week="5">Week 5</button>
+                <button class="week-btn" data-week="6">Week 6</button>
+                <button class="week-btn" data-week="7">Week 7</button>
+                <button class="week-btn" data-week="8">Week 8</button>
+                <button class="week-btn" data-week="9">Week 9</button>
+            </div>
+
+            <div id="teacherFeedbackCard" class="card" style="display: none; background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-left: 4px solid var(--success);">
+                <h3 style="color: var(--success); margin-bottom: 12px;"><i class="fas fa-comment-dots"></i> Teacher Feedback</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <div>
+                        <span style="font-weight: 600;">Your Score:</span>
+                        <span id="teacherGradeDisplay" style="font-size: 24px; font-weight: 700; color: var(--success); margin-left: 8px;">--</span>
+                        <span style="color: var(--gray-600);">/ 20 pts</span>
+                    </div>
+                </div>
+                <div id="teacherFeedbackText" style="background: white; padding: 12px 16px; border-radius: 8px; color: var(--gray-700); font-style: italic;">
+                    No feedback yet.
+                </div>
+            </div>
+
+            <div class="card reflection-form-card">
+                <form id="weeklyReflectionForm">
+                    <input type="hidden" id="reflectionWeek" value="1">
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-list-check"></i> My Contributions This Week (5 pts)</h3>
+                        <p class="form-hint">List at least 3 specific tasks YOU completed. Use "I" statements, not "we".</p>
+
+                        <div class="contribution-list" id="contributionList">
+                            <div class="contribution-item">
+                                <input type="date" class="contrib-date" required>
+                                <input type="text" class="contrib-task" placeholder="I designed the..." required>
+                            </div>
+                            <div class="contribution-item">
+                                <input type="date" class="contrib-date" required>
+                                <input type="text" class="contrib-task" placeholder="I built/coded/tested..." required>
+                            </div>
+                            <div class="contribution-item">
+                                <input type="date" class="contrib-date" required>
+                                <input type="text" class="contrib-task" placeholder="I researched/documented..." required>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-small" id="addContribution">
+                            <i class="fas fa-plus"></i> Add Another
+                        </button>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-camera"></i> Evidence of Work (5 pts)</h3>
+                        <p class="form-hint">Upload at least 2 photos/screenshots showing YOUR work or you actively working.</p>
+
+                        <div class="evidence-upload">
+                            <div class="upload-zone" id="uploadZone">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Drag & drop images or click to browse</p>
+                                <input type="file" id="evidenceFiles" multiple accept="image/*" hidden>
+                            </div>
+                            <div class="evidence-preview" id="evidencePreview"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="evidenceLinks">Or paste image URLs (one per line)</label>
+                            <textarea id="evidenceLinks" rows="2" placeholder="https://drive.google.com/..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-puzzle-piece"></i> Challenges & Solutions (5 pts)</h3>
+
+                        <div class="form-group">
+                            <label for="challenges">What problems did you encounter?</label>
+                            <textarea id="challenges" rows="3" required placeholder="Describe specific technical challenges..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="solutions">How did you address them?</label>
+                            <textarea id="solutions" rows="3" required placeholder="Explain your problem-solving process..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-bullseye"></i> Next Week's Goals (5 pts)</h3>
+                        <p class="form-hint">List 3 specific, measurable goals for next week.</p>
+
+                        <div class="goals-list">
+                            <input type="text" class="goal-input" placeholder="Goal 1: I will..." required>
+                            <input type="text" class="goal-input" placeholder="Goal 2: I will..." required>
+                            <input type="text" class="goal-input" placeholder="Goal 3: I will..." required>
+                        </div>
+                    </div>
+
+                    <div class="form-section" style="background: var(--primary-light);">
+                        <h3><i class="fas fa-clipboard-check"></i> Self-Assessment</h3>
+                        <p class="form-hint">Rate the quality of your reflection honestly. This helps you improve!</p>
+
+                        <div class="rubric-grid">
+                            <div class="rubric-item">
+                                <label class="rubric-label">Detail & Specificity</label>
+                                <p class="rubric-desc">How specific are your contributions? Did you name tools, parts, or code?</p>
+                                <div class="rubric-options">
+                                    <label class="rubric-option"><input type="radio" name="rubricDetail" value="1"> 1 - Vague</label>
+                                    <label class="rubric-option"><input type="radio" name="rubricDetail" value="2"> 2 - Some detail</label>
+                                    <label class="rubric-option"><input type="radio" name="rubricDetail" value="3"> 3 - Good detail</label>
+                                    <label class="rubric-option"><input type="radio" name="rubricDetail" value="4"> 4 - Very specific</label>
+                                </div>
+                            </div>
+
+                            <div class="rubric-item">
+                                <label class="rubric-label">Evidence Quality</label>
+                                <p class="rubric-desc">Do your photos/links clearly show YOUR work?</p>
+                                <div class="rubric-options">
+                                    <label class="rubric-option"><input type="radio" name="rubricEvidence" value="1"> 1 - No evidence</label>
+                                    <label class="rubric-option"><input type="radio" name="rubricEvidence" value="2"> 2 - Generic photos</label>
+                                    <label class="rubric-option"><input type="radio" name="rubricEvidence" value="3"> 3 - Shows my work</label>
+                                    <label class="rubric-option"><input type="radio" name="rubricEvidence" value="4"> 4 - Clear + labeled</label>
+                                </div>
+                            </div>
+
+                            <div class="rubric-item">
+                                <label class="rubric-label">Problem-Solving</label>
+                                <p class="rubric-desc">How well did you explain challenges and solutions?</p>
+                                <div class="rubric-options">
+                                    <label class="rubric-option"><input type="radio" name="rubricProblemSolving" value="1"> 1 - Not mentioned</label>
+                                    <label class="rubric-option"><input type="radio" name="rubricProblemSolving" value="2"> 2 - Brief mention</label>
+                                    <label class="rubric-option"><input type="radio" name="rubricProblemSolving" value="3"> 3 - Explained well</label>
+                                    <label class="rubric-option"><input type="radio" name="rubricProblemSolving" value="4"> 4 - Detailed process</label>
+                                </div>
+                            </div>
+
+                            <div class="rubric-item">
+                                <label class="rubric-label">Goals Quality</label>
+                                <p class="rubric-desc">Are your goals specific and measurable?</p>
+                                <div class="rubric-options">
+                                    <label class="rubric-option"><input type="radio" name="rubricGoals" value="1"> 1 - Vague/missing</label>
+                                    <label class="rubric-option"><input type="radio" name="rubricGoals" value="2"> 2 - General</label>
+                                    <label class="rubric-option"><input type="radio" name="rubricGoals" value="3"> 3 - Specific</label>
+                                    <label class="rubric-option"><input type="radio" name="rubricGoals" value="4"> 4 - SMART goals</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="rubricScore" style="margin-top: 15px; padding: 10px; background: white; border-radius: 8px; text-align: center;">
+                            <strong>Self-Assessment Total:</strong> 0 / 16 points
+                        </div>
+                    </div>
+
+                    <div id="validationErrors" class="validation-errors" style="display: none; background: #ffebee; border: 1px solid #f44336; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                        <h4 style="color: #c62828; margin: 0 0 10px;"><i class="fas fa-exclamation-triangle"></i> Please fix the following:</h4>
+                        <ul id="errorList" style="margin: 0; padding-left: 20px; color: #c62828;"></ul>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="saveReflectionDraft">
+                            <i class="fas fa-save"></i> Save Draft
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Submit Reflection
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Deliverables Page -->
+        <div class="page" id="deliverablesPage">
+            <header class="page-header">
+                <h1>Major Deliverables</h1>
+                <p class="subtitle">Complete these milestone assignments throughout the 9 weeks</p>
+            </header>
+
+            <div class="deliverables-list" id="deliverablesList">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Deliverable Form Modal -->
+        <div class="modal" id="deliverableModal">
+            <div class="modal-content modal-large">
+                <button class="modal-close" id="closeDeliverableModal">&times;</button>
+                <div id="deliverableFormContent">
+                    <!-- Dynamically populated based on deliverable type -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Evidence Gallery Page -->
+        <div class="page" id="evidencePage">
+            <header class="page-header">
+                <h1>Evidence Gallery</h1>
+                <p class="subtitle">All your documented work in one place</p>
+            </header>
+
+            <div class="gallery-filters">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="weekly">Weekly</button>
+                <button class="filter-btn" data-filter="deliverable">Deliverables</button>
+            </div>
+
+            <div class="evidence-gallery" id="evidenceGallery">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Team View Page -->
+        <div class="page" id="teamPage">
+            <header class="page-header">
+                <h1>Team View</h1>
+                <p class="subtitle">See your subsystem team's combined progress</p>
+            </header>
+
+            <div class="team-header" id="teamHeader">
+                <h2 id="teamName">Loading team...</h2>
+                <div class="team-progress">
+                    <div class="progress-bar large">
+                        <div class="progress-fill" id="teamProgressFill" style="width: 0%"></div>
+                    </div>
+                    <span id="teamProgressText">0% Complete</span>
+                </div>
+            </div>
+
+            <div class="team-members" id="teamMembers">
+                <!-- Populated by JS -->
+            </div>
+
+            <div class="card">
+                <h3><i class="fas fa-layer-group"></i> Combined Team Portfolio</h3>
+                <p>When ready, combine all team members' work into a unified subsystem documentation.</p>
+                <button class="btn btn-primary" id="generateTeamPortfolio">
+                    <i class="fas fa-magic"></i> Generate Team Portfolio
+                </button>
+            </div>
+        </div>
+
+        <!-- Final Portfolio Page -->
+        <div class="page" id="portfolioPage">
+            <header class="page-header">
+                <h1>Final Portfolio</h1>
+                <p class="subtitle">Generate your polished Engineer Portfolio entry</p>
+            </header>
+
+            <div class="portfolio-builder">
+                <div class="card">
+                    <h3><i class="fas fa-robot"></i> AI Portfolio Assistant</h3>
+                    <p>Use AI to polish your writing, organize your documentation, and create a professional portfolio entry.</p>
+
+                    <div class="ai-options">
+                        <div class="ai-option" data-action="polish">
+                            <i class="fas fa-sparkles"></i>
+                            <h4>Polish Writing</h4>
+                            <p>Improve grammar, clarity, and technical writing style</p>
+                        </div>
+                        <div class="ai-option" data-action="organize">
+                            <i class="fas fa-sitemap"></i>
+                            <h4>Organize Content</h4>
+                            <p>Structure your work into a professional portfolio format</p>
+                        </div>
+                        <div class="ai-option" data-action="summarize">
+                            <i class="fas fa-compress-alt"></i>
+                            <h4>Create Summary</h4>
+                            <p>Generate an executive summary of your contributions</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-eye"></i> Portfolio Preview</h3>
+                    <div class="portfolio-preview" id="portfolioPreview">
+                        <p class="placeholder-text">Complete more deliverables to preview your portfolio...</p>
+                    </div>
+
+                    <div class="export-options">
+                        <button class="btn btn-secondary" id="exportPDF">
+                            <i class="fas fa-file-pdf"></i> Export PDF
+                        </button>
+                        <button class="btn btn-secondary" id="exportWord">
+                            <i class="fas fa-file-word"></i> Export Word
+                        </button>
+                        <button class="btn btn-primary" id="exportHTML">
+                            <i class="fas fa-code"></i> Export HTML
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-clipboard-check"></i> Presentation Prep</h3>
+                    <p>Practice your judge presentation with AI-generated questions.</p>
+                    <button class="btn btn-secondary" id="generateQuestions">
+                        <i class="fas fa-question-circle"></i> Generate Practice Questions
+                    </button>
+                    <div class="practice-questions" id="practiceQuestions"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- AI Assistant Panel -->
+    <div class="ai-panel" id="aiPanel">
+        <div class="ai-panel-header">
+            <h3><i class="fas fa-robot"></i> AI Assistant</h3>
+            <button class="ai-panel-close" id="closeAiPanel">&times;</button>
+        </div>
+        <div class="ai-panel-content" id="aiPanelContent">
+            <!-- AI interaction content -->
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

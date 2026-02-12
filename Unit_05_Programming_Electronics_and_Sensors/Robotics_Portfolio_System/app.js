@@ -11,7 +11,7 @@ const CONFIG = {
     VERSION: 'v2.8.5',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
-    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbzmA0eLDydJ3PVCKxUKQgDoqNJdyApIw_h_M8aquvgoVhlZBUvppUP1SVxWYe7R9Zud/exec',
+    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbxVW2ygtieDM8XBFHwKF9XtDYL8aV_NrXOPOc0dfC8SZtDo4iJNB6VfUeBkUdA2rSeY/exec',
 
     // Google OAuth Client ID
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -2146,3 +2146,199 @@ window.showToast = showToast;
 window.saveDeliverableDraft = saveDeliverableDraft;
 window.copySnippet = copySnippet;
 window.showResource = showResource;
+
+// ============================================
+// AI FEEDBACK MODULE (test mode only)
+// ============================================
+const AI_FEEDBACK_ENABLED = window.location.pathname.includes('test');
+
+if (AI_FEEDBACK_ENABLED) {
+    // Inject AI feedback modal into the page
+    document.addEventListener('DOMContentLoaded', () => {
+        const modalHtml = `
+            <div class="modal" id="aiFeedbackModal">
+                <div class="modal-content modal-large">
+                    <button class="modal-close" onclick="document.getElementById('aiFeedbackModal').classList.remove('active')">&times;</button>
+                    <div id="aiFeedbackContent">
+                        <div style="text-align: center; padding: 40px;">
+                            <i class="fas fa-robot" style="font-size: 48px; color: var(--primary); margin-bottom: 16px;"></i>
+                            <h2>AI Review</h2>
+                            <p style="color: var(--gray-600);">Analyzing your submission...</p>
+                            <div class="loading-spinner" style="margin: 20px auto;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+        // Add AI review button to reflection form
+        const reflectionActions = document.querySelector('#weeklyReflectionForm .form-actions');
+        if (reflectionActions) {
+            const aiBtn = document.createElement('button');
+            aiBtn.type = 'button';
+            aiBtn.className = 'btn btn-secondary';
+            aiBtn.innerHTML = '<i class="fas fa-robot"></i> AI Review';
+            aiBtn.style.cssText = 'background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none;';
+            aiBtn.addEventListener('click', () => requestAIFeedback('reflection'));
+            reflectionActions.insertBefore(aiBtn, reflectionActions.firstChild);
+        }
+
+        // Add CSS for AI feedback display
+        const style = document.createElement('style');
+        style.textContent = `
+            .ai-score-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+            .ai-score-label { width: 110px; font-size: 13px; font-weight: 500; }
+            .ai-score-track { flex: 1; height: 8px; background: var(--gray-200); border-radius: 4px; overflow: hidden; }
+            .ai-score-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+            .ai-score-value { width: 30px; text-align: right; font-size: 13px; font-weight: 600; }
+            .ai-level-badge { display: inline-block; font-size: 32px; font-weight: 700; width: 56px; height: 56px; line-height: 56px; text-align: center; border-radius: 12px; }
+            .ai-level-A { background: #e8f5e9; color: #2e7d32; }
+            .ai-level-B { background: #e3f2fd; color: #1565c0; }
+            .ai-level-C { background: #fff3e0; color: #e65100; }
+            .ai-level-D { background: #fce4ec; color: #c62828; }
+            .ai-section { margin-bottom: 16px; }
+            .ai-section h4 { margin-bottom: 8px; font-size: 14px; color: var(--gray-700); }
+            .ai-improvement { padding: 8px 12px; background: var(--gray-50); border-left: 3px solid var(--primary); margin-bottom: 6px; border-radius: 0 4px 4px 0; font-size: 13px; }
+            .ai-example-box { padding: 12px; background: #f0f7ff; border: 1px solid #c2deff; border-radius: 8px; font-size: 13px; line-height: 1.6; }
+        `;
+        document.head.appendChild(style);
+    });
+
+    function requestAIFeedback(type, deliverableId) {
+        const modal = document.getElementById('aiFeedbackModal');
+        const contentEl = document.getElementById('aiFeedbackContent');
+
+        // Show loading state
+        contentEl.innerHTML = `
+            <div style="text-align: center; padding: 40px;">
+                <i class="fas fa-robot" style="font-size: 48px; color: #764ba2; margin-bottom: 16px; display: block;"></i>
+                <h2 style="margin-bottom: 8px;">Analyzing Your Submission</h2>
+                <p style="color: var(--gray-600); margin-bottom: 24px;">The AI is reviewing your work for specificity, detail, completeness, and insight...</p>
+                <div style="width: 40px; height: 40px; border: 3px solid var(--gray-200); border-top-color: #764ba2; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+            </div>
+            <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+        `;
+        modal.classList.add('active');
+
+        // Gather submission data
+        let payload = { action: 'getAIFeedback', type, email: state.student?.email };
+
+        if (type === 'reflection') {
+            const data = getReflectionFormData();
+            payload.week = data.week;
+            payload.content = {
+                contributions: data.contributions,
+                challenges: data.challenges,
+                solutions: data.solutions,
+                goals: data.goals
+            };
+            payload.rubricScores = data.rubric;
+        } else if (type === 'deliverable') {
+            const deliverable = DELIVERABLES.find(d => d.id === deliverableId);
+            payload.title = deliverable?.title || `Deliverable ${deliverableId}`;
+            payload.week = deliverable?.week;
+            payload.content = {
+                text: document.getElementById('deliverableContent').value
+            };
+        }
+
+        // Call the backend
+        fetch(CONFIG.SHEETS_API_URL, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        })
+        .then(r => r.json())
+        .then(result => {
+            if (result.error) {
+                contentEl.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <i class="fas fa-exclamation-circle" style="font-size: 48px; color: var(--danger); margin-bottom: 16px; display: block;"></i>
+                        <h2>Unable to Get Feedback</h2>
+                        <p style="color: var(--gray-600);">${result.error}</p>
+                    </div>
+                `;
+                return;
+            }
+            displayAIFeedback(result.feedback, type);
+        })
+        .catch(err => {
+            contentEl.innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <i class="fas fa-exclamation-circle" style="font-size: 48px; color: var(--danger); margin-bottom: 16px; display: block;"></i>
+                    <h2>Connection Error</h2>
+                    <p style="color: var(--gray-600);">Could not reach the server. Please try again.</p>
+                </div>
+            `;
+        });
+    }
+
+    function displayAIFeedback(feedback, type) {
+        const contentEl = document.getElementById('aiFeedbackContent');
+        const scoreColors = { 1: '#c62828', 2: '#e65100', 3: '#1565c0', 4: '#2e7d32' };
+
+        contentEl.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                <div class="ai-level-badge ai-level-${feedback.level}">${feedback.level}</div>
+                <div>
+                    <h2 style="margin: 0 0 4px 0;">AI Review</h2>
+                    <p style="color: var(--gray-600); margin: 0; font-size: 14px;">${feedback.summary}</p>
+                </div>
+            </div>
+
+            <div class="ai-section">
+                <h4><i class="fas fa-chart-bar"></i> Quality Scores</h4>
+                ${['specificity', 'detail', 'completeness', 'insight'].map(key => `
+                    <div class="ai-score-bar">
+                        <span class="ai-score-label">${key.charAt(0).toUpperCase() + key.slice(1)}</span>
+                        <div class="ai-score-track">
+                            <div class="ai-score-fill" style="width: ${(feedback.scores[key] / 4) * 100}%; background: ${scoreColors[feedback.scores[key]] || '#999'};"></div>
+                        </div>
+                        <span class="ai-score-value">${feedback.scores[key]}/4</span>
+                    </div>
+                `).join('')}
+            </div>
+
+            <div class="ai-section">
+                <h4><i class="fas fa-star" style="color: #f9a825;"></i> Strengths</h4>
+                ${feedback.strengths.map(s => `<div class="ai-improvement" style="border-left-color: var(--success);">${s}</div>`).join('')}
+            </div>
+
+            <div class="ai-section">
+                <h4><i class="fas fa-arrow-up" style="color: var(--primary);"></i> How to Improve</h4>
+                ${feedback.improvements.map(i => `<div class="ai-improvement">${i}</div>`).join('')}
+            </div>
+
+            <div class="ai-section">
+                <h4><i class="fas fa-edit"></i> Example Improvement</h4>
+                <div class="ai-example-box">${feedback.example}</div>
+            </div>
+
+            <div style="text-align: center; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--gray-200);">
+                <p style="color: var(--gray-500); font-size: 12px; margin-bottom: 12px;">Use this feedback to improve your submission, then submit when ready.</p>
+                <button class="btn btn-secondary" onclick="document.getElementById('aiFeedbackModal').classList.remove('active')">
+                    <i class="fas fa-arrow-left"></i> Back to Editing
+                </button>
+            </div>
+        `;
+    }
+
+    // Patch the deliverable form to include AI review button
+    const _originalOpenDeliverableForm = openDeliverableForm;
+    openDeliverableForm = function(id) {
+        _originalOpenDeliverableForm(id);
+        // Inject AI review button into deliverable form actions
+        const formActions = document.querySelector('#deliverableForm .form-actions');
+        if (formActions) {
+            const aiBtn = document.createElement('button');
+            aiBtn.type = 'button';
+            aiBtn.className = 'btn btn-secondary';
+            aiBtn.innerHTML = '<i class="fas fa-robot"></i> AI Review';
+            aiBtn.style.cssText = 'background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none;';
+            aiBtn.addEventListener('click', () => requestAIFeedback('deliverable', id));
+            formActions.insertBefore(aiBtn, formActions.firstChild);
+        }
+    };
+
+    window.requestAIFeedback = requestAIFeedback;
+}

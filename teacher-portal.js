@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.10',
+    VERSION: 'v2.9.11',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -21,7 +21,7 @@ const CONFIG = {
     COURSES: {
         robotics: {
             name: 'Robotics Portfolio',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbySBQE8BHty1vw4u2SkRQN4LAtYk-0Z8Nuvw2Iwrq_97ktwPq3yIF7pVE8IzfYabt5C/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbxVW2ygtieDM8XBFHwKF9XtDYL8aV_NrXOPOc0dfC8SZtDo4iJNB6VfUeBkUdA2rSeY/exec',
             hasTeams: false,
             totalDeliverables: 9,
             totalReflections: 9,
@@ -30,7 +30,7 @@ const CONFIG = {
         },
         frc: {
             name: 'FRC Portfolio',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbxgbjUdbObmJKiV911QuC0LLnlCxRoK8dORiObLK32zsm1pGfyYdVnYxVh2eVxS9UJ2/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbwAvmEvw57yxtPJUSk18msLpon4zgOOV592X9GlUzYsBk4x1u0C3nRrRAvt-X_AJ-Uv/exec',
             hasTeams: true,
             teams: ['drivetrain', 'intake', 'shooter', 'climber', 'autonomous', 'integration'],
             totalDeliverables: 10,
@@ -576,15 +576,21 @@ function openStudentDetail(email) {
             const selfAssessment = submitted[10]; // Column K - Self Assessment (rubric total /16)
             const existingGrade = draft?.teacherGrade ?? submitted[11] ?? '';
             const existingFeedback = draft?.teacherFeedback ?? submitted[12] ?? '';
+            const gradedAt = submitted[13] || '';
+            const submittedAt = submitted[8] || '';
             const isUngraded = existingGrade === '' || existingGrade === null || existingGrade === undefined;
+            const isResubmitted = !isUngraded && gradedAt && submittedAt && new Date(submittedAt) > new Date(gradedAt);
             const contentId = `reflection-content-${week}`;
             const fullContent = `<strong>Contributions:</strong><br>${(submitted[3] || '').replace(/\n/g, '<br>')}${submitted[5] ? `<br><br><strong>Challenges:</strong> ${submitted[5]}` : ''}${submitted[6] ? `<br><strong>Solutions:</strong> ${submitted[6]}` : ''}`;
             const needsExpand = fullContent.length > 400;
+            const statusLabel = isResubmitted ? 'Resubmitted' : (isUngraded ? 'Needs Grading' : 'Graded');
+            const statusClass = isResubmitted ? 'status-behind' : (isUngraded ? 'status-behind' : 'status-on-track');
+            const borderStyle = isResubmitted ? 'border-left: 4px solid #e53935;' : (isUngraded ? 'border-left: 4px solid var(--warning);' : '');
             reflectionsPanel.innerHTML += `
-                <div class="item-card" style="${isUngraded ? 'border-left: 4px solid var(--warning);' : ''}">
+                <div class="item-card" style="${borderStyle}">
                     <div class="item-header">
                         <span class="item-title">Week ${week}</span>
-                        <span class="item-status status-badge ${isUngraded ? 'status-behind' : 'status-on-track'}">${isUngraded ? 'Needs Grading' : 'Graded'}</span>
+                        <span class="item-status status-badge ${statusClass}">${statusLabel}</span>
                         ${selfAssessment ? `<span style="margin-left: auto; font-size: 12px; color: var(--gray-600);">Self: ${selfAssessment}/16</span>` : ''}
                     </div>
                     <div class="item-content" id="${contentId}" style="${needsExpand ? 'max-height: 150px; overflow: hidden; position: relative;' : ''}">
@@ -651,8 +657,11 @@ function openStudentDetail(email) {
         if (submitted && submitted[7] === 'completed') {
             const existingGrade = draft?.teacherGrade ?? submitted[9] ?? '';
             const existingFeedback = draft?.teacherFeedback ?? submitted[10] ?? '';
+            const gradedAt = submitted[11] || '';
+            const submittedAt = submitted[8] || '';
             const maxPoints = course.deliverablePoints?.[id] || 50;
             const isUngraded = existingGrade === '' || existingGrade === null || existingGrade === undefined;
+            const isResubmitted = !isUngraded && gradedAt && submittedAt && new Date(submittedAt) > new Date(gradedAt);
             const contentId = `deliverable-content-${id}`;
             const content = submitted[4] || '';
             const selfAssessmentText = submitted[6] !== '' && submitted[6] !== null && submitted[6] !== undefined ? `<br><br><strong>Self-Assessment:</strong> ${submitted[6]}/10` : '';
@@ -660,11 +669,14 @@ function openStudentDetail(email) {
             const fullContent = content + selfAssessmentText + linksText;
             const needsExpand = content.length > 300;
             const previewContent = needsExpand ? content.substring(0, 300) + '...' + selfAssessmentText + linksText : fullContent;
+            const dStatusLabel = isResubmitted ? 'Resubmitted' : (isUngraded ? 'Needs Grading' : 'Graded');
+            const dStatusClass = isResubmitted ? 'status-behind' : (isUngraded ? 'status-behind' : 'status-on-track');
+            const dBorderStyle = isResubmitted ? 'border-left: 4px solid #e53935;' : (isUngraded ? 'border-left: 4px solid var(--warning);' : '');
             deliverablesPanel.innerHTML += `
-                <div class="item-card" style="${isUngraded ? 'border-left: 4px solid var(--warning);' : ''}">
+                <div class="item-card" style="${dBorderStyle}">
                     <div class="item-header">
                         <span class="item-title">${submitted[3] || `Deliverable ${id}`}</span>
-                        <span class="item-status status-badge ${isUngraded ? 'status-behind' : 'status-on-track'}">${isUngraded ? 'Needs Grading' : 'Graded'}</span>
+                        <span class="item-status status-badge ${dStatusClass}">${dStatusLabel}</span>
                     </div>
                     <div class="item-content" id="${contentId}" data-expanded="false">
                         ${previewContent}

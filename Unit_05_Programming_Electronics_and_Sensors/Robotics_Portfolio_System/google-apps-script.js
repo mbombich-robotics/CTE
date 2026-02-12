@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.10';
+const BACKEND_VERSION = 'v2.9.12a';
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
@@ -88,6 +88,9 @@ function doPost(e) {
       case 'sendReminders':
         return jsonResponse(sendRemindersWeb(data.semesterStart));
 
+      case 'getAIFeedback':
+        return jsonResponse(getAIFeedback(data));
+
       default:
         return jsonResponse({ error: 'Unknown action' });
     }
@@ -131,14 +134,14 @@ function initializeSheets() {
   let reflectionsSheet = ss.getSheetByName(SHEET_NAMES.REFLECTIONS);
   if (!reflectionsSheet) {
     reflectionsSheet = ss.insertSheet(SHEET_NAMES.REFLECTIONS);
-    reflectionsSheet.getRange(1, 1, 1, 13).setValues([[
-      'Email', 'Name', 'Week', 'Contributions', 'Evidence Links', 'Challenges', 'Solutions', 'Goals', 'Submitted At', 'Points', 'Self Assessment', 'Grade', 'Feedback'
+    reflectionsSheet.getRange(1, 1, 1, 14).setValues([[
+      'Email', 'Name', 'Week', 'Contributions', 'Evidence Links', 'Challenges', 'Solutions', 'Goals', 'Submitted At', 'Points', 'Self Assessment', 'Grade', 'Feedback', 'Graded At'
     ]]);
-    reflectionsSheet.getRange(1, 1, 1, 13).setFontWeight('bold').setBackground('#34a853').setFontColor('white');
+    reflectionsSheet.getRange(1, 1, 1, 14).setFontWeight('bold').setBackground('#34a853').setFontColor('white');
     reflectionsSheet.setFrozenRows(1);
   } else {
     // Add missing columns if needed
-    const headers = reflectionsSheet.getRange(1, 1, 1, 13).getValues()[0];
+    const headers = reflectionsSheet.getRange(1, 1, 1, reflectionsSheet.getLastColumn()).getValues()[0];
     if (!headers[10] || headers[10] !== 'Self Assessment') {
       reflectionsSheet.getRange(1, 11).setValue('Self Assessment');
       reflectionsSheet.getRange(1, 11).setFontWeight('bold').setBackground('#34a853').setFontColor('white');
@@ -151,16 +154,20 @@ function initializeSheets() {
       reflectionsSheet.getRange(1, 13).setValue('Feedback');
       reflectionsSheet.getRange(1, 13).setFontWeight('bold').setBackground('#34a853').setFontColor('white');
     }
+    if (headers.length < 14 || headers[13] !== 'Graded At') {
+      reflectionsSheet.getRange(1, 14).setValue('Graded At');
+      reflectionsSheet.getRange(1, 14).setFontWeight('bold').setBackground('#34a853').setFontColor('white');
+    }
   }
 
   // Deliverables sheet
   let deliverablesSheet = ss.getSheetByName(SHEET_NAMES.DELIVERABLES);
   if (!deliverablesSheet) {
     deliverablesSheet = ss.insertSheet(SHEET_NAMES.DELIVERABLES);
-    deliverablesSheet.getRange(1, 1, 1, 10).setValues([[
-      'Email', 'Name', 'Deliverable ID', 'Title', 'Content', 'Links', 'Self Assessment', 'Status', 'Submitted At', 'Grade'
+    deliverablesSheet.getRange(1, 1, 1, 12).setValues([[
+      'Email', 'Name', 'Deliverable ID', 'Title', 'Content', 'Links', 'Self Assessment', 'Status', 'Submitted At', 'Grade', 'Feedback', 'Graded At'
     ]]);
-    deliverablesSheet.getRange(1, 1, 1, 10).setFontWeight('bold').setBackground('#fbbc04').setFontColor('black');
+    deliverablesSheet.getRange(1, 1, 1, 12).setFontWeight('bold').setBackground('#fbbc04').setFontColor('black');
     deliverablesSheet.setFrozenRows(1);
   }
 
@@ -778,11 +785,13 @@ function saveGrades(grades) {
   grades.forEach(gradeData => {
     const { email, type, assignmentId, grade, feedback } = gradeData;
 
+    const gradedAt = new Date().toISOString();
+
     if (type === 'reflection') {
       const sheet = ss.getSheetByName(SHEET_NAMES.REFLECTIONS);
       const data = sheet.getDataRange().getValues();
 
-      // Ensure we have grade and feedback columns (L=12, M=13) - K is Self Assessment
+      // Ensure we have grade, feedback, and graded at columns
       const headerRow = data[0];
       if (headerRow.length < 13 || headerRow[11] !== 'Grade') {
         sheet.getRange(1, 12).setValue('Grade');
@@ -790,12 +799,16 @@ function saveGrades(grades) {
       if (headerRow.length < 13 || headerRow[12] !== 'Feedback') {
         sheet.getRange(1, 13).setValue('Feedback');
       }
+      if (headerRow.length < 14 || headerRow[13] !== 'Graded At') {
+        sheet.getRange(1, 14).setValue('Graded At');
+      }
 
       // Find the reflection row
       for (let i = 1; i < data.length; i++) {
         if (data[i][0] === email && data[i][2] == assignmentId) {
           if (grade !== '') sheet.getRange(i + 1, 12).setValue(parseFloat(grade));
           if (feedback !== '') sheet.getRange(i + 1, 13).setValue(feedback);
+          if (grade !== '' || feedback !== '') sheet.getRange(i + 1, 14).setValue(gradedAt);
           break;
         }
       }
@@ -803,10 +816,13 @@ function saveGrades(grades) {
       const sheet = ss.getSheetByName(SHEET_NAMES.DELIVERABLES);
       const data = sheet.getDataRange().getValues();
 
-      // Ensure we have feedback column (J=Grade already exists, K=11 for Feedback)
+      // Ensure we have feedback and graded at columns
       const headerRow = data[0];
       if (headerRow.length < 11 || headerRow[10] !== 'Feedback') {
         sheet.getRange(1, 11).setValue('Feedback');
+      }
+      if (headerRow.length < 12 || headerRow[11] !== 'Graded At') {
+        sheet.getRange(1, 12).setValue('Graded At');
       }
 
       // Find the deliverable row
@@ -814,6 +830,7 @@ function saveGrades(grades) {
         if (data[i][0] === email && data[i][2] == assignmentId) {
           if (grade !== '') sheet.getRange(i + 1, 10).setValue(parseFloat(grade));
           if (feedback !== '') sheet.getRange(i + 1, 11).setValue(feedback);
+          if (grade !== '' || feedback !== '') sheet.getRange(i + 1, 12).setValue(gradedAt);
           break;
         }
       }
@@ -1038,6 +1055,122 @@ function sendReminderEmails() {
   });
 
   ui.alert(`Sent ${emailsSent} reminder emails. Check the execution log for details.`);
+}
+
+// ============================================
+// AI FEEDBACK (Gemini)
+// ============================================
+
+/**
+ * Get AI feedback on a student submission using Gemini API.
+ * Requires GEMINI_API_KEY to be set in Script Properties:
+ *   File > Project Settings > Script Properties > Add: GEMINI_API_KEY = your_key
+ */
+function getAIFeedback(data) {
+  const apiKey = PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY');
+  if (!apiKey) {
+    return { error: 'AI feedback is not configured. Set GEMINI_API_KEY in Script Properties.' };
+  }
+
+  const { type, content, title, week, rubricScores } = data;
+
+  // Build the prompt based on submission type
+  let submissionText = '';
+  if (type === 'reflection') {
+    const contributions = content.contributions || [];
+    const contribText = contributions.map(c => `  ${c.date}: ${c.task}`).join('\n');
+    submissionText = [
+      `WEEKLY REFLECTION - Week ${week}`,
+      '',
+      'Daily Contributions:',
+      contribText || '  (none provided)',
+      '',
+      'Challenges: ' + (content.challenges || '(not provided)'),
+      'Solutions: ' + (content.solutions || '(not provided)'),
+      '',
+      'Goals for Next Week:',
+      (content.goals || []).map(g => `  - ${g}`).join('\n') || '  (none provided)'
+    ].join('\n');
+  } else if (type === 'deliverable') {
+    submissionText = [
+      `DELIVERABLE: ${title || 'Untitled'}`,
+      '',
+      content.text || content || ''
+    ].join('\n');
+  }
+
+  const selfAssessment = rubricScores ? `\nStudent self-assessment: ${JSON.stringify(rubricScores)}` : '';
+
+  const prompt = `You are a supportive robotics engineering teacher reviewing a high school student's portfolio submission. Your goal is to help them improve their submission by one quality level.
+
+SUBMISSION:
+${submissionText}
+${selfAssessment}
+
+EVALUATION CRITERIA:
+- Specificity: Does the student mention specific tools, components, code functions, or technical details? (e.g., "adjusted PID constants" vs "worked on the robot")
+- Detail: Is the description thorough enough to understand what was accomplished?
+- Completeness: Are all sections addressed with meaningful content?
+- Insight: Does the student show genuine reflection, problem-solving thinking, and learning?
+
+RESPONSE FORMAT - You MUST respond with valid JSON only, no markdown:
+{
+  "level": "A" or "B" or "C" or "D",
+  "summary": "One sentence overall assessment",
+  "scores": {
+    "specificity": 1-4,
+    "detail": 1-4,
+    "completeness": 1-4,
+    "insight": 1-4
+  },
+  "strengths": ["strength 1", "strength 2"],
+  "improvements": ["specific actionable suggestion 1", "specific actionable suggestion 2", "specific actionable suggestion 3"],
+  "example": "Take one weak part of their submission and rewrite it to show what a stronger version looks like"
+}
+
+TONE GUIDELINES:
+- If the submission is minimal or vague (D-level): Be warm and encouraging. Focus on easy, concrete wins. Example: "You mentioned working on the robot - try adding which specific part you worked on and what tool you used."
+- If the submission shows effort but lacks depth (C-level): Be supportive but direct. Point out exactly where more detail would strengthen it.
+- If the submission is solid but could be polished (B-level): Be professional. Highlight what makes it good and suggest refinements for excellence.
+- If the submission is strong (A-level): Affirm the quality. Suggest minor polish only.
+
+Remember: respond with ONLY the JSON object, no other text.`;
+
+  try {
+    const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + apiKey;
+
+    const response = UrlFetchApp.fetch(url, {
+      method: 'post',
+      contentType: 'application/json',
+      payload: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 1024
+        }
+      }),
+      muteHttpExceptions: true
+    });
+
+    const result = JSON.parse(response.getContentText());
+
+    if (result.error) {
+      return { error: 'Gemini API error: ' + result.error.message };
+    }
+
+    const aiText = result.candidates[0].content.parts[0].text;
+
+    // Parse the JSON response (strip markdown code fences if present)
+    const cleanJson = aiText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    const feedback = JSON.parse(cleanJson);
+
+    logActivity('AI_FEEDBACK', data.email || 'unknown', `${type} week ${week || ''}: Level ${feedback.level}`);
+
+    return { success: true, feedback };
+  } catch (error) {
+    logActivity('AI_ERROR', data.email || 'unknown', error.toString());
+    return { error: 'Failed to get AI feedback: ' + error.toString() };
+  }
 }
 
 /**
