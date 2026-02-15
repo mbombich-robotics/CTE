@@ -1296,9 +1296,9 @@ function loadGradeTable() {
                 if (draft?.rubric?.total) {
                     selfScore = `${draft.rubric.total}/16`;
                 }
-                // Get existing grade/feedback from submissions (if stored)
-                existingGrade = submitted[9] || ''; // Column J - grade
-                existingFeedback = submitted[10] || ''; // Column K - feedback
+                // Get existing grade/feedback - Column L (index 11) = Grade, Column M (index 12) = Feedback
+                existingGrade = submitted[11] || '';
+                existingFeedback = submitted[12] || '';
             } else if (draft && !draft.submitted && (draft.contributions?.length > 0 || draft.challenges)) {
                 status = '<span class="status-badge status-behind">Draft</span>';
                 if (draft.rubric?.total) {
@@ -1382,23 +1382,33 @@ async function saveAllGrades() {
     btn.disabled = true;
 
     try {
-        await fetch(course.apiUrl, {
+        const response = await fetch(course.apiUrl, {
             method: 'POST',
-            mode: 'no-cors',
+            redirect: 'follow',
             body: JSON.stringify({
                 action: 'saveGrades',
                 grades: grades
             })
         });
 
-        btn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+        const text = await response.text();
+        let result;
+        try { result = JSON.parse(text); } catch (e) { result = {}; }
+
+        if (result.success) {
+            btn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+        } else {
+            btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error: ' + (result.error || 'Unknown');
+        }
+
         setTimeout(() => {
             btn.innerHTML = '<i class="fas fa-save"></i> Save All Grades';
             btn.disabled = false;
         }, 2000);
 
         // Reload data to show updated grades
-        loadCourseData();
+        await loadCourseData();
+        loadGradeTable();
     } catch (error) {
         console.error('Failed to save grades:', error);
         btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error';
