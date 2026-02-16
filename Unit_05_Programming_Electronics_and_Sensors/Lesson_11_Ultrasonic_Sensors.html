@@ -550,16 +550,19 @@
                 <h2>Wiring the HC-SR04</h2>
             </div>
             <div class="content">
-                <div class="diagram" style="font-size: 1rem;">
-                    <pre style="text-align: left; display: inline-block;">
-   HC-SR04                    Arduino RP2040
-  ┌─────────┐                ┌─────────────┐
-  │  VCC    │───────────────→│  5V         │
-  │  GND    │───────────────→│  GND        │
-  │  TRIG   │───────────────→│  Pin 2      │
-  │  ECHO   │───────────────→│  Pin 3      │
-  └─────────┘                └─────────────┘
-                    </pre>
+                <div class="concept-box" style="font-size: 1.1rem;">
+                    <h3 style="color: #50fa7b; margin-top: 0;">Wire Connections</h3>
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                        <tr style="border-bottom: 1px solid #444;">
+                            <th style="text-align: left; padding: 8px; color: #00d4ff;">Arduino Pin</th>
+                            <th style="text-align: center; padding: 8px;">→</th>
+                            <th style="text-align: left; padding: 8px; color: #ff9500;">Sensor Pin</th>
+                        </tr>
+                        <tr><td style="padding: 8px;">5V</td><td style="text-align: center;">→</td><td style="padding: 8px;">VCC</td></tr>
+                        <tr><td style="padding: 8px;">GND</td><td style="text-align: center;">→</td><td style="padding: 8px;">GND</td></tr>
+                        <tr><td style="padding: 8px;">Pin 9</td><td style="text-align: center;">→</td><td style="padding: 8px;">TRIG</td></tr>
+                        <tr><td style="padding: 8px;">Pin 10</td><td style="text-align: center;">→</td><td style="padding: 8px;">ECHO</td></tr>
+                    </table>
                 </div>
 
                 <div class="two-column">
@@ -569,7 +572,7 @@
                             <ul>
                                 <li>TRIG can be any digital output pin</li>
                                 <li>ECHO can be any digital input pin</li>
-                                <li>We'll use pins 2 and 3 in our examples</li>
+                                <li>We'll use pins 9 and 10 in our examples</li>
                             </ul>
                         </div>
                     </div>
@@ -672,8 +675,8 @@ Timeline:
             <div class="content">
                 <div class="code-block"><button class="copy-btn" onclick="copyCode1()">Copy</button><span class="code-comment">// HC-SR04 Ultrasonic Sensor - Basic Distance Reading</span>
 
-<span class="code-keyword">const int</span> trigPin = <span class="code-number">2</span>;
-<span class="code-keyword">const int</span> echoPin = <span class="code-number">3</span>;
+<span class="code-keyword">const int</span> trigPin = <span class="code-number">9</span>;
+<span class="code-keyword">const int</span> echoPin = <span class="code-number">10</span>;
 
 <span class="code-keyword">void</span> <span class="code-function">setup</span>() {
   <span class="code-function">Serial</span>.<span class="code-function">begin</span>(<span class="code-number">115200</span>);
@@ -842,11 +845,11 @@ Timeline:
 
                 <div class="two-column">
                     <div class="column">
-                        <h3>1. Wiring Diagram (10 pts)</h3>
+                        <h3>1. Wiring Connections (10 pts)</h3>
                         <ul>
-                            <li>Hand-drawn or digital</li>
-                            <li>Label all connections</li>
-                            <li>Show pin numbers clearly</li>
+                            <li>List each wire connection (Arduino pin → sensor pin)</li>
+                            <li>Include power and ground connections</li>
+                            <li>Verify all 4 connections are listed</li>
                         </ul>
 
                         <h3 style="margin-top: 20px;">2. Code with Comments (15 pts)</h3>
@@ -964,8 +967,8 @@ Timeline:
         function copyCode1() {
             const code = `// HC-SR04 Ultrasonic Sensor - Basic Distance Reading
 
-const int trigPin = 2;
-const int echoPin = 3;
+const int trigPin = 9;
+const int echoPin = 10;
 
 void setup() {
   Serial.begin(115200);

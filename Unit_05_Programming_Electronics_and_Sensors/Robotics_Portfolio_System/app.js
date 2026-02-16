@@ -84,9 +84,9 @@ const DELIVERABLES = [
         phase: 'scanner',
         description: 'Document your ultrasonic sensor setup and testing.',
         requirements: [
-            'Wiring diagram (hand-drawn or digital)',
+            'Wire connections list (Arduino pin → sensor pin)',
             'Code with comments explaining each section',
-            'Distance accuracy data table (5+ distances)',
+            'Distance accuracy data table (5 distances, 3 readings each)',
             'Observations about sensor behavior'
         ]
     },
@@ -1863,9 +1863,63 @@ function openDeliverableForm(id) {
             </div>
             ` : ''}
 
+            ${id === 3 ? `
+            <div class="card" style="margin-bottom: 20px; border-left: 3px solid var(--primary);">
+                <h4 style="margin-bottom: 12px;"><i class="fas fa-plug"></i> Wire Connections</h4>
+                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 12px;">List each wire from your Arduino to the HC-SR04 sensor</p>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--gray-200);">
+                            <th style="text-align: left; padding: 8px; font-size: 14px;">Arduino Pin</th>
+                            <th style="text-align: center; padding: 8px; font-size: 14px;">→</th>
+                            <th style="text-align: left; padding: 8px; font-size: 14px;">Sensor Pin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${[0,1,2,3].map(i => {
+                            const w = (existing.wiring && existing.wiring[i]) || {};
+                            return `<tr>
+                                <td style="padding: 6px 8px;"><input type="text" class="wiring-arduino" data-row="${i}" value="${w.arduino || ''}" placeholder="e.g. 5V, GND, Pin 9" style="width: 100%; padding: 6px; border: 1px solid var(--gray-200); border-radius: 4px;"></td>
+                                <td style="text-align: center; color: var(--gray-400);">→</td>
+                                <td style="padding: 6px 8px;"><input type="text" class="wiring-sensor" data-row="${i}" value="${w.sensor || ''}" placeholder="e.g. VCC, GND, TRIG" style="width: 100%; padding: 6px; border: 1px solid var(--gray-200); border-radius: 4px;"></td>
+                            </tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card" style="margin-bottom: 20px; border-left: 3px solid var(--success);">
+                <h4 style="margin-bottom: 12px;"><i class="fas fa-ruler"></i> Distance Accuracy Test</h4>
+                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 12px;">Place an object at each distance and record 3 sensor readings</p>
+                <table style="width: 100%; border-collapse: collapse; text-align: center;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--gray-200);">
+                            <th style="padding: 8px; font-size: 14px;">Actual (cm)</th>
+                            <th style="padding: 8px; font-size: 14px;">Reading 1</th>
+                            <th style="padding: 8px; font-size: 14px;">Reading 2</th>
+                            <th style="padding: 8px; font-size: 14px;">Reading 3</th>
+                            <th style="padding: 8px; font-size: 14px;">Avg Error</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${[5, 10, 20, 50, 100].map((dist, i) => {
+                            const row = (existing.accuracyData && existing.accuracyData[i]) || {};
+                            return `<tr style="border-bottom: 1px solid var(--gray-100);">
+                                <td style="padding: 6px 8px; font-weight: bold;">${dist}</td>
+                                <td style="padding: 6px 4px;"><input type="number" class="accuracy-reading" data-row="${i}" data-col="r1" value="${row.r1 || ''}" placeholder="cm" style="width: 70px; padding: 4px; text-align: center; border: 1px solid var(--gray-200); border-radius: 4px;"></td>
+                                <td style="padding: 6px 4px;"><input type="number" class="accuracy-reading" data-row="${i}" data-col="r2" value="${row.r2 || ''}" placeholder="cm" style="width: 70px; padding: 4px; text-align: center; border: 1px solid var(--gray-200); border-radius: 4px;"></td>
+                                <td style="padding: 6px 4px;"><input type="number" class="accuracy-reading" data-row="${i}" data-col="r3" value="${row.r3 || ''}" placeholder="cm" style="width: 70px; padding: 4px; text-align: center; border: 1px solid var(--gray-200); border-radius: 4px;"></td>
+                                <td style="padding: 6px 8px;"><span class="avg-error" data-row="${i}" style="font-weight: bold; color: var(--gray-500);">—</span></td>
+                            </tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+            ` : ''}
+
             <div class="form-group">
-                <label for="deliverableContent">Your Submission</label>
-                <textarea id="deliverableContent" rows="8" placeholder="Describe what you did, paste your code, explain your process...">${existing.content || ''}</textarea>
+                <label for="deliverableContent">${id === 3 ? 'Code & Observations' : 'Your Submission'}</label>
+                <textarea id="deliverableContent" rows="8" placeholder="${id === 3 ? 'Paste your code with comments, and describe your observations about sensor behavior...' : 'Describe what you did, paste your code, explain your process...'}">${existing.content || ''}</textarea>
             </div>
 
             <div class="form-group">
@@ -1900,12 +1954,53 @@ function openDeliverableForm(id) {
         el.addEventListener('input', markDirty);
     });
 
+    // Auto-calculate average error for deliverable 3 accuracy table
+    if (id === 3) {
+        const distances = [5, 10, 20, 50, 100];
+        function updateAvgErrors() {
+            distances.forEach((dist, i) => {
+                const r1 = parseFloat(document.querySelector(`.accuracy-reading[data-row="${i}"][data-col="r1"]`)?.value);
+                const r2 = parseFloat(document.querySelector(`.accuracy-reading[data-row="${i}"][data-col="r2"]`)?.value);
+                const r3 = parseFloat(document.querySelector(`.accuracy-reading[data-row="${i}"][data-col="r3"]`)?.value);
+                const span = document.querySelector(`.avg-error[data-row="${i}"]`);
+                const readings = [r1, r2, r3].filter(v => !isNaN(v));
+                if (readings.length > 0) {
+                    const avgError = readings.reduce((sum, r) => sum + Math.abs(r - dist), 0) / readings.length;
+                    span.textContent = avgError.toFixed(1) + ' cm';
+                    span.style.color = avgError <= 2 ? 'var(--success)' : avgError <= 5 ? '#f59e0b' : 'var(--danger)';
+                } else {
+                    span.textContent = '—';
+                    span.style.color = 'var(--gray-500)';
+                }
+            });
+        }
+        content.querySelectorAll('.accuracy-reading').forEach(el => {
+            el.addEventListener('input', updateAvgErrors);
+        });
+        updateAvgErrors(); // Calculate on load if data exists
+    }
+
     document.getElementById('deliverableForm').addEventListener('submit', (e) => {
         e.preventDefault();
         submitDeliverable(id);
     });
 
     modal.classList.add('active');
+}
+
+function collectDeliverable3CustomData() {
+    const wiring = [0,1,2,3].map(i => ({
+        arduino: document.querySelector(`.wiring-arduino[data-row="${i}"]`)?.value || '',
+        sensor: document.querySelector(`.wiring-sensor[data-row="${i}"]`)?.value || ''
+    }));
+    const distances = [5, 10, 20, 50, 100];
+    const accuracyData = distances.map((dist, i) => ({
+        actual: dist,
+        r1: document.querySelector(`.accuracy-reading[data-row="${i}"][data-col="r1"]`)?.value || '',
+        r2: document.querySelector(`.accuracy-reading[data-row="${i}"][data-col="r2"]`)?.value || '',
+        r3: document.querySelector(`.accuracy-reading[data-row="${i}"][data-col="r3"]`)?.value || ''
+    }));
+    return { wiring, accuracyData };
 }
 
 function saveDeliverableDraft(id) {
@@ -1916,6 +2011,7 @@ function saveDeliverableDraft(id) {
         links: document.getElementById('deliverableLinks').value,
         selfAssessment: document.getElementById('deliverableSelfAssessment').value,
         completionTime: completionTimeEl ? parseInt(completionTimeEl.value) || null : null,
+        ...(id === 3 ? collectDeliverable3CustomData() : {}),
         status: 'in-progress',
         updatedAt: new Date().toISOString()
     };
@@ -1939,6 +2035,7 @@ function submitDeliverable(id) {
         links: document.getElementById('deliverableLinks').value,
         selfAssessment: document.getElementById('deliverableSelfAssessment').value,
         completionTime: completionTimeEl ? parseInt(completionTimeEl.value) || null : null,
+        ...(id === 3 ? collectDeliverable3CustomData() : {}),
         status: 'completed',
         submittedAt: new Date().toISOString()
     };
