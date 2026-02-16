@@ -2022,13 +2022,13 @@ function saveDeliverableDraft(id) {
 
 function formatDeliverable3Content(content, customData) {
     const { wiring, accuracyData } = customData;
-    let formatted = '=== WIRE CONNECTIONS ===\n';
+    let formatted = '--- WIRE CONNECTIONS ---\n';
     wiring.forEach(w => {
         if (w.arduino || w.sensor) {
             formatted += `${w.arduino} → ${w.sensor}\n`;
         }
     });
-    formatted += '\n=== DISTANCE ACCURACY TEST ===\n';
+    formatted += '\n--- DISTANCE ACCURACY TEST ---\n';
     formatted += 'Actual(cm) | Reading1 | Reading2 | Reading3 | Avg Error\n';
     formatted += '-----------|----------|----------|----------|---------\n';
     const distances = [5, 10, 20, 50, 100];
@@ -2039,7 +2039,7 @@ function formatDeliverable3Content(content, customData) {
             : '—';
         formatted += `${String(distances[i]).padEnd(10)} | ${String(row.r1 || '—').padEnd(8)} | ${String(row.r2 || '—').padEnd(8)} | ${String(row.r3 || '—').padEnd(8)} | ${avgError}\n`;
     });
-    formatted += '\n=== CODE & OBSERVATIONS ===\n' + content;
+    formatted += '\n--- CODE & OBSERVATIONS ---\n' + content;
     return formatted;
 }
 
