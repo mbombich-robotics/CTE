@@ -1919,7 +1919,7 @@ function openDeliverableForm(id) {
 
             <div class="form-group">
                 <label for="deliverableContent">${id === 3 ? 'Code & Observations' : 'Your Submission'}</label>
-                <textarea id="deliverableContent" rows="8" placeholder="${id === 3 ? 'Paste your code with comments, and describe your observations about sensor behavior...' : 'Describe what you did, paste your code, explain your process...'}">${existing.content || ''}</textarea>
+                <textarea id="deliverableContent" rows="8" placeholder="${id === 3 ? 'Paste your code with comments, and describe your observations about sensor behavior...' : 'Describe what you did, paste your code, explain your process...'}">${id === 3 ? (existing.rawContent || existing.content || '') : (existing.content || '')}</textarea>
             </div>
 
             <div class="form-group">
@@ -2020,6 +2020,29 @@ function saveDeliverableDraft(id) {
     showToast('Draft saved!', 'success');
 }
 
+function formatDeliverable3Content(content, customData) {
+    const { wiring, accuracyData } = customData;
+    let formatted = '=== WIRE CONNECTIONS ===\n';
+    wiring.forEach(w => {
+        if (w.arduino || w.sensor) {
+            formatted += `${w.arduino} → ${w.sensor}\n`;
+        }
+    });
+    formatted += '\n=== DISTANCE ACCURACY TEST ===\n';
+    formatted += 'Actual(cm) | Reading1 | Reading2 | Reading3 | Avg Error\n';
+    formatted += '-----------|----------|----------|----------|---------\n';
+    const distances = [5, 10, 20, 50, 100];
+    accuracyData.forEach((row, i) => {
+        const readings = [row.r1, row.r2, row.r3].map(r => parseFloat(r)).filter(r => !isNaN(r));
+        const avgError = readings.length > 0
+            ? (readings.reduce((sum, r) => sum + Math.abs(r - distances[i]), 0) / readings.length).toFixed(1)
+            : '—';
+        formatted += `${String(distances[i]).padEnd(10)} | ${String(row.r1 || '—').padEnd(8)} | ${String(row.r2 || '—').padEnd(8)} | ${String(row.r3 || '—').padEnd(8)} | ${avgError}\n`;
+    });
+    formatted += '\n=== CODE & OBSERVATIONS ===\n' + content;
+    return formatted;
+}
+
 function submitDeliverable(id) {
     const deliverable = DELIVERABLES.find(d => d.id === id);
     const content = document.getElementById('deliverableContent').value;
@@ -2030,12 +2053,16 @@ function submitDeliverable(id) {
         return;
     }
 
+    const customData = id === 3 ? collectDeliverable3CustomData() : {};
+    const finalContent = id === 3 ? formatDeliverable3Content(content, customData) : content;
+
     state.deliverables[id] = {
-        content,
+        content: finalContent,
+        rawContent: id === 3 ? content : undefined,
         links: document.getElementById('deliverableLinks').value,
         selfAssessment: document.getElementById('deliverableSelfAssessment').value,
         completionTime: completionTimeEl ? parseInt(completionTimeEl.value) || null : null,
-        ...(id === 3 ? collectDeliverable3CustomData() : {}),
+        ...customData,
         status: 'completed',
         submittedAt: new Date().toISOString()
     };
