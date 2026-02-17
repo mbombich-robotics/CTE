@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.12a',
+    VERSION: 'v2.9.13',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -263,7 +263,7 @@ async function loadCourseData() {
     `;
 
     try {
-        const response = await fetch(course.apiUrl + '?action=all');
+        const response = await fetch(course.apiUrl + '?action=all&_t=' + Date.now());
         state.rawData = await response.json();
         processStudentData();
         applyFilters();
@@ -505,7 +505,7 @@ function renderStudentTable(students) {
             </td>
             <td>
                 <span class="status-badge status-${s.status}">${formatStatus(s.status)}</span>
-                ${s.ungradedTotal > 0 ? `<span class="status-badge" style="background: #fef3c7; color: #92400e; margin-left: 4px;" title="${s.ungradedTotal} item(s) need grading"><i class="fas fa-pen"></i> ${s.ungradedTotal}</span>` : ''}
+                ${s.ungradedTotal > 0 ? `<span class="status-badge" style="background: #fef3c7; color: #92400e; margin-left: 4px;" title="${s.ungradedReflections > 0 ? s.ungradedReflections + ' reflection(s)' : ''}${s.ungradedReflections > 0 && s.ungradedDeliverables > 0 ? ', ' : ''}${s.ungradedDeliverables > 0 ? s.ungradedDeliverables + ' deliverable(s)' : ''} need grading"><i class="fas fa-pen"></i> ${s.ungradedTotal}</span>` : ''}
             </td>
         </tr>
     `).join('');
