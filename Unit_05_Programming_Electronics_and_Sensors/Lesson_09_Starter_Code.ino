@@ -1,6 +1,6 @@
-// Lesson 9: PID Control for Line Following
+// Lesson 9: PD Control for Line Following
 // Starter Code for Lab Exercises
-// Complete the TODOs to implement a working PID line follower
+// Complete the TODOs to implement a working PD line follower
 
 // ===== MOTOR PIN DEFINITIONS =====
 // 3-pin motor controller (INA, INB, PWM)
@@ -19,11 +19,17 @@ const int SENSOR_3 = 2;    // Center
 const int SENSOR_4 = 1;    // Right
 const int SENSOR_5 = A3;   // Far right
 
-// ===== PID CONSTANTS =====
+// ===== PD CONSTANTS =====
 // These values are a starting point - you will tune them!
 const float Kp = 30.0;      // Proportional constant (start with 20-50)
 const float Kd = 10.0;      // Derivative constant (start with Kp/3)
 const int baseSpeed = 150;  // Base motor speed (0-255)
+
+// ===== MOTOR CALIBRATION =====
+// Run the Motor Tuning Sketch first to find these values!
+// Set the coefficient for the FASTER motor (slower motor stays at 1.0)
+const float LEFT_COEFF  = 1.0;   // Adjust if left motor is faster
+const float RIGHT_COEFF = 1.0;   // Adjust if right motor is faster
 
 // ===== VARIABLES =====
 int lastError = 0;          // Stores previous error for derivative calculation
@@ -47,7 +53,7 @@ void setup() {
 
   // Optional: Initialize serial communication for debugging
   Serial.begin(9600);
-  Serial.println("PID Line Follower Starting...");
+  Serial.println("PD Line Follower Starting...");
   Serial.println("Kp=" + String(Kp) + " Kd=" + String(Kd) + " Base=" + String(baseSpeed));
 }
 
@@ -158,10 +164,15 @@ int getPositionError() {
 
 // ===== FUNCTION: SET MOTOR SPEEDS =====
 // Controls both motors with variable speeds using PWM
+// Applies calibration coefficients to compensate for motor differences
 // Parameters:
 //   leftSpeed: Speed for left motor (0-255, or negative for reverse)
 //   rightSpeed: Speed for right motor (0-255, or negative for reverse)
 void setMotorSpeeds(int leftSpeed, int rightSpeed) {
+  // Apply calibration coefficients
+  leftSpeed  = leftSpeed  * LEFT_COEFF;
+  rightSpeed = rightSpeed * RIGHT_COEFF;
+
   // ===== LEFT MOTOR =====
   if (leftSpeed >= 0) {
     // Forward direction
@@ -191,28 +202,33 @@ void setMotorSpeeds(int leftSpeed, int rightSpeed) {
 
 // ===== EXERCISE PROGRESSION =====
 //
-// Exercise 1: P-Only Control
+// Exercise 1: Motor Calibration
+// - Upload the Motor_Tuning_Sketch.ino
+// - Run both motors at the same speed and count rotations
+// - Calculate the coefficient and enter it above
+//
+// Exercise 2: P-Only Control
 // - Set Kd = 0 at the top of this file
 // - Complete TODOs 2-7 but skip the Kd term in Step 3
 // - Upload and test - robot should follow but may oscillate
 //
-// Exercise 2: Tune Kp
+// Exercise 3: Tune Kp
 // - Try different Kp values: 20, 30, 40, 50
 // - Find the highest value that doesn't oscillate too wildly
 // - Write down your best value!
 //
-// Exercise 3: Add D Term
+// Exercise 4: Add D Term
 // - Set Kd = Kp / 3
 // - Complete Step 3 with full PD calculation
 // - Upload and test - oscillation should reduce!
 //
-// Exercise 4: Fine-tune Kd
+// Exercise 5: Fine-tune Kd
 // - Adjust Kd up or down by 2-3
 // - Find the smoothest motion
 // - If sluggish, reduce Kd
 // - If still wobbling, increase Kd
 //
-// Exercise 5: Optimize for Speed
+// Exercise 6: Optimize for Speed
 // - Once tuned, increase baseSpeed gradually
 // - Test: 150 -> 170 -> 190 -> 200
 // - May need to re-tune Kp and Kd for higher speeds
@@ -234,4 +250,7 @@ void setMotorSpeeds(int leftSpeed, int rightSpeed) {
 //
 // Symptom: Robot leaves the line on sharp curves
 // Solution: Reduce baseSpeed or increase Kp
+//
+// Symptom: Robot drifts to one side on straights
+// Solution: Run Motor Tuning Sketch, adjust coefficients
 //
