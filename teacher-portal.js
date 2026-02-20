@@ -359,9 +359,18 @@ function processStudentData() {
         }
 
         if (fullState && fullState.deliverables) {
-            Object.values(fullState.deliverables).forEach(d => {
+            Object.entries(fullState.deliverables).forEach(([dId, d]) => {
                 if (d.status === 'in-progress' && d.content) {
                     draftDeliverables++;
+                } else if (d.status === 'completed' && d.content) {
+                    // Check if this completed deliverable is missing from the sheet
+                    const inSheet = state.rawData.deliverables?.some(
+                        row => row[0] === email && row[2] == dId && row[7] === 'completed'
+                    );
+                    if (!inSheet) {
+                        completedDeliverables++;
+                        ungradedDeliverables++;
+                    }
                 }
             });
         }
@@ -693,6 +702,34 @@ function openStudentDetail(email) {
                         <textarea class="feedback-input" data-type="deliverable" data-id="${id}" data-email="${email}"
                                   placeholder="Feedback for student..."
                                   style="width: 100%; padding: 8px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 13px; resize: vertical; min-height: 60px;">${existingFeedback}</textarea>
+                    </div>
+                </div>
+            `;
+        } else if (draft && draft.status === 'completed' && draft.content) {
+            // Completed in student state but missing from Deliverables sheet (sync issue)
+            const maxPoints = course.deliverablePoints?.[id] || 50;
+            deliverablesPanel.innerHTML += `
+                <div class="item-card" style="border-left: 4px solid var(--warning);">
+                    <div class="item-header">
+                        <span class="item-title">Deliverable ${id}</span>
+                        <span class="item-status status-badge status-behind">Needs Grading</span>
+                    </div>
+                    <div class="item-content">
+                        ${(draft.content || '').substring(0, 300)}${draft.content?.length > 300 ? '...' : ''}
+                        ${draft.selfAssessment ? `<br><br><strong>Self-Assessment:</strong> ${draft.selfAssessment}/10` : ''}
+                        ${draft.links ? `<br><br><strong>Links:</strong> ${draft.links}` : ''}
+                    </div>
+                    <div class="grade-section" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gray-200);">
+                        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 8px;">
+                            <label style="font-size: 13px; font-weight: 500;">Grade:</label>
+                            <input type="number" class="grade-input" data-type="deliverable" data-id="${id}" data-email="${email}"
+                                   value="" min="0" max="${maxPoints}" step="1"
+                                   style="width: 60px; padding: 4px 8px; border: 1px solid var(--gray-300); border-radius: 4px;">
+                            <span style="color: var(--gray-500); font-size: 12px;">/ ${maxPoints} pts</span>
+                        </div>
+                        <textarea class="feedback-input" data-type="deliverable" data-id="${id}" data-email="${email}"
+                                  placeholder="Feedback for student..."
+                                  style="width: 100%; padding: 8px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 13px; resize: vertical; min-height: 60px;"></textarea>
                     </div>
                 </div>
             `;
