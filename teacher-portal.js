@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.13',
+    VERSION: 'v2.9.14',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -167,6 +167,12 @@ function initEventListeners() {
 
     // Sign out
     document.getElementById('signOutBtn').addEventListener('click', signOut);
+
+    // Leaderboard
+    document.getElementById('leaderboardBtn').addEventListener('click', openLeaderboard);
+    document.getElementById('leaderboardModal').addEventListener('click', (e) => {
+        if (e.target.id === 'leaderboardModal') closeLeaderboard();
+    });
 
     // Grade entry
     initGradeEntry();
@@ -1454,4 +1460,292 @@ async function saveAllGrades() {
             btn.disabled = false;
         }, 2000);
     }
+}
+
+// ============================================
+// LEADERBOARD
+// ============================================
+
+async function openLeaderboard() {
+    const modal = document.getElementById('leaderboardModal');
+    modal.classList.add('active');
+
+    document.getElementById('leaderboardLoading').style.display = 'block';
+    document.getElementById('leaderboardContent').style.display = 'none';
+    document.getElementById('leaderboardWeek').textContent = state.currentWeek;
+
+    try {
+        const allData = await loadLeaderboardData();
+        const classes = buildLeaderboardClasses(allData);
+        renderLeaderboard(classes);
+    } catch (error) {
+        console.error('Failed to load leaderboard:', error);
+        document.getElementById('leaderboardLoading').innerHTML = `
+            <i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i>
+            <p>Failed to load leaderboard data. Please try again.</p>
+        `;
+    }
+}
+
+function closeLeaderboard() {
+    document.getElementById('leaderboardModal').classList.remove('active');
+}
+
+async function loadLeaderboardData() {
+    const [roboticsRes, frcRes] = await Promise.all([
+        fetch(CONFIG.COURSES.robotics.apiUrl + '?action=all&_t=' + Date.now()),
+        fetch(CONFIG.COURSES.frc.apiUrl + '?action=all&_t=' + Date.now())
+    ]);
+    return {
+        robotics: await roboticsRes.json(),
+        frc: await frcRes.json()
+    };
+}
+
+function buildLeaderboardClasses(allData) {
+    const classes = [
+        buildClassData('6th Hour', allData.robotics, CONFIG.COURSES.robotics, 'hour6', 'fa-robot'),
+        buildClassData('7th Hour', allData.robotics, CONFIG.COURSES.robotics, 'hour7', 'fa-robot'),
+        buildClassData('FRC', allData.frc, CONFIG.COURSES.frc, null, 'fa-cogs')
+    ];
+
+    // Sort by completion rate descending (best first)
+    classes.sort((a, b) => b.completionRate - a.completionRate);
+
+    // Assign ranks (handle ties)
+    classes.forEach((cls, i) => {
+        if (i === 0) cls.rank = 1;
+        else if (cls.completionRate === classes[i - 1].completionRate) cls.rank = classes[i - 1].rank;
+        else cls.rank = i + 1;
+    });
+
+    return classes;
+}
+
+function buildClassData(name, rawData, courseConfig, periodFilter, icon) {
+    // Filter students to this class/period
+    const students = (rawData.students || []).filter(row => {
+        if (periodFilter) return row[3] === periodFilter;
+        return true;
+    });
+
+    const studentEmails = new Set(students.map(s => s[0]));
+    const studentCount = studentEmails.size;
+
+    // Determine which weeks have passed their Friday 3pm deadline
+    const pastDeadlineWeeks = [];
+    for (let week = 1; week <= Math.min(state.currentWeek, courseConfig.totalReflections); week++) {
+        const weekStart = new Date(CONFIG.SEMESTER_START);
+        weekStart.setDate(weekStart.getDate() + (week - 1) * 7);
+        const fridayDeadline = new Date(weekStart);
+        fridayDeadline.setDate(fridayDeadline.getDate() + 4);
+        fridayDeadline.setHours(15, 0, 0, 0);
+        if (new Date() > fridayDeadline) {
+            pastDeadlineWeeks.push(week);
+        }
+    }
+
+    // Build lookup sets for submitted work
+    const submittedReflections = new Set();
+    (rawData.reflections || []).forEach(r => {
+        if (studentEmails.has(r[0])) {
+            submittedReflections.add(r[0] + '-' + r[2]);
+        }
+    });
+
+    const completedDeliverables = new Set();
+    (rawData.deliverables || []).forEach(d => {
+        if (studentEmails.has(d[0]) && d[7] === 'completed') {
+            completedDeliverables.add(d[0] + '-' + d[2]);
+        }
+    });
+
+    // Calculate pending items per week
+    let totalDueItems = 0;
+    let totalSubmittedItems = 0;
+    const pendingByWeek = [];
+
+    pastDeadlineWeeks.forEach(week => {
+        let reflectionPending = 0;
+        let deliverablePending = 0;
+
+        studentEmails.forEach(email => {
+            if (!submittedReflections.has(email + '-' + week)) reflectionPending++;
+            if (week <= courseConfig.totalDeliverables) {
+                if (!completedDeliverables.has(email + '-' + week)) deliverablePending++;
+            }
+        });
+
+        const weekItems = [{ type: 'Reflection', pending: reflectionPending }];
+        totalDueItems += studentCount;
+        totalSubmittedItems += (studentCount - reflectionPending);
+
+        if (week <= courseConfig.totalDeliverables) {
+            weekItems.push({ type: 'Deliverable', pending: deliverablePending });
+            totalDueItems += studentCount;
+            totalSubmittedItems += (studentCount - deliverablePending);
+        }
+
+        pendingByWeek.push({ week, items: weekItems });
+    });
+
+    const totalPending = totalDueItems - totalSubmittedItems;
+    const completionRate = totalDueItems > 0
+        ? Math.round((totalSubmittedItems / totalDueItems) * 1000) / 10
+        : 100;
+
+    return {
+        name, icon, studentCount,
+        totalPendingItems: totalPending,
+        completionRate,
+        pendingByWeek
+    };
+}
+
+function renderLeaderboard(classes) {
+    const content = document.getElementById('leaderboardContent');
+    const winner = classes[0];
+
+    const rankIcons = { 1: 'fa-trophy', 2: 'fa-medal', 3: 'fa-award' };
+    const rankColors = { 1: '#F59E0B', 2: '#9CA3AF', 3: '#D97706' };
+
+    function getRingColor(rate) {
+        if (rate >= 90) return '#10b981';
+        if (rate >= 70) return '#6366f1';
+        if (rate >= 50) return '#f59e0b';
+        return '#ef4444';
+    }
+
+    function getPendingClass(count) {
+        if (count === 0) return 'pending-zero';
+        if (count <= 2) return 'pending-low';
+        if (count <= 5) return 'pending-med';
+        return 'pending-high';
+    }
+
+    const circumference = 2 * Math.PI * 52; // r=52
+
+    // Winner Banner
+    let html = `
+        <div class="leaderboard-winner-banner">
+            <div class="winner-trophy"><i class="fas fa-trophy"></i></div>
+            <div class="winner-text">
+                <strong>${winner.name} is leading the pack!</strong>
+                <span>${winner.completionRate}% completion rate &middot; Only ${winner.totalPendingItems} pending items</span>
+            </div>
+        </div>
+    `;
+
+    // Podium Cards
+    html += '<div class="leaderboard-podium">';
+    classes.forEach(cls => {
+        const offset = circumference - (cls.completionRate / 100) * circumference;
+        const ringColor = getRingColor(cls.completionRate);
+        html += `
+            <div class="podium-card podium-rank-${cls.rank}">
+                <div class="podium-medal"><i class="fas ${rankIcons[cls.rank]}"></i></div>
+                <div class="podium-rank-label">#${cls.rank}</div>
+                <h3 class="podium-class-name">
+                    <i class="fas ${cls.icon}" style="font-size: 14px; color: var(--gray-400); margin-right: 4px;"></i>
+                    ${cls.name}
+                </h3>
+                <div class="podium-ring">
+                    <svg viewBox="0 0 120 120">
+                        <circle class="ring-bg" cx="60" cy="60" r="52"/>
+                        <circle class="ring-fill" cx="60" cy="60" r="52"
+                                style="stroke: ${ringColor}; stroke-dasharray: ${circumference}; stroke-dashoffset: ${offset}"/>
+                    </svg>
+                    <div class="ring-label" style="color: ${ringColor};">${cls.completionRate}%</div>
+                </div>
+                <div class="podium-stats">
+                    <div class="podium-stat">
+                        <span class="stat-num">${cls.totalPendingItems}</span>
+                        <span class="stat-desc">pending</span>
+                    </div>
+                    <div class="podium-stat">
+                        <span class="stat-num">${cls.studentCount}</span>
+                        <span class="stat-desc">students</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    html += '</div>';
+
+    // Week-by-Week Breakdown Table
+    const allWeeks = [];
+    classes.forEach(cls => {
+        cls.pendingByWeek.forEach(w => {
+            if (!allWeeks.includes(w.week)) allWeeks.push(w.week);
+        });
+    });
+    allWeeks.sort((a, b) => a - b);
+
+    // Display order: always 6th Hour, 7th Hour, FRC regardless of rank
+    const displayOrder = ['6th Hour', '7th Hour', 'FRC'];
+    const orderedClasses = displayOrder.map(name => classes.find(c => c.name === name)).filter(Boolean);
+
+    html += `
+        <div class="leaderboard-breakdown">
+            <h3><i class="fas fa-list-ol" style="color: var(--primary);"></i> Pending Submissions by Week</h3>
+            <table class="breakdown-table">
+                <thead>
+                    <tr>
+                        <th style="text-align: left;">Item</th>
+                        ${orderedClasses.map(c => `<th>${c.name}</th>`).join('')}
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+
+    allWeeks.forEach(week => {
+        html += `<tr class="week-header"><td colspan="${orderedClasses.length + 1}">Week ${week}</td></tr>`;
+
+        // Reflection row
+        const refCounts = orderedClasses.map(cls => {
+            const weekData = cls.pendingByWeek.find(w => w.week === week);
+            const item = weekData ? weekData.items.find(i => i.type === 'Reflection') : null;
+            return item ? item.pending : 0;
+        });
+        const minRef = Math.min(...refCounts);
+
+        html += `<tr>
+            <td><i class="fas fa-pen-fancy" style="color: var(--gray-400); margin-right: 6px;"></i>Reflection</td>
+            ${refCounts.map(count => {
+                const isBest = count === minRef && refCounts.filter(c => c === minRef).length < refCounts.length;
+                return `<td${isBest ? ' class="best-in-row"' : ''}>
+                    <span class="pending-pill ${getPendingClass(count)}">${count}</span>
+                </td>`;
+            }).join('')}
+        </tr>`;
+
+        // Deliverable row
+        const delCounts = orderedClasses.map(cls => {
+            const weekData = cls.pendingByWeek.find(w => w.week === week);
+            const item = weekData ? weekData.items.find(i => i.type === 'Deliverable') : null;
+            return item !== undefined && item !== null ? item.pending : null;
+        });
+
+        if (delCounts.some(c => c !== null)) {
+            const validDels = delCounts.filter(c => c !== null);
+            const minDel = Math.min(...validDels);
+
+            html += `<tr>
+                <td><i class="fas fa-file-alt" style="color: var(--gray-400); margin-right: 6px;"></i>Deliverable</td>
+                ${delCounts.map(count => {
+                    if (count === null) return '<td style="color: var(--gray-300);">—</td>';
+                    const isBest = count === minDel && validDels.filter(c => c === minDel).length < validDels.length;
+                    return `<td${isBest ? ' class="best-in-row"' : ''}>
+                        <span class="pending-pill ${getPendingClass(count)}">${count}</span>
+                    </td>`;
+                }).join('')}
+            </tr>`;
+        }
+    });
+
+    html += '</tbody></table></div>';
+
+    content.innerHTML = html;
+    document.getElementById('leaderboardLoading').style.display = 'none';
+    content.style.display = 'block';
 }

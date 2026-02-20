@@ -505,6 +505,296 @@
             .student-table { font-size: 13px; }
             .student-header { flex-direction: column; }
         }
+
+        /* ============================================
+           LEADERBOARD STYLES
+           ============================================ */
+        .leaderboard-modal .modal-content {
+            max-width: 1000px;
+            padding: 0;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .leaderboard-header {
+            background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+            color: white;
+            padding: 20px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .leaderboard-header h2 {
+            color: white;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+        }
+
+        .leaderboard-header .week-badge {
+            font-size: 13px;
+            font-weight: normal;
+            color: #9ca3af;
+            margin-left: 4px;
+        }
+
+        .leaderboard-close {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .leaderboard-close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .leaderboard-body {
+            background: #f3f4f6;
+            padding: 24px;
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+
+        .leaderboard-loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray-500);
+        }
+
+        .leaderboard-loading i {
+            font-size: 32px;
+            margin-bottom: 12px;
+            display: block;
+            color: var(--primary);
+        }
+
+        /* Winner Banner */
+        .leaderboard-winner-banner {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            border-radius: 12px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            animation: lbSlideDown 0.4s ease;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .winner-trophy {
+            width: 48px;
+            height: 48px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .winner-text { color: white; }
+        .winner-text strong { font-size: 18px; display: block; }
+        .winner-text span { font-size: 14px; opacity: 0.9; }
+
+        /* Podium Cards */
+        .leaderboard-podium {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .podium-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px 20px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+            animation: lbFadeInUp 0.5s ease both;
+        }
+
+        .podium-card:nth-child(1) { animation-delay: 0.1s; }
+        .podium-card:nth-child(2) { animation-delay: 0.2s; }
+        .podium-card:nth-child(3) { animation-delay: 0.3s; }
+
+        .podium-rank-1 { border-top: 4px solid #F59E0B; }
+        .podium-rank-2 { border-top: 4px solid #9CA3AF; }
+        .podium-rank-3 { border-top: 4px solid #D97706; }
+
+        .podium-medal { font-size: 28px; margin-bottom: 4px; }
+        .podium-rank-1 .podium-medal { color: #F59E0B; }
+        .podium-rank-2 .podium-medal { color: #9CA3AF; }
+        .podium-rank-3 .podium-medal { color: #D97706; }
+
+        .podium-rank-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--gray-400);
+            margin-bottom: 4px;
+        }
+
+        .podium-class-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0 0 16px 0;
+            color: var(--gray-800);
+        }
+
+        /* SVG Progress Ring */
+        .podium-ring {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 16px;
+        }
+
+        .podium-ring svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .ring-bg {
+            fill: none;
+            stroke: #e5e7eb;
+            stroke-width: 8;
+        }
+
+        .ring-fill {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease 0.3s;
+        }
+
+        .ring-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .podium-stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 8px;
+        }
+
+        .podium-stat { text-align: center; }
+        .podium-stat .stat-num { display: block; font-size: 20px; font-weight: 700; color: var(--gray-800); }
+        .podium-stat .stat-desc { font-size: 11px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Breakdown Table */
+        .leaderboard-breakdown {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .leaderboard-breakdown h3 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 16px 0;
+            font-size: 16px;
+            color: var(--gray-700);
+        }
+
+        .breakdown-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .breakdown-table th {
+            background: var(--gray-50);
+            padding: 10px 16px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray-600);
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .breakdown-table th:first-child { text-align: left; }
+
+        .breakdown-table td {
+            padding: 8px 16px;
+            text-align: center;
+            border-bottom: 1px solid var(--gray-100);
+            font-size: 14px;
+        }
+
+        .breakdown-table td:first-child {
+            text-align: left;
+            font-weight: 500;
+            color: var(--gray-600);
+        }
+
+        .breakdown-table .week-header td {
+            background: var(--gray-50);
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--gray-500);
+            text-align: left;
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .pending-pill {
+            display: inline-block;
+            min-width: 28px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .pending-zero { background: #d1fae5; color: #065f46; }
+        .pending-low { background: #fef3c7; color: #92400e; }
+        .pending-med { background: #fed7aa; color: #9a3412; }
+        .pending-high { background: #fee2e2; color: #991b1b; }
+
+        .best-in-row {
+            background: #ecfdf5;
+        }
+
+        /* Animations */
+        @keyframes lbFadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes lbSlideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .leaderboard-podium { grid-template-columns: 1fr; }
+            .leaderboard-body { padding: 16px; }
+        }
     </style>
 </head>
 <body>
@@ -621,6 +911,10 @@
 
             <button class="btn btn-secondary btn-small" id="gradeReportBtn" onclick="showGradeReport()">
                 <i class="fas fa-clipboard-list"></i> Grade Report
+            </button>
+
+            <button class="btn btn-small" id="leaderboardBtn" style="background: linear-gradient(135deg, #fbbf24, #f59e0b); color: white; border: none; font-weight: 600;">
+                <i class="fas fa-trophy"></i> Leaderboard
             </button>
         </div>
 
@@ -817,6 +1111,27 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard Modal -->
+    <div class="modal leaderboard-modal" id="leaderboardModal">
+        <div class="modal-content">
+            <div class="leaderboard-header">
+                <h2>
+                    <i class="fas fa-trophy" style="color: #F59E0B;"></i>
+                    Class Leaderboard
+                    <span class="week-badge">Week <span id="leaderboardWeek">-</span></span>
+                </h2>
+                <button class="leaderboard-close" onclick="closeLeaderboard()">&times;</button>
+            </div>
+            <div class="leaderboard-body">
+                <div class="leaderboard-loading" id="leaderboardLoading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading data from all classes...</p>
+                </div>
+                <div id="leaderboardContent" style="display: none;"></div>
             </div>
         </div>
     </div>
