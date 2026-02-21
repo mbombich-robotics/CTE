@@ -86,9 +86,8 @@ const DELIVERABLES = [
         phase: 'Design',
         description: 'Document the team decision-making process for final design selection.',
         requirements: [
-            'Decision matrix with weighted criteria',
-            'Your individual scoring and justification',
-            'Final design selection rationale',
+            'Pugh Matrix with 3+ design options and 3+ weighted criteria',
+            'Individual scoring with justification for winner',
             'Personal statement: "My contribution to this decision"'
         ]
     },
@@ -183,6 +182,70 @@ const DELIVERABLES = [
         ]
     }
 ];
+
+// ============================================
+// GRADING RUBRICS
+// ============================================
+const RUBRICS = {
+    4: {
+        categories: [
+            { name: 'Pugh Matrix', points: 25, criteria: [
+                '3+ design options with descriptive names',
+                '3+ criteria with appropriate weights (1-5)',
+                'All cells scored (+, S, or -)',
+                'Totals calculated correctly'
+            ]},
+            { name: 'Justification', points: 15, criteria: [
+                'Explains why the winning design scored highest',
+                'References specific criteria and scores',
+                'Connects choice to project goals'
+            ]},
+            { name: 'Personal Contribution', points: 10, criteria: [
+                'Describes your specific role in the decision process',
+                'Concrete examples of your input'
+            ]}
+        ]
+    }
+};
+
+function renderRubricCard(deliverableId) {
+    const rubric = RUBRICS[deliverableId];
+    if (!rubric) return '';
+    const totalPts = rubric.categories.reduce((sum, c) => sum + c.points, 0);
+    return `
+        <div class="card" style="margin-bottom: 20px; border-left: 3px solid #8b5cf6;">
+            <h4 style="margin-bottom: 0; cursor: pointer; display: flex; align-items: center; justify-content: space-between;"
+                onclick="const d=this.nextElementSibling; const a=d.style.display==='none'?'block':'none'; d.style.display=a; this.querySelector('.toggle-icon').textContent=a==='none'?'▸':'▾';">
+                <span><i class="fas fa-star"></i> Grading Rubric (${totalPts} pts)</span>
+                <span class="toggle-icon" style="font-size: 16px;">▸</span>
+            </h4>
+            <div style="display: none; margin-top: 12px;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--gray-200);">
+                            <th style="text-align: left; padding: 8px;">Category</th>
+                            <th style="text-align: center; padding: 8px; width: 60px;">Points</th>
+                            <th style="text-align: left; padding: 8px;">What I'm Looking For</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rubric.categories.map(cat => `
+                            <tr style="border-bottom: 1px solid var(--gray-100); vertical-align: top;">
+                                <td style="padding: 8px; font-weight: 600;">${cat.name}</td>
+                                <td style="padding: 8px; text-align: center; font-weight: 600;">${cat.points}</td>
+                                <td style="padding: 8px;">
+                                    <ul style="margin: 0; padding-left: 18px;">
+                                        ${cat.criteria.map(c => `<li style="margin-bottom: 4px;">${c}</li>`).join('')}
+                                    </ul>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
 
 // ============================================
 // APPLICATION STATE
@@ -1428,6 +1491,9 @@ function openDeliverableForm(id) {
     const modal = document.getElementById('deliverableModal');
     const content = document.getElementById('deliverableFormContent');
 
+    // For deliverable 4, use rawContent for the textarea if available
+    const textareaContent = (id === 4 && existing.rawContent !== undefined) ? existing.rawContent : (existing.content || '');
+
     content.innerHTML = `
         <h2><i class="fas fa-clipboard-list"></i> ${deliverable.title}</h2>
         <p style="color: var(--gray-600); margin-bottom: 20px;">${deliverable.description}</p>
@@ -1451,11 +1517,140 @@ function openDeliverableForm(id) {
             </ul>
         </div>
 
+        ${renderRubricCard(id)}
+
         <form id="deliverableForm" style="margin-top: 20px;">
+            ${id === 4 ? `
+            <div class="card" style="margin-bottom: 20px; border-left: 3px solid var(--primary);">
+                <h4 style="margin-bottom: 0; cursor: pointer; display: flex; align-items: center; justify-content: space-between;"
+                    onclick="const d=this.nextElementSibling; const a=d.style.display==='none'?'block':'none'; d.style.display=a; this.querySelector('.toggle-icon').textContent=a==='none'?'▸':'▾';">
+                    <span><i class="fas fa-info-circle"></i> Instructions & Example</span>
+                    <span class="toggle-icon" style="font-size: 16px;">▸</span>
+                </h4>
+                <div style="display: none; margin-top: 12px; font-size: 14px; color: var(--gray-600);">
+                    <p style="margin-bottom: 10px;"><strong>A Pugh Matrix</strong> compares design options against a baseline using weighted criteria.</p>
+                    <ol style="margin-left: 20px; margin-bottom: 14px;">
+                        <li>Name your design options (Idea 1 is the baseline)</li>
+                        <li>Choose 3-5 evaluation criteria (cost, durability, etc.)</li>
+                        <li>Assign weights (1-5, higher = more important)</li>
+                        <li>Score each option vs. baseline: <strong>+</strong> (better), <strong>S</strong> (same), <strong>-</strong> (worse)</li>
+                        <li>Weighted scores are calculated automatically</li>
+                        <li>Highest total = recommended design</li>
+                    </ol>
+                    <p style="margin-bottom: 8px;"><strong>Example:</strong></p>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 8px;">
+                        <thead>
+                            <tr style="background: var(--gray-100);">
+                                <th style="padding: 6px 8px; text-align: left; border: 1px solid var(--gray-200);">Criteria</th>
+                                <th style="padding: 6px 8px; text-align: center; border: 1px solid var(--gray-200); width: 50px;">Weight</th>
+                                <th style="padding: 6px 8px; text-align: center; border: 1px solid var(--gray-200);">Linkage (Baseline)</th>
+                                <th style="padding: 6px 8px; text-align: center; border: 1px solid var(--gray-200);">Gear Drive</th>
+                                <th style="padding: 6px 8px; text-align: center; border: 1px solid var(--gray-200);">Belt Drive</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding: 6px 8px; border: 1px solid var(--gray-200);">Cost</td>
+                                <td style="padding: 6px 8px; text-align: center; border: 1px solid var(--gray-200);">3</td>
+                                <td style="padding: 6px 8px; text-align: center; border: 1px solid var(--gray-200);">0</td>
+                                <td style="padding: 6px 8px; text-align: center; border: 1px solid var(--gray-200);">+ (3)</td>
+                                <td style="padding: 6px 8px; text-align: center; border: 1px solid var(--gray-200);">S (0)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 6px 8px; border: 1px solid var(--gray-200);">Durability</td>
+                                <td style="padding: 6px 8px; text-align: center; border: 1px solid var(--gray-200);">4</td>
+                                <td style="padding: 6px 8px; text-align: center; border: 1px solid var(--gray-200);">0</td>
+                                <td style="padding: 6px 8px; text-align: center; border: 1px solid var(--gray-200);">S (0)</td>
+                                <td style="padding: 6px 8px; text-align: center; border: 1px solid var(--gray-200);">- (-4)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 6px 8px; border: 1px solid var(--gray-200);">Ease of Fabrication</td>
+                                <td style="padding: 6px 8px; text-align: center; border: 1px solid var(--gray-200);">2</td>
+                                <td style="padding: 6px 8px; text-align: center; border: 1px solid var(--gray-200);">0</td>
+                                <td style="padding: 6px 8px; text-align: center; border: 1px solid var(--gray-200);">+ (2)</td>
+                                <td style="padding: 6px 8px; text-align: center; border: 1px solid var(--gray-200);">- (-2)</td>
+                            </tr>
+                            <tr style="background: var(--gray-50); font-weight: bold;">
+                                <td style="padding: 6px 8px; border: 1px solid var(--gray-200);">TOTAL</td>
+                                <td style="padding: 6px 8px; border: 1px solid var(--gray-200);"></td>
+                                <td style="padding: 6px 8px; text-align: center; border: 1px solid var(--gray-200);">0</td>
+                                <td style="padding: 6px 8px; text-align: center; border: 1px solid var(--gray-200); color: var(--success);">+5</td>
+                                <td style="padding: 6px 8px; text-align: center; border: 1px solid var(--gray-200); color: var(--danger);">-6</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p style="font-style: italic;">Result: Gear Drive scores highest (+5). It's cheaper and easier to make, with equal durability.</p>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 20px; border-left: 3px solid var(--success);">
+                <h4 style="margin-bottom: 12px;"><i class="fas fa-table"></i> Pugh Decision Matrix</h4>
+                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 12px;">Name your design options, add criteria with weights, and score each option against the baseline.</p>
+
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 6px;">Design Options</label>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 140px;">
+                            <label style="font-size: 11px; color: var(--gray-500);">Baseline (Idea 1)</label>
+                            <input type="text" class="pugh-option" data-col="0" value="${(existing.options && existing.options[0]) || ''}" placeholder="e.g. Linkage Arm" style="width: 100%; padding: 6px; border: 1px solid var(--gray-200); border-radius: 4px;">
+                        </div>
+                        <div style="flex: 1; min-width: 140px;">
+                            <label style="font-size: 11px; color: var(--gray-500);">Option 2</label>
+                            <input type="text" class="pugh-option" data-col="1" value="${(existing.options && existing.options[1]) || ''}" placeholder="e.g. Gear Drive" style="width: 100%; padding: 6px; border: 1px solid var(--gray-200); border-radius: 4px;">
+                        </div>
+                        <div style="flex: 1; min-width: 140px;">
+                            <label style="font-size: 11px; color: var(--gray-500);">Option 3</label>
+                            <input type="text" class="pugh-option" data-col="2" value="${(existing.options && existing.options[2]) || ''}" placeholder="e.g. Belt Drive" style="width: 100%; padding: 6px; border: 1px solid var(--gray-200); border-radius: 4px;">
+                        </div>
+                    </div>
+                </div>
+
+                <table id="pughMatrix" style="width: 100%; border-collapse: collapse; text-align: center; font-size: 14px;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--gray-200);">
+                            <th style="text-align: left; padding: 8px;">Criteria</th>
+                            <th style="padding: 8px; width: 70px;">Weight</th>
+                            <th style="padding: 8px;">Baseline</th>
+                            <th style="padding: 8px;">Option 2</th>
+                            <th style="padding: 8px;">Option 3</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pughRows">
+                        ${renderPughRows(existing)}
+                    </tbody>
+                    <tfoot>
+                        <tr style="border-top: 2px solid var(--gray-300); font-weight: bold; background: var(--gray-50);">
+                            <td style="padding: 8px; text-align: left;">TOTAL</td>
+                            <td style="padding: 8px;"></td>
+                            <td style="padding: 8px;"><span class="pugh-total" data-col="0">0</span></td>
+                            <td style="padding: 8px;"><span class="pugh-total" data-col="1">0</span></td>
+                            <td style="padding: 8px;"><span class="pugh-total" data-col="2">0</span></td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <div style="margin-top: 10px;">
+                    <button type="button" class="btn btn-secondary" style="font-size: 13px; padding: 6px 12px;" onclick="addPughRow()">
+                        <i class="fas fa-plus"></i> Add Criteria
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="pughJustification">Justification: Why is the winning design the best choice? (15 pts)</label>
+                <textarea id="pughJustification" rows="5" placeholder="Explain why the highest-scoring design is the best choice. Reference specific criteria and scores from your matrix. Connect your choice to the project goals...">${existing.justification || ''}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="pughContribution">My Contribution to This Decision (10 pts)</label>
+                <textarea id="pughContribution" rows="4" placeholder="What was your specific role in the decision-making process? What criteria did you advocate for? What research or testing did you do to inform your scores?">${existing.contribution || ''}</textarea>
+            </div>
+            ` : `
             <div class="form-group">
                 <label for="deliverableContent">Your Submission</label>
-                <textarea id="deliverableContent" rows="10" placeholder="Enter your deliverable content here. Include all required components...">${existing.content || ''}</textarea>
+                <textarea id="deliverableContent" rows="10" placeholder="Enter your deliverable content here. Include all required components...">${textareaContent}</textarea>
             </div>
+            `}
 
             <div class="form-group">
                 <label for="deliverableLinks">Supporting Links (Google Drive, images, etc.)</label>
@@ -1479,9 +1674,18 @@ function openDeliverableForm(id) {
     `;
 
     // Attach dirty listeners to dynamically created inputs
-    content.querySelectorAll('textarea, input').forEach(el => {
+    content.querySelectorAll('textarea, input, select').forEach(el => {
         el.addEventListener('input', markDirty);
+        el.addEventListener('change', markDirty);
     });
+
+    // Live calculation for Pugh Matrix totals
+    if (id === 4) {
+        content.querySelectorAll('.pugh-score, .pugh-weight').forEach(el => {
+            el.addEventListener('change', updatePughTotals);
+        });
+        updatePughTotals();
+    }
 
     document.getElementById('deliverableForm').addEventListener('submit', (e) => {
         e.preventDefault();
@@ -1491,12 +1695,196 @@ function openDeliverableForm(id) {
     modal.classList.add('active');
 }
 
+// ============================================
+// PUGH MATRIX HELPERS
+// ============================================
+const PUGH_MIN_ROWS = 3;
+const PUGH_MAX_ROWS = 8;
+const PUGH_DEFAULT_ROWS = 5;
+
+function renderPughRows(existing) {
+    const criteria = existing.criteria || [];
+    const rowCount = Math.max(criteria.length, PUGH_DEFAULT_ROWS);
+    let html = '';
+    for (let i = 0; i < rowCount; i++) {
+        const c = criteria[i] || {};
+        html += renderPughRow(i, c, rowCount);
+    }
+    return html;
+}
+
+function renderPughRow(i, c, totalRows) {
+    const canRemove = totalRows > PUGH_MIN_ROWS;
+    return `
+        <tr class="pugh-row" data-row="${i}" style="border-bottom: 1px solid var(--gray-100);">
+            <td style="padding: 6px 4px;">
+                <input type="text" class="pugh-criteria" data-row="${i}" value="${c.name || ''}" placeholder="e.g. Cost, Weight, Speed"
+                    style="width: 100%; padding: 4px 6px; border: 1px solid var(--gray-200); border-radius: 4px; font-size: 13px;">
+            </td>
+            <td style="padding: 6px 4px;">
+                <select class="pugh-weight" data-row="${i}" style="width: 100%; padding: 4px; border: 1px solid var(--gray-200); border-radius: 4px; font-size: 13px;">
+                    ${[1,2,3,4,5].map(w => `<option value="${w}" ${(c.weight || 3) == w ? 'selected' : ''}>${w}</option>`).join('')}
+                </select>
+            </td>
+            <td style="padding: 6px 4px; text-align: center; color: var(--gray-400); font-weight: bold;">0</td>
+            <td style="padding: 6px 4px;">
+                <select class="pugh-score" data-row="${i}" data-col="1" style="width: 100%; padding: 4px; border: 1px solid var(--gray-200); border-radius: 4px; font-size: 13px;">
+                    <option value="" ${!c.scores || c.scores[1] === undefined || c.scores[1] === '' ? 'selected' : ''}>—</option>
+                    <option value="1" ${c.scores && c.scores[1] === 1 ? 'selected' : ''}>+ (better)</option>
+                    <option value="0" ${c.scores && c.scores[1] === 0 ? 'selected' : ''}>S (same)</option>
+                    <option value="-1" ${c.scores && c.scores[1] === -1 ? 'selected' : ''}>- (worse)</option>
+                </select>
+            </td>
+            <td style="padding: 6px 4px;">
+                <select class="pugh-score" data-row="${i}" data-col="2" style="width: 100%; padding: 4px; border: 1px solid var(--gray-200); border-radius: 4px; font-size: 13px;">
+                    <option value="" ${!c.scores || c.scores[2] === undefined || c.scores[2] === '' ? 'selected' : ''}>—</option>
+                    <option value="1" ${c.scores && c.scores[2] === 1 ? 'selected' : ''}>+ (better)</option>
+                    <option value="0" ${c.scores && c.scores[2] === 0 ? 'selected' : ''}>S (same)</option>
+                    <option value="-1" ${c.scores && c.scores[2] === -1 ? 'selected' : ''}>- (worse)</option>
+                </select>
+            </td>
+            <td style="padding: 6px 2px; width: 30px;">
+                ${canRemove ? `<button type="button" onclick="removePughRow(${i})" style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 14px; padding: 2px;" title="Remove row"><i class="fas fa-times"></i></button>` : ''}
+            </td>
+        </tr>
+    `;
+}
+
+function addPughRow() {
+    const rows = document.querySelectorAll('.pugh-row');
+    if (rows.length >= PUGH_MAX_ROWS) {
+        showToast(`Maximum ${PUGH_MAX_ROWS} criteria allowed`, 'error');
+        return;
+    }
+    const tbody = document.getElementById('pughRows');
+    const newIndex = rows.length;
+    tbody.insertAdjacentHTML('beforeend', renderPughRow(newIndex, {}, newIndex + 1));
+    // Re-render remove buttons if we crossed from min to min+1
+    refreshPughRemoveButtons();
+    // Attach listeners to new elements
+    tbody.querySelectorAll(`[data-row="${newIndex}"]`).forEach(el => {
+        el.addEventListener('input', markDirty);
+        el.addEventListener('change', () => { markDirty(); updatePughTotals(); });
+    });
+    updatePughTotals();
+}
+
+function removePughRow(index) {
+    const rows = document.querySelectorAll('.pugh-row');
+    if (rows.length <= PUGH_MIN_ROWS) return;
+    rows[index].remove();
+    // Re-index remaining rows
+    document.querySelectorAll('.pugh-row').forEach((row, i) => {
+        row.setAttribute('data-row', i);
+        row.querySelectorAll('[data-row]').forEach(el => el.setAttribute('data-row', i));
+    });
+    refreshPughRemoveButtons();
+    updatePughTotals();
+}
+
+function refreshPughRemoveButtons() {
+    const rows = document.querySelectorAll('.pugh-row');
+    rows.forEach((row, i) => {
+        const lastTd = row.querySelector('td:last-child');
+        if (rows.length <= PUGH_MIN_ROWS) {
+            lastTd.innerHTML = '';
+        } else if (!lastTd.querySelector('button')) {
+            lastTd.innerHTML = `<button type="button" onclick="removePughRow(${i})" style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 14px; padding: 2px;" title="Remove row"><i class="fas fa-times"></i></button>`;
+        } else {
+            lastTd.querySelector('button').setAttribute('onclick', `removePughRow(${i})`);
+        }
+    });
+}
+
+function updatePughTotals() {
+    const totals = [0, 0, 0]; // baseline, option2, option3
+    document.querySelectorAll('.pugh-row').forEach(row => {
+        const weight = parseInt(row.querySelector('.pugh-weight')?.value) || 0;
+        totals[0] += 0; // baseline always 0
+        row.querySelectorAll('.pugh-score').forEach(sel => {
+            const col = parseInt(sel.getAttribute('data-col'));
+            const val = sel.value;
+            if (val !== '') totals[col] += parseInt(val) * weight;
+        });
+    });
+    document.querySelectorAll('.pugh-total').forEach(span => {
+        const col = parseInt(span.getAttribute('data-col'));
+        const val = totals[col];
+        span.textContent = val > 0 ? `+${val}` : `${val}`;
+        span.style.color = col === 0 ? 'var(--gray-600)' : val > 0 ? 'var(--success)' : val < 0 ? 'var(--danger)' : 'var(--gray-600)';
+    });
+}
+
+function collectDeliverable4CustomData() {
+    const options = [0, 1, 2].map(i =>
+        document.querySelector(`.pugh-option[data-col="${i}"]`)?.value || ''
+    );
+    const criteria = [];
+    document.querySelectorAll('.pugh-row').forEach(row => {
+        const rowIdx = row.getAttribute('data-row');
+        const name = row.querySelector('.pugh-criteria')?.value || '';
+        const weight = parseInt(row.querySelector('.pugh-weight')?.value) || 3;
+        const scores = [0]; // baseline always 0
+        row.querySelectorAll('.pugh-score').forEach(sel => {
+            scores.push(sel.value !== '' ? parseInt(sel.value) : '');
+        });
+        criteria.push({ name, weight, scores });
+    });
+    const justification = document.getElementById('pughJustification')?.value || '';
+    const contribution = document.getElementById('pughContribution')?.value || '';
+    return { options, criteria, justification, contribution };
+}
+
+function formatDeliverable4Content(customData) {
+    const { options, criteria, justification, contribution } = customData;
+    const optNames = [
+        options[0] || 'Baseline',
+        options[1] || 'Option 2',
+        options[2] || 'Option 3'
+    ];
+    const scoreSymbol = (s) => s === 1 ? '+' : s === -1 ? '-' : s === 0 ? 'S' : '—';
+
+    let text = '--- PUGH DECISION MATRIX ---\n';
+    text += `Baseline: ${optNames[0]} | ${optNames[1]} | ${optNames[2]}\n\n`;
+
+    // Header
+    const cw = 22, sw = 12;
+    text += 'Criteria (Weight)'.padEnd(cw) + '| ' + optNames[0].substring(0, sw - 2).padEnd(sw) + '| ' + optNames[1].substring(0, sw - 2).padEnd(sw) + '| ' + optNames[2].substring(0, sw - 2) + '\n';
+    text += '-'.repeat(cw) + '|' + '-'.repeat(sw + 1) + '|' + '-'.repeat(sw + 1) + '|' + '-'.repeat(sw) + '\n';
+
+    const totals = [0, 0, 0];
+    criteria.forEach(c => {
+        if (!c.name) return;
+        const label = `${c.name} (${c.weight})`.padEnd(cw);
+        const cells = c.scores.map((s, col) => {
+            if (col === 0) return '0'.padEnd(sw);
+            const weighted = s !== '' ? s * c.weight : '';
+            if (s !== '' && s !== undefined) totals[col] += s * c.weight;
+            const sym = scoreSymbol(s);
+            return weighted !== '' ? `${sym} (${weighted > 0 ? '+' : ''}${weighted})`.padEnd(sw) : '—'.padEnd(sw);
+        });
+        text += label + '| ' + cells[0] + '| ' + cells[1] + '| ' + cells[2] + '\n';
+    });
+
+    const fmtTotal = (v) => v > 0 ? `+${v}` : `${v}`;
+    text += 'TOTAL'.padEnd(cw) + '| ' + '0'.padEnd(sw) + '| ' + fmtTotal(totals[1]).padEnd(sw) + '| ' + fmtTotal(totals[2]) + '\n';
+
+    text += '\n--- JUSTIFICATION ---\n' + justification + '\n';
+    text += '\n--- MY CONTRIBUTION ---\n' + contribution;
+    return text;
+}
+
+// ============================================
+// SAVE / SUBMIT DELIVERABLES
+// ============================================
 function saveDeliverableDraft(id) {
+    const customData = id === 4 ? collectDeliverable4CustomData() : {};
     state.deliverables[id] = {
         ...state.deliverables[id],
-        content: document.getElementById('deliverableContent').value,
+        content: id === 4 ? '' : document.getElementById('deliverableContent').value,
         links: document.getElementById('deliverableLinks').value,
         selfAssessment: document.getElementById('deliverableSelfAssessment').value,
+        ...customData,
         status: 'in-progress',
         updatedAt: new Date().toISOString()
     };
@@ -1507,20 +1895,47 @@ function saveDeliverableDraft(id) {
 
 function submitDeliverable(id) {
     const deliverable = DELIVERABLES.find(d => d.id === id);
-    const content = document.getElementById('deliverableContent').value;
 
-    if (!content || content.length < 100) {
-        showToast('Please provide more detailed content (at least 100 characters)', 'error');
-        return;
+    if (id === 4) {
+        const customData = collectDeliverable4CustomData();
+        // Validate: at least 3 criteria with names
+        const namedCriteria = customData.criteria.filter(c => c.name.trim());
+        if (namedCriteria.length < 3) {
+            showToast('Please name at least 3 criteria in your matrix', 'error');
+            return;
+        }
+        if (!customData.justification || customData.justification.length < 50) {
+            showToast('Please provide a more detailed justification (at least 50 characters)', 'error');
+            return;
+        }
+        if (!customData.contribution || customData.contribution.length < 30) {
+            showToast('Please describe your contribution in more detail (at least 30 characters)', 'error');
+            return;
+        }
+        const formattedContent = formatDeliverable4Content(customData);
+        state.deliverables[id] = {
+            content: formattedContent,
+            rawContent: '',
+            ...customData,
+            links: document.getElementById('deliverableLinks').value,
+            selfAssessment: document.getElementById('deliverableSelfAssessment').value,
+            status: 'completed',
+            submittedAt: new Date().toISOString()
+        };
+    } else {
+        const content = document.getElementById('deliverableContent').value;
+        if (!content || content.length < 100) {
+            showToast('Please provide more detailed content (at least 100 characters)', 'error');
+            return;
+        }
+        state.deliverables[id] = {
+            content,
+            links: document.getElementById('deliverableLinks').value,
+            selfAssessment: document.getElementById('deliverableSelfAssessment').value,
+            status: 'completed',
+            submittedAt: new Date().toISOString()
+        };
     }
-
-    state.deliverables[id] = {
-        content,
-        links: document.getElementById('deliverableLinks').value,
-        selfAssessment: document.getElementById('deliverableSelfAssessment').value,
-        status: 'completed',
-        submittedAt: new Date().toISOString()
-    };
 
     saveToCloud(); // immediate save on submission
     updateUI();

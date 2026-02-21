@@ -681,9 +681,11 @@ function openStudentDetail(email) {
             const content = submitted[4] || '';
             const selfAssessmentText = submitted[6] !== '' && submitted[6] !== null && submitted[6] !== undefined ? `<br><br><strong>Self-Assessment:</strong> ${submitted[6]}/10` : '';
             const linksText = submitted[5] ? `<br><br><strong>Links:</strong> ${submitted[5]}` : '';
-            const fullContent = content + selfAssessmentText + linksText;
-            const needsExpand = content.length > 300;
-            const previewContent = needsExpand ? content.substring(0, 300) + '...' + selfAssessmentText + linksText : fullContent;
+            const hasStructured = draft && (draft.criteria || draft.wiring);
+            const structuredHtml = hasStructured ? renderStructuredContent(draft, content) : '';
+            const fullContent = hasStructured ? structuredHtml + selfAssessmentText + linksText : `<div style="white-space: pre-wrap;">${content}</div>` + selfAssessmentText + linksText;
+            const needsExpand = hasStructured || content.length > 300;
+            const previewContent = hasStructured ? content.substring(0, 200) + '...' + selfAssessmentText + linksText : (needsExpand ? content.substring(0, 300) + '...' + selfAssessmentText + linksText : fullContent);
             const dStatusLabel = isResubmitted ? 'Resubmitted' : (isUngraded ? 'Needs Grading' : 'Graded');
             const dStatusClass = isResubmitted ? 'status-behind' : (isUngraded ? 'status-behind' : 'status-on-track');
             const dBorderStyle = isResubmitted ? 'border-left: 4px solid #e53935;' : (isUngraded ? 'border-left: 4px solid var(--warning);' : '');
@@ -711,7 +713,7 @@ function openStudentDetail(email) {
                     </div>
                 </div>
             `;
-        } else if (draft && draft.status === 'completed' && draft.content) {
+        } else if (draft && draft.status === 'completed' && (draft.content || draft.criteria)) {
             // Completed in student state but missing from Deliverables sheet (sync issue)
             const maxPoints = course.deliverablePoints?.[id] || 50;
             deliverablesPanel.innerHTML += `
@@ -721,7 +723,7 @@ function openStudentDetail(email) {
                         <span class="item-status status-badge status-behind">Needs Grading</span>
                     </div>
                     <div class="item-content">
-                        ${(draft.content || '').substring(0, 300)}${draft.content?.length > 300 ? '...' : ''}
+                        ${(draft.criteria || draft.wiring) ? renderStructuredContent(draft, draft.content) : `<div style="white-space: pre-wrap;">${(draft.content || '').substring(0, 300)}${draft.content?.length > 300 ? '...' : ''}</div>`}
                         ${draft.selfAssessment ? `<br><br><strong>Self-Assessment:</strong> ${draft.selfAssessment}/10` : ''}
                         ${draft.links ? `<br><br><strong>Links:</strong> ${draft.links}` : ''}
                     </div>
@@ -739,7 +741,7 @@ function openStudentDetail(email) {
                     </div>
                 </div>
             `;
-        } else if (draft && draft.status === 'in-progress' && draft.content) {
+        } else if (draft && draft.status === 'in-progress' && (draft.content || draft.criteria)) {
             deliverablesPanel.innerHTML += `
                 <div class="item-card" style="border-left: 3px solid var(--warning);">
                     <div class="item-header">
@@ -747,7 +749,7 @@ function openStudentDetail(email) {
                         <span class="item-status status-badge status-behind">In Progress</span>
                     </div>
                     <div class="item-content">
-                        ${(draft.content || '').substring(0, 300)}${draft.content?.length > 300 ? '...' : ''}
+                        ${(draft.criteria || draft.wiring) ? renderStructuredContent(draft, draft.content) : `<div style="white-space: pre-wrap;">${(draft.content || '').substring(0, 300)}${draft.content?.length > 300 ? '...' : ''}</div>`}
                     </div>
                 </div>
             `;
@@ -834,6 +836,112 @@ function toggleContent(contentId) {
 }
 
 // Toggle deliverable content expansion
+// Render structured deliverable data as HTML tables when available
+function renderStructuredContent(draft, contentText) {
+    if (!draft) return `<div style="white-space: pre-wrap;">${contentText || ''}</div>`;
+
+    let html = '';
+
+    // Pugh Matrix (FRC deliverable 4)
+    if (draft.criteria && draft.options) {
+        const optNames = [draft.options[0] || 'Baseline', draft.options[1] || 'Option 2', draft.options[2] || 'Option 3'];
+        const scoreSymbol = (s) => s === 1 ? '+' : s === -1 ? '-' : s === 0 ? 'S' : '—';
+        const totals = [0, 0, 0];
+        html += `<div style="margin-bottom: 12px;"><strong>Pugh Decision Matrix</strong></div>`;
+        html += `<table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 12px;">
+            <thead><tr style="background: #f5f5f5;">
+                <th style="padding: 6px 8px; text-align: left; border: 1px solid #ddd;">Criteria</th>
+                <th style="padding: 6px 8px; text-align: center; border: 1px solid #ddd; width: 50px;">Weight</th>
+                <th style="padding: 6px 8px; text-align: center; border: 1px solid #ddd;">${optNames[0]} (Baseline)</th>
+                <th style="padding: 6px 8px; text-align: center; border: 1px solid #ddd;">${optNames[1]}</th>
+                <th style="padding: 6px 8px; text-align: center; border: 1px solid #ddd;">${optNames[2]}</th>
+            </tr></thead><tbody>`;
+        draft.criteria.forEach(c => {
+            if (!c.name) return;
+            html += `<tr>
+                <td style="padding: 6px 8px; border: 1px solid #ddd;">${c.name}</td>
+                <td style="padding: 6px 8px; text-align: center; border: 1px solid #ddd;">${c.weight}</td>
+                <td style="padding: 6px 8px; text-align: center; border: 1px solid #ddd;">0</td>`;
+            [1, 2].forEach(col => {
+                const s = c.scores?.[col];
+                const weighted = (s !== '' && s !== undefined) ? s * c.weight : '';
+                if (weighted !== '') totals[col] += weighted;
+                const sym = scoreSymbol(s);
+                const wStr = weighted !== '' ? ` (${weighted > 0 ? '+' : ''}${weighted})` : '';
+                html += `<td style="padding: 6px 8px; text-align: center; border: 1px solid #ddd;">${sym}${wStr}</td>`;
+            });
+            html += `</tr>`;
+        });
+        const fmtT = (v) => v > 0 ? `+${v}` : `${v}`;
+        html += `<tr style="font-weight: bold; background: #f9f9f9;">
+            <td style="padding: 6px 8px; border: 1px solid #ddd;">TOTAL</td>
+            <td style="border: 1px solid #ddd;"></td>
+            <td style="padding: 6px 8px; text-align: center; border: 1px solid #ddd;">0</td>
+            <td style="padding: 6px 8px; text-align: center; border: 1px solid #ddd; color: ${totals[1] > 0 ? '#4caf50' : totals[1] < 0 ? '#e53935' : '#666'};">${fmtT(totals[1])}</td>
+            <td style="padding: 6px 8px; text-align: center; border: 1px solid #ddd; color: ${totals[2] > 0 ? '#4caf50' : totals[2] < 0 ? '#e53935' : '#666'};">${fmtT(totals[2])}</td>
+        </tr></tbody></table>`;
+        if (draft.justification) html += `<div style="margin-bottom: 8px;"><strong>Justification:</strong><br><span style="white-space: pre-wrap;">${draft.justification}</span></div>`;
+        if (draft.contribution) html += `<div style="margin-bottom: 8px;"><strong>My Contribution:</strong><br><span style="white-space: pre-wrap;">${draft.contribution}</span></div>`;
+        return html;
+    }
+
+    // Wiring + Accuracy (Robotics deliverable 3)
+    if (draft.wiring && draft.accuracyData) {
+        html += `<div style="margin-bottom: 12px;"><strong>Wire Connections</strong></div>`;
+        html += `<table style="border-collapse: collapse; font-size: 13px; margin-bottom: 12px;">
+            <thead><tr style="background: #f5f5f5;">
+                <th style="padding: 6px 8px; text-align: left; border: 1px solid #ddd;">Arduino Pin</th>
+                <th style="padding: 6px 8px; text-align: center; border: 1px solid #ddd;">→</th>
+                <th style="padding: 6px 8px; text-align: left; border: 1px solid #ddd;">Sensor Pin</th>
+            </tr></thead><tbody>`;
+        draft.wiring.forEach(w => {
+            if (w.arduino || w.sensor) {
+                html += `<tr>
+                    <td style="padding: 4px 8px; border: 1px solid #ddd;">${w.arduino}</td>
+                    <td style="padding: 4px 8px; text-align: center; border: 1px solid #ddd;">→</td>
+                    <td style="padding: 4px 8px; border: 1px solid #ddd;">${w.sensor}</td>
+                </tr>`;
+            }
+        });
+        html += `</tbody></table>`;
+
+        const distances = [5, 10, 20, 50, 100];
+        html += `<div style="margin-bottom: 8px;"><strong>Distance Accuracy Test</strong></div>`;
+        html += `<table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: center; margin-bottom: 12px;">
+            <thead><tr style="background: #f5f5f5;">
+                <th style="padding: 6px 8px; border: 1px solid #ddd;">Actual (cm)</th>
+                <th style="padding: 6px 8px; border: 1px solid #ddd;">Reading 1</th>
+                <th style="padding: 6px 8px; border: 1px solid #ddd;">Reading 2</th>
+                <th style="padding: 6px 8px; border: 1px solid #ddd;">Reading 3</th>
+                <th style="padding: 6px 8px; border: 1px solid #ddd;">Avg Error</th>
+            </tr></thead><tbody>`;
+        draft.accuracyData.forEach((row, i) => {
+            const readings = [row.r1, row.r2, row.r3].map(r => parseFloat(r)).filter(r => !isNaN(r));
+            const avgError = readings.length > 0
+                ? (readings.reduce((sum, r) => sum + Math.abs(r - distances[i]), 0) / readings.length).toFixed(1)
+                : '—';
+            const errColor = avgError !== '—' ? (parseFloat(avgError) <= 2 ? '#4caf50' : parseFloat(avgError) <= 5 ? '#f59e0b' : '#e53935') : '#666';
+            html += `<tr>
+                <td style="padding: 4px 8px; border: 1px solid #ddd; font-weight: bold;">${distances[i]}</td>
+                <td style="padding: 4px 8px; border: 1px solid #ddd;">${row.r1 || '—'}</td>
+                <td style="padding: 4px 8px; border: 1px solid #ddd;">${row.r2 || '—'}</td>
+                <td style="padding: 4px 8px; border: 1px solid #ddd;">${row.r3 || '—'}</td>
+                <td style="padding: 4px 8px; border: 1px solid #ddd; font-weight: bold; color: ${errColor};">${avgError}${avgError !== '—' ? ' cm' : ''}</td>
+            </tr>`;
+        });
+        html += `</tbody></table>`;
+
+        // Show remaining content (code & observations)
+        if (draft.rawContent) {
+            html += `<div><strong>Code & Observations:</strong><br><span style="white-space: pre-wrap;">${draft.rawContent}</span></div>`;
+        }
+        return html;
+    }
+
+    // Fallback: plain text with whitespace preservation
+    return `<div style="white-space: pre-wrap;">${contentText || draft.content || ''}</div>`;
+}
+
 function toggleDeliverableContent(contentId, deliverableId) {
     const element = document.getElementById(contentId);
     const button = element.nextElementSibling;
@@ -851,11 +959,21 @@ function toggleDeliverableContent(contentId, deliverableId) {
         const selfAssessmentText = submitted[6] !== '' && submitted[6] !== null && submitted[6] !== undefined ? `<br><br><strong>Self-Assessment:</strong> ${submitted[6]}/10` : '';
         const linksText = submitted[5] ? `<br><br><strong>Links:</strong> ${submitted[5]}` : '';
 
-        element.innerHTML = content + selfAssessmentText + linksText;
+        // Check for structured data in fullState
+        const student = state.students?.find(s => s.email === modalEmail);
+        const draft = student?.fullState?.deliverables?.[deliverableId];
+        const hasStructured = draft && (draft.criteria || draft.wiring);
+
+        if (hasStructured) {
+            element.innerHTML = renderStructuredContent(draft, content) + selfAssessmentText + linksText;
+        } else {
+            element.innerHTML = `<div style="white-space: pre-wrap;">${content}</div>` + selfAssessmentText + linksText;
+        }
         element.dataset.expanded = 'true';
         button.textContent = 'Show Less';
     } else {
-        const submitted = state.rawData.deliverables?.find(d => d[2] == deliverableId);
+        const modalEmail = document.querySelector('#studentModal .item-card .grade-input')?.dataset.email;
+        const submitted = state.rawData.deliverables?.find(d => d[0] === (modalEmail || '') && d[2] == deliverableId);
         if (!submitted) return;
 
         const content = submitted[4] || '';
