@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.12a';
+const BACKEND_VERSION = 'v2.9.14';
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
@@ -388,23 +388,33 @@ function saveDeliverable(student, id, deliverable) {
     }
   }
 
-  const rowData = [
-    student.email,
-    student.name,
-    id,
-    titles[id] || `Deliverable ${id}`,
-    deliverable.content || '',
-    deliverable.links || '',
-    deliverable.selfAssessment || '',
-    deliverable.status,
-    deliverable.submittedAt || new Date().toISOString(),
-    '' // Grade (teacher fills in)
-  ];
-
   if (rowIndex > 0) {
-    sheet.getRange(rowIndex, 1, 1, rowData.length).setValues([rowData]);
+    // Update content columns (A-I) but PRESERVE grade, feedback, and graded-at columns
+    const contentData = [
+      student.email,
+      student.name,
+      id,
+      titles[id] || `Deliverable ${id}`,
+      deliverable.content || '',
+      deliverable.links || '',
+      deliverable.selfAssessment || '',
+      deliverable.status,
+      deliverable.submittedAt || new Date().toISOString()
+    ];
+    sheet.getRange(rowIndex, 1, 1, contentData.length).setValues([contentData]);
   } else {
-    sheet.appendRow(rowData);
+    sheet.appendRow([
+      student.email,
+      student.name,
+      id,
+      titles[id] || `Deliverable ${id}`,
+      deliverable.content || '',
+      deliverable.links || '',
+      deliverable.selfAssessment || '',
+      deliverable.status,
+      deliverable.submittedAt || new Date().toISOString(),
+      '' // Grade (teacher fills in)
+    ]);
   }
 }
 
