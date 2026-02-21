@@ -11,7 +11,7 @@ const CONFIG = {
     VERSION: 'v2.7.2',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
-    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbwAvmEvw57yxtPJUSk18msLpon4zgOOV592X9GlUzYsBk4x1u0C3nRrRAvt-X_AJ-Uv/exec',
+    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbzJ3L-5lnLOrCvylK6NqOTbc7Vz7sLA3BVyOP5kp5UFPv1SajcGpOQUH1rKf5TD-BNh/exec',
 
     // Google OAuth Client ID
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -22,7 +22,7 @@ const CONFIG = {
     // Point values
     POINTS: {
         WEEKLY_REFLECTION: 20,
-        TOTAL_POSSIBLE: 900
+        TOTAL_POSSIBLE: 890
     },
 
     // Auto-save interval in milliseconds
@@ -52,7 +52,7 @@ const DELIVERABLES = [
         id: 2,
         title: 'Subsystem Research Report',
         week: 2,
-        points: 50,
+        points: 75,
         phase: 'Research',
         description: 'Research different approaches to your subsystem mechanism.',
         requirements: [
@@ -67,7 +67,7 @@ const DELIVERABLES = [
         id: 3,
         title: 'Design Contribution',
         week: 3,
-        points: 75,
+        points: 40,
         phase: 'Design',
         description: 'Create detailed designs for your portion of the subsystem.',
         requirements: [
