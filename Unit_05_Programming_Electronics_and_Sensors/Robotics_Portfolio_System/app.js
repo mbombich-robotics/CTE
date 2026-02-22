@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.14',
+    VERSION: 'v2.9.15',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyEWj9KQMlPPtdTcv0ZVoBoJv0dKvaVfSm_E75wgqjqmbKN-vcjkgNmcg76CD5CDS5m/exec',
@@ -98,10 +98,9 @@ const DELIVERABLES = [
         phase: 'scanner',
         description: 'Build the servo-mounted scanning mechanism.',
         requirements: [
-            'Physical scanner mechanism mounted to robot',
-            'Sweep code that moves sensor 0° to 180°',
-            'Photos of your assembly process',
-            'CAD design file (bonus: +15 points if 3D printed)'
+            'Screenshot of your customized Ultrasonic Sensor Mount CAD model',
+            'Screenshot of the CAD assembly: Servo Mount + Servo Motor + Sensor Mount',
+            'Sweep code (0° to 180°) with brief explanation'
         ]
     },
     {
@@ -489,6 +488,68 @@ void loop() {
 `
     }
 };
+
+// ============================================
+// GRADING RUBRICS
+// ============================================
+const RUBRICS = {
+    4: {
+        categories: [
+            { name: 'Customized CAD Model', points: 20, criteria: [
+                'Screenshot shows the ultrasonic sensor mount',
+                'Evidence of personalization beyond the base model',
+                'Modification is meaningful, not trivial'
+            ]},
+            { name: 'CAD Assembly Screenshot', points: 15, criteria: [
+                'Screenshot shows Servo Mount + Servo Motor + Sensor Mount together',
+                'All three components are visible and properly assembled'
+            ]},
+            { name: 'Sweep Code', points: 15, criteria: [
+                'Code sweeps servo 0° to 180°',
+                'Brief explanation of how the code works'
+            ]}
+        ]
+    }
+};
+
+function renderRubricCard(deliverableId) {
+    const rubric = RUBRICS[deliverableId];
+    if (!rubric) return '';
+    const totalPts = rubric.categories.reduce((sum, c) => sum + c.points, 0);
+    return `
+        <div class="card" style="margin-bottom: 20px; border-left: 3px solid #8b5cf6;">
+            <h4 style="margin-bottom: 0; cursor: pointer; display: flex; align-items: center; justify-content: space-between;"
+                onclick="const d=this.nextElementSibling; const a=d.style.display==='none'?'block':'none'; d.style.display=a; this.querySelector('.toggle-icon').textContent=a==='none'?'▸':'▾';">
+                <span><i class="fas fa-star"></i> Grading Rubric (${totalPts} pts)</span>
+                <span class="toggle-icon" style="font-size: 16px;">▸</span>
+            </h4>
+            <div style="display: none; margin-top: 12px;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--gray-200);">
+                            <th style="text-align: left; padding: 8px;">Category</th>
+                            <th style="text-align: center; padding: 8px; width: 60px;">Points</th>
+                            <th style="text-align: left; padding: 8px;">What I'm Looking For</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rubric.categories.map(cat => `
+                            <tr style="border-bottom: 1px solid var(--gray-100); vertical-align: top;">
+                                <td style="padding: 8px; font-weight: 600;">${cat.name}</td>
+                                <td style="padding: 8px; text-align: center; font-weight: 600;">${cat.points}</td>
+                                <td style="padding: 8px;">
+                                    <ul style="margin: 0; padding-left: 18px;">
+                                        ${cat.criteria.map(c => `<li style="margin-bottom: 4px;">${c}</li>`).join('')}
+                                    </ul>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
 
 // ============================================
 // APPLICATION STATE
@@ -1847,6 +1908,8 @@ function openDeliverableForm(id) {
             </ul>
         </div>
 
+        ${renderRubricCard(id)}
+
         <form id="deliverableForm" style="margin-top: 20px;">
             ${deliverable.timeLimit ? `
             <div class="form-group">
@@ -1917,14 +1980,74 @@ function openDeliverableForm(id) {
             </div>
             ` : ''}
 
+            ${id === 4 ? `
+            <div class="card" style="margin-bottom: 20px; border-left: 3px solid var(--primary);">
+                <h4 style="margin-bottom: 0; cursor: pointer; display: flex; align-items: center; justify-content: space-between;"
+                    onclick="const d=this.nextElementSibling; const a=d.style.display==='none'?'block':'none'; d.style.display=a; this.querySelector('.toggle-icon').textContent=a==='none'?'▸':'▾';">
+                    <span><i class="fas fa-info-circle"></i> Instructions</span>
+                    <span class="toggle-icon" style="font-size: 16px;">▸</span>
+                </h4>
+                <div style="display: none; margin-top: 12px; font-size: 14px; color: var(--gray-600);">
+                    <p style="margin-bottom: 10px;">Each robot will have <strong>one scanning ultrasonic sensor</strong> mounted on a servo. You are responsible for designing the mount that holds the sensor.</p>
+                    <p style="margin-bottom: 10px;">You were given a <strong>base CAD model</strong> of the sensor mount. You must personalize it — add your own design elements that go beyond the base. Examples: a custom face, decorative fins, your initials, a character pose, etc.</p>
+                    <p style="margin-bottom: 6px;"><strong>Screenshot 1 — Customized Sensor Mount:</strong></p>
+                    <ul style="margin-left: 20px; margin-bottom: 10px;">
+                        <li>Show your modified version of the base mount</li>
+                        <li>Your personalization must be clearly visible</li>
+                    </ul>
+                    <p style="margin-bottom: 6px;"><strong>Screenshot 2 — Full CAD Assembly:</strong></p>
+                    <ul style="margin-left: 20px; margin-bottom: 10px;">
+                        <li>Show all three parts together: <strong>Servo Mount</strong> (provided) + <strong>Servo Motor</strong> (provided) + <strong>your Sensor Mount</strong></li>
+                        <li>All components must be visible in the assembly view</li>
+                    </ul>
+                    <p><strong>Upload both screenshots using the photo upload section below.</strong></p>
+                </div>
+            </div>
+            ` : ''}
+
             <div class="form-group">
-                <label for="deliverableContent">${id === 3 ? 'Code & Observations' : 'Your Submission'}</label>
-                <textarea id="deliverableContent" rows="8" placeholder="${id === 3 ? 'Paste your code with comments, and describe your observations about sensor behavior...' : 'Describe what you did, paste your code, explain your process...'}">${id === 3 ? (existing.rawContent || existing.content || '') : (existing.content || '')}</textarea>
+                <label for="deliverableContent">${id === 3 ? 'Code & Observations' : id === 4 ? 'Sweep Code & Explanation' : 'Your Submission'}</label>
+                <textarea id="deliverableContent" rows="8" placeholder="${id === 3 ? 'Paste your code with comments, and describe your observations about sensor behavior...' : id === 4 ? 'Paste your servo sweep code and briefly explain how it works (what does each part do?)...' : 'Describe what you did, paste your code, explain your process...'}">${id === 3 ? (existing.rawContent || existing.content || '') : (existing.content || '')}</textarea>
             </div>
 
             <div class="form-group">
-                <label for="deliverableLinks">Supporting Links (photos, videos, code)</label>
-                <textarea id="deliverableLinks" rows="3" placeholder="https://drive.google.com/...">${existing.links || ''}</textarea>
+                <label>
+                    Photos
+                    <span style="font-weight: normal; color: var(--gray-500); font-size: 13px;">
+                        ${id === 4 ? '— Required: upload both CAD screenshots above' : '— if applicable'}
+                    </span>
+                </label>
+                <div id="deliverablePhotoZone"
+                    style="border: 2px dashed var(--gray-300); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; color: var(--gray-500); font-size: 14px;"
+                    onclick="document.getElementById('deliverablePhotoInput').click()"
+                    ondragover="event.preventDefault(); this.style.borderColor='var(--primary)';"
+                    ondragleave="this.style.borderColor='var(--gray-300)';"
+                    ondrop="event.preventDefault(); this.style.borderColor='var(--gray-300)'; handleDeliverablePhotos(event.dataTransfer.files, ${id});">
+                    <i class="fas fa-camera" style="font-size: 20px; margin-bottom: 6px; display: block;"></i>
+                    Click or drag photos here
+                </div>
+                <input type="file" id="deliverablePhotoInput" accept="image/*" multiple style="display: none;"
+                    onchange="handleDeliverablePhotos(this.files, ${id}); this.value='';">
+                <div id="deliverablePhotoPreview" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
+                    ${(existing.photos || []).map(p => `
+                        <div class="evidence-thumb" style="position: relative; width: 80px; height: 80px; border-radius: 6px; overflow: hidden;">
+                            <img src="${p.thumbnailLink}" alt="${p.filename}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='${PLACEHOLDER_IMG}'">
+                            <a href="${p.webViewLink}" target="_blank" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); opacity: 0; transition: opacity 0.2s; color: white; font-size: 18px; text-decoration: none;"
+                               onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0">
+                                <i class="fas fa-expand"></i>
+                            </a>
+                            <button type="button" onclick="removeDeliverablePhoto('${p.driveId}', ${id}, this.closest('.evidence-thumb'))"
+                                style="position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="deliverableLinks">Supporting Documentation</label>
+                <textarea id="deliverableLinks" rows="3" placeholder="Brief vital code snippets (not full code)">${existing.links || ''}</textarea>
             </div>
 
             <div class="form-group">
@@ -2003,6 +2126,58 @@ function collectDeliverable3CustomData() {
     return { wiring, accuracyData };
 }
 
+// ============================================
+// DELIVERABLE PHOTO UPLOAD
+// ============================================
+async function handleDeliverablePhotos(files, deliverableId) {
+    const preview = document.getElementById('deliverablePhotoPreview');
+    if (!preview) return;
+
+    for (const file of Array.from(files)) {
+        if (!file.type.startsWith('image/')) continue;
+
+        const thumb = document.createElement('div');
+        thumb.className = 'evidence-thumb';
+        thumb.style.cssText = 'position: relative; width: 80px; height: 80px; border-radius: 6px; overflow: hidden; background: var(--gray-100); display: flex; align-items: center; justify-content: center;';
+        thumb.innerHTML = `<i class="fas fa-spinner fa-spin" style="font-size: 20px; color: var(--gray-400);"></i>`;
+        preview.appendChild(thumb);
+
+        const driveFile = await uploadToDrive(file, state.selectedWeek);
+        if (driveFile) {
+            if (!state.deliverables[deliverableId]) state.deliverables[deliverableId] = {};
+            if (!state.deliverables[deliverableId].photos) state.deliverables[deliverableId].photos = [];
+            state.deliverables[deliverableId].photos.push({
+                driveId: driveFile.id,
+                filename: driveFile.name,
+                thumbnailLink: driveFile.thumbnailLink,
+                webViewLink: driveFile.webViewLink,
+                uploadedAt: new Date().toISOString()
+            });
+            thumb.innerHTML = `
+                <img src="${driveFile.thumbnailLink}" alt="${driveFile.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='${PLACEHOLDER_IMG}'">
+                <a href="${driveFile.webViewLink}" target="_blank" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); opacity: 0; transition: opacity 0.2s; color: white; font-size: 18px; text-decoration: none;"
+                   onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0"><i class="fas fa-expand"></i></a>
+                <button type="button" onclick="removeDeliverablePhoto('${driveFile.id}', ${deliverableId}, this.closest('.evidence-thumb'))"
+                    style="position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            markDirty();
+            showToast('Photo uploaded', 'success');
+        } else {
+            thumb.remove();
+        }
+    }
+}
+
+function removeDeliverablePhoto(driveId, deliverableId, element) {
+    if (state.deliverables[deliverableId]?.photos) {
+        state.deliverables[deliverableId].photos = state.deliverables[deliverableId].photos.filter(p => p.driveId !== driveId);
+    }
+    element.remove();
+    markDirty();
+}
+
 function saveDeliverableDraft(id) {
     const completionTimeEl = document.getElementById('completionTime');
     state.deliverables[id] = {
@@ -2012,6 +2187,7 @@ function saveDeliverableDraft(id) {
         selfAssessment: document.getElementById('deliverableSelfAssessment').value,
         completionTime: completionTimeEl ? parseInt(completionTimeEl.value) || null : null,
         ...(id === 3 ? collectDeliverable3CustomData() : {}),
+        // photos are written to state live on upload, preserved here via spread
         status: 'in-progress',
         updatedAt: new Date().toISOString()
     };
@@ -2047,14 +2223,32 @@ function submitDeliverable(id) {
     const deliverable = DELIVERABLES.find(d => d.id === id);
     const content = document.getElementById('deliverableContent').value;
     const completionTimeEl = document.getElementById('completionTime');
+    const photos = state.deliverables[id]?.photos || [];
 
-    if (!content || content.length < 50) {
-        showToast('Please provide more detail (at least 50 characters)', 'error');
-        return;
+    // Deliverable 4: require at least one photo and code explanation
+    if (id === 4) {
+        if (photos.length === 0) {
+            showToast('Please upload at least one CAD screenshot', 'error');
+            return;
+        }
+        if (!content || content.length < 30) {
+            showToast('Please include your sweep code and a brief explanation', 'error');
+            return;
+        }
+    } else {
+        if (!content || content.length < 50) {
+            showToast('Please provide more detail (at least 50 characters)', 'error');
+            return;
+        }
     }
 
     const customData = id === 3 ? collectDeliverable3CustomData() : {};
-    const finalContent = id === 3 ? formatDeliverable3Content(content, customData) : content;
+    let finalContent = id === 3 ? formatDeliverable3Content(content, customData) : content;
+
+    // Append photo links to content for Sheets storage
+    if (photos.length > 0) {
+        finalContent += '\n\n--- PHOTOS ---\n' + photos.map(p => p.webViewLink).join('\n');
+    }
 
     state.deliverables[id] = {
         content: finalContent,
@@ -2063,6 +2257,7 @@ function submitDeliverable(id) {
         selfAssessment: document.getElementById('deliverableSelfAssessment').value,
         completionTime: completionTimeEl ? parseInt(completionTimeEl.value) || null : null,
         ...customData,
+        photos,
         status: 'completed',
         submittedAt: new Date().toISOString()
     };

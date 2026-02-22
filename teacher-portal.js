@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.14',
+    VERSION: 'v2.9.15',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -938,8 +938,22 @@ function renderStructuredContent(draft, contentText) {
         return html;
     }
 
-    // Fallback: plain text with whitespace preservation
-    return `<div style="white-space: pre-wrap;">${contentText || draft.content || ''}</div>`;
+    // Render photos from draft if present
+    if (draft.photos && draft.photos.length > 0) {
+        html += `<div style="margin-bottom: 10px;"><strong>Photos:</strong></div>`;
+        html += `<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">`;
+        draft.photos.forEach(p => {
+            html += `<a href="${p.webViewLink}" target="_blank" style="display: block; width: 100px; height: 100px; border-radius: 6px; overflow: hidden; border: 1px solid #ddd;">
+                <img src="${p.thumbnailLink}" alt="${p.filename}" style="width: 100%; height: 100%; object-fit: cover;">
+            </a>`;
+        });
+        html += `</div>`;
+    }
+
+    // Fallback: plain text with whitespace preservation (strip photo URLs from text since we rendered them above)
+    const textForDisplay = (contentText || draft.content || '').replace(/\n\n--- PHOTOS ---\n[\s\S]*$/, '').trim();
+    if (textForDisplay) html += `<div style="white-space: pre-wrap;">${textForDisplay}</div>`;
+    return html || `<div style="white-space: pre-wrap;">${contentText || draft.content || ''}</div>`;
 }
 
 function toggleDeliverableContent(contentId, deliverableId) {
