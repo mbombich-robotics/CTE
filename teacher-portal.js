@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.15',
+    VERSION: 'v2.9.16',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -43,6 +43,88 @@ const CONFIG = {
     // Semester start date
     SEMESTER_START: new Date('2026-02-02')
 };
+
+// ============================================
+// GRADING RUBRICS
+// ============================================
+const RUBRICS = {
+    robotics: {
+        4: {
+            categories: [
+                { name: 'Customized CAD Model', points: 20 },
+                { name: 'CAD Assembly Screenshot', points: 15 },
+                { name: 'Sweep Code', points: 15 }
+            ]
+        }
+    },
+    frc: {
+        4: {
+            categories: [
+                { name: 'Pugh Matrix', points: 25 },
+                { name: 'Justification', points: 15 },
+                { name: 'Personal Contribution', points: 10 }
+            ]
+        }
+    }
+};
+
+function renderGradeSection(courseKey, deliverableId, maxPoints, existingGrade, existingFeedback, email) {
+    const rubric = RUBRICS[courseKey]?.[deliverableId];
+    const gradeInputHtml = `
+        <input type="number" class="grade-input" data-type="deliverable" data-id="${deliverableId}" data-email="${email}"
+               value="${existingGrade}" min="0" max="${maxPoints}" step="1"
+               style="width: 60px; padding: 4px 8px; border: 1px solid var(--gray-300); border-radius: 4px;">
+        <span style="color: var(--gray-500); font-size: 12px;">/ ${maxPoints} pts</span>`;
+
+    const feedbackHtml = `
+        <textarea class="feedback-input" data-type="deliverable" data-id="${deliverableId}" data-email="${email}"
+                  placeholder="Feedback for student..."
+                  style="width: 100%; padding: 8px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 13px; resize: vertical; min-height: 60px;">${existingFeedback}</textarea>`;
+
+    if (!rubric) {
+        return `
+            <div class="grade-section" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gray-200);">
+                <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 8px;">
+                    <label style="font-size: 13px; font-weight: 500;">Grade:</label>
+                    ${gradeInputHtml}
+                </div>
+                ${feedbackHtml}
+            </div>`;
+    }
+
+    const uid = `rubric-${courseKey}-${deliverableId}-${email.replace(/[^a-z0-9]/gi, '')}`;
+    const categoryRows = rubric.categories.map((cat, i) => `
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+            <span style="flex: 1; font-size: 13px;">${cat.name}</span>
+            <input type="number" class="rubric-cat-input" data-uid="${uid}" min="0" max="${cat.points}" step="1"
+                   placeholder="—"
+                   style="width: 50px; padding: 3px 6px; border: 1px solid var(--gray-300); border-radius: 4px; text-align: center; font-size: 13px;"
+                   oninput="tallyRubric('${uid}', ${deliverableId}, '${email}')">
+            <span style="font-size: 12px; color: var(--gray-500); width: 45px;">/ ${cat.points}</span>
+        </div>
+    `).join('');
+
+    return `
+        <div class="grade-section" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gray-200);">
+            <div style="margin-bottom: 10px;">
+                <div style="font-size: 13px; font-weight: 500; margin-bottom: 8px; color: var(--gray-600);">Rubric Worksheet:</div>
+                ${categoryRows}
+                <div style="display: flex; align-items: center; gap: 8px; padding-top: 8px; border-top: 1px solid var(--gray-200); margin-top: 4px;">
+                    <span style="flex: 1; font-size: 13px; font-weight: 600;">Total</span>
+                    ${gradeInputHtml}
+                </div>
+            </div>
+            ${feedbackHtml}
+        </div>`;
+}
+
+function tallyRubric(uid, deliverableId, email) {
+    const inputs = document.querySelectorAll(`.rubric-cat-input[data-uid="${uid}"]`);
+    let total = 0;
+    inputs.forEach(inp => { total += parseInt(inp.value) || 0; });
+    const gradeInput = document.querySelector(`.grade-input[data-type="deliverable"][data-id="${deliverableId}"][data-email="${email}"]`);
+    if (gradeInput) gradeInput.value = total;
+}
 
 // ============================================
 // APPLICATION STATE
@@ -699,18 +781,7 @@ function openStudentDetail(email) {
                         ${previewContent}
                     </div>
                     ${needsExpand ? `<button onclick="toggleDeliverableContent('${contentId}', ${id})" style="margin-top: 8px; padding: 4px 12px; background: var(--gray-100); border: 1px solid var(--gray-300); border-radius: 4px; cursor: pointer; font-size: 12px; color: var(--primary);">Show More</button>` : ''}
-                    <div class="grade-section" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gray-200);">
-                        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 8px;">
-                            <label style="font-size: 13px; font-weight: 500;">Grade:</label>
-                            <input type="number" class="grade-input" data-type="deliverable" data-id="${id}" data-email="${email}"
-                                   value="${existingGrade}" min="0" max="${maxPoints}" step="1"
-                                   style="width: 60px; padding: 4px 8px; border: 1px solid var(--gray-300); border-radius: 4px;">
-                            <span style="color: var(--gray-500); font-size: 12px;">/ ${maxPoints} pts</span>
-                        </div>
-                        <textarea class="feedback-input" data-type="deliverable" data-id="${id}" data-email="${email}"
-                                  placeholder="Feedback for student..."
-                                  style="width: 100%; padding: 8px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 13px; resize: vertical; min-height: 60px;">${existingFeedback}</textarea>
-                    </div>
+                    ${renderGradeSection(state.activeCourse, id, maxPoints, existingGrade, existingFeedback, email)}
                 </div>
             `;
         } else if (draft && draft.status === 'completed' && (draft.content || draft.criteria)) {
@@ -727,18 +798,7 @@ function openStudentDetail(email) {
                         ${draft.selfAssessment ? `<br><br><strong>Self-Assessment:</strong> ${draft.selfAssessment}/10` : ''}
                         ${draft.links ? `<br><br><strong>Links:</strong> ${draft.links}` : ''}
                     </div>
-                    <div class="grade-section" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gray-200);">
-                        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 8px;">
-                            <label style="font-size: 13px; font-weight: 500;">Grade:</label>
-                            <input type="number" class="grade-input" data-type="deliverable" data-id="${id}" data-email="${email}"
-                                   value="" min="0" max="${maxPoints}" step="1"
-                                   style="width: 60px; padding: 4px 8px; border: 1px solid var(--gray-300); border-radius: 4px;">
-                            <span style="color: var(--gray-500); font-size: 12px;">/ ${maxPoints} pts</span>
-                        </div>
-                        <textarea class="feedback-input" data-type="deliverable" data-id="${id}" data-email="${email}"
-                                  placeholder="Feedback for student..."
-                                  style="width: 100%; padding: 8px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 13px; resize: vertical; min-height: 60px;"></textarea>
-                    </div>
+                    ${renderGradeSection(state.activeCourse, id, maxPoints, '', '', email)}
                 </div>
             `;
         } else if (draft && draft.status === 'in-progress' && (draft.content || draft.criteria)) {
