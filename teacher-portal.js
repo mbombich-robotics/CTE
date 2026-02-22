@@ -763,7 +763,7 @@ function openStudentDetail(email) {
             const content = submitted[4] || '';
             const selfAssessmentText = submitted[6] !== '' && submitted[6] !== null && submitted[6] !== undefined ? `<br><br><strong>Self-Assessment:</strong> ${submitted[6]}/10` : '';
             const linksText = submitted[5] ? `<br><br><strong>Links:</strong> ${submitted[5]}` : '';
-            const hasStructured = draft && (draft.criteria || draft.wiring);
+            const hasStructured = draft && (draft.criteria || draft.wiring || draft.photos?.length);
             const structuredHtml = hasStructured ? renderStructuredContent(draft, content) : '';
             const fullContent = hasStructured ? structuredHtml + selfAssessmentText + linksText : `<div style="white-space: pre-wrap;">${content}</div>` + selfAssessmentText + linksText;
             const needsExpand = hasStructured || content.length > 300;
@@ -1036,7 +1036,7 @@ function toggleDeliverableContent(contentId, deliverableId) {
         // Check for structured data in fullState
         const student = state.students?.find(s => s.email === modalEmail);
         const draft = student?.fullState?.deliverables?.[deliverableId];
-        const hasStructured = draft && (draft.criteria || draft.wiring);
+        const hasStructured = draft && (draft.criteria || draft.wiring || draft.photos?.length);
 
         if (hasStructured) {
             element.innerHTML = renderStructuredContent(draft, content) + selfAssessmentText + linksText;
