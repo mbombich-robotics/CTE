@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.15',
+    VERSION: 'v2.9.16',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyEWj9KQMlPPtdTcv0ZVoBoJv0dKvaVfSm_E75wgqjqmbKN-vcjkgNmcg76CD5CDS5m/exec',
@@ -109,12 +109,12 @@ const DELIVERABLES = [
         week: 5,
         points: 75,
         phase: 'scanner',
-        description: 'Demonstrate obstacle detection using your scanner.',
+        description: 'Demonstrate obstacle detection using your scanning robot.',
         requirements: [
-            'Scan environment and identify nearest obstacle',
-            'Report obstacle distance and direction',
-            'Identify clearest path direction',
-            'Serial output showing scan results'
+            'Complete scanning algorithm: full sweep, nearest obstacle, clearest path, navigation decision',
+            'Serial output clearly shows scan data, nearest obstacle, clearest path, and decision',
+            'In-class demonstration with teacher-placed obstacles',
+            'Strategy & Reflection: describe your navigation approach'
         ]
     },
     {
@@ -507,6 +507,30 @@ const RUBRICS = {
             { name: 'Sweep Code', points: 15, criteria: [
                 'Code sweeps servo 0° to 180°',
                 'Brief explanation of how the code works'
+            ]}
+        ]
+    },
+    5: {
+        categories: [
+            { name: 'Code', points: 25, criteria: [
+                'Scanning algorithm complete and functional',
+                'Code uploaded and runs without errors',
+                'Serial output shows scan data, nearest obstacle, clearest path, and decision'
+            ]},
+            { name: 'Course Completion', points: 25, criteria: [
+                'Completed all parts of the practical during class time',
+                'Demonstrated scanner in front of teacher',
+                'Submitted code and reflection before deadline'
+            ]},
+            { name: 'Performance', points: 15, criteria: [
+                'Top third of class — correct decisions in most scenarios (15 pts)',
+                'Multiple attempts and code iterations (10 pts)',
+                'Few attempts or moderate effort (5 pts)',
+                'No meaningful attempt (0 pts)'
+            ]},
+            { name: 'Strategy & Reflection', points: 10, criteria: [
+                'Clear description of the navigation strategy used',
+                'Reflects on what worked and what would be improved'
             ]}
         ]
     }
@@ -2005,9 +2029,83 @@ function openDeliverableForm(id) {
             </div>
             ` : ''}
 
+            ${id === 5 ? `
+            <div class="card" style="margin-bottom: 20px; border-left: 3px solid var(--primary);">
+                <h4 style="margin-bottom: 0; cursor: pointer; display: flex; align-items: center; justify-content: space-between;"
+                    onclick="const d=this.nextElementSibling; const a=d.style.display==='none'?'block':'none'; d.style.display=a; this.querySelector('.toggle-icon').textContent=a==='none'?'▸':'▾';">
+                    <span><i class="fas fa-info-circle"></i> Instructions</span>
+                    <span class="toggle-icon" style="font-size: 16px;">▸</span>
+                </h4>
+                <div style="display: none; margin-top: 12px; font-size: 14px; color: var(--gray-600);">
+                    <p style="margin-bottom: 10px;">This is an <strong>in-class practical</strong>. Your robot must scan the environment, identify the nearest obstacle and clearest path, and print a navigation decision to Serial.</p>
+                    <p style="margin-bottom: 10px;"><strong>Before class:</strong> Your scanning code should be uploaded and running. You will place your robot in scenarios set up by Mr. B and demonstrate the output.</p>
+                    <p style="margin-bottom: 6px;"><strong>What to submit in the portfolio:</strong></p>
+                    <ul style="margin-left: 20px; margin-bottom: 10px;">
+                        <li>Select your navigation <strong>strategy</strong> below</li>
+                        <li>Record your <strong>test results</strong> during the practical (nearest, angle, decision)</li>
+                        <li>Write a brief <strong>reflection</strong> in the text area — what worked, what you'd improve</li>
+                    </ul>
+                    <p><strong>Performance is graded on how your robot compares to the class</strong> — top third earns full 15 pts. Multiple attempts and code iterations earn partial credit. No attempt = 0.</p>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 20px; border-left: 3px solid var(--success);">
+                <h4 style="margin-bottom: 12px;"><i class="fas fa-robot"></i> Navigation Strategy</h4>
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label style="font-size: 13px; color: var(--gray-600); margin-bottom: 6px; display: block;">Which strategy did you implement?</label>
+                    <select id="strategySelect" style="width: 100%; padding: 8px; border: 1px solid var(--gray-200); border-radius: 6px; font-size: 14px;">
+                        <option value="">— Select a strategy —</option>
+                        <option value="Stop-and-scan" ${(existing.strategy === 'Stop-and-scan') ? 'selected' : ''}>Stop-and-Scan (full 180° sweep before deciding)</option>
+                        <option value="Reactive" ${(existing.strategy === 'Reactive') ? 'selected' : ''}>Reactive / Threshold (react when obstacle gets close)</option>
+                        <option value="Weighted steering" ${(existing.strategy === 'Weighted steering') ? 'selected' : ''}>Weighted Steering (proportional turn based on clearance)</option>
+                        <option value="Custom" ${(existing.strategy === 'Custom') ? 'selected' : ''}>Custom approach</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 20px; border-left: 3px solid var(--warning, #f59e0b);">
+                <h4 style="margin-bottom: 12px;"><i class="fas fa-table"></i> Test Results</h4>
+                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 12px;">Record your robot's output for each test scenario during the practical</p>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--gray-200);">
+                            <th style="text-align: left; padding: 8px; font-size: 13px;">Scenario</th>
+                            <th style="text-align: center; padding: 8px; font-size: 13px;">Nearest (cm)</th>
+                            <th style="text-align: center; padding: 8px; font-size: 13px;">At Angle (°)</th>
+                            <th style="text-align: center; padding: 8px; font-size: 13px;">Decision</th>
+                            <th style="text-align: center; padding: 8px; font-size: 13px;">Correct?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${[
+                            'Object at Left (0°–60°)',
+                            'Object Ahead (70°–110°)',
+                            'Object at Right (120°–180°)'
+                        ].map((scenario, i) => {
+                            const r = (existing.testResults && existing.testResults[i]) || {};
+                            return `<tr style="border-bottom: 1px solid var(--gray-100);">
+                                <td style="padding: 6px 8px; font-size: 13px; color: var(--gray-700);">${scenario}</td>
+                                <td style="padding: 6px 4px; text-align: center;"><input type="number" class="test-nearest" data-row="${i}" value="${r.nearest || ''}" placeholder="cm" style="width: 70px; padding: 4px; text-align: center; border: 1px solid var(--gray-200); border-radius: 4px;"></td>
+                                <td style="padding: 6px 4px; text-align: center;"><input type="number" class="test-angle" data-row="${i}" value="${r.angle || ''}" placeholder="°" style="width: 60px; padding: 4px; text-align: center; border: 1px solid var(--gray-200); border-radius: 4px;"></td>
+                                <td style="padding: 6px 4px; text-align: center;"><input type="text" class="test-decision" data-row="${i}" value="${r.decision || ''}" placeholder="TURN LEFT..." style="width: 110px; padding: 4px; text-align: center; border: 1px solid var(--gray-200); border-radius: 4px;"></td>
+                                <td style="padding: 6px 4px; text-align: center;">
+                                    <select class="test-correct" data-row="${i}" style="padding: 4px; border: 1px solid var(--gray-200); border-radius: 4px; font-size: 13px;">
+                                        <option value="">—</option>
+                                        <option value="Yes" ${r.correct === 'Yes' ? 'selected' : ''}>Yes</option>
+                                        <option value="No" ${r.correct === 'No' ? 'selected' : ''}>No</option>
+                                        <option value="Partial" ${r.correct === 'Partial' ? 'selected' : ''}>Partial</option>
+                                    </select>
+                                </td>
+                            </tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+            ` : ''}
+
             <div class="form-group">
-                <label for="deliverableContent">${id === 3 ? 'Code & Observations' : id === 4 ? 'Sweep Code & Explanation' : 'Your Submission'}</label>
-                <textarea id="deliverableContent" rows="8" placeholder="${id === 3 ? 'Paste your code with comments, and describe your observations about sensor behavior...' : id === 4 ? 'Paste your servo sweep code and briefly explain how it works (what does each part do?)...' : 'Describe what you did, paste your code, explain your process...'}">${id === 3 ? (existing.rawContent || existing.content || '') : (existing.content || '')}</textarea>
+                <label for="deliverableContent">${id === 3 ? 'Code & Observations' : id === 4 ? 'Sweep Code & Explanation' : id === 5 ? 'Strategy & Reflection' : 'Your Submission'}</label>
+                <textarea id="deliverableContent" rows="8" placeholder="${id === 3 ? 'Paste your code with comments, and describe your observations about sensor behavior...' : id === 4 ? 'Paste your servo sweep code and briefly explain how it works (what does each part do?)...' : id === 5 ? 'Describe your navigation strategy. What approach did you use? What worked well? What would you improve next time?' : 'Describe what you did, paste your code, explain your process...'}">${id === 3 ? (existing.rawContent || existing.content || '') : id === 5 ? (existing.rawContent || existing.content || '') : (existing.content || '')}</textarea>
             </div>
 
             <div class="form-group">
@@ -2187,6 +2285,7 @@ function saveDeliverableDraft(id) {
         selfAssessment: document.getElementById('deliverableSelfAssessment').value,
         completionTime: completionTimeEl ? parseInt(completionTimeEl.value) || null : null,
         ...(id === 3 ? collectDeliverable3CustomData() : {}),
+        ...(id === 5 ? collectDeliverable5CustomData() : {}),
         // photos are written to state live on upload, preserved here via spread
         status: 'in-progress',
         updatedAt: new Date().toISOString()
@@ -2219,6 +2318,32 @@ function formatDeliverable3Content(content, customData) {
     return formatted;
 }
 
+function collectDeliverable5CustomData() {
+    const strategy = document.getElementById('strategySelect')?.value || '';
+    const scenarios = ['Object at Left (0°–60°)', 'Object Ahead (70°–110°)', 'Object at Right (120°–180°)'];
+    const testResults = scenarios.map((scenario, i) => ({
+        scenario,
+        nearest: document.querySelector(`.test-nearest[data-row="${i}"]`)?.value || '',
+        angle: document.querySelector(`.test-angle[data-row="${i}"]`)?.value || '',
+        decision: document.querySelector(`.test-decision[data-row="${i}"]`)?.value || '',
+        correct: document.querySelector(`.test-correct[data-row="${i}"]`)?.value || ''
+    }));
+    return { strategy, testResults };
+}
+
+function formatDeliverable5Content(content, customData) {
+    const { strategy, testResults } = customData;
+    let formatted = `--- STRATEGY ---\n${strategy || '(not specified)'}\n`;
+    formatted += '\n--- TEST RESULTS ---\n';
+    formatted += 'Scenario                  | Nearest(cm) | Angle(°) | Decision      | Correct\n';
+    formatted += '--------------------------|-------------|----------|---------------|--------\n';
+    testResults.forEach(r => {
+        formatted += `${String(r.scenario).padEnd(26)}| ${String(r.nearest || '—').padEnd(12)}| ${String(r.angle || '—').padEnd(9)}| ${String(r.decision || '—').padEnd(14)}| ${r.correct || '—'}\n`;
+    });
+    formatted += '\n--- STRATEGY & REFLECTION ---\n' + content;
+    return formatted;
+}
+
 function submitDeliverable(id) {
     const deliverable = DELIVERABLES.find(d => d.id === id);
     const content = document.getElementById('deliverableContent').value;
@@ -2235,6 +2360,11 @@ function submitDeliverable(id) {
             showToast('Please include your sweep code and a brief explanation', 'error');
             return;
         }
+    } else if (id === 5) {
+        if (!content || content.length < 20) {
+            showToast('Please add a brief strategy & reflection', 'error');
+            return;
+        }
     } else {
         if (!content || content.length < 50) {
             showToast('Please provide more detail (at least 50 characters)', 'error');
@@ -2242,8 +2372,8 @@ function submitDeliverable(id) {
         }
     }
 
-    const customData = id === 3 ? collectDeliverable3CustomData() : {};
-    let finalContent = id === 3 ? formatDeliverable3Content(content, customData) : content;
+    const customData = id === 3 ? collectDeliverable3CustomData() : id === 5 ? collectDeliverable5CustomData() : {};
+    let finalContent = id === 3 ? formatDeliverable3Content(content, customData) : id === 5 ? formatDeliverable5Content(content, customData) : content;
 
     // Append photo links to content for Sheets storage
     if (photos.length > 0) {
@@ -2252,7 +2382,7 @@ function submitDeliverable(id) {
 
     state.deliverables[id] = {
         content: finalContent,
-        rawContent: id === 3 ? content : undefined,
+        rawContent: (id === 3 || id === 5) ? content : undefined,
         links: document.getElementById('deliverableLinks').value,
         selfAssessment: document.getElementById('deliverableSelfAssessment').value,
         completionTime: completionTimeEl ? parseInt(completionTimeEl.value) || null : null,

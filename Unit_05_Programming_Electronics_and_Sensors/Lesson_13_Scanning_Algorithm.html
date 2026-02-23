@@ -403,7 +403,8 @@
                 </div>
                 <div class="warning-box" style="margin-top: 20px;">
                     <h3 style="color: #ff9500; margin-top: 0;">Week 5 Deliverable: Scanning Practical</h3>
-                    <p>Due Friday: Robot scans environment, identifies obstacles, and determines clearest path (75 points)</p>
+                    <p>In-class demonstration: your robot scans, identifies obstacles, and determines the clearest path (75 points)</p>
+                    <p style="margin-top: 8px; font-size: 0.95rem;">Code 25 · Completion 25 · Performance 15 · Strategy & Reflection 10</p>
                 </div>
             </div>
         </div>
@@ -663,7 +664,59 @@ Decision Logic:
             </div>
         </div>
 
-        <!-- Slide 8: Complete Scanner Code -->
+        <!-- Slide 8: Obstacle Avoidance Strategies -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Obstacle Avoidance Strategies</h2>
+            </div>
+            <div class="content">
+                <div class="two-column">
+                    <div class="column">
+                        <div class="concept-box">
+                            <h3 style="color: #00d4ff; margin-top: 0;">Strategy 1: Stop-and-Scan</h3>
+                            <p style="margin-bottom: 10px;"><strong>What we built today.</strong> Robot stops, does a full 180° sweep, picks the clearest direction, then moves.</p>
+                            <ul style="font-size: 1rem;">
+                                <li><span class="highlight">Pro:</span> Thorough — sees the full picture before deciding</li>
+                                <li><span class="emphasis">Con:</span> Slow — robot stops to scan (~3–5 sec)</li>
+                                <li><span class="highlight">Best when:</span> Obstacles are stationary, accuracy matters</li>
+                            </ul>
+                        </div>
+
+                        <div class="concept-box">
+                            <h3 style="color: #00d4ff; margin-top: 0;">Strategy 2: Reactive / Threshold</h3>
+                            <p style="margin-bottom: 10px;">Robot drives forward until the <strong>forward-facing sensor</strong> drops below a threshold (e.g., 20 cm), then turns toward whichever side has more space.</p>
+                            <ul style="font-size: 1rem;">
+                                <li><span class="highlight">Pro:</span> Fast — no full sweep needed</li>
+                                <li><span class="emphasis">Con:</span> Only sees straight ahead — can miss side obstacles</li>
+                                <li><span class="highlight">Best when:</span> Open corridors, fast navigation</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="concept-box">
+                            <h3 style="color: #00d4ff; margin-top: 0;">Strategy 3: Weighted Steering</h3>
+                            <p style="margin-bottom: 10px;">Instead of a binary left/right decision, use scan data to <strong>weight</strong> the turn. A large distance difference means a sharp turn; a small difference means a gentle correction.</p>
+                            <ul style="font-size: 1rem;">
+                                <li><span class="highlight">Pro:</span> Smooth movement, more like a real robot</li>
+                                <li><span class="emphasis">Con:</span> More complex to tune</li>
+                                <li><span class="highlight">Best when:</span> Open space, smooth motion is a goal</li>
+                            </ul>
+                        </div>
+
+                        <div class="warning-box">
+                            <h3 style="color: #ff9500; margin-top: 0;">Tuning Reality</h3>
+                            <ul style="font-size: 1rem;">
+                                <li>Sensor hardware varies — <strong>calibrate your threshold distances</strong> on your actual robot</li>
+                                <li>Start with a conservative threshold (30 cm), then reduce</li>
+                                <li>Test multiple scenarios: obstacle on left, right, and ahead</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Complete Scanner Code -->
         <div class="slide">
             <div class="slide-header">
                 <h2>Complete Scanner Code</h2>
@@ -709,7 +762,7 @@ Decision Logic:
             </div>
         </div>
 
-        <!-- Slide 9: Serial Output Format -->
+        <!-- Slide 10: Serial Output Format -->
         <div class="slide">
             <div class="slide-header">
                 <h2>Expected Serial Output</h2>
@@ -758,7 +811,7 @@ Decision: GO FORWARD
             </div>
         </div>
 
-        <!-- Slide 10: Lab Exercise -->
+        <!-- Slide 11: Lab Exercise -->
         <div class="slide">
             <div class="slide-header">
                 <h2>Lab Exercise: Obstacle Course</h2>
@@ -795,70 +848,50 @@ Decision: GO FORWARD
             </div>
         </div>
 
-        <!-- Slide 11: Deliverable -->
+        <!-- Slide 12: Deliverable -->
         <div class="slide">
             <div class="slide-header">
                 <h2>Week 5 Deliverable: Scanning Practical</h2>
             </div>
             <div class="content">
                 <div class="success-box">
-                    <h3 style="color: #50fa7b; margin-top: 0;">Practical Exercise (75 points)</h3>
+                    <h3 style="color: #50fa7b; margin-top: 0;">In-Class Practical (75 points)</h3>
                 </div>
 
                 <div class="two-column">
                     <div class="column">
-                        <h3>Requirements</h3>
+                        <h3>What You Need</h3>
                         <ul>
-                            <li><strong>Scan Environment (20 pts)</strong>
-                                <ul style="font-size: 0.95rem;">
-                                    <li>Complete 180° sweep</li>
-                                    <li>Distance readings at each angle</li>
-                                </ul>
-                            </li>
-                            <li><strong>Identify Obstacles (25 pts)</strong>
-                                <ul style="font-size: 0.95rem;">
-                                    <li>Find nearest obstacle distance</li>
-                                    <li>Report obstacle direction (angle)</li>
-                                </ul>
-                            </li>
-                            <li><strong>Determine Path (20 pts)</strong>
-                                <ul style="font-size: 0.95rem;">
-                                    <li>Find clearest path distance</li>
-                                    <li>Report path direction</li>
-                                </ul>
-                            </li>
-                            <li><strong>Output Format (10 pts)</strong>
-                                <ul style="font-size: 0.95rem;">
-                                    <li>Clear, readable Serial output</li>
-                                    <li>Decision displayed</li>
-                                </ul>
-                            </li>
+                            <li><strong>Code:</strong> Scanning algorithm complete and uploaded. Performs a full sweep, identifies nearest obstacle and clearest path, prints results to Serial.</li>
+                            <li><strong>In-class Demo:</strong> Show your scanner working with obstacles placed by Mr. B. The Serial output must clearly display angle, nearest, clearest, and decision.</li>
+                            <li><strong>Strategy & Reflection:</strong> In the portfolio, briefly describe your navigation strategy and what you learned.</li>
                         </ul>
                     </div>
                     <div class="column">
-                        <h3>Demonstration</h3>
-                        <p>You will demonstrate your scanner in class with obstacles placed by the teacher.</p>
-
-                        <div class="warning-box" style="margin-top: 20px;">
-                            <h3 style="color: #ff9500; margin-top: 0;">Grading</h3>
+                        <div class="warning-box">
+                            <h3 style="color: #ff9500; margin-top: 0;">Rubric</h3>
                             <table style="font-size: 0.9rem;">
-                                <tr><th>Criteria</th><th>Points</th></tr>
-                                <tr><td>Scan completes</td><td>20</td></tr>
-                                <tr><td>Nearest found</td><td>25</td></tr>
-                                <tr><td>Clearest found</td><td>20</td></tr>
-                                <tr><td>Output format</td><td>10</td></tr>
+                                <tr><th>Category</th><th>Points</th></tr>
+                                <tr><td>Code (complete &amp; functional)</td><td>25</td></tr>
+                                <tr><td>Course Completion (practical done in class)</td><td>25</td></tr>
+                                <tr><td>Performance (top ⅓ = 15 · attempts = 10/5 · none = 0)</td><td>15</td></tr>
+                                <tr><td>Strategy &amp; Reflection</td><td>10</td></tr>
                                 <tr><th>Total</th><th>75</th></tr>
                             </table>
                         </div>
 
+                        <div class="concept-box" style="margin-top: 15px;">
+                            <p style="font-size: 1rem;"><strong>Performance is graded on how your robot compares to the class</strong> — top third earns full 15 pts. Multiple attempts and iterations earn partial credit.</p>
+                        </div>
+
                         <p style="margin-top: 15px;"><strong>Due:</strong> Friday at 3:00 PM<br>
-                        Submit code via Portfolio → Deliverable 5</p>
+                        Submit via Portfolio → Deliverable 5</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Slide 12: Summary -->
+        <!-- Slide 13: Summary -->
         <div class="slide">
             <div class="slide-header">
                 <h2>Summary & What's Next</h2>
