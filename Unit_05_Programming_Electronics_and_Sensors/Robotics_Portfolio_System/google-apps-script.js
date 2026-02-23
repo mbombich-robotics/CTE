@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.14';
+const BACKEND_VERSION = 'v2.9.15';
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
@@ -254,17 +254,43 @@ function saveFullState(email, data) {
   const sheet = ss.getSheetByName(SHEET_NAMES.STUDENTS);
   const sheetData = sheet.getDataRange().getValues();
 
-  const stateJson = JSON.stringify({
-    student: data.student,
-    weeklyReflections: data.weeklyReflections || {},
-    deliverables: data.deliverables || {},
-    codeSnippets: data.codeSnippets || [],
-    viewedFeedback: data.viewedFeedback || [],
-    lastSynced: data.timestamp || new Date().toISOString()
-  });
-
   for (let i = 1; i < sheetData.length; i++) {
     if (sheetData[i][0] === email) {
+      // Read existing state and merge — never allow a partial save to overwrite complete data.
+      // If the frontend sends an incomplete weeklyReflections (e.g. due to a race condition
+      // or two tabs open), existing weeks not present in the incoming data are preserved.
+      let existingReflections = {};
+      let existingDeliverables = {};
+      let existingCodeSnippets = [];
+      let existingViewedFeedback = [];
+
+      const existingJson = sheetData[i][8];
+      if (existingJson && existingJson.trim()) {
+        try {
+          const existing = JSON.parse(existingJson);
+          existingReflections = existing.weeklyReflections || {};
+          existingDeliverables = existing.deliverables || {};
+          existingCodeSnippets = existing.codeSnippets || [];
+          existingViewedFeedback = existing.viewedFeedback || [];
+        } catch (e) {
+          // Existing JSON is corrupt — start fresh from incoming data
+        }
+      }
+
+      // Merge: incoming data wins for any weeks/deliverables it includes;
+      // existing data is preserved for anything the incoming payload is missing.
+      const mergedReflections = Object.assign({}, existingReflections, data.weeklyReflections || {});
+      const mergedDeliverables = Object.assign({}, existingDeliverables, data.deliverables || {});
+
+      const stateJson = JSON.stringify({
+        student: data.student,
+        weeklyReflections: mergedReflections,
+        deliverables: mergedDeliverables,
+        codeSnippets: (data.codeSnippets && data.codeSnippets.length > 0) ? data.codeSnippets : existingCodeSnippets,
+        viewedFeedback: (data.viewedFeedback && data.viewedFeedback.length > 0) ? data.viewedFeedback : existingViewedFeedback,
+        lastSynced: data.timestamp || new Date().toISOString()
+      });
+
       sheet.getRange(i + 1, 9).setValue(stateJson);
       return;
     }
@@ -484,17 +510,48 @@ function loadStudentData(email) {
         try {
           const fullState = JSON.parse(studentsData[i][8]);
 
-          // Merge in teacher grades/feedback from the sheets
+          // Merge in submitted reflections from the Reflections sheet.
+          // This both restores teacher grades/feedback AND recovers any weeks that
+          // were accidentally lost from the fullState JSON (data loss recovery).
           const reflectionsSheet = ss.getSheetByName(SHEET_NAMES.REFLECTIONS);
           const reflectionsData = reflectionsSheet.getDataRange().getValues();
+
+          if (!fullState.weeklyReflections) fullState.weeklyReflections = {};
 
           for (let j = 1; j < reflectionsData.length; j++) {
             if (reflectionsData[j][0] === email) {
               const week = reflectionsData[j][2];
-              if (fullState.weeklyReflections && fullState.weeklyReflections[week]) {
-                // Grade in column L (index 11), Feedback in column M (index 12)
+
+              if (fullState.weeklyReflections[week]) {
+                // Week exists in fullState — just merge teacher grades/feedback
                 fullState.weeklyReflections[week].teacherGrade = reflectionsData[j][11] || undefined;
                 fullState.weeklyReflections[week].teacherFeedback = reflectionsData[j][12] || '';
+              } else {
+                // Week is missing from fullState — reconstruct from Reflections sheet (data recovery)
+                const contributionLines = (reflectionsData[j][3] || '').split('\n').filter(function(l) { return l.trim(); });
+                const contributions = contributionLines.map(function(line) {
+                  var colonIdx = line.indexOf(': ');
+                  if (colonIdx > 0) {
+                    return { date: line.substring(0, colonIdx), task: line.substring(colonIdx + 2) };
+                  }
+                  return { date: '', task: line };
+                });
+
+                const goals = (reflectionsData[j][7] || '').split('\n').filter(function(g) { return g.trim(); });
+
+                fullState.weeklyReflections[week] = {
+                  week: week,
+                  contributions: contributions,
+                  evidenceLinks: reflectionsData[j][4] || '',
+                  challenges: reflectionsData[j][5] || '',
+                  solutions: reflectionsData[j][6] || '',
+                  goals: goals,
+                  submitted: true,
+                  submittedAt: reflectionsData[j][8] || '',
+                  teacherGrade: reflectionsData[j][11] || undefined,
+                  teacherFeedback: reflectionsData[j][12] || '',
+                  _recoveredFromSheet: true
+                };
               }
             }
           }
