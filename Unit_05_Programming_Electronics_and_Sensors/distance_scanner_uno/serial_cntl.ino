@@ -1,17 +1,28 @@
 /***************     SERIAL COMMAND INPUT — Arduino Uno    *****************/
-// Type an angle (0–180) in the Serial Monitor and press Enter to move
-// the scanning servo directly to that position. Useful for verifying
-// servo range and finding the actual start/stop endpoints on your hardware.
+// Commands:
+//   "scan"   → start continuous sweep mode
+//   0–180    → stop sweeping, move servo to that angle
 //
 // Example: type "0" → servo goes to 0°
 //          type "90" → servo goes to 90° (center)
-//          type "180" → servo goes to 180°
+//          type "scan" → starts sweeping 0°→180° continuously
+
+extern bool scanMode;
+extern int currentSweepAngle;
 
 String inputBuffer = "";
 
 void processInput(String s) {
   s.trim();
   if (s.length() == 0) return;
+
+  // "scan" command — enter scanning mode
+  if (s.equalsIgnoreCase("scan")) {
+    scanMode = true;
+    currentSweepAngle = STARTING_ANGLE;
+    Serial.println("Scan mode ON — type an angle to stop.");
+    return;
+  }
 
   // Validate: digits only
   bool valid = true;
@@ -20,7 +31,7 @@ void processInput(String s) {
   }
 
   if (!valid) {
-    Serial.println("Invalid input: enter an integer angle between 0 and 180.");
+    Serial.println("Invalid input: enter an angle (0-180) or \"scan\".");
     return;
   }
 
@@ -32,8 +43,9 @@ void processInput(String s) {
     return;
   }
 
+  scanMode = false;
   setServoAngle(angle);
-  Serial.print("Servo moved to: ");
+  Serial.print("Scan mode OFF — servo moved to: ");
   Serial.print(angle);
   Serial.println("°");
 }
