@@ -790,14 +790,25 @@ Assembly Overview:
                     </ol>
                 </div>
 
-                <div class="two-column" style="margin-top: 20px;">
+                <div class="concept-box" style="margin-bottom: 20px;">
+                    <h3 style="color: #00d4ff; margin-top: 0;">Serial Monitor Calibration (115200 baud)</h3>
+                    <p style="margin-bottom: 10px;">The sketch starts in <span class="highlight">command mode</span> — type an angle and press Enter to move the servo directly. Use this to find your servo's real endpoints before mounting.</p>
+                    <ul>
+                        <li>Type <span class="highlight">0</span> → move to 0° &nbsp;|&nbsp; Type <span class="highlight">90</span> → center &nbsp;|&nbsp; Type <span class="highlight">180</span> → move to 180°</li>
+                        <li>Type <span class="highlight">scan</span> → start continuous sweep mode</li>
+                        <li>Type any angle while scanning → stop sweep and hold that position</li>
+                    </ul>
+                </div>
+
+                <div class="two-column">
                     <div class="column">
                         <h3>Test Checklist</h3>
                         <ul>
-                            <li>☐ Servo moves smoothly 0° to 180°</li>
-                            <li>☐ No binding or scraping</li>
-                            <li>☐ Sensor readings appear in Serial Monitor</li>
-                            <li>☐ Distance values are reasonable</li>
+                            <li>☐ Serial Monitor opens at 115200 baud</li>
+                            <li>☐ Type angles to verify full range of motion</li>
+                            <li>☐ Type "scan" — servo sweeps smoothly 0° to 180°</li>
+                            <li>☐ No binding or scraping during sweep</li>
+                            <li>☐ Sensor readings appear after type "scan"</li>
                             <li>☐ Wires don't tangle during rotation</li>
                         </ul>
                     </div>
@@ -806,9 +817,10 @@ Assembly Overview:
                             <h3 style="color: #ff9500; margin-top: 0;">Troubleshooting</h3>
                             <ul>
                                 <li><span class="emphasis">Servo jitters:</span> Check power supply</li>
-                                <li><span class="emphasis">No movement:</span> Verify signal wire</li>
+                                <li><span class="emphasis">No movement:</span> Verify signal wire on pin 9</li>
                                 <li><span class="emphasis">Limited range:</span> Check for obstructions</li>
                                 <li><span class="emphasis">Bad readings:</span> Sensor may be loose</li>
+                                <li><span class="emphasis">Serial not responding:</span> Confirm 115200 baud</li>
                             </ul>
                         </div>
                     </div>
