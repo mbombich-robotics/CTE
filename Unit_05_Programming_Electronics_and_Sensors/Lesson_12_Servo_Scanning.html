@@ -307,6 +307,42 @@
 
         .copy-btn:hover { background: rgba(0, 212, 255, 0.4); }
 
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            border-radius: 10px;
+            border: 2px solid #50fa7b;
+            background: linear-gradient(135deg, rgba(80, 250, 123, 0.15), rgba(80, 250, 123, 0.05));
+            color: #50fa7b;
+            text-decoration: none;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(80, 250, 123, 0.2);
+            cursor: pointer;
+        }
+
+        .download-btn:hover {
+            background: linear-gradient(135deg, rgba(80, 250, 123, 0.3), rgba(80, 250, 123, 0.15));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(80, 250, 123, 0.35);
+        }
+
+        .download-btn.rp2040 {
+            border-color: #bd93f9;
+            background: linear-gradient(135deg, rgba(189, 147, 249, 0.15), rgba(189, 147, 249, 0.05));
+            color: #bd93f9;
+            box-shadow: 0 4px 15px rgba(189, 147, 249, 0.2);
+        }
+
+        .download-btn.rp2040:hover {
+            background: linear-gradient(135deg, rgba(189, 147, 249, 0.3), rgba(189, 147, 249, 0.15));
+            box-shadow: 0 6px 20px rgba(189, 147, 249, 0.35);
+        }
+
         /* Servo visualization */
         .servo-visual {
             display: flex;
@@ -496,11 +532,11 @@ PWM Signal (20ms period = 50Hz):
             <div class="content">
                 <div class="diagram" style="font-size: 1rem;">
                     <pre style="text-align: left; display: inline-block;">
-   SG90 Servo                 Arduino RP2040
+   SG90 Servo                 Arduino Uno
   ┌─────────┐                ┌─────────────┐
   │  Brown  │───────────────→│  GND        │
   │  Red    │───────────────→│  5V         │
-  │  Orange │───────────────→│  Pin 4      │
+  │  Orange │───────────────→│  Pin 9      │
   └─────────┘                └─────────────┘
 
 Wire Colors (Standard):
@@ -512,19 +548,17 @@ Wire Colors (Standard):
 
                 <div class="two-column">
                     <div class="column">
-                        <div class="warning-box">
-                            <h3 style="color: #ff9500; margin-top: 0;">Power Warning</h3>
-                            <ul>
-                                <li>Servos draw significant current (up to 500mA)</li>
-                                <li>For multiple servos, use external 5V supply</li>
-                                <li>Always connect grounds together</li>
-                            </ul>
+                        <div class="concept-box">
+                            <h3 style="color: #00d4ff; margin-top: 0;">Power via USB</h3>
+                            <p>For a <strong>single scanning servo</strong>, the Uno's 5V pin powered by computer USB is sufficient. The SG90 draws ~100–250mA sweeping freely — well within the ~420mA remaining after the Uno itself.</p>
+                            <p style="margin-top: 10px;"><span class="emphasis">Avoid stalling the servo</span> — hitting a physical stop and holding can spike current and cause a brownout.</p>
                         </div>
                     </div>
                     <div class="column">
                         <div class="concept-box">
                             <h3 style="color: #00d4ff; margin-top: 0;">Pin Choice</h3>
-                            <p>The Servo library handles PWM timing internally. You can use almost any digital pin - we'll use pin 4.</p>
+                            <p>The Servo library handles PWM timing internally. Pin 9 is a good choice — it's PWM-capable and leaves other common pins free.</p>
+                            <p style="margin-top: 10px;">If you ever add drive motors, move servo power to an external 5V supply with a shared ground.</p>
                         </div>
                     </div>
                 </div>
@@ -542,7 +576,7 @@ Wire Colors (Standard):
 <span class="code-function">Servo</span> myServo;  <span class="code-comment">// Create servo object</span>
 
 <span class="code-keyword">void</span> <span class="code-function">setup</span>() {
-  myServo.<span class="code-function">attach</span>(<span class="code-number">4</span>);  <span class="code-comment">// Attach servo to pin 4</span>
+  myServo.<span class="code-function">attach</span>(<span class="code-number">9</span>);  <span class="code-comment">// Attach servo to pin 9</span>
 }
 
 <span class="code-keyword">void</span> <span class="code-function">loop</span>() {
@@ -667,6 +701,19 @@ Assembly Overview:
             │
      ═══════════════  ← Robot chassis
                             </pre>
+                        </div>
+
+                        <div class="success-box" style="margin-top: 15px;">
+                            <h3 style="color: #50fa7b; margin-top: 0; margin-bottom: 15px;">Download Starter Sketches</h3>
+                            <p style="font-size: 0.95rem; margin-bottom: 15px; color: #b8c5d6;">Each download is a complete Arduino sketch folder. Unzip and open the <strong>.ino</strong> file — the other files load automatically.</p>
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <a href="distance_scanner_uno.zip" download class="download-btn">
+                                    ⬇ Arduino Uno Sketch
+                                </a>
+                                <a href="distance_scanner.zip" download class="download-btn rp2040">
+                                    ⬇ RP2040 Sketch (advanced)
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
