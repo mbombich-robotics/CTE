@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.15';
+const BACKEND_VERSION = 'v2.9.16';
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
@@ -774,25 +774,38 @@ function loadTeamData(team, period) {
 
 /**
  * Load all data (for teacher dashboard)
+ * Wrapped in try/catch so a single sheet failure doesn't crash the entire load.
+ * Each sheet is loaded independently — partial data is returned if one sheet fails.
  */
 function loadAllData() {
   initializeSheets();
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
-  const students = ss.getSheetByName(SHEET_NAMES.STUDENTS).getDataRange().getValues();
-  const reflections = ss.getSheetByName(SHEET_NAMES.REFLECTIONS).getDataRange().getValues();
-  const deliverables = ss.getSheetByName(SHEET_NAMES.DELIVERABLES).getDataRange().getValues();
-  const evidence = ss.getSheetByName(SHEET_NAMES.EVIDENCE).getDataRange().getValues();
+  function safeGetSheet(name) {
+    try {
+      const sheet = ss.getSheetByName(name);
+      if (!sheet) return [[]];
+      return sheet.getDataRange().getValues();
+    } catch (e) {
+      logActivity('ERROR', 'system', 'loadAllData failed for sheet: ' + name + ' — ' + e.toString());
+      return [[]];
+    }
+  }
+
+  const students     = safeGetSheet(SHEET_NAMES.STUDENTS);
+  const reflections  = safeGetSheet(SHEET_NAMES.REFLECTIONS);
+  const deliverables = safeGetSheet(SHEET_NAMES.DELIVERABLES);
+  const evidence     = safeGetSheet(SHEET_NAMES.EVIDENCE);
 
   return {
-    students: students.slice(1), // Remove header
-    reflections: reflections.slice(1),
+    students:     students.slice(1),
+    reflections:  reflections.slice(1),
     deliverables: deliverables.slice(1),
-    evidence: evidence.slice(1),
+    evidence:     evidence.slice(1),
     summary: {
-      totalStudents: students.length - 1,
-      totalReflections: reflections.length - 1,
-      totalDeliverables: deliverables.length - 1
+      totalStudents:      Math.max(0, students.length - 1),
+      totalReflections:   Math.max(0, reflections.length - 1),
+      totalDeliverables:  Math.max(0, deliverables.length - 1)
     }
   };
 }

@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.14',
+    VERSION: 'v2.9.15',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbzJ3L-5lnLOrCvylK6NqOTbc7Vz7sLA3BVyOP5kp5UFPv1SajcGpOQUH1rKf5TD-BNh/exec',
@@ -1084,7 +1084,7 @@ function addContributionRow() {
     const newItem = document.createElement('div');
     newItem.className = 'contribution-item';
     newItem.innerHTML = `
-        <input type="date" class="contrib-date" required>
+        <input type="date" class="contrib-date" min="2020-01-01" max="2030-12-31" required>
         <input type="text" class="contrib-task" placeholder="I worked on..." required>
         <button type="button" class="btn btn-small" onclick="this.parentElement.remove()" style="padding: 8px;">
             <i class="fas fa-times"></i>
@@ -1101,7 +1101,7 @@ function loadReflectionData(data) {
         const item = document.createElement('div');
         item.className = 'contribution-item';
         item.innerHTML = `
-            <input type="date" class="contrib-date" value="${contrib.date}" required>
+            <input type="date" class="contrib-date" min="2020-01-01" max="2030-12-31" value="${contrib.date}" required>
             <input type="text" class="contrib-task" value="${contrib.task}" required>
             ${index >= 3 ? '<button type="button" class="btn btn-small" onclick="this.parentElement.remove()" style="padding: 8px;"><i class="fas fa-times"></i></button>' : ''}
         `;
@@ -1166,15 +1166,15 @@ function clearReflectionForm() {
     document.getElementById('weeklyReflectionForm').reset();
     document.getElementById('contributionList').innerHTML = `
         <div class="contribution-item">
-            <input type="date" class="contrib-date" required>
+            <input type="date" class="contrib-date" min="2020-01-01" max="2030-12-31" required>
             <input type="text" class="contrib-task" placeholder="I designed the..." required>
         </div>
         <div class="contribution-item">
-            <input type="date" class="contrib-date" required>
+            <input type="date" class="contrib-date" min="2020-01-01" max="2030-12-31" required>
             <input type="text" class="contrib-task" placeholder="I built/coded/tested..." required>
         </div>
         <div class="contribution-item">
-            <input type="date" class="contrib-date" required>
+            <input type="date" class="contrib-date" min="2020-01-01" max="2030-12-31" required>
             <input type="text" class="contrib-task" placeholder="I researched/documented..." required>
         </div>
     `;
@@ -1210,7 +1210,13 @@ function getReflectionFormData() {
     document.querySelectorAll('.contribution-item').forEach(item => {
         const date = item.querySelector('.contrib-date').value;
         const task = item.querySelector('.contrib-task').value;
-        if (date && task) contributions.push({ date, task });
+        if (date && task) {
+            // Reject dates with unreasonable years (prevents year-10000 data corruption)
+            const year = parseInt(date.substring(0, 4));
+            if (year >= 2020 && year <= 2030) {
+                contributions.push({ date, task });
+            }
+        }
     });
 
     const goals = [];
