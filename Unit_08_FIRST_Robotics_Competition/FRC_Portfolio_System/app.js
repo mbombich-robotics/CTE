@@ -8,10 +8,10 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.15',
+    VERSION: 'v2.9.16',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
-    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbzJ3L-5lnLOrCvylK6NqOTbc7Vz7sLA3BVyOP5kp5UFPv1SajcGpOQUH1rKf5TD-BNh/exec',
+    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbxrI1Y9M1Vr7kl-RCARx_ooSB-PFBOOJYvulMjCZ7-I-tXi60MMnzRF-ctQBypJXZMb/exec',
 
     // Google OAuth Client ID
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -397,6 +397,10 @@ async function handleTokenResponse(tokenResponse) {
             calculateCurrentWeek();
             hideAllModals();
             onAuthenticated();
+        } else if (cloudData && cloudData.loadError) {
+            // Server unreachable — show persistent banner, don't treat as new student
+            hideAllModals();
+            showOutageBanner(email, name);
         } else {
             // New student — show profile modal
             document.getElementById('profileEmail').textContent = email;
@@ -619,7 +623,7 @@ async function loadStudentFromCloud(email) {
         return (data && data.student) ? data : null;
     } catch (error) {
         console.error('Failed to load from cloud:', error);
-        return null;
+        return { loadError: true };
     }
 }
 
@@ -2360,8 +2364,58 @@ function showCelebration(message) {
     }, 3000);
 }
 
+function showOutageBanner(email, name) {
+    const existing = document.getElementById('outageBanner');
+    if (existing) existing.remove();
+
+    const banner = document.createElement('div');
+    banner.id = 'outageBanner';
+    banner.style.cssText = `
+        position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+        background: #92400e; color: #fef3c7;
+        padding: 14px 20px; display: flex; align-items: center; gap: 12px;
+        font-size: 14px; font-weight: 500; box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    `;
+    banner.innerHTML = `
+        <i class="fas fa-exclamation-triangle" style="font-size: 18px; flex-shrink:0;"></i>
+        <span style="flex:1;">
+            <strong>Unable to load your portfolio.</strong>
+            The server may be temporarily unavailable — your work is safe.
+            Refresh the page to try again, or wait a moment and click Retry.
+        </span>
+        <button onclick="retryCloudLoad('${email}','${name.replace(/'/g,"\\'")}');this.closest('#outageBanner').remove();"
+            style="background:#d97706; color:#fff; border:none; border-radius:6px;
+                   padding:8px 16px; cursor:pointer; font-weight:600; white-space:nowrap;">
+            Retry
+        </button>
+    `;
+    document.body.prepend(banner);
+}
+
+async function retryCloudLoad(email, name) {
+    const cloudData = await loadStudentFromCloud(email);
+    if (cloudData && cloudData.student) {
+        state = cloudData;
+        state.student.name = name;
+        restoreEvidenceLocal();
+        calculateCurrentWeek();
+        hideAllModals();
+        onAuthenticated();
+    } else if (cloudData && cloudData.loadError) {
+        showOutageBanner(email, name);
+        showToast('Still unable to reach the server — try again in a moment.', 'error');
+    } else {
+        // New student (no record found)
+        document.getElementById('profileEmail').textContent = email;
+        document.getElementById('profileModal').classList.add('active');
+        state.student = { email, name };
+        initProfileForm();
+    }
+}
+
 // Expose for inline onclick handlers
 window.showToast = showToast;
+window.retryCloudLoad = retryCloudLoad;
 window.saveDeliverableDraft = saveDeliverableDraft;
 window.generatePracticeQuestions = generatePracticeQuestions;
 
