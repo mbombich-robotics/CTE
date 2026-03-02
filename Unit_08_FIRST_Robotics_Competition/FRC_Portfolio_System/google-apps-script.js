@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.16';
+const BACKEND_VERSION = 'v2.9.17';
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
@@ -49,6 +49,9 @@ function doGet(e) {
 
       case 'all':
         return jsonResponse(loadAllData());
+
+      case 'repair':
+        return jsonResponse(repairStudent(e.parameter.email));
 
       case 'export':
         return jsonResponse(exportAllData());
@@ -496,6 +499,55 @@ function saveEvidence(student, evidence) {
 /**
  * Load student data
  */
+/**
+ * Repair a student's data by clearing the stale fullState JSON and rebuilding
+ * it immediately from the individual sheets (Reflections, Deliverables, Evidence).
+ * Called by the teacher portal when a student's work isn't loading after an outage.
+ */
+function repairStudent(email) {
+  if (!email) return { success: false, error: 'No email provided' };
+  initializeSheets();
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  const studentsSheet = ss.getSheetByName(SHEET_NAMES.STUDENTS);
+  const studentsData = studentsSheet.getDataRange().getValues();
+
+  let studentRow = -1;
+  for (let i = 1; i < studentsData.length; i++) {
+    if (studentsData[i][0] === email) {
+      studentRow = i + 1; // 1-indexed for getRange
+      break;
+    }
+  }
+
+  if (studentRow < 0) {
+    return { success: false, error: 'Student not found: ' + email };
+  }
+
+  // Clear the stale fullState JSON so loadStudentData falls back to sheet-based rebuild
+  studentsSheet.getRange(studentRow, 9).setValue('');
+  logActivity('REPAIR', email, 'Teacher initiated data repair — fullState cleared');
+
+  // loadStudentData will now take the fallback path and rebuild from individual sheets
+  const rebuilt = loadStudentData(email);
+
+  if (rebuilt && !rebuilt.error) {
+    // Write the freshly rebuilt state back to column 9 so it's cached for future loads
+    studentsSheet.getRange(studentRow, 9).setValue(JSON.stringify(rebuilt));
+    const reflCount = Object.keys(rebuilt.weeklyReflections || {}).length;
+    const delCount = Object.keys(rebuilt.deliverables || {}).length;
+    const evCount = (rebuilt.evidence || []).length;
+    logActivity('REPAIR', email, 'Rebuilt: ' + reflCount + ' reflections, ' + delCount + ' deliverables, ' + evCount + ' evidence items');
+    return {
+      success: true,
+      email: email,
+      recovered: { reflections: reflCount, deliverables: delCount, evidence: evCount }
+    };
+  }
+
+  return { success: false, error: 'Failed to rebuild data for ' + email };
+}
+
 function loadStudentData(email) {
   initializeSheets();
   const ss = SpreadsheetApp.getActiveSpreadsheet();

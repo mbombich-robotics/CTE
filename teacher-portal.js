@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.16',
+    VERSION: 'v2.9.17',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -603,6 +603,7 @@ function renderStudentTable(students) {
             <td>
                 <span class="status-badge status-${s.status}">${formatStatus(s.status)}</span>
                 ${s.ungradedTotal > 0 ? `<span class="status-badge" style="background: #fef3c7; color: #92400e; margin-left: 4px;" title="${s.ungradedReflections > 0 ? s.ungradedReflections + ' reflection(s)' : ''}${s.ungradedReflections > 0 && s.ungradedDeliverables > 0 ? ', ' : ''}${s.ungradedDeliverables > 0 ? s.ungradedDeliverables + ' deliverable(s)' : ''} need grading"><i class="fas fa-pen"></i> ${s.ungradedTotal}</span>` : ''}
+                <button class="repair-btn" data-email="${s.email}" title="Repair student data (use if student's work isn't loading)" style="margin-left:6px;padding:2px 6px;border:1px solid #d1d5db;border-radius:4px;background:#fff;color:#6b7280;font-size:11px;cursor:pointer;vertical-align:middle;"><i class="fas fa-wrench"></i></button>
             </td>
         </tr>
     `).join('');
@@ -610,6 +611,14 @@ function renderStudentTable(students) {
     // Add click handlers
     tbody.querySelectorAll('tr').forEach(row => {
         row.addEventListener('click', () => openStudentDetail(row.dataset.email));
+    });
+
+    // Repair buttons — stop propagation so the row click doesn't open student detail
+    tbody.querySelectorAll('.repair-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+            e.stopPropagation();
+            repairStudentData(btn.dataset.email);
+        });
     });
 }
 
@@ -638,6 +647,37 @@ function updateStats(students) {
 // ============================================
 // STUDENT DETAIL MODAL
 // ============================================
+async function repairStudentData(email) {
+    const student = state.students.find(s => s.email === email);
+    const name = student ? student.name : email;
+    const apiUrl = CONFIG.COURSES[state.activeCourse].apiUrl;
+
+    const btn = document.querySelector(`.repair-btn[data-email="${CSS.escape(email)}"]`);
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    }
+
+    try {
+        const res = await fetch(`${apiUrl}?action=repair&email=${encodeURIComponent(email)}`);
+        const data = await res.json();
+
+        if (data.success) {
+            const r = data.recovered;
+            showToast(`Repaired ${name}: recovered ${r.reflections} reflection(s), ${r.deliverables} deliverable(s), ${r.evidence} photo(s). Ask them to refresh.`, 'success', 7000);
+        } else {
+            showToast(`Repair failed for ${name}: ${data.error}`, 'error', 6000);
+        }
+    } catch (err) {
+        showToast(`Repair request failed: ${err.message}`, 'error', 5000);
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-wrench"></i>';
+        }
+    }
+}
+
 function openStudentDetail(email) {
     const student = state.students.find(s => s.email === email);
     if (!student) return;
@@ -1337,7 +1377,7 @@ async function sendReminderEmails() {
 // ============================================
 // UTILITIES
 // ============================================
-function showToast(message, type = 'info') {
+function showToast(message, type = 'info', duration = 3000) {
     // Remove existing toast
     const existing = document.querySelector('.toast');
     if (existing) existing.remove();
@@ -1359,7 +1399,7 @@ function showToast(message, type = 'info') {
     toast.textContent = message;
     document.body.appendChild(toast);
 
-    setTimeout(() => toast.remove(), 3000);
+    setTimeout(() => toast.remove(), duration);
 }
 
 function getInitials(name) {
