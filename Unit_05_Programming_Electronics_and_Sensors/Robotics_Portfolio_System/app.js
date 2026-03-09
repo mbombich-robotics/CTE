@@ -105,16 +105,18 @@ const DELIVERABLES = [
     },
     {
         id: 5,
-        title: 'Scanning Practical',
+        title: 'Obstacle Avoidance Run',
         week: 5,
         points: 75,
         phase: 'scanner',
-        description: 'Demonstrate obstacle detection using your scanning robot.',
+        description: 'Run your reactive navigation robot as long as possible without hitting an obstacle. Submit commented code explaining how it works, how you tuned it, and what problems you solved.',
         requirements: [
-            'Complete scanning algorithm: full sweep, nearest obstacle, clearest path, navigation decision',
-            'Serial output clearly shows scan data, nearest obstacle, clearest path, and decision',
-            'In-class demonstration with teacher-placed obstacles',
-            'Strategy & Reflection: describe your navigation approach'
+            'Code uploaded and running during your in-class turn',
+            'Serial Monitor open — distances, side checks, and decisions visible',
+            'Best continuous run time recorded by teacher',
+            'Portfolio: paste a key code section (loop() or a motor function) with inline comments explaining how each part works',
+            'Explain which constants you tuned (THRESHOLD, TURN_TIME, etc.) and what values you landed on',
+            'Describe at least one problem you encountered and how you fixed it'
         ]
     },
     {
@@ -512,25 +514,24 @@ const RUBRICS = {
     },
     5: {
         categories: [
-            { name: 'Code', points: 25, criteria: [
-                'Scanning algorithm complete and functional',
-                'Code uploaded and runs without errors',
-                'Serial output shows scan data, nearest obstacle, clearest path, and decision'
+            { name: 'Commented Code', points: 25, criteria: [
+                'Key section of code (loop() or motor function) pasted in portfolio',
+                'Inline comments explain what each part does and why',
+                'Comments are specific — not just restating the code'
             ]},
-            { name: 'Course Completion', points: 25, criteria: [
-                'Completed all parts of the practical during class time',
-                'Demonstrated scanner in front of teacher',
-                'Submitted code and reflection before deadline'
+            { name: 'Run Time', points: 25, criteria: [
+                'Longest continuous run without collision recorded by teacher',
+                'Top third of class earns full 25 pts',
+                'Multiple attempts allowed — best run counts'
             ]},
-            { name: 'Performance', points: 15, criteria: [
-                'Top third of class — correct decisions in most scenarios (15 pts)',
-                'Multiple attempts and code iterations (10 pts)',
-                'Few attempts or moderate effort (5 pts)',
-                'No meaningful attempt (0 pts)'
+            { name: 'Tuning Explanation', points: 15, criteria: [
+                'Identifies which constants were adjusted (THRESHOLD, TURN_TIME, DRIVE_SPEED, etc.)',
+                'States what values were tried and what was finally used',
+                'Explains the reasoning behind the changes'
             ]},
-            { name: 'Strategy & Reflection', points: 10, criteria: [
-                'Clear description of the navigation strategy used',
-                'Reflects on what worked and what would be improved'
+            { name: 'Problem & Solution', points: 10, criteria: [
+                'Describes at least one specific problem encountered during development or tuning',
+                'Explains what caused it and how it was resolved'
             ]}
         ]
     }
@@ -2114,8 +2115,8 @@ function openDeliverableForm(id) {
             ` : ''}
 
             <div class="form-group">
-                <label for="deliverableContent">${id === 3 ? 'Code & Observations' : id === 4 ? 'Sweep Code & Explanation' : id === 5 ? 'Strategy & Reflection' : 'Your Submission'}</label>
-                <textarea id="deliverableContent" rows="8" placeholder="${id === 3 ? 'Paste your code with comments, and describe your observations about sensor behavior...' : id === 4 ? 'Paste your servo sweep code and briefly explain how it works (what does each part do?)...' : id === 5 ? 'Describe your navigation strategy. What approach did you use? What worked well? What would you improve next time?' : 'Describe what you did, paste your code, explain your process...'}">${id === 3 ? (existing.rawContent || existing.content || '') : id === 5 ? (existing.rawContent || existing.content || '') : (existing.content || '')}</textarea>
+                <label for="deliverableContent">${id === 3 ? 'Code & Observations' : id === 4 ? 'Sweep Code & Explanation' : id === 5 ? 'Commented Code & Reflection' : 'Your Submission'}</label>
+                <textarea id="deliverableContent" rows="8" placeholder="${id === 3 ? 'Paste your code with comments, and describe your observations about sensor behavior...' : id === 4 ? 'Paste your servo sweep code and briefly explain how it works (what does each part do?)...' : id === 5 ? 'Paste a key section of your code (e.g. loop() or a motor function) and add comments explaining:\n- What each part does and why\n- Which constants you tuned (THRESHOLD, TURN_TIME, etc.) and what values you used\n- At least one problem you ran into and how you fixed it' : 'Describe what you did, paste your code, explain your process...'}">${id === 3 ? (existing.rawContent || existing.content || '') : id === 5 ? (existing.rawContent || existing.content || '') : (existing.content || '')}</textarea>
             </div>
 
             <div class="form-group">
