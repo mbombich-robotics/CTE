@@ -800,7 +800,60 @@ Decision: GO FORWARD
             </div>
         </div>
 
-        <!-- Slide 12: Summary -->
+        <!-- Slide 12: Wall-Following Tuning -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Wall-Following: Tuning the P-Controller</h2>
+            </div>
+            <div class="content">
+                <div class="concept-box" style="margin-bottom:20px; text-align:center;">
+                    <p style="font-size:1.05rem; margin-bottom:0;">
+                        <span style="color:#6272a4;">error</span> = dist − TARGET_DIST &nbsp;|&nbsp;
+                        <span style="color:#50fa7b;">rightSpeed</span> = BASE_SPEED − (Kp × <span style="color:#6272a4;">error</span>)
+                    </p>
+                </div>
+
+                <div class="two-column">
+                    <div class="column">
+                        <div class="concept-box">
+                            <h3 style="color:#00d4ff; margin-top:0;">Tuning Order</h3>
+                            <ol style="font-size:0.95rem;">
+                                <li><strong>Set TARGET_DIST</strong> first — hold the sensor at your desired wall distance and confirm that reading in Serial Monitor before the robot moves.</li>
+                                <li><strong>Set BASE_SPEED low</strong> (120–130) for first runs. Slower movement gives corrections more time to take effect.</li>
+                                <li><strong>Start Kp at 1.0.</strong> The robot will follow loosely. Increase by 0.5 at a time until it tracks the wall tightly.</li>
+                                <li><strong>If it oscillates</strong> (weaves back and forth), Kp is too high — reduce it by 0.5.</li>
+                                <li><strong>Once stable</strong>, increase BASE_SPEED gradually for a faster run.</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="concept-box">
+                            <h3 style="color:#00d4ff; margin-top:0;">Reading the Serial Output</h3>
+                            <div class="diagram" style="font-size:0.85rem; margin-bottom:10px;">Dist: 18cm  Err:  3  R: 131  ← drifting away, correcting right
+Dist: 15cm  Err:  0  R: 140  ← on target, both motors equal
+Dist: 11cm  Err: -4  R: 152  ← too close, steering away</div>
+                            <ul style="font-size:0.92rem;">
+                                <li><span class="highlight">Error near 0</span> — robot tracking correctly</li>
+                                <li><span class="emphasis">Error swinging ±5+</span> — Kp too high, reduce it</li>
+                                <li>R speed hitting 0 or 255 — correction is maxing out; lower Kp or BASE_SPEED</li>
+                                <li>Dist always 200 — sensor timeout; wall is out of range or servo angle is wrong</li>
+                            </ul>
+                        </div>
+
+                        <div class="warning-box" style="margin-top:0;">
+                            <h3 style="color:#ff9500; margin-top:0;">Common Problems</h3>
+                            <ul style="font-size:0.92rem;">
+                                <li><strong>Robot curves away from wall immediately</strong> — swap which motor is constant vs. adjusting, or flip the sign on Kp</li>
+                                <li><strong>Robot hugs wall and grinds</strong> — TARGET_DIST too small or Kp too high</li>
+                                <li><strong>Works on straight wall, fails at corners</strong> — expected; P-only can't anticipate. A corner fix requires adding obstacle detection from Lesson 13</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Summary -->
         <div class="slide">
             <div class="slide-header">
                 <h2>Summary &amp; What's Next</h2>
