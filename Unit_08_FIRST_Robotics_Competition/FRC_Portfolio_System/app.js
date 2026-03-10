@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.16',
+    VERSION: 'v2.9.17',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbxrI1Y9M1Vr7kl-RCARx_ooSB-PFBOOJYvulMjCZ7-I-tXi60MMnzRF-ctQBypJXZMb/exec',
@@ -112,13 +112,12 @@ const DELIVERABLES = [
         week: 6,
         points: 50,
         phase: 'Test',
-        description: 'Document systematic testing and improvements.',
+        description: 'Document post-competition observations, proposed subsystem modifications, and a full component weight inventory.',
         requirements: [
-            'Test procedures you developed or executed',
-            'Data collected (measurements, success rates, times)',
-            'Failures documented with photos',
-            'Design changes made based on testing',
-            'Before/after comparison'
+            'Specific observations from competition matches (failures, unexpected behaviors, successes)',
+            'At least 2 proposed modifications — each must name the problem it solves and include implementation details',
+            'Complete weight inventory: every component listed with quantity and mass',
+            'Weight data submitted to the team Weight Sheet'
         ]
     },
     {
@@ -187,6 +186,27 @@ const DELIVERABLES = [
 // GRADING RUBRICS
 // ============================================
 const RUBRICS = {
+    6: {
+        categories: [
+            { name: 'Post-Competition Observations', points: 15, criteria: [
+                'References specific matches or moments (not vague generalities)',
+                'Covers both successes and failures',
+                'Describes root causes, not just symptoms'
+            ]},
+            { name: 'Proposed Modifications', points: 20, criteria: [
+                'At least 2 modifications documented',
+                'Each modification clearly states the problem it addresses',
+                'Implementation details: materials, dimensions, or approach described',
+                'Priority assigned and reasoning given'
+            ]},
+            { name: 'Weight Documentation', points: 15, criteria: [
+                'All major components listed by name',
+                'Quantities and unit masses provided for each component',
+                'Totals calculated correctly',
+                'Data submitted to team Weight Sheet'
+            ]}
+        ]
+    },
     4: {
         categories: [
             { name: 'Pugh Matrix', points: 25, criteria: [
@@ -1501,8 +1521,8 @@ function openDeliverableForm(id) {
     const modal = document.getElementById('deliverableModal');
     const content = document.getElementById('deliverableFormContent');
 
-    // For deliverable 4, use rawContent for the textarea if available
-    const textareaContent = (id === 4 && existing.rawContent !== undefined) ? existing.rawContent : (existing.content || '');
+    // For custom-form deliverables (4, 6), rawContent is not used — suppress to empty
+    const textareaContent = ((id === 4 || id === 6) && existing.rawContent !== undefined) ? existing.rawContent : (existing.content || '');
 
     content.innerHTML = `
         <h2><i class="fas fa-clipboard-list"></i> ${deliverable.title}</h2>
@@ -1655,6 +1675,84 @@ function openDeliverableForm(id) {
                 <label for="pughContribution">My Contribution to This Decision (10 pts)</label>
                 <textarea id="pughContribution" rows="4" placeholder="What was your specific role in the decision-making process? What criteria did you advocate for? What research or testing did you do to inform your scores?">${existing.contribution || ''}</textarea>
             </div>
+            ` : id === 6 ? `
+
+            <div class="card" style="margin-bottom: 20px; border-left: 3px solid #f59e0b;">
+                <h4 style="margin-bottom: 10px;"><i class="fas fa-binoculars"></i> Post-Competition Observations</h4>
+                <p style="font-size: 13px; color: var(--gray-600); margin-bottom: 10px;">
+                    Describe specific behaviors observed during competition matches. What worked? What failed? When and why?
+                </p>
+                <textarea id="compObservations" rows="6"
+                    placeholder="e.g. During matches 3 and 7, the intake roller jammed when picking up game pieces at angles greater than ~30°. The shooter consistently hit targets from the center zone but missed from the sides due to inconsistent spin-up time..."
+                    style="width: 100%; padding: 10px; border: 1px solid var(--gray-200); border-radius: 6px; font-size: 13px; resize: vertical; box-sizing: border-box;">${existing.observations || ''}</textarea>
+            </div>
+
+            <div class="card" style="margin-bottom: 20px; border-left: 3px solid #8b5cf6;">
+                <h4 style="margin-bottom: 6px;"><i class="fas fa-wrench"></i> Proposed Subsystem Modifications</h4>
+                <p style="font-size: 13px; color: var(--gray-600); margin-bottom: 12px;">
+                    List each proposed change. Every modification must reference a specific observation and include enough detail for someone else to implement it.
+                </p>
+                <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 8px; min-width: 560px;">
+                    <thead>
+                        <tr style="background: var(--gray-100);">
+                            <th style="padding: 8px; border: 1px solid var(--gray-200); text-align: left; width: 22%;">Problem Observed</th>
+                            <th style="padding: 8px; border: 1px solid var(--gray-200); text-align: left; width: 28%;">Proposed Modification</th>
+                            <th style="padding: 8px; border: 1px solid var(--gray-200); text-align: left; width: 33%;">Details (materials, dimensions, approach)</th>
+                            <th style="padding: 8px; border: 1px solid var(--gray-200); text-align: center; width: 10%;">Priority</th>
+                            <th style="padding: 8px; border: 1px solid var(--gray-200); width: 32px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="modsBody">
+                        ${renderMod6Rows(existing.modifications || [])}
+                    </tbody>
+                </table>
+                </div>
+                <button type="button" class="btn btn-secondary" style="font-size: 13px; padding: 6px 12px;" onclick="addMod6Row()">
+                    <i class="fas fa-plus"></i> Add Modification
+                </button>
+            </div>
+
+            <div class="card" style="margin-bottom: 20px; border-left: 3px solid #10b981;">
+                <h4 style="margin-bottom: 6px;"><i class="fas fa-weight-hanging"></i> Subsystem Weight Documentation</h4>
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Subsystem Name</label>
+                    <input type="text" id="subsystemName" value="${existing.subsystemName || ''}"
+                        placeholder="e.g. Intake, Drivetrain, Shooter"
+                        style="width: 100%; padding: 8px; border: 1px solid var(--gray-200); border-radius: 6px; font-size: 13px; box-sizing: border-box;">
+                </div>
+                <p style="font-size: 13px; color: var(--gray-600); margin-bottom: 12px;">
+                    List every component in your subsystem. This data will be pushed to the team Weight Sheet.
+                </p>
+                <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 8px; min-width: 520px;">
+                    <thead>
+                        <tr style="background: var(--gray-100);">
+                            <th style="padding: 8px; border: 1px solid var(--gray-200); text-align: left;">Component Name</th>
+                            <th style="padding: 8px; border: 1px solid var(--gray-200); text-align: center; width: 60px;">Qty</th>
+                            <th style="padding: 8px; border: 1px solid var(--gray-200); text-align: center; width: 110px;">Unit Mass (lbs)</th>
+                            <th style="padding: 8px; border: 1px solid var(--gray-200); text-align: center; width: 110px;">Total (lbs)</th>
+                            <th style="padding: 8px; border: 1px solid var(--gray-200); text-align: left;">Notes</th>
+                            <th style="padding: 8px; border: 1px solid var(--gray-200); width: 32px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="weightBody">
+                        ${renderWeight6Rows(existing.weightData || [])}
+                    </tbody>
+                    <tfoot>
+                        <tr style="background: var(--gray-50); font-weight: 600;">
+                            <td colspan="3" style="padding: 8px; border: 1px solid var(--gray-200); text-align: right;">Subsystem Total:</td>
+                            <td style="padding: 8px; border: 1px solid var(--gray-200); text-align: center;" id="weightTotal">0.000 lbs</td>
+                            <td colspan="2" style="border: 1px solid var(--gray-200);"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                </div>
+                <button type="button" class="btn btn-secondary" style="font-size: 13px; padding: 6px 12px;" onclick="addWeight6Row()">
+                    <i class="fas fa-plus"></i> Add Component
+                </button>
+            </div>
+
             ` : `
             <div class="form-group">
                 <label for="deliverableContent">Your Submission</label>
@@ -1695,6 +1793,16 @@ function openDeliverableForm(id) {
             el.addEventListener('change', updatePughTotals);
         });
         updatePughTotals();
+    }
+
+    // Live calculation for weight table totals
+    if (id === 6) {
+        content.addEventListener('input', (e) => {
+            if (e.target.classList.contains('w6-qty') || e.target.classList.contains('w6-unit')) {
+                calcWeight6Totals();
+            }
+        });
+        calcWeight6Totals();
     }
 
     document.getElementById('deliverableForm').addEventListener('submit', (e) => {
@@ -1885,13 +1993,245 @@ function formatDeliverable4Content(customData) {
 }
 
 // ============================================
+// DELIVERABLE 6 — POST-COMPETITION / WEIGHT
+// ============================================
+
+function renderMod6Rows(mods) {
+    const rows = mods.length > 0 ? mods : [{}, {}]; // default 2 empty rows
+    return rows.map((m) => `
+        <tr class="mod6-row">
+            <td style="padding: 4px;">
+                <textarea class="mod6-problem" rows="2"
+                    style="width:100%; padding:4px; border:1px solid var(--gray-200); border-radius:4px; font-size:12px; resize:vertical;"
+                    placeholder="e.g. Intake jammed at steep angles">${m.problem || ''}</textarea>
+            </td>
+            <td style="padding: 4px;">
+                <textarea class="mod6-mod" rows="2"
+                    style="width:100%; padding:4px; border:1px solid var(--gray-200); border-radius:4px; font-size:12px; resize:vertical;"
+                    placeholder="e.g. Widen roller gap from 1.5\" to 2\"">${m.modification || ''}</textarea>
+            </td>
+            <td style="padding: 4px;">
+                <textarea class="mod6-details" rows="2"
+                    style="width:100%; padding:4px; border:1px solid var(--gray-200); border-radius:4px; font-size:12px; resize:vertical;"
+                    placeholder="Materials, dimensions, estimated build time, who will do it">${m.details || ''}</textarea>
+            </td>
+            <td style="padding: 4px; text-align:center;">
+                <select class="mod6-priority"
+                    style="padding:4px; border:1px solid var(--gray-200); border-radius:4px; font-size:12px; width:80px;">
+                    <option value="High" ${(m.priority || '') === 'High' ? 'selected' : ''}>High</option>
+                    <option value="Medium" ${(m.priority === 'Medium' || !m.priority) ? 'selected' : ''}>Medium</option>
+                    <option value="Low" ${(m.priority || '') === 'Low' ? 'selected' : ''}>Low</option>
+                </select>
+            </td>
+            <td style="padding: 4px; text-align:center;">
+                <button type="button" onclick="this.closest('tr').remove()"
+                    style="background:none; border:none; color:var(--gray-400); cursor:pointer; font-size:16px; padding:2px 4px;"
+                    title="Remove row">×</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function renderWeight6Rows(items) {
+    const rows = items.length > 0 ? items : [{}, {}, {}]; // default 3 empty rows
+    return rows.map((w) => `
+        <tr class="weight6-row">
+            <td style="padding: 4px;">
+                <input type="text" class="w6-component"
+                    value="${w.component || ''}" placeholder="e.g. 4\" Mecanum Wheel"
+                    style="width:100%; padding:5px; border:1px solid var(--gray-200); border-radius:4px; font-size:13px; box-sizing:border-box;">
+            </td>
+            <td style="padding: 4px; text-align:center;">
+                <input type="number" class="w6-qty" min="0" step="1"
+                    value="${w.qty || ''}" placeholder="1"
+                    style="width:55px; padding:5px; border:1px solid var(--gray-200); border-radius:4px; font-size:13px; text-align:center;">
+            </td>
+            <td style="padding: 4px; text-align:center;">
+                <input type="number" class="w6-unit" min="0" step="0.001"
+                    value="${w.unitMass || ''}" placeholder="0.000"
+                    style="width:88px; padding:5px; border:1px solid var(--gray-200); border-radius:4px; font-size:13px; text-align:center;">
+            </td>
+            <td style="padding: 4px; text-align:center; font-weight:600;" class="w6-row-total">
+                ${w.totalMass != null && w.totalMass > 0 ? w.totalMass.toFixed(3) : '—'}
+            </td>
+            <td style="padding: 4px;">
+                <input type="text" class="w6-notes"
+                    value="${w.notes || ''}" placeholder="optional"
+                    style="width:100%; padding:5px; border:1px solid var(--gray-200); border-radius:4px; font-size:12px; box-sizing:border-box;">
+            </td>
+            <td style="padding: 4px; text-align:center;">
+                <button type="button" onclick="this.closest('tr').remove(); calcWeight6Totals();"
+                    style="background:none; border:none; color:var(--gray-400); cursor:pointer; font-size:16px; padding:2px 4px;"
+                    title="Remove row">×</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function addMod6Row() {
+    const tbody = document.getElementById('modsBody');
+    const tr = document.createElement('tr');
+    tr.className = 'mod6-row';
+    tr.innerHTML = `
+        <td style="padding:4px;">
+            <textarea class="mod6-problem" rows="2"
+                style="width:100%; padding:4px; border:1px solid var(--gray-200); border-radius:4px; font-size:12px; resize:vertical;"
+                placeholder="e.g. Intake jammed at steep angles"></textarea>
+        </td>
+        <td style="padding:4px;">
+            <textarea class="mod6-mod" rows="2"
+                style="width:100%; padding:4px; border:1px solid var(--gray-200); border-radius:4px; font-size:12px; resize:vertical;"
+                placeholder="e.g. Widen roller gap from 1.5&quot; to 2&quot;"></textarea>
+        </td>
+        <td style="padding:4px;">
+            <textarea class="mod6-details" rows="2"
+                style="width:100%; padding:4px; border:1px solid var(--gray-200); border-radius:4px; font-size:12px; resize:vertical;"
+                placeholder="Materials, dimensions, estimated build time, who will do it"></textarea>
+        </td>
+        <td style="padding:4px; text-align:center;">
+            <select class="mod6-priority"
+                style="padding:4px; border:1px solid var(--gray-200); border-radius:4px; font-size:12px; width:80px;">
+                <option value="High">High</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="Low">Low</option>
+            </select>
+        </td>
+        <td style="padding:4px; text-align:center;">
+            <button type="button" onclick="this.closest('tr').remove()"
+                style="background:none; border:none; color:var(--gray-400); cursor:pointer; font-size:16px; padding:2px 4px;"
+                title="Remove row">×</button>
+        </td>
+    `;
+    tbody.appendChild(tr);
+    tr.querySelectorAll('textarea, input, select').forEach(el => el.addEventListener('input', markDirty));
+}
+
+function addWeight6Row() {
+    const tbody = document.getElementById('weightBody');
+    const tr = document.createElement('tr');
+    tr.className = 'weight6-row';
+    tr.innerHTML = `
+        <td style="padding:4px;">
+            <input type="text" class="w6-component" placeholder="e.g. 4&quot; Mecanum Wheel"
+                style="width:100%; padding:5px; border:1px solid var(--gray-200); border-radius:4px; font-size:13px; box-sizing:border-box;">
+        </td>
+        <td style="padding:4px; text-align:center;">
+            <input type="number" class="w6-qty" min="0" step="1" placeholder="1"
+                style="width:55px; padding:5px; border:1px solid var(--gray-200); border-radius:4px; font-size:13px; text-align:center;">
+        </td>
+        <td style="padding:4px; text-align:center;">
+            <input type="number" class="w6-unit" min="0" step="0.001" placeholder="0.000"
+                style="width:88px; padding:5px; border:1px solid var(--gray-200); border-radius:4px; font-size:13px; text-align:center;">
+        </td>
+        <td style="padding:4px; text-align:center; font-weight:600;" class="w6-row-total">—</td>
+        <td style="padding:4px;">
+            <input type="text" class="w6-notes" placeholder="optional"
+                style="width:100%; padding:5px; border:1px solid var(--gray-200); border-radius:4px; font-size:12px; box-sizing:border-box;">
+        </td>
+        <td style="padding:4px; text-align:center;">
+            <button type="button" onclick="this.closest('tr').remove(); calcWeight6Totals();"
+                style="background:none; border:none; color:var(--gray-400); cursor:pointer; font-size:16px; padding:2px 4px;"
+                title="Remove row">×</button>
+        </td>
+    `;
+    tbody.appendChild(tr);
+    tr.querySelectorAll('input').forEach(el => {
+        el.addEventListener('input', (e) => {
+            if (e.target.classList.contains('w6-qty') || e.target.classList.contains('w6-unit')) calcWeight6Totals();
+            markDirty();
+        });
+    });
+    calcWeight6Totals();
+}
+
+function calcWeight6Totals() {
+    let grand = 0;
+    document.querySelectorAll('.weight6-row').forEach(row => {
+        const qty = parseFloat(row.querySelector('.w6-qty')?.value) || 0;
+        const unit = parseFloat(row.querySelector('.w6-unit')?.value) || 0;
+        const rowTotal = qty * unit;
+        const cell = row.querySelector('.w6-row-total');
+        if (cell) cell.textContent = (qty > 0 || unit > 0) ? rowTotal.toFixed(3) : '—';
+        grand += rowTotal;
+    });
+    const totalEl = document.getElementById('weightTotal');
+    if (totalEl) totalEl.textContent = grand.toFixed(3) + ' lbs';
+}
+
+function collectDeliverable6CustomData() {
+    const observations = document.getElementById('compObservations')?.value || '';
+    const subsystemName = document.getElementById('subsystemName')?.value || '';
+
+    const modifications = [];
+    document.querySelectorAll('.mod6-row').forEach(row => {
+        const problem = row.querySelector('.mod6-problem')?.value || '';
+        const modification = row.querySelector('.mod6-mod')?.value || '';
+        const details = row.querySelector('.mod6-details')?.value || '';
+        const priority = row.querySelector('.mod6-priority')?.value || 'Medium';
+        if (problem.trim() || modification.trim()) {
+            modifications.push({ problem, modification, details, priority });
+        }
+    });
+
+    const weightData = [];
+    document.querySelectorAll('.weight6-row').forEach(row => {
+        const component = row.querySelector('.w6-component')?.value || '';
+        const qty = parseFloat(row.querySelector('.w6-qty')?.value) || 0;
+        const unitMass = parseFloat(row.querySelector('.w6-unit')?.value) || 0;
+        const notes = row.querySelector('.w6-notes')?.value || '';
+        if (component.trim()) {
+            weightData.push({ component, qty, unitMass, totalMass: qty * unitMass, notes });
+        }
+    });
+
+    return { observations, subsystemName, modifications, weightData };
+}
+
+function formatDeliverable6Content(customData) {
+    const { observations, subsystemName, modifications, weightData } = customData;
+
+    let text = '--- POST-COMPETITION OBSERVATIONS ---\n';
+    text += (observations || '(none provided)') + '\n\n';
+
+    text += '--- PROPOSED MODIFICATIONS ---\n';
+    if (modifications.length === 0) {
+        text += '(none documented)\n';
+    } else {
+        modifications.forEach((m, i) => {
+            text += `\n[${i + 1}] PRIORITY: ${m.priority}\n`;
+            text += `  Problem:      ${m.problem}\n`;
+            text += `  Modification: ${m.modification}\n`;
+            text += `  Details:      ${m.details}\n`;
+        });
+    }
+
+    const label = subsystemName ? subsystemName.toUpperCase() : 'SUBSYSTEM';
+    text += `\n--- WEIGHT INVENTORY: ${label} ---\n`;
+    let grandTotal = 0;
+    if (weightData.length === 0) {
+        text += '(no components listed)\n';
+    } else {
+        weightData.forEach(w => {
+            const line = `  ${w.component}: ${w.qty} × ${w.unitMass} lbs = ${w.totalMass.toFixed(3)} lbs`;
+            text += w.notes ? `${line}  [${w.notes}]\n` : `${line}\n`;
+            grandTotal += w.totalMass;
+        });
+        text += `  TOTAL: ${grandTotal.toFixed(3)} lbs\n`;
+    }
+
+    return text;
+}
+
+// ============================================
 // SAVE / SUBMIT DELIVERABLES
 // ============================================
 function saveDeliverableDraft(id) {
-    const customData = id === 4 ? collectDeliverable4CustomData() : {};
+    const customData = id === 4 ? collectDeliverable4CustomData()
+                     : id === 6 ? collectDeliverable6CustomData()
+                     : {};
     state.deliverables[id] = {
         ...state.deliverables[id],
-        content: id === 4 ? '' : document.getElementById('deliverableContent').value,
+        content: (id === 4 || id === 6) ? '' : document.getElementById('deliverableContent').value,
         links: document.getElementById('deliverableLinks').value,
         selfAssessment: document.getElementById('deliverableSelfAssessment').value,
         ...customData,
@@ -1908,7 +2248,6 @@ function submitDeliverable(id) {
 
     if (id === 4) {
         const customData = collectDeliverable4CustomData();
-        // Validate: at least 3 criteria with names
         const namedCriteria = customData.criteria.filter(c => c.name.trim());
         if (namedCriteria.length < 3) {
             showToast('Please name at least 3 criteria in your matrix', 'error');
@@ -1923,6 +2262,39 @@ function submitDeliverable(id) {
             return;
         }
         const formattedContent = formatDeliverable4Content(customData);
+        state.deliverables[id] = {
+            content: formattedContent,
+            rawContent: '',
+            ...customData,
+            links: document.getElementById('deliverableLinks').value,
+            selfAssessment: document.getElementById('deliverableSelfAssessment').value,
+            status: 'completed',
+            submittedAt: new Date().toISOString()
+        };
+    } else if (id === 6) {
+        const customData = collectDeliverable6CustomData();
+        if (!customData.observations || customData.observations.length < 50) {
+            showToast('Please describe your competition observations in more detail (at least 50 characters)', 'error');
+            return;
+        }
+        if (customData.modifications.length < 2) {
+            showToast('Please document at least 2 proposed modifications', 'error');
+            return;
+        }
+        const undocumented = customData.modifications.filter(m => !m.details || m.details.trim().length < 20);
+        if (undocumented.length > 0) {
+            showToast('Each modification needs more detail — describe materials, dimensions, or approach (at least 20 characters)', 'error');
+            return;
+        }
+        if (customData.weightData.length === 0) {
+            showToast('Please add at least one component to the weight inventory', 'error');
+            return;
+        }
+        if (!customData.subsystemName || !customData.subsystemName.trim()) {
+            showToast('Please enter your subsystem name', 'error');
+            return;
+        }
+        const formattedContent = formatDeliverable6Content(customData);
         state.deliverables[id] = {
             content: formattedContent,
             rawContent: '',

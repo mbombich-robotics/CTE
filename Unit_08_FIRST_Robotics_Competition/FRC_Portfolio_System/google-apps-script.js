@@ -26,6 +26,7 @@ const SHEET_NAMES = {
   REFLECTIONS: 'Weekly Reflections',
   DELIVERABLES: 'Deliverables',
   EVIDENCE: 'Evidence',
+  WEIGHT: 'Weight Sheet',
   LOG: 'Activity Log'
 };
 
@@ -192,6 +193,17 @@ function initializeSheets() {
     }
   }
 
+  // Weight Sheet (component mass inventory — populated by deliverable 6)
+  let weightSheet = ss.getSheetByName(SHEET_NAMES.WEIGHT);
+  if (!weightSheet) {
+    weightSheet = ss.insertSheet(SHEET_NAMES.WEIGHT);
+    weightSheet.getRange(1, 1, 1, 9).setValues([[
+      'Email', 'Name', 'Subsystem', 'Component', 'Qty', 'Unit Mass (lbs)', 'Total Mass (lbs)', 'Notes', 'Submitted At'
+    ]]);
+    weightSheet.getRange(1, 1, 1, 9).setFontWeight('bold').setBackground('#0d9488').setFontColor('white');
+    weightSheet.setFrozenRows(1);
+  }
+
   // Activity Log sheet
   let logSheet = ss.getSheetByName(SHEET_NAMES.LOG);
   if (!logSheet) {
@@ -240,6 +252,12 @@ function syncStudentData(data) {
     data.evidence.forEach(evidence => {
       saveEvidence(data.student, evidence);
     });
+  }
+
+  // Sync weight inventory to Weight Sheet when deliverable 6 is submitted
+  const d6 = data.deliverables && data.deliverables[6];
+  if (d6 && d6.status === 'completed' && d6.weightData && d6.weightData.length > 0) {
+    saveWeightData(data.student, d6.subsystemName || '', d6.weightData, d6.submittedAt);
   }
 
   logActivity('SYNC', data.student.email, `Synced at ${data.timestamp}`);
@@ -972,6 +990,44 @@ function saveGrades(grades) {
 
   logActivity('GRADES', 'teacher', `Saved ${grades.length} grades`);
   return { success: true, count: grades.length };
+}
+
+/**
+ * Save component weight inventory to Weight Sheet (deliverable 6)
+ * Replaces all existing rows for this student so re-submissions stay current.
+ */
+function saveWeightData(student, subsystemName, weightItems, submittedAt) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(SHEET_NAMES.WEIGHT);
+  if (!sheet) return;
+
+  // Remove all existing rows for this student (iterate backwards to avoid index shift)
+  const data = sheet.getDataRange().getValues();
+  for (let i = data.length - 1; i >= 1; i--) {
+    if (data[i][0] === student.email) {
+      sheet.deleteRow(i + 1);
+    }
+  }
+
+  // Append one row per component
+  const now = submittedAt || new Date().toISOString();
+  weightItems.forEach(function(item) {
+    if (item.component && item.component.trim()) {
+      sheet.appendRow([
+        student.email,
+        student.name,
+        subsystemName || '',
+        item.component,
+        item.qty || 0,
+        item.unitMass || 0,
+        item.totalMass || 0,
+        item.notes || '',
+        now
+      ]);
+    }
+  });
+
+  logActivity('WEIGHT', student.email, 'Weight data saved: ' + weightItems.length + ' components, subsystem: ' + subsystemName);
 }
 
 /**
