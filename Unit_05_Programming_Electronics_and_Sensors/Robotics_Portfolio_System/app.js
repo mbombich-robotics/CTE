@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.19',
+    VERSION: 'v2.9.20',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbzkALgf6zIOFqyZn3YqZGm0MdZuSDXeMH0F9FMdijiOlubV8oFew20H0Uk3CvgTeafS/exec',
@@ -22,7 +22,7 @@ const CONFIG = {
     // Point values
     POINTS: {
         WEEKLY_REFLECTION: 20,
-        TOTAL_POSSIBLE: 800
+        TOTAL_POSSIBLE: 820
     },
 
     // Auto-save interval in milliseconds
@@ -38,10 +38,11 @@ const WEEK_TOPICS = {
     3: { title: 'Ultrasonic Sensor Basics', phase: 'scanner', focus: 'HC-SR04 wiring, distance measurement' },
     4: { title: 'Servo & Scanner Build', phase: 'scanner', focus: 'Servo control, mounting, CAD design' },
     5: { title: 'Scanning Algorithm', phase: 'scanner', focus: 'Data arrays, obstacle detection' },
-    6: { title: 'Claw Design', phase: 'claw', focus: 'Gripper mechanisms, CAD, assembly' },
-    7: { title: 'Claw Programming', phase: 'claw', focus: 'Servo control, grip functions' },
-    8: { title: 'Integrated Systems', phase: 'claw', focus: 'Scanner + claw + drive integration' },
-    9: { title: 'Final Integration', phase: 'final', focus: 'Full system demo, presentation' }
+    6: { title: 'Wall Following Robot', phase: 'scanner', focus: 'Reactive navigation, distance-based wall tracking' },
+    7: { title: 'Claw Design', phase: 'claw', focus: 'Gripper mechanisms, CAD, assembly' },
+    8: { title: 'Claw Programming', phase: 'claw', focus: 'Servo control, grip functions' },
+    9: { title: 'Integrated Systems', phase: 'claw', focus: 'Scanner + claw + drive integration' },
+    10: { title: 'Final Integration', phase: 'final', focus: 'Full system demo, presentation' }
 };
 
 // ============================================
@@ -121,23 +122,24 @@ const DELIVERABLES = [
     },
     {
         id: 6,
-        title: 'Claw Design Document (Optional)',
+        title: 'Wall Following Robot (Optional)',
         week: 6,
         optional: true,
         points: 50,
-        phase: 'claw',
-        description: 'Design your claw mechanism before building.',
+        phase: 'scanner',
+        description: 'Program your robot to follow a wall using ultrasonic distance sensing.',
         requirements: [
-            'Sketch or CAD of claw mechanism',
-            'Parts list with sources/costs',
-            'Explanation of design choices',
-            'How it will mount to your robot'
+            'Robot maintains a consistent distance from a wall while moving forward',
+            'Serial Monitor shows live distance readings and steering decisions',
+            'Paste key code section with inline comments explaining how it works',
+            'Explain the distance threshold and correction values you tuned',
+            'Describe at least one problem you encountered and how you fixed it'
         ]
     },
     {
         id: 7,
         title: 'Claw Control Code',
-        week: 7,
+        week: 8,
         points: 50,
         phase: 'claw',
         description: 'Working code to control your claw mechanism.',
@@ -151,7 +153,7 @@ const DELIVERABLES = [
     {
         id: 8,
         title: 'Claw Practical',
-        week: 8,
+        week: 9,
         points: 75,
         phase: 'claw',
         description: 'Pick up and transport an object to a target zone.',
@@ -165,7 +167,7 @@ const DELIVERABLES = [
     {
         id: 9,
         title: 'Final Robot Demonstration',
-        week: 9,
+        week: 10,
         points: 100,
         phase: 'final',
         description: 'Demonstrate all three capabilities and present your work.',
@@ -1183,7 +1185,7 @@ function updateUI() {
     const requiredDeliverableCount = DELIVERABLES.filter(d => !d.optional).length;
 
     document.getElementById('completedCount').textContent = completedDeliverables + completedReflections;
-    document.getElementById('pendingCount').textContent = (requiredDeliverableCount - completedRequiredDeliverables) + (9 - completedReflections);
+    document.getElementById('pendingCount').textContent = (requiredDeliverableCount - completedRequiredDeliverables) + (10 - completedReflections);
     document.getElementById('totalPoints').textContent = calculatePoints();
     document.getElementById('currentWeek').textContent = state.currentWeek;
 
@@ -1274,8 +1276,8 @@ function markFeedbackViewed(key) {
 
 function getCurrentPhase() {
     if (state.currentWeek <= 2) return { name: 'Line Following', key: 'linefollow' };
-    if (state.currentWeek <= 5) return { name: 'Ultrasonic Scanner', key: 'scanner' };
-    if (state.currentWeek <= 8) return { name: 'Servo Claw', key: 'claw' };
+    if (state.currentWeek <= 6) return { name: 'Ultrasonic Scanner', key: 'scanner' };
+    if (state.currentWeek <= 9) return { name: 'Servo Claw', key: 'claw' };
     return { name: 'Final Demo', key: 'final' };
 }
 
@@ -1315,7 +1317,7 @@ function calculateCurrentWeek() {
     const diffTime = now - CONFIG.SEMESTER_START;
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     const diffWeeks = Math.floor(diffDays / 7) + 1;
-    state.currentWeek = Math.min(Math.max(1, diffWeeks), 9);
+    state.currentWeek = Math.min(Math.max(1, diffWeeks), 10);
 }
 
 function updatePhaseIndicators() {
