@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.17';
+const BACKEND_VERSION = 'v2.9.18';
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
@@ -211,7 +211,6 @@ function initializeSheets() {
  */
 function syncStudentData(data) {
   initializeSheets();
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
 
   // Update student record and store full state JSON in column 9
   updateStudentRecord(data.student);
@@ -320,6 +319,16 @@ function saveFullState(email, data) {
       return;
     }
   }
+}
+
+/**
+ * Register a new student (or update if already exists)
+ */
+function registerStudent(student) {
+  initializeSheets();
+  updateStudentRecord(student);
+  logActivity('REGISTER', student.email, 'Student registered: ' + student.name);
+  return { success: true };
 }
 
 /**
