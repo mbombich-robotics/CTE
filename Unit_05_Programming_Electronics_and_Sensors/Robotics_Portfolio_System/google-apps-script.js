@@ -215,7 +215,12 @@ function syncStudentData(data) {
 
   // Update student record and store full state JSON in column 9
   updateStudentRecord(data.student);
-  saveFullState(data.student.email, data);
+  try {
+    saveFullState(data.student.email, data);
+  } catch (fsError) {
+    // Log but do not abort — individual row writes below must still run
+    logActivity('ERROR', data.student.email, 'saveFullState threw: ' + fsError.toString());
+  }
 
   // Sync submitted reflections to teacher-visible sheet
   if (data.weeklyReflections) {
@@ -285,16 +290,33 @@ function saveFullState(email, data) {
       const mergedReflections = Object.assign({}, existingReflections, data.weeklyReflections || {});
       const mergedDeliverables = Object.assign({}, existingDeliverables, data.deliverables || {});
 
-      const stateJson = JSON.stringify({
+      const fullCodeSnippets = (data.codeSnippets && data.codeSnippets.length > 0) ? data.codeSnippets : existingCodeSnippets;
+      const fullViewedFeedback = (data.viewedFeedback && data.viewedFeedback.length > 0) ? data.viewedFeedback : existingViewedFeedback;
+
+      const buildJson = (includeSnippets) => JSON.stringify({
         student: data.student,
         weeklyReflections: mergedReflections,
         deliverables: mergedDeliverables,
-        codeSnippets: (data.codeSnippets && data.codeSnippets.length > 0) ? data.codeSnippets : existingCodeSnippets,
-        viewedFeedback: (data.viewedFeedback && data.viewedFeedback.length > 0) ? data.viewedFeedback : existingViewedFeedback,
-        lastSynced: data.timestamp || new Date().toISOString()
+        codeSnippets: includeSnippets ? fullCodeSnippets : [],
+        viewedFeedback: fullViewedFeedback,
+        lastSynced: data.timestamp || new Date().toISOString(),
+        _codeSnippetsStripped: !includeSnippets
       });
 
-      sheet.getRange(i + 1, 9).setValue(stateJson);
+      // Google Sheets cells cap at 50,000 characters. Try full state first,
+      // then fall back to stripping code snippets. Never throw — a failed
+      // fullState write must not block the individual deliverable row writes.
+      const CELL_LIMIT = 49500;
+      let stateJson = buildJson(true);
+      if (stateJson.length > CELL_LIMIT) {
+        stateJson = buildJson(false);
+        logActivity('WARN', email, `Full state too large (stripped code snippets): ${stateJson.length} chars`);
+      }
+      try {
+        sheet.getRange(i + 1, 9).setValue(stateJson.substring(0, CELL_LIMIT));
+      } catch (cellError) {
+        logActivity('ERROR', email, 'saveFullState cell write failed: ' + cellError.toString());
+      }
       return;
     }
   }
