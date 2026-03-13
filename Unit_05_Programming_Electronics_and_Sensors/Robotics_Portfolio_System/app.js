@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.18',
+    VERSION: 'v2.9.19',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbzkALgf6zIOFqyZn3YqZGm0MdZuSDXeMH0F9FMdijiOlubV8oFew20H0Uk3CvgTeafS/exec',
@@ -121,8 +121,9 @@ const DELIVERABLES = [
     },
     {
         id: 6,
-        title: 'Claw Design Document',
+        title: 'Claw Design Document (Optional)',
         week: 6,
+        optional: true,
         points: 50,
         phase: 'claw',
         description: 'Design your claw mechanism before building.',
@@ -1178,9 +1179,11 @@ function updateUI() {
 
     const completedDeliverables = Object.values(state.deliverables).filter(d => d.status === 'completed').length;
     const completedReflections = Object.keys(state.weeklyReflections).filter(k => state.weeklyReflections[k].submitted).length;
+    const completedRequiredDeliverables = DELIVERABLES.filter(d => !d.optional && state.deliverables[d.id]?.status === 'completed').length;
+    const requiredDeliverableCount = DELIVERABLES.filter(d => !d.optional).length;
 
     document.getElementById('completedCount').textContent = completedDeliverables + completedReflections;
-    document.getElementById('pendingCount').textContent = (9 - completedDeliverables) + (9 - completedReflections);
+    document.getElementById('pendingCount').textContent = (requiredDeliverableCount - completedRequiredDeliverables) + (9 - completedReflections);
     document.getElementById('totalPoints').textContent = calculatePoints();
     document.getElementById('currentWeek').textContent = state.currentWeek;
 
@@ -1344,7 +1347,7 @@ function updateUpcoming() {
     }
 
     const currentDeliverable = DELIVERABLES.find(d => d.week === state.currentWeek);
-    if (currentDeliverable && state.deliverables[currentDeliverable.id]?.status !== 'completed') {
+    if (currentDeliverable && !currentDeliverable.optional && state.deliverables[currentDeliverable.id]?.status !== 'completed') {
         upcoming.push({ title: currentDeliverable.title, due: `End of Week ${state.currentWeek}`, points: currentDeliverable.points, overdue: false });
     }
 
@@ -1352,9 +1355,9 @@ function updateUpcoming() {
         if (!state.weeklyReflections[week]?.submitted) {
             upcoming.unshift({ title: `Week ${week} Reflection`, due: 'OVERDUE', points: 20, overdue: true });
         }
-        // Check for overdue deliverables from previous weeks
+        // Check for overdue deliverables from previous weeks (skip optional)
         const overdueDeliverable = DELIVERABLES.find(d => d.week === week);
-        if (overdueDeliverable && state.deliverables[overdueDeliverable.id]?.status !== 'completed') {
+        if (overdueDeliverable && !overdueDeliverable.optional && state.deliverables[overdueDeliverable.id]?.status !== 'completed') {
             upcoming.unshift({ title: overdueDeliverable.title, due: 'OVERDUE', points: overdueDeliverable.points, overdue: true });
         }
     }

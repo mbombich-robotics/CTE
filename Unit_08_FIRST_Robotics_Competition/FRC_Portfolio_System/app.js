@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.17',
+    VERSION: 'v2.9.18',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbxrI1Y9M1Vr7kl-RCARx_ooSB-PFBOOJYvulMjCZ7-I-tXi60MMnzRF-ctQBypJXZMb/exec',
@@ -108,8 +108,9 @@ const DELIVERABLES = [
     },
     {
         id: 6,
-        title: 'Testing & Iteration Log',
+        title: 'Testing & Iteration Log (Optional)',
         week: 6,
+        optional: true,
         points: 50,
         phase: 'Test',
         description: 'Document post-competition observations, proposed subsystem modifications, and a full component weight inventory.',
@@ -905,9 +906,11 @@ function updateUI() {
 
     const completedDeliverables = Object.values(state.deliverables).filter(d => d.status === 'completed').length;
     const completedReflections = Object.keys(state.weeklyReflections).filter(k => state.weeklyReflections[k].submitted).length;
+    const completedRequiredDeliverables = DELIVERABLES.filter(d => !d.optional && state.deliverables[d.id]?.status === 'completed').length;
+    const requiredDeliverableCount = DELIVERABLES.filter(d => !d.optional).length;
 
     document.getElementById('completedCount').textContent = completedDeliverables + completedReflections;
-    document.getElementById('pendingCount').textContent = (10 - completedDeliverables) + (9 - completedReflections);
+    document.getElementById('pendingCount').textContent = (requiredDeliverableCount - completedRequiredDeliverables) + (9 - completedReflections);
     document.getElementById('totalPoints').textContent = calculatePoints();
     document.getElementById('currentWeek').textContent = state.currentWeek;
 
@@ -1000,7 +1003,7 @@ function updateUpcoming() {
     }
 
     const currentDeliverable = DELIVERABLES.find(d => d.week === state.currentWeek);
-    if (currentDeliverable && state.deliverables[currentDeliverable.id]?.status !== 'completed') {
+    if (currentDeliverable && !currentDeliverable.optional && state.deliverables[currentDeliverable.id]?.status !== 'completed') {
         upcoming.push({ title: currentDeliverable.title, due: `End of Week ${state.currentWeek}`, points: currentDeliverable.points, overdue: false });
     }
 
