@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.17',
+    VERSION: 'v2.9.18',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -441,9 +441,16 @@ function processStudentData() {
             const studentDeliverables = state.rawData.deliverables.filter(
                 d => d[0] === email && d[7] === 'completed'
             );
-            completedDeliverables = studentDeliverables.length;
+            // Deduplicate by deliverable id, preferring graded rows
+            const seen = {};
+            studentDeliverables.forEach(d => {
+                const id = d[2];
+                if (!seen[id] || (d[9] !== '' && d[9] !== null && d[9] !== undefined)) seen[id] = d;
+            });
+            const deduped = Object.values(seen);
+            completedDeliverables = deduped.length;
             // Count ungraded (column J = index 9 is Grade)
-            ungradedDeliverables = studentDeliverables.filter(d => !d[9] && d[9] !== 0).length;
+            ungradedDeliverables = deduped.filter(d => !d[9] && d[9] !== 0).length;
         }
 
         if (fullState && fullState.deliverables) {

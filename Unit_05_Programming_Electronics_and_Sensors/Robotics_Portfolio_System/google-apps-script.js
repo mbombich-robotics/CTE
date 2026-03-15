@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.17';
+const BACKEND_VERSION = 'v2.9.18';
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
@@ -955,13 +955,12 @@ function saveGrades(grades) {
         sheet.getRange(1, 12).setValue('Graded At');
       }
 
-      // Find the deliverable row
+      // Find and update all matching deliverable rows (handles duplicates)
       for (let i = 1; i < data.length; i++) {
         if (data[i][0] === email && data[i][2] == assignmentId) {
           if (grade !== '') sheet.getRange(i + 1, 10).setValue(parseFloat(grade));
           if (feedback !== '') sheet.getRange(i + 1, 11).setValue(feedback);
           if (grade !== '' || feedback !== '') sheet.getRange(i + 1, 12).setValue(gradedAt);
-          break;
         }
       }
     }

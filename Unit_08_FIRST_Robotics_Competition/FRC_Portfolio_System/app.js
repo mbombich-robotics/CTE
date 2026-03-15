@@ -11,7 +11,7 @@ const CONFIG = {
     VERSION: 'v2.9.18',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
-    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbxrI1Y9M1Vr7kl-RCARx_ooSB-PFBOOJYvulMjCZ7-I-tXi60MMnzRF-ctQBypJXZMb/exec',
+    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyQrOCee5FxTZZvLdeYPSUODBTNpxTiz74zvTPRLg6YJvZcZyQxhcGUPJ0yaOTBR_8/exec',
 
     // Google OAuth Client ID
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
