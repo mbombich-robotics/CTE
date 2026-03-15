@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.18',
+    VERSION: 'v2.9.19',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -415,12 +415,18 @@ function processStudentData() {
         let draftReflections = 0;
         let ungradedReflections = 0;
 
-        // Count from sheet data
+        // Count from sheet data (deduplicate by week to handle concurrent-sync duplicates)
         if (state.rawData.reflections) {
             const studentReflections = state.rawData.reflections.filter(r => r[0] === email);
-            submittedReflections = studentReflections.length;
+            const seenWeeks = {};
+            studentReflections.forEach(r => {
+                const week = r[2];
+                if (!seenWeeks[week] || (r[11] !== '' && r[11] !== null && r[11] !== undefined)) seenWeeks[week] = r;
+            });
+            const dedupedReflections = Object.values(seenWeeks);
+            submittedReflections = dedupedReflections.length;
             // Count ungraded (column L = index 11 is Grade)
-            ungradedReflections = studentReflections.filter(r => !r[11] && r[11] !== 0).length;
+            ungradedReflections = dedupedReflections.filter(r => !r[11] && r[11] !== 0).length;
         }
 
         // Count drafts from JSON

@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.18';
+const BACKEND_VERSION = 'v2.9.19';
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
@@ -210,6 +210,18 @@ function initializeSheets() {
  * Sync all student data
  */
 function syncStudentData(data) {
+  // Acquire a script-level lock to prevent concurrent syncs from the same student
+  // (e.g. two browser tabs open) creating duplicate rows in the sheets.
+  const lock = LockService.getScriptLock();
+  lock.waitLock(15000); // wait up to 15s for the lock
+  try {
+    return _syncStudentDataLocked(data);
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function _syncStudentDataLocked(data) {
   initializeSheets();
 
   // Update student record and store full state JSON in column 9
