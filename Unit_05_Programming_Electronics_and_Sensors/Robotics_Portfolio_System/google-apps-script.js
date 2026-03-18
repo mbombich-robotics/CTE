@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.20';
+const BACKEND_VERSION = 'v2.9.21';
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
@@ -445,7 +445,7 @@ function saveDeliverable(student, id, deliverable) {
     4: 'Scanner Assembly',
     5: 'Scanning Practical',
     6: 'Wall Following Robot',
-    7: 'Claw Control Code',
+    7: 'Motor Functions & PWM Values',
     8: 'Claw Practical',
     9: 'Final Robot Demonstration'
   };
@@ -1121,7 +1121,7 @@ function sendRemindersWeb(semesterStart) {
     4: 'Scanner Assembly',
     5: 'Scanning Practical',
     6: 'Wall Following Robot',
-    7: 'Claw Control Code',
+    7: 'Motor Functions & PWM Values',
     8: 'Claw Practical',
     9: 'Final Robot Demonstration'
   };
