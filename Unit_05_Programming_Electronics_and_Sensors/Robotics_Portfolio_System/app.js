@@ -145,7 +145,7 @@ const DELIVERABLES = [
         description: 'Demonstrate your understanding of functions, arguments, and motor control by documenting your code and tuned PWM values.',
         requirements: [
             'Submit exactly 5 lines of code you wrote, each with a // comment explaining what it does',
-            'Complete the PWM values table for all four movement scenarios',
+            'Complete the PWM values table for all seven movement scenarios',
             'Describe at least one problem you encountered (e.g. oscillation, veering) and how you solved it'
         ]
     },
@@ -2156,7 +2156,7 @@ function openDeliverableForm(id) {
                         </tr>
                     </thead>
                     <tbody>
-                        ${['Drive Straight', 'Nudge', 'Turn', 'Pivot'].map((scenario, i) => {
+                        ${['Drive Straight', 'Nudge Left', 'Nudge Right', 'Turn Left', 'Turn Right', 'Pivot Left', 'Pivot Right'].map((scenario, i) => {
                             const r = (existing.pwmTable && existing.pwmTable[i]) || {};
                             return `<tr style="border-bottom: 1px solid var(--gray-100);">
                                 <td style="padding: 6px 8px; font-size: 13px; color: var(--gray-700);">${scenario}</td>
@@ -2413,7 +2413,7 @@ function formatDeliverable5Content(content, customData) {
 
 function collectDeliverable7CustomData() {
     const codeLines = document.getElementById('d6CodeLines')?.value || '';
-    const scenarios = ['Drive Straight', 'Nudge', 'Turn', 'Pivot'];
+    const scenarios = ['Drive Straight', 'Nudge Left', 'Nudge Right', 'Turn Left', 'Turn Right', 'Pivot Left', 'Pivot Right'];
     const pwmTable = scenarios.map((scenario, i) => ({
         scenario,
         left: document.querySelector(`.pwm-left[data-row="${i}"]`)?.value || '',
