@@ -853,7 +853,77 @@ Dist: 11cm  Err: -4  R: 152  ← too close, steering away</div>
             </div>
         </div>
 
-        <!-- Slide 13: Summary -->
+        <!-- Slide 13: Break & Fix Warm-Up -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>🛠️ Break &amp; Fix: Find the Errors</h2>
+            </div>
+            <div class="content">
+                <p style="text-align:center; font-size:1.1rem; margin-bottom:20px;">This code <strong>will not compile</strong>. There are <span class="emphasis">exactly two errors</span>. Find both before looking at the answers.</p>
+
+                <div class="two-column" style="align-items: start;">
+                    <div>
+                        <div class="code-block"><span class="code-keyword">const int</span> LEFT_INA  = <span class="code-number">8</span>,  LEFT_INB  = <span class="code-number">7</span>,  LEFT_PWM  = <span class="code-number">5</span>;
+<span class="code-keyword">const int</span> RIGHT_INA = <span class="code-number">6</span>,  RIGHT_INB = <span class="code-number">4</span>,  RIGHT_PWM = <span class="code-number">3</span>;
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  <span class="code-function">pinMode</span>(LEFT_INA,  OUTPUT);
+  <span class="code-function">pinMode</span>(LEFT_INB,  OUTPUT);
+  <span class="code-function">pinMode</span>(LEFT_PWM,  OUTPUT);
+  <span class="code-function">pinMode</span>(RIGHT_INA, OUTPUT);
+  <span class="code-function">pinMode</span>(RIGHT_INB, OUTPUT);
+  <span class="code-function">pinMode</span>(RIGHT_PWM, OUTPUT);
+  <span style="color:#ff5555;"><span class="code-function">stopMotors</span>();</span>   <span class="code-comment">// ERROR?</span>
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span style="color:#ff5555;"><span class="code-function">driveForward</span>(<span class="code-number">35</span>);</span>   <span class="code-comment">// ERROR?</span>
+  <span class="code-function">delay</span>(<span class="code-number">2000</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">driveForward</span>(<span class="code-keyword">int</span> speed, <span class="code-keyword">int</span> duration) {
+  <span class="code-function">analogWrite</span>(LEFT_PWM,  speed);
+  <span class="code-function">analogWrite</span>(RIGHT_PWM, speed);
+  <span class="code-function">digitalWrite</span>(LEFT_INA,  HIGH); <span class="code-function">digitalWrite</span>(LEFT_INB,  LOW);
+  <span class="code-function">digitalWrite</span>(RIGHT_INA, HIGH); <span class="code-function">digitalWrite</span>(RIGHT_INB, LOW);
+  <span class="code-function">delay</span>(duration);
+}</div>
+                    </div>
+
+                    <div class="column" style="gap:16px;">
+                        <div class="error-box">
+                            <h3 style="color:#ff5555; margin-top:0;">Error 1 — Line 10</h3>
+                            <p style="font-size:0.95rem; margin-bottom:6px;"><code>stopMotors()</code> is called in <code>setup()</code>, but this function is <strong>never defined</strong> anywhere in the file.</p>
+                            <p style="font-size:0.9rem; color:#a0aab8; margin-bottom:0;">Compiler message: <em>"'stopMotors' was not declared in this scope"</em></p>
+                        </div>
+
+                        <div class="error-box">
+                            <h3 style="color:#ff5555; margin-top:0;">Error 2 — Line 16</h3>
+                            <p style="font-size:0.95rem; margin-bottom:6px;"><code>driveForward(35)</code> passes <strong>1 argument</strong>, but the function signature requires <strong>2</strong>: <code>speed</code> and <code>duration</code>.</p>
+                            <p style="font-size:0.9rem; color:#a0aab8; margin-bottom:0;">Compiler message: <em>"too few arguments to function 'void driveForward(int, int)'"</em></p>
+                        </div>
+
+                        <div class="success-box">
+                            <h3 style="color:#50fa7b; margin-top:0;">The Fix</h3>
+                            <ul style="font-size:0.95rem;">
+                                <li>Add a <code>void stopMotors() { … }</code> function <strong>or</strong> remove the call from <code>setup()</code></li>
+                                <li>Change <code>driveForward(35)</code> → <code>driveForward(35, 2000)</code> so both arguments are supplied</li>
+                            </ul>
+                        </div>
+
+                        <div class="concept-box">
+                            <h3 style="color:#00d4ff; margin-top:0;">Key Vocab</h3>
+                            <ul style="font-size:0.95rem;">
+                                <li><strong>Undeclared identifier</strong> — you used a name the compiler has never seen</li>
+                                <li><strong>Too few arguments</strong> — a function call is missing required parameters</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Summary -->
         <div class="slide">
             <div class="slide-header">
                 <h2>Summary &amp; What's Next</h2>
