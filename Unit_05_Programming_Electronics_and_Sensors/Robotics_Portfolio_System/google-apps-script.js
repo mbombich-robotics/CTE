@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.19';
+const BACKEND_VERSION = 'v2.9.21';
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
@@ -444,8 +444,8 @@ function saveDeliverable(student, id, deliverable) {
     3: 'Ultrasonic Sensor Lab Report',
     4: 'Scanner Assembly',
     5: 'Scanning Practical',
-    6: 'Claw Design Document',
-    7: 'Claw Control Code',
+    6: 'Wall Following Robot',
+    7: 'Motor Functions & PWM Values',
     8: 'Claw Practical',
     9: 'Final Robot Demonstration'
   };
@@ -1120,8 +1120,8 @@ function sendRemindersWeb(semesterStart) {
     3: 'Ultrasonic Sensor Lab Report',
     4: 'Scanner Assembly',
     5: 'Scanning Practical',
-    6: 'Claw Design Document',
-    7: 'Claw Control Code',
+    6: 'Wall Following Robot',
+    7: 'Motor Functions & PWM Values',
     8: 'Claw Practical',
     9: 'Final Robot Demonstration'
   };

@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.19';
+const BACKEND_VERSION = 'v2.9.20';
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
@@ -432,7 +432,7 @@ function saveDeliverable(student, id, deliverable) {
     4: 'Design Decision Matrix',
     5: 'Prototype Documentation',
     6: 'Testing & Iteration Log',
-    7: 'Integration Report',
+    7: 'Robot Readiness Contributions',
     8: 'Technical Contribution Summary',
     9: 'Engineer Portfolio Entry',
     10: 'Final Presentation'
@@ -1149,7 +1149,7 @@ function sendRemindersWeb(semesterStart) {
     4: 'Design Decision Matrix',
     5: 'Prototype Documentation',
     6: 'Testing & Iteration Log',
-    7: 'Integration Report',
+    7: 'Robot Readiness Contributions',
     8: 'Technical Contribution Summary',
     9: 'Engineer Portfolio Entry',
     10: 'Final Presentation'

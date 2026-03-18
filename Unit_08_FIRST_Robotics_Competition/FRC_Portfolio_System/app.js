@@ -8,10 +8,10 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.18',
+    VERSION: 'v2.9.19',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
-    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbxOwcK1bjitUDV2oZaNCeT2YO9416JWobq6bJFoPXRzmHyKsG1wniQCSEyXGL78esVg/exec',
+    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbwN50bW0p6c_WIYatLPN9TpUgWR8bMtr42NZ66lEFVdBgBD1PnvBevztP7LqLnWxKg2/exec',
 
     // Google OAuth Client ID
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -26,7 +26,10 @@ const CONFIG = {
     },
 
     // Auto-save interval in milliseconds
-    AUTO_SAVE_INTERVAL: 30000
+    AUTO_SAVE_INTERVAL: 30000,
+
+    // Shared team weight spreadsheet URL (Week 7 deliverable)
+    WEIGHT_SHEET_URL: 'https://docs.google.com/spreadsheets/d/1f9m6rmyez0N8ofEg_AGg90mhhrQVuTDmFWSQn5e6t1s/edit?gid=0#gid=0'
 };
 
 // ============================================
@@ -123,17 +126,17 @@ const DELIVERABLES = [
     },
     {
         id: 7,
-        title: 'Integration Report',
+        title: 'Robot Readiness Contributions',
         week: 7,
         points: 50,
         phase: 'Improve',
-        description: 'Document how your subsystem integrates with the full robot.',
+        description: 'The redesign phase is closing — but two critical tasks are still incomplete: the team weight spreadsheet and the shop. Both need your hands-on attention this week.',
         requirements: [
-            'Interface points with other subsystems',
-            'Problems discovered during integration',
-            'Your role in solving integration issues',
-            'Wiring diagrams, code snippets, or assembly photos',
-            'Full robot demo presentation'
+            'Open the team weight spreadsheet and claim at least 2 subassemblies or components as "Design Responsible"',
+            'Physically weigh your claimed components and enter their mass in the spreadsheet',
+            'Describe the 5S work you completed in the shop — what area, what you sorted, organized, or cleaned',
+            'Add before/after photos of your shop area to the Supporting Links field',
+            'Reflect: how does knowing the robot\'s actual mass affect your subsystem\'s design decisions?'
         ]
     },
     {
@@ -1677,6 +1680,23 @@ function openDeliverableForm(id) {
             <div class="form-group">
                 <label for="pughContribution">My Contribution to This Decision (10 pts)</label>
                 <textarea id="pughContribution" rows="4" placeholder="What was your specific role in the decision-making process? What criteria did you advocate for? What research or testing did you do to inform your scores?">${existing.contribution || ''}</textarea>
+            </div>
+            ` : id === 7 ? `
+            <div class="card" style="margin-bottom: 20px; border-left: 4px solid #ef4444; background: #fef2f2;">
+                <h4 style="margin-bottom: 10px; color: #b91c1c;"><i class="fas fa-exclamation-triangle"></i> Action Required This Week</h4>
+                <p style="font-size: 14px; color: #7f1d1d; margin-bottom: 14px;">
+                    The weight spreadsheet must be complete by end of week. Open it, claim your components, weigh them, and enter the data.
+                </p>
+                <a href="${CONFIG.WEIGHT_SHEET_URL}" target="_blank"
+                   style="display: inline-block; background: #ef4444; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                    <i class="fas fa-table"></i> Open Team Weight Spreadsheet
+                </a>
+            </div>
+
+            <div class="form-group">
+                <label for="deliverableContent">Your Submission</label>
+                <textarea id="deliverableContent" rows="10"
+                    placeholder="1. Components I claimed and weighed (list each with mass)&#10;2. My 5S contributions (area, what I did)&#10;3. Reflection: how does the robot's mass affect my subsystem's design?">${existing.content || ''}</textarea>
             </div>
             ` : id === 6 ? `
 

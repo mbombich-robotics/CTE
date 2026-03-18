@@ -8,10 +8,10 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.20',
+    VERSION: 'v2.9.22',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
-    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbz2zToSMXHWQegIJnA73YxCZVUHVPLRck1DbQQiF7hUCnnMTE7WMUVNtpAjoGVY2-A/exec',
+    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbzTYBlMMsKnXXvZSsPmDdphK_CReX9Hpnaq-VfFsFxUuUlxnuCa5mjrgS7YgmuTYFpB/exec',
 
     // Google OAuth Client ID
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -138,6 +138,20 @@ const DELIVERABLES = [
     },
     {
         id: 7,
+        title: 'Motor Functions & PWM Values',
+        week: 7,
+        points: 50,
+        phase: 'scanner',
+        description: 'Demonstrate your understanding of functions, arguments, and motor control by documenting your code and tuned PWM values.',
+        requirements: [
+            'Submit exactly 5 lines of code you wrote, each with a // comment explaining what it does',
+            'Complete the PWM values table for all four movement scenarios',
+            'Describe at least one problem you encountered (e.g. oscillation, veering) and how you solved it'
+        ]
+    },
+    {
+        id: 8,
+        hidden: true,
         title: 'Claw Control Code',
         week: 8,
         points: 50,
@@ -151,7 +165,8 @@ const DELIVERABLES = [
         ]
     },
     {
-        id: 8,
+        id: 9,
+        hidden: true,
         title: 'Claw Practical',
         week: 9,
         points: 75,
@@ -165,7 +180,8 @@ const DELIVERABLES = [
         ]
     },
     {
-        id: 9,
+        id: 10,
+        hidden: true,
         title: 'Final Robot Demonstration',
         week: 10,
         points: 100,
@@ -1181,8 +1197,8 @@ function updateUI() {
 
     const completedDeliverables = Object.values(state.deliverables).filter(d => d.status === 'completed').length;
     const completedReflections = Object.keys(state.weeklyReflections).filter(k => state.weeklyReflections[k].submitted).length;
-    const completedRequiredDeliverables = DELIVERABLES.filter(d => !d.optional && state.deliverables[d.id]?.status === 'completed').length;
-    const requiredDeliverableCount = DELIVERABLES.filter(d => !d.optional).length;
+    const completedRequiredDeliverables = DELIVERABLES.filter(d => !d.optional && !d.hidden && state.deliverables[d.id]?.status === 'completed').length;
+    const requiredDeliverableCount = DELIVERABLES.filter(d => !d.optional && !d.hidden).length;
 
     document.getElementById('completedCount').textContent = completedDeliverables + completedReflections;
     document.getElementById('pendingCount').textContent = (requiredDeliverableCount - completedRequiredDeliverables) + (10 - completedReflections);
@@ -1348,7 +1364,7 @@ function updateUpcoming() {
         upcoming.push({ title: `Week ${state.currentWeek} Reflection`, due: 'Friday', points: 20, overdue: false });
     }
 
-    const currentDeliverable = DELIVERABLES.find(d => d.week === state.currentWeek);
+    const currentDeliverable = DELIVERABLES.find(d => !d.hidden && d.week === state.currentWeek);
     if (currentDeliverable && !currentDeliverable.optional && state.deliverables[currentDeliverable.id]?.status !== 'completed') {
         upcoming.push({ title: currentDeliverable.title, due: `End of Week ${state.currentWeek}`, points: currentDeliverable.points, overdue: false });
     }
@@ -1358,7 +1374,7 @@ function updateUpcoming() {
             upcoming.unshift({ title: `Week ${week} Reflection`, due: 'OVERDUE', points: 20, overdue: true });
         }
         // Check for overdue deliverables from previous weeks (skip optional)
-        const overdueDeliverable = DELIVERABLES.find(d => d.week === week);
+        const overdueDeliverable = DELIVERABLES.find(d => !d.hidden && d.week === week);
         if (overdueDeliverable && !overdueDeliverable.optional && state.deliverables[overdueDeliverable.id]?.status !== 'completed') {
             upcoming.unshift({ title: overdueDeliverable.title, due: 'OVERDUE', points: overdueDeliverable.points, overdue: true });
         }
@@ -1400,7 +1416,7 @@ function updateDeliverablesList() {
     const list = document.getElementById('deliverablesList');
     const activePhase = document.querySelector('.phase-tab.active')?.dataset.phase || 'all';
 
-    const filtered = activePhase === 'all' ? DELIVERABLES : DELIVERABLES.filter(d => d.phase === activePhase);
+    const filtered = (activePhase === 'all' ? DELIVERABLES : DELIVERABLES.filter(d => d.phase === activePhase)).filter(d => !d.hidden);
 
     list.innerHTML = filtered.map(d => {
         const status = state.deliverables[d.id]?.status || 'pending';
@@ -2117,11 +2133,45 @@ function openDeliverableForm(id) {
                     </tbody>
                 </table>
             </div>
+            ` : id === 7 ? `
+            <div class="card" style="margin-bottom: 20px; border-left: 3px solid var(--primary);">
+                <h4 style="margin-bottom: 12px;"><i class="fas fa-code"></i> Your Code (5 lines with comments)</h4>
+                <p style="font-size: 13px; color: var(--gray-600); margin-bottom: 10px;">
+                    Pick any 5 lines from the code you wrote. Add a <code>//</code> comment after each line explaining what it does.
+                </p>
+                <textarea id="d6CodeLines" rows="7"
+                    placeholder="analogWrite(LEFT_MOTOR_PWM, 40);  // sets left motor speed to 40 out of 255&#10;digitalWrite(LEFT_MOTOR_INA, HIGH);  // sets left motor direction to forward&#10;..."
+                    style="font-family: monospace; font-size: 13px; width: 100%; padding: 10px; border: 1px solid var(--gray-200); border-radius: 6px; resize: vertical; box-sizing: border-box;">${existing.codeLines || ''}</textarea>
+            </div>
+
+            <div class="card" style="margin-bottom: 20px; border-left: 3px solid var(--success);">
+                <h4 style="margin-bottom: 12px;"><i class="fas fa-sliders-h"></i> PWM Values</h4>
+                <p style="font-size: 13px; color: var(--gray-600); margin-bottom: 12px;">Enter the motor speeds (0–255) that worked best for each movement.</p>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--gray-200);">
+                            <th style="text-align: left; padding: 8px; font-size: 13px;">Scenario</th>
+                            <th style="text-align: center; padding: 8px; font-size: 13px;">Left Motor PWM</th>
+                            <th style="text-align: center; padding: 8px; font-size: 13px;">Right Motor PWM</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${['Drive Straight', 'Nudge', 'Turn', 'Pivot'].map((scenario, i) => {
+                            const r = (existing.pwmTable && existing.pwmTable[i]) || {};
+                            return `<tr style="border-bottom: 1px solid var(--gray-100);">
+                                <td style="padding: 6px 8px; font-size: 13px; color: var(--gray-700);">${scenario}</td>
+                                <td style="padding: 6px 4px; text-align: center;"><input type="number" class="pwm-left" data-row="${i}" min="0" max="255" value="${r.left || ''}" placeholder="0–255" style="width: 80px; padding: 4px; text-align: center; border: 1px solid var(--gray-200); border-radius: 4px;"></td>
+                                <td style="padding: 6px 4px; text-align: center;"><input type="number" class="pwm-right" data-row="${i}" min="0" max="255" value="${r.right || ''}" placeholder="0–255" style="width: 80px; padding: 4px; text-align: center; border: 1px solid var(--gray-200); border-radius: 4px;"></td>
+                            </tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
             ` : ''}
 
             <div class="form-group">
-                <label for="deliverableContent">${id === 3 ? 'Code & Observations' : id === 4 ? 'Sweep Code & Explanation' : id === 5 ? 'Commented Code & Reflection' : 'Your Submission'}</label>
-                <textarea id="deliverableContent" rows="8" placeholder="${id === 3 ? 'Paste your code with comments, and describe your observations about sensor behavior...' : id === 4 ? 'Paste your servo sweep code and briefly explain how it works (what does each part do?)...' : id === 5 ? 'Paste a key section of your code (e.g. loop() or a motor function) and add comments explaining:\n- What each part does and why\n- Which constants you tuned (THRESHOLD, TURN_TIME, etc.) and what values you used\n- At least one problem you ran into and how you fixed it' : 'Describe what you did, paste your code, explain your process...'}">${id === 3 ? (existing.rawContent || existing.content || '') : id === 5 ? (existing.rawContent || existing.content || '') : (existing.content || '')}</textarea>
+                <label for="deliverableContent">${id === 3 ? 'Code & Observations' : id === 4 ? 'Sweep Code & Explanation' : id === 5 ? 'Commented Code & Reflection' : id === 7 ? 'Problem & Solution' : 'Your Submission'}</label>
+                <textarea id="deliverableContent" rows="8" placeholder="${id === 3 ? 'Paste your code with comments, and describe your observations about sensor behavior...' : id === 4 ? 'Paste your servo sweep code and briefly explain how it works (what does each part do?)...' : id === 5 ? 'Paste a key section of your code (e.g. loop() or a motor function) and add comments explaining:\n- What each part does and why\n- Which constants you tuned (THRESHOLD, TURN_TIME, etc.) and what values you used\n- At least one problem you ran into and how you fixed it' : id === 7 ? 'Describe at least one problem you ran into (e.g. robot oscillating, veering, not stopping) and explain how you solved it or what you tried...' : 'Describe what you did, paste your code, explain your process...'}">${id === 3 ? (existing.rawContent || existing.content || '') : id === 5 ? (existing.rawContent || existing.content || '') : id === 7 ? (existing.rawContent || existing.content || '') : (existing.content || '')}</textarea>
             </div>
 
             <div class="form-group">
@@ -2302,6 +2352,7 @@ function saveDeliverableDraft(id) {
         completionTime: completionTimeEl ? parseInt(completionTimeEl.value) || null : null,
         ...(id === 3 ? collectDeliverable3CustomData() : {}),
         ...(id === 5 ? collectDeliverable5CustomData() : {}),
+        ...(id === 7 ? collectDeliverable7CustomData() : {}),
         // photos are written to state live on upload, preserved here via spread
         status: 'in-progress',
         updatedAt: new Date().toISOString()
@@ -2360,6 +2411,31 @@ function formatDeliverable5Content(content, customData) {
     return formatted;
 }
 
+function collectDeliverable7CustomData() {
+    const codeLines = document.getElementById('d6CodeLines')?.value || '';
+    const scenarios = ['Drive Straight', 'Nudge', 'Turn', 'Pivot'];
+    const pwmTable = scenarios.map((scenario, i) => ({
+        scenario,
+        left: document.querySelector(`.pwm-left[data-row="${i}"]`)?.value || '',
+        right: document.querySelector(`.pwm-right[data-row="${i}"]`)?.value || ''
+    }));
+    return { codeLines, pwmTable };
+}
+
+function formatDeliverable7Content(content, customData) {
+    const { codeLines, pwmTable } = customData;
+    let formatted = '--- CODE SAMPLES (5 lines with comments) ---\n';
+    formatted += codeLines || '(none provided)';
+    formatted += '\n\n--- PWM VALUES ---\n';
+    formatted += 'Scenario       | Left PWM | Right PWM\n';
+    formatted += '---------------|----------|----------\n';
+    pwmTable.forEach(r => {
+        formatted += `${String(r.scenario).padEnd(15)}| ${String(r.left || '—').padEnd(9)}| ${r.right || '—'}\n`;
+    });
+    formatted += '\n--- PROBLEM & SOLUTION ---\n' + content;
+    return formatted;
+}
+
 function submitDeliverable(id) {
     const deliverable = DELIVERABLES.find(d => d.id === id);
     const content = document.getElementById('deliverableContent').value;
@@ -2388,8 +2464,8 @@ function submitDeliverable(id) {
         }
     }
 
-    const customData = id === 3 ? collectDeliverable3CustomData() : id === 5 ? collectDeliverable5CustomData() : {};
-    let finalContent = id === 3 ? formatDeliverable3Content(content, customData) : id === 5 ? formatDeliverable5Content(content, customData) : content;
+    const customData = id === 3 ? collectDeliverable3CustomData() : id === 5 ? collectDeliverable5CustomData() : id === 7 ? collectDeliverable7CustomData() : {};
+    let finalContent = id === 3 ? formatDeliverable3Content(content, customData) : id === 5 ? formatDeliverable5Content(content, customData) : id === 7 ? formatDeliverable7Content(content, customData) : content;
 
     // Append photo links to content for Sheets storage
     if (photos.length > 0) {
@@ -2398,7 +2474,7 @@ function submitDeliverable(id) {
 
     state.deliverables[id] = {
         content: finalContent,
-        rawContent: (id === 3 || id === 5) ? content : undefined,
+        rawContent: (id === 3 || id === 5 || id === 7) ? content : undefined,
         links: document.getElementById('deliverableLinks').value,
         selfAssessment: document.getElementById('deliverableSelfAssessment').value,
         completionTime: completionTimeEl ? parseInt(completionTimeEl.value) || null : null,
