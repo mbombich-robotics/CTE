@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.23',
+    VERSION: 'v2.9.24',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbzTYBlMMsKnXXvZSsPmDdphK_CReX9Hpnaq-VfFsFxUuUlxnuCa5mjrgS7YgmuTYFpB/exec',
@@ -44,6 +44,10 @@ const WEEK_TOPICS = {
     9: { title: 'Integrated Systems', phase: 'claw', focus: 'Scanner + claw + drive integration' },
     10: { title: 'Final Integration', phase: 'final', focus: 'Full system demo, presentation' }
 };
+
+// Weeks that do not require a reflection (short weeks, holidays, etc.)
+// Students won't see these weeks as due/overdue, and they won't count toward pending totals.
+const SKIP_REFLECTION_WEEKS = [8];
 
 // ============================================
 // DELIVERABLES DATA
@@ -1201,7 +1205,8 @@ function updateUI() {
     const requiredDeliverableCount = DELIVERABLES.filter(d => !d.optional && !d.hidden).length;
 
     document.getElementById('completedCount').textContent = completedDeliverables + completedReflections;
-    document.getElementById('pendingCount').textContent = (requiredDeliverableCount - completedRequiredDeliverables) + (10 - completedReflections);
+    const requiredReflectionCount = 10 - SKIP_REFLECTION_WEEKS.length;
+    document.getElementById('pendingCount').textContent = (requiredDeliverableCount - completedRequiredDeliverables) + (requiredReflectionCount - completedReflections);
     document.getElementById('totalPoints').textContent = calculatePoints();
     document.getElementById('currentWeek').textContent = state.currentWeek;
 
@@ -1360,7 +1365,7 @@ function updateUpcoming() {
     const list = document.getElementById('upcomingList');
     const upcoming = [];
 
-    if (!state.weeklyReflections[state.currentWeek]?.submitted) {
+    if (!SKIP_REFLECTION_WEEKS.includes(state.currentWeek) && !state.weeklyReflections[state.currentWeek]?.submitted) {
         upcoming.push({ title: `Week ${state.currentWeek} Reflection`, due: 'Friday', points: 20, overdue: false });
     }
 
@@ -1370,7 +1375,7 @@ function updateUpcoming() {
     }
 
     for (let week = 1; week < state.currentWeek; week++) {
-        if (!state.weeklyReflections[week]?.submitted) {
+        if (!SKIP_REFLECTION_WEEKS.includes(week) && !state.weeklyReflections[week]?.submitted) {
             upcoming.unshift({ title: `Week ${week} Reflection`, due: 'OVERDUE', points: 20, overdue: true });
         }
         // Check for overdue deliverables from previous weeks (skip optional)
