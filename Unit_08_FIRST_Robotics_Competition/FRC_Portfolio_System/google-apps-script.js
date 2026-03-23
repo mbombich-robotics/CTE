@@ -19,7 +19,10 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.20';
+const BACKEND_VERSION = 'v2.9.21';
+
+// Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
+const TEACHER_TOKEN = 'rp-portal-teach-2026';
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
@@ -27,6 +30,7 @@ const SHEET_NAMES = {
   DELIVERABLES: 'Deliverables',
   EVIDENCE: 'Evidence',
   WEIGHT: 'Weight Sheet',
+  CONFIG: 'Config',
   LOG: 'Activity Log'
 };
 
@@ -51,6 +55,9 @@ function doGet(e) {
       case 'all':
         return jsonResponse(loadAllData());
 
+      case 'getConfig':
+        return jsonResponse(handleGetConfig());
+
       case 'repair':
         return jsonResponse(repairStudent(e.parameter.email));
 
@@ -74,6 +81,9 @@ function doPost(e) {
     const action = data.action;
 
     switch (action) {
+      case 'setConfig':
+        return jsonResponse(handleSetConfig(data));
+
       case 'sync':
         return jsonResponse(syncStudentData(data));
 
@@ -111,6 +121,50 @@ function jsonResponse(data) {
   return ContentService
     .createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+// ============================================
+// CONFIG OPERATIONS
+// ============================================
+
+function handleGetConfig() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const configSheet = ss.getSheetByName(SHEET_NAMES.CONFIG);
+  const config = { skipReflectionWeeks: [], skipDeliverableWeeks: [], expectedVersion: '' };
+  if (configSheet && configSheet.getLastRow() > 0) {
+    configSheet.getDataRange().getValues().forEach(row => {
+      try {
+        if (row[0] === 'skipReflectionWeeks')  config.skipReflectionWeeks  = JSON.parse(row[1] || '[]');
+        if (row[0] === 'skipDeliverableWeeks') config.skipDeliverableWeeks = JSON.parse(row[1] || '[]');
+        if (row[0] === 'expectedVersion')       config.expectedVersion      = row[1] || '';
+      } catch(e) {}
+    });
+  }
+  return config;
+}
+
+function handleSetConfig(data) {
+  if (data.token !== TEACHER_TOKEN) return { error: 'Unauthorized' };
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let configSheet = ss.getSheetByName(SHEET_NAMES.CONFIG);
+  if (!configSheet) configSheet = ss.insertSheet(SHEET_NAMES.CONFIG);
+
+  const existing = configSheet.getLastRow() > 0 ? configSheet.getDataRange().getValues() : [];
+  const rowMap = {};
+  existing.forEach((row, i) => { if (row[0]) rowMap[row[0]] = i + 1; });
+
+  const updates = {
+    skipReflectionWeeks:  JSON.stringify(data.skipReflectionWeeks  || []),
+    skipDeliverableWeeks: JSON.stringify(data.skipDeliverableWeeks || []),
+    expectedVersion:      data.expectedVersion || ''
+  };
+
+  Object.entries(updates).forEach(([key, value]) => {
+    if (rowMap[key]) configSheet.getRange(rowMap[key], 2).setValue(value);
+    else configSheet.appendRow([key, value]);
+  });
+
+  return { success: true };
 }
 
 // ============================================

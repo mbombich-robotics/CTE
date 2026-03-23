@@ -8,10 +8,10 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.19',
+    VERSION: 'v2.9.20',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
-    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbwN50bW0p6c_WIYatLPN9TpUgWR8bMtr42NZ66lEFVdBgBD1PnvBevztP7LqLnWxKg2/exec',
+    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbw45t8wwkkhSNIZXGI-hSRY-YxvkzbMTT9mN-x7_ptOTeuWJG3vs_HF8EdczgcrHpI/exec',
 
     // Google OAuth Client ID
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -282,7 +282,12 @@ let state = {
     codeSnippets: [],
     viewedFeedback: [],  // Track which feedback notifications have been viewed
     currentWeek: 1,
-    selectedWeek: 1
+    selectedWeek: 1,
+    config: {
+        skipReflectionWeeks: [],   // default — overwritten by backend on load
+        skipDeliverableWeeks: [],
+        expectedVersion: null
+    }
 };
 
 let autoSaveTimer = null;
@@ -847,6 +852,41 @@ function onAuthenticated() {
 
     startAutoSave();
     markDirty(); // ensure first state is persisted
+
+    // Fetch remote config and start version-check polling
+    fetchConfig();
+    setInterval(fetchConfig, 5 * 60 * 1000);
+}
+
+async function fetchConfig() {
+    try {
+        const res = await fetch(CONFIG.SHEETS_API_URL + '?action=getConfig&_t=' + Date.now());
+        const cfg = await res.json();
+        if (cfg.error) return;
+
+        state.config.skipReflectionWeeks  = cfg.skipReflectionWeeks  || [];
+        state.config.skipDeliverableWeeks = cfg.skipDeliverableWeeks || [];
+
+        const expected = cfg.expectedVersion;
+        if (expected && expected !== CONFIG.VERSION) {
+            if (!isDirty) {
+                location.reload();
+            } else {
+                showUpdateBanner();
+            }
+        }
+
+        updateUI();
+    } catch(e) { /* silent — keep existing config */ }
+}
+
+function showUpdateBanner() {
+    if (document.getElementById('updateBanner')) return;
+    const banner = document.createElement('div');
+    banner.id = 'updateBanner';
+    banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#f59e0b;color:#1a1a1a;text-align:center;padding:12px 20px;font-weight:600;z-index:9999;font-size:14px;';
+    banner.innerHTML = '⚠️ A new version of the portfolio is available. <a href="#" onclick="location.reload()" style="color:#1a1a1a;text-decoration:underline;font-weight:700;">Refresh the page</a> to update — your draft is auto-saved.';
+    document.body.prepend(banner);
 }
 
 // ============================================
@@ -913,7 +953,8 @@ function updateUI() {
     const requiredDeliverableCount = DELIVERABLES.filter(d => !d.optional).length;
 
     document.getElementById('completedCount').textContent = completedDeliverables + completedReflections;
-    document.getElementById('pendingCount').textContent = (requiredDeliverableCount - completedRequiredDeliverables) + (9 - completedReflections);
+    const requiredReflectionCount = 9 - state.config.skipReflectionWeeks.length;
+    document.getElementById('pendingCount').textContent = (requiredDeliverableCount - completedRequiredDeliverables) + (requiredReflectionCount - completedReflections);
     document.getElementById('totalPoints').textContent = calculatePoints();
     document.getElementById('currentWeek').textContent = state.currentWeek;
 
@@ -1001,7 +1042,7 @@ function updateUpcoming() {
     const list = document.getElementById('upcomingList');
     const upcoming = [];
 
-    if (!state.weeklyReflections[state.currentWeek]?.submitted) {
+    if (!state.config.skipReflectionWeeks.includes(state.currentWeek) && !state.weeklyReflections[state.currentWeek]?.submitted) {
         upcoming.push({ title: `Week ${state.currentWeek} Reflection`, due: 'Friday', points: 20, overdue: false });
     }
 
@@ -1011,7 +1052,7 @@ function updateUpcoming() {
     }
 
     for (let week = 1; week < state.currentWeek; week++) {
-        if (!state.weeklyReflections[week]?.submitted) {
+        if (!state.config.skipReflectionWeeks.includes(week) && !state.weeklyReflections[week]?.submitted) {
             upcoming.unshift({ title: `Week ${week} Reflection`, due: 'OVERDUE', points: 20, overdue: true });
         }
     }

@@ -8,10 +8,10 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.24',
+    VERSION: 'v2.9.25',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
-    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbzTYBlMMsKnXXvZSsPmDdphK_CReX9Hpnaq-VfFsFxUuUlxnuCa5mjrgS7YgmuTYFpB/exec',
+    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbxaaeImU9-PpzrOr_067dFS7UJer9AFEuLV3m7Xu-oqXcgrR0syx4bblF5okBiFUZTD/exec',
 
     // Google OAuth Client ID
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -45,9 +45,7 @@ const WEEK_TOPICS = {
     10: { title: 'Final Integration', phase: 'final', focus: 'Full system demo, presentation' }
 };
 
-// Weeks that do not require a reflection (short weeks, holidays, etc.)
-// Students won't see these weeks as due/overdue, and they won't count toward pending totals.
-const SKIP_REFLECTION_WEEKS = [8];
+// skipReflectionWeeks is now stored in state.config and loaded from the backend at runtime.
 
 // ============================================
 // DELIVERABLES DATA
@@ -610,7 +608,12 @@ let state = {
     codeSnippets: [],
     viewedFeedback: [],  // Track which feedback notifications have been viewed
     currentWeek: 1,
-    selectedWeek: 1
+    selectedWeek: 1,
+    config: {
+        skipReflectionWeeks: [8],  // default — overwritten by backend on load
+        skipDeliverableWeeks: [],
+        expectedVersion: null
+    }
 };
 
 let autoSaveTimer = null;
@@ -1138,6 +1141,41 @@ function onAuthenticated() {
 
     startAutoSave();
     markDirty(); // ensure first state is persisted
+
+    // Fetch remote config and start version-check polling
+    fetchConfig();
+    setInterval(fetchConfig, 5 * 60 * 1000);
+}
+
+async function fetchConfig() {
+    try {
+        const res = await fetch(CONFIG.SHEETS_API_URL + '?action=getConfig&_t=' + Date.now());
+        const cfg = await res.json();
+        if (cfg.error) return;
+
+        state.config.skipReflectionWeeks  = cfg.skipReflectionWeeks  || [];
+        state.config.skipDeliverableWeeks = cfg.skipDeliverableWeeks || [];
+
+        const expected = cfg.expectedVersion;
+        if (expected && expected !== CONFIG.VERSION) {
+            if (!isDirty) {
+                location.reload();
+            } else {
+                showUpdateBanner();
+            }
+        }
+
+        updateUI();
+    } catch(e) { /* silent — keep existing config */ }
+}
+
+function showUpdateBanner() {
+    if (document.getElementById('updateBanner')) return;
+    const banner = document.createElement('div');
+    banner.id = 'updateBanner';
+    banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#f59e0b;color:#1a1a1a;text-align:center;padding:12px 20px;font-weight:600;z-index:9999;font-size:14px;';
+    banner.innerHTML = '⚠️ A new version of the portfolio is available. <a href="#" onclick="location.reload()" style="color:#1a1a1a;text-decoration:underline;font-weight:700;">Refresh the page</a> to update — your draft is auto-saved.';
+    document.body.prepend(banner);
 }
 
 // ============================================
@@ -1205,7 +1243,7 @@ function updateUI() {
     const requiredDeliverableCount = DELIVERABLES.filter(d => !d.optional && !d.hidden).length;
 
     document.getElementById('completedCount').textContent = completedDeliverables + completedReflections;
-    const requiredReflectionCount = 10 - SKIP_REFLECTION_WEEKS.length;
+    const requiredReflectionCount = 10 - state.config.skipReflectionWeeks.length;
     document.getElementById('pendingCount').textContent = (requiredDeliverableCount - completedRequiredDeliverables) + (requiredReflectionCount - completedReflections);
     document.getElementById('totalPoints').textContent = calculatePoints();
     document.getElementById('currentWeek').textContent = state.currentWeek;
@@ -1365,7 +1403,7 @@ function updateUpcoming() {
     const list = document.getElementById('upcomingList');
     const upcoming = [];
 
-    if (!SKIP_REFLECTION_WEEKS.includes(state.currentWeek) && !state.weeklyReflections[state.currentWeek]?.submitted) {
+    if (!state.config.skipReflectionWeeks.includes(state.currentWeek) && !state.weeklyReflections[state.currentWeek]?.submitted) {
         upcoming.push({ title: `Week ${state.currentWeek} Reflection`, due: 'Friday', points: 20, overdue: false });
     }
 
@@ -1375,7 +1413,7 @@ function updateUpcoming() {
     }
 
     for (let week = 1; week < state.currentWeek; week++) {
-        if (!SKIP_REFLECTION_WEEKS.includes(week) && !state.weeklyReflections[week]?.submitted) {
+        if (!state.config.skipReflectionWeeks.includes(week) && !state.weeklyReflections[week]?.submitted) {
             upcoming.unshift({ title: `Week ${week} Reflection`, due: 'OVERDUE', points: 20, overdue: true });
         }
         // Check for overdue deliverables from previous weeks (skip optional)

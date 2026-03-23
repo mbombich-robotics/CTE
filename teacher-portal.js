@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.23',
+    VERSION: 'v2.9.24',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -21,7 +21,7 @@ const CONFIG = {
     COURSES: {
         robotics: {
             name: 'Robotics Portfolio',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbyEWj9KQMlPPtdTcv0ZVoBoJv0dKvaVfSm_E75wgqjqmbKN-vcjkgNmcg76CD5CDS5m/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbxaaeImU9-PpzrOr_067dFS7UJer9AFEuLV3m7Xu-oqXcgrR0syx4bblF5okBiFUZTD/exec',
             hasTeams: false,
             totalDeliverables: 9,
             totalReflections: 9,
@@ -30,7 +30,7 @@ const CONFIG = {
         },
         frc: {
             name: 'FRC Portfolio',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbzJ3L-5lnLOrCvylK6NqOTbc7Vz7sLA3BVyOP5kp5UFPv1SajcGpOQUH1rKf5TD-BNh/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbw45t8wwkkhSNIZXGI-hSRY-YxvkzbMTT9mN-x7_ptOTeuWJG3vs_HF8EdczgcrHpI/exec',
             hasTeams: true,
             teams: ['drivetrain', 'intake', 'shooter', 'climber', 'autonomous', 'integration'],
             totalDeliverables: 10,
@@ -41,7 +41,10 @@ const CONFIG = {
     },
 
     // Semester start date
-    SEMESTER_START: new Date('2026-02-02')
+    SEMESTER_START: new Date('2026-02-02'),
+
+    // Shared secret for writing config to the backend (must match TEACHER_TOKEN in both Apps Scripts)
+    TEACHER_TOKEN: 'rp-portal-teach-2026'
 };
 
 // ============================================
@@ -2039,7 +2042,7 @@ function renderLeaderboard(classes) {
 // ============================================
 // WEEK SETTINGS MODAL
 // ============================================
-function openWeekSettings() {
+async function openWeekSettings() {
     const modal = document.getElementById('weekSettingsModal');
     if (!modal) return;
 
@@ -2074,18 +2077,30 @@ function openWeekSettings() {
     });
 
     modal.classList.add('active');
+
+    // Fetch current backend config to pre-populate version fields
+    try {
+        const [roboCfg, frcCfg] = await Promise.all([
+            fetch(CONFIG.COURSES.robotics.apiUrl + '?action=getConfig&_t=' + Date.now()).then(r => r.json()),
+            fetch(CONFIG.COURSES.frc.apiUrl     + '?action=getConfig&_t=' + Date.now()).then(r => r.json())
+        ]);
+        const roboEl = document.getElementById('expectedVersion_robotics');
+        const frcEl  = document.getElementById('expectedVersion_frc');
+        if (roboEl) roboEl.value = roboCfg.expectedVersion || '';
+        if (frcEl)  frcEl.value  = frcCfg.expectedVersion  || '';
+    } catch(e) {}
 }
 
 function closeWeekSettings() {
     document.getElementById('weekSettingsModal').classList.remove('active');
 }
 
-function applyWeekSettings() {
+async function applyWeekSettings() {
     // Current week override
     const overrideVal = document.getElementById('weekOverrideSelect').value;
     weekSettings.currentWeekOverride = overrideVal ? parseInt(overrideVal) : null;
 
-    // Collect checkboxes
+    // Collect checkboxes and version fields
     ['robotics', 'frc'].forEach(courseId => {
         const maxWeeks = CONFIG.COURSES[courseId].totalReflections;
         weekSettings[courseId].skipReflections  = [];
@@ -2094,16 +2109,45 @@ function applyWeekSettings() {
             if (document.getElementById(`skipRef_${courseId}_${w}`)?.checked)  weekSettings[courseId].skipReflections.push(w);
             if (document.getElementById(`skipDel_${courseId}_${w}`)?.checked)  weekSettings[courseId].skipDeliverables.push(w);
         }
+        weekSettings[courseId].expectedVersion = document.getElementById(`expectedVersion_${courseId}`)?.value.trim() || '';
     });
 
     saveWeekSettings();
     calculateCurrentWeek();
-    closeWeekSettings();
 
-    // Re-process and re-render with new settings
-    if (state.rawData) {
-        state.students = processStudentData(state.rawData);
-        renderStudentTable();
-        updateStats();
+    // Save to backends
+    const saveBtn = document.querySelector('#weekSettingsModal .btn-primary');
+    const originalHTML = saveBtn.innerHTML;
+    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    saveBtn.disabled = true;
+
+    try {
+        await Promise.all(['robotics', 'frc'].map(courseId =>
+            fetch(CONFIG.COURSES[courseId].apiUrl, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'setConfig',
+                    token: CONFIG.TEACHER_TOKEN,
+                    skipReflectionWeeks:  weekSettings[courseId].skipReflections,
+                    skipDeliverableWeeks: weekSettings[courseId].skipDeliverables,
+                    expectedVersion:      weekSettings[courseId].expectedVersion
+                })
+            })
+        ));
+        saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+        setTimeout(() => {
+            saveBtn.innerHTML = originalHTML;
+            saveBtn.disabled = false;
+            closeWeekSettings();
+            if (state.rawData) {
+                state.students = processStudentData(state.rawData);
+                renderStudentTable();
+                updateStats();
+            }
+        }, 1000);
+    } catch(e) {
+        saveBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Backend error — saved locally only';
+        saveBtn.disabled = false;
+        setTimeout(() => { saveBtn.innerHTML = originalHTML; closeWeekSettings(); }, 2500);
     }
 }
