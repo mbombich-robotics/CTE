@@ -21,7 +21,7 @@ const CONFIG = {
     COURSES: {
         robotics: {
             name: 'Robotics Portfolio',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbxaaeImU9-PpzrOr_067dFS7UJer9AFEuLV3m7Xu-oqXcgrR0syx4bblF5okBiFUZTD/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
             currentAppVersion: 'v2.9.26',  // keep in sync with Robotics app.js CONFIG.VERSION
             hasTeams: false,
             totalDeliverables: 9,
@@ -31,7 +31,7 @@ const CONFIG = {
         },
         frc: {
             name: 'FRC Portfolio',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbw45t8wwkkhSNIZXGI-hSRY-YxvkzbMTT9mN-x7_ptOTeuWJG3vs_HF8EdczgcrHpI/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbyXSBw_lCaHusiocLh3B_U1kyOmxyV3WlXhoqEdVAAzUN6U6_6ZCELqSTzzfhH6rUKc/exec',
             currentAppVersion: 'v2.9.21',  // keep in sync with FRC app.js CONFIG.VERSION
             hasTeams: true,
             teams: ['drivetrain', 'intake', 'shooter', 'climber', 'autonomous', 'integration'],
