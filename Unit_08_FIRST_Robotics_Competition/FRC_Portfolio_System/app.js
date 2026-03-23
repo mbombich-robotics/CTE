@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.20',
+    VERSION: 'v2.9.21',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbw45t8wwkkhSNIZXGI-hSRY-YxvkzbMTT9mN-x7_ptOTeuWJG3vs_HF8EdczgcrHpI/exec',
@@ -422,6 +422,8 @@ async function handleTokenResponse(tokenResponse) {
             // Returning student
             state = cloudData;
             state.student.name = name;
+            // config is not persisted in cloud state — restore default so it's never undefined
+            state.config = { skipReflectionWeeks: [], skipDeliverableWeeks: [], expectedVersion: null };
             restoreEvidenceLocal();
             calculateCurrentWeek();
             hideAllModals();
@@ -2833,6 +2835,7 @@ async function retryCloudLoad(email, name) {
     if (cloudData && cloudData.student) {
         state = cloudData;
         state.student.name = name;
+        state.config = { skipReflectionWeeks: [], skipDeliverableWeeks: [], expectedVersion: null };
         restoreEvidenceLocal();
         calculateCurrentWeek();
         hideAllModals();

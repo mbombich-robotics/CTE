@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.24',
+    VERSION: 'v2.9.25',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -22,6 +22,7 @@ const CONFIG = {
         robotics: {
             name: 'Robotics Portfolio',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxaaeImU9-PpzrOr_067dFS7UJer9AFEuLV3m7Xu-oqXcgrR0syx4bblF5okBiFUZTD/exec',
+            currentAppVersion: 'v2.9.26',  // keep in sync with Robotics app.js CONFIG.VERSION
             hasTeams: false,
             totalDeliverables: 9,
             totalReflections: 9,
@@ -31,6 +32,7 @@ const CONFIG = {
         frc: {
             name: 'FRC Portfolio',
             apiUrl: 'https://script.google.com/macros/s/AKfycbw45t8wwkkhSNIZXGI-hSRY-YxvkzbMTT9mN-x7_ptOTeuWJG3vs_HF8EdczgcrHpI/exec',
+            currentAppVersion: 'v2.9.21',  // keep in sync with FRC app.js CONFIG.VERSION
             hasTeams: true,
             teams: ['drivetrain', 'intake', 'shooter', 'climber', 'autonomous', 'integration'],
             totalDeliverables: 10,
@@ -2078,17 +2080,45 @@ async function openWeekSettings() {
 
     modal.classList.add('active');
 
-    // Fetch current backend config to pre-populate version fields
+    // Populate version display fields with current code versions
+    ['robotics', 'frc'].forEach(courseId => {
+        const codeVersionEl = document.getElementById('codeVersion_' + courseId);
+        if (codeVersionEl) codeVersionEl.textContent = CONFIG.COURSES[courseId].currentAppVersion || '—';
+    });
+
+    // Fetch current backend config to show what students are currently expecting
     try {
         const [roboCfg, frcCfg] = await Promise.all([
             fetch(CONFIG.COURSES.robotics.apiUrl + '?action=getConfig&_t=' + Date.now()).then(r => r.json()),
             fetch(CONFIG.COURSES.frc.apiUrl     + '?action=getConfig&_t=' + Date.now()).then(r => r.json())
         ]);
-        const roboEl = document.getElementById('expectedVersion_robotics');
-        const frcEl  = document.getElementById('expectedVersion_frc');
-        if (roboEl) roboEl.value = roboCfg.expectedVersion || '';
-        if (frcEl)  frcEl.value  = frcCfg.expectedVersion  || '';
-    } catch(e) {}
+        const configs = { robotics: roboCfg, frc: frcCfg };
+        ['robotics', 'frc'].forEach(courseId => {
+            const cfg = configs[courseId];
+            const backendEl = document.getElementById('backendVersion_' + courseId);
+            const hiddenEl  = document.getElementById('expectedVersion_' + courseId);
+            const current   = CONFIG.COURSES[courseId].currentAppVersion;
+            const stored    = cfg.expectedVersion || '(not set)';
+            if (backendEl) {
+                backendEl.textContent = stored;
+                backendEl.style.color = (cfg.expectedVersion && cfg.expectedVersion === current) ? 'var(--success)' : 'var(--danger)';
+            }
+            if (hiddenEl) hiddenEl.value = cfg.expectedVersion || '';
+        });
+    } catch(e) {
+        ['robotics', 'frc'].forEach(courseId => {
+            const el = document.getElementById('backendVersion_' + courseId);
+            if (el) { el.textContent = 'fetch failed'; el.style.color = 'var(--danger)'; }
+        });
+    }
+}
+
+function setExpectedVersion(courseId) {
+    const current = CONFIG.COURSES[courseId].currentAppVersion;
+    const hiddenEl   = document.getElementById('expectedVersion_' + courseId);
+    const backendEl  = document.getElementById('backendVersion_' + courseId);
+    if (hiddenEl)  hiddenEl.value    = current;
+    if (backendEl) { backendEl.textContent = current; backendEl.style.color = 'var(--success)'; }
 }
 
 function closeWeekSettings() {
