@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.22',
+    VERSION: 'v2.9.23',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbzTYBlMMsKnXXvZSsPmDdphK_CReX9Hpnaq-VfFsFxUuUlxnuCa5mjrgS7YgmuTYFpB/exec',
@@ -39,7 +39,7 @@ const WEEK_TOPICS = {
     4: { title: 'Servo & Scanner Build', phase: 'scanner', focus: 'Servo control, mounting, CAD design' },
     5: { title: 'Scanning Algorithm', phase: 'scanner', focus: 'Data arrays, obstacle detection' },
     6: { title: 'Wall Following Robot', phase: 'scanner', focus: 'Reactive navigation, distance-based wall tracking' },
-    7: { title: 'Claw Design', phase: 'claw', focus: 'Gripper mechanisms, CAD, assembly' },
+    7: { title: 'Motor Functions & PWM Values', phase: 'scanner', focus: 'Function parameters, PWM control, motor direction' },
     8: { title: 'Claw Programming', phase: 'claw', focus: 'Servo control, grip functions' },
     9: { title: 'Integrated Systems', phase: 'claw', focus: 'Scanner + claw + drive integration' },
     10: { title: 'Final Integration', phase: 'final', focus: 'Full system demo, presentation' }
