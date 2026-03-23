@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.22';
+const BACKEND_VERSION = 'v2.9.23';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -1167,44 +1167,60 @@ function sendRemindersWeb(semesterStart) {
   let emailsSent = 0;
   const emailedStudents = [];
 
-  // Deliverable titles by ID (each corresponds to its week number)
+  // Read skip config from Config sheet
+  const cfg = handleGetConfig();
+  const skipReflectionWeeks  = cfg.skipReflectionWeeks  || [];
+  const skipDeliverableWeeks = cfg.skipDeliverableWeeks || [];
+
+  // Deliverable titles by ID — optional deliverables are excluded from reminders
   const deliverableTitles = {
     1: 'Line Following Practical #1',
     2: 'Line Following Final Practical',
     3: 'Ultrasonic Sensor Lab Report',
     4: 'Scanner Assembly',
     5: 'Scanning Practical',
-    6: 'Wall Following Robot',
     7: 'Motor Functions & PWM Values',
     8: 'Claw Practical',
     9: 'Final Robot Demonstration'
+    // 6 (Wall Following Robot) intentionally omitted — optional deliverable
   };
 
   data.students.forEach(student => {
     const email = student[0];
     const name = student[1];
 
-    // Check missing reflections
+    // Check missing reflections — only weeks whose Friday 3pm deadline has passed
     const submittedWeeks = data.reflections
       .filter(r => r[0] === email)
       .map(r => r[2]);
 
+    const now = new Date();
     const missingReflections = [];
     for (let w = 1; w <= currentWeek; w++) {
-      if (!submittedWeeks.includes(w)) {
+      const weekStart = new Date(startDate);
+      weekStart.setDate(weekStart.getDate() + (w - 1) * 7);
+      const fridayDeadline = new Date(weekStart);
+      fridayDeadline.setDate(fridayDeadline.getDate() + 4);
+      fridayDeadline.setHours(15, 0, 0, 0);
+      if (now > fridayDeadline && !skipReflectionWeeks.includes(w) && !submittedWeeks.includes(w)) {
         missingReflections.push(w);
       }
     }
 
-    // Check missing deliverables (each deliverable ID matches its due week)
+    // Check missing deliverables — only past-deadline weeks, skip optional/skipped
     const completedDeliverables = data.deliverables
       .filter(d => d[0] === email && d[7] === 'completed')
       .map(d => d[2]);
 
     const missingDeliverables = [];
     for (let id = 1; id <= currentWeek && id <= 9; id++) {
-      if (!completedDeliverables.includes(id)) {
-        missingDeliverables.push(deliverableTitles[id] || `Deliverable ${id}`);
+      const weekStart = new Date(startDate);
+      weekStart.setDate(weekStart.getDate() + (id - 1) * 7);
+      const fridayDeadline = new Date(weekStart);
+      fridayDeadline.setDate(fridayDeadline.getDate() + 4);
+      fridayDeadline.setHours(15, 0, 0, 0);
+      if (now > fridayDeadline && deliverableTitles[id] && !skipDeliverableWeeks.includes(id) && !completedDeliverables.includes(id)) {
+        missingDeliverables.push(deliverableTitles[id]);
       }
     }
 
