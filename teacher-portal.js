@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.19',
+    VERSION: 'v2.9.23',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -127,6 +127,39 @@ function tallyRubric(uid, deliverableId, email) {
 }
 
 // ============================================
+// WEEK SETTINGS (localStorage)
+// ============================================
+let weekSettings = {
+    robotics: { skipReflections: [], skipDeliverables: [] },
+    frc:      { skipReflections: [], skipDeliverables: [] },
+    currentWeekOverride: null
+};
+
+function loadWeekSettings() {
+    try {
+        const saved = localStorage.getItem('teacherPortalWeekSettings');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            weekSettings = { ...weekSettings, ...parsed };
+            weekSettings.robotics = { ...weekSettings.robotics, ...parsed.robotics };
+            weekSettings.frc = { ...weekSettings.frc, ...parsed.frc };
+        }
+    } catch(e) {}
+}
+
+function saveWeekSettings() {
+    localStorage.setItem('teacherPortalWeekSettings', JSON.stringify(weekSettings));
+}
+
+function isReflectionRequired(courseId, week) {
+    return !(weekSettings[courseId]?.skipReflections || []).includes(week);
+}
+
+function isDeliverableRequired(courseId, week) {
+    return !(weekSettings[courseId]?.skipDeliverables || []).includes(week);
+}
+
+// ============================================
 // APPLICATION STATE
 // ============================================
 let state = {
@@ -153,6 +186,7 @@ window.onload = function() {
         const signinVersionEl = document.getElementById('signinVersion');
         if (signinVersionEl) signinVersionEl.textContent = CONFIG.VERSION;
 
+        loadWeekSettings();
         calculateCurrentWeek();
         initEventListeners();
 
@@ -203,6 +237,9 @@ function calculateCurrentWeek() {
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     const diffWeeks = Math.floor(diffDays / 7) + 1;
     state.currentWeek = Math.min(Math.max(1, diffWeeks), 9);
+    if (weekSettings.currentWeekOverride !== null) {
+        state.currentWeek = weekSettings.currentWeekOverride;
+    }
 }
 
 function initGoogleSignIn() {
@@ -511,9 +548,9 @@ function processStudentData() {
             fridayDeadline.setHours(15, 0, 0, 0); // 3pm
 
             if (new Date() > fridayDeadline) {
-                expectedReflections++;
+                if (isReflectionRequired(state.activeCourse, week)) expectedReflections++;
                 // Deliverables are due same week (1-9 match weeks 1-9)
-                if (week <= course.totalDeliverables) {
+                if (week <= course.totalDeliverables && isDeliverableRequired(state.activeCourse, week)) {
                     expectedDeliverables++;
                 }
             }
@@ -1749,9 +1786,9 @@ async function loadLeaderboardData() {
 
 function buildLeaderboardClasses(allData) {
     const classes = [
-        buildClassData('6th Hour', allData.robotics, CONFIG.COURSES.robotics, 'hour6', 'fa-robot'),
-        buildClassData('7th Hour', allData.robotics, CONFIG.COURSES.robotics, 'hour7', 'fa-robot'),
-        buildClassData('FRC', allData.frc, CONFIG.COURSES.frc, null, 'fa-cogs')
+        buildClassData('6th Hour', allData.robotics, CONFIG.COURSES.robotics, 'hour6', 'fa-robot', 'robotics'),
+        buildClassData('7th Hour', allData.robotics, CONFIG.COURSES.robotics, 'hour7', 'fa-robot', 'robotics'),
+        buildClassData('FRC', allData.frc, CONFIG.COURSES.frc, null, 'fa-cogs', 'frc')
     ];
 
     // Sort by completion rate descending (best first)
@@ -1767,7 +1804,7 @@ function buildLeaderboardClasses(allData) {
     return classes;
 }
 
-function buildClassData(name, rawData, courseConfig, periodFilter, icon) {
+function buildClassData(name, rawData, courseConfig, periodFilter, icon, courseId) {
     // Filter students to this class/period
     const students = (rawData.students || []).filter(row => {
         if (periodFilter) return row[3] === periodFilter;
@@ -1811,27 +1848,31 @@ function buildClassData(name, rawData, courseConfig, periodFilter, icon) {
     const pendingByWeek = [];
 
     pastDeadlineWeeks.forEach(week => {
-        let reflectionPending = 0;
-        let deliverablePending = 0;
+        const weekItems = [];
 
-        studentEmails.forEach(email => {
-            if (!submittedReflections.has(email + '-' + week)) reflectionPending++;
-            if (week <= courseConfig.totalDeliverables) {
+        if (isReflectionRequired(courseId, week)) {
+            let reflectionPending = 0;
+            studentEmails.forEach(email => {
+                if (!submittedReflections.has(email + '-' + week)) reflectionPending++;
+            });
+            weekItems.push({ type: 'Reflection', pending: reflectionPending });
+            totalDueItems += studentCount;
+            totalSubmittedItems += (studentCount - reflectionPending);
+        }
+
+        if (week <= courseConfig.totalDeliverables && isDeliverableRequired(courseId, week)) {
+            let deliverablePending = 0;
+            studentEmails.forEach(email => {
                 if (!completedDeliverables.has(email + '-' + week)) deliverablePending++;
-            }
-        });
-
-        const weekItems = [{ type: 'Reflection', pending: reflectionPending }];
-        totalDueItems += studentCount;
-        totalSubmittedItems += (studentCount - reflectionPending);
-
-        if (week <= courseConfig.totalDeliverables) {
+            });
             weekItems.push({ type: 'Deliverable', pending: deliverablePending });
             totalDueItems += studentCount;
             totalSubmittedItems += (studentCount - deliverablePending);
         }
 
-        pendingByWeek.push({ week, items: weekItems });
+        if (weekItems.length > 0) {
+            pendingByWeek.push({ week, items: weekItems });
+        }
     });
 
     const totalPending = totalDueItems - totalSubmittedItems;
@@ -1993,4 +2034,76 @@ function renderLeaderboard(classes) {
     content.innerHTML = html;
     document.getElementById('leaderboardLoading').style.display = 'none';
     content.style.display = 'block';
+}
+
+// ============================================
+// WEEK SETTINGS MODAL
+// ============================================
+function openWeekSettings() {
+    const modal = document.getElementById('weekSettingsModal');
+    if (!modal) return;
+
+    // Show auto-calculated week
+    const now = new Date();
+    const diffWeeks = Math.floor(Math.floor((now - CONFIG.SEMESTER_START) / (1000 * 60 * 60 * 24)) / 7) + 1;
+    const autoWeek = Math.min(Math.max(1, diffWeeks), 9);
+    document.getElementById('autoWeekDisplay').textContent = autoWeek;
+
+    // Set override dropdown
+    const overrideSelect = document.getElementById('weekOverrideSelect');
+    overrideSelect.value = weekSettings.currentWeekOverride !== null ? weekSettings.currentWeekOverride : '';
+
+    // Populate checkboxes for each course
+    ['robotics', 'frc'].forEach(courseId => {
+        const maxWeeks = CONFIG.COURSES[courseId].totalReflections;
+        const tbody = document.getElementById(courseId + 'WeekSettingsBody');
+        tbody.innerHTML = '';
+        for (let w = 1; w <= maxWeeks; w++) {
+            const skipRef  = (weekSettings[courseId].skipReflections  || []).includes(w);
+            const skipDel  = (weekSettings[courseId].skipDeliverables || []).includes(w);
+            tbody.innerHTML += `<tr>
+                <td style="padding: 8px 12px; font-weight: 600;">Week ${w}</td>
+                <td style="padding: 8px 12px; text-align: center;">
+                    <input type="checkbox" id="skipRef_${courseId}_${w}" ${skipRef ? 'checked' : ''}>
+                </td>
+                <td style="padding: 8px 12px; text-align: center;">
+                    <input type="checkbox" id="skipDel_${courseId}_${w}" ${skipDel ? 'checked' : ''}>
+                </td>
+            </tr>`;
+        }
+    });
+
+    modal.classList.add('active');
+}
+
+function closeWeekSettings() {
+    document.getElementById('weekSettingsModal').classList.remove('active');
+}
+
+function applyWeekSettings() {
+    // Current week override
+    const overrideVal = document.getElementById('weekOverrideSelect').value;
+    weekSettings.currentWeekOverride = overrideVal ? parseInt(overrideVal) : null;
+
+    // Collect checkboxes
+    ['robotics', 'frc'].forEach(courseId => {
+        const maxWeeks = CONFIG.COURSES[courseId].totalReflections;
+        weekSettings[courseId].skipReflections  = [];
+        weekSettings[courseId].skipDeliverables = [];
+        for (let w = 1; w <= maxWeeks; w++) {
+            if (document.getElementById(`skipRef_${courseId}_${w}`)?.checked)  weekSettings[courseId].skipReflections.push(w);
+            if (document.getElementById(`skipDel_${courseId}_${w}`)?.checked)  weekSettings[courseId].skipDeliverables.push(w);
+        }
+    });
+
+    saveWeekSettings();
+    calculateCurrentWeek();
+    closeWeekSettings();
+
+    // Re-process and re-render with new settings
+    if (state.rawData) {
+        state.students = processStudentData(state.rawData);
+        renderStudentTable();
+        updateStats();
+    }
 }

@@ -916,6 +916,10 @@
             <button class="btn btn-small" id="leaderboardBtn" style="background: linear-gradient(135deg, #fbbf24, #f59e0b); color: white; border: none; font-weight: 600;">
                 <i class="fas fa-trophy"></i> Leaderboard
             </button>
+
+            <button class="btn btn-secondary btn-small" onclick="openWeekSettings()" title="Configure which weeks require reflections and deliverables">
+                <i class="fas fa-cog"></i> Week Settings
+            </button>
         </div>
 
         <!-- Table -->
@@ -1132,6 +1136,80 @@
                     <p>Loading data from all classes...</p>
                 </div>
                 <div id="leaderboardContent" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Week Settings Modal -->
+    <div class="modal" id="weekSettingsModal">
+        <div class="modal-content" style="max-width: 620px;">
+            <div class="modal-header">
+                <h2><i class="fas fa-cog"></i> Week Settings</h2>
+                <button class="modal-close" onclick="closeWeekSettings()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--gray-500); font-size: 14px; margin-bottom: 20px;">
+                    Skipped weeks are excluded from "missing work" counts and the students-behind indicator. Settings are saved in your browser.
+                </p>
+
+                <!-- Current Week Override -->
+                <div style="background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+                    <h3 style="font-size: 15px; margin-bottom: 10px;">Current Week</h3>
+                    <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+                        <span style="color: var(--gray-500); font-size: 14px;">Auto-detected: Week <strong id="autoWeekDisplay">—</strong></span>
+                        <label style="font-size: 14px; display: flex; align-items: center; gap: 8px;">
+                            Override:
+                            <select id="weekOverrideSelect" style="padding: 4px 10px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 14px;">
+                                <option value="">Auto</option>
+                                <option value="1">Week 1</option>
+                                <option value="2">Week 2</option>
+                                <option value="3">Week 3</option>
+                                <option value="4">Week 4</option>
+                                <option value="5">Week 5</option>
+                                <option value="6">Week 6</option>
+                                <option value="7">Week 7</option>
+                                <option value="8">Week 8</option>
+                                <option value="9">Week 9</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                    <!-- Robotics -->
+                    <div>
+                        <h3 style="font-size: 15px; margin-bottom: 10px;"><i class="fas fa-robot" style="color: var(--primary);"></i> Robotics Portfolio</h3>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                            <thead>
+                                <tr style="background: var(--gray-50);">
+                                    <th style="padding: 8px 10px; text-align: left; border: 1px solid var(--gray-200);">Week</th>
+                                    <th style="padding: 8px 10px; text-align: center; border: 1px solid var(--gray-200);">Skip Reflection</th>
+                                    <th style="padding: 8px 10px; text-align: center; border: 1px solid var(--gray-200);">Skip Deliverable</th>
+                                </tr>
+                            </thead>
+                            <tbody id="roboticsWeekSettingsBody"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- FRC -->
+                    <div>
+                        <h3 style="font-size: 15px; margin-bottom: 10px;"><i class="fas fa-cogs" style="color: var(--primary);"></i> FRC Portfolio</h3>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                            <thead>
+                                <tr style="background: var(--gray-50);">
+                                    <th style="padding: 8px 10px; text-align: left; border: 1px solid var(--gray-200);">Week</th>
+                                    <th style="padding: 8px 10px; text-align: center; border: 1px solid var(--gray-200);">Skip Reflection</th>
+                                    <th style="padding: 8px 10px; text-align: center; border: 1px solid var(--gray-200);">Skip Deliverable</th>
+                                </tr>
+                            </thead>
+                            <tbody id="frcWeekSettingsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="margin-top: 0; padding: 16px 24px; border-top: 1px solid var(--gray-200); display: flex; justify-content: flex-end; gap: 12px;">
+                <button class="btn btn-secondary" onclick="closeWeekSettings()">Cancel</button>
+                <button class="btn btn-primary" onclick="applyWeekSettings()"><i class="fas fa-save"></i> Save Settings</button>
             </div>
         </div>
     </div>
