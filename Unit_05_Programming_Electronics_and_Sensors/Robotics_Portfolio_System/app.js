@@ -1983,9 +1983,46 @@ function initDeliverables() {
     });
 }
 
+function parseDeliverable7Content(content) {
+    const scenarios = ['Drive Straight', 'Nudge Left', 'Nudge Right', 'Turn Left', 'Turn Right', 'Pivot Left', 'Pivot Right'];
+    const pwmTable = scenarios.map(s => ({ scenario: s, left: '', right: '' }));
+
+    const codeMatch = content.match(/--- CODE SAMPLES.*?---\n([\s\S]*?)\n\n--- PWM VALUES ---/);
+    const codeLines = codeMatch ? codeMatch[1].trim() : '';
+
+    const pwmMatch = content.match(/--- PWM VALUES ---\n[\s\S]*?---\n([\s\S]*?)\n\n--- PROBLEM/);
+    if (pwmMatch) {
+        pwmMatch[1].trim().split('\n').forEach(line => {
+            const parts = line.split('|');
+            if (parts.length >= 3) {
+                const name = parts[0].trim();
+                const idx = scenarios.indexOf(name);
+                if (idx >= 0) {
+                    pwmTable[idx].left  = parts[1].trim().replace('—', '');
+                    pwmTable[idx].right = parts[2].trim().replace('—', '');
+                }
+            }
+        });
+    }
+
+    const problemMatch = content.match(/--- PROBLEM & SOLUTION ---\n([\s\S]*?)(?:\n\n--- PHOTOS|$)/);
+    const rawContent = problemMatch ? problemMatch[1].trim() : '';
+
+    return { codeLines, pwmTable, rawContent };
+}
+
 function openDeliverableForm(id) {
     const deliverable = DELIVERABLES.find(d => d.id === id);
     const existing = state.deliverables[id] || {};
+
+    // Recover structured fields from formatted content if they're missing
+    // (happens when student submitted before pwmTable was stored separately)
+    if (id === 7 && existing.content && !existing.pwmTable) {
+        const parsed = parseDeliverable7Content(existing.content);
+        existing.pwmTable   = parsed.pwmTable;
+        existing.codeLines  = existing.codeLines  || parsed.codeLines;
+        existing.rawContent = existing.rawContent || parsed.rawContent;
+    }
     const modal = document.getElementById('deliverableModal');
     const content = document.getElementById('deliverableFormContent');
 
