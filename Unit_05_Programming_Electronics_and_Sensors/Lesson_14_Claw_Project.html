@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 14: Pololu Claw Project</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .slide {
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            background: rgba(26, 31, 58, 0.95);
+            border-radius: 20px;
+            border: 3px solid #00d4ff;
+            box-shadow: 0 20px 80px rgba(0, 212, 255, 0.3);
+            padding: 60px;
+            display: none;
+            flex-direction: column;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(100px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        .slide-header { text-align: center; margin-bottom: 40px; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            color: #00d4ff;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: #00d4ff;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        h3 { font-size: 1.3rem; margin-bottom: 10px; color: #e0e6f0; }
+
+        p { font-size: 1.1rem; line-height: 1.6; margin-bottom: 15px; }
+
+        ul, ol { padding-left: 25px; }
+        ul li, ol li { font-size: 1.05rem; line-height: 1.8; }
+
+        .content { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+
+        .two-column   { display: grid; grid-template-columns: 1fr 1fr;     gap: 30px; }
+        .three-column { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        .column       { display: flex; flex-direction: column; gap: 15px; }
+
+        .concept-box {
+            background: rgba(0, 212, 255, 0.08);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .warning-box {
+            background: rgba(255, 149, 0, 0.08);
+            border: 1px solid rgba(255, 149, 0, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .success-box {
+            background: rgba(80, 250, 123, 0.08);
+            border: 1px solid rgba(80, 250, 123, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .rule-box {
+            background: rgba(189, 147, 249, 0.08);
+            border: 1px solid rgba(189, 147, 249, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .code-block {
+            background: #0d1117;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .highlight { color: #50fa7b; font-weight: 600; }
+        .emphasis  { color: #ff9500; font-weight: 600; }
+        .purple    { color: #bd93f9; font-weight: 600; }
+
+        .step-number {
+            display: inline-block;
+            background: #00d4ff;
+            color: #0a0e27;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .step-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px 14px; text-align: left; border: 1px solid rgba(0,212,255,0.2); font-size: 0.95rem; }
+        th { background: rgba(0,212,255,0.1); color: #00d4ff; font-weight: 600; }
+        tr:hover td { background: rgba(0,212,255,0.04); }
+
+        .flowchart {
+            background: #0d1117;
+            border: 1px solid rgba(0,212,255,0.2);
+            border-radius: 8px;
+            padding: 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 2.2;
+            text-align: center;
+        }
+        .flow-box      { color: #e0e6f0; }
+        .flow-yes      { color: #50fa7b; }
+        .flow-no       { color: #ff9500; }
+        .flow-arrow    { color: #6272a4; }
+        .flow-decision { color: #00d4ff; }
+
+        .nav-container {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid #00d4ff;
+            color: #00d4ff;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .nav-btn:hover:not(:disabled) { background: rgba(0, 212, 255, 0.3); }
+        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .nav-button {
+            background: rgba(255, 149, 0, 0.1);
+            border: 2px solid #ff9500;
+            color: #ff9500;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .nav-button:hover { background: rgba(255, 149, 0, 0.3); }
+        .nav-button.home { border-color: #6272a4; color: #6272a4; }
+        .nav-button.home:hover { background: rgba(98,114,164,0.2); }
+
+        .slide-counter {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            font-family: 'Orbitron', sans-serif;
+            color: rgba(0, 212, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(80, 250, 123, 0.15);
+            border: 1px solid rgba(80, 250, 123, 0.5);
+            border-radius: 20px;
+            padding: 4px 14px;
+            font-size: 0.85rem;
+            color: #50fa7b;
+            font-weight: 600;
+        }
+
+        .big-rule {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #ff9500;
+            border: 2px solid rgba(255,149,0,0.4);
+            border-radius: 12px;
+            padding: 20px 30px;
+            background: rgba(255,149,0,0.06);
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="content" style="justify-content: center; align-items: center; text-align: center;">
+                <div style="margin-bottom: 20px;">
+                    <span style="font-family: 'Orbitron', sans-serif; color: #6272a4; font-size: 1rem; letter-spacing: 3px;">UNIT 5 · LESSON 14</span>
+                </div>
+                <h1 style="font-size: 3.5rem; margin-bottom: 10px;">Pololu Claw Project</h1>
+                <p style="font-size: 1.5rem; color: #50fa7b; margin-bottom: 10px;">AI-Assisted Engineering</p>
+                <p style="font-size: 1.1rem; color: #a0aab8; max-width: 700px; margin-bottom: 40px;">
+                    Build a feedback-controlled gripper. Document your work like an engineer. Use AI — and prove you understand everything it helped you build.
+                </p>
+
+                <div class="two-column" style="max-width: 700px; width: 100%;">
+                    <div class="concept-box" style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 8px;">⚙️</div>
+                        <h3 style="color: #00d4ff; margin-bottom: 4px;">10 Class Days</h3>
+                        <p style="font-size: 0.9rem; margin: 0; color: #a0aab8;">Build · Code · Test</p>
+                    </div>
+                    <div class="concept-box" style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 8px;">🤖</div>
+                        <h3 style="color: #00d4ff; margin-bottom: 4px;">AI as a Tool</h3>
+                        <p style="font-size: 0.9rem; margin: 0; color: #a0aab8;">Research · Code · Document</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: The Challenge -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>The Challenge</h2>
+                <p style="color: #a0aab8; margin-top: 10px;">Your claw must do this — automatically, every time:</p>
+            </div>
+            <div class="content">
+                <div class="flowchart" style="margin-bottom: 30px;">
+                    <span class="flow-box">📡 Serial trigger received</span><br>
+                    <span class="flow-arrow">↓</span><br>
+                    <span class="flow-box">🟢 Claw opens fully</span><br>
+                    <span class="flow-arrow">↓  [place object]</span><br>
+                    <span class="flow-box">⚙️ Claw closes slowly — feedback monitored each step</span><br>
+                    <span class="flow-arrow">↓</span><br>
+                    <span class="flow-decision">🔵 Is feedback still changing?</span><br>
+                    <span class="flow-yes">YES → keep closing</span> &nbsp;|&nbsp; <span class="flow-no">NO → contact detected!</span><br>
+                    <span class="flow-arrow">↓</span><br>
+                    <span class="flow-box">💡 LED color = object size &nbsp; (🟢 large &nbsp; 🔵 medium &nbsp; 🔴 small)</span><br>
+                    <span class="flow-arrow">↓</span><br>
+                    <span class="flow-box">🔍 Hold grip · monitor for slip · 🟡 flash if object moves</span>
+                </div>
+
+                <div class="two-column">
+                    <div class="concept-box">
+                        <h3 style="color: #50fa7b; margin-top: 0;">Why this is interesting</h3>
+                        <p style="font-size: 0.95rem; margin: 0;">The claw can't see the object. It uses <strong>sensor feedback</strong> to know when it's touched something — the same principle used in industrial robot grippers.</p>
+                    </div>
+                    <div class="concept-box">
+                        <h3 style="color: #00d4ff; margin-top: 0;">What you'll learn</h3>
+                        <ul style="font-size: 0.95rem;">
+                            <li>Servo PWM control</li>
+                            <li>Analog feedback / ADC</li>
+                            <li>Feedback-controlled loops</li>
+                            <li>AI-assisted coding &amp; documentation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: AI Ground Rules -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>AI in This Class</h2>
+            </div>
+            <div class="content">
+                <div class="big-rule">
+                    "If you can't explain it, you don't own it."
+                </div>
+
+                <div class="three-column" style="margin-top: 10px;">
+                    <div class="rule-box">
+                        <h3 style="color: #bd93f9; margin-top: 0;">Rule 1 — Give Context</h3>
+                        <p style="font-size: 0.9rem; margin: 0;">Tell AI who you are, what hardware you're using, and what you already know. Vague prompts give vague answers.</p>
+                    </div>
+                    <div class="rule-box">
+                        <h3 style="color: #bd93f9; margin-top: 0;">Rule 2 — Show Your Thinking</h3>
+                        <p style="font-size: 0.9rem; margin: 0;">Share your plan first, then ask AI to help. AI improves your thinking better than it replaces it.</p>
+                    </div>
+                    <div class="rule-box">
+                        <h3 style="color: #bd93f9; margin-top: 0;">Rule 3 — Push Back</h3>
+                        <p style="font-size: 0.9rem; margin: 0;">AI is wrong sometimes. If something doesn't make sense, say so. Accepting wrong answers is on you.</p>
+                    </div>
+                </div>
+
+                <div class="two-column" style="margin-top: 20px;">
+                    <div class="warning-box">
+                        <h3 style="color: #ff9500; margin-top: 0;">What AI use looks like here</h3>
+                        <ul style="font-size: 0.95rem;">
+                            <li>Generate code — then annotate every line yourself</li>
+                            <li>Explain concepts — then rewrite in your own words</li>
+                            <li>Review your spec sheet — then verify what it changes</li>
+                            <li>Log every prompt in your AI Log section</li>
+                        </ul>
+                    </div>
+                    <div class="success-box">
+                        <h3 style="color: #50fa7b; margin-top: 0;">How you're graded</h3>
+                        <ul style="font-size: 0.95rem;">
+                            <li><strong>Spec sheet</strong> — accuracy &amp; clarity, not polish</li>
+                            <li><strong>Live demo</strong> — code must work on real hardware</li>
+                            <li><strong>Quiz</strong> — everything in your spec sheet is fair game</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: The Spec Sheet -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Your Spec Sheet</h2>
+                <p style="color: #a0aab8; margin-top: 10px;">A technical document — the kind an engineer would write to hand off a project.</p>
+            </div>
+            <div class="content">
+                <div class="two-column">
+                    <div class="column">
+                        <div class="concept-box">
+                            <h3 style="color: #00d4ff; margin-top: 0;">Sections</h3>
+                            <ol style="font-size: 0.95rem; line-height: 2;">
+                                <li>Project Overview</li>
+                                <li>Bill of Materials (with datasheet links)</li>
+                                <li>Hardware Setup (pin table)</li>
+                                <li>Key Concepts — in <em>your</em> words</li>
+                                <li>Algorithm (flowchart or pseudocode)</li>
+                                <li>Annotated Code</li>
+                                <li>Testing Results</li>
+                                <li>AI Conversation Log</li>
+                                <li>Challenges &amp; Solutions</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="success-box">
+                            <h3 style="color: #50fa7b; margin-top: 0;">Getting Started</h3>
+                            <p style="font-size: 0.95rem;">Click the link below to get your own copy of the spec sheet template. Save it to your Google Drive and work in it throughout the project.</p>
+                            <p style="font-size: 0.95rem; margin-bottom: 0;">The template link is also in your portfolio under <strong>Deliverable 8</strong>.</p>
+                        </div>
+                        <div class="warning-box">
+                            <h3 style="color: #ff9500; margin-top: 0;">Submission</h3>
+                            <p style="font-size: 0.95rem; margin-bottom: 8px;"><strong>Week 1 checkpoint (Day 5):</strong> Sections 1–4 + AI Log</p>
+                            <p style="font-size: 0.95rem; margin-bottom: 0;"><strong>Final (Day 10):</strong> All sections complete</p>
+                            <p style="font-size: 0.9rem; color: #a0aab8; margin-top: 8px;">Submit via the Robotics Portfolio — paste your Google Doc link as evidence.</p>
+                        </div>
+                        <div class="concept-box" style="text-align: center;">
+                            <a href="https://docs.google.com/document/d/1XzKYwNGAgwlf2oUAeRreHoJvHcbjgdkX2IaG-KthgiY/copy" target="_blank"
+                               style="color: #00d4ff; font-size: 1.1rem; font-weight: 700; text-decoration: none;">
+                                📄 Open Spec Sheet Template →
+                            </a>
+                            <p style="font-size: 0.8rem; color: #6272a4; margin: 8px 0 0;">Click to get your own copy</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Today — Assembly -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Today: Assembly</h2>
+            </div>
+            <div class="content">
+                <div class="two-column">
+                    <div class="column">
+                        <div class="concept-box">
+                            <h3 style="color: #00d4ff; margin-top: 0;">First AI Prompt</h3>
+                            <p style="font-size: 0.95rem;">Before you open the box, try this prompt:</p>
+                            <div class="code-block" style="font-size: 0.8rem; white-space: pre-wrap; margin-top: 10px;">"I am assembling a Pololu Micro Gripper
+Kit (product #3551). It uses a servo
+motor and a rack-and-pinion mechanism
+to move two parallel paddles. Give me
+step-by-step assembly instructions."</div>
+                            <p style="font-size: 0.9rem; margin-top: 12px; margin-bottom: 0;">Then open the official Pololu guide and compare. Where did AI get it right? Where was it vague or wrong? <strong>Write this in your spec sheet.</strong></p>
+                        </div>
+                        <div class="warning-box">
+                            <h3 style="color: #ff9500; margin-top: 0;">Why this matters</h3>
+                            <p style="font-size: 0.95rem; margin: 0;">AI doesn't have a camera in your kit. It may not know the exact order of assembly steps. Verifying AI output against a reliable source is an engineering skill — practice it now.</p>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="success-box">
+                            <h3 style="color: #50fa7b; margin-top: 0;">Assembly Checklist</h3>
+                            <ul style="font-size: 0.95rem;">
+                                <li>Use the official Pololu assembly guide</li>
+                                <li>Do not force any parts — the rack slides in one direction</li>
+                                <li>The servo should be seated flush before securing</li>
+                                <li>Three wires when done: signal (orange/yellow), power (red), ground (brown/black), feedback (white/extra)</li>
+                            </ul>
+                        </div>
+                        <div class="concept-box">
+                            <h3 style="color: #00d4ff; margin-top: 0;">Start Your Spec Sheet Today</h3>
+                            <ul style="font-size: 0.95rem;">
+                                <li>Fill in your name and Project Overview (2–3 sentences)</li>
+                                <li>Ask AI to help you find the datasheet links for the BOM</li>
+                                <li>Log your first AI prompt in the AI Log section</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Project Schedule -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Project Schedule</h2>
+            </div>
+            <div class="content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Day</th>
+                            <th>Focus</th>
+                            <th>Key AI Activity</th>
+                            <th>Output</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1</strong></td>
+                            <td>Assembly + project intro</td>
+                            <td>Assembly instructions prompt — compare to official guide</td>
+                            <td>Assembled claw, Spec Sheet started</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2</strong></td>
+                            <td>Wiring + first servo code</td>
+                            <td>Generate open/close code — annotate every line</td>
+                            <td>Claw opens and closes</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3</strong></td>
+                            <td>Feedback potentiometer</td>
+                            <td>Ask AI to explain ADC, 3.3V reference, expected values</td>
+                            <td>Feedback printed to Serial Monitor, thresholds calibrated</td>
+                        </tr>
+                        <tr>
+                            <td><strong>4</strong></td>
+                            <td>Grip loop + LED output</td>
+                            <td>Flowchart → AI translates to code</td>
+                            <td>Contact detection working, LED classifies size</td>
+                        </tr>
+                        <tr style="background: rgba(80,250,123,0.05);">
+                            <td><strong>5 ★</strong></td>
+                            <td colspan="2"><strong>Week 1 Deliverable Due</strong> — Spec Sheet (Sections 1–4 + AI Log) + demo</td>
+                            <td>Portfolio submission</td>
+                        </tr>
+                        <tr>
+                            <td><strong>6</strong></td>
+                            <td>Slip detection</td>
+                            <td>Extension prompt — monitorSlip() function</td>
+                            <td>Slip triggers yellow flash</td>
+                        </tr>
+                        <tr>
+                            <td><strong>7</strong></td>
+                            <td>Debug + refine</td>
+                            <td>Ask AI to interpret unexpected behavior</td>
+                            <td>Reliable classification with 5+ objects</td>
+                        </tr>
+                        <tr>
+                            <td><strong>8</strong></td>
+                            <td>Spec sheet work day</td>
+                            <td>AI reviews Key Concepts for accuracy</td>
+                            <td>All sections drafted</td>
+                        </tr>
+                        <tr>
+                            <td><strong>9</strong></td>
+                            <td>Final polish + peer review</td>
+                            <td>—</td>
+                            <td>Spec sheet finalized</td>
+                        </tr>
+                        <tr style="background: rgba(255,149,0,0.05);">
+                            <td><strong>10 ★</strong></td>
+                            <td colspan="2"><strong>Final Demo + Spec Sheet Due + Quiz</strong></td>
+                            <td>Portfolio submission</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Slide 7: Deliverables -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Deliverables &amp; Quiz</h2>
+            </div>
+            <div class="content">
+                <div class="three-column">
+                    <div class="concept-box">
+                        <div style="font-size: 1.8rem; text-align: center; margin-bottom: 10px;">📋</div>
+                        <h3 style="color: #00d4ff; margin-top: 0; text-align: center;">Week 1 Checkpoint</h3>
+                        <p style="font-size: 0.85rem; color: #a0aab8; text-align: center; margin-bottom: 12px;">Due Day 5 — Portfolio Deliverable 8</p>
+                        <ul style="font-size: 0.9rem;">
+                            <li>Spec sheet link (Sections 1–4)</li>
+                            <li>Working code: open + feedback to Serial</li>
+                            <li>Screenshot of Serial Monitor readings</li>
+                            <li>AI Log: ≥ 3 prompts documented</li>
+                        </ul>
+                    </div>
+                    <div class="concept-box">
+                        <div style="font-size: 1.8rem; text-align: center; margin-bottom: 10px;">🏁</div>
+                        <h3 style="color: #00d4ff; margin-top: 0; text-align: center;">Final Submission</h3>
+                        <p style="font-size: 0.85rem; color: #a0aab8; text-align: center; margin-bottom: 12px;">Due Day 10 — Portfolio Deliverable 9</p>
+                        <ul style="font-size: 0.9rem;">
+                            <li>Complete spec sheet (all sections)</li>
+                            <li>Live demo: grip + classify + slip detect</li>
+                            <li>Testing Results (≥ 5 objects)</li>
+                            <li>AI Log: ≥ 6 prompts total</li>
+                        </ul>
+                    </div>
+                    <div class="warning-box">
+                        <div style="font-size: 1.8rem; text-align: center; margin-bottom: 10px;">📝</div>
+                        <h3 style="color: #ff9500; margin-top: 0; text-align: center;">Quiz</h3>
+                        <p style="font-size: 0.85rem; color: #a0aab8; text-align: center; margin-bottom: 12px;">Day 10 — No notes</p>
+                        <ul style="font-size: 0.9rem;">
+                            <li>PWM and pulse width</li>
+                            <li>ADC and feedback voltage</li>
+                            <li>Contact detection algorithm</li>
+                            <li>Reading your own code</li>
+                            <li>Evaluating AI output</li>
+                        </ul>
+                        <p style="font-size: 0.85rem; color: #ff9500; margin-top: 12px; margin-bottom: 0;">Everything on the quiz comes directly from your spec sheet learning objectives.</p>
+                    </div>
+                </div>
+
+                <div class="concept-box" style="margin-top: 25px; text-align: center;">
+                    <a href="Claw_Project_Reference.html"
+                       style="color: #50fa7b; font-size: 1.1rem; font-weight: 700; text-decoration: none; margin-right: 40px;">
+                        📖 Project Reference Page →
+                    </a>
+                    <a href="https://docs.google.com/document/d/1XzKYwNGAgwlf2oUAeRreHoJvHcbjgdkX2IaG-KthgiY/copy" target="_blank"
+                       style="color: #00d4ff; font-size: 1.1rem; font-weight: 700; text-decoration: none;">
+                        📄 Spec Sheet Template →
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- end slide-container -->
+
+    <!-- Navigation -->
+    <div class="nav-container">
+        <a href="index.html" class="nav-button home">⌂ Home</a>
+        <button class="nav-btn" id="prev-btn" onclick="prevSlide()" disabled>← Prev</button>
+        <span id="slide-label" style="font-family:'Orbitron',sans-serif; color:#00d4ff; font-size:0.9rem;">1 / 7</span>
+        <button class="nav-btn" id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">7</span>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 7;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            if (n > totalSlides) currentSlide = totalSlides;
+            if (n < 1) currentSlide = 1;
+            slides.forEach(s => s.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+            document.getElementById('current-slide').textContent = currentSlide;
+            document.getElementById('slide-label').textContent = currentSlide + ' / ' + totalSlides;
+            document.getElementById('prev-btn').disabled = currentSlide === 1;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides;
+        }
+
+        function nextSlide() { currentSlide++; showSlide(currentSlide); }
+        function prevSlide() { currentSlide--; showSlide(currentSlide); }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextSlide();
+            if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   prevSlide();
+        });
+
+        showSlide(1);
+    </script>
+</body>
+</html>

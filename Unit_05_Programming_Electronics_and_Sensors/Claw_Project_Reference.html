@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Claw Project Reference</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            min-height: 100vh;
+            padding: 40px 20px 80px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        /* ── Header ── */
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid rgba(0,212,255,0.3);
+        }
+        .page-header .eyebrow {
+            font-family: 'Orbitron', sans-serif;
+            color: #6272a4;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+        }
+        .page-header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            color: #00d4ff;
+            text-shadow: 0 0 30px rgba(0,212,255,0.5);
+            margin-bottom: 10px;
+        }
+        .page-header p {
+            color: #a0aab8;
+            font-size: 1rem;
+        }
+
+        /* ── Table of Contents ── */
+        .toc {
+            background: rgba(0,212,255,0.05);
+            border: 1px solid rgba(0,212,255,0.2);
+            border-radius: 12px;
+            padding: 20px 30px;
+            margin-bottom: 50px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 30px;
+        }
+        .toc a {
+            color: #00d4ff;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+        .toc a:hover { color: #50fa7b; }
+
+        /* ── Sections ── */
+        .section {
+            margin-bottom: 60px;
+            scroll-margin-top: 20px;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: #00d4ff;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0,212,255,0.3);
+        }
+
+        /* ── Boxes ── */
+        .box {
+            background: rgba(26,31,58,0.8);
+            border: 1px solid rgba(0,212,255,0.25);
+            border-radius: 12px;
+            padding: 20px 25px;
+            margin-bottom: 20px;
+        }
+        .box.green  { border-color: rgba(80,250,123,0.4);  background: rgba(80,250,123,0.05); }
+        .box.orange { border-color: rgba(255,149,0,0.4);   background: rgba(255,149,0,0.05); }
+        .box.purple { border-color: rgba(189,147,249,0.4); background: rgba(189,147,249,0.05); }
+
+        h3 { font-size: 1.1rem; margin-bottom: 10px; color: #e0e6f0; }
+        h3.green  { color: #50fa7b; }
+        h3.orange { color: #ff9500; }
+        h3.cyan   { color: #00d4ff; }
+        h3.purple { color: #bd93f9; }
+
+        p { font-size: 1rem; line-height: 1.7; margin-bottom: 12px; }
+        ul, ol { padding-left: 22px; }
+        ul li, ol li { font-size: 0.95rem; line-height: 1.9; }
+
+        /* ── Tables ── */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { padding: 10px 14px; text-align: left; border: 1px solid rgba(0,212,255,0.2); font-size: 0.95rem; }
+        th { background: rgba(0,212,255,0.1); color: #00d4ff; font-weight: 600; }
+
+        /* ── Code ── */
+        .code-block {
+            background: #0d1117;
+            border: 1px solid rgba(0,212,255,0.2);
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.7;
+            white-space: pre;
+            overflow-x: auto;
+            margin-bottom: 16px;
+        }
+        .code-keyword  { color: #ff79c6; }
+        .code-function { color: #50fa7b; }
+        .code-number   { color: #bd93f9; }
+        .code-comment  { color: #6272a4; font-style: italic; }
+
+        .inline-code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(0,212,255,0.1);
+            border-radius: 4px;
+            padding: 2px 7px;
+            font-size: 0.9em;
+            color: #50fa7b;
+        }
+
+        /* ── Flowchart ── */
+        .flowchart {
+            background: #0d1117;
+            border: 1px solid rgba(0,212,255,0.2);
+            border-radius: 8px;
+            padding: 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 2.2;
+            text-align: center;
+        }
+        .flow-box      { color: #e0e6f0; }
+        .flow-yes      { color: #50fa7b; }
+        .flow-no       { color: #ff9500; }
+        .flow-arrow    { color: #6272a4; }
+        .flow-decision { color: #00d4ff; }
+
+        /* ── Two column ── */
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        /* ── Prompt card ── */
+        .prompt-card {
+            background: rgba(189,147,249,0.05);
+            border: 1px solid rgba(189,147,249,0.3);
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+        }
+        .prompt-label {
+            font-size: 0.8rem;
+            color: #bd93f9;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .prompt-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            color: #e0e6f0;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        .prompt-note {
+            font-size: 0.85rem;
+            color: #a0aab8;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        /* ── Calibration table ── */
+        .cal-input {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(0,212,255,0.4);
+            color: #50fa7b;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            width: 80px;
+            text-align: center;
+            outline: none;
+        }
+
+        /* ── Back button ── */
+        .back-link {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: rgba(0,212,255,0.1);
+            border: 2px solid #00d4ff;
+            color: #00d4ff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .back-link:hover { background: rgba(0,212,255,0.3); }
+
+        .highlight { color: #50fa7b; font-weight: 600; }
+        .emphasis  { color: #ff9500; font-weight: 600; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Header -->
+    <div class="page-header">
+        <div class="eyebrow">UNIT 5 · LESSON 14</div>
+        <h1>Claw Project Reference</h1>
+        <p>Keep this page open during the project. Everything you need is here.</p>
+    </div>
+
+    <!-- Table of Contents -->
+    <nav class="toc">
+        <a href="#hardware">Hardware Setup</a>
+        <a href="#servo">Servo PWM</a>
+        <a href="#feedback">Feedback &amp; ADC</a>
+        <a href="#algorithm">Algorithm</a>
+        <a href="#prompting">Prompting Guide</a>
+        <a href="#prompts">Example Prompts</a>
+        <a href="#calibration">Calibration Log</a>
+        <a href="#specsheet">Spec Sheet</a>
+    </nav>
+
+    <!-- ── Section 1: Hardware Setup ── -->
+    <div class="section" id="hardware">
+        <div class="section-title">1. Hardware Setup</div>
+
+        <div class="two-col">
+            <div>
+                <div class="box">
+                    <h3 class="cyan">Pin Assignments</h3>
+                    <table>
+                        <thead>
+                            <tr><th>Signal</th><th>RP2040 Pin</th><th>Notes</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Servo PWM</td><td><span class="highlight">4</span></td><td>writeMicroseconds()</td></tr>
+                            <tr><td>Feedback</td><td><span class="highlight">A0</span></td><td>Analog 0–1023</td></tr>
+                            <tr><td>Red LED</td><td><span class="highlight">LEDR</span></td><td>Active low — write LOW to turn ON</td></tr>
+                            <tr><td>Green LED</td><td><span class="highlight">LEDG</span></td><td>Active low — write LOW to turn ON</td></tr>
+                            <tr><td>Blue LED</td><td><span class="highlight">LEDB</span></td><td>Active low — write LOW to turn ON</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div>
+                <div class="box green">
+                    <h3 class="green">Claw Wires</h3>
+                    <table>
+                        <thead>
+                            <tr><th>Wire Color</th><th>Connection</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Orange / Yellow</td><td>Servo signal → Pin 4</td></tr>
+                            <tr><td>Red</td><td>Power → 5V</td></tr>
+                            <tr><td>Brown / Black</td><td>Ground → GND</td></tr>
+                            <tr><td>White / Extra</td><td>Feedback → A0</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="box orange">
+                    <h3 class="orange">Required Libraries</h3>
+                    <ul>
+                        <li><span class="inline-code">#include &lt;Servo.h&gt;</span> — servo control</li>
+                        <li><span class="inline-code">#include &lt;WiFiNINA.h&gt;</span> — RGB LED (LEDR/LEDG/LEDB)</li>
+                    </ul>
+                    <p style="font-size:0.85rem; color:#a0aab8; margin: 8px 0 0;">WiFiNINA must be included even if you're not using WiFi.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Section 2: Servo PWM ── -->
+    <div class="section" id="servo">
+        <div class="section-title">2. Servo PWM Reference</div>
+
+        <div class="two-col">
+            <div>
+                <div class="box">
+                    <h3 class="cyan">Pulse Width Range</h3>
+                    <table>
+                        <thead>
+                            <tr><th>Position</th><th>writeMicroseconds()</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Fully Open</td><td><span class="highlight">500 µs</span></td></tr>
+                            <tr><td>Center</td><td><span class="highlight">~1450 µs</span></td></tr>
+                            <tr><td>Fully Closed</td><td><span class="highlight">2400 µs</span></td></tr>
+                        </tbody>
+                    </table>
+                    <p style="font-size:0.85rem; color:#a0aab8; margin-top:10px;">This is an extended range (500–2400 µs). Standard servos use 1000–2000 µs. Use <span class="inline-code">writeMicroseconds()</span>, not <span class="inline-code">write()</span>.</p>
+                </div>
+
+                <div class="box">
+                    <h3 class="cyan">Basic Setup Code</h3>
+                    <div class="code-block"><span class="code-keyword">#include</span> &lt;Servo.h&gt;
+<span class="code-keyword">#include</span> &lt;WiFiNINA.h&gt;
+
+Servo claw;
+<span class="code-keyword">const int</span> SERVO_PIN = <span class="code-number">4</span>;
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  claw.<span class="code-function">attach</span>(SERVO_PIN, <span class="code-number">500</span>, <span class="code-number">2400</span>);
+  claw.<span class="code-function">writeMicroseconds</span>(<span class="code-number">500</span>);  <span class="code-comment">// open</span>
+}</div>
+                </div>
+            </div>
+            <div>
+                <div class="box green">
+                    <h3 class="green">What PWM Actually Does</h3>
+                    <p style="font-size:0.95rem;">A servo is controlled by sending pulses on a regular interval (every ~20ms). The <strong>width</strong> of each pulse (in microseconds) tells the servo where to go:</p>
+                    <ul style="font-size:0.9rem;">
+                        <li>Short pulse (500 µs) → servo rotates toward open position</li>
+                        <li>Long pulse (2400 µs) → servo rotates toward closed position</li>
+                        <li>The servo holds that position as long as pulses keep coming</li>
+                    </ul>
+                    <p style="font-size:0.9rem; margin-top:10px; margin-bottom:0;">The Servo library handles the timing — <span class="inline-code">writeMicroseconds()</span> just tells it which width to use.</p>
+                </div>
+                <div class="box orange">
+                    <h3 class="orange">Closing Loop Pattern</h3>
+                    <div class="code-block"><span class="code-comment">// Close slowly in steps of 15µs</span>
+<span class="code-keyword">for</span> (<span class="code-keyword">int</span> pos = <span class="code-number">500</span>; pos &lt;= <span class="code-number">2400</span>; pos += <span class="code-number">15</span>) {
+  claw.<span class="code-function">writeMicroseconds</span>(pos);
+  <span class="code-function">delay</span>(<span class="code-number">25</span>);
+  <span class="code-comment">// check feedback here</span>
+}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Section 3: Feedback & ADC ── -->
+    <div class="section" id="feedback">
+        <div class="section-title">3. Feedback &amp; ADC Reference</div>
+
+        <div class="two-col">
+            <div>
+                <div class="box">
+                    <h3 class="cyan">What the Feedback Wire Does</h3>
+                    <p style="font-size:0.95rem;">The Pololu claw has a built-in potentiometer that outputs a voltage proportional to jaw position:</p>
+                    <table>
+                        <thead>
+                            <tr><th>Jaw Position</th><th>Voltage</th><th>ADC Value (approx)</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Fully Open</td><td>~0.5 V</td><td>~155</td></tr>
+                            <tr><td>Midway</td><td>~1.35 V</td><td>~419</td></tr>
+                            <tr><td>Fully Closed</td><td>~2.2 V</td><td>~682</td></tr>
+                        </tbody>
+                    </table>
+                    <p style="font-size:0.85rem; color:#a0aab8; margin-top:10px;">Your actual values may differ — calibrate with Serial Monitor on Day 3.</p>
+                </div>
+
+                <div class="box">
+                    <h3 class="cyan">Reading Feedback</h3>
+                    <div class="code-block"><span class="code-keyword">int</span> fb = <span class="code-function">analogRead</span>(A0);
+<span class="code-comment">// returns 0–1023</span>
+
+<span class="code-comment">// To convert to voltage:</span>
+<span class="code-keyword">float</span> v = (fb / <span class="code-number">1023.0</span>) * <span class="code-number">3.3</span>;
+Serial.<span class="code-function">print</span>(fb);
+Serial.<span class="code-function">print</span>(<span class="code-string">"  → "</span>);
+Serial.<span class="code-function">println</span>(v);</div>
+                </div>
+            </div>
+            <div>
+                <div class="box green">
+                    <h3 class="green">The ADC Formula</h3>
+                    <p style="font-size:0.95rem;">The RP2040 Connect uses a <strong>3.3V reference</strong> with <strong>10-bit resolution</strong>.</p>
+                    <div class="code-block">ADC = (voltage / 3.3) × 1023</div>
+                    <p style="font-size:0.95rem; margin-top: 10px;"><strong>Example:</strong> 0.5V open position:</p>
+                    <div class="code-block">(0.5 / 3.3) × 1023 = 155</div>
+                    <p style="font-size:0.9rem; color:#ff9500; margin-top:10px; margin-bottom:0;">⚠️ This board uses 3.3V, not 5V like a standard Arduino. This changes all your expected ADC values — document this in your Key Concepts section.</p>
+                </div>
+                <div class="box orange">
+                    <h3 class="orange">Contact Detection Logic</h3>
+                    <p style="font-size:0.9rem; margin-bottom:8px;">While closing, feedback should increase each step. If it stops increasing, the servo has stalled against an object:</p>
+                    <div class="code-block"><span class="code-keyword">int</span> current = <span class="code-function">analogRead</span>(A0);
+<span class="code-keyword">int</span> delta = current - prev;
+
+<span class="code-keyword">if</span> (delta &lt; <span class="code-number">5</span> &amp;&amp; pos &gt; <span class="code-number">700</span>) {
+  <span class="code-comment">// contact detected — break</span>
+  contactFb = current;
+  <span class="code-keyword">break</span>;
+}
+prev = current;</div>
+                    <p style="font-size:0.85rem; color:#a0aab8; margin-top:8px;"><span class="inline-code">pos &gt; 700</span> prevents false triggering at the very start of the loop.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Section 4: Algorithm ── -->
+    <div class="section" id="algorithm">
+        <div class="section-title">4. Full Algorithm Flowchart</div>
+
+        <div class="flowchart">
+<span class="flow-box">[ Serial trigger received ]</span>
+<span class="flow-arrow">        ↓</span>
+<span class="flow-box">[ Open claw → delay 600ms ]</span>
+<span class="flow-arrow">        ↓  ← place object here</span>
+<span class="flow-box">[ prev = analogRead(A0) ]</span>
+<span class="flow-arrow">        ↓</span>
+<span class="flow-box">[ for pos = 500 → 2400, step 15 ]</span>
+<span class="flow-arrow">        ↓</span>
+<span class="flow-box">[ writeMicroseconds(pos) · delay 25ms ]</span>
+<span class="flow-arrow">        ↓</span>
+<span class="flow-box">[ current = analogRead(A0) ]</span>
+<span class="flow-arrow">        ↓</span>
+<span class="flow-decision">[ current − prev &lt; 5  AND  pos &gt; 700 ? ]</span>
+<span class="flow-yes">   YES → contact! break loop</span>   <span class="flow-no">NO → prev = current, continue</span>
+<span class="flow-arrow">        ↓</span>
+<span class="flow-decision">[ contactFb &lt; 300 ? ]</span>
+<span class="flow-yes">   YES → LED GREEN (large)</span>
+<span class="flow-decision">[ contactFb &lt; 500 ? ]</span>
+<span class="flow-yes">   YES → LED BLUE (medium)</span>   <span class="flow-no">NO → LED RED (small)</span>
+<span class="flow-arrow">        ↓</span>
+<span class="flow-box">[ monitorSlip(contactFb) — hold 5s, watch for drift &gt; 15 ]</span>
+<span class="flow-arrow">        ↓</span>
+<span class="flow-box">[ if drift detected → flash YELLOW ]</span>
+<span class="flow-arrow">        ↓</span>
+<span class="flow-box">[ open claw · LED off ]</span>
+        </div>
+
+        <div class="box orange" style="margin-top: 20px;">
+            <h3 class="orange">Threshold Values — Calibrate These</h3>
+            <p style="font-size: 0.9rem; margin-bottom: 0;">The values 300 and 500 are starting points. After Day 3 calibration, replace them with your measured values. Your calibration log is in Section 7 below.</p>
+        </div>
+    </div>
+
+    <!-- ── Section 5: Prompting Guide ── -->
+    <div class="section" id="prompting">
+        <div class="section-title">5. AI Prompting Guide</div>
+
+        <div class="two-col">
+            <div class="box purple">
+                <h3 class="purple">Rule 1 — Give Context</h3>
+                <p style="font-size: 0.9rem;">Tell AI your hardware, your knowledge level, and your goal. Vague prompts give vague answers.</p>
+                <p style="font-size: 0.85rem; color: #ff5555; margin-bottom: 4px;">✗ Bad:</p>
+                <div class="code-block" style="font-size: 0.8rem; white-space: pre-wrap;">"How do I read analog input?"</div>
+                <p style="font-size: 0.85rem; color: #50fa7b; margin-bottom: 4px; margin-top: 8px;">✓ Better:</p>
+                <div class="code-block" style="font-size: 0.8rem; white-space: pre-wrap;">"I'm using an Arduino Nano RP2040 Connect
+with a 3.3V reference. I want to read a
+voltage between 0.5V and 2.2V on pin A0
+using analogRead(). Show me the code and
+explain what the returned number means."</div>
+            </div>
+            <div>
+                <div class="box purple">
+                    <h3 class="purple">Rule 2 — Show Your Thinking First</h3>
+                    <p style="font-size: 0.9rem;">Share your plan or pseudocode before asking AI to write code. AI improves your thinking — it doesn't replace it.</p>
+                    <p style="font-size: 0.85rem; color: #50fa7b; margin-bottom: 4px;">✓ Good:</p>
+                    <div class="code-block" style="font-size: 0.8rem; white-space: pre-wrap;">"My plan: close the servo in a loop and
+check the feedback each step. If feedback
+stops changing, the servo has stalled.
+Here's my pseudocode: [paste it].
+Translate this to Arduino C++."</div>
+                </div>
+                <div class="box purple">
+                    <h3 class="purple">Rule 3 — Push Back</h3>
+                    <p style="font-size: 0.9rem;">AI makes mistakes. If something doesn't make sense, say so. Good example:</p>
+                    <div class="code-block" style="font-size: 0.8rem; white-space: pre-wrap;">"You said the max ADC value is 1024, but
+earlier you said 1023. Which is correct
+and why?"</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Section 6: Example Prompts ── -->
+    <div class="section" id="prompts">
+        <div class="section-title">6. Example Prompts — By Day</div>
+
+        <div class="prompt-card">
+            <div class="prompt-label">Day 1 — Assembly Instructions</div>
+            <div class="prompt-text">"I am assembling a Pololu Micro Gripper Kit (product #3551). It uses a servo motor and a rack-and-pinion mechanism to move two parallel paddles. Give me step-by-step assembly instructions."</div>
+            <div class="prompt-note">Then compare to the official Pololu guide. Note in your AI Log where AI was accurate, vague, or wrong.</div>
+        </div>
+
+        <div class="prompt-card">
+            <div class="prompt-label">Day 2 — First Servo Code</div>
+            <div class="prompt-text">"I'm using an Arduino Nano RP2040 Connect to control a Pololu Micro Gripper servo (product #3551) on pin 4. This servo uses writeMicroseconds() with a range of 500 (fully open) to 2400 (fully closed) — wider than a standard servo. Write code that opens the claw when any character is received via Serial. Include WiFiNINA.h for the RGB LED even though we're not using it yet. Add a comment on every line explaining what it does."</div>
+            <div class="prompt-note">After running it, rewrite every comment in your own words before adding it to your spec sheet.</div>
+        </div>
+
+        <div class="prompt-card">
+            <div class="prompt-label">Day 3 — Feedback / ADC Concepts</div>
+            <div class="prompt-text">"What is an analog-to-digital converter (ADC)? My RP2040 Connect has a 3.3V reference and 10-bit resolution. The feedback wire on my servo outputs 0.5V when fully open and 2.2V when fully closed. What ADC values should I expect? Write a code snippet that reads pin A0 every 100ms and prints the value to Serial Monitor."</div>
+            <div class="prompt-note">Run the code and verify the numbers match the AI's prediction. Record actual values in your Calibration Log.</div>
+        </div>
+
+        <div class="prompt-card">
+            <div class="prompt-label">Day 4 — Algorithm → Code (write your flowchart first!)</div>
+            <div class="prompt-text">"Here is my algorithm as a flowchart: [paste your flowchart description]. Translate this into Arduino C++ code. Use a for loop to close the servo slowly from 500 to 2400 microseconds in steps of 15. Inside the loop, read the analog feedback pin and compare it to the previous reading. If the change is less than 5 AND the position is greater than 700, the claw has stalled — break out of the loop. After breaking, set the RGB LED: green if the feedback value is below [YOUR_LARGE_THRESHOLD] (large object), blue if between that and [YOUR_SMALL_THRESHOLD] (medium), red if above (small). The LED uses pins LEDR, LEDG, LEDB and is active-low."</div>
+            <div class="prompt-note">Fill in your actual threshold values from Day 3 calibration. Do NOT use 300 and 500 without testing first.</div>
+        </div>
+
+        <div class="prompt-card">
+            <div class="prompt-label">Day 6 — Slip Detection</div>
+            <div class="prompt-text">"After my claw grips an object and classifies it, I want it to hold the grip for 5 seconds and monitor for slip. If the feedback reading changes by more than 15 from the value at contact, the object has slipped — flash the LED yellow 3 times. After 5 seconds, open the claw and turn the LED off. Write this as a function called monitorSlip(int contactFeedback) that I can call after classification."</div>
+        </div>
+
+        <div class="prompt-card">
+            <div class="prompt-label">Day 7 — Debugging Unexpected Behavior</div>
+            <div class="prompt-text">"My feedback loop is detecting contact too early — the claw barely closes before triggering. Here is my code: [paste code]. What might cause this and how would I fix it?"</div>
+            <div class="prompt-note">Adapt this prompt to describe whatever actual problem you're experiencing. Be specific about symptoms.</div>
+        </div>
+
+        <div class="prompt-card">
+            <div class="prompt-label">Day 8 — Spec Sheet Review</div>
+            <div class="prompt-text">"Here is my Key Concepts section explaining PWM and the feedback potentiometer: [paste your text]. Improve the clarity and professional tone without changing the technical meaning. Then tell me if anything I wrote is technically inaccurate."</div>
+            <div class="prompt-note">Read AI's suggestions carefully before accepting them. If AI changes the meaning or introduces errors, reject those changes.</div>
+        </div>
+    </div>
+
+    <!-- ── Section 7: Calibration Log ── -->
+    <div class="section" id="calibration">
+        <div class="section-title">7. Calibration Log</div>
+
+        <div class="box">
+            <h3 class="cyan">Record Your Measured Values (Day 3)</h3>
+            <p style="font-size: 0.9rem; color: #a0aab8; margin-bottom: 16px;">Read the ADC value from Serial Monitor for each position. These replace the placeholder values in your code.</p>
+            <table>
+                <thead>
+                    <tr><th>Measurement</th><th>Expected ADC</th><th>Your Measured Value</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Claw fully open (no object)</td><td>~155</td><td><input class="cal-input" type="text" placeholder="____"></td></tr>
+                    <tr><td>Claw fully closed (no object)</td><td>~682</td><td><input class="cal-input" type="text" placeholder="____"></td></tr>
+                    <tr><td>Gripping large object</td><td>low value</td><td><input class="cal-input" type="text" placeholder="____"></td></tr>
+                    <tr><td>Gripping medium object</td><td>mid value</td><td><input class="cal-input" type="text" placeholder="____"></td></tr>
+                    <tr><td>Gripping small object</td><td>high value</td><td><input class="cal-input" type="text" placeholder="____"></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="box green">
+            <h3 class="green">Your Classification Thresholds</h3>
+            <table>
+                <thead>
+                    <tr><th>Category</th><th>ADC Range</th><th>LED Color</th><th>Your Threshold</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Large</td><td>below LARGE_THRESHOLD</td><td>🟢 Green</td><td>LARGE_THRESHOLD = <input class="cal-input" type="text" placeholder="____"></td></tr>
+                    <tr><td>Medium</td><td>LARGE to SMALL threshold</td><td>🔵 Blue</td><td>—</td></tr>
+                    <tr><td>Small</td><td>above SMALL_THRESHOLD</td><td>🔴 Red</td><td>SMALL_THRESHOLD = <input class="cal-input" type="text" placeholder="____"></td></tr>
+                    <tr><td>No object detected</td><td>loop completes fully</td><td>🔵 3× flash</td><td>—</td></tr>
+                    <tr><td>Slip detected</td><td>drift &gt; 15 from contact</td><td>🟡 3× flash</td><td>SLIP_DELTA = 15 (adjust if needed)</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ── Section 8: Spec Sheet ── -->
+    <div class="section" id="specsheet">
+        <div class="section-title">8. Spec Sheet &amp; Deliverables</div>
+
+        <div class="two-col">
+            <div class="box green" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;">
+                <div style="font-size: 2rem;">📄</div>
+                <h3 class="green" style="margin: 0;">Spec Sheet Template</h3>
+                <p style="font-size: 0.9rem; color: #a0aab8; margin: 0;">Click to get your own copy in Google Drive</p>
+                <a href="https://docs.google.com/document/d/1XzKYwNGAgwlf2oUAeRreHoJvHcbjgdkX2IaG-KthgiY/copy" target="_blank"
+                   style="color: #50fa7b; font-size: 1.1rem; font-weight: 700; text-decoration: none; border: 1px solid rgba(80,250,123,0.4); border-radius: 8px; padding: 10px 20px;">
+                    Open Template →
+                </a>
+            </div>
+            <div>
+                <div class="box">
+                    <h3 class="cyan">Week 1 Checkpoint — Deliverable 8</h3>
+                    <ul style="font-size: 0.9rem;">
+                        <li>Spec sheet link — Sections 1–4 complete</li>
+                        <li>Code: claw opens, feedback prints to Serial</li>
+                        <li>Screenshot of Serial Monitor (2+ objects)</li>
+                        <li>AI Log: ≥ 3 prompts documented</li>
+                    </ul>
+                </div>
+                <div class="box">
+                    <h3 class="cyan">Final Submission — Deliverable 9</h3>
+                    <ul style="font-size: 0.9rem;">
+                        <li>All spec sheet sections complete</li>
+                        <li>Working demo: classify + slip detection</li>
+                        <li>Testing Results: ≥ 5 objects</li>
+                        <li>AI Log: ≥ 6 prompts total</li>
+                        <li>Challenges &amp; Solutions: ≥ 1 AI correction documented</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div><!-- end container -->
+
+<a href="Lesson_14_Claw_Project.html" class="back-link">← Lesson 14</a>
+
+</body>
+</html>

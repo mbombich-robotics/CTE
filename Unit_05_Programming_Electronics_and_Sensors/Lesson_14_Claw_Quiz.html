@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Claw Project Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            min-height: 100vh;
+            padding: 50px 20px 80px;
+        }
+
+        .container { max-width: 860px; margin: 0 auto; }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid rgba(255, 149, 0, 0.4);
+        }
+
+        header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.8rem;
+            color: #ff9500;
+            text-shadow: 0 0 30px rgba(255,149,0,0.5);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        header .subtitle {
+            font-size: 1.2rem;
+            color: #00d4ff;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .instructions {
+            background: rgba(0,212,255,0.05);
+            border: 1px solid rgba(0,212,255,0.3);
+            border-radius: 10px;
+            padding: 18px 24px;
+            font-size: 1rem;
+            color: #a0aab8;
+            line-height: 1.7;
+            text-align: left;
+        }
+        .instructions strong { color: #ff9500; }
+
+        /* Student info block */
+        .student-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .info-field {
+            background: rgba(26,31,58,0.8);
+            border: 1px solid rgba(0,212,255,0.25);
+            border-radius: 10px;
+            padding: 16px 20px;
+        }
+        .info-field label {
+            display: block;
+            font-size: 0.8rem;
+            color: #6272a4;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .info-field .line {
+            border-bottom: 1px solid rgba(0,212,255,0.4);
+            height: 28px;
+        }
+
+        /* Question card */
+        .question {
+            background: rgba(26,31,58,0.8);
+            border: 1px solid rgba(0,212,255,0.2);
+            border-radius: 14px;
+            padding: 28px 30px;
+            margin-bottom: 30px;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 14px;
+            gap: 20px;
+        }
+
+        .q-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            color: #6272a4;
+            white-space: nowrap;
+        }
+
+        .q-points {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            color: #00d4ff;
+            white-space: nowrap;
+        }
+
+        .question p {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: #e0e6f0;
+            margin-bottom: 10px;
+        }
+
+        .question .sub-question {
+            font-size: 0.95rem;
+            color: #a0aab8;
+            margin-left: 16px;
+            margin-bottom: 6px;
+            line-height: 1.7;
+        }
+
+        .code-snippet {
+            background: #0d1117;
+            border: 1px solid rgba(0,212,255,0.2);
+            border-radius: 6px;
+            padding: 14px 18px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: #50fa7b;
+            margin: 12px 0;
+        }
+
+        .answer-lines { margin-top: 16px; }
+        .answer-line {
+            border-bottom: 1px solid rgba(0,212,255,0.2);
+            height: 32px;
+            margin-bottom: 4px;
+        }
+
+        .math-box {
+            background: rgba(189,147,249,0.06);
+            border: 1px solid rgba(189,147,249,0.3);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 12px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: #bd93f9;
+        }
+
+        /* Bonus */
+        .bonus-card {
+            background: rgba(80,250,123,0.05);
+            border: 1px solid rgba(80,250,123,0.3);
+            border-radius: 14px;
+            padding: 28px 30px;
+            margin-bottom: 40px;
+        }
+        .bonus-card .q-number { color: #50fa7b; }
+
+        /* Scoring footer */
+        .scoring {
+            background: rgba(26,31,58,0.8);
+            border: 1px solid rgba(0,212,255,0.2);
+            border-radius: 12px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+        }
+        .scoring h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: #00d4ff;
+            margin-bottom: 14px;
+        }
+        .score-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .score-cell {
+            text-align: center;
+            padding: 10px;
+            background: rgba(0,212,255,0.05);
+            border-radius: 6px;
+            border: 1px solid rgba(0,212,255,0.15);
+        }
+        .score-cell .label { font-size: 0.75rem; color: #6272a4; margin-bottom: 4px; }
+        .score-cell .pts   { font-size: 1rem; font-weight: 700; color: #00d4ff; }
+        .score-cell .slash { font-size: 0.85rem; color: #6272a4; }
+
+        .inline-code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(0,212,255,0.1);
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-size: 0.9em;
+            color: #50fa7b;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <header>
+        <h1>Claw Project Quiz</h1>
+        <div class="subtitle">Unit 5 · Lesson 14 — No notes permitted</div>
+        <div class="instructions">
+            Answer all questions in the space provided. <strong>No notes, no devices.</strong>
+            All concepts on this quiz were covered in your spec sheet learning objectives.
+            Total: <strong>26 points + 2 bonus</strong>.
+        </div>
+    </header>
+
+    <!-- Student Info -->
+    <div class="student-info">
+        <div class="info-field">
+            <label>Name</label>
+            <div class="line"></div>
+        </div>
+        <div class="info-field">
+            <label>Period / Date</label>
+            <div class="line"></div>
+        </div>
+    </div>
+
+    <!-- Q1: PWM -->
+    <div class="question">
+        <div class="question-header">
+            <span class="q-number">QUESTION 1</span>
+            <span class="q-points">4 points</span>
+        </div>
+        <p>In your own words, what is PWM? How does the pulse width physically cause the servo to move to a different position?</p>
+        <div class="answer-lines">
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+        </div>
+    </div>
+
+    <!-- Q2: ADC Math -->
+    <div class="question">
+        <div class="question-header">
+            <span class="q-number">QUESTION 2</span>
+            <span class="q-points">6 points</span>
+        </div>
+        <p>The RP2040 Connect uses a <strong>3.3V reference voltage</strong> with <strong>10-bit ADC resolution</strong>. The feedback wire on the Pololu claw outputs approximately <strong>0.5V when fully open</strong> and <strong>2.2V when fully closed</strong>.</p>
+        <p class="sub-question">a) What ADC value do you expect when the claw is fully open? Show your work.</p>
+        <div class="math-box">ADC = (voltage / 3.3) × 1023<br><br>Open:  ( ____ / 3.3 ) × 1023 = ____</div>
+        <p class="sub-question">b) What ADC value do you expect when the claw is fully closed? Show your work.</p>
+        <div class="math-box">Closed: ( ____ / 3.3 ) × 1023 = ____</div>
+        <p class="sub-question">c) If a large object stops the claw when it has barely closed, will the ADC value be closer to the open value or the closed value? Explain why.</p>
+        <div class="answer-lines">
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+        </div>
+    </div>
+
+    <!-- Q3: Contact Detection -->
+    <div class="question">
+        <div class="question-header">
+            <span class="q-number">QUESTION 3</span>
+            <span class="q-points">4 points</span>
+        </div>
+        <p>Describe in plain English how your code knows the claw has touched an object — without being able to see it. Why is this better than just closing the claw all the way every time?</p>
+        <div class="answer-lines">
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+        </div>
+    </div>
+
+    <!-- Q4: Code Reading -->
+    <div class="question">
+        <div class="question-header">
+            <span class="q-number">QUESTION 4</span>
+            <span class="q-points">4 points</span>
+        </div>
+        <p>Look at this line from the slip detection function:</p>
+        <div class="code-snippet">if (abs(currentFeedback - holdFeedback) &gt; 15)</div>
+        <p class="sub-question">a) What does <span class="inline-code">abs()</span> do, and why is it needed here?</p>
+        <div class="answer-lines">
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+        </div>
+        <p class="sub-question" style="margin-top: 12px;">b) What real-world event does this line detect?</p>
+        <div class="answer-lines">
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+        </div>
+    </div>
+
+    <!-- Q5: Debugging -->
+    <div class="question">
+        <div class="question-header">
+            <span class="q-number">QUESTION 5</span>
+            <span class="q-points">4 points</span>
+        </div>
+        <p>Your claw correctly classifies a tennis ball as <strong>"large"</strong> when you test it by hand (manually triggering the grip sequence). But when you run the full program with the Serial trigger, the same ball is classified as <strong>"medium."</strong></p>
+        <p>Name one possible reason this is happening and describe how you would investigate it.</p>
+        <div class="answer-lines">
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+        </div>
+    </div>
+
+    <!-- Q6: AI Evaluation -->
+    <div class="question">
+        <div class="question-header">
+            <span class="q-number">QUESTION 6</span>
+            <span class="q-points">4 points</span>
+        </div>
+        <p>Describe one thing AI gave you during this project that was wrong, incomplete, or that you had to change. What was the problem, and how did you fix it?</p>
+        <p style="font-size: 0.9rem; color: #a0aab8; font-style: italic;">(If you believe everything AI gave you was perfect and you accepted it all without changes — explain why that would concern a careful engineer.)</p>
+        <div class="answer-lines">
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+        </div>
+    </div>
+
+    <!-- Bonus -->
+    <div class="bonus-card">
+        <div class="question-header">
+            <span class="q-number" style="color:#50fa7b;">BONUS</span>
+            <span class="q-points" style="color:#50fa7b;">+2 points</span>
+        </div>
+        <p>What does <strong>"active low"</strong> mean for the RGB LED on the RP2040 Connect? Why does it matter when you write code to turn on a specific color?</p>
+        <div class="answer-lines">
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+            <div class="answer-line"></div>
+        </div>
+    </div>
+
+    <!-- Scoring -->
+    <div class="scoring">
+        <h3>Score</h3>
+        <div class="score-grid">
+            <div class="score-cell"><div class="label">Q1</div><div class="pts">____<span class="slash"> / 4</span></div></div>
+            <div class="score-cell"><div class="label">Q2</div><div class="pts">____<span class="slash"> / 6</span></div></div>
+            <div class="score-cell"><div class="label">Q3</div><div class="pts">____<span class="slash"> / 4</span></div></div>
+            <div class="score-cell"><div class="label">Q4</div><div class="pts">____<span class="slash"> / 4</span></div></div>
+            <div class="score-cell"><div class="label">Q5</div><div class="pts">____<span class="slash"> / 4</span></div></div>
+            <div class="score-cell"><div class="label">Q6</div><div class="pts">____<span class="slash"> / 4</span></div></div>
+            <div class="score-cell"><div class="label">Bonus</div><div class="pts">____<span class="slash"> / 2</span></div></div>
+            <div class="score-cell" style="border-color: rgba(255,149,0,0.4); background: rgba(255,149,0,0.06);">
+                <div class="label" style="color:#ff9500;">Total</div>
+                <div class="pts" style="color:#ff9500;">____<span class="slash"> / 26</span></div>
+            </div>
+        </div>
+    </div>
+
+</div><!-- end container -->
+</body>
+</html>

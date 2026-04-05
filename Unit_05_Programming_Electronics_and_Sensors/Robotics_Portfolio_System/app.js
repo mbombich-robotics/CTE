@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.26',
+    VERSION: 'v2.9.27',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbz2zToSMXHWQegIJnA73YxCZVUHVPLRck1DbQQiF7hUCnnMTE7WMUVNtpAjoGVY2-A/exec',
@@ -154,31 +154,31 @@ const DELIVERABLES = [
     {
         id: 8,
         hidden: true,
-        title: 'Claw Control Code',
+        title: 'Claw Project — Week 1 Checkpoint',
         week: 8,
         points: 50,
         phase: 'claw',
-        description: 'Working code to control your claw mechanism.',
+        description: 'Submit your spec sheet draft and demonstrate basic claw control with feedback readings.',
         requirements: [
-            'open() and close() functions',
-            'Partial grip function (percentage)',
-            'Button or serial control input',
-            'Video demonstrating claw operation'
+            'Link to your Google Doc spec sheet (must include: Project Overview, BOM, Hardware Setup, and Key Concepts — PWM and Feedback — written in your own words)',
+            'Working code: claw opens on startup, reads feedback potentiometer to Serial Monitor',
+            'Screenshot of Serial Monitor showing feedback values for at least two different objects',
+            'AI Log: at least 3 prompts documented with the AI response and your notes on what you used, changed, or rejected'
         ]
     },
     {
         id: 9,
         hidden: true,
-        title: 'Claw Practical',
+        title: 'Claw Project — Final',
         week: 9,
         points: 75,
         phase: 'claw',
-        description: 'Pick up and transport an object to a target zone.',
+        description: 'Submit your completed spec sheet and demonstrate the full grip-and-classify challenge.',
         requirements: [
-            'Pick up object from designated location',
-            'Transport without dropping',
-            'Place in target zone accurately',
-            'Bonus for autonomous operation'
+            'Updated spec sheet link — all sections complete: Algorithm (flowchart or pseudocode), Annotated Code (every meaningful line commented in your own words), Testing Results table (at least 5 objects), and AI Log (at least 6 prompts total)',
+            'Working demo: claw grips an unknown object, classifies size by LED color (green/blue/red), and detects slip with a yellow flash',
+            'Testing Results table shows consistent correct classification for large, medium, and small objects',
+            'Challenges & Solutions section describes at least two problems encountered and how they were resolved — including at least one case where AI output had to be corrected or verified'
         ]
     },
     {
