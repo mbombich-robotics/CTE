@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.27',
+    VERSION: 'v2.9.28',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbz2zToSMXHWQegIJnA73YxCZVUHVPLRck1DbQQiF7hUCnnMTE7WMUVNtpAjoGVY2-A/exec',
@@ -22,7 +22,7 @@ const CONFIG = {
     // Point values
     POINTS: {
         WEEKLY_REFLECTION: 20,
-        TOTAL_POSSIBLE: 820
+        TOTAL_POSSIBLE: 860
     },
 
     // Auto-save interval in milliseconds
@@ -42,7 +42,8 @@ const WEEK_TOPICS = {
     7: { title: 'Motor Functions & PWM Values', phase: 'scanner', focus: 'Function parameters, PWM control, motor direction' },
     8: { title: 'Claw Programming', phase: 'claw', focus: 'Servo control, grip functions' },
     9: { title: 'Integrated Systems', phase: 'claw', focus: 'Scanner + claw + drive integration' },
-    10: { title: 'Final Integration', phase: 'final', focus: 'Full system demo, presentation' }
+    10: { title: 'Claw Project — Week 1 Checkpoint', phase: 'claw', focus: 'Spec sheet draft, servo control, feedback readings' },
+    11: { title: 'Claw Project — Final', phase: 'claw', focus: 'Full grip-and-classify demo, annotated code, testing results' }
 };
 
 // skipReflectionWeeks is now stored in state.config and loaded from the backend at runtime.
@@ -155,7 +156,7 @@ const DELIVERABLES = [
         id: 8,
         hidden: true,
         title: 'Claw Project — Week 1 Checkpoint',
-        week: 8,
+        week: 10,
         points: 50,
         phase: 'claw',
         description: 'Submit your spec sheet draft and demonstrate basic claw control with feedback readings.',
@@ -170,7 +171,7 @@ const DELIVERABLES = [
         id: 9,
         hidden: true,
         title: 'Claw Project — Final',
-        week: 9,
+        week: 11,
         points: 75,
         phase: 'claw',
         description: 'Submit your completed spec sheet and demonstrate the full grip-and-classify challenge.',

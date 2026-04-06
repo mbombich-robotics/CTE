@@ -170,7 +170,7 @@
 
         .nav-container {
             position: fixed;
-            bottom: 30px;
+            bottom: 40px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -206,8 +206,6 @@
             font-weight: 600;
         }
         .nav-button:hover { background: rgba(255, 149, 0, 0.3); }
-        .nav-button.home { border-color: #6272a4; color: #6272a4; }
-        .nav-button.home:hover { background: rgba(98,114,164,0.2); }
 
         .slide-counter {
             position: fixed;
@@ -593,9 +591,8 @@ step-by-step assembly instructions."</div>
 
     <!-- Navigation -->
     <div class="nav-container">
-        <a href="index.html" class="nav-button home">⌂ Home</a>
-        <button class="nav-btn" id="prev-btn" onclick="prevSlide()" disabled>← Prev</button>
-        <span id="slide-label" style="font-family:'Orbitron',sans-serif; color:#00d4ff; font-size:0.9rem;">1 / 7</span>
+        <button class="nav-btn" id="prev-btn" onclick="prevSlide()">← Previous</button>
+        <a href="index.html" class="nav-button">⌂ BACK TO UNIT 5</a>
         <button class="nav-btn" id="next-btn" onclick="nextSlide()">Next →</button>
     </div>
 
@@ -616,7 +613,6 @@ step-by-step assembly instructions."</div>
             slides.forEach(s => s.classList.remove('active'));
             slides[currentSlide - 1].classList.add('active');
             document.getElementById('current-slide').textContent = currentSlide;
-            document.getElementById('slide-label').textContent = currentSlide + ' / ' + totalSlides;
             document.getElementById('prev-btn').disabled = currentSlide === 1;
             document.getElementById('next-btn').disabled = currentSlide === totalSlides;
         }

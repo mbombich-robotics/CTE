@@ -22,11 +22,11 @@ const CONFIG = {
         robotics: {
             name: 'Robotics Portfolio',
             apiUrl: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
-            currentAppVersion: 'v2.9.26',  // keep in sync with Robotics app.js CONFIG.VERSION
+            currentAppVersion: 'v2.9.28',  // keep in sync with Robotics app.js CONFIG.VERSION
             hasTeams: false,
             totalDeliverables: 9,
-            totalReflections: 9,
-            totalPoints: 800,
+            totalReflections: 11,
+            totalPoints: 840,
             deliverablePoints: { 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 75, 9: 100 }
         },
         frc: {
@@ -2051,7 +2051,7 @@ async function openWeekSettings() {
     // Show auto-calculated week
     const now = new Date();
     const diffWeeks = Math.floor(Math.floor((now - CONFIG.SEMESTER_START) / (1000 * 60 * 60 * 24)) / 7) + 1;
-    const autoWeek = Math.min(Math.max(1, diffWeeks), 9);
+    const autoWeek = Math.min(Math.max(1, diffWeeks), 11);
     document.getElementById('autoWeekDisplay').textContent = autoWeek;
 
     // Set override dropdown
