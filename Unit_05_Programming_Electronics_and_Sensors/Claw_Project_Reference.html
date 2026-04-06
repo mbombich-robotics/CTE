@@ -252,8 +252,8 @@
                             <tr><th>Signal</th><th>RP2040 Pin</th><th>Notes</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td>Servo PWM</td><td><span class="highlight">4</span></td><td>writeMicroseconds()</td></tr>
-                            <tr><td>Feedback</td><td><span class="highlight">A0</span></td><td>Analog 0–1023</td></tr>
+                            <tr><td>Servo PWM</td><td><span class="highlight">19 (GRIPPER_SERVO)</span></td><td>writeMicroseconds()</td></tr>
+                            <tr><td>Feedback</td><td><span class="highlight">A0 (GRIPPER_FBK)</span></td><td>Analog 0–1023</td></tr>
                             <tr><td>Red LED</td><td><span class="highlight">LEDR</span></td><td>Active low — write LOW to turn ON</td></tr>
                             <tr><td>Green LED</td><td><span class="highlight">LEDG</span></td><td>Active low — write LOW to turn ON</td></tr>
                             <tr><td>Blue LED</td><td><span class="highlight">LEDB</span></td><td>Active low — write LOW to turn ON</td></tr>
@@ -269,10 +269,10 @@
                             <tr><th>Wire Color</th><th>Connection</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td>Orange / Yellow</td><td>Servo signal → Pin 4</td></tr>
+                            <tr><td>Orange / Yellow</td><td>Servo signal → Pin 19 (GRIPPER_SERVO)</td></tr>
                             <tr><td>Red</td><td>Power → 5V</td></tr>
                             <tr><td>Brown / Black</td><td>Ground → GND</td></tr>
-                            <tr><td>White / Extra</td><td>Feedback → A0</td></tr>
+                            <tr><td>White / Extra</td><td>Feedback → A0 (GRIPPER_FBK)</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -314,11 +314,13 @@
                     <div class="code-block"><span class="code-keyword">#include</span> &lt;Servo.h&gt;
 <span class="code-keyword">#include</span> &lt;WiFiNINA.h&gt;
 
+<span class="code-keyword">#define</span> GRIPPER_SERVO <span class="code-number">19</span>
+<span class="code-keyword">#define</span> GRIPPER_FBK   A0
+
 Servo claw;
-<span class="code-keyword">const int</span> SERVO_PIN = <span class="code-number">4</span>;
 
 <span class="code-keyword">void</span> <span class="code-function">setup</span>() {
-  claw.<span class="code-function">attach</span>(SERVO_PIN, <span class="code-number">500</span>, <span class="code-number">2400</span>);
+  claw.<span class="code-function">attach</span>(GRIPPER_SERVO, <span class="code-number">500</span>, <span class="code-number">2400</span>);
   claw.<span class="code-function">writeMicroseconds</span>(<span class="code-number">500</span>);  <span class="code-comment">// open</span>
 }</div>
                 </div>
@@ -371,7 +373,7 @@ Servo claw;
 
                 <div class="box">
                     <h3 class="cyan">Reading Feedback</h3>
-                    <div class="code-block"><span class="code-keyword">int</span> fb = <span class="code-function">analogRead</span>(A0);
+                    <div class="code-block"><span class="code-keyword">int</span> fb = <span class="code-function">analogRead</span>(GRIPPER_FBK);
 <span class="code-comment">// returns 0–1023</span>
 
 <span class="code-comment">// To convert to voltage:</span>
@@ -393,7 +395,7 @@ Serial.<span class="code-function">println</span>(v);</div>
                 <div class="box orange">
                     <h3 class="orange">Contact Detection Logic</h3>
                     <p style="font-size:0.9rem; margin-bottom:8px;">While closing, feedback should increase each step. If it stops increasing, the servo has stalled against an object:</p>
-                    <div class="code-block"><span class="code-keyword">int</span> current = <span class="code-function">analogRead</span>(A0);
+                    <div class="code-block"><span class="code-keyword">int</span> current = <span class="code-function">analogRead</span>(GRIPPER_FBK);
 <span class="code-keyword">int</span> delta = current - prev;
 
 <span class="code-keyword">if</span> (delta &lt; <span class="code-number">5</span> &amp;&amp; pos &gt; <span class="code-number">700</span>) {
@@ -417,7 +419,7 @@ prev = current;</div>
 <span class="flow-arrow">        ↓</span>
 <span class="flow-box">[ Open claw → delay 600ms ]</span>
 <span class="flow-arrow">        ↓  ← place object here</span>
-<span class="flow-box">[ prev = analogRead(A0) ]</span>
+<span class="flow-box">[ prev = analogRead(GRIPPER_FBK) ]</span>
 <span class="flow-arrow">        ↓</span>
 <span class="flow-box">[ for pos = 500 → 2400, step 15 ]</span>
 <span class="flow-arrow">        ↓</span>
@@ -497,7 +499,7 @@ and why?"</div>
 
         <div class="prompt-card">
             <div class="prompt-label">Day 2 — First Servo Code</div>
-            <div class="prompt-text">"I'm using an Arduino Nano RP2040 Connect to control a Pololu Micro Gripper servo (product #3551) on pin 4. This servo uses writeMicroseconds() with a range of 500 (fully open) to 2400 (fully closed) — wider than a standard servo. Write code that opens the claw when any character is received via Serial. Include WiFiNINA.h for the RGB LED even though we're not using it yet. Add a comment on every line explaining what it does."</div>
+            <div class="prompt-text">"I'm using an Arduino Nano RP2040 Connect to control a Pololu Micro Gripper servo (product #3551). The servo is on pin 19, defined as #define GRIPPER_SERVO 19. The feedback potentiometer is on A0, defined as #define GRIPPER_FBK A0. This servo uses writeMicroseconds() with a range of 500 (fully open) to 2400 (fully closed) — wider than a standard servo. Write code that opens the claw when any character is received via Serial. Include WiFiNINA.h for the RGB LED even though we're not using it yet. Add a comment on every line explaining what it does."</div>
             <div class="prompt-note">After running it, rewrite every comment in your own words before adding it to your spec sheet.</div>
         </div>
 

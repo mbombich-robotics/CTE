@@ -63,8 +63,8 @@ function buildSpecSheetTemplate() {
 
   appendStyledTable(body, [
     ['Signal',                 'RP2040 Pin', 'Notes'],
-    ['Servo PWM signal',       '4',          'claw.writeMicroseconds() — range 500 to 2400'],
-    ['Feedback potentiometer', 'A0',         'analogRead() returns 0–1023'],
+    ['Servo PWM signal',       '19 (GRIPPER_SERVO)', 'claw.writeMicroseconds() — range 500 to 2400'],
+    ['Feedback potentiometer', 'A0 (GRIPPER_FBK)',   'analogRead() returns 0–1023'],
     ['Red LED',                'LEDR',       'Active low — write LOW to turn ON, HIGH to turn OFF'],
     ['Green LED',              'LEDG',       'Active low — write LOW to turn ON, HIGH to turn OFF'],
     ['Blue LED',               'LEDB',       'Active low — write LOW to turn ON, HIGH to turn OFF'],
