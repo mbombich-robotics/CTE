@@ -238,6 +238,83 @@
             background: rgba(255,149,0,0.06);
             margin: 20px 0;
         }
+
+        .obj-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .obj-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            font-size: 1.05rem;
+            line-height: 1.5;
+        }
+        .obj-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            height: 32px;
+            background: rgba(0,212,255,0.15);
+            border: 2px solid #00d4ff;
+            border-radius: 50%;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            color: #00d4ff;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .tool-card {
+            background: rgba(26,31,58,0.8);
+            border-radius: 14px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .tool-card .icon { font-size: 2.4rem; text-align: center; }
+        .tool-card h3 { margin: 0; text-align: center; }
+
+        .checklist-section { display: flex; flex-direction: column; gap: 6px; }
+        .checklist-row {
+            display: grid;
+            grid-template-columns: 38px 1fr auto;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            border-left: 3px solid rgba(0,212,255,0.2);
+        }
+        .checklist-row .day-num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            color: #6272a4;
+            font-weight: 700;
+            text-align: center;
+        }
+        .checklist-row .day-focus { font-size: 0.95rem; }
+        .checklist-row .day-out {
+            font-size: 0.8rem;
+            color: #6272a4;
+            text-align: right;
+            white-space: nowrap;
+        }
+        .checklist-milestone {
+            border-left: 3px solid #ff9500;
+            background: rgba(255,149,0,0.06);
+        }
+        .checklist-milestone .day-num { color: #ff9500; }
+        .day1-done {
+            border-left: 3px solid #50fa7b;
+            background: rgba(80,250,123,0.04);
+        }
+        .day1-done .day-num { color: #50fa7b; }
     </style>
 </head>
 <body>
@@ -254,7 +331,6 @@
                 <p style="font-size: 1.1rem; color: #a0aab8; max-width: 700px; margin-bottom: 40px;">
                     Build a feedback-controlled gripper. Document your work like an engineer. Use AI — and prove you understand everything it helped you build.
                 </p>
-
                 <div class="two-column" style="max-width: 700px; width: 100%;">
                     <div class="concept-box" style="text-align: center;">
                         <div style="font-size: 2rem; margin-bottom: 8px;">⚙️</div>
@@ -270,55 +346,118 @@
             </div>
         </div>
 
-        <!-- Slide 2: The Challenge -->
+        <!-- Slide 2: Learning Objectives -->
         <div class="slide">
             <div class="slide-header">
-                <h2>The Challenge</h2>
-                <p style="color: #a0aab8; margin-top: 10px;">Your claw must do this — automatically, every time:</p>
+                <h2>Learning Objectives</h2>
+                <p style="color: #a0aab8; margin-top: 10px;">By the end of this project, you will be able to:</p>
+            </div>
+            <div class="content" style="justify-content: center;">
+                <ul class="obj-list" style="max-width: 860px; width: 100%;">
+                    <li>
+                        <span class="obj-num">1</span>
+                        <span>Explain what <strong>PWM</strong> is and how pulse width controls a servo motor's position</span>
+                    </li>
+                    <li>
+                        <span class="obj-num">2</span>
+                        <span>Read analog feedback from a potentiometer and <strong>calculate expected ADC values</strong> using a 3.3 V reference and 10-bit resolution</span>
+                    </li>
+                    <li>
+                        <span class="obj-num">3</span>
+                        <span>Write and debug a <strong>feedback-controlled grip loop</strong> that detects contact, classifies object size by LED color, and monitors for slip</span>
+                    </li>
+                    <li>
+                        <span class="obj-num">4</span>
+                        <span>Use AI as a <strong>productivity tool</strong> — and verify, annotate, and explain in your own words everything it produces</span>
+                    </li>
+                    <li>
+                        <span class="obj-num">5</span>
+                        <span>Complete a <strong>professional-quality spec sheet</strong> documenting your hardware, algorithm, code, and testing results</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 3: When to Use AI -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>When to Use AI</h2>
+                <p style="color: #a0aab8; margin-top: 10px;">The right tool for the right job.</p>
             </div>
             <div class="content">
-                <div class="flowchart" style="margin-bottom: 30px;">
-                    <span class="flow-box">📡 Serial trigger received</span><br>
-                    <span class="flow-arrow">↓</span><br>
-                    <span class="flow-box">🟢 Claw opens fully</span><br>
-                    <span class="flow-arrow">↓  [place object]</span><br>
-                    <span class="flow-box">⚙️ Claw closes slowly — feedback monitored each step</span><br>
-                    <span class="flow-arrow">↓</span><br>
-                    <span class="flow-decision">🔵 Is feedback still changing?</span><br>
-                    <span class="flow-yes">YES → keep closing</span> &nbsp;|&nbsp; <span class="flow-no">NO → contact detected!</span><br>
-                    <span class="flow-arrow">↓</span><br>
-                    <span class="flow-box">💡 LED color = object size &nbsp; (🟢 large &nbsp; 🔵 medium &nbsp; 🔴 small)</span><br>
-                    <span class="flow-arrow">↓</span><br>
-                    <span class="flow-box">🔍 Hold grip · monitor for slip · 🟡 flash if object moves</span>
-                </div>
-
-                <div class="two-column">
-                    <div class="concept-box">
-                        <h3 style="color: #50fa7b; margin-top: 0;">Why this is interesting</h3>
-                        <p style="font-size: 0.95rem; margin: 0;">The claw can't see the object. It uses <strong>sensor feedback</strong> to know when it's touched something — the same principle used in industrial robot grippers.</p>
+                <div class="two-column" style="margin-bottom: 24px;">
+                    <div class="tool-card" style="border: 2px solid rgba(255,149,0,0.4);">
+                        <div class="icon">⚡</div>
+                        <h3 style="color: #ff9500;">Impact Driver</h3>
+                        <p style="font-size: 0.95rem; text-align: center; color: #a0aab8; margin: 0;">Fast. Powerful. Gets the job done in seconds.</p>
+                        <p style="font-size: 0.95rem; text-align: center; margin: 0;">But in the wrong situation — wrong fastener, too much torque — it <strong style="color:#ff9500;">strips the screw</strong> or cracks the material.</p>
                     </div>
-                    <div class="concept-box">
-                        <h3 style="color: #00d4ff; margin-top: 0;">What you'll learn</h3>
+                    <div class="tool-card" style="border: 2px solid rgba(0,212,255,0.3);">
+                        <div class="icon">🔩</div>
+                        <h3 style="color: #00d4ff;">Screwdriver</h3>
+                        <p style="font-size: 0.95rem; text-align: center; color: #a0aab8; margin: 0;">Slow. Gives you feel and control.</p>
+                        <p style="font-size: 0.95rem; text-align: center; margin: 0;">You <strong style="color:#00d4ff;">know exactly</strong> what's happening at every turn. Precision work done right.</p>
+                    </div>
+                </div>
+                <div class="big-rule" style="margin: 0 0 20px;">AI is your impact driver — use it with judgment.</div>
+                <div class="two-column">
+                    <div class="success-box">
+                        <h3 style="color: #50fa7b; margin-top: 0;">Reach for AI when…</h3>
                         <ul style="font-size: 0.95rem;">
-                            <li>Servo PWM control</li>
-                            <li>Analog feedback / ADC</li>
-                            <li>Feedback-controlled loops</li>
-                            <li>AI-assisted coding &amp; documentation</li>
+                            <li>You're stuck on a concept and need it explained differently</li>
+                            <li>You have a plan and want starter code to annotate</li>
+                            <li>You want to check your own reasoning against another source</li>
+                            <li>You need to explore options quickly</li>
+                        </ul>
+                    </div>
+                    <div class="warning-box">
+                        <h3 style="color: #ff9500; margin-top: 0;">Put it down when…</h3>
+                        <ul style="font-size: 0.95rem;">
+                            <li>You haven't tried to understand it yourself first</li>
+                            <li>You're copying output without reading it</li>
+                            <li>The answer doesn't make sense and you accept it anyway</li>
+                            <li>You couldn't explain the result to someone else</li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Slide 3: AI Ground Rules -->
+        <!-- Slide 4: Ethics in AI Use -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Ethics in AI Use</h2>
+            </div>
+            <div class="content">
+                <div class="three-column" style="margin-bottom: 20px;">
+                    <div class="concept-box">
+                        <h3 style="color: #00d4ff; margin-top: 0;">Integrity</h3>
+                        <p style="font-size: 0.9rem; margin: 0;">There's a line between AI <em>helping you learn</em> and AI <em>learning for you</em>. Using AI to skip understanding isn't a shortcut — it's a trap. The quiz has no notes for a reason.</p>
+                    </div>
+                    <div class="concept-box">
+                        <h3 style="color: #00d4ff; margin-top: 0;">Honesty</h3>
+                        <p style="font-size: 0.9rem; margin: 0;">Log every prompt you use. This isn't punishment — it's how engineers document their process. Hiding your sources doesn't make your work more impressive; it makes it less trustworthy.</p>
+                    </div>
+                    <div class="concept-box">
+                        <h3 style="color: #00d4ff; margin-top: 0;">Responsibility</h3>
+                        <p style="font-size: 0.9rem; margin: 0;">If AI writes code that doesn't work, you still own the problem. In the real world, "AI told me so" is not an acceptable answer when a system fails. You are the engineer.</p>
+                    </div>
+                </div>
+                <div class="big-rule">"AI-assisted" means you did the thinking. AI helped you do it faster.</div>
+                <div class="warning-box" style="margin-top: 16px; text-align: center;">
+                    <p style="font-size: 1rem; margin: 0;">The spec sheet and quiz together are how we verify that the work is <strong>yours</strong>.<br>
+                    If you own the understanding, both are easy. If you don't, both will show it.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: AI in This Class -->
         <div class="slide">
             <div class="slide-header">
                 <h2>AI in This Class</h2>
             </div>
             <div class="content">
-                <div class="big-rule">
-                    "If you can't explain it, you don't own it."
-                </div>
+                <div class="big-rule">"If you can't explain it, you don't own it."</div>
 
                 <div class="three-column" style="margin-top: 10px;">
                     <div class="rule-box">
@@ -357,55 +496,46 @@
             </div>
         </div>
 
-        <!-- Slide 4: The Spec Sheet -->
+        <!-- Slide 6: The Challenge -->
         <div class="slide">
             <div class="slide-header">
-                <h2>Your Spec Sheet</h2>
-                <p style="color: #a0aab8; margin-top: 10px;">A technical document — the kind an engineer would write to hand off a project.</p>
+                <h2>The Challenge</h2>
+                <p style="color: #a0aab8; margin-top: 10px;">Your claw must do this — automatically, every time:</p>
             </div>
             <div class="content">
+                <div class="flowchart" style="margin-bottom: 30px;">
+                    <span class="flow-box">📡 Serial trigger received</span><br>
+                    <span class="flow-arrow">↓</span><br>
+                    <span class="flow-box">🟢 Claw opens fully</span><br>
+                    <span class="flow-arrow">↓  [place object]</span><br>
+                    <span class="flow-box">⚙️ Claw closes slowly — feedback monitored each step</span><br>
+                    <span class="flow-arrow">↓</span><br>
+                    <span class="flow-decision">🔵 Is feedback still changing?</span><br>
+                    <span class="flow-yes">YES → keep closing</span> &nbsp;|&nbsp; <span class="flow-no">NO → contact detected!</span><br>
+                    <span class="flow-arrow">↓</span><br>
+                    <span class="flow-box">💡 LED color = object size &nbsp; (🟢 large &nbsp; 🔵 medium &nbsp; 🔴 small)</span><br>
+                    <span class="flow-arrow">↓</span><br>
+                    <span class="flow-box">🔍 Hold grip · monitor for slip · 🟡 flash if object moves</span>
+                </div>
                 <div class="two-column">
-                    <div class="column">
-                        <div class="concept-box">
-                            <h3 style="color: #00d4ff; margin-top: 0;">Sections</h3>
-                            <ol style="font-size: 0.95rem; line-height: 2;">
-                                <li>Project Overview</li>
-                                <li>Bill of Materials (with datasheet links)</li>
-                                <li>Hardware Setup (pin table)</li>
-                                <li>Key Concepts — in <em>your</em> words</li>
-                                <li>Algorithm (flowchart or pseudocode)</li>
-                                <li>Annotated Code</li>
-                                <li>Testing Results</li>
-                                <li>AI Conversation Log</li>
-                                <li>Challenges &amp; Solutions</li>
-                            </ol>
-                        </div>
+                    <div class="concept-box">
+                        <h3 style="color: #50fa7b; margin-top: 0;">Why this is interesting</h3>
+                        <p style="font-size: 0.95rem; margin: 0;">The claw can't see the object. It uses <strong>sensor feedback</strong> to know when it's touched something — the same principle used in industrial robot grippers.</p>
                     </div>
-                    <div class="column">
-                        <div class="success-box">
-                            <h3 style="color: #50fa7b; margin-top: 0;">Getting Started</h3>
-                            <p style="font-size: 0.95rem;">Click the link below to get your own copy of the spec sheet template. Save it to your Google Drive and work in it throughout the project.</p>
-                            <p style="font-size: 0.95rem; margin-bottom: 0;">The template link is also in your portfolio under <strong>Deliverable 8</strong>.</p>
-                        </div>
-                        <div class="warning-box">
-                            <h3 style="color: #ff9500; margin-top: 0;">Submission</h3>
-                            <p style="font-size: 0.95rem; margin-bottom: 8px;"><strong>Week 1 checkpoint (Day 5):</strong> Sections 1–4 + AI Log</p>
-                            <p style="font-size: 0.95rem; margin-bottom: 0;"><strong>Final (Day 10):</strong> All sections complete</p>
-                            <p style="font-size: 0.9rem; color: #a0aab8; margin-top: 8px;">Submit via the Robotics Portfolio — paste your Google Doc link as evidence.</p>
-                        </div>
-                        <div class="concept-box" style="text-align: center;">
-                            <a href="https://docs.google.com/document/d/1XzKYwNGAgwlf2oUAeRreHoJvHcbjgdkX2IaG-KthgiY/copy" target="_blank"
-                               style="color: #00d4ff; font-size: 1.1rem; font-weight: 700; text-decoration: none;">
-                                📄 Open Spec Sheet Template →
-                            </a>
-                            <p style="font-size: 0.8rem; color: #6272a4; margin: 8px 0 0;">Click to get your own copy</p>
-                        </div>
+                    <div class="concept-box">
+                        <h3 style="color: #00d4ff; margin-top: 0;">What you'll build</h3>
+                        <ul style="font-size: 0.95rem;">
+                            <li>Servo PWM control</li>
+                            <li>Analog feedback / ADC</li>
+                            <li>Feedback-controlled loops</li>
+                            <li>AI-assisted coding &amp; documentation</li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Slide 5: Today — Assembly -->
+        <!-- Slide 7: Today — Assembly -->
         <div class="slide">
             <div class="slide-header">
                 <h2>Today: Assembly</h2>
@@ -435,102 +565,171 @@ step-by-step assembly instructions."</div>
                                 <li>Use the official Pololu assembly guide</li>
                                 <li>Do not force any parts — the rack slides in one direction</li>
                                 <li>The servo should be seated flush before securing</li>
-                                <li>Three wires when done: signal (orange/yellow), power (red), ground (brown/black), feedback (white/extra)</li>
+                                <li>Four wires when done: <span style="color:#50fa7b;">green</span> (pot feedback), <span style="color:#e0e6f0;">white</span> (servo signal), <span style="color:#ff5555;">red</span> (power), <span style="color:#6272a4;">black</span> (ground)</li>
                             </ul>
                         </div>
-                        <div class="concept-box">
-                            <h3 style="color: #00d4ff; margin-top: 0;">Start Your Spec Sheet Today</h3>
-                            <ul style="font-size: 0.95rem;">
-                                <li>Fill in your name and Project Overview (2–3 sentences)</li>
-                                <li>Ask AI to help you find the datasheet links for the BOM</li>
-                                <li>Log your first AI prompt in the AI Log section</li>
-                            </ul>
+                        <div style="border-radius: 10px; overflow: hidden; border: 1px solid rgba(0,212,255,0.2);">
+                            <img src="Micro%20Gripper%20Wiring%20Connection.jpeg"
+                                 alt="Micro Gripper Wiring Connection"
+                                 style="width: 100%; display: block;">
+                            <div style="background: rgba(0,212,255,0.06); padding: 8px 12px; font-size: 0.82rem; color: #6272a4; text-align: center;">
+                                Micro Gripper Wiring Connection
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Slide 6: Project Schedule -->
+        <!-- Slide 8: Day 2 — Objectives Reminder -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Day 2 — Picking Back Up</h2>
+                <p style="color: #a0aab8; margin-top: 10px;">Here's what we're working toward. Keep these in mind as you dig into your spec sheet today.</p>
+            </div>
+            <div class="content" style="justify-content: center;">
+                <ul class="obj-list" style="max-width: 860px; width: 100%;">
+                    <li>
+                        <span class="obj-num">1</span>
+                        <span>Explain what <strong>PWM</strong> is and how pulse width controls a servo motor's position</span>
+                    </li>
+                    <li>
+                        <span class="obj-num">2</span>
+                        <span>Read analog feedback from a potentiometer and <strong>calculate expected ADC values</strong> using a 3.3 V reference and 10-bit resolution</span>
+                    </li>
+                    <li>
+                        <span class="obj-num">3</span>
+                        <span>Write and debug a <strong>feedback-controlled grip loop</strong> that detects contact, classifies object size by LED color, and monitors for slip</span>
+                    </li>
+                    <li>
+                        <span class="obj-num">4</span>
+                        <span>Use AI as a <strong>productivity tool</strong> — and verify, annotate, and explain in your own words everything it produces</span>
+                    </li>
+                    <li>
+                        <span class="obj-num">5</span>
+                        <span>Complete a <strong>professional-quality spec sheet</strong> documenting your hardware, algorithm, code, and testing results</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 9: Your Spec Sheet -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Your Spec Sheet</h2>
+                <p style="color: #a0aab8; margin-top: 10px;">A technical document — the kind an engineer would write to hand off a project.</p>
+            </div>
+            <div class="content">
+                <div class="two-column">
+                    <div class="column">
+                        <div class="concept-box">
+                            <h3 style="color: #00d4ff; margin-top: 0;">Sections</h3>
+                            <ol style="font-size: 0.95rem; line-height: 2;">
+                                <li>Project Overview</li>
+                                <li>Bill of Materials (with datasheet links)</li>
+                                <li>Hardware Setup (pin table)</li>
+                                <li>Key Concepts — in <em>your</em> words</li>
+                                <li>Algorithm (flowchart or pseudocode)</li>
+                                <li>Annotated Code</li>
+                                <li>Testing Results</li>
+                                <li>AI Conversation Log</li>
+                                <li>Challenges &amp; Solutions</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="concept-box">
+                            <h3 style="color: #00d4ff; margin-top: 0;">Start Today</h3>
+                            <ul style="font-size: 0.95rem;">
+                                <li>Fill in your name and Project Overview (2–3 sentences)</li>
+                                <li>Ask AI to help you find the datasheet links for the BOM</li>
+                                <li>Log your first AI prompt in the AI Log section</li>
+                            </ul>
+                        </div>
+                        <div class="warning-box">
+                            <h3 style="color: #ff9500; margin-top: 0;">Submission Deadlines</h3>
+                            <p style="font-size: 0.95rem; margin-bottom: 8px;"><strong>Week 1 checkpoint (Day 5):</strong> Sections 1–4 + AI Log</p>
+                            <p style="font-size: 0.95rem; margin-bottom: 0;"><strong>Final (Day 10):</strong> All sections complete</p>
+                            <p style="font-size: 0.9rem; color: #a0aab8; margin-top: 8px;">Submit via the Robotics Portfolio — paste your Google Doc link as evidence.</p>
+                        </div>
+                        <div class="concept-box" style="text-align: center;">
+                            <a href="https://docs.google.com/document/d/1XzKYwNGAgwlf2oUAeRreHoJvHcbjgdkX2IaG-KthgiY/copy" target="_blank"
+                               style="color: #00d4ff; font-size: 1.1rem; font-weight: 700; text-decoration: none;">
+                                📄 Open Spec Sheet Template →
+                            </a>
+                            <p style="font-size: 0.8rem; color: #6272a4; margin: 8px 0 0;">Click to get your own copy</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Project Schedule (Checklist) -->
         <div class="slide">
             <div class="slide-header">
                 <h2>Project Schedule</h2>
             </div>
             <div class="content">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Day</th>
-                            <th>Focus</th>
-                            <th>Key AI Activity</th>
-                            <th>Output</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>1</strong></td>
-                            <td>Assembly + project intro</td>
-                            <td>Assembly instructions prompt — compare to official guide</td>
-                            <td>Assembled claw, Spec Sheet started</td>
-                        </tr>
-                        <tr>
-                            <td><strong>2</strong></td>
-                            <td>Wiring + first servo code</td>
-                            <td>Generate open/close code — annotate every line</td>
-                            <td>Claw opens and closes</td>
-                        </tr>
-                        <tr>
-                            <td><strong>3</strong></td>
-                            <td>Feedback potentiometer</td>
-                            <td>Ask AI to explain ADC, 3.3V reference, expected values</td>
-                            <td>Feedback printed to Serial Monitor, thresholds calibrated</td>
-                        </tr>
-                        <tr>
-                            <td><strong>4</strong></td>
-                            <td>Grip loop + LED output</td>
-                            <td>Flowchart → AI translates to code</td>
-                            <td>Contact detection working, LED classifies size</td>
-                        </tr>
-                        <tr style="background: rgba(80,250,123,0.05);">
-                            <td><strong>5 ★</strong></td>
-                            <td colspan="2"><strong>Week 1 Deliverable Due</strong> — Spec Sheet (Sections 1–4 + AI Log) + demo</td>
-                            <td>Portfolio submission</td>
-                        </tr>
-                        <tr>
-                            <td><strong>6</strong></td>
-                            <td>Slip detection</td>
-                            <td>Extension prompt — monitorSlip() function</td>
-                            <td>Slip triggers yellow flash</td>
-                        </tr>
-                        <tr>
-                            <td><strong>7</strong></td>
-                            <td>Debug + refine</td>
-                            <td>Ask AI to interpret unexpected behavior</td>
-                            <td>Reliable classification with 5+ objects</td>
-                        </tr>
-                        <tr>
-                            <td><strong>8</strong></td>
-                            <td>Spec sheet work day</td>
-                            <td>AI reviews Key Concepts for accuracy</td>
-                            <td>All sections drafted</td>
-                        </tr>
-                        <tr>
-                            <td><strong>9</strong></td>
-                            <td>Final polish + peer review</td>
-                            <td>—</td>
-                            <td>Spec sheet finalized</td>
-                        </tr>
-                        <tr style="background: rgba(255,149,0,0.05);">
-                            <td><strong>10 ★</strong></td>
-                            <td colspan="2"><strong>Final Demo + Spec Sheet Due + Quiz</strong></td>
-                            <td>Portfolio submission</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="two-column" style="align-items: start;">
+                    <div class="checklist-section">
+                        <div class="checklist-row day1-done">
+                            <span class="day-num">1 ✓</span>
+                            <span class="day-focus">Intro · AI discussion · Assembly</span>
+                            <span class="day-out">Claw assembled</span>
+                        </div>
+                        <div class="checklist-row">
+                            <span class="day-num">2</span>
+                            <span class="day-focus">Spec sheet · Wiring · First servo code</span>
+                            <span class="day-out">Claw opens &amp; closes</span>
+                        </div>
+                        <div class="checklist-row">
+                            <span class="day-num">3</span>
+                            <span class="day-focus">Feedback potentiometer · ADC calibration</span>
+                            <span class="day-out">Feedback → Serial Monitor</span>
+                        </div>
+                        <div class="checklist-row">
+                            <span class="day-num">4</span>
+                            <span class="day-focus">Grip loop · LED size classification</span>
+                            <span class="day-out">Contact detection working</span>
+                        </div>
+                        <div class="checklist-row checklist-milestone">
+                            <span class="day-num">5 ★</span>
+                            <span class="day-focus"><strong>Checkpoint Due</strong> — Spec Sheet Sec. 1–4 + AI Log + demo</span>
+                            <span class="day-out">Portfolio submission</span>
+                        </div>
+                    </div>
+                    <div class="checklist-section">
+                        <div class="checklist-row">
+                            <span class="day-num">6</span>
+                            <span class="day-focus">Slip detection · monitorSlip() function</span>
+                            <span class="day-out">Yellow flash on slip</span>
+                        </div>
+                        <div class="checklist-row">
+                            <span class="day-num">7</span>
+                            <span class="day-focus">Debug · refine · test with 5+ objects</span>
+                            <span class="day-out">Reliable classification</span>
+                        </div>
+                        <div class="checklist-row">
+                            <span class="day-num">8</span>
+                            <span class="day-focus">Spec sheet work day · AI reviews Key Concepts</span>
+                            <span class="day-out">All sections drafted</span>
+                        </div>
+                        <div class="checklist-row">
+                            <span class="day-num">9</span>
+                            <span class="day-focus">Final polish · peer review</span>
+                            <span class="day-out">Spec sheet finalized</span>
+                        </div>
+                        <div class="checklist-row checklist-milestone">
+                            <span class="day-num">10 ★</span>
+                            <span class="day-focus"><strong>Final Due</strong> — Demo + Spec Sheet + Quiz</span>
+                            <span class="day-out">Portfolio submission</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Slide 7: Deliverables -->
+        <!-- Slide 11: Deliverables & Quiz -->
         <div class="slide">
             <div class="slide-header">
                 <h2>Deliverables &amp; Quiz</h2>
@@ -602,7 +801,7 @@ step-by-step assembly instructions."</div>
 
     <script>
         let currentSlide = 1;
-        const totalSlides = 7;
+        const totalSlides = 11;
 
         document.getElementById('total-slides').textContent = totalSlides;
 
