@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.32',
+    VERSION: 'v2.9.33',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbz2zToSMXHWQegIJnA73YxCZVUHVPLRck1DbQQiF7hUCnnMTE7WMUVNtpAjoGVY2-A/exec',
@@ -1130,7 +1130,7 @@ function initProfileForm() {
 // ============================================
 // ON AUTHENTICATED — called after sign-in is fully resolved
 // ============================================
-function onAuthenticated() {
+async function onAuthenticated() {
     document.getElementById('signOutBtn').style.display = 'inline-flex';
 
     initWeeklyReflectionForm();
@@ -1138,13 +1138,16 @@ function onAuthenticated() {
     attachDirtyListeners();
 
     calculateCurrentWeek();
+
+    // Load correct skip-week config before first render so the upcoming list
+    // doesn't flash stale items. Fall through to updateUI() regardless.
+    await fetchConfig();
     updateUI();
 
     startAutoSave();
     markDirty(); // ensure first state is persisted
 
-    // Fetch remote config and start version-check polling
-    fetchConfig();
+    // Continue polling every 5 min
     setInterval(fetchConfig, 5 * 60 * 1000);
 }
 
@@ -1161,6 +1164,7 @@ async function fetchConfig() {
         if (expected && expected !== CONFIG.VERSION) {
             if (!isDirty) {
                 location.reload();
+                return;
             } else {
                 showUpdateBanner();
             }
