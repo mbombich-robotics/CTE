@@ -22,12 +22,14 @@ const CONFIG = {
         robotics: {
             name: 'Robotics Portfolio',
             apiUrl: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
-            currentAppVersion: 'v2.9.28',  // keep in sync with Robotics app.js CONFIG.VERSION
+            currentAppVersion: 'v2.9.29',  // keep in sync with Robotics app.js CONFIG.VERSION
             hasTeams: false,
             totalDeliverables: 9,
             totalReflections: 11,
-            totalPoints: 840,
-            deliverablePoints: { 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 75, 9: 100 }
+            totalPoints: 735,
+            deliverablePoints: { 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75 },
+            // deliverable id → week it is due (defaults to same number if not listed)
+            deliverableWeeks: { 8: 10, 9: 11 }
         },
         frc: {
             name: 'FRC Portfolio',
@@ -162,6 +164,19 @@ function isReflectionRequired(courseId, week) {
 
 function isDeliverableRequired(courseId, week) {
     return !(weekSettings[courseId]?.skipDeliverables || []).includes(week);
+}
+
+// Returns the week a given deliverable id is due for a course
+function deliverableWeek(course, id) {
+    return course.deliverableWeeks?.[id] ?? id;
+}
+
+// Returns the deliverable id due in a given week for a course (or null)
+function deliverableForWeek(course, week) {
+    for (let id = 1; id <= course.totalDeliverables; id++) {
+        if (deliverableWeek(course, id) === week) return id;
+    }
+    return null;
 }
 
 // ============================================
@@ -554,8 +569,8 @@ function processStudentData() {
 
             if (new Date() > fridayDeadline) {
                 if (isReflectionRequired(state.activeCourse, week)) expectedReflections++;
-                // Deliverables are due same week (1-9 match weeks 1-9)
-                if (week <= course.totalDeliverables && isDeliverableRequired(state.activeCourse, week)) {
+                // Check if a deliverable is due this week
+                if (deliverableForWeek(course, week) !== null && isDeliverableRequired(state.activeCourse, week)) {
                     expectedDeliverables++;
                 }
             }
@@ -1865,10 +1880,11 @@ function buildClassData(name, rawData, courseConfig, periodFilter, icon, courseI
             totalSubmittedItems += (studentCount - reflectionPending);
         }
 
-        if (week <= courseConfig.totalDeliverables && isDeliverableRequired(courseId, week)) {
+        const dueDeliverableId = deliverableForWeek(courseConfig, week);
+        if (dueDeliverableId !== null && isDeliverableRequired(courseId, week)) {
             let deliverablePending = 0;
             studentEmails.forEach(email => {
-                if (!completedDeliverables.has(email + '-' + week)) deliverablePending++;
+                if (!completedDeliverables.has(email + '-' + dueDeliverableId)) deliverablePending++;
             });
             weekItems.push({ type: 'Deliverable', pending: deliverablePending });
             totalDueItems += studentCount;
