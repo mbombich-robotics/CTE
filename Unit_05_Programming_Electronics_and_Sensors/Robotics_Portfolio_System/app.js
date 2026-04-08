@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.30',
+    VERSION: 'v2.9.31',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbz2zToSMXHWQegIJnA73YxCZVUHVPLRck1DbQQiF7hUCnnMTE7WMUVNtpAjoGVY2-A/exec',
@@ -1154,8 +1154,8 @@ async function fetchConfig() {
         const cfg = await res.json();
         if (cfg.error) return;
 
-        state.config.skipReflectionWeeks  = cfg.skipReflectionWeeks  || [];
-        state.config.skipDeliverableWeeks = cfg.skipDeliverableWeeks || [];
+        state.config.skipReflectionWeeks  = (cfg.skipReflectionWeeks  || []).map(Number);
+        state.config.skipDeliverableWeeks = (cfg.skipDeliverableWeeks || []).map(Number);
 
         const expected = cfg.expectedVersion;
         if (expected && expected !== CONFIG.VERSION) {
@@ -1244,7 +1244,7 @@ function updateUI() {
     const requiredDeliverableCount = DELIVERABLES.filter(d => !d.optional && !d.hidden).length;
 
     document.getElementById('completedCount').textContent = completedDeliverables + completedReflections;
-    const requiredReflectionCount = 10 - state.config.skipReflectionWeeks.length;
+    const requiredReflectionCount = 11 - state.config.skipReflectionWeeks.length;
     document.getElementById('pendingCount').textContent = (requiredDeliverableCount - completedRequiredDeliverables) + (requiredReflectionCount - completedReflections);
     document.getElementById('totalPoints').textContent = calculatePoints();
     document.getElementById('currentWeek').textContent = state.currentWeek;
@@ -1377,7 +1377,7 @@ function calculateCurrentWeek() {
     const diffTime = now - CONFIG.SEMESTER_START;
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     const diffWeeks = Math.floor(diffDays / 7) + 1;
-    state.currentWeek = Math.min(Math.max(1, diffWeeks), 10);
+    state.currentWeek = Math.min(Math.max(1, diffWeeks), 11);
 }
 
 function updatePhaseIndicators() {
@@ -2251,15 +2251,15 @@ function openDeliverableForm(id) {
             ` : ''}
 
             <div class="form-group">
-                <label for="deliverableContent">${id === 3 ? 'Code & Observations' : id === 4 ? 'Sweep Code & Explanation' : id === 5 ? 'Commented Code & Reflection' : id === 7 ? 'Problem & Solution' : 'Your Submission'}</label>
-                <textarea id="deliverableContent" rows="8" placeholder="${id === 3 ? 'Paste your code with comments, and describe your observations about sensor behavior...' : id === 4 ? 'Paste your servo sweep code and briefly explain how it works (what does each part do?)...' : id === 5 ? 'Paste a key section of your code (e.g. loop() or a motor function) and add comments explaining:\n- What each part does and why\n- Which constants you tuned (THRESHOLD, TURN_TIME, etc.) and what values you used\n- At least one problem you ran into and how you fixed it' : id === 7 ? 'Describe at least one problem you ran into (e.g. robot oscillating, veering, not stopping) and explain how you solved it or what you tried...' : 'Describe what you did, paste your code, explain your process...'}">${id === 3 ? (existing.rawContent || existing.content || '') : id === 5 ? (existing.rawContent || existing.content || '') : id === 7 ? (existing.rawContent || existing.content || '') : (existing.content || '')}</textarea>
+                <label for="deliverableContent">${id === 3 ? 'Code & Observations' : id === 4 ? 'Sweep Code & Explanation' : id === 5 ? 'Commented Code & Reflection' : id === 7 ? 'Problem & Solution' : id === 8 ? 'Google Doc Link & AI Log Summary' : id === 9 ? 'Google Doc Link & Project Summary' : 'Your Submission'}</label>
+                <textarea id="deliverableContent" rows="8" placeholder="${id === 3 ? 'Paste your code with comments, and describe your observations about sensor behavior...' : id === 4 ? 'Paste your servo sweep code and briefly explain how it works (what does each part do?)...' : id === 5 ? 'Paste a key section of your code (e.g. loop() or a motor function) and add comments explaining:\n- What each part does and why\n- Which constants you tuned (THRESHOLD, TURN_TIME, etc.) and what values you used\n- At least one problem you ran into and how you fixed it' : id === 7 ? 'Describe at least one problem you ran into (e.g. robot oscillating, veering, not stopping) and explain how you solved it or what you tried...' : id === 8 ? 'Paste your Google Doc spec sheet link here (make sure sharing is set to "Anyone with the link can view").\n\nThen briefly describe your AI Log — how many prompts, what you asked, and one thing AI got wrong or that you had to correct.' : id === 9 ? 'Paste your Google Doc spec sheet link here (make sure sharing is set to "Anyone with the link can view").\n\nBriefly describe your testing results and at least one case where you had to correct or verify AI output.' : 'Describe what you did, paste your code, explain your process...'}">${id === 3 ? (existing.rawContent || existing.content || '') : id === 5 ? (existing.rawContent || existing.content || '') : id === 7 ? (existing.rawContent || existing.content || '') : (existing.content || '')}</textarea>
             </div>
 
             <div class="form-group">
                 <label>
-                    Photos
+                    ${id === 8 ? 'Screenshots' : id === 9 ? 'Screenshots' : 'Photos'}
                     <span style="font-weight: normal; color: var(--gray-500); font-size: 13px;">
-                        ${id === 4 ? '— Required: upload both CAD screenshots above' : '— if applicable'}
+                        ${id === 4 ? '— Required: upload both CAD screenshots above' : id === 8 ? '— Required: Serial Monitor showing feedback values for at least two different objects' : id === 9 ? '— Required: demo photos or screenshots showing grip, LED classification, and slip detection' : '— if applicable'}
                     </span>
                 </label>
                 <div id="deliverablePhotoZone"
@@ -2290,10 +2290,11 @@ function openDeliverableForm(id) {
                 </div>
             </div>
 
+            ${id !== 8 && id !== 9 ? `
             <div class="form-group">
                 <label for="deliverableLinks">Supporting Documentation</label>
                 <textarea id="deliverableLinks" rows="3" placeholder="Brief vital code snippets (not full code)">${existing.links || ''}</textarea>
-            </div>
+            </div>` : ''}
 
             <div class="form-group">
                 <label for="deliverableSelfAssessment">Self-Assessment (1-10)</label>

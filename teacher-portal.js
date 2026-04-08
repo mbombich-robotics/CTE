@@ -22,7 +22,7 @@ const CONFIG = {
         robotics: {
             name: 'Robotics Portfolio',
             apiUrl: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
-            currentAppVersion: 'v2.9.30',  // keep in sync with Robotics app.js CONFIG.VERSION
+            currentAppVersion: 'v2.9.31',  // keep in sync with Robotics app.js CONFIG.VERSION
             hasTeams: false,
             totalDeliverables: 9,
             totalReflections: 11,
