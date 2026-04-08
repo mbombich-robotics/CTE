@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.31',
+    VERSION: 'v2.9.32',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbz2zToSMXHWQegIJnA73YxCZVUHVPLRck1DbQQiF7hUCnnMTE7WMUVNtpAjoGVY2-A/exec',
