@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.21',
+    VERSION: 'v2.9.22',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyXSBw_lCaHusiocLh3B_U1kyOmxyV3WlXhoqEdVAAzUN6U6_6ZCELqSTzzfhH6rUKc/exec',
@@ -22,7 +22,7 @@ const CONFIG = {
     // Point values
     POINTS: {
         WEEKLY_REFLECTION: 20,
-        TOTAL_POSSIBLE: 890
+        TOTAL_POSSIBLE: 1105
     },
 
     // Auto-save interval in milliseconds
@@ -183,6 +183,37 @@ const DELIVERABLES = [
             'Visual aids/demonstrations',
             'Answer Q&A from class/teacher'
         ]
+    },
+    {
+        id: 11,
+        title: 'Engineer Portfolio — Draft',
+        week: 10,
+        points: 75,
+        phase: 'Portfolio',
+        description: 'Use AI to help you draft your section of the team\'s Engineer Portfolio. Your section documents the design journey for your subsystem in a format that FIRST judges can evaluate.',
+        requirements: [
+            'Use the AI prompts below to draft each section of your subsystem page',
+            'Problem Statement: What game challenge does your subsystem solve? What constraints did you face?',
+            'Design Iterations: Describe at least 2 approaches you considered — include sketches, photos, or CAD screenshots',
+            'Final Design Rationale: Why did you choose this approach? Reference data, weight, or performance',
+            'Testing & Results: What did you measure or observe? What changed based on testing?',
+            'Paste your AI-drafted text into the reflection field and annotate it — fix anything the AI got wrong'
+        ]
+    },
+    {
+        id: 12,
+        title: 'Engineer Portfolio — Final',
+        week: 11,
+        points: 100,
+        phase: 'Portfolio',
+        description: 'Finalize and polish your portfolio section. This document will go to the FIRST judging panel — it must be accurate, professional, and tell the real story of your design work.',
+        requirements: [
+            'All four sections complete: Problem Statement, Design Iterations, Final Design, Testing & Results',
+            'Minimum 2 photos or diagrams embedded (sketches, CAD, build photos, test data)',
+            'Use AI to polish the writing — but every fact must be something you actually did',
+            'Have a teammate read your draft and give written feedback (include their name)',
+            'Export your final section as a PDF and submit the link in Supporting Links'
+        ]
     }
 ];
 
@@ -208,6 +239,58 @@ const RUBRICS = {
                 'Quantities and unit masses provided for each component',
                 'Totals calculated correctly',
                 'Data submitted to team Weight Sheet'
+            ]}
+        ]
+    },
+    11: {
+        categories: [
+            { name: 'Problem Statement', points: 15, criteria: [
+                'Clearly states what game challenge the subsystem addresses',
+                'Mentions at least one design constraint (weight, space, rules)',
+                'Written in first person — your perspective, not the team\'s'
+            ]},
+            { name: 'Design Iterations', points: 25, criteria: [
+                'At least 2 distinct approaches documented',
+                'Each approach includes visual evidence (sketch, photo, or CAD)',
+                'Explains why each option was considered or rejected'
+            ]},
+            { name: 'Final Design Rationale', points: 20, criteria: [
+                'States clearly what design was chosen',
+                'References at least one data point, measurement, or performance metric',
+                'Connects the decision back to the problem statement'
+            ]},
+            { name: 'Testing & Results', points: 15, criteria: [
+                'Describes at least one specific test performed',
+                'Includes an observable or measurable result',
+                'Notes one thing that changed based on testing'
+            ]}
+        ]
+    },
+    12: {
+        categories: [
+            { name: 'Completeness', points: 20, criteria: [
+                'All four sections present and substantive',
+                'Minimum 2 photos or diagrams with captions',
+                'Covers the full design journey from problem to final result'
+            ]},
+            { name: 'Technical Accuracy', points: 30, criteria: [
+                'All facts, measurements, and claims are accurate',
+                'AI-generated text has been reviewed and corrected',
+                'Technical terminology used correctly for the subsystem'
+            ]},
+            { name: 'Professional Writing', points: 25, criteria: [
+                'Clear, concise sentences — no filler phrases',
+                'Consistent formatting throughout',
+                'Reads like a professional engineering document, not a class assignment'
+            ]},
+            { name: 'Peer Review', points: 15, criteria: [
+                'Teammate feedback included or referenced',
+                'Evidence that feedback was acted on',
+                'Reviewer\'s name noted'
+            ]},
+            { name: 'Submission', points: 10, criteria: [
+                'PDF exported and link submitted in Supporting Links',
+                'File is legible and properly formatted'
             ]}
         ]
     },
@@ -2520,6 +2603,29 @@ Here's my raw content:
 [PASTE YOUR DELIVERABLES AND REFLECTIONS HERE]`;
             break;
 
+        case 'portfolio-draft':
+            instructions = 'Use this prompt to draft your Engineer Portfolio section with AI:';
+            prompt = buildPortfolioDraftPrompt();
+            break;
+
+        case 'portfolio-polish':
+            instructions = 'Use this prompt to polish your draft into final form:';
+            prompt = `You are helping a high school student finalize their FIRST Robotics Engineer Portfolio section for submission to competition judges.
+
+Subsystem: ${formatTeamName(state.student?.team || 'subsystem')}
+Student name: ${state.student?.name || '[name]'}
+
+Here is my draft. Please:
+1. Improve grammar, clarity, and professional tone
+2. Make sure each section has a clear heading
+3. Replace vague phrases like "we worked on" with specific technical language
+4. Do NOT add facts — only improve what is already written
+5. Keep it under 1 page (about 500 words) so it fits the portfolio format
+
+My draft:
+[PASTE YOUR DRAFT HERE]`;
+            break;
+
         case 'summarize':
             instructions = 'Copy this prompt to generate an executive summary:';
             prompt = `Create a 150-200 word executive summary of my contributions to the FIRST Robotics team.
@@ -2546,6 +2652,132 @@ Make it professional, highlighting technical skills and problem-solving abilitie
     document.getElementById('closeAiPanel').addEventListener('click', () => {
         panel.classList.remove('active');
     });
+}
+
+function buildPortfolioDraftPrompt() {
+    const team = state.student?.team || 'subsystem';
+    const name = state.student?.name || '[your name]';
+
+    const subsystemGuidance = {
+        drivetrain: {
+            label: 'Drivetrain',
+            hints: [
+                'Drive base type (tank, swerve, mecanum, etc.) and why it was chosen',
+                'Wheel size, motor selection, gear ratio or belt ratio',
+                'How traction, turning radius, and speed were balanced',
+                'How the drivetrain handled defense or field obstacles'
+            ],
+            questions: [
+                'What drive base did you choose and what alternatives did you consider?',
+                'What was your target top speed and how did you calculate the gear ratio?',
+                'How did the drivetrain perform at competition vs. in testing?'
+            ]
+        },
+        collector: {
+            label: 'Collector / Intake',
+            hints: [
+                'Game piece being collected and what made it difficult',
+                'Intake geometry (rollers, belts, compliant wheels) and why',
+                'Ground clearance, intake angle, and compression distance',
+                'Reliability improvements made after testing'
+            ],
+            questions: [
+                'What were the main challenges collecting the game piece reliably?',
+                'What intake geometry did you try first, and why did you change it?',
+                'How did you measure collection success rate in testing?'
+            ]
+        },
+        hopper: {
+            label: 'Hopper / Storage',
+            hints: [
+                'How many game pieces must be stored and how they are indexed',
+                'Material choices to reduce jam risk',
+                'Sensor integration (beam breaks, limit switches) if any',
+                'Feed path from intake to shooter'
+            ],
+            questions: [
+                'How did game pieces move from the intake through the hopper?',
+                'What jam conditions did you encounter and how did you solve them?',
+                'How did you ensure consistent delivery to the shooter?'
+            ]
+        },
+        shooter: {
+            label: 'Shooter / Launcher',
+            hints: [
+                'Shooter type (flywheel, puncher, catapult) and rationale',
+                'Target exit velocity and how you calculated or measured it',
+                'Hood angle adjustment mechanism if applicable',
+                'Repeatability data — shot consistency across multiple attempts'
+            ],
+            questions: [
+                'What exit velocity did you target and how did you determine it?',
+                'How many design iterations did the shooter go through?',
+                'What was your shooting accuracy at competition distance?'
+            ]
+        },
+        climber: {
+            label: 'Climber / Endgame',
+            hints: [
+                'Climb mechanism type (hook, telescoping arm, winch, etc.)',
+                'Load analysis — estimated robot weight the climber must support',
+                'Time to complete climb and how it was measured',
+                'Safety considerations and failure modes tested'
+            ],
+            questions: [
+                'What forces does your climber need to handle and how did you verify it?',
+                'How long does a successful climb take, and how did you optimize that?',
+                'What failure mode were you most concerned about and how did you address it?'
+            ]
+        },
+        programming: {
+            label: 'Programming / Autonomous',
+            hints: [
+                'Languages and frameworks used (Java/WPILib, Python, etc.)',
+                'Autonomous routines developed and their scoring value',
+                'Vision or sensor integration (Limelight, AprilTags, encoders)',
+                'Closed-loop control implemented (PID, motion profiling)'
+            ],
+            questions: [
+                'What autonomous routines did you write and how reliably did they run?',
+                'What sensor feedback did you use and how did you tune it?',
+                'What was the hardest software problem you solved this season?'
+            ]
+        }
+    };
+
+    const sub = subsystemGuidance[team] || {
+        label: formatTeamName(team),
+        hints: ['Key mechanism description', 'Design alternatives considered', 'Testing data collected'],
+        questions: ['What challenge did your subsystem solve?', 'What design iterations did you go through?', 'How did you test and validate performance?']
+    };
+
+    return `You are helping ${name}, a high school FIRST Robotics student, write their Engineer Portfolio section for the ${sub.label} subsystem. This will be submitted to FIRST judges at competition.
+
+The portfolio follows this structure (keep each section to 2–4 sentences):
+
+**1. Problem Statement**
+What game challenge does the ${sub.label} need to solve? What constraints existed (weight, rules, space)?
+
+**2. Design Iterations**
+What approaches did the team consider? What did you personally work on or evaluate?
+Include: ${sub.hints[0]}, ${sub.hints[1]}
+
+**3. Final Design Rationale**
+What was chosen and why? Reference a specific measurement or performance result.
+Include: ${sub.hints[2]}
+
+**4. Testing & Results**
+What did you test? What did you observe or measure? What changed?
+${sub.hints[3] ? 'Include: ' + sub.hints[3] : ''}
+
+---
+To help you write this, answer the following questions in your own words first, then I will format them into the portfolio:
+
+${sub.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
+
+[ANSWER THE QUESTIONS ABOVE, THEN PASTE YOUR ANSWERS HERE]
+
+Write in first person (I/we) and keep the total under 500 words. Do not make up facts — only use what the student provides.`;
 }
 
 function generatePracticeQuestions() {
