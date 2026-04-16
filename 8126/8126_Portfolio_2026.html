@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FRC Team 8126 • Vicksburg Control Freaks • 2026 Engineering Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=Barlow+Semi+Condensed:ital,wght@1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #C41230;
+    --red-dark: #8B0D22;
+    --red-light: #E8192E;
+    --black: #0D0D0D;
+    --dark: #1A1A1A;
+    --mid: #2E2E2E;
+    --gray: #6B6B6B;
+    --light-gray: #F0F0F0;
+    --off-white: #F8F8F8;
+    --white: #FFFFFF;
+    --rule: 1px solid #D0D0D0;
+    --rule-heavy: 3px solid var(--red);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 400;
+    color: var(--black);
+    background: var(--white);
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  /* ── COVER ─────────────────────────────────────────── */
+  .cover {
+    background: var(--black);
+    color: var(--white);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 60px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 60px,
+      rgba(196,18,48,0.04) 60px,
+      rgba(196,18,48,0.04) 61px
+    );
+  }
+
+  .cover-accent {
+    width: 60px;
+    height: 4px;
+    background: var(--red);
+    margin: 0 auto 28px;
+  }
+
+  .cover-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--red-light);
+    margin-bottom: 16px;
+  }
+
+  .cover h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(52px, 8vw, 96px);
+    line-height: 0.92;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .cover h1 span { color: var(--red-light); }
+
+  .cover-sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #888;
+    margin-top: 14px;
+    margin-bottom: 40px;
+  }
+
+  .cover-rule { width: 100%; max-width: 500px; height: 1px; background: #333; margin: 0 auto 40px; }
+
+  .cover-motto {
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-style: italic;
+    font-size: 20px;
+    color: #AAA;
+    margin-bottom: 48px;
+  }
+
+  .awards-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    max-width: 700px;
+  }
+
+  .award-chip {
+    border: 1px solid #444;
+    color: #CCC;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 2px;
+  }
+
+  .cover-photo {
+    width: 100%;
+    max-width: 800px;
+    aspect-ratio: 16/7;
+    background: #222;
+    border: 1px solid #333;
+    margin-top: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover-photo::after {
+    content: none;
+  }
+
+  /* ── LAYOUT ─────────────────────────────────────────── */
+  .page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  /* ── TABLE OF CONTENTS ──────────────────────────────── */
+  .toc-section {
+    padding: 72px 0 64px;
+    border-bottom: var(--rule);
+  }
+
+  .toc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-top: 40px;
+    border: var(--rule);
+  }
+
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 24px;
+    border-bottom: var(--rule);
+    border-right: var(--rule);
+    text-decoration: none;
+    color: var(--black);
+    transition: background 0.15s;
+  }
+
+  .toc-item:nth-child(even) { border-right: none; }
+  .toc-item:nth-last-child(-n+2) { border-bottom: none; }
+
+  .toc-item:hover { background: var(--light-gray); }
+
+  .toc-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 28px;
+    color: var(--red);
+    line-height: 1;
+    min-width: 32px;
+  }
+
+  .toc-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* ── SECTION HEADERS ─────────────────────────────────── */
+  .section {
+    padding: 80px 0 64px;
+    border-bottom: var(--rule);
+  }
+
+  .section:last-child { border-bottom: none; }
+
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 10px;
+  }
+
+  .section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(36px, 5vw, 56px);
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+
+  .section-desc {
+    font-size: 14px;
+    font-style: italic;
+    color: var(--gray);
+    margin-bottom: 40px;
+    padding-bottom: 32px;
+    border-bottom: var(--rule);
+  }
+
+  /* ── STAT ROW ────────────────────────────────────────── */
+  .stat-row {
+    display: flex;
+    gap: 0;
+    margin-bottom: 40px;
+    border: var(--rule);
+  }
+
+  .stat {
+    flex: 1;
+    padding: 24px 20px;
+    border-right: var(--rule);
+    text-align: center;
+  }
+
+  .stat:last-child { border-right: none; }
+
+  .stat-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 42px;
+    color: var(--red);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+
+  /* ── PHOTO PLACEHOLDER ───────────────────────────────── */
+  .photo {
+    background: var(--light-gray);
+    border: 1px dashed #C0C0C0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .photo::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 6px,
+      rgba(0,0,0,0.025) 6px,
+      rgba(0,0,0,0.025) 7px
+    );
+  }
+
+  .photo-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #AAA;
+    position: relative;
+    text-align: center;
+    padding: 0 12px;
+  }
+
+  .photo-icon {
+    width: 28px;
+    height: 28px;
+    opacity: 0.25;
+    position: relative;
+  }
+
+  /* Photo size helpers */
+  .photo-wide  { width: 100%; aspect-ratio: 16/7; }
+  .photo-hero  { width: 100%; aspect-ratio: 3/2; max-height: 360px; }
+  .photo-sq    { aspect-ratio: 1; }
+  .photo-tall  { aspect-ratio: 3/4; }
+  .photo-short { aspect-ratio: 16/6; width: 100%; }
+
+  /* ── CONTENT BLOCKS ──────────────────────────────────── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 40px;
+  }
+
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+
+  .two-thirds-col {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 32px;
+    align-items: start;
+    margin-bottom: 40px;
+  }
+
+  .one-third-col {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 32px;
+    align-items: start;
+    margin-bottom: 40px;
+  }
+
+  /* ── SUBHEADINGS ─────────────────────────────────────── */
+  h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--red);
+    margin-bottom: 10px;
+    margin-top: 32px;
+  }
+
+  h3:first-child { margin-top: 0; }
+
+  p { margin-bottom: 14px; }
+  p:last-child { margin-bottom: 0; }
+
+  ul {
+    padding-left: 20px;
+    margin-bottom: 14px;
+  }
+
+  li { margin-bottom: 6px; }
+
+  strong { font-weight: 600; }
+
+  /* ── TABLE ───────────────────────────────────────────── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 32px;
+    font-size: 14px;
+  }
+
+  .data-table th {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: var(--black);
+    color: var(--white);
+    padding: 12px 16px;
+    text-align: left;
+  }
+
+  .data-table td {
+    padding: 12px 16px;
+    border-bottom: var(--rule);
+    vertical-align: top;
+  }
+
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:nth-child(even) td { background: var(--off-white); }
+
+  /* ── FAULT TABLE (two-col) ───────────────────────────── */
+  .fault-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 32px;
+    font-size: 14px;
+  }
+
+  .fault-table th {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: var(--black);
+    color: var(--white);
+    padding: 12px 16px;
+    text-align: left;
+  }
+
+  .fault-table td {
+    padding: 12px 16px;
+    border-bottom: var(--rule);
+    vertical-align: top;
+  }
+
+  .fault-table tr:last-child td { border-bottom: none; }
+  .fault-table tr:nth-child(even) td { background: var(--off-white); }
+
+  .fault-table td:first-child {
+    font-weight: 600;
+    width: 42%;
+  }
+
+  /* ── PUGH MATRIX ─────────────────────────────────────── */
+  .pugh-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 32px;
+  }
+
+  .pugh-table th {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: var(--black);
+    color: var(--white);
+    padding: 10px 14px;
+    text-align: center;
+  }
+
+  .pugh-table th:first-child,
+  .pugh-table th:nth-child(2) { text-align: left; }
+
+  .pugh-table td {
+    padding: 10px 14px;
+    border-bottom: var(--rule);
+    text-align: center;
+  }
+
+  .pugh-table td:first-child,
+  .pugh-table td:nth-child(2) { text-align: left; }
+
+  .pugh-table tr:nth-child(even) td { background: var(--off-white); }
+
+  .pos { color: #1a7f3c; font-weight: 700; }
+  .neg { color: var(--red); font-weight: 700; }
+  .neu { color: var(--gray); }
+
+  /* ── STACK LIST ──────────────────────────────────────── */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .stack-item {
+    padding: 14px 18px;
+    border: var(--rule);
+    border-left: 3px solid var(--red);
+    font-size: 14px;
+  }
+
+  .stack-item strong {
+    display: block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 2px;
+  }
+
+  /* ── OUTREACH TABLE ──────────────────────────────────── */
+  .outreach-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-bottom: 32px;
+  }
+
+  .outreach-table th {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: var(--black);
+    color: var(--white);
+    padding: 12px 16px;
+    text-align: left;
+  }
+
+  .outreach-table td {
+    padding: 12px 16px;
+    border-bottom: var(--rule);
+    vertical-align: top;
+  }
+
+  .outreach-table td:first-child { font-weight: 600; width: 36%; }
+  .outreach-table td:nth-child(2) { width: 16%; color: var(--red); font-weight: 700; font-family: 'Barlow Condensed', sans-serif; font-size: 16px; }
+  .outreach-table tr:nth-child(even) td { background: var(--off-white); }
+
+  /* ── SPONSOR TIERS ───────────────────────────────────── */
+  .tier-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    border: var(--rule);
+    margin-bottom: 32px;
+  }
+
+  .tier {
+    padding: 28px 24px;
+    border-right: var(--rule);
+  }
+
+  .tier:last-child { border-right: none; }
+
+  .tier-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 22px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+  }
+
+  .tier-bronze .tier-name { color: #A0522D; }
+  .tier-silver .tier-name { color: #777; }
+  .tier-gold .tier-name { color: #B8860B; }
+
+  .tier ul { font-size: 14px; }
+
+  /* ── QUOTE BLOCK ─────────────────────────────────────── */
+  .pullquote {
+    border-left: 4px solid var(--red);
+    padding: 20px 28px;
+    background: var(--off-white);
+    margin: 32px 0;
+    font-size: 16px;
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  .pullquote cite {
+    display: block;
+    margin-top: 12px;
+    font-style: normal;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+
+  /* ── PHOTO CAPTIONS ──────────────────────────────────── */
+  figcaption {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-top: 8px;
+    text-align: center;
+  }
+
+  figure { margin: 0; }
+
+  /* ── FUNDING ITEM ────────────────────────────────────── */
+  .funding-item {
+    padding: 16px 0;
+    border-bottom: var(--rule);
+    display: flex;
+    gap: 20px;
+  }
+
+  .funding-item:last-child { border-bottom: none; }
+
+  .funding-bullet {
+    width: 8px;
+    height: 8px;
+    background: var(--red);
+    border-radius: 50%;
+    margin-top: 8px;
+    flex-shrink: 0;
+  }
+
+  .funding-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+
+  /* ── ALUMNI STATS ────────────────────────────────────── */
+  .alumni-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border: var(--rule);
+    margin-bottom: 32px;
+  }
+
+  .alumni-stat {
+    padding: 24px 16px;
+    text-align: center;
+    border-right: var(--rule);
+  }
+
+  .alumni-stat:last-child { border-right: none; }
+
+  .alumni-stat .stat-value { font-size: 36px; }
+
+  /* ── AWARD HISTORY ───────────────────────────────────── */
+  .award-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    margin: 4px 4px 4px 0;
+    border-radius: 2px;
+  }
+
+  .award-badge::before {
+    content: '★';
+    color: var(--red-light);
+    font-size: 14px;
+  }
+
+  /* ── FOOTER ──────────────────────────────────────────── */
+  .footer {
+    background: var(--black);
+    color: #666;
+    text-align: center;
+    padding: 32px 40px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .footer strong { color: var(--white); }
+
+  /* ── OVERVIEW ────────────────────────────────────────── */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 48px;
+    align-items: start;
+    margin-bottom: 40px;
+  }
+
+  .overview-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: var(--rule);
+  }
+
+  .overview-stat {
+    padding: 24px 20px;
+    border-bottom: var(--rule);
+    border-right: var(--rule);
+    text-align: center;
+  }
+
+  .overview-stat:nth-child(even) { border-right: none; }
+  .overview-stat:nth-last-child(-n+2) { border-bottom: none; }
+
+  .overview-stat .stat-value { font-size: 34px; }
+
+  /* ── ITERATION ROW ───────────────────────────────────── */
+  .iter-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    border: var(--rule);
+    margin-bottom: 40px;
+  }
+
+  .iter-cell {
+    padding: 0;
+    border-right: var(--rule);
+  }
+
+  .iter-cell:last-child { border-right: none; }
+
+  .iter-photo {
+    width: 100%;
+    aspect-ratio: 4/3;
+  }
+
+  .iter-label {
+    padding: 16px;
+    background: var(--off-white);
+    border-top: var(--rule);
+  }
+
+  .iter-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 20px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 4px;
+  }
+
+  .iter-desc { font-size: 13px; color: var(--gray); }
+
+  /* ── QUALITY TABLE ───────────────────────────────────── */
+  .quality-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-bottom: 32px;
+  }
+
+  .quality-table th {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: var(--black);
+    color: var(--white);
+    padding: 12px 16px;
+    text-align: left;
+  }
+
+  .quality-table td {
+    padding: 12px 16px;
+    border-bottom: var(--rule);
+    vertical-align: top;
+  }
+
+  .quality-table td:nth-child(3) { color: var(--gray); font-size: 13px; }
+  .quality-table tr:nth-child(even) td { background: var(--off-white); }
+
+  /* ── RED DIVIDER ─────────────────────────────────────── */
+  .red-rule {
+    width: 48px;
+    height: 4px;
+    background: var(--red);
+    margin-bottom: 32px;
+  }
+
+  @media print {
+    @page {
+      size: letter;
+      margin: 0.65in 0.75in;
+    }
+
+    body { font-size: 13px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+    /* ── Each major .page div starts on a fresh page ── */
+    .page {
+      page-break-before: always;
+      break-before: page;
+      max-width: 100%;
+      padding: 0;
+    }
+
+    /* ── Cover fills the page ── */
+    .cover {
+      min-height: 100vh;
+      page-break-after: always;
+      break-after: page;
+      padding: 60px 40px;
+    }
+
+    /* Remove decorative repeat pattern — saves ink, may moire */
+    .cover::before { display: none; }
+
+    /* ── Prevent orphaned h3 headings ── */
+    h3 {
+      page-break-after: avoid;
+      break-after: avoid;
+    }
+
+    /* ── Paragraph widows / orphans ── */
+    p { orphans: 3; widows: 3; }
+
+    /* ── Keep atomic blocks intact ── */
+    figure,
+    figcaption,
+    .stat-row,
+    .iter-row,
+    .pullquote,
+    .funding-item,
+    .tier-grid,
+    .alumni-grid,
+    .stack-grid,
+    .toc-grid,
+    .data-table,
+    .fault-table,
+    .pugh-table,
+    .outreach-table,
+    .quality-table {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    /* ── Keep photo placeholder styling clean in print ── */
+    .photo::before { display: none; }
+    .photo { border-style: solid; border-color: #ccc; }
+
+    /* ── Section headers stay with what follows ── */
+    .section-label,
+    .section-title,
+    .red-rule {
+      page-break-after: avoid;
+      break-after: avoid;
+    }
+
+    /* ── Don't break inside small two/three-col grids (photos + captions) ── */
+    .iter-cell,
+    .overview-stat,
+    .stack-item,
+    .tier {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    /* ── Avoid splitting a section-desc from its section header ── */
+    .section-desc {
+      page-break-before: avoid;
+      break-before: avoid;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════ COVER ══════════ -->
+<div class="cover">
+  <div class="cover-eyebrow">FRC Team 8126 &nbsp;•&nbsp; Vicksburg, Michigan &nbsp;•&nbsp; 2026 Season</div>
+  <div class="cover-accent"></div>
+  <h1>Vicksburg<br><span>Control</span><br>Freaks</h1>
+  <div class="cover-sub">FRC Rebuilt &nbsp;•&nbsp; Engineering Portfolio</div>
+  <div class="cover-rule"></div>
+  <div class="cover-motto">"Put it together. Take it apart."</div>
+  <div class="awards-list">
+    <span class="award-chip">Autonomous Award</span>
+    <span class="award-chip">Excellence in Engineering</span>
+    <span class="award-chip">Industrial Design Award</span>
+    <span class="award-chip">Quality Award</span>
+    <span class="award-chip">Engineering Inspiration</span>
+    <span class="award-chip">Gracious Professionalism</span>
+    <span class="award-chip">Team Sustainability</span>
+  </div>
+  <div class="cover-photo">
+    <img src="New Team Photo.png" style="width:100%;height:100%;object-fit:cover;object-position:center center;display:block;">
+  </div>
+</div>
+
+
+<!-- ══════════ TABLE OF CONTENTS ══════════ -->
+<div class="page">
+  <div class="toc-section">
+    <div class="section-label">Navigation</div>
+    <div class="section-title">Table of Contents</div>
+    <div class="toc-grid">
+      <a class="toc-item" href="#overview"><span class="toc-num">01</span><span class="toc-label">Team Overview</span></a>
+      <a class="toc-item" href="#autonomous"><span class="toc-num">02</span><span class="toc-label">Autonomous Award</span></a>
+      <a class="toc-item" href="#engineering"><span class="toc-num">03</span><span class="toc-label">Excellence in Engineering</span></a>
+      <a class="toc-item" href="#industrial"><span class="toc-num">04</span><span class="toc-label">Industrial Design Award</span></a>
+      <a class="toc-item" href="#quality"><span class="toc-num">05</span><span class="toc-label">Quality Award</span></a>
+      <a class="toc-item" href="#inspiration"><span class="toc-num">06</span><span class="toc-label">Engineering Inspiration</span></a>
+      <a class="toc-item" href="#gp"><span class="toc-num">07</span><span class="toc-label">Gracious Professionalism</span></a>
+      <a class="toc-item" href="#sustainability"><span class="toc-num">08</span><span class="toc-label">Team Sustainability</span></a>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ ONE-PAGE LEAVE-BEHIND ══════════ -->
+<div class="page" style="page-break-after:always;">
+  <div class="section">
+    <div class="section-label">Quick Reference</div>
+    <div class="section-title">Team 8126 — At a Glance</div>
+    <div class="red-rule"></div>
+    <p style="margin-bottom:24px;">Vicksburg Control Freaks · Vicksburg, Michigan · 6th year · 24 members · Self-funded</p>
+
+    <div class="two-col" style="gap:32px; align-items:start;">
+      <div>
+        <h3 style="margin-bottom:8px;">Robot Highlights</h3>
+        <ul style="margin:0 0 20px 16px; padding:0; line-height:1.8;">
+          <li>Three full design iterations during build season</li>
+          <li>Two independent auto paths — vision-tracked + encoder-based fallback</li>
+          <li>Shooter: 3-wheel flywheel, ±1° adjustable hood, 3 exit paths</li>
+          <li>Collector: passive compliant intake, gravity-fed hopper</li>
+          <li>Climber: dual-stage elevator, hooks machined in-house</li>
+          <li>CNC-routed polycarbonate panels; carbon fiber spacers (±0.10 mm)</li>
+        </ul>
+
+        <h3 style="margin-bottom:8px;">Awards We're Pursuing</h3>
+        <ul style="margin:0 0 20px 16px; padding:0; line-height:1.8;">
+          <li>Autonomous Award</li>
+          <li>Excellence in Engineering Award</li>
+          <li>Industrial Design Award</li>
+          <li>Quality Award</li>
+          <li>Engineering Inspiration Award</li>
+          <li>Gracious Professionalism Award</li>
+          <li>Team Sustainability Award</li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 style="margin-bottom:8px;">Program Snapshot</h3>
+        <ul style="margin:0 0 20px 16px; padding:0; line-height:1.8;">
+          <li>$800K Engineering Technology Curriculum grant (MS + HS)</li>
+          <li>FLL → FTC → FRC pipeline — all run by same lead mentors</li>
+          <li>100% student retention; 20% annual membership growth</li>
+          <li>14 alumni placed in STEM careers or skilled trades</li>
+          <li>3,833 lbs scrap metal recycled → Rotary scholarship fund</li>
+          <li>5+ outreach events annually; 2,000+ community members reached</li>
+        </ul>
+
+        <h3 style="margin-bottom:8px;">Previous Awards</h3>
+        <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:20px;">
+          <span class="award-badge">Gracious Professionalism</span>
+          <span class="award-badge">Creativity Award</span>
+          <span class="award-badge">Team Sustainability</span>
+        </div>
+
+        <h3 style="margin-bottom:8px;">Find Us</h3>
+        <p style="margin:0; line-height:1.8;">
+          Vicksburg High School · Vicksburg, MI 49097<br>
+          vicksburgcontrolfreaks@gmail.com<br>
+          <a href="https://vicksburgcontrolfreaks.github.io/2026CF/" style="color:inherit;">vicksburgcontrolfreaks.github.io/2026CF</a><br>
+          Team #8126
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ TEAM OVERVIEW ══════════ -->
+<div class="page">
+  <div class="section" id="overview">
+    <div class="section-label">Introduction</div>
+    <div class="section-title">Team Overview</div>
+    <div class="red-rule"></div>
+
+    <div class="overview-grid">
+      <div>
+        <p>Team 8126 — the Vicksburg Control Freaks — is an FRC team from Vicksburg, Michigan (pop. ~3,400). In six years we have grown from a program in an 80×25 ft portable classroom into a full mechatronics shop with a half-court practice field, programming room, and classroom. Our program is almost entirely self-funded and operates a complete FLL → FTC → FRC pipeline.</p>
+
+        <h3>Design Philosophy</h3>
+        <p>Our motto — <em>"Put it together. Take it apart."</em> — is the operating principle behind every design decision. We build to learn, iterate to improve, and discard what isn't working. This mindset produced a robot that, by its third iteration, is precise, modular, visually unified, and competition-hardened.</p>
+      </div>
+      <div class="overview-stats">
+        <div class="overview-stat"><div class="stat-value">6</div><div class="stat-label">Years as a Team</div></div>
+        <div class="overview-stat"><div class="stat-value">21</div><div class="stat-label">Active Members</div></div>
+        <div class="overview-stat"><div class="stat-value">14</div><div class="stat-label">Alumni in STEM / Trades</div></div>
+        <div class="overview-stat"><div class="stat-value">$800K</div><div class="stat-label">Curriculum Grant</div></div>
+      </div>
+    </div>
+
+    <h3>Three Iterations — One Season</h3>
+    <div class="iter-row">
+      <div class="iter-cell">
+        <div class="photo photo-sq iter-photo">
+          <img src="version 1 full robot.jpg" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="iter-label">
+          <div class="iter-tag">V1 — Proof of Concept</div>
+          <div class="iter-desc">Established subsystem layout. Identified weight (140 lbs), live-bottom, and shooter speed issues.</div>
+        </div>
+      </div>
+      <div class="iter-cell">
+        <div class="photo photo-sq iter-photo">
+          <img src="earlier version full robot.jpeg" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="iter-label">
+          <div class="iter-tag">V2 — Competition Ready</div>
+          <div class="iter-desc">Weight reduced to ~90 lbs via polycarbonate panels. Three independent flywheel shooters, motorized collector, live-bottom belts added.</div>
+        </div>
+      </div>
+      <div class="iter-cell">
+        <div class="photo photo-sq iter-photo">
+          <img src="current version full robot.jpg" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="iter-label">
+          <div class="iter-tag">V3 — Quality Refinement</div>
+          <div class="iter-desc">Shooter spacers cut from carbon fiber arrow shafts to ±0.10 mm. Live bottom decoupled. All panels CNC-routed and flush aligned.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ AUTONOMOUS ══════════ -->
+<div class="page">
+  <div class="section" id="autonomous">
+    <div class="section-label">Award Submission</div>
+    <div class="section-title">Autonomous Award</div>
+    <div class="section-desc">Honors consistent, high-performance autonomous robot operation through innovative programming, sensor integration, and reliable execution.</div>
+
+    <div class="stat-row">
+      <div class="stat"><div class="stat-value">~50</div><div class="stat-label">Avg. Balls Scored / Auton</div></div>
+      <div class="stat"><div class="stat-value">6</div><div class="stat-label">Autonomous Routines</div></div>
+      <div class="stat"><div class="stat-value">95%</div><div class="stat-label">Loaded Balls Scored</div></div>
+      <div class="stat"><div class="stat-value">3</div><div class="stat-label">Starting Configurations</div></div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h3>System Architecture</h3>
+        <p>Four Arducam OV9281 cameras run PhotonVision with multi-tag PNP estimation. All four camera feeds are weighted and fused with drivetrain odometry via WPILib's SwerveDrivePoseEstimator and ADIS16470 IMU, giving the robot a continuously accurate field position.</p>
+
+        <h3>Routine Structure</h3>
+        <p>At match start the robot reads its position via AprilTag detection and selects one of six routines (two per starting position, both alliances). Each routine:</p>
+        <ul>
+          <li>Navigate under the trough; collect game pieces</li>
+          <li>Return over the hump — saves ~2 sec vs. the long way</li>
+          <li>Settle; auto-aim using live AprilTags to reestablish pose</li>
+          <li>Score ~25 balls; repeat for a second cycle</li>
+        </ul>
+      </div>
+      <div>
+        <figure>
+          <div class="photo photo-hero">
+            <img src="Path Planner.JPG" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
+          </div>
+          <figcaption>PathPlanner route visualization — field overhead view</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-bottom:32px;">
+      <figure>
+        <div class="photo" style="aspect-ratio:4/3;">
+          <img src="Vision Subsystem Components.JPG" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <figcaption>Vision subsystem — electronics, co-processor, and camera hardware</figcaption>
+      </figure>
+      <figure>
+        <div class="photo" style="aspect-ratio:4/3;">
+          <img src="Path Planner.JPG" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
+        </div>
+        <figcaption>PathPlanner trajectory visualization — field overhead view</figcaption>
+      </figure>
+    </div>
+
+    <p><strong>Executed in competition twice at our most recent event.</strong> Both runs were identical — all marks hit, 95% of loaded game pieces scored. Average total: ~50 balls per autonomous period.</p>
+
+    <h3>Fault Tolerance</h3>
+    <table class="fault-table">
+      <thead><tr><th>Scenario</th><th>Outcome</th></tr></thead>
+      <tbody>
+        <tr><td>Nominal — two full cycles</td><td>~50 balls; 95% conversion rate</td></tr>
+        <tr><td>2nd-cycle collection failure</td><td>~25 balls; robot staged, ready to shoot at teleop start</td></tr>
+        <tr><td>Camera failure</td><td>8 preloaded balls via fallback routine; stable field position</td></tr>
+        <tr><td>Worst case</td><td>Correct side of field, clear of collision zones, ready for teleop</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Software Stack</h3>
+    <div class="stack-grid">
+      <div class="stack-item"><strong>Trajectories</strong>PathPlanner (migrated from Choreo for better error diagnostics)</div>
+      <div class="stack-item"><strong>Vision</strong>PhotonVision, multi-tag PNP, four cameras</div>
+      <div class="stack-item"><strong>Localization</strong>SwerveDrivePoseEstimator + ADIS16470 + odometry</div>
+      <div class="stack-item"><strong>Routine Selection</strong>SmartDashboard chooser with pose-based orientation logic</div>
+      <div class="stack-item"><strong>Shooter</strong>Three independent velocity loops; linear interpolation across four calibrated distance-to-RPM points</div>
+      <div class="stack-item"><strong>Speed Modes</strong>50% normal / 90% turbo / 25% precision; single-button auto-aim and X-lock</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ EXCELLENCE IN ENGINEERING ══════════ -->
+<div class="page">
+  <div class="section" id="engineering">
+    <div class="section-label">Award Submission</div>
+    <div class="section-title">Excellence in Engineering Award</div>
+    <div class="section-desc">Recognizes an elegant, efficient, and well-documented design process where every engineering decision is justified through data, analysis, and iteration.</div>
+
+    <h3>Design Process</h3>
+    <p>Every subsystem followed: <strong>problem definition → requirements → concept generation → Pugh analysis → prototype → controlled testing → iteration.</strong></p>
+
+    <h3>Shooter: Fixed Hood vs. Articulating</h3>
+    <div class="two-thirds-col">
+      <div>
+        <p>Three concepts evaluated via weighted Pugh matrix (7 criteria). Fixed hood selected. ~3 hours of structured 10-shot trials established 68–67° as the optimal angle. Final iteration refined to 62°, 0.35" compression, enabling simultaneous collect-and-shoot.</p>
+        <table class="pugh-table">
+          <thead>
+            <tr>
+              <th>Criteria</th>
+              <th>Weight</th>
+              <th>Pitch Machine</th>
+              <th>Articulating Hood</th>
+              <th>Fixed Hood</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Ease of production</td><td>2</td><td class="neu">0</td><td class="pos">+2</td><td class="pos">+2</td></tr>
+            <tr><td>Simplicity</td><td>2</td><td class="neu">0</td><td class="neg">-2</td><td class="pos">+2</td></tr>
+            <tr><td>Weight</td><td>3</td><td class="neu">0</td><td class="pos">+3</td><td class="pos">+3</td></tr>
+            <tr><td>Range</td><td>4</td><td class="neu">0</td><td class="pos">+4</td><td class="neu">0</td></tr>
+            <tr><td>Power</td><td>2</td><td class="neu">0</td><td class="pos">+2</td><td class="neu">0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <figure>
+          <div class="photo" style="aspect-ratio:3/4;">
+            <img src="Shooter prototype 3rd iteration.jpeg" style="width:100%;height:100%;object-fit:cover;display:block;">
+          </div>
+          <figcaption>Shooter assembly — clear PC panels, carbon fiber spacers, aligned flywheel paths</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <h3>Drivetrain: Belly Pan Iterations</h3>
+    <p>Steel (rigid, too heavy) → hybrid steel/PC (improved) → full polycarbonate (final, ~29.3 lbs). Measurably better acceleration and driver control at each stage.</p>
+
+    <h3>Climber: Strategic Removal</h3>
+    <p>V4 climber (9.34 lbs) lacked torque and lateral stability. Two V5 paths engineered (magnetic lock, active stability). Strategic decision: remove the climber, reallocate 9.34 lbs to scoring. Software complete. Modular chassis footprint preserved for future re-integration.</p>
+
+    <h3>Collector: Simplicity as a Design Goal</h3>
+    <p>Multi-roller prototypes jammed under load. Final design: two-roller, single-motor belt system with Cat Tongue grip and 0.25–0.5" compression. Fewer failure points, better synchronization, more consistent acquisition.</p>
+    <div class="two-col">
+      <figure>
+        <div class="photo" style="aspect-ratio:4/3; background:#f8f8f8;">
+          <img src="Collector early version.png" style="width:100%;height:100%;object-fit:contain;display:block;">
+        </div>
+        <figcaption>Early collector — 3-roller concept, multi-point contact</figcaption>
+      </figure>
+      <figure>
+        <div class="photo" style="aspect-ratio:4/3; background:#f8f8f8;">
+          <img src="Collector current.png" style="width:100%;height:100%;object-fit:contain;display:block;">
+        </div>
+        <figcaption>Final collector — 2-roller, single-motor, Cat Tongue grip</figcaption>
+      </figure>
+    </div>
+
+    <h3>Software Iteration Examples</h3>
+    <ul>
+      <li>Encoder wraparound at 0/1 boundary caused PID to command wrong direction — fixed via wraparound handling</li>
+      <li>Pre-spin cap too high → voltage drop blocked other inputs — calibrated to lower idle RPM</li>
+      <li>PathPlanner replaced Choreo for improved trajectory error diagnostics</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ══════════ INDUSTRIAL DESIGN ══════════ -->
+<div class="page">
+  <div class="section" id="industrial">
+    <div class="section-label">Award Submission</div>
+    <div class="section-title">Industrial Design Award</div>
+    <div class="section-desc">Recognizes a robot where form and function are unified — material choices, visual design, and structural decisions working as a coherent whole.</div>
+
+    <figure style="margin-bottom:40px;">
+      <div class="photo photo-hero">
+        <img src="clean shot.jpeg" style="width:100%;height:100%;object-fit:cover;display:block;">
+      </div>
+      <figcaption>V3 final robot — clear polycarbonate panels, unified visual system</figcaption>
+    </figure>
+
+    <div class="two-col">
+      <div>
+        <h3>Clear Polycarbonate as a Design Language</h3>
+        <p>All primary panels are clear polycarbonate — intentional on multiple levels. Aesthetically, it produces a sharp, modern industrial appearance. Functionally, drivers see payload status in real time without sensors or cameras. Pit crew diagnose issues at a glance without removing covers.</p>
+        <p>PC was also selected for impact resistance. Competition contact is anticipated and designed for — tolerance between collector and hopper absorbs impacts without transferring force to adjacent components.</p>
+
+        <h3>Unified Visual System</h3>
+        <p>Every shooter panel is flush-aligned with no visible offset. All three shooter paths are visually and mechanically identical. The assembly appears machined as a single part. This is the direct result of CNC-routed components and ±0.10 mm carbon fiber spacers.</p>
+      </div>
+      <div>
+        <figure style="margin-bottom:20px;">
+          <div class="photo" style="aspect-ratio:4/3;">
+            <img src="Payload visibility through clear polycarbonate.jpg" style="width:100%;height:100%;object-fit:cover;display:block;">
+          </div>
+          <figcaption>Payload visibility through clear polycarbonate</figcaption>
+        </figure>
+        <figure>
+          <div class="photo" style="aspect-ratio:4/3;">
+            <img src="Three shooter paths — visually and mechanically identical.jpg" style="width:100%;height:100%;object-fit:cover;display:block;">
+          </div>
+          <figcaption>Three shooter paths — visually and mechanically identical</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ QUALITY ══════════ -->
+<div class="page">
+  <div class="section" id="quality">
+    <div class="section-label">Award Submission</div>
+    <div class="section-title">Quality Award</div>
+    <div class="section-desc">Honors craftsmanship, precision manufacturing, and an elevated standard of care in robot construction.</div>
+
+    <h3>Manufacturing Standards</h3>
+    <table class="quality-table">
+      <thead><tr><th>Tool / Method</th><th>Application</th><th>Tolerance / Outcome</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>CNC Router</strong></td>
+          <td>All polycarbonate structural panels, lightening holes, mounting features</td>
+          <td>Precise, repeatable; consistent edge quality across all panels</td>
+        </tr>
+        <tr>
+          <td><strong>Carbon Fiber Arrow Shafts</strong> (custom-cut spacers)</td>
+          <td>Shooter wheel spacing in all three shooter paths</td>
+          <td>±0.10 mm; visually and mechanically aligned assembly</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="two-col" style="margin-bottom:40px;">
+      <figure>
+        <div class="photo" style="aspect-ratio:4/3;">
+          <img src="CNC Router.JPG" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <figcaption>CNC router — polycarbonate panel production</figcaption>
+      </figure>
+      <figure>
+        <div class="photo" style="aspect-ratio:4/3;">
+          <img src="Carbon fiber spacers — ±0.10 mm precision.jpg" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <figcaption>Carbon fiber spacers — ±0.10 mm precision</figcaption>
+      </figure>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h3>The Shooter: A Quality Benchmark</h3>
+        <p>Spacers cut from carbon fiber arrow shafts to ±0.10 mm hold wheel position in all three shooter paths. The result: panels are flush, wheels sit true, and the assembly appears machined as a single piece.</p>
+        <p>Three independent velocity loops eliminate follower interference. Pre-spun at calibrated idle RPM, shot-to-shot consistency is high and spin-up delay is eliminated.</p>
+
+        <h3>Modularity as a Quality Practice</h3>
+        <p>Removing the live bottom from the shooter assembly in V3 was a quality decision. Each module is independently inspectable and serviceable without disturbing adjacent systems. Belt tension on the live bottom improved as a side effect. The robot is faster to repair and reassembled more reliably after maintenance.</p>
+      </div>
+      <div>
+        <figure style="margin-bottom:20px;">
+          <div class="photo" style="aspect-ratio:4/3;">
+            <img src="Three shooter paths — visually and mechanically identical.jpg" style="width:100%;height:100%;object-fit:cover;display:block;">
+          </div>
+          <figcaption>Three aligned shooter paths</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ ENGINEERING INSPIRATION ══════════ -->
+<div class="page">
+  <div class="section" id="inspiration">
+    <div class="section-label">Award Submission</div>
+    <div class="section-title">Engineering Inspiration Award</div>
+    <div class="section-desc">Honors the team that has done the most to inspire others to pursue STEM through community outreach, education, and engagement beyond the competition floor.</div>
+
+    <div class="stat-row">
+      <div class="stat"><div class="stat-value">2,700+</div><div class="stat-label">People Reached</div></div>
+      <div class="stat"><div class="stat-value">5+</div><div class="stat-label">Outreach Events</div></div>
+      <div class="stat"><div class="stat-value">$800K</div><div class="stat-label">Curriculum Grants</div></div>
+      <div class="stat"><div class="stat-value">1</div><div class="stat-label">FLL Team Restarted</div></div>
+    </div>
+
+    <h3>The Pipeline: FLL → FTC → FRC → Beyond</h3>
+    <p>Team 8126's outreach is an ecosystem, not a collection of events. Our lead mentors teach two engineering and design classes per day at Vicksburg High School. Next year they expand to six HS classes and one middle school class. Students encounter FIRST through the classroom and choose to go further.</p>
+
+    <figure style="margin-bottom:40px;">
+      <div class="photo photo-short">
+        <img src="The pipeline.png" style="width:100%;height:100%;object-fit:cover;display:block;">
+      </div>
+      <figcaption>FLL → FTC → FRC pipeline</figcaption>
+    </figure>
+
+    <h3>Outreach Events</h3>
+    <table class="outreach-table">
+      <thead><tr><th>Event</th><th>Audience</th><th>Impact</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Football Game T-Shirt Cannon (multiple events)</td>
+          <td>800–1,000 per event</td>
+          <td>Team-built pneumatic launcher; engages non-traditional audiences; promotes sponsors</td>
+        </tr>
+        <tr>
+          <td>Vicksburg Harvest Festival</td>
+          <td>~600</td>
+          <td>Community display and hands-on demo in a rural setting with limited STEM access</td>
+        </tr>
+        <tr>
+          <td>Humphrey Products Big Tent Event</td>
+          <td>~300</td>
+          <td>Industry Q&amp;A; builds sponsor relationships; shows real engineering to professionals</td>
+        </tr>
+        <tr>
+          <td>Girl Scouts Presentation</td>
+          <td>Troop + leaders</td>
+          <td>Hands-on STEM session; directly restarted the local FLL team</td>
+        </tr>
+        <tr>
+          <td>Week-Long Summer Robotics Camp</td>
+          <td>Elementary students</td>
+          <td>Run by lead mentor and HS volunteers; students use LEGO League bots; creates pipeline entry point</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="three-col" style="margin-bottom:40px;">
+      <figure>
+        <div class="photo" style="aspect-ratio:4/3;">
+          <img src="Harvest Festival community demo.png" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <figcaption>Harvest Festival community demo</figcaption>
+      </figure>
+      <figure>
+        <div class="photo" style="aspect-ratio:4/3;">
+          <img src="Summer robotics camp.png" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block;">
+        </div>
+        <figcaption>Summer robotics camp</figcaption>
+      </figure>
+      <figure>
+        <div class="photo" style="aspect-ratio:4/3;">
+          <img src="Pneumatic t-shirt cannon at football games.png" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <figcaption>Pneumatic t-shirt cannon at football games</figcaption>
+      </figure>
+    </div>
+
+    <figure style="margin-bottom:0;">
+      <div class="photo" style="aspect-ratio:16/7;">
+        <img src="Humphrey Products industry event.png" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block;">
+      </div>
+      <figcaption>Humphrey Products industry event</figcaption>
+    </figure>
+
+    <h3 style="margin-top:40px;">The $800,000 Curriculum Grant</h3>
+    <p>The most significant milestone in our Engineering Inspiration story is the $800,000 Engineering Technology Curriculum grant at both the HS and MS level. This embeds structured engineering education into the school day from 6th grade through 12th grade — the institutionalization of everything our outreach has worked toward.</p>
+
+    <div class="pullquote">
+      "[...] I was just accepted into Purdue's competitive ~35 person Mars Rover Team. I could not have done it without the experience I gained through the Control Freaks. [...] Without our club, I would not have discovered my interest in programming, which is now steadily becoming a primary focus of my time in college and my eventual career."
+      <cite>— 2022 Vicksburg Graduate</cite>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ GRACIOUS PROFESSIONALISM ══════════ -->
+<div class="page">
+  <div class="section" id="gp">
+    <div class="section-label">Award Submission</div>
+    <div class="section-title">Gracious Professionalism Award</div>
+    <div class="section-desc">Honors a team that embodies FIRST's core value of Gracious Professionalism — competing fiercely while treating everyone with respect and contributing to the broader FRC community.</div>
+
+    <p><em>Team 8126 is a previous Gracious Professionalism Award recipient.</em></p>
+
+    <div style="margin-top:32px;">
+        <h3>Opening Our Facility</h3>
+        <p>Several teams have been formally invited to practice at our half-court field — full-scale space unavailable to most small programs in our region. These sessions are collaborative by design: our students and theirs share the floor, compare notes, and solve problems together.</p>
+
+        <h3>Pit Row and Event Support</h3>
+        <p>At every event we assist in pit row: sharing parts and materials, helping other teams with mechanical diagnosis, and offering programming support. Our team is consistently available to help with sensor integration, motor controller configuration, and autonomous debugging.</p>
+    </div>
+
+    <div>
+        <h3>Recycling Initiative — Community Partnership</h3>
+        <p>When transitioning into our new mechatronics shop, we partnered with the Vicksburg Rotary Club to recycle more than 3,833 lbs of scrap metal from the old shop. The proceeds — $560.83 — were added to the Rotary Club's scholarship fund for Vicksburg high school graduates.</p>
+        <p>This initiative demonstrates Gracious Professionalism extending beyond the competition floor: finding a way to serve the community in the process of serving our team.</p>
+    </div>
+
+    <h3>Giving Back to Sponsors</h3>
+    <p>All sponsors receive season-long progress updates. We offer three structured tiers:</p>
+    <div class="tier-grid">
+      <div class="tier tier-bronze">
+        <div class="tier-name">Bronze</div>
+        <ul>
+          <li>Logo on competition pit</li>
+          <li>Web page link</li>
+          <li>Social media acknowledgement</li>
+        </ul>
+      </div>
+      <div class="tier tier-silver">
+        <div class="tier-name">Silver</div>
+        <ul>
+          <li>All Bronze benefits</li>
+          <li>Logo displayed on the competition robot</li>
+        </ul>
+      </div>
+      <div class="tier tier-gold">
+        <div class="tier-name">Gold</div>
+        <ul>
+          <li>All Silver benefits</li>
+          <li>Large logo on robot</li>
+          <li>Robot demonstration at the company</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ TEAM SUSTAINABILITY ══════════ -->
+<div class="page">
+  <div class="section" id="sustainability">
+    <div class="section-label">Award Submission</div>
+    <div class="section-title">Team Sustainability Award</div>
+    <div class="section-desc">Recognizes a team that has built a robust, long-term program — financially self-sustaining, growing in membership, embedded in its school and community, and producing graduates who carry FIRST forward.</div>
+
+    <p><em>Team 8126 is a previous Team Sustainability Award recipient.</em></p>
+
+    <div class="stat-row" style="margin-top:32px;">
+      <div class="stat"><div class="stat-value">6</div><div class="stat-label">Years as a Team</div></div>
+      <div class="stat"><div class="stat-value">100%</div><div class="stat-label">Student Retention Rate</div></div>
+      <div class="stat"><div class="stat-value">20%</div><div class="stat-label">Annual Growth Rate</div></div>
+      <div class="stat"><div class="stat-value">100%</div><div class="stat-label">Graduate Employment Rate</div></div>
+    </div>
+
+    <h3>Funding Model</h3>
+    <div>
+        <div class="funding-item">
+          <div class="funding-bullet"></div>
+          <div><div class="funding-title">Student-Led Business Outreach</div>Students identify and approach STEM businesses with polished sponsorship presentations — real-world professional development alongside technical skills.</div>
+        </div>
+        <div class="funding-item">
+          <div class="funding-bullet"></div>
+          <div><div class="funding-title">MDE Grant</div>Consistently applied for and awarded annually.</div>
+        </div>
+        <div class="funding-item">
+          <div class="funding-bullet"></div>
+          <div><div class="funding-title">Community Foundation Grants</div>Received $40,000 in grants from two Vicksburg area community foundations.</div>
+        </div>
+        <div class="funding-item">
+          <div class="funding-bullet"></div>
+          <div><div class="funding-title">School Board Presentations</div>Annual presentations maintain district-level institutional support.</div>
+        </div>
+    </div>
+
+    <h3>The $800,000 Milestone</h3>
+    <p>The $800,000 Engineering Technology Curriculum grant at both the middle and high school level does not fund a team — it funds a curriculum. It creates a structured, school-day pathway from 6th through 12th grade, self-replenishing regardless of which individuals are present in any given year.</p>
+
+    <h3>Recycling Initiative</h3>
+    <p>Partnering with the Vicksburg Rotary Club, we recycled 3,833+ lbs of scrap metal from the old mechatronics shop. The $560.83 generated was donated to the Rotary Club's scholarship fund for Vicksburg graduates — turning our transition into a community contribution.</p>
+
+    <h3>Alumni Outcomes</h3>
+    <div class="alumni-grid">
+      <div class="alumni-stat"><div class="stat-value">3</div><div class="stat-label">Graduates in Engineering Careers</div></div>
+      <div class="alumni-stat"><div class="stat-value">6</div><div class="stat-label">In Engineering Programs</div></div>
+      <div class="alumni-stat"><div class="stat-value">5</div><div class="stat-label">In Skilled Trades</div></div>
+      <div class="alumni-stat"><div class="stat-value">14</div><div class="stat-label">Total Alumni in STEM / Trades</div></div>
+    </div>
+
+    <p>For a self-funded team from a rural community of 3,400 people, 14 alumni placed in STEM careers and trades — all employed — is an extraordinary return. Nearly 11% of Vicksburg working adults are in technical production roles; our program contributes directly to that.</p>
+
+    <div class="pullquote">
+      "[...] I was just accepted into Purdue's competitive ~35 person Mars Rover Team. I could not have done it without the experience I gained through the Control Freaks. [...] Without our club, I would not have discovered my interest in programming, which is now steadily becoming a primary focus of my time in college and my eventual career."
+      <cite>— 2022 Vicksburg Graduate</cite>
+    </div>
+
+    <h3>Membership Growth</h3>
+    <p>When our mentors began teaching engineering at the high school, membership grew from 12 to 21. This year it increased by 3 more — with 6 HS classes and a MS class beginning next year, growth will continue to accelerate. The program is self-reinforcing: the curriculum brings students in, the team retains them, and FLL/FTC feeds the pipeline.</p>
+
+    <h3 style="margin-top:40px;">Previous Award Recognition</h3>
+    <div>
+      <span class="award-badge">Gracious Professionalism Award</span>
+      <span class="award-badge">Creativity Award</span>
+      <span class="award-badge">Team Sustainability Award</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════ FOOTER ══════════ -->
+<div class="footer">
+  <strong>FRC Team 8126 &nbsp;•&nbsp; Vicksburg Control Freaks</strong><br>
+  Vicksburg, Michigan &nbsp;•&nbsp; 2026 Season &nbsp;•&nbsp; FRC Rebuilt &nbsp;•&nbsp; Engineering Portfolio
+</div>
+
+</body>
+</html>

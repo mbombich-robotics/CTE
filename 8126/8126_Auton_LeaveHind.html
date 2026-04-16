@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team 8126 — Autonomous Routine 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #C41230;
+    --black: #0D0D0D;
+    --gray: #6B6B6B;
+    --light: #F0F0F0;
+    --off-white: #F8F8F8;
+    --rule: 1px solid #D0D0D0;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--black);
+    background: white;
+    padding: 32px 40px 24px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    border-bottom: 3px solid var(--red);
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+  }
+
+  .header-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 4px;
+  }
+
+  .header-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 38px;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+
+  .header-title span { color: var(--red); }
+
+  .header-meta {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray);
+    text-align: right;
+    line-height: 1.6;
+  }
+
+  /* ── STAT STRIP ── */
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: var(--rule);
+    margin-bottom: 20px;
+  }
+
+  .stat {
+    padding: 12px 14px;
+    border-right: var(--rule);
+    text-align: center;
+  }
+  .stat:last-child { border-right: none; }
+
+  .stat-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 28px;
+    color: var(--red);
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+
+  .stat-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+
+  /* ── BODY GRID ── */
+  .body-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    margin-bottom: 16px;
+  }
+
+  /* ── SECTION LABELS ── */
+  h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 8px;
+    margin-top: 16px;
+    border-bottom: var(--rule);
+    padding-bottom: 4px;
+  }
+
+  h3:first-child { margin-top: 0; }
+
+  /* ── SEQUENCE STEPS ── */
+  .steps { list-style: none; padding: 0; }
+
+  .step {
+    display: grid;
+    grid-template-columns: 26px 1fr;
+    gap: 8px;
+    margin-bottom: 6px;
+    align-items: start;
+  }
+
+  .step-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 15px;
+    color: white;
+    background: var(--red);
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .step-text strong {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    display: block;
+    letter-spacing: 0.04em;
+  }
+
+  .step-text span {
+    font-size: 11.5px;
+    color: var(--gray);
+  }
+
+  /* ── SELECTION LOGIC ── */
+  .logic-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-top: 8px;
+  }
+
+  .logic-table th {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    background: var(--black);
+    color: white;
+    padding: 7px 10px;
+    text-align: left;
+  }
+
+  .logic-table td {
+    padding: 6px 10px;
+    border-bottom: var(--rule);
+    vertical-align: top;
+  }
+
+  .logic-table tr:last-child td { border-bottom: none; }
+  .logic-table tr:nth-child(even) td { background: var(--off-white); }
+
+  .badge {
+    display: inline-block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 2px;
+    margin-right: 3px;
+  }
+
+  .badge-red { background: #fde8ec; color: var(--red); }
+  .badge-blue { background: #e8ecfd; color: #1230C4; }
+
+  /* ── TECH SPECS ── */
+  .spec-list { list-style: none; padding: 0; }
+
+  .spec-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 5px 0;
+    border-bottom: var(--rule);
+    font-size: 12px;
+  }
+
+  .spec-list li:last-child { border-bottom: none; }
+
+  .spec-key {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray);
+    flex-shrink: 0;
+    margin-right: 8px;
+  }
+
+  .spec-val { text-align: right; font-size: 12px; }
+
+  /* ── PATH PLANNER IMAGE ── */
+  .path-image {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: var(--light);
+    border: var(--rule);
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .path-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    display: block;
+  }
+
+  .caption {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray);
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  /* ── FALLBACK CALLOUT ── */
+  .callout {
+    border-left: 3px solid var(--red);
+    background: var(--off-white);
+    padding: 8px 14px;
+    font-size: 12px;
+    margin-top: 12px;
+  }
+
+  .callout strong {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top: var(--rule);
+    padding-top: 10px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    font-size: 10.5px;
+    color: var(--gray);
+  }
+
+  .footer a { color: var(--gray); }
+
+  .ai-credit {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #aaa;
+    text-align: right;
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    @page { size: letter landscape; margin: 0.5in; }
+    body { padding: 0; max-width: 100%; font-size: 12px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .header-title { font-size: 32px; }
+    .stat-value { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-eyebrow">FRC Team 8126 · Vicksburg Control Freaks · 2026</div>
+    <div class="header-title">Autonomous <span>Routines</span></div>
+  </div>
+  <div class="header-meta">
+    Rebuilt Season<br>
+    vicksburgcontrolfreaks.github.io/2026CF
+  </div>
+</div>
+
+<div class="stat-strip">
+  <div class="stat">
+    <div class="stat-value">6</div>
+    <div class="stat-label">Selectable Routines</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">2</div>
+    <div class="stat-label">Game Pieces (Two-Piece)</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">4</div>
+    <div class="stat-label">Vision Cameras</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">2°</div>
+    <div class="stat-label">Aim Tolerance</div>
+  </div>
+</div>
+
+<div class="body-grid">
+
+  <!-- LEFT: Sequence + Selection -->
+  <div>
+    <h3>Two-Piece Auto — Sequence</h3>
+    <ul class="steps">
+      <li class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <strong>Pre-spin &amp; aim</strong>
+          <span>Shooter spins to 3,500 RPM on autonomousInit(). PID controller rotates robot back toward speaker. Feeds when aligned (&lt;2°) and at RPM.</span>
+        </div>
+      </li>
+      <li class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <strong>First shot</strong>
+          <span>Indexer and floor run for 3 s; hopper oscillates (0.02 → 0.19) to agitate game pieces.</span>
+        </div>
+      </li>
+      <li class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <strong>Drive to pickup (0.61, 0.68 m)</strong>
+          <span>Proportional speed ramp (max 50%); shooter holds cap RPM during transit. Hopper deploys, collector runs.</span>
+        </div>
+      </li>
+      <li class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">
+          <strong>Collect — 3 s dwell</strong>
+          <span>Stationary at pickup; collector running. Robot holds 180° heading.</span>
+        </div>
+      </li>
+      <li class="step">
+        <div class="step-num">5</div>
+        <div class="step-text">
+          <strong>Drive to shoot (2.46, 2.69 m)</strong>
+          <span>Shooter re-enables full RPM en route. Rotation PID re-locks heading.</span>
+        </div>
+      </li>
+      <li class="step">
+        <div class="step-num">6</div>
+        <div class="step-text">
+          <strong>Second shot</strong>
+          <span>Re-aims; feeds when conditions met. 3 s shooting window; auto ends.</span>
+        </div>
+      </li>
+    </ul>
+
+    <h3>Auto Selection — No Driver Input Required</h3>
+    <table class="logic-table">
+      <thead>
+        <tr><th>Starting Position</th><th>Routine</th><th>Strategy</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-blue">Blue</span> Left / <span class="badge badge-red">Red</span> Right</td>
+          <td>Collect &amp; Shoot</td>
+          <td>Two-piece — depot side</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-blue">Blue</span> Center / <span class="badge badge-red">Red</span> Center</td>
+          <td>Center Shoot</td>
+          <td>Preload shot, clear center</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-blue">Blue</span> Right / <span class="badge badge-red">Red</span> Left</td>
+          <td>Collect &amp; Shoot</td>
+          <td>Two-piece — outpost side</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <strong>No-Vision Fallback</strong>
+      If AprilTag detection is unavailable, robot drives 1 m forward and shoots using last known distance estimate — no silent failure.
+    </div>
+  </div>
+
+  <!-- RIGHT: Path image + Tech specs -->
+  <div>
+    <h3>PathPlanner — Two-Piece Path</h3>
+    <div class="path-image">
+      <img src="Path Planner.JPG" alt="PathPlanner route visualization">
+    </div>
+    <div class="caption">Blue alliance two-piece path — start → pickup → shoot</div>
+
+    <h3>Shooter &amp; Vision Specs</h3>
+    <ul class="spec-list">
+      <li>
+        <span class="spec-key">Shooter wheels</span>
+        <span class="spec-val">3× 4" Stealth, NEO Vortex, 1:1</span>
+      </li>
+      <li>
+        <span class="spec-key">RPM range</span>
+        <span class="spec-val">3,000 – 4,500 RPM (optimal 3,500 – 4,000)</span>
+      </li>
+      <li>
+        <span class="spec-key">RPM tolerance</span>
+        <span class="spec-val">±100 RPM before indexer feeds</span>
+      </li>
+      <li>
+        <span class="spec-key">Alignment tolerance</span>
+        <span class="spec-val">±2° before indexer feeds</span>
+      </li>
+      <li>
+        <span class="spec-key">Distance → RPM</span>
+        <span class="spec-val">Interpolated lookup table, PhotonVision</span>
+      </li>
+      <li>
+        <span class="spec-key">Vision cameras</span>
+        <span class="spec-val">4× (front, back, left, right) AprilTag</span>
+      </li>
+      <li>
+        <span class="spec-key">Pose estimation</span>
+        <span class="spec-val">Vision + swerve odometry fusion</span>
+      </li>
+      <li>
+        <span class="spec-key">Rotation PID</span>
+        <span class="spec-val">P 0.02 · I 0.0001 · D 0.003</span>
+      </li>
+      <li>
+        <span class="spec-key">Branch</span>
+        <span class="spec-val">dynamic-shooting-test (velocity comp. in test)</span>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="footer">
+  <div>Team 8126 · Vicksburg Control Freaks · Vicksburg, MI · <a href="mailto:vicksburgcontrolfreaks@gmail.com">vicksburgcontrolfreaks@gmail.com</a></div>
+  <div class="ai-credit">Code documentation &amp; layout assisted by Claude AI (Anthropic) · <a href="https://vicksburgcontrolfreaks.github.io/2026CF/">vicksburgcontrolfreaks.github.io/2026CF</a></div>
+</div>
+
+</body>
+</html>
