@@ -22,7 +22,7 @@ const CONFIG = {
         robotics: {
             name: 'Robotics Portfolio',
             apiUrl: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
-            currentAppVersion: 'v2.9.38',  // keep in sync with Robotics app.js CONFIG.VERSION
+            currentAppVersion: 'v2.9.39',  // keep in sync with Robotics app.js CONFIG.VERSION
             hasTeams: false,
             totalDeliverables: 9,
             totalReflections: 11,
@@ -973,6 +973,56 @@ function openStudentDetail(email) {
                 }).join('')}
             </div>
         `;
+    }
+
+    // Quiz panel (Robotics only)
+    const quizTab   = document.getElementById('quizDetailTab');
+    const quizPanel = document.getElementById('quizPanel');
+    if (quizTab && quizPanel) {
+        if (state.activeCourse === 'robotics') {
+            quizTab.style.display = '';
+            const quizRow = (state.rawData?.quiz || []).find(r => r[1] === student.email);
+            if (!quizRow) {
+                quizPanel.innerHTML = '<p class="empty-state">No quiz submission yet.</p>';
+            } else {
+                const qLabels = ['Q1 (PWM)', 'Q2 (Contact Detection)', 'Q3 (abs/slip)', 'Q4 (Rate of Closure)', 'Q5 (Object Detection)', 'Q6 (Blocking Code)', 'Bonus (Active Low)'];
+                const qIds    = ['q1','q2','q3','q4','q5','q6','bonus'];
+                let col = 3; // columns: 0=timestamp, 1=email, 2=name, then per-question: answer, score, feedback × 7, aiTotal, teacherFinal
+                let rows = '';
+                qIds.forEach((id, i) => {
+                    const answer   = quizRow[col]   || '';
+                    const score    = quizRow[col+1] !== '' ? quizRow[col+1] : '—';
+                    const feedback = quizRow[col+2] || '';
+                    col += 3;
+                    rows += `
+                        <tr style="border-bottom:1px solid var(--gray-100);">
+                            <td style="padding:10px 8px; font-weight:600; font-size:13px; white-space:nowrap; vertical-align:top;">${qLabels[i]}</td>
+                            <td style="padding:10px 8px; font-size:13px; vertical-align:top; max-width:300px;">${answer}</td>
+                            <td style="padding:10px 8px; text-align:center; font-weight:700; vertical-align:top;">${score}</td>
+                            <td style="padding:10px 8px; font-size:12px; color:var(--gray-500); vertical-align:top;">${feedback}</td>
+                        </tr>`;
+                });
+                const aiTotal      = quizRow[col]   !== '' ? quizRow[col]   : '—';
+                const teacherFinal = quizRow[col+1] !== '' ? quizRow[col+1] : '—';
+                quizPanel.innerHTML = `
+                    <p style="font-size:13px; color:var(--gray-500); margin-bottom:12px;">
+                        Submitted: ${quizRow[0]} &nbsp;|&nbsp;
+                        AI Total: <strong>${aiTotal}/26</strong> &nbsp;|&nbsp;
+                        Teacher Final: <strong>${teacherFinal}</strong>
+                    </p>
+                    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                        <thead><tr style="background:var(--gray-50);">
+                            <th style="padding:8px; text-align:left; border-bottom:2px solid var(--gray-200);">Question</th>
+                            <th style="padding:8px; text-align:left; border-bottom:2px solid var(--gray-200);">Student Answer</th>
+                            <th style="padding:8px; text-align:center; border-bottom:2px solid var(--gray-200); width:50px;">Score</th>
+                            <th style="padding:8px; text-align:left; border-bottom:2px solid var(--gray-200);">AI Feedback</th>
+                        </tr></thead>
+                        <tbody>${rows}</tbody>
+                    </table>`;
+            }
+        } else {
+            quizTab.style.display = 'none';
+        }
     }
 
     // Show modal

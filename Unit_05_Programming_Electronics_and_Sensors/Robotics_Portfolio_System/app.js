@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.38',
+    VERSION: 'v2.9.39',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -3189,13 +3189,16 @@ async function submitQuiz(e) {
         const data = await res.json();
 
         if (data.success) {
-            state.quiz.submitted = true;
-            state.quiz.grades    = data.grades;
-            state.quiz.aiTotal   = data.aiTotal;
-            state.quiz.loaded    = true;
+            state.quiz.submitted      = true;
+            state.quiz.grades         = data.grades;
+            state.quiz.aiTotal        = data.aiTotal;
+            state.quiz.gradingPending = !!data.gradingPending;
+            state.quiz.loaded         = true;
             updateUI();
             renderQuizResults(document.getElementById('quizPage'));
-            showToast('Quiz submitted!', 'success');
+            showToast(data.gradingPending
+                ? 'Quiz submitted! AI grading unavailable — Mr. Bombich will grade manually.'
+                : 'Quiz submitted!', data.gradingPending ? 'warning' : 'success');
         } else if (data.error === 'already_submitted') {
             state.quiz.submitted = true;
             state.quiz.loaded    = true;
@@ -3212,7 +3215,8 @@ async function submitQuiz(e) {
 
 function renderQuizResults(page) {
     const grades   = state.quiz.grades || {};
-    const aiTotal  = state.quiz.aiTotal ?? '—';
+    const aiTotal        = state.quiz.aiTotal ?? '—';
+    const gradingPending = state.quiz.gradingPending;
 
     function badgeStyle(score, max) {
         const pct = score / max;
@@ -3224,42 +3228,55 @@ function renderQuizResults(page) {
 
     let cardsHtml = '';
     QUIZ_QUESTION_META.forEach(q => {
-        const g     = grades[q.id] || { score: 0, feedback: 'No feedback available.' };
-        const score = Math.min(Number(g.score) || 0, q.pts);
+        const g = grades[q.id] || { score: null, feedback: '' };
+        const scoreNull = g.score === null || g.score === undefined || g.score === '';
+        const score = scoreNull ? null : Math.min(Number(g.score) || 0, q.pts);
+        const badgePart = scoreNull
+            ? `<span style="font-size:13px; font-weight:700; padding:3px 12px; border-radius:12px; background:#f3f4f6; color:#6b7280;">Pending</span>`
+            : `<span style="font-size:13px; font-weight:700; padding:3px 12px; border-radius:12px; ${badgeStyle(score, q.pts)}">${score} / ${q.pts}</span>`;
         cardsHtml += `
             <div class="card" style="margin-bottom:18px; padding:22px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
                     <span style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--gray-400);">${q.label}</span>
-                    <span style="font-size:13px; font-weight:700; padding:3px 12px; border-radius:12px; ${badgeStyle(score, q.pts)}">${score} / ${q.pts}</span>
+                    ${badgePart}
                 </div>
                 <p style="font-size:14px; color:var(--gray-400); font-style:italic; line-height:1.6; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--gray-100);">${q.text}</p>
-                <p style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--gray-400); margin-bottom:6px;">AI Feedback</p>
-                <p style="font-size:14px; color:var(--gray-600); line-height:1.65; background:var(--gray-50); border-radius:6px; padding:12px 14px; border-left:3px solid var(--primary);">${escapeHtmlQuiz(g.feedback || '')}</p>
+                ${g.feedback ? `<p style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--gray-400); margin-bottom:6px;">AI Feedback</p>
+                <p style="font-size:14px; color:var(--gray-600); line-height:1.65; background:var(--gray-50); border-radius:6px; padding:12px 14px; border-left:3px solid var(--primary);">${escapeHtmlQuiz(g.feedback)}</p>` : ''}
             </div>`;
     });
 
-    page.innerHTML = `
-        <div class="page-header">
-            <h1 class="page-title"><i class="fas fa-check-circle" style="color:var(--success);"></i> Quiz Submitted</h1>
-        </div>
-
-        <div class="card" style="border-left:4px solid #f59e0b; background:rgba(245,158,11,0.05); margin-bottom:24px; padding:18px 22px;">
+    const disclaimerHtml = gradingPending
+        ? `<div class="card" style="border-left:4px solid #ef4444; background:rgba(239,68,68,0.05); margin-bottom:24px; padding:18px 22px;">
+            <p style="font-size:14px; line-height:1.65; color:var(--gray-600);">
+                <strong style="color:#b91c1c;">AI grading is temporarily unavailable.</strong>
+                Your answers were saved successfully. Mr. Bombich will grade your quiz manually.
+            </p>
+           </div>`
+        : `<div class="card" style="border-left:4px solid #f59e0b; background:rgba(245,158,11,0.05); margin-bottom:24px; padding:18px 22px;">
             <p style="font-size:14px; line-height:1.65; color:var(--gray-600);">
                 <strong style="color:#b45309;">About these scores:</strong>
                 The scores and feedback below were generated by AI to give you immediate insight into your answers.
                 <strong>Mr. Bombich will review every response</strong> and has final say on your grade.
                 Your official grade may differ from the AI score — you will be notified when grading is complete.
             </p>
-        </div>
+           </div>`;
 
-        ${cardsHtml}
-
+    const totalHtml = gradingPending ? '' : `
         <div class="card" style="text-align:center; padding:30px; background: linear-gradient(135deg, rgba(99,102,241,0.05), rgba(99,102,241,0.1)); border:2px solid var(--primary);">
             <p style="font-size:12px; text-transform:uppercase; letter-spacing:1px; color:var(--gray-400); margin-bottom:8px;">AI-Generated Score</p>
             <p style="font-family:monospace; font-size:3rem; font-weight:900; color:var(--primary); line-height:1;">${aiTotal}</p>
             <p style="font-size:13px; color:var(--gray-400); margin-top:6px;">out of 26 points (+ up to 2 bonus)</p>
             <p style="font-size:13px; color:var(--gray-500); margin-top:12px;">This is a starting point for teacher review, not your official grade.</p>
         </div>`;
+
+    page.innerHTML = `
+        <div class="page-header">
+            <h1 class="page-title"><i class="fas fa-check-circle" style="color:var(--success);"></i> Quiz Submitted</h1>
+        </div>
+        ${disclaimerHtml}
+        ${cardsHtml}
+        ${totalHtml}`;
 }
 
 function escapeHtmlQuiz(str) {

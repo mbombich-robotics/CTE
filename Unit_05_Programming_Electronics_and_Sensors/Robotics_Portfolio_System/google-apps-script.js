@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.25';
+const BACKEND_VERSION = 'v2.9.27';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -951,12 +951,14 @@ function loadAllData() {
   const reflections  = safeGetSheet(SHEET_NAMES.REFLECTIONS);
   const deliverables = safeGetSheet(SHEET_NAMES.DELIVERABLES);
   const evidence     = safeGetSheet(SHEET_NAMES.EVIDENCE);
+  const quiz         = safeGetSheet(SHEET_NAMES.QUIZ);
 
   return {
     students:     students.slice(1),
     reflections:  reflections.slice(1),
     deliverables: deliverables.slice(1),
     evidence:     evidence.slice(1),
+    quiz:         quiz.slice(1),
     summary: {
       totalStudents:     Math.max(0, students.length - 1),
       totalReflections:  Math.max(0, reflections.length - 1),
@@ -1532,37 +1534,40 @@ function handleSubmitQuiz(data) {
   const sheet = getOrCreateQuizSheet();
   if (quizEmailSubmitted(sheet, email)) return { success: false, error: 'already_submitted' };
 
-  // Grade with Gemini
+  // Grade with Gemini — if it fails, still save the submission
   let gradeMap = {};
+  let gradingError = null;
   try {
     gradeMap = gradeClawQuiz(data);
   } catch(err) {
-    logActivity('QUIZ_GRADE_ERROR', email, err.toString());
-    return { success: false, error: 'Grading failed: ' + err.toString() };
+    gradingError = err.toString();
+    logActivity('QUIZ_GRADE_ERROR', email, gradingError);
+    QUIZ_QUESTIONS.forEach(q => {
+      gradeMap[q.id] = { score: null, feedback: 'AI grading unavailable — Mr. Bombich will grade manually.' };
+    });
   }
 
-  // Calculate total
-  let aiTotal = 0;
-  QUIZ_QUESTIONS.forEach(q => {
-    const g = gradeMap[q.id] || { score: 0 };
-    aiTotal += Math.min(Number(g.score) || 0, q.maxPts);
-  });
+  // Calculate total (null scores excluded)
+  let aiTotal = gradingError ? null : 0;
+  if (!gradingError) {
+    QUIZ_QUESTIONS.forEach(q => {
+      const g = gradeMap[q.id] || { score: 0 };
+      aiTotal += Math.min(Number(g.score) || 0, q.maxPts);
+    });
+  }
 
   // Build and append row
   const row = [data.timestamp || new Date().toLocaleString(), email, data.name || ''];
   QUIZ_QUESTIONS.forEach(q => {
-    const g = gradeMap[q.id] || { score: 0, feedback: 'Grading unavailable' };
-    row.push(
-      (data[q.id] || '').trim(),
-      Math.min(Number(g.score) || 0, q.maxPts),
-      g.feedback || ''
-    );
+    const g = gradeMap[q.id] || { score: null, feedback: '' };
+    const score = g.score === null ? '' : Math.min(Number(g.score) || 0, q.maxPts);
+    row.push((data[q.id] || '').trim(), score, g.feedback || '');
   });
-  row.push(aiTotal, ''); // AI Total, Teacher Final (blank)
+  row.push(aiTotal !== null ? aiTotal : '', ''); // AI Total, Teacher Final (blank)
   sheet.appendRow(row);
 
-  logActivity('QUIZ_SUBMIT', email, `AI Total: ${aiTotal}/26`);
-  return { success: true, grades: gradeMap, aiTotal };
+  logActivity('QUIZ_SUBMIT', email, gradingError ? 'AI grading failed — saved for manual grading' : `AI Total: ${aiTotal}/26`);
+  return { success: true, grades: gradeMap, aiTotal, gradingPending: !!gradingError };
 }
 
 function gradeClawQuiz(answers) {
@@ -1590,8 +1595,8 @@ Respond with ONLY a valid JSON object — no markdown fences, no other text:
     prompt += `---\nid: ${q.id} | max: ${q.maxPts}\nQuestion: ${q.question}\nRubric: ${q.rubric}\nStudent answer: "${answer.replace(/"/g, "'").substring(0, 800)}"\n\n`;
   });
 
-  const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + apiKey;
-  const fetchOptions = {
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=' + apiKey;
+  const response = UrlFetchApp.fetch(url, {
     method: 'post',
     contentType: 'application/json',
     payload: JSON.stringify({
@@ -1599,16 +1604,9 @@ Respond with ONLY a valid JSON object — no markdown fences, no other text:
       generationConfig: { temperature: 0.1, maxOutputTokens: 2048 }
     }),
     muteHttpExceptions: true
-  };
+  });
 
-  let result;
-  const delays = [5000, 15000, 30000]; // retry after 5s, 15s, 30s
-  for (let attempt = 0; attempt <= delays.length; attempt++) {
-    const response = UrlFetchApp.fetch(url, fetchOptions);
-    result = JSON.parse(response.getContentText());
-    if (!result.error || result.error.code !== 429) break;
-    if (attempt < delays.length) Utilities.sleep(delays[attempt]);
-  }
+  const result = JSON.parse(response.getContentText());
   if (result.error) throw new Error('Gemini: ' + result.error.message);
 
   const text = result.candidates[0].content.parts[0].text;
