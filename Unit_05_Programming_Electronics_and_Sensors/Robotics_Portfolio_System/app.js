@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.41',
+    VERSION: 'v2.9.42',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -2278,16 +2278,18 @@ function openDeliverableForm(id) {
             </div>
             ` : ''}
 
+            ${id !== 9 ? `
             <div class="form-group">
-                <label for="deliverableContent">${id === 3 ? 'Code & Observations' : id === 4 ? 'Sweep Code & Explanation' : id === 5 ? 'Commented Code & Reflection' : id === 7 ? 'Problem & Solution' : id === 8 ? 'AI Log Summary' : id === 9 ? 'Project Summary' : 'Your Submission'}</label>
-                <textarea id="deliverableContent" rows="8" placeholder="${id === 3 ? 'Paste your code with comments, and describe your observations about sensor behavior...' : id === 4 ? 'Paste your servo sweep code and briefly explain how it works (what does each part do?)...' : id === 5 ? 'Paste a key section of your code (e.g. loop() or a motor function) and add comments explaining:\n- What each part does and why\n- Which constants you tuned (THRESHOLD, TURN_TIME, etc.) and what values you used\n- At least one problem you ran into and how you fixed it' : id === 7 ? 'Describe at least one problem you ran into (e.g. robot oscillating, veering, not stopping) and explain how you solved it or what you tried...' : id === 8 ? 'How many prompts did you use? What did you ask? Describe one thing AI got wrong or that you had to correct.' : id === 9 ? 'Describe your testing results and at least one case where you had to correct or verify AI output.' : 'Describe what you did, paste your code, explain your process...'}">${id === 3 ? (existing.rawContent || existing.content || '') : id === 5 ? (existing.rawContent || existing.content || '') : id === 7 ? (existing.rawContent || existing.content || '') : (existing.content || '')}</textarea>
-            </div>
+                <label for="deliverableContent">${id === 3 ? 'Code & Observations' : id === 4 ? 'Sweep Code & Explanation' : id === 5 ? 'Commented Code & Reflection' : id === 7 ? 'Problem & Solution' : id === 8 ? 'AI Log Summary' : 'Your Submission'}</label>
+                <textarea id="deliverableContent" rows="8" placeholder="${id === 3 ? 'Paste your code with comments, and describe your observations about sensor behavior...' : id === 4 ? 'Paste your servo sweep code and briefly explain how it works (what does each part do?)...' : id === 5 ? 'Paste a key section of your code (e.g. loop() or a motor function) and add comments explaining:\n- What each part does and why\n- Which constants you tuned (THRESHOLD, TURN_TIME, etc.) and what values you used\n- At least one problem you ran into and how you fixed it' : id === 7 ? 'Describe at least one problem you ran into (e.g. robot oscillating, veering, not stopping) and explain how you solved it or what you tried...' : id === 8 ? 'How many prompts did you use? What did you ask? Describe one thing AI got wrong or that you had to correct.' : 'Describe what you did, paste your code, explain your process...'}">${id === 3 ? (existing.rawContent || existing.content || '') : id === 5 ? (existing.rawContent || existing.content || '') : id === 7 ? (existing.rawContent || existing.content || '') : (existing.content || '')}</textarea>
+            </div>` : ''}
 
+            ${id !== 9 ? `
             <div class="form-group">
                 <label>
-                    ${id === 8 ? 'Screenshots' : id === 9 ? 'Screenshots' : 'Photos'}
+                    ${id === 8 ? 'Screenshots' : 'Photos'}
                     <span style="font-weight: normal; color: var(--gray-500); font-size: 13px;">
-                        ${id === 4 ? '— Required: upload both CAD screenshots above' : id === 8 ? '— Required: Serial Monitor showing feedback values for at least two different objects' : id === 9 ? '— Required: demo photos or screenshots showing grip, LED classification, and slip detection' : '— if applicable'}
+                        ${id === 4 ? '— Required: upload both CAD screenshots above' : id === 8 ? '— Required: Serial Monitor showing feedback values for at least two different objects' : '— if applicable'}
                     </span>
                 </label>
                 <div id="deliverablePhotoZone"
@@ -2316,7 +2318,7 @@ function openDeliverableForm(id) {
                         </div>
                     `).join('')}
                 </div>
-            </div>
+            </div>` : ''}
 
             ${id === 8 || id === 9 ? `
             <div class="form-group">
