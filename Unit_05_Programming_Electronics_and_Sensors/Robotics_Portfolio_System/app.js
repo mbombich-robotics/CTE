@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.37',
+    VERSION: 'v2.9.38',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -3054,7 +3054,7 @@ const QUIZ_QUESTION_META = [
     { id: 'q2',    pts: 4, label: 'Question 2',
       text: 'Describe in plain English how your code knows the claw has touched an object — without being able to see it. Why is this better than just closing the claw all the way every time?' },
     { id: 'q3',    pts: 4, label: 'Question 3',
-      text: '<strong>Given:</strong> <code>if (abs(currentFeedback - holdFeedback) > 15)</code><br>a) What does <code>abs()</code> do and why is it needed here?<br>b) What real-world event does this line detect?' },
+      text: '<strong>Given:</strong> <code>if (abs(currentFeedback - oldFeedback) > 15)</code><br>a) What does <code>abs()</code> do and why is it needed here?<br>b) What real-world event does this line detect?' },
     { id: 'q4',    pts: 4, label: 'Question 4',
       text: 'What controls how fast your claw closes? Point to the specific line, value, or variable in your code that is responsible, and explain what would happen if you changed it.' },
     { id: 'q5',    pts: 4, label: 'Question 5',
