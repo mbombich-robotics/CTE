@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.28';
+const BACKEND_VERSION = 'v2.9.29';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -1655,7 +1655,7 @@ Respond with ONLY a valid JSON object — no markdown fences, no other text:
     prompt += `---\nid: ${q.id} | max: ${q.maxPts}\nQuestion: ${q.question}\nRubric: ${q.rubric}\nStudent answer: "${answer.replace(/"/g, "'").substring(0, 800)}"\n\n`;
   });
 
-  const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=' + apiKey;
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + apiKey;
   const response = UrlFetchApp.fetch(url, {
     method: 'post',
     contentType: 'application/json',
