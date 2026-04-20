@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.30';
+const BACKEND_VERSION = 'v2.9.31';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -1656,7 +1656,7 @@ Respond with ONLY a valid JSON object — no markdown fences, no other text:
   });
 
   const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + apiKey;
-  const response = UrlFetchApp.fetch(url, {
+  const fetchOpts = {
     method: 'post',
     contentType: 'application/json',
     payload: JSON.stringify({
@@ -1664,9 +1664,15 @@ Respond with ONLY a valid JSON object — no markdown fences, no other text:
       generationConfig: { temperature: 0.1, maxOutputTokens: 2048 }
     }),
     muteHttpExceptions: true
-  });
+  };
 
-  const result = JSON.parse(response.getContentText());
+  let response = UrlFetchApp.fetch(url, fetchOpts);
+  let result = JSON.parse(response.getContentText());
+  if (result.error && result.error.code === 429) {
+    Utilities.sleep(10000); // wait 10s and try once more
+    response = UrlFetchApp.fetch(url, fetchOpts);
+    result = JSON.parse(response.getContentText());
+  }
   if (result.error) throw new Error('Gemini: ' + result.error.message);
 
   const text = result.candidates[0].content.parts[0].text;
