@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.31';
+const BACKEND_VERSION = 'v2.9.32';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -1525,7 +1525,7 @@ function handleCheckQuiz(e) {
   const grades = {};
   let col = 3; // 0-based: col 0=timestamp, 1=email, 2=name, 3=first answer
   QUIZ_QUESTIONS.forEach(q => {
-    grades[q.id] = { score: rowData[col + 1], feedback: rowData[col + 2] };
+    grades[q.id] = { answer: rowData[col], score: rowData[col + 1], feedback: rowData[col + 2] };
     col += 3;
   });
   const aiTotal = rowData[col];
@@ -1571,6 +1571,9 @@ function handleSubmitQuiz(data) {
   });
   row.push(aiTotal !== null ? aiTotal : '', ''); // AI Total, Teacher Final (blank)
   sheet.appendRow(row);
+
+  // Merge student answers into gradeMap so the client can display them
+  QUIZ_QUESTIONS.forEach(q => { if (gradeMap[q.id]) gradeMap[q.id].answer = (data[q.id] || '').trim(); });
 
   logActivity('QUIZ_SUBMIT', email, gradingError ? 'AI grading failed — saved for manual grading' : `AI Total: ${aiTotal}/26`);
   return { success: true, grades: gradeMap, aiTotal, gradingPending: !!gradingError, gradingErrorMessage: gradingError || null };

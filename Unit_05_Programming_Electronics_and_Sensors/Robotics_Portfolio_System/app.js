@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.42',
+    VERSION: 'v2.9.43',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -3249,6 +3249,8 @@ function renderQuizResults(page) {
                     ${badgePart}
                 </div>
                 <p style="font-size:14px; color:var(--gray-400); font-style:italic; line-height:1.6; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--gray-100);">${q.text}</p>
+                ${g.answer ? `<p style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--gray-400); margin-bottom:6px;">Your Answer</p>
+                <p style="font-size:14px; color:var(--gray-700); line-height:1.65; background:#f8fafc; border-radius:6px; padding:12px 14px; border-left:3px solid var(--gray-300); margin-bottom:12px; white-space:pre-wrap;">${escapeHtmlQuiz(g.answer)}</p>` : ''}
                 ${g.feedback ? `<p style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--gray-400); margin-bottom:6px;">AI Feedback</p>
                 <p style="font-size:14px; color:var(--gray-600); line-height:1.65; background:var(--gray-50); border-radius:6px; padding:12px 14px; border-left:3px solid var(--primary);">${escapeHtmlQuiz(g.feedback)}</p>` : ''}
             </div>`;
