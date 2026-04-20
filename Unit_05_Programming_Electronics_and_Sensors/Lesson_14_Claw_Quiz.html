@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="../favicon.svg">
-    <title>Claw Project Quiz</title>
+    <title>Claw Project Quiz | Unit 5</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -19,16 +19,19 @@
 
         .container { max-width: 860px; margin: 0 auto; }
 
+        .hidden { display: none !important; }
+
+        /* ── Header ─────────────────────────────── */
         header {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 40px;
             padding-bottom: 30px;
-            border-bottom: 2px solid rgba(255, 149, 0, 0.4);
+            border-bottom: 2px solid rgba(255,149,0,0.4);
         }
 
         header h1 {
             font-family: 'Orbitron', sans-serif;
-            font-size: 2.8rem;
+            font-size: 2.6rem;
             color: #ff9500;
             text-shadow: 0 0 30px rgba(255,149,0,0.5);
             margin-bottom: 8px;
@@ -37,78 +40,138 @@
         }
 
         header .subtitle {
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             color: #00d4ff;
             font-weight: 600;
-            margin-bottom: 20px;
         }
 
-        .instructions {
+        /* ── Auth section ───────────────────────── */
+        .auth-section {
+            background: linear-gradient(135deg, rgba(0,212,255,0.05), rgba(26,31,58,0.8));
+            border: 2px solid #00d4ff;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            max-width: 580px;
+            margin: 40px auto;
+        }
+
+        .auth-section h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            font-size: 1.6rem;
+            margin-bottom: 18px;
+        }
+
+        .auth-section p {
+            color: #b8c5d6;
+            line-height: 1.6;
+            margin-bottom: 14px;
+            font-size: 1rem;
+        }
+
+        .warning-box {
+            background: rgba(255,149,0,0.1);
+            border: 2px solid #ff9500;
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-top: 18px;
+            color: #ff9500;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* ── User info bar ──────────────────────── */
+        .user-bar {
+            background: rgba(80,250,123,0.1);
+            border: 2px solid #50fa7b;
+            border-radius: 8px;
+            padding: 12px 20px;
+            margin-bottom: 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .user-bar-text { color: #50fa7b; font-size: 1rem; }
+
+        .signout-btn {
+            background: rgba(255,85,85,0.2);
+            border: 1px solid #ff5555;
+            border-radius: 6px;
+            color: #ff5555;
+            padding: 7px 14px;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .signout-btn:hover { background: rgba(255,85,85,0.35); }
+
+        /* ── Already-submitted screen ───────────── */
+        .already-submitted {
+            background: rgba(255,149,0,0.08);
+            border: 2px solid #ff9500;
+            border-radius: 14px;
+            padding: 40px;
+            text-align: center;
+            max-width: 600px;
+            margin: 30px auto;
+        }
+
+        .already-submitted h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #ff9500;
+            margin-bottom: 16px;
+        }
+
+        .already-submitted p { color: #b8c5d6; line-height: 1.6; }
+
+        /* ── Instructions banner ────────────────── */
+        .instructions-banner {
             background: rgba(0,212,255,0.05);
             border: 1px solid rgba(0,212,255,0.3);
             border-radius: 10px;
             padding: 18px 24px;
-            font-size: 1rem;
+            margin-bottom: 36px;
             color: #a0aab8;
             line-height: 1.7;
-            text-align: left;
-        }
-        .instructions strong { color: #ff9500; }
-
-        /* Student info block */
-        .student-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 50px;
+            font-size: 0.97rem;
         }
 
-        .info-field {
-            background: rgba(26,31,58,0.8);
-            border: 1px solid rgba(0,212,255,0.25);
-            border-radius: 10px;
-            padding: 16px 20px;
-        }
-        .info-field label {
-            display: block;
-            font-size: 0.8rem;
-            color: #6272a4;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-        }
-        .info-field .line {
-            border-bottom: 1px solid rgba(0,212,255,0.4);
-            height: 28px;
-        }
+        .instructions-banner strong { color: #ff9500; }
 
-        /* Question card */
+        /* ── Question card ──────────────────────── */
         .question {
-            background: rgba(26,31,58,0.8);
+            background: rgba(26,31,58,0.85);
             border: 1px solid rgba(0,212,255,0.2);
             border-radius: 14px;
             padding: 28px 30px;
-            margin-bottom: 30px;
+            margin-bottom: 28px;
+            transition: border-color 0.3s;
         }
+
+        .question.answered { border-color: rgba(80,250,123,0.35); }
 
         .question-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 14px;
-            gap: 20px;
+            gap: 16px;
         }
 
         .q-number {
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: #6272a4;
-            white-space: nowrap;
         }
 
         .q-points {
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: #00d4ff;
             white-space: nowrap;
         }
@@ -117,10 +180,10 @@
             font-size: 1.05rem;
             line-height: 1.7;
             color: #e0e6f0;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
-        .question .sub-question {
+        .sub-question {
             font-size: 0.95rem;
             color: #a0aab8;
             margin-left: 16px;
@@ -132,70 +195,12 @@
             background: #0d1117;
             border: 1px solid rgba(0,212,255,0.2);
             border-radius: 6px;
-            padding: 14px 18px;
+            padding: 12px 16px;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.9rem;
             color: #50fa7b;
-            margin: 12px 0;
+            margin: 10px 0 14px;
         }
-
-        .answer-lines { margin-top: 16px; }
-        .answer-line {
-            border-bottom: 1px solid rgba(0,212,255,0.2);
-            height: 32px;
-            margin-bottom: 4px;
-        }
-
-        .math-box {
-            background: rgba(189,147,249,0.06);
-            border: 1px solid rgba(189,147,249,0.3);
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin: 12px 0;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
-            color: #bd93f9;
-        }
-
-        /* Bonus */
-        .bonus-card {
-            background: rgba(80,250,123,0.05);
-            border: 1px solid rgba(80,250,123,0.3);
-            border-radius: 14px;
-            padding: 28px 30px;
-            margin-bottom: 40px;
-        }
-        .bonus-card .q-number { color: #50fa7b; }
-
-        /* Scoring footer */
-        .scoring {
-            background: rgba(26,31,58,0.8);
-            border: 1px solid rgba(0,212,255,0.2);
-            border-radius: 12px;
-            padding: 20px 30px;
-            margin-bottom: 30px;
-        }
-        .scoring h3 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1rem;
-            color: #00d4ff;
-            margin-bottom: 14px;
-        }
-        .score-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-        }
-        .score-cell {
-            text-align: center;
-            padding: 10px;
-            background: rgba(0,212,255,0.05);
-            border-radius: 6px;
-            border: 1px solid rgba(0,212,255,0.15);
-        }
-        .score-cell .label { font-size: 0.75rem; color: #6272a4; margin-bottom: 4px; }
-        .score-cell .pts   { font-size: 1rem; font-weight: 700; color: #00d4ff; }
-        .score-cell .slash { font-size: 0.85rem; color: #6272a4; }
 
         .inline-code {
             font-family: 'JetBrains Mono', monospace;
@@ -205,6 +210,277 @@
             font-size: 0.9em;
             color: #50fa7b;
         }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(0,212,255,0.25);
+            border-radius: 8px;
+            color: #e0e6f0;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1rem;
+            padding: 14px 16px;
+            resize: vertical;
+            transition: border-color 0.2s;
+            line-height: 1.6;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        textarea.tall { min-height: 160px; }
+
+        .bonus-card {
+            background: rgba(80,250,123,0.05);
+            border: 1px solid rgba(80,250,123,0.3);
+            border-radius: 14px;
+            padding: 28px 30px;
+            margin-bottom: 36px;
+        }
+
+        .bonus-card .q-number { color: #50fa7b; }
+        .bonus-card textarea { border-color: rgba(80,250,123,0.25); }
+        .bonus-card textarea:focus { border-color: #50fa7b; }
+
+        /* ── Submit button ──────────────────────── */
+        .submit-btn {
+            display: block;
+            margin: 10px auto 40px;
+            background: linear-gradient(135deg, #ff9500, #ff6b00);
+            border: 2px solid #ff9500;
+            border-radius: 12px;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            padding: 18px 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: scale(1.04);
+            box-shadow: 0 0 28px rgba(255,149,0,0.5);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ── Loading overlay ────────────────────── */
+        #loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10,14,39,0.96);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0,212,255,0.2);
+            border-top: 4px solid #00d4ff;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loading-text {
+            color: #00d4ff;
+            font-size: 1.25rem;
+            margin-top: 24px;
+            font-weight: 600;
+        }
+
+        .loading-sub {
+            color: #6272a4;
+            font-size: 0.95rem;
+            margin-top: 10px;
+        }
+
+        /* ── Results screen ─────────────────────── */
+        #results-section { margin-top: 10px; }
+
+        .submitted-banner {
+            background: rgba(80,250,123,0.1);
+            border: 2px solid #50fa7b;
+            border-radius: 12px;
+            padding: 20px 28px;
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .submitted-banner h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #50fa7b;
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+        }
+
+        .submitted-banner p { color: #b8c5d6; font-size: 0.97rem; }
+
+        .teacher-disclaimer {
+            background: rgba(255,149,0,0.1);
+            border: 2px solid #ff9500;
+            border-radius: 12px;
+            padding: 18px 24px;
+            margin-bottom: 36px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .disclaimer-icon { font-size: 1.6rem; flex-shrink: 0; margin-top: 2px; }
+
+        .disclaimer-text { color: #e0c080; line-height: 1.65; font-size: 0.97rem; }
+        .disclaimer-text strong { color: #ff9500; }
+
+        /* ── Result question card ───────────────── */
+        .result-card {
+            background: rgba(26,31,58,0.85);
+            border: 1px solid rgba(0,212,255,0.2);
+            border-radius: 14px;
+            padding: 26px 28px;
+            margin-bottom: 24px;
+        }
+
+        .result-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .result-q-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.82rem;
+            color: #6272a4;
+        }
+
+        .score-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        .score-full  { background: rgba(80,250,123,0.2);  color: #50fa7b; border: 1px solid rgba(80,250,123,0.5); }
+        .score-good  { background: rgba(255,185,0,0.2);   color: #ffb900; border: 1px solid rgba(255,185,0,0.4); }
+        .score-part  { background: rgba(255,120,0,0.2);   color: #ff7800; border: 1px solid rgba(255,120,0,0.4); }
+        .score-low   { background: rgba(255,85,85,0.2);   color: #ff5555; border: 1px solid rgba(255,85,85,0.4); }
+
+        .result-question {
+            font-size: 1rem;
+            color: #a0aab8;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+
+        .result-answer-label {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #6272a4;
+            margin-bottom: 6px;
+        }
+
+        .result-answer {
+            background: rgba(0,0,0,0.3);
+            border-left: 3px solid rgba(0,212,255,0.3);
+            border-radius: 0 6px 6px 0;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            color: #c8d0e0;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            margin-bottom: 14px;
+        }
+
+        .ai-feedback-label {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #6272a4;
+            margin-bottom: 6px;
+        }
+
+        .ai-feedback {
+            background: rgba(0,212,255,0.05);
+            border: 1px solid rgba(0,212,255,0.2);
+            border-radius: 8px;
+            padding: 14px 16px;
+            font-size: 0.97rem;
+            color: #b8c5d6;
+            line-height: 1.65;
+        }
+
+        .ai-feedback::before {
+            content: "AI Feedback: ";
+            color: #00d4ff;
+            font-weight: 700;
+        }
+
+        /* ── Total score box ────────────────────── */
+        .total-box {
+            background: linear-gradient(135deg, rgba(0,212,255,0.08), rgba(26,31,58,0.9));
+            border: 2px solid #00d4ff;
+            border-radius: 14px;
+            padding: 30px;
+            text-align: center;
+            margin: 40px 0 20px;
+        }
+
+        .total-box h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+        }
+
+        .total-score {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            color: #ff9500;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .total-max {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            color: #6272a4;
+            margin-top: 6px;
+        }
+
+        .total-note {
+            margin-top: 16px;
+            font-size: 0.9rem;
+            color: #a0aab8;
+            line-height: 1.6;
+        }
+
+        /* ── Responsive ─────────────────────────── */
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.9rem; }
+            .question, .result-card { padding: 20px; }
+        }
     </style>
 </head>
 <body>
@@ -213,167 +489,377 @@
     <header>
         <h1>Claw Project Quiz</h1>
         <div class="subtitle">Unit 5 · Lesson 14 — No notes permitted</div>
-        <div class="instructions">
-            Answer all questions in the space provided. <strong>No notes, no devices.</strong>
-            All concepts on this quiz were covered in your spec sheet learning objectives.
-            Total: <strong>26 points + 2 bonus</strong>.
-        </div>
     </header>
 
-    <!-- Student Info -->
-    <div class="student-info">
-        <div class="info-field">
-            <label>Name</label>
-            <div class="line"></div>
-        </div>
-        <div class="info-field">
-            <label>Period / Date</label>
-            <div class="line"></div>
-        </div>
-    </div>
-
-    <!-- Q1: PWM -->
-    <div class="question">
-        <div class="question-header">
-            <span class="q-number">QUESTION 1</span>
-            <span class="q-points">4 points</span>
-        </div>
-        <p>In your own words, what is PWM? How does the pulse width physically cause the servo to move to a different position?</p>
-        <div class="answer-lines">
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
+    <!-- ── Auth Gate ───────────────────────────────── -->
+    <div id="auth-section" class="auth-section">
+        <h2>Sign In to Begin</h2>
+        <p>Use your school Google account to access the quiz.</p>
+        <p>Your answers will be submitted automatically when you click <strong>Submit Quiz</strong>.</p>
+        <div id="google-signin-btn"></div>
+        <div class="warning-box">
+            ⚠ You have <strong>one attempt</strong>. Once you submit, the quiz is locked.
+            Make sure you are ready before signing in.
         </div>
     </div>
 
-    <!-- Q2: ADC Math -->
-    <div class="question">
-        <div class="question-header">
-            <span class="q-number">QUESTION 2</span>
-            <span class="q-points">6 points</span>
+    <!-- ── Already Submitted ──────────────────────── -->
+    <div id="already-submitted-section" class="hidden">
+        <div class="user-bar">
+            <span class="user-bar-text">Signed in as: <strong id="user-email-done"></strong></span>
+            <button class="signout-btn" onclick="signOut()">Sign Out</button>
         </div>
-        <p>The RP2040 Connect uses a <strong>3.3V reference voltage</strong> with <strong>10-bit ADC resolution</strong>. The feedback wire on the Pololu claw outputs approximately <strong>0.5V when fully open</strong> and <strong>2.2V when fully closed</strong>.</p>
-        <p class="sub-question">a) What ADC value do you expect when the claw is fully open? Show your work.</p>
-        <div class="math-box">ADC = (voltage / 3.3) × 1023<br><br>Open:  ( ____ / 3.3 ) × 1023 = ____</div>
-        <p class="sub-question">b) What ADC value do you expect when the claw is fully closed? Show your work.</p>
-        <div class="math-box">Closed: ( ____ / 3.3 ) × 1023 = ____</div>
-        <p class="sub-question">c) If a large object stops the claw when it has barely closed, will the ADC value be closer to the open value or the closed value? Explain why.</p>
-        <div class="answer-lines">
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
+        <div class="already-submitted">
+            <h2>Quiz Already Submitted</h2>
+            <p style="margin-top: 12px;">Your response has been received and recorded.</p>
+            <p style="margin-top: 10px;">Mr. Bombich will review your answers and post your final grade.</p>
         </div>
     </div>
 
-    <!-- Q3: Contact Detection -->
-    <div class="question">
-        <div class="question-header">
-            <span class="q-number">QUESTION 3</span>
-            <span class="q-points">4 points</span>
+    <!-- ── Quiz Form ───────────────────────────────── -->
+    <div id="quiz-section" class="hidden">
+
+        <div class="user-bar">
+            <span class="user-bar-text">Signed in as: <strong id="user-email"></strong></span>
+            <button class="signout-btn" onclick="signOut()">Sign Out</button>
         </div>
-        <p>Describe in plain English how your code knows the claw has touched an object — without being able to see it. Why is this better than just closing the claw all the way every time?</p>
-        <div class="answer-lines">
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
+
+        <div class="instructions-banner">
+            Answer all questions in the text boxes below. <strong>No notes, no devices, no AI.</strong>
+            All concepts were covered in your Design Brief learning objectives.
+            Click <strong>Submit Quiz</strong> when done — you have one attempt.
+            Total: <strong>26 points + 2 bonus</strong>.
         </div>
+
+        <form id="quiz-form">
+
+            <!-- Q1: PWM -->
+            <div class="question" id="qcard-q1">
+                <div class="question-header">
+                    <span class="q-number">QUESTION 1</span>
+                    <span class="q-points">4 points</span>
+                </div>
+                <p>In your own words, what is PWM? How does the pulse width physically cause the servo to move to a different position?</p>
+                <textarea id="ans-q1" name="q1" placeholder="Write your answer here..." oninput="markAnswered('q1')"></textarea>
+            </div>
+
+            <!-- Q2: Contact Detection -->
+            <div class="question" id="qcard-q2">
+                <div class="question-header">
+                    <span class="q-number">QUESTION 2</span>
+                    <span class="q-points">4 points</span>
+                </div>
+                <p>Describe in plain English how your code knows the claw has touched an object — without being able to see it. Why is this better than just closing the claw all the way every time?</p>
+                <textarea id="ans-q2" name="q2" placeholder="Write your answer here..." oninput="markAnswered('q2')"></textarea>
+            </div>
+
+            <!-- Q3: Code Reading -->
+            <div class="question" id="qcard-q3">
+                <div class="question-header">
+                    <span class="q-number">QUESTION 3</span>
+                    <span class="q-points">4 points</span>
+                </div>
+                <p>Look at this line from the slip detection function:</p>
+                <div class="code-snippet">if (abs(currentFeedback - holdFeedback) &gt; 15)</div>
+                <p class="sub-question">a) What does <span class="inline-code">abs()</span> do, and why is it needed here?</p>
+                <p class="sub-question">b) What real-world event does this line detect?</p>
+                <textarea id="ans-q3" name="q3" placeholder="Answer both parts (a) and (b) here..." oninput="markAnswered('q3')"></textarea>
+            </div>
+
+            <!-- Q4: Rate of Closure -->
+            <div class="question" id="qcard-q4">
+                <div class="question-header">
+                    <span class="q-number">QUESTION 4</span>
+                    <span class="q-points">4 points</span>
+                </div>
+                <p>What controls how fast your claw closes — meaning, what determines the speed of each small servo step? Point to the specific line, value, or variable in your code that is responsible, and explain what would happen if you changed it.</p>
+                <textarea id="ans-q4" name="q4" placeholder="Write your answer here..." oninput="markAnswered('q4')"></textarea>
+            </div>
+
+            <!-- Q5: Object Detection Line -->
+            <div class="question" id="qcard-q5">
+                <div class="question-header">
+                    <span class="q-number">QUESTION 5</span>
+                    <span class="q-points">4 points</span>
+                </div>
+                <p>Which specific line or lines in your code actually read the potentiometer and compare the result against your contact threshold? Write the line out (or reconstruct it as best you can) and explain what each part does.</p>
+                <textarea id="ans-q5" name="q5" class="tall" placeholder="Write your answer here..." oninput="markAnswered('q5')"></textarea>
+            </div>
+
+            <!-- Q6: Blocking Code -->
+            <div class="question" id="qcard-q6">
+                <div class="question-header">
+                    <span class="q-number">QUESTION 6</span>
+                    <span class="q-points">6 points</span>
+                </div>
+                <p>What is <strong>blocking code</strong>? Using <span class="inline-code">delay()</span> as an example, explain why a blocking approach would have made it impossible to close the claw and check for contact at the same time — and describe how your program was structured to avoid this problem.</p>
+                <textarea id="ans-q6" name="q6" class="tall" placeholder="Write your answer here..." oninput="markAnswered('q6')"></textarea>
+            </div>
+
+            <!-- Bonus -->
+            <div class="bonus-card" id="qcard-bonus">
+                <div class="question-header">
+                    <span class="q-number" style="color:#50fa7b;">BONUS</span>
+                    <span class="q-points" style="color:#50fa7b;">+2 points</span>
+                </div>
+                <p>What does <strong>"active low"</strong> mean for the RGB LED on the RP2040 Connect? Why does it matter when you write code to turn on a specific color?</p>
+                <textarea id="ans-bonus" name="bonus" placeholder="Write your answer here (optional)..." oninput="markAnswered('bonus')"></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submit-btn">Submit Quiz</button>
+
+        </form>
+    </div><!-- end quiz-section -->
+
+    <!-- ── Loading Overlay ────────────────────────── -->
+    <div id="loading-overlay" class="hidden">
+        <div class="spinner"></div>
+        <div class="loading-text">Grading your responses…</div>
+        <div class="loading-sub">AI is reviewing each answer — please wait, do not close this tab</div>
     </div>
 
-    <!-- Q4: Code Reading -->
-    <div class="question">
-        <div class="question-header">
-            <span class="q-number">QUESTION 4</span>
-            <span class="q-points">4 points</span>
-        </div>
-        <p>Look at this line from the slip detection function:</p>
-        <div class="code-snippet">if (abs(currentFeedback - holdFeedback) &gt; 15)</div>
-        <p class="sub-question">a) What does <span class="inline-code">abs()</span> do, and why is it needed here?</p>
-        <div class="answer-lines">
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-        </div>
-        <p class="sub-question" style="margin-top: 12px;">b) What real-world event does this line detect?</p>
-        <div class="answer-lines">
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-        </div>
-    </div>
+    <!-- ── Results ─────────────────────────────────── -->
+    <div id="results-section" class="hidden">
 
-    <!-- Q5: Debugging -->
-    <div class="question">
-        <div class="question-header">
-            <span class="q-number">QUESTION 5</span>
-            <span class="q-points">4 points</span>
+        <div class="submitted-banner">
+            <h2>Quiz Submitted</h2>
+            <p>Your answers have been recorded. The feedback below was generated by AI.</p>
         </div>
-        <p>Your claw correctly classifies a tennis ball as <strong>"large"</strong> when you test it by hand (manually triggering the grip sequence). But when you run the full program with the Serial trigger, the same ball is classified as <strong>"medium."</strong></p>
-        <p>Name one possible reason this is happening and describe how you would investigate it.</p>
-        <div class="answer-lines">
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-        </div>
-    </div>
 
-    <!-- Q6: AI Evaluation -->
-    <div class="question">
-        <div class="question-header">
-            <span class="q-number">QUESTION 6</span>
-            <span class="q-points">4 points</span>
-        </div>
-        <p>Describe one thing AI gave you during this project that was wrong, incomplete, or that you had to change. What was the problem, and how did you fix it?</p>
-        <p style="font-size: 0.9rem; color: #a0aab8; font-style: italic;">(If you believe everything AI gave you was perfect and you accepted it all without changes — explain why that would concern a careful engineer.)</p>
-        <div class="answer-lines">
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-        </div>
-    </div>
-
-    <!-- Bonus -->
-    <div class="bonus-card">
-        <div class="question-header">
-            <span class="q-number" style="color:#50fa7b;">BONUS</span>
-            <span class="q-points" style="color:#50fa7b;">+2 points</span>
-        </div>
-        <p>What does <strong>"active low"</strong> mean for the RGB LED on the RP2040 Connect? Why does it matter when you write code to turn on a specific color?</p>
-        <div class="answer-lines">
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-            <div class="answer-line"></div>
-        </div>
-    </div>
-
-    <!-- Scoring -->
-    <div class="scoring">
-        <h3>Score</h3>
-        <div class="score-grid">
-            <div class="score-cell"><div class="label">Q1</div><div class="pts">____<span class="slash"> / 4</span></div></div>
-            <div class="score-cell"><div class="label">Q2</div><div class="pts">____<span class="slash"> / 6</span></div></div>
-            <div class="score-cell"><div class="label">Q3</div><div class="pts">____<span class="slash"> / 4</span></div></div>
-            <div class="score-cell"><div class="label">Q4</div><div class="pts">____<span class="slash"> / 4</span></div></div>
-            <div class="score-cell"><div class="label">Q5</div><div class="pts">____<span class="slash"> / 4</span></div></div>
-            <div class="score-cell"><div class="label">Q6</div><div class="pts">____<span class="slash"> / 4</span></div></div>
-            <div class="score-cell"><div class="label">Bonus</div><div class="pts">____<span class="slash"> / 2</span></div></div>
-            <div class="score-cell" style="border-color: rgba(255,149,0,0.4); background: rgba(255,149,0,0.06);">
-                <div class="label" style="color:#ff9500;">Total</div>
-                <div class="pts" style="color:#ff9500;">____<span class="slash"> / 26</span></div>
+        <div class="teacher-disclaimer">
+            <div class="disclaimer-icon">📋</div>
+            <div class="disclaimer-text">
+                <strong>Important — about these scores:</strong> The scores and feedback shown here are
+                AI-generated and are meant to help you understand how you did.
+                Mr. Bombich will review every response and <strong>has final say on your grade</strong>.
+                Your grade may be adjusted up or down after teacher review.
+                You will be notified of your official final grade.
             </div>
         </div>
-    </div>
+
+        <div id="results-list"></div>
+
+        <div class="total-box">
+            <h2>AI-Generated Score</h2>
+            <div class="total-score" id="ai-total">—</div>
+            <div class="total-max">out of 26 points (+ up to 2 bonus)</div>
+            <div class="total-note">
+                This score is a starting point for teacher review, not your official grade.
+            </div>
+        </div>
+
+    </div><!-- end results-section -->
 
 </div><!-- end container -->
+
+<!-- Google Identity Services -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<script>
+    // ── CONFIG ───────────────────────────────────────────────
+    // Paste your deployed Apps Script URL here after deploying
+    const QUIZ_SCRIPT_URL = 'PASTE_YOUR_APPS_SCRIPT_DEPLOYMENT_URL_HERE';
+    const GOOGLE_CLIENT_ID = '351912540436-54lj11b56684ni284ngu3afb5gruno05.apps.googleusercontent.com';
+
+    // ── STATE ────────────────────────────────────────────────
+    let userEmail = '';
+    let userName  = '';
+
+    const QUESTIONS = [
+        { id: 'q1',    label: 'Question 1',  pts: 4, text: 'In your own words, what is PWM? How does the pulse width physically cause the servo to move to a different position?' },
+        { id: 'q2',    label: 'Question 2',  pts: 4, text: 'Describe in plain English how your code knows the claw has touched an object — without being able to see it. Why is this better than just closing the claw all the way every time?' },
+        { id: 'q3',    label: 'Question 3',  pts: 4, text: 'abs() and slip detection line — see quiz above for full question.' },
+        { id: 'q4',    label: 'Question 4',  pts: 4, text: 'What controls how fast your claw closes?' },
+        { id: 'q5',    label: 'Question 5',  pts: 4, text: 'Which specific line(s) read the potentiometer and compare against your contact threshold?' },
+        { id: 'q6',    label: 'Question 6',  pts: 6, text: 'What is blocking code, and how did your program avoid it?' },
+        { id: 'bonus', label: 'Bonus',       pts: 2, text: 'What does "active low" mean for the RGB LED?' }
+    ];
+
+    // ── Google Sign-In ───────────────────────────────────────
+    function initGoogleSignIn() {
+        google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: handleCredential
+        });
+        google.accounts.id.renderButton(
+            document.getElementById('google-signin-btn'),
+            { theme: 'outline', size: 'large', text: 'signin_with', width: 280 }
+        );
+    }
+
+    async function handleCredential(response) {
+        const payload = JSON.parse(atob(response.credential.split('.')[1]));
+        userEmail = payload.email;
+        userName  = payload.name;
+
+        // Check for prior submission before showing the quiz
+        document.getElementById('auth-section').classList.add('hidden');
+        showLoading('Checking submission status…', '');
+
+        try {
+            const res = await fetch(`${QUIZ_SCRIPT_URL}?action=checkSubmission&email=${encodeURIComponent(userEmail)}`);
+            const data = await res.json();
+            hideLoading();
+
+            if (data.submitted) {
+                showAlreadySubmitted();
+            } else {
+                showQuiz();
+            }
+        } catch (err) {
+            hideLoading();
+            // If the check fails (network issue), still allow the quiz to proceed
+            // The server will do a final duplicate check on submit
+            console.warn('Submission check failed, proceeding to quiz:', err);
+            showQuiz();
+        }
+    }
+
+    function signOut() {
+        google.accounts.id.disableAutoSelect();
+        userEmail = '';
+        userName  = '';
+        document.getElementById('auth-section').classList.remove('hidden');
+        document.getElementById('already-submitted-section').classList.add('hidden');
+        document.getElementById('quiz-section').classList.add('hidden');
+        document.getElementById('results-section').classList.add('hidden');
+    }
+
+    window.onload = function() {
+        if (typeof google !== 'undefined') initGoogleSignIn();
+    };
+
+    // ── View helpers ─────────────────────────────────────────
+    function showLoading(text, sub) {
+        document.getElementById('loading-overlay').classList.remove('hidden');
+        document.querySelector('.loading-text').textContent = text || 'Loading…';
+        document.querySelector('.loading-sub').textContent  = sub  || '';
+    }
+
+    function hideLoading() {
+        document.getElementById('loading-overlay').classList.add('hidden');
+    }
+
+    function showAlreadySubmitted() {
+        document.getElementById('user-email-done').textContent = userEmail;
+        document.getElementById('already-submitted-section').classList.remove('hidden');
+    }
+
+    function showQuiz() {
+        document.getElementById('user-email').textContent = userEmail;
+        document.getElementById('quiz-section').classList.remove('hidden');
+    }
+
+    function markAnswered(qid) {
+        const ta = document.getElementById('ans-' + qid);
+        const card = document.getElementById('qcard-' + qid);
+        if (ta && card) {
+            card.classList.toggle('answered', ta.value.trim().length > 0);
+        }
+    }
+
+    // ── Form submission ──────────────────────────────────────
+    document.getElementById('quiz-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const btn = document.getElementById('submit-btn');
+        if (btn.disabled) return;
+
+        // Check required questions
+        const required = ['q1','q2','q3','q4','q5','q6'];
+        const unanswered = required.filter(id => !document.getElementById('ans-' + id).value.trim());
+        if (unanswered.length > 0) {
+            alert(`Please answer all required questions before submitting.\n\nUnanswered: ${unanswered.map(id => id.toUpperCase()).join(', ')}`);
+            return;
+        }
+
+        btn.disabled = true;
+        showLoading('Grading your responses…', 'AI is reviewing each answer — please wait, do not close this tab');
+
+        const payload = {
+            action:    'submitQuiz',
+            email:     userEmail,
+            name:      userName,
+            timestamp: new Date().toLocaleString(),
+            q1:     document.getElementById('ans-q1').value,
+            q2:     document.getElementById('ans-q2').value,
+            q3:     document.getElementById('ans-q3').value,
+            q4:     document.getElementById('ans-q4').value,
+            q5:     document.getElementById('ans-q5').value,
+            q6:     document.getElementById('ans-q6').value,
+            bonus:  document.getElementById('ans-bonus').value
+        };
+
+        try {
+            const res = await fetch(QUIZ_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            hideLoading();
+
+            if (data.success) {
+                showResults(payload, data.grades, data.aiTotal);
+            } else if (data.error === 'already_submitted') {
+                showAlreadySubmitted();
+            } else {
+                throw new Error(data.error || 'Submission failed');
+            }
+        } catch (err) {
+            hideLoading();
+            btn.disabled = false;
+            alert('There was an error submitting your quiz: ' + err.message +
+                  '\n\nPlease screenshot your answers and notify Mr. Bombich immediately.');
+        }
+    });
+
+    // ── Display results ──────────────────────────────────────
+    function scoreBadgeClass(score, max) {
+        const pct = score / max;
+        if (pct >= 1.0)  return 'score-full';
+        if (pct >= 0.75) return 'score-good';
+        if (pct >= 0.5)  return 'score-part';
+        return 'score-low';
+    }
+
+    function showResults(answers, grades, aiTotal) {
+        document.getElementById('quiz-section').classList.add('hidden');
+
+        const list = document.getElementById('results-list');
+        list.innerHTML = '';
+
+        QUESTIONS.forEach(q => {
+            const g = grades[q.id] || { score: 0, feedback: 'No feedback available.' };
+            const score = Math.min(g.score, q.pts);
+            const badgeClass = scoreBadgeClass(score, q.pts);
+            const studentAnswer = (answers[q.id] || '').trim() || '(no answer)';
+
+            list.innerHTML += `
+                <div class="result-card">
+                    <div class="result-card-header">
+                        <span class="result-q-label">${q.label.toUpperCase()}</span>
+                        <span class="score-badge ${badgeClass}">${score} / ${q.pts}</span>
+                    </div>
+                    <div class="result-answer-label">Your Answer</div>
+                    <div class="result-answer">${escapeHtml(studentAnswer)}</div>
+                    <div class="ai-feedback-label">AI Feedback</div>
+                    <div class="ai-feedback">${escapeHtml(g.feedback || '')}</div>
+                </div>`;
+        });
+
+        document.getElementById('ai-total').textContent = aiTotal + (aiTotal === 1 ? ' pt' : ' pts');
+        document.getElementById('results-section').classList.remove('hidden');
+        document.getElementById('results-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+</script>
 </body>
 </html>

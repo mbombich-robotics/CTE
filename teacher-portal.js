@@ -22,7 +22,7 @@ const CONFIG = {
         robotics: {
             name: 'Robotics Portfolio',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz2zToSMXHWQegIJnA73YxCZVUHVPLRck1DbQQiF7hUCnnMTE7WMUVNtpAjoGVY2-A/exec',
-            currentAppVersion: 'v2.9.33',  // keep in sync with Robotics app.js CONFIG.VERSION
+            currentAppVersion: 'v2.9.34',  // keep in sync with Robotics app.js CONFIG.VERSION
             hasTeams: false,
             totalDeliverables: 9,
             totalReflections: 11,
@@ -137,7 +137,7 @@ function tallyRubric(uid, deliverableId, email) {
 // WEEK SETTINGS (localStorage)
 // ============================================
 let weekSettings = {
-    robotics: { skipReflections: [], skipDeliverables: [] },
+    robotics: { skipReflections: [], skipDeliverables: [], quizEnabled: false },
     frc:      { skipReflections: [], skipDeliverables: [] },
     currentWeekOverride: null
 };
@@ -148,8 +148,8 @@ function loadWeekSettings() {
         if (saved) {
             const parsed = JSON.parse(saved);
             weekSettings = { ...weekSettings, ...parsed };
-            weekSettings.robotics = { ...weekSettings.robotics, ...parsed.robotics };
-            weekSettings.frc = { ...weekSettings.frc, ...parsed.frc };
+            weekSettings.robotics = { skipReflections: [], skipDeliverables: [], quizEnabled: false, ...parsed.robotics };
+            weekSettings.frc      = { skipReflections: [], skipDeliverables: [], ...parsed.frc };
         }
     } catch(e) {}
 }
@@ -2094,6 +2094,10 @@ async function openWeekSettings() {
         }
     });
 
+    // Set quiz toggle
+    const quizToggle = document.getElementById('quizEnabledToggle');
+    if (quizToggle) quizToggle.checked = weekSettings.robotics.quizEnabled || false;
+
     modal.classList.add('active');
 
     // Populate version display fields with current code versions
@@ -2158,6 +2162,9 @@ async function applyWeekSettings() {
         weekSettings[courseId].expectedVersion = document.getElementById(`expectedVersion_${courseId}`)?.value.trim() || '';
     });
 
+    // Collect quiz toggle (robotics only)
+    weekSettings.robotics.quizEnabled = document.getElementById('quizEnabledToggle')?.checked || false;
+
     saveWeekSettings();
     calculateCurrentWeek();
 
@@ -2168,18 +2175,17 @@ async function applyWeekSettings() {
     saveBtn.disabled = true;
 
     try {
-        await Promise.all(['robotics', 'frc'].map(courseId =>
-            fetch(CONFIG.COURSES[courseId].apiUrl, {
-                method: 'POST',
-                body: JSON.stringify({
-                    action: 'setConfig',
-                    token: CONFIG.TEACHER_TOKEN,
-                    skipReflectionWeeks:  weekSettings[courseId].skipReflections,
-                    skipDeliverableWeeks: weekSettings[courseId].skipDeliverables,
-                    expectedVersion:      weekSettings[courseId].expectedVersion
-                })
-            })
-        ));
+        await Promise.all(['robotics', 'frc'].map(courseId => {
+            const body = {
+                action: 'setConfig',
+                token: CONFIG.TEACHER_TOKEN,
+                skipReflectionWeeks:  weekSettings[courseId].skipReflections,
+                skipDeliverableWeeks: weekSettings[courseId].skipDeliverables,
+                expectedVersion:      weekSettings[courseId].expectedVersion
+            };
+            if (courseId === 'robotics') body.quizEnabled = weekSettings.robotics.quizEnabled;
+            return fetch(CONFIG.COURSES[courseId].apiUrl, { method: 'POST', body: JSON.stringify(body) });
+        }));
         saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
         setTimeout(() => {
             saveBtn.innerHTML = originalHTML;

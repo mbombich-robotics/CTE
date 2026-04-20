@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Claw Project — Design Brief Rubric | Unit 5</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: #1a1a1a;
+            color: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: linear-gradient(135deg, #8B0000 0%, #c41e3a 50%, #8B0000 100%);
+            height: 80px;
+            border-bottom: 3px solid #ffffff;
+            box-shadow: 0 4px 20px rgba(196,30,58,0.5);
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            gap: 20px;
+        }
+
+        .school-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border: 2px solid rgba(255,255,255,0.4);
+            text-transform: uppercase;
+        }
+
+        .course-title-compact {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 50px 40px 80px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 3px solid #c41e3a;
+        }
+
+        .page-header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.4rem;
+            color: #c41e3a;
+            margin-bottom: 8px;
+        }
+
+        .page-header .sub {
+            color: #aaa;
+            font-size: 1.05rem;
+        }
+
+        .meta-row {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            background: rgba(196,30,58,0.12);
+            border: 1px solid rgba(196,30,58,0.35);
+            border-radius: 8px;
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            color: #ddd;
+        }
+
+        .meta-item strong { color: #c41e3a; }
+
+        .overview {
+            background: rgba(255,255,255,0.05);
+            border-left: 4px solid #c41e3a;
+            border-radius: 10px;
+            padding: 24px 28px;
+            margin-bottom: 40px;
+            color: #ccc;
+            line-height: 1.7;
+        }
+
+        .overview h2 {
+            color: #c41e3a;
+            margin-bottom: 12px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Checkpoint callout */
+        .checkpoint-banner {
+            background: rgba(255,185,0,0.08);
+            border: 2px solid rgba(255,185,0,0.4);
+            border-radius: 10px;
+            padding: 18px 24px;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .checkpoint-banner .icon {
+            font-size: 1.8rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .checkpoint-banner div { color: #ccc; }
+
+        .checkpoint-banner strong { color: #ffb900; }
+
+        /* Section heading */
+        .rubric-section { margin-bottom: 50px; }
+
+        .section-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #c41e3a;
+            margin-bottom: 14px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid rgba(196,30,58,0.4);
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        thead tr { background: rgba(196,30,58,0.25); }
+
+        thead th {
+            padding: 12px 14px;
+            text-align: left;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #fff;
+            border: 1px solid rgba(196,30,58,0.3);
+        }
+
+        thead th.pts-col { text-align: center; width: 80px; }
+
+        tbody tr { border-bottom: 1px solid rgba(255,255,255,0.07); }
+        tbody tr:nth-child(even) { background: rgba(255,255,255,0.03); }
+
+        tbody td {
+            padding: 14px;
+            vertical-align: top;
+            border: 1px solid rgba(255,255,255,0.07);
+            color: #ccc;
+            line-height: 1.55;
+        }
+
+        tbody td.criterion {
+            font-weight: 700;
+            color: #f0f0f0;
+            width: 200px;
+        }
+
+        tbody td.pts-cell {
+            text-align: center;
+            width: 80px;
+            color: #c41e3a;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+        }
+
+        .band { margin-bottom: 6px; }
+        .band:last-child { margin-bottom: 0; }
+
+        .band-label {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .band-full  { background: rgba(80,250,123,0.2);   color: #50fa7b; border: 1px solid rgba(80,250,123,0.4); }
+        .band-part  { background: rgba(255,185,0,0.15);   color: #ffb900; border: 1px solid rgba(255,185,0,0.35); }
+        .band-min   { background: rgba(255,80,80,0.15);   color: #ff5050; border: 1px solid rgba(255,80,80,0.35); }
+        .band-zero  { background: rgba(120,120,120,0.15); color: #888;    border: 1px solid rgba(120,120,120,0.3); }
+
+        /* Highlight rows for high-weight criteria */
+        tbody tr.high-weight td.criterion::after {
+            content: " ★";
+            color: #ffb900;
+        }
+
+        tfoot td {
+            padding: 12px 14px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            background: rgba(196,30,58,0.18);
+            border: 1px solid rgba(196,30,58,0.3);
+            color: #fff;
+        }
+
+        tfoot td.pts-cell { text-align: center; color: #fff; font-size: 1.1rem; }
+
+        /* Score summary */
+        .score-box {
+            background: rgba(255,255,255,0.04);
+            border: 2px solid rgba(196,30,58,0.4);
+            border-radius: 12px;
+            padding: 24px 28px;
+            margin-top: 50px;
+        }
+
+        .score-box h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.25rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #c41e3a;
+            margin-bottom: 18px;
+        }
+
+        .score-group {
+            margin-bottom: 28px;
+        }
+
+        .score-group-label {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            margin-bottom: 10px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .score-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .score-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 12px 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .score-item .label {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            margin-bottom: 4px;
+        }
+
+        .score-item .value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            color: #c41e3a;
+            font-weight: 700;
+        }
+
+        .score-total-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 16px;
+        }
+
+        .score-total {
+            background: rgba(196,30,58,0.12);
+            border: 2px solid rgba(196,30,58,0.5);
+            border-radius: 10px;
+            padding: 14px 28px;
+            text-align: center;
+        }
+
+        .score-total .label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            margin-bottom: 4px;
+        }
+
+        .score-total .value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.6rem;
+            color: #c41e3a;
+            font-weight: 700;
+        }
+
+        .notes-area { margin-top: 40px; }
+
+        .notes-area h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        .notes-lines {
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 16px;
+            min-height: 120px;
+            background: rgba(255,255,255,0.02);
+        }
+
+        .notes-line {
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            height: 32px;
+        }
+
+        .notes-line:last-child { border-bottom: none; }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #c41e3a;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+
+        .back-link:hover { color: #e83a5a; }
+
+        @media print {
+            body { background: #fff; color: #000; }
+            .top-bar { background: #8B0000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .back-link { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="school-badge">VHS Bulldogs</div>
+        <div class="course-title-compact">Applied Engineering &amp; Robotics</div>
+    </div>
+
+    <div class="page">
+        <a href="Lesson_14_Claw_Project.html" class="back-link">← Lesson 14: Claw Project</a>
+
+        <div class="page-header">
+            <h1>Design Brief Rubric</h1>
+            <p class="sub">Unit 5 — Claw Project | Deliverables 8 &amp; 9</p>
+            <div class="meta-row">
+                <div class="meta-item"><strong>Document:</strong> Design Brief (Google Doc)</div>
+                <div class="meta-item"><strong>Checkpoint (D8):</strong> Sections 1–4 + AI Log — 50 pts</div>
+                <div class="meta-item"><strong>Final (D9):</strong> All Sections — 25 pts</div>
+            </div>
+        </div>
+
+        <div class="overview">
+            <h2>Overview</h2>
+            <p>
+                The Design Brief is a 9-section technical document students build progressively over the 10-day project.
+                It is submitted twice: a <strong>Week 1 Checkpoint</strong> (Deliverable 8, Day 5) covering Sections 1–4 and the AI Log,
+                and a <strong>Final submission</strong> (Deliverable 9, Day 10) covering all 9 sections.
+                Grading emphasizes accuracy and understanding over polish — students should write in their own words,
+                not copy AI output verbatim. Annotated code must show the student's own explanations of every function.
+            </p>
+        </div>
+
+        <div class="checkpoint-banner">
+            <div class="icon">★</div>
+            <div>
+                <strong>Checkpoint grading (Deliverable 8 — 50 pts):</strong>
+                Grade only Sections 1–4 (40 pts) + AI Log (10 pts).
+                Sections 5–9 are not yet expected; do not penalize for absence.
+                <br><br>
+                <strong>Final grading (Deliverable 9 — 25 pts for Design Brief portion):</strong>
+                Grade Sections 5–9 (25 pts total). Sections 1–4 are already graded from D8;
+                re-grade them only if significantly revised.
+            </div>
+        </div>
+
+        <!-- ===== CHECKPOINT SECTIONS ===== -->
+        <div class="section-title" style="font-size:1.05rem; color:#ffb900; border-color:rgba(255,185,0,0.4); margin-bottom: 24px;">
+            Deliverable 8 — Checkpoint Sections (50 pts)
+        </div>
+
+        <!-- Section 1: Project Overview -->
+        <div class="rubric-section">
+            <div class="section-title">Section 1 — Project Overview (6 pts)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Criterion</th>
+                        <th>Performance Description</th>
+                        <th class="pts-col">Pts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="criterion">Purpose &amp; Context</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">3</span> Clearly states what the project is, what the system does (grip, classify, detect slip), and why it is a useful application of sensors and embedded programming. Written in 2–4 sentences in student's own voice.</div>
+                            <div class="band"><span class="band-label band-part">2</span> States what the project is but description of functionality is vague or incomplete.</div>
+                            <div class="band"><span class="band-label band-min">1</span> Present but reads like AI output pasted without editing; no personal voice.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> Missing or one-sentence placeholder.</div>
+                        </td>
+                        <td class="pts-cell">3</td>
+                    </tr>
+                    <tr>
+                        <td class="criterion">Learning Goals</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">3</span> Lists 2–3 specific learning goals (e.g., "I will learn how PWM controls servo position" and "I will learn how to use ADC values to detect contact"). Goals are specific, not generic.</div>
+                            <div class="band"><span class="band-label band-part">2</span> Goals listed but generic ("I will learn programming").</div>
+                            <div class="band"><span class="band-label band-min">1</span> One goal present; vague.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> Missing.</div>
+                        </td>
+                        <td class="pts-cell">3</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="2">Section Total</td><td class="pts-cell">/ 6</td></tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Section 2: BOM -->
+        <div class="rubric-section">
+            <div class="section-title">Section 2 — Bill of Materials (8 pts)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Criterion</th>
+                        <th>Performance Description</th>
+                        <th class="pts-col">Pts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="criterion">Completeness</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">4</span> All major components listed (microcontroller, servo, potentiometer, LED(s), resistor(s), claw hardware, power supply). No significant omissions.</div>
+                            <div class="band"><span class="band-label band-part">2–3</span> 1–2 components missing; core items present.</div>
+                            <div class="band"><span class="band-label band-min">1</span> Significant omissions; fewer than half the components listed.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> Missing or empty.</div>
+                        </td>
+                        <td class="pts-cell">4</td>
+                    </tr>
+                    <tr>
+                        <td class="criterion">Datasheet Links</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">4</span> Working hyperlinks to datasheets (or product pages) provided for servo, potentiometer, and at least one other component. Links actually open the correct resource.</div>
+                            <div class="band"><span class="band-label band-part">2–3</span> Links present for 2 components; one broken or incorrect link.</div>
+                            <div class="band"><span class="band-label band-min">1</span> One working link; others missing or broken.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> No links.</div>
+                        </td>
+                        <td class="pts-cell">4</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="2">Section Total</td><td class="pts-cell">/ 8</td></tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Section 3: Hardware Setup -->
+        <div class="rubric-section">
+            <div class="section-title">Section 3 — Hardware Setup (8 pts)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Criterion</th>
+                        <th>Performance Description</th>
+                        <th class="pts-col">Pts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="criterion">Pin Table Accuracy</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">5</span> Pin table lists all connected components with correct pin numbers/names, wire color, and signal type (power/signal/ground). Matches actual wiring (green = pot, white = servo sig, red = power, black = ground).</div>
+                            <div class="band"><span class="band-label band-part">3–4</span> Table present with minor errors (1–2 wrong pin numbers or missing a column).</div>
+                            <div class="band"><span class="band-label band-min">1–2</span> Table attempted but significant errors or missing components.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> No pin table.</div>
+                        </td>
+                        <td class="pts-cell">5</td>
+                    </tr>
+                    <tr>
+                        <td class="criterion">Diagram or Photo</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">3</span> A wiring diagram or clear photo is included that matches the pin table and shows connections legibly.</div>
+                            <div class="band"><span class="band-label band-part">2</span> Diagram/photo present but unclear or partially matching.</div>
+                            <div class="band"><span class="band-label band-min">1</span> Very blurry photo or a generic diagram not specific to this project.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> Missing.</div>
+                        </td>
+                        <td class="pts-cell">3</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="2">Section Total</td><td class="pts-cell">/ 8</td></tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Section 4: Key Concepts -->
+        <div class="rubric-section">
+            <div class="section-title">Section 4 — Key Concepts (18 pts) ★ Highest-weighted section</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Criterion</th>
+                        <th>Performance Description</th>
+                        <th class="pts-col">Pts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="high-weight">
+                        <td class="criterion">PWM Explanation</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">6</span> Explains in student's own words: what PWM stands for, what duty cycle means, how changing duty cycle controls servo position. Uses an analogy or example. Does <em>not</em> read like a textbook or AI dump.</div>
+                            <div class="band"><span class="band-label band-part">3–5</span> Explanation is mostly correct but incomplete (e.g., defines PWM but doesn't connect to servo angle) or is clearly paraphrased AI with no personal voice.</div>
+                            <div class="band"><span class="band-label band-min">1–2</span> Definition only ("PWM is a technique...") with no connection to the servo or claw.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> Missing or completely wrong.</div>
+                        </td>
+                        <td class="pts-cell">6</td>
+                    </tr>
+                    <tr class="high-weight">
+                        <td class="criterion">ADC Explanation</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">6</span> Explains in student's own words: what ADC does (analog → digital), what the 0–1023 range represents, and how ADC values from the potentiometer are used to detect claw position/contact. Example or analogy included.</div>
+                            <div class="band"><span class="band-label band-part">3–5</span> Explanation mostly correct; missing connection to the potentiometer's role in claw control, or lacks personal voice.</div>
+                            <div class="band"><span class="band-label band-min">1–2</span> Surface definition only ("ADC converts analog signals to digital") with no application to project.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> Missing or completely wrong.</div>
+                        </td>
+                        <td class="pts-cell">6</td>
+                    </tr>
+                    <tr>
+                        <td class="criterion">Additional Concept</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">6</span> Student includes and explains at least one additional concept relevant to their implementation (e.g., control loop, threshold logic, serial communication, mapping function, or slip detection algorithm). Explanation is accurate and in their own words.</div>
+                            <div class="band"><span class="band-label band-part">3–5</span> Additional concept present but explanation is shallow or partially accurate.</div>
+                            <div class="band"><span class="band-label band-min">1–2</span> Names a concept without explaining it.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> No additional concept beyond PWM and ADC.</div>
+                        </td>
+                        <td class="pts-cell">6</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="2">Section Total</td><td class="pts-cell">/ 18</td></tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- AI Log (checkpoint) -->
+        <div class="rubric-section">
+            <div class="section-title">Section 8 — AI Conversation Log, Checkpoint (10 pts)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Criterion</th>
+                        <th>Performance Description</th>
+                        <th class="pts-col">Pts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="criterion">Prompt Count &amp; Variety</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">5</span> At least 3 prompts logged by Day 5. Prompts cover different topics (e.g., not three variations of the same question). Prompts are real (match the work done on the project).</div>
+                            <div class="band"><span class="band-label band-part">3–4</span> 2 prompts logged, or 3 prompts that are very similar to each other.</div>
+                            <div class="band"><span class="band-label band-min">1–2</span> 1 prompt logged, or prompts clearly fabricated.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> No AI log entries.</div>
+                        </td>
+                        <td class="pts-cell">5</td>
+                    </tr>
+                    <tr>
+                        <td class="criterion">Reflection on AI Use</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">5</span> For each logged prompt, student notes what AI got right, what it missed or got wrong, and what the student did with the output (accepted, modified, ignored). At least one entry notes a case where AI was incorrect or vague.</div>
+                            <div class="band"><span class="band-label band-part">3–4</span> Some reflection present but not for every entry, or all reflections are positive with no critical evaluation.</div>
+                            <div class="band"><span class="band-label band-min">1–2</span> Log just lists prompts with no reflection.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> No reflection.</div>
+                        </td>
+                        <td class="pts-cell">5</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="2">Section Total (Checkpoint)</td><td class="pts-cell">/ 10</td></tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- ===== FINAL SECTIONS ===== -->
+        <div class="section-title" style="font-size:1.05rem; color:#50fa7b; border-color:rgba(80,250,123,0.4); margin-bottom: 24px; margin-top: 10px;">
+            Deliverable 9 — Final Sections (25 pts)
+        </div>
+
+        <!-- Section 5: Algorithm -->
+        <div class="rubric-section">
+            <div class="section-title">Section 5 — Algorithm (6 pts)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Criterion</th>
+                        <th>Performance Description</th>
+                        <th class="pts-col">Pts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="criterion">Flowchart or Pseudocode</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">4</span> Flowchart or pseudocode accurately represents the main program loop: open claw → read ADC → check contact → classify size → set LED → check for slip → repeat. Decision branches are present. Matches actual code.</div>
+                            <div class="band"><span class="band-label band-part">2–3</span> High-level steps present but missing decision branches or does not match code.</div>
+                            <div class="band"><span class="band-label band-min">1</span> Very rough sketch; missing key steps.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> Missing.</div>
+                        </td>
+                        <td class="pts-cell">4</td>
+                    </tr>
+                    <tr>
+                        <td class="criterion">Clarity</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">2</span> Another student could follow the algorithm to understand the program flow without reading the code.</div>
+                            <div class="band"><span class="band-label band-part">1</span> Understandable with effort; some ambiguity.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> Unclear or inaccurate.</div>
+                        </td>
+                        <td class="pts-cell">2</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="2">Section Total</td><td class="pts-cell">/ 6</td></tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Section 6: Annotated Code -->
+        <div class="rubric-section">
+            <div class="section-title">Section 6 — Annotated Code (8 pts)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Criterion</th>
+                        <th>Performance Description</th>
+                        <th class="pts-col">Pts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="high-weight">
+                        <td class="criterion">Annotation Quality</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">5</span> Every function or major block has a comment written by the student explaining <em>what it does and why</em> — not just a restatement of the code. Comments are in student's own words (not AI-generated boilerplate).</div>
+                            <div class="band"><span class="band-label band-part">3–4</span> Most functions annotated; some comments just restate the code ("this reads the ADC value" with no explanation of why or what happens next).</div>
+                            <div class="band"><span class="band-label band-min">1–2</span> Sparse annotations; fewer than half the functions commented.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> No annotations, or code is not included.</div>
+                        </td>
+                        <td class="pts-cell">5</td>
+                    </tr>
+                    <tr>
+                        <td class="criterion">Code Accuracy</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">3</span> Code in the Design Brief matches (or is a clean final version of) the code that ran during the live demo. No placeholder functions left unexplained.</div>
+                            <div class="band"><span class="band-label band-part">2</span> Minor discrepancies between Design Brief code and demo code.</div>
+                            <div class="band"><span class="band-label band-min">1</span> Code is incomplete or significantly different from what was demoed.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> No code or clearly not the student's work.</div>
+                        </td>
+                        <td class="pts-cell">3</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="2">Section Total</td><td class="pts-cell">/ 8</td></tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Section 7: Testing Results -->
+        <div class="rubric-section">
+            <div class="section-title">Section 7 — Testing Results (5 pts)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Criterion</th>
+                        <th>Performance Description</th>
+                        <th class="pts-col">Pts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="criterion">Data Table</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">3</span> Table includes results for ≥ 5 objects. Columns: object name, estimated size, ADC reading at contact, classified size, correct? Rows are filled in with real values (not invented round numbers).</div>
+                            <div class="band"><span class="band-label band-part">2</span> Table present with 3–4 objects, or some columns missing.</div>
+                            <div class="band"><span class="band-label band-min">1</span> Fewer than 3 objects, or data looks fabricated.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> No testing results.</div>
+                        </td>
+                        <td class="pts-cell">3</td>
+                    </tr>
+                    <tr>
+                        <td class="criterion">Analysis</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">2</span> Student notes any objects that were misclassified and explains why (e.g., "the ping pong ball was light enough that the ADC threshold I used put it in the wrong category"). Proposes one improvement.</div>
+                            <div class="band"><span class="band-label band-part">1</span> Analysis present but superficial ("it worked most of the time").</div>
+                            <div class="band"><span class="band-label band-zero">0</span> No analysis.</div>
+                        </td>
+                        <td class="pts-cell">2</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="2">Section Total</td><td class="pts-cell">/ 5</td></tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Section 9: Challenges & Solutions -->
+        <div class="rubric-section">
+            <div class="section-title">Section 9 — Challenges &amp; Solutions (6 pts)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Criterion</th>
+                        <th>Performance Description</th>
+                        <th class="pts-col">Pts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="criterion">Challenges Identified</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">3</span> At least 2 real challenges described with specifics (e.g., "The ADC readings fluctuated ±30 when the claw was stationary, causing false contact triggers"). Challenges are plausible and match the complexity of the project.</div>
+                            <div class="band"><span class="band-label band-part">2</span> One specific challenge plus one vague challenge ("programming was hard").</div>
+                            <div class="band"><span class="band-label band-min">1</span> Vague or generic challenges only.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> Missing.</div>
+                        </td>
+                        <td class="pts-cell">3</td>
+                    </tr>
+                    <tr>
+                        <td class="criterion">Solutions Documented</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">3</span> For each challenge, student explains the solution they tried and whether it worked. Unresolved challenges are noted honestly. Shows a real debugging/iteration process.</div>
+                            <div class="band"><span class="band-label band-part">2</span> Solutions listed but not connected clearly to specific challenges, or "I googled it" without detail.</div>
+                            <div class="band"><span class="band-label band-min">1</span> Solutions very vague or missing for some challenges.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> No solutions documented.</div>
+                        </td>
+                        <td class="pts-cell">3</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="2">Section Total</td><td class="pts-cell">/ 6</td></tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Score Summary -->
+        <div class="score-box">
+            <h2>Score Summary</h2>
+
+            <div class="score-group">
+                <div class="score-group-label">Deliverable 8 — Checkpoint (50 pts)</div>
+                <div class="score-grid">
+                    <div class="score-item">
+                        <div class="label">Section 1 — Project Overview</div>
+                        <div class="value">_____ / 6</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="label">Section 2 — BOM</div>
+                        <div class="value">_____ / 8</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="label">Section 3 — Hardware Setup</div>
+                        <div class="value">_____ / 8</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="label">Section 4 — Key Concepts ★</div>
+                        <div class="value">_____ / 18</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="label">Section 8 — AI Log (Checkpoint)</div>
+                        <div class="value">_____ / 10</div>
+                    </div>
+                    <div class="score-item" style="border-color: rgba(255,185,0,0.4); background: rgba(255,185,0,0.06);">
+                        <div class="label" style="color: #ffb900;">D8 Total</div>
+                        <div class="value" style="font-size: 1.3rem;">_____ / 50</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="score-group">
+                <div class="score-group-label">Deliverable 9 — Design Brief Final (25 pts)</div>
+                <div class="score-grid">
+                    <div class="score-item">
+                        <div class="label">Section 5 — Algorithm</div>
+                        <div class="value">_____ / 6</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="label">Section 6 — Annotated Code ★</div>
+                        <div class="value">_____ / 8</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="label">Section 7 — Testing Results</div>
+                        <div class="value">_____ / 5</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="label">Section 9 — Challenges &amp; Solutions</div>
+                        <div class="value">_____ / 6</div>
+                    </div>
+                    <div class="score-item" style="border-color: rgba(80,250,123,0.4); background: rgba(80,250,123,0.06);">
+                        <div class="label" style="color: #50fa7b;">D9 Brief Total</div>
+                        <div class="value" style="font-size: 1.3rem;">_____ / 25</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Notes -->
+        <div class="notes-area">
+            <h2>Instructor Notes</h2>
+            <div class="notes-lines">
+                <div class="notes-line"></div>
+                <div class="notes-line"></div>
+                <div class="notes-line"></div>
+                <div class="notes-line"></div>
+                <div class="notes-line"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer style="text-align:center; padding:30px; background:#0d0d0d; border-top:3px solid #c41e3a; color:#888; font-size:0.9rem;">
+        <div style="color:#fff; margin-bottom:6px;">GO BULLDOGS!</div>
+        <p>Vicksburg High School | Applied Engineering &amp; Robotics</p>
+        <p>Mr. Bombich | Room 70 | mbombich@vicksburgschools.org</p>
+    </footer>
+
+</body>
+</html>

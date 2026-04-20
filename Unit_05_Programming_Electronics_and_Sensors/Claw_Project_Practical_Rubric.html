@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Claw Project — Practical Test Rubric | Unit 5</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: #1a1a1a;
+            color: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: linear-gradient(135deg, #8B0000 0%, #c41e3a 50%, #8B0000 100%);
+            height: 80px;
+            border-bottom: 3px solid #ffffff;
+            box-shadow: 0 4px 20px rgba(196, 30, 58, 0.5);
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            gap: 20px;
+        }
+
+        .school-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border: 2px solid rgba(255,255,255,0.4);
+            text-transform: uppercase;
+        }
+
+        .course-title-compact {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Page content */
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 50px 40px 80px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 3px solid #c41e3a;
+        }
+
+        .page-header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.4rem;
+            color: #c41e3a;
+            margin-bottom: 8px;
+        }
+
+        .page-header .sub {
+            color: #aaa;
+            font-size: 1.05rem;
+        }
+
+        .meta-row {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            background: rgba(196,30,58,0.12);
+            border: 1px solid rgba(196,30,58,0.35);
+            border-radius: 8px;
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            color: #ddd;
+        }
+
+        .meta-item strong {
+            color: #c41e3a;
+        }
+
+        /* Overview box */
+        .overview {
+            background: rgba(255,255,255,0.05);
+            border-left: 4px solid #c41e3a;
+            border-radius: 10px;
+            padding: 24px 28px;
+            margin-bottom: 40px;
+            color: #ccc;
+            line-height: 1.7;
+        }
+
+        .overview h2 {
+            color: #c41e3a;
+            margin-bottom: 12px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Rubric table */
+        .rubric-section {
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #c41e3a;
+            margin-bottom: 14px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid rgba(196,30,58,0.4);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        thead tr {
+            background: rgba(196,30,58,0.25);
+        }
+
+        thead th {
+            padding: 12px 14px;
+            text-align: left;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #fff;
+            border: 1px solid rgba(196,30,58,0.3);
+        }
+
+        thead th.pts-col {
+            text-align: center;
+            width: 80px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+
+        tbody tr:nth-child(even) {
+            background: rgba(255,255,255,0.03);
+        }
+
+        tbody td {
+            padding: 14px;
+            vertical-align: top;
+            border: 1px solid rgba(255,255,255,0.07);
+            color: #ccc;
+            line-height: 1.55;
+        }
+
+        tbody td.criterion {
+            font-weight: 700;
+            color: #f0f0f0;
+            width: 200px;
+        }
+
+        tbody td.pts-cell {
+            text-align: center;
+            width: 80px;
+            color: #c41e3a;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+        }
+
+        /* Score bands inside cells */
+        .band {
+            margin-bottom: 6px;
+        }
+
+        .band:last-child {
+            margin-bottom: 0;
+        }
+
+        .band-label {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .band-full  { background: rgba(80,250,123,0.2);  color: #50fa7b; border: 1px solid rgba(80,250,123,0.4); }
+        .band-part  { background: rgba(255,185,0,0.15);  color: #ffb900; border: 1px solid rgba(255,185,0,0.35); }
+        .band-min   { background: rgba(255,80,80,0.15);  color: #ff5050; border: 1px solid rgba(255,80,80,0.35); }
+        .band-zero  { background: rgba(120,120,120,0.15); color: #888;   border: 1px solid rgba(120,120,120,0.3); }
+
+        /* Totals row */
+        tfoot td {
+            padding: 12px 14px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            background: rgba(196,30,58,0.18);
+            border: 1px solid rgba(196,30,58,0.3);
+            color: #fff;
+        }
+
+        tfoot td.pts-cell {
+            text-align: center;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+
+        /* Score summary box */
+        .score-box {
+            background: rgba(255,255,255,0.04);
+            border: 2px solid rgba(196,30,58,0.4);
+            border-radius: 12px;
+            padding: 24px 28px;
+            margin-top: 50px;
+        }
+
+        .score-box h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.25rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #c41e3a;
+            margin-bottom: 18px;
+        }
+
+        .score-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .score-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 12px 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .score-item .label {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            margin-bottom: 4px;
+        }
+
+        .score-item .value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.15rem;
+            color: #c41e3a;
+            font-weight: 700;
+        }
+
+        /* Notes area */
+        .notes-area {
+            margin-top: 40px;
+        }
+
+        .notes-area h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        .notes-lines {
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 16px;
+            min-height: 100px;
+            background: rgba(255,255,255,0.02);
+        }
+
+        .notes-line {
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            height: 32px;
+        }
+
+        .notes-line:last-child {
+            border-bottom: none;
+        }
+
+        /* Nav link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #c41e3a;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+
+        .back-link:hover { color: #e83a5a; }
+
+        /* Print */
+        @media print {
+            body { background: #fff; color: #000; }
+            .top-bar { background: #8B0000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .back-link { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="school-badge">VHS Bulldogs</div>
+        <div class="course-title-compact">Applied Engineering &amp; Robotics</div>
+    </div>
+
+    <div class="page">
+        <a href="Lesson_14_Claw_Project.html" class="back-link">← Lesson 14: Claw Project</a>
+
+        <div class="page-header">
+            <h1>Practical Test Rubric</h1>
+            <p class="sub">Unit 5 — Claw Project | Deliverable 9 Component</p>
+            <div class="meta-row">
+                <div class="meta-item"><strong>Assessment:</strong> Live Hardware Demo</div>
+                <div class="meta-item"><strong>Day:</strong> Day 10 (Final)</div>
+                <div class="meta-item"><strong>Total Points:</strong> 50 pts</div>
+            </div>
+        </div>
+
+        <div class="overview">
+            <h2>Overview</h2>
+            <p>
+                Students demonstrate their working claw system on real hardware in a live, in-class evaluation.
+                The grader observes and scores each criterion in real time. No re-dos are permitted after the session ends.
+                Code must run on the student's own microcontroller without instructor intervention.
+                The 50-point practical score is one component of the 75-point Deliverable 9 grade;
+                the remaining 25 points come from the Final Design Brief submission.
+            </p>
+        </div>
+
+        <!-- Section 1: Startup & Hardware -->
+        <div class="rubric-section">
+            <div class="section-title">1 — Startup &amp; Hardware (8 pts)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Criterion</th>
+                        <th>Performance Description</th>
+                        <th class="pts-col">Pts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="criterion">Physical Assembly</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">4</span> Claw is fully assembled; no loose wires; all components mounted securely.</div>
+                            <div class="band"><span class="band-label band-part">2–3</span> Minor issues (one loose wire, component slightly unsecured) but functional.</div>
+                            <div class="band"><span class="band-label band-min">1</span> Functional but sloppy build; multiple loose connections.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> Non-functional or not assembled.</div>
+                        </td>
+                        <td class="pts-cell">4</td>
+                    </tr>
+                    <tr>
+                        <td class="criterion">Code Uploads &amp; Runs</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">4</span> Student uploads and runs code independently; claw responds within 30 seconds of power-on.</div>
+                            <div class="band"><span class="band-label band-part">2–3</span> Runs with one minor prompt from instructor (e.g., reminder to select COM port).</div>
+                            <div class="band"><span class="band-label band-min">1</span> Requires significant instructor assistance to get running.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> Code does not run.</div>
+                        </td>
+                        <td class="pts-cell">4</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="2">Section Total</td><td class="pts-cell">/ 8</td></tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Section 2: Core Functionality -->
+        <div class="rubric-section">
+            <div class="section-title">2 — Core Functionality (18 pts)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Criterion</th>
+                        <th>Performance Description</th>
+                        <th class="pts-col">Pts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="criterion">Servo Control (Open / Close)</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">6</span> Claw opens to a fully open position and closes smoothly; motion is controlled (not jerky or slamming).</div>
+                            <div class="band"><span class="band-label band-part">3–5</span> Claw opens and closes but motion is inconsistent or range is limited.</div>
+                            <div class="band"><span class="band-label band-min">1–2</span> Partial movement only (opens or closes but not both reliably).</div>
+                            <div class="band"><span class="band-label band-zero">0</span> Servo does not respond.</div>
+                        </td>
+                        <td class="pts-cell">6</td>
+                    </tr>
+                    <tr>
+                        <td class="criterion">Potentiometer Feedback to Serial</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">6</span> Serial Monitor displays live ADC readings that visibly change as claw opens/closes; values make sense (e.g., 0–1023 range or mapped equivalent).</div>
+                            <div class="band"><span class="band-label band-part">3–5</span> Readings appear but are noisy, stuck, or update only intermittently.</div>
+                            <div class="band"><span class="band-label band-min">1–2</span> Serial Monitor prints something but values do not reflect claw position.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> No Serial Monitor output.</div>
+                        </td>
+                        <td class="pts-cell">6</td>
+                    </tr>
+                    <tr>
+                        <td class="criterion">Contact Detection</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">6</span> Claw autonomously stops closing when it contacts an object (does not crush); demonstrated on at least 2 different objects.</div>
+                            <div class="band"><span class="band-label band-part">3–5</span> Contact detection works on 1 object reliably, or works on 2 objects inconsistently.</div>
+                            <div class="band"><span class="band-label band-min">1–2</span> Some evidence of detection logic but claw overshoots or misses contact most of the time.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> No contact detection; claw stalls or requires manual stop.</div>
+                        </td>
+                        <td class="pts-cell">6</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="2">Section Total</td><td class="pts-cell">/ 18</td></tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Section 3: Classification & LED -->
+        <div class="rubric-section">
+            <div class="section-title">3 — Object Classification &amp; LED Feedback (12 pts)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Criterion</th>
+                        <th>Performance Description</th>
+                        <th class="pts-col">Pts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="criterion">Size Classification Logic</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">6</span> System distinguishes at least two size categories (e.g., small / large) based on ADC threshold; correct category is printed to Serial Monitor or indicated by LED for each graded object.</div>
+                            <div class="band"><span class="band-label band-part">3–5</span> Classification logic exists and works for one category consistently, or works for both categories with occasional errors.</div>
+                            <div class="band"><span class="band-label band-min">1–2</span> Classification code present but rarely produces the correct result.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> No classification logic.</div>
+                        </td>
+                        <td class="pts-cell">6</td>
+                    </tr>
+                    <tr>
+                        <td class="criterion">LED Visual Feedback</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">6</span> LED changes state (color or on/off) to match the classified object size; behavior is consistent and matches the stated design in the Design Brief.</div>
+                            <div class="band"><span class="band-label band-part">3–5</span> LED responds but behavior is inconsistent or partially matches design.</div>
+                            <div class="band"><span class="band-label band-min">1–2</span> LED is wired and lights up but does not reflect classification.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> LED does not function.</div>
+                        </td>
+                        <td class="pts-cell">6</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="2">Section Total</td><td class="pts-cell">/ 12</td></tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Section 4: Slip Detection -->
+        <div class="rubric-section">
+            <div class="section-title">4 — Slip Detection (8 pts)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Criterion</th>
+                        <th>Performance Description</th>
+                        <th class="pts-col">Pts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="criterion">Slip Event Detection</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">5</span> When an object slips (or is gently pulled), claw detects the change in ADC reading and responds (re-grips or signals via Serial/LED); demonstrated live.</div>
+                            <div class="band"><span class="band-label band-part">3–4</span> Slip detection logic is present and sometimes responds correctly but is unreliable.</div>
+                            <div class="band"><span class="band-label band-min">1–2</span> Code contains slip detection logic but no observable response during demo.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> No slip detection.</div>
+                        </td>
+                        <td class="pts-cell">5</td>
+                    </tr>
+                    <tr>
+                        <td class="criterion">Serial / Visual Indicator</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">3</span> A distinct Serial message (e.g., "SLIP DETECTED") or LED change occurs at the moment of slip.</div>
+                            <div class="band"><span class="band-label band-part">2</span> Indicator fires but is inconsistent or fires at wrong times.</div>
+                            <div class="band"><span class="band-label band-min">1</span> Indicator code present but never triggered during demo.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> No indicator.</div>
+                        </td>
+                        <td class="pts-cell">3</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="2">Section Total</td><td class="pts-cell">/ 8</td></tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Section 5: Reliability & Code Quality -->
+        <div class="rubric-section">
+            <div class="section-title">5 — Reliability &amp; Code Quality (4 pts)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Criterion</th>
+                        <th>Performance Description</th>
+                        <th class="pts-col">Pts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="criterion">Demo Reliability</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">2</span> All demonstrated features work on first attempt; no crashes or freezes during the session.</div>
+                            <div class="band"><span class="band-label band-part">1</span> One crash or retry required; recovered without instructor help.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> Multiple failures or instructor intervention needed to recover.</div>
+                        </td>
+                        <td class="pts-cell">2</td>
+                    </tr>
+                    <tr>
+                        <td class="criterion">Student Can Explain Code</td>
+                        <td>
+                            <div class="band"><span class="band-label band-full">2</span> When asked 1–2 spot questions about the code, student answers correctly and in their own words (not reading from the doc).</div>
+                            <div class="band"><span class="band-label band-part">1</span> Answers one question correctly; struggles with the other.</div>
+                            <div class="band"><span class="band-label band-zero">0</span> Cannot explain any part of the code to the instructor's satisfaction.</div>
+                        </td>
+                        <td class="pts-cell">2</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="2">Section Total</td><td class="pts-cell">/ 4</td></tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Score Summary -->
+        <div class="score-box">
+            <h2>Score Summary</h2>
+            <div class="score-grid">
+                <div class="score-item">
+                    <div class="label">1 — Startup &amp; Hardware</div>
+                    <div class="value">_____ / 8</div>
+                </div>
+                <div class="score-item">
+                    <div class="label">2 — Core Functionality</div>
+                    <div class="value">_____ / 18</div>
+                </div>
+                <div class="score-item">
+                    <div class="label">3 — Classification &amp; LED</div>
+                    <div class="value">_____ / 12</div>
+                </div>
+                <div class="score-item">
+                    <div class="label">4 — Slip Detection</div>
+                    <div class="value">_____ / 8</div>
+                </div>
+                <div class="score-item">
+                    <div class="label">5 — Reliability &amp; Code Quality</div>
+                    <div class="value">_____ / 4</div>
+                </div>
+                <div class="score-item" style="border-color: rgba(196,30,58,0.5); background: rgba(196,30,58,0.08);">
+                    <div class="label" style="color: #c41e3a;">Total</div>
+                    <div class="value" style="font-size: 1.4rem;">_____ / 50</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="notes-area">
+            <h2>Instructor Notes</h2>
+            <div class="notes-lines">
+                <div class="notes-line"></div>
+                <div class="notes-line"></div>
+                <div class="notes-line"></div>
+                <div class="notes-line"></div>
+                <div class="notes-line"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer style="text-align:center; padding:30px; background:#0d0d0d; border-top:3px solid #c41e3a; color:#888; font-size:0.9rem;">
+        <div style="color:#fff; margin-bottom:6px;">GO BULLDOGS!</div>
+        <p>Vicksburg High School | Applied Engineering &amp; Robotics</p>
+        <p>Mr. Bombich | Room 70 | mbombich@vicksburgschools.org</p>
+    </footer>
+
+</body>
+</html>

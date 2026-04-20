@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.23';
+const BACKEND_VERSION = 'v2.9.24';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -30,7 +30,8 @@ const SHEET_NAMES = {
   DELIVERABLES: 'Deliverables',
   EVIDENCE: 'Evidence',
   CONFIG: 'Config',
-  LOG: 'Activity Log'
+  LOG: 'Activity Log',
+  QUIZ: 'Claw Quiz'
 };
 
 // ============================================
@@ -56,6 +57,9 @@ function doGet(e) {
 
       case 'getConfig':
         return jsonResponse(handleGetConfig());
+
+      case 'checkQuiz':
+        return jsonResponse(handleCheckQuiz(e));
 
       case 'repair':
         return jsonResponse(repairStudent(e.parameter.email));
@@ -104,6 +108,9 @@ function doPost(e) {
       case 'getAIFeedback':
         return jsonResponse(getAIFeedback(data));
 
+      case 'submitQuiz':
+        return jsonResponse(handleSubmitQuiz(data));
+
       default:
         return jsonResponse({ error: 'Unknown action' });
     }
@@ -129,13 +136,14 @@ function jsonResponse(data) {
 function handleGetConfig() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const configSheet = ss.getSheetByName(SHEET_NAMES.CONFIG);
-  const config = { skipReflectionWeeks: [], skipDeliverableWeeks: [], expectedVersion: '' };
+  const config = { skipReflectionWeeks: [], skipDeliverableWeeks: [], expectedVersion: '', quizEnabled: false };
   if (configSheet && configSheet.getLastRow() > 0) {
     configSheet.getDataRange().getValues().forEach(row => {
       try {
         if (row[0] === 'skipReflectionWeeks')  config.skipReflectionWeeks  = JSON.parse(row[1] || '[]');
         if (row[0] === 'skipDeliverableWeeks') config.skipDeliverableWeeks = JSON.parse(row[1] || '[]');
         if (row[0] === 'expectedVersion')       config.expectedVersion      = row[1] || '';
+        if (row[0] === 'quizEnabled')           config.quizEnabled          = row[1] === true || row[1] === 'true';
       } catch(e) {}
     });
   }
@@ -155,7 +163,8 @@ function handleSetConfig(data) {
   const updates = {
     skipReflectionWeeks:  JSON.stringify(data.skipReflectionWeeks  || []),
     skipDeliverableWeeks: JSON.stringify(data.skipDeliverableWeeks || []),
-    expectedVersion:      data.expectedVersion || ''
+    expectedVersion:      data.expectedVersion || '',
+    quizEnabled:          data.quizEnabled === true ? true : false
   };
 
   Object.entries(updates).forEach(([key, value]) => {
@@ -1413,6 +1422,191 @@ Remember: respond with ONLY the JSON object, no other text.`;
     logActivity('AI_ERROR', data.email || 'unknown', error.toString());
     return { error: 'Failed to get AI feedback: ' + error.toString() };
   }
+}
+
+// ============================================
+// CLAW QUIZ
+// ============================================
+
+const QUIZ_QUESTIONS = [
+  { id: 'q1', maxPts: 4, label: 'Q1 – PWM',
+    question: 'In your own words, what is PWM? How does the pulse width physically cause the servo to move to a different position?',
+    rubric: `Award 0–4:
+1 pt – Identifies PWM as Pulse Width Modulation (or describes on/off pulses at fixed frequency).
+1 pt – Explains duty cycle: ratio of on-time to total period.
+1 pt – Connects duty cycle/pulse width to a specific servo angle.
+1 pt – Explanation is in the student's own words showing real understanding, not a copy-paste.` },
+  { id: 'q2', maxPts: 4, label: 'Q2 – Contact Detection',
+    question: 'Describe in plain English how your code knows the claw has touched an object without being able to see it. Why is this better than just closing the claw all the way every time?',
+    rubric: `Award 0–4:
+2 pts – Explains that the potentiometer ADC reading stalls/stops changing when the claw contacts resistance. Code detects contact when the value stops increasing despite the motor still trying to close.
+2 pts – Explains why better than full-close: prevents crushing fragile objects, adapts to different sizes, avoids motor stall damage.` },
+  { id: 'q3', maxPts: 4, label: 'Q3 – Code Reading (abs)',
+    question: 'Given: if (abs(currentFeedback - holdFeedback) > 15) — a) What does abs() do and why is it needed here? b) What real-world event does this line detect?',
+    rubric: `Award 0–4 (2 per part):
+Part a: abs() returns absolute value. Needed because feedback could increase OR decrease depending on slip direction — we need the magnitude regardless of sign.
+Part b: Detects an object slipping in the grip. Object movement shifts the claw ADC value more than 15 units from its hold position.` },
+  { id: 'q4', maxPts: 4, label: 'Q4 – Rate of Closure',
+    question: 'What controls how fast your claw closes? Point to the specific line, value, or variable responsible, and explain what would happen if you changed it.',
+    rubric: `Award 0–4:
+2 pts – Identifies something specific: a delay() value between servo steps, a step-size increment, or a millis() interval. Vague "the loop" answers earn 0–1.
+2 pts – Correctly explains effect of changing it: larger delay/smaller step = slower; smaller delay/larger step = faster.` },
+  { id: 'q5', maxPts: 4, label: 'Q5 – Object Detection Line',
+    question: 'Which specific line(s) in your code read the potentiometer and compare against your contact threshold? Write the line out and explain what each part does.',
+    rubric: `Award 0–4:
+1 pt – Includes analogRead() call.
+1 pt – Stores/uses the returned value correctly.
+1 pt – Includes a comparison against a threshold (>, >=, etc.).
+1 pt – Can explain what each part does (what analogRead returns, what the threshold represents).` },
+  { id: 'q6', maxPts: 6, label: 'Q6 – Blocking Code',
+    question: 'What is blocking code? Using delay() as an example, explain why a blocking approach would have made it impossible to close the claw and check for contact at the same time — and describe how your program avoided this problem.',
+    rubric: `Award 0–6:
+2 pts – Correctly defines blocking code: halts all execution until finished (delay(1000) = CPU does nothing for 1 second).
+2 pts – Explains the specific problem: delay() between servo steps would prevent analogRead() contact checks from running, so contact could be missed entirely.
+2 pts – Describes their non-blocking solution: small servo increments each loop() pass, checking ADC every iteration, using millis() instead of delay(), or similar. Must be specific to their code.` },
+  { id: 'bonus', maxPts: 2, label: 'Bonus – Active-Low LED',
+    question: 'What does "active low" mean for the RGB LED on the RP2040 Connect? Why does it matter when you write code to turn on a specific color?',
+    rubric: `Award 0–2:
+1 pt – Active-low means LED turns ON when pin is driven LOW (0V), not HIGH.
+1 pt – Practical consequence: to turn a color ON you write LOW (0) to that pin — opposite of what most expect. Writing HIGH turns it OFF.` }
+];
+
+function getOrCreateQuizSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(SHEET_NAMES.QUIZ);
+  if (!sheet) {
+    sheet = ss.insertSheet(SHEET_NAMES.QUIZ);
+    const headers = ['Timestamp', 'Email', 'Name'];
+    QUIZ_QUESTIONS.forEach(q => {
+      headers.push(q.label + ' Answer', q.label + ' AI Score', q.label + ' AI Feedback');
+    });
+    headers.push('AI Total', 'Teacher Final Score');
+    sheet.appendRow(headers);
+    sheet.setFrozenRows(1);
+    // Widen answer and feedback columns
+    let col = 4;
+    QUIZ_QUESTIONS.forEach(() => {
+      sheet.setColumnWidth(col,     320); // answer
+      sheet.setColumnWidth(col + 1, 80);  // score
+      sheet.setColumnWidth(col + 2, 260); // feedback
+      col += 3;
+    });
+    sheet.setColumnWidth(col, 80);      // AI Total
+    sheet.setColumnWidth(col + 1, 120); // Teacher Final
+  }
+  return sheet;
+}
+
+function quizEmailSubmitted(sheet, email) {
+  const data = sheet.getDataRange().getValues();
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][1]).toLowerCase().trim() === email.toLowerCase().trim()) return i + 1; // 1-based row
+  }
+  return 0;
+}
+
+function handleCheckQuiz(e) {
+  const email = (e.parameter.email || '').trim();
+  if (!email) return { error: 'Missing email' };
+  const sheet = getOrCreateQuizSheet();
+  const row = quizEmailSubmitted(sheet, email);
+  if (!row) return { submitted: false };
+
+  // Return their stored results
+  const rowData = sheet.getRange(row, 1, 1, sheet.getLastColumn()).getValues()[0];
+  const grades = {};
+  let col = 3; // 0-based: col 0=timestamp, 1=email, 2=name, 3=first answer
+  QUIZ_QUESTIONS.forEach(q => {
+    grades[q.id] = { score: rowData[col + 1], feedback: rowData[col + 2] };
+    col += 3;
+  });
+  const aiTotal = rowData[col];
+  return { submitted: true, grades, aiTotal };
+}
+
+function handleSubmitQuiz(data) {
+  if (data.token !== TEACHER_TOKEN && !data.email) return { error: 'Unauthorized' };
+  const email = (data.email || '').trim();
+  if (!email) return { error: 'Missing email' };
+
+  const sheet = getOrCreateQuizSheet();
+  if (quizEmailSubmitted(sheet, email)) return { success: false, error: 'already_submitted' };
+
+  // Grade with Gemini
+  let gradeMap = {};
+  try {
+    gradeMap = gradeClawQuiz(data);
+  } catch(err) {
+    logActivity('QUIZ_GRADE_ERROR', email, err.toString());
+    return { success: false, error: 'Grading failed: ' + err.toString() };
+  }
+
+  // Calculate total
+  let aiTotal = 0;
+  QUIZ_QUESTIONS.forEach(q => {
+    const g = gradeMap[q.id] || { score: 0 };
+    aiTotal += Math.min(Number(g.score) || 0, q.maxPts);
+  });
+
+  // Build and append row
+  const row = [data.timestamp || new Date().toLocaleString(), email, data.name || ''];
+  QUIZ_QUESTIONS.forEach(q => {
+    const g = gradeMap[q.id] || { score: 0, feedback: 'Grading unavailable' };
+    row.push(
+      (data[q.id] || '').trim(),
+      Math.min(Number(g.score) || 0, q.maxPts),
+      g.feedback || ''
+    );
+  });
+  row.push(aiTotal, ''); // AI Total, Teacher Final (blank)
+  sheet.appendRow(row);
+
+  logActivity('QUIZ_SUBMIT', email, `AI Total: ${aiTotal}/26`);
+  return { success: true, grades: gradeMap, aiTotal };
+}
+
+function gradeClawQuiz(answers) {
+  const apiKey = PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY');
+  if (!apiKey) throw new Error('GEMINI_API_KEY not set in Script Properties.');
+
+  let prompt = `You are grading a high school robotics quiz. Students built a servo claw with potentiometer feedback on an Arduino-compatible microcontroller.
+Grade each answer using only its rubric. Be fair but strict. Award partial credit for partial understanding.
+
+Respond with ONLY a valid JSON object — no markdown fences, no other text:
+{
+  "q1":    {"score": <int>, "feedback": "<1-2 sentences: what they got right and what was missing>"},
+  "q2":    {"score": <int>, "feedback": "..."},
+  "q3":    {"score": <int>, "feedback": "..."},
+  "q4":    {"score": <int>, "feedback": "..."},
+  "q5":    {"score": <int>, "feedback": "..."},
+  "q6":    {"score": <int>, "feedback": "..."},
+  "bonus": {"score": <int>, "feedback": "..."}
+}
+
+`;
+
+  QUIZ_QUESTIONS.forEach(q => {
+    const answer = (answers[q.id] || '').trim() || '(no answer)';
+    prompt += `---\nid: ${q.id} | max: ${q.maxPts}\nQuestion: ${q.question}\nRubric: ${q.rubric}\nStudent answer: "${answer.replace(/"/g, "'").substring(0, 800)}"\n\n`;
+  });
+
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + apiKey;
+  const response = UrlFetchApp.fetch(url, {
+    method: 'post',
+    contentType: 'application/json',
+    payload: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.1, maxOutputTokens: 2048 }
+    }),
+    muteHttpExceptions: true
+  });
+
+  const result = JSON.parse(response.getContentText());
+  if (result.error) throw new Error('Gemini: ' + result.error.message);
+
+  const text = result.candidates[0].content.parts[0].text;
+  const cleaned = text.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
+  return JSON.parse(cleaned);
 }
 
 /**

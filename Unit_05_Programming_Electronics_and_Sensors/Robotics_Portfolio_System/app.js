@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.33',
+    VERSION: 'v2.9.34',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbz2zToSMXHWQegIJnA73YxCZVUHVPLRck1DbQQiF7hUCnnMTE7WMUVNtpAjoGVY2-A/exec',
@@ -611,7 +611,14 @@ let state = {
     config: {
         skipReflectionWeeks: [8],  // default — overwritten by backend on load
         skipDeliverableWeeks: [],
-        expectedVersion: null
+        expectedVersion: null,
+        quizEnabled: false
+    },
+    quiz: {
+        loaded: false,      // true once we've checked the backend
+        submitted: false,   // true if this student already submitted
+        grades: null,
+        aiTotal: null
     }
 };
 
@@ -748,7 +755,8 @@ async function handleTokenResponse(tokenResponse) {
             state = cloudData;
             state.student.name = name;
             // config is not persisted in cloud state — restore default so it's never undefined
-            state.config = { skipReflectionWeeks: [8], skipDeliverableWeeks: [], expectedVersion: null };
+            state.config = { skipReflectionWeeks: [8], skipDeliverableWeeks: [], expectedVersion: null, quizEnabled: false };
+            state.quiz = { loaded: false, submitted: false, grades: null, aiTotal: null };
             restoreEvidenceLocal();
             calculateCurrentWeek();
             hideAllModals();
@@ -1159,6 +1167,7 @@ async function fetchConfig() {
 
         state.config.skipReflectionWeeks  = (cfg.skipReflectionWeeks  || []).map(Number);
         state.config.skipDeliverableWeeks = (cfg.skipDeliverableWeeks || []).map(Number);
+        state.config.quizEnabled          = cfg.quizEnabled === true || cfg.quizEnabled === 'true';
 
         const expected = cfg.expectedVersion;
         if (expected && expected !== CONFIG.VERSION) {
@@ -1228,6 +1237,7 @@ function navigateTo(pageId) {
     if (pageId === 'dashboard') updateUI();
     if (pageId === 'evidence') loadEvidenceGallery();
     if (pageId === 'code') loadCodeSnippets();
+    if (pageId === 'quiz') loadQuizPage();
 }
 
 // ============================================
@@ -1263,6 +1273,13 @@ function updateUI() {
     updateDeliverablesList();
     updateWeekTopic();
     updateFeedbackNotification();
+
+    // Show/hide quiz nav item based on teacher toggle
+    const quizNav = document.getElementById('quizNavItem');
+    if (quizNav) {
+        // Show if teacher enabled, OR if this student already submitted (so they can always see their results)
+        quizNav.style.display = (state.config.quizEnabled || state.quiz.submitted) ? 'flex' : 'none';
+    }
 }
 
 function updateFeedbackNotification() {
@@ -3018,4 +3035,226 @@ if (AI_FEEDBACK_ENABLED) {
     };
 
     window.requestAIFeedback = requestAIFeedback;
+}
+
+// ============================================
+// CLAW QUIZ PAGE
+// ============================================
+
+const QUIZ_QUESTION_META = [
+    { id: 'q1',    pts: 4, label: 'Question 1',
+      text: 'In your own words, what is PWM? How does the pulse width physically cause the servo to move to a different position?' },
+    { id: 'q2',    pts: 4, label: 'Question 2',
+      text: 'Describe in plain English how your code knows the claw has touched an object — without being able to see it. Why is this better than just closing the claw all the way every time?' },
+    { id: 'q3',    pts: 4, label: 'Question 3',
+      text: '<strong>Given:</strong> <code>if (abs(currentFeedback - holdFeedback) > 15)</code><br>a) What does <code>abs()</code> do and why is it needed here?<br>b) What real-world event does this line detect?' },
+    { id: 'q4',    pts: 4, label: 'Question 4',
+      text: 'What controls how fast your claw closes? Point to the specific line, value, or variable in your code that is responsible, and explain what would happen if you changed it.' },
+    { id: 'q5',    pts: 4, label: 'Question 5',
+      text: 'Which specific line(s) in your code read the potentiometer and compare against your contact threshold? Write the line out (or reconstruct it) and explain what each part does.' },
+    { id: 'q6',    pts: 6, label: 'Question 6',
+      text: 'What is <strong>blocking code</strong>? Using <code>delay()</code> as an example, explain why a blocking approach would have made it impossible to close the claw and check for contact at the same time — and describe how your program avoided this problem.' },
+    { id: 'bonus', pts: 2, label: 'Bonus',
+      text: 'What does <strong>"active low"</strong> mean for the RGB LED on the RP2040 Connect? Why does it matter when you write code to turn on a specific color?' }
+];
+
+async function loadQuizPage() {
+    const page = document.getElementById('quizPage');
+    if (!page) return;
+
+    // If we already have results in state, just render them
+    if (state.quiz.submitted && state.quiz.grades) {
+        renderQuizResults(page);
+        return;
+    }
+
+    // Show loading while we check backend
+    page.innerHTML = `
+        <div class="page-header"><h1 class="page-title"><i class="fas fa-pencil-alt"></i> Claw Project Quiz</h1></div>
+        <div style="text-align:center; padding: 60px 20px; color: var(--gray-500);">
+            <i class="fas fa-spinner fa-spin" style="font-size:2rem; margin-bottom:16px;"></i>
+            <p>Checking submission status…</p>
+        </div>`;
+
+    if (!state.quiz.loaded) {
+        try {
+            const res = await fetch(`${CONFIG.SHEETS_API_URL}?action=checkQuiz&email=${encodeURIComponent(state.student.email)}&_t=${Date.now()}`);
+            const data = await res.json();
+            state.quiz.loaded = true;
+            if (data.submitted) {
+                state.quiz.submitted = true;
+                state.quiz.grades    = data.grades;
+                state.quiz.aiTotal   = data.aiTotal;
+                updateUI(); // re-run to keep nav item visible
+            }
+        } catch(e) {
+            state.quiz.loaded = true; // treat as not submitted on error
+        }
+    }
+
+    if (state.quiz.submitted && state.quiz.grades) {
+        renderQuizResults(page);
+    } else {
+        renderQuizForm(page);
+    }
+}
+
+function renderQuizForm(page) {
+    let questionsHtml = '';
+    QUIZ_QUESTION_META.forEach((q, i) => {
+        const isBonus = q.id === 'bonus';
+        const cardStyle = isBonus
+            ? 'border: 1px solid var(--success); background: rgba(16,185,129,0.04);'
+            : 'border: 1px solid var(--gray-200);';
+        questionsHtml += `
+            <div class="card" id="qcard-${q.id}" style="${cardStyle} margin-bottom: 20px; padding: 24px;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+                    <span style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:${isBonus ? 'var(--success)' : 'var(--gray-400)'};">${q.label}</span>
+                    <span style="font-size:12px; font-weight:700; color: var(--primary); background: var(--primary-light, rgba(99,102,241,0.1)); padding: 2px 10px; border-radius:12px;">${q.pts} pts</span>
+                </div>
+                <p style="font-size:15px; line-height:1.65; margin-bottom:14px; color: var(--gray-700);">${q.text}</p>
+                <textarea id="ans-${q.id}" rows="4"
+                    placeholder="${isBonus ? 'Optional — write your answer here…' : 'Write your answer here…'}"
+                    style="width:100%; padding:12px; border:1px solid var(--gray-300); border-radius:6px; font-family:inherit; font-size:14px; resize:vertical; line-height:1.6; transition: border-color 0.2s;"
+                    oninput="document.getElementById('qcard-${q.id}').style.borderColor = this.value.trim() ? 'var(--primary)' : '${isBonus ? 'var(--success)' : 'var(--gray-200)'}';"
+                ></textarea>
+            </div>`;
+    });
+
+    page.innerHTML = `
+        <div class="page-header">
+            <h1 class="page-title"><i class="fas fa-pencil-alt"></i> Claw Project Quiz</h1>
+            <p style="color:var(--gray-500); margin-top:6px;">Unit 5 · Lesson 14 — No notes permitted · 26 pts + 2 bonus</p>
+        </div>
+
+        <div class="card" style="border-left: 4px solid var(--warning, #f59e0b); background: rgba(245,158,11,0.05); margin-bottom:24px; padding:16px 20px;">
+            <p style="font-size:14px; color:var(--gray-600); line-height:1.6;">
+                <strong style="color:var(--warning, #b45309);">No notes, no devices, no AI.</strong>
+                Answer all 6 required questions in your own words.
+                You have <strong>one attempt</strong> — once you submit, the quiz is locked.
+                After submitting you will receive AI-generated feedback.
+                Mr. Bombich reviews all responses and <strong>has final say on your grade</strong>.
+            </p>
+        </div>
+
+        <form id="quizForm">
+            ${questionsHtml}
+            <button type="submit" class="btn btn-primary" style="width:100%; padding:14px; font-size:16px; margin-top:8px;">
+                <i class="fas fa-paper-plane"></i> Submit Quiz
+            </button>
+        </form>`;
+
+    document.getElementById('quizForm').addEventListener('submit', submitQuiz);
+}
+
+async function submitQuiz(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type=submit]');
+    if (btn.disabled) return;
+
+    // Validate required questions
+    const required = ['q1','q2','q3','q4','q5','q6'];
+    const missing = required.filter(id => !document.getElementById('ans-' + id)?.value.trim());
+    if (missing.length) {
+        showToast(`Please answer all required questions (${missing.map(s => s.toUpperCase()).join(', ')})`, 'error');
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Grading your answers…';
+
+    const payload = {
+        action:    'submitQuiz',
+        email:     state.student.email,
+        name:      state.student.name,
+        timestamp: new Date().toLocaleString()
+    };
+    QUIZ_QUESTION_META.forEach(q => {
+        payload[q.id] = document.getElementById('ans-' + q.id)?.value || '';
+    });
+
+    try {
+        const res = await fetch(CONFIG.SHEETS_API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            state.quiz.submitted = true;
+            state.quiz.grades    = data.grades;
+            state.quiz.aiTotal   = data.aiTotal;
+            state.quiz.loaded    = true;
+            updateUI();
+            renderQuizResults(document.getElementById('quizPage'));
+            showToast('Quiz submitted!', 'success');
+        } else if (data.error === 'already_submitted') {
+            state.quiz.submitted = true;
+            state.quiz.loaded    = true;
+            showToast('Already submitted — reload to see your results.', 'warning');
+        } else {
+            throw new Error(data.error || 'Submission failed');
+        }
+    } catch(err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Quiz';
+        showToast('Submission error: ' + err.message + ' — screenshot your answers and notify Mr. Bombich.', 'error');
+    }
+}
+
+function renderQuizResults(page) {
+    const grades   = state.quiz.grades || {};
+    const aiTotal  = state.quiz.aiTotal ?? '—';
+
+    function badgeStyle(score, max) {
+        const pct = score / max;
+        if (pct >= 1.0)  return 'background:#d1fae5; color:#065f46;';
+        if (pct >= 0.75) return 'background:#fef3c7; color:#92400e;';
+        if (pct >= 0.5)  return 'background:#fed7aa; color:#9a3412;';
+        return 'background:#fee2e2; color:#991b1b;';
+    }
+
+    let cardsHtml = '';
+    QUIZ_QUESTION_META.forEach(q => {
+        const g     = grades[q.id] || { score: 0, feedback: 'No feedback available.' };
+        const score = Math.min(Number(g.score) || 0, q.pts);
+        cardsHtml += `
+            <div class="card" style="margin-bottom:18px; padding:22px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+                    <span style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--gray-400);">${q.label}</span>
+                    <span style="font-size:13px; font-weight:700; padding:3px 12px; border-radius:12px; ${badgeStyle(score, q.pts)}">${score} / ${q.pts}</span>
+                </div>
+                <p style="font-size:14px; color:var(--gray-400); font-style:italic; line-height:1.6; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--gray-100);">${q.text}</p>
+                <p style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--gray-400); margin-bottom:6px;">AI Feedback</p>
+                <p style="font-size:14px; color:var(--gray-600); line-height:1.65; background:var(--gray-50); border-radius:6px; padding:12px 14px; border-left:3px solid var(--primary);">${escapeHtmlQuiz(g.feedback || '')}</p>
+            </div>`;
+    });
+
+    page.innerHTML = `
+        <div class="page-header">
+            <h1 class="page-title"><i class="fas fa-check-circle" style="color:var(--success);"></i> Quiz Submitted</h1>
+        </div>
+
+        <div class="card" style="border-left:4px solid #f59e0b; background:rgba(245,158,11,0.05); margin-bottom:24px; padding:18px 22px;">
+            <p style="font-size:14px; line-height:1.65; color:var(--gray-600);">
+                <strong style="color:#b45309;">About these scores:</strong>
+                The scores and feedback below were generated by AI to give you immediate insight into your answers.
+                <strong>Mr. Bombich will review every response</strong> and has final say on your grade.
+                Your official grade may differ from the AI score — you will be notified when grading is complete.
+            </p>
+        </div>
+
+        ${cardsHtml}
+
+        <div class="card" style="text-align:center; padding:30px; background: linear-gradient(135deg, rgba(99,102,241,0.05), rgba(99,102,241,0.1)); border:2px solid var(--primary);">
+            <p style="font-size:12px; text-transform:uppercase; letter-spacing:1px; color:var(--gray-400); margin-bottom:8px;">AI-Generated Score</p>
+            <p style="font-family:monospace; font-size:3rem; font-weight:900; color:var(--primary); line-height:1;">${aiTotal}</p>
+            <p style="font-size:13px; color:var(--gray-400); margin-top:6px;">out of 26 points (+ up to 2 bonus)</p>
+            <p style="font-size:13px; color:var(--gray-500); margin-top:12px;">This is a starting point for teacher review, not your official grade.</p>
+        </div>`;
+}
+
+function escapeHtmlQuiz(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
