@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.34',
+    VERSION: 'v2.9.35',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbz2zToSMXHWQegIJnA73YxCZVUHVPLRck1DbQQiF7hUCnnMTE7WMUVNtpAjoGVY2-A/exec',
@@ -1430,7 +1430,9 @@ function updateUpcoming() {
     }
 
     const currentDeliverable = DELIVERABLES.find(d => !d.hidden && d.week === state.currentWeek);
-    if (currentDeliverable && !currentDeliverable.optional && state.deliverables[currentDeliverable.id]?.status !== 'completed') {
+    if (currentDeliverable && !currentDeliverable.optional
+            && !state.config.skipDeliverableWeeks.includes(state.currentWeek)
+            && state.deliverables[currentDeliverable.id]?.status !== 'completed') {
         upcoming.push({ title: currentDeliverable.title, due: `End of Week ${state.currentWeek}`, points: currentDeliverable.points, overdue: false });
     }
 
@@ -1438,9 +1440,11 @@ function updateUpcoming() {
         if (!state.config.skipReflectionWeeks.includes(week) && !state.weeklyReflections[week]?.submitted) {
             upcoming.unshift({ title: `Week ${week} Reflection`, due: 'OVERDUE', points: 20, overdue: true });
         }
-        // Check for overdue deliverables from previous weeks (skip optional)
+        // Check for overdue deliverables from previous weeks (skip optional and skipped weeks)
         const overdueDeliverable = DELIVERABLES.find(d => !d.hidden && d.week === week);
-        if (overdueDeliverable && !overdueDeliverable.optional && state.deliverables[overdueDeliverable.id]?.status !== 'completed') {
+        if (overdueDeliverable && !overdueDeliverable.optional
+                && !state.config.skipDeliverableWeeks.includes(week)
+                && state.deliverables[overdueDeliverable.id]?.status !== 'completed') {
             upcoming.unshift({ title: overdueDeliverable.title, due: 'OVERDUE', points: overdueDeliverable.points, overdue: true });
         }
     }
@@ -1459,6 +1463,8 @@ function updateUpcoming() {
 function updateWeekButtons() {
     document.querySelectorAll('.week-btn').forEach(btn => {
         const week = parseInt(btn.dataset.week);
+        const skipped = state.config.skipReflectionWeeks.includes(week);
+        btn.style.display = skipped ? 'none' : '';
         btn.classList.toggle('completed', !!state.weeklyReflections[week]?.submitted);
         btn.classList.toggle('active', week === state.selectedWeek);
     });
@@ -1481,7 +1487,8 @@ function updateDeliverablesList() {
     const list = document.getElementById('deliverablesList');
     const activePhase = document.querySelector('.phase-tab.active')?.dataset.phase || 'all';
 
-    const filtered = (activePhase === 'all' ? DELIVERABLES : DELIVERABLES.filter(d => d.phase === activePhase)).filter(d => !d.hidden);
+    const filtered = (activePhase === 'all' ? DELIVERABLES : DELIVERABLES.filter(d => d.phase === activePhase))
+        .filter(d => !d.hidden && !state.config.skipDeliverableWeeks.includes(d.week));
 
     list.innerHTML = filtered.map(d => {
         const status = state.deliverables[d.id]?.status || 'pending';
