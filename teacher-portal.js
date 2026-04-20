@@ -22,7 +22,7 @@ const CONFIG = {
         robotics: {
             name: 'Robotics Portfolio',
             apiUrl: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
-            currentAppVersion: 'v2.9.39',  // keep in sync with Robotics app.js CONFIG.VERSION
+            currentAppVersion: 'v2.9.40',  // keep in sync with Robotics app.js CONFIG.VERSION
             hasTeams: false,
             totalDeliverables: 9,
             totalReflections: 11,
@@ -986,39 +986,54 @@ function openStudentDetail(email) {
                 quizPanel.innerHTML = '<p class="empty-state">No quiz submission yet.</p>';
             } else {
                 const qLabels = ['Q1 (PWM)', 'Q2 (Contact Detection)', 'Q3 (abs/slip)', 'Q4 (Rate of Closure)', 'Q5 (Object Detection)', 'Q6 (Blocking Code)', 'Bonus (Active Low)'];
-                const qIds    = ['q1','q2','q3','q4','q5','q6','bonus'];
-                let col = 3; // columns: 0=timestamp, 1=email, 2=name, then per-question: answer, score, feedback × 7, aiTotal, teacherFinal
+                let col = 3;
                 let rows = '';
-                qIds.forEach((id, i) => {
+                const gradingPending = qLabels.every((_, i) => quizRow[col + i*3 + 1] === '' || quizRow[col + i*3 + 1] === null);
+                qLabels.forEach((label, i) => {
                     const answer   = quizRow[col]   || '';
-                    const score    = quizRow[col+1] !== '' ? quizRow[col+1] : '—';
-                    const feedback = quizRow[col+2] || '';
+                    const aiScore  = quizRow[col+1] !== '' && quizRow[col+1] !== null ? quizRow[col+1] : '—';
+                    const feedback = quizRow[col+2] || (gradingPending ? '<em style="color:var(--gray-400);">AI grading pending</em>' : '');
                     col += 3;
                     rows += `
                         <tr style="border-bottom:1px solid var(--gray-100);">
-                            <td style="padding:10px 8px; font-weight:600; font-size:13px; white-space:nowrap; vertical-align:top;">${qLabels[i]}</td>
-                            <td style="padding:10px 8px; font-size:13px; vertical-align:top; max-width:300px;">${answer}</td>
-                            <td style="padding:10px 8px; text-align:center; font-weight:700; vertical-align:top;">${score}</td>
+                            <td style="padding:10px 8px; font-weight:600; font-size:13px; white-space:nowrap; vertical-align:top;">${label}</td>
+                            <td style="padding:10px 8px; font-size:13px; vertical-align:top;">${answer}</td>
+                            <td style="padding:10px 8px; text-align:center; font-weight:700; vertical-align:top;">${aiScore}</td>
                             <td style="padding:10px 8px; font-size:12px; color:var(--gray-500); vertical-align:top;">${feedback}</td>
                         </tr>`;
                 });
-                const aiTotal      = quizRow[col]   !== '' ? quizRow[col]   : '—';
-                const teacherFinal = quizRow[col+1] !== '' ? quizRow[col+1] : '—';
+                const aiTotal      = quizRow[col]   !== '' && quizRow[col]   !== null ? quizRow[col]   : '—';
+                const teacherFinal = quizRow[col+1] !== '' && quizRow[col+1] !== null ? quizRow[col+1] : '';
+                const regradeBtn = `<button class="btn btn-secondary" style="font-size:12px; padding:6px 12px;"
+                    onclick="regradeQuiz('${student.email}', this)">
+                    <i class="fas fa-robot"></i> ${gradingPending ? 'Run AI Grading' : 'Re-run AI Grading'}
+                </button>`;
                 quizPanel.innerHTML = `
-                    <p style="font-size:13px; color:var(--gray-500); margin-bottom:12px;">
-                        Submitted: ${quizRow[0]} &nbsp;|&nbsp;
-                        AI Total: <strong>${aiTotal}/26</strong> &nbsp;|&nbsp;
-                        Teacher Final: <strong>${teacherFinal}</strong>
-                    </p>
-                    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+                        <p style="font-size:13px; color:var(--gray-500); margin:0;">
+                            Submitted: ${quizRow[0]} &nbsp;|&nbsp; AI Total: <strong>${aiTotal}/26</strong>
+                        </p>
+                        ${regradeBtn}
+                    </div>
+                    <table style="width:100%; border-collapse:collapse; font-size:13px; margin-bottom:20px;">
                         <thead><tr style="background:var(--gray-50);">
-                            <th style="padding:8px; text-align:left; border-bottom:2px solid var(--gray-200);">Question</th>
+                            <th style="padding:8px; text-align:left; border-bottom:2px solid var(--gray-200); white-space:nowrap;">Question</th>
                             <th style="padding:8px; text-align:left; border-bottom:2px solid var(--gray-200);">Student Answer</th>
-                            <th style="padding:8px; text-align:center; border-bottom:2px solid var(--gray-200); width:50px;">Score</th>
+                            <th style="padding:8px; text-align:center; border-bottom:2px solid var(--gray-200); width:50px;">AI</th>
                             <th style="padding:8px; text-align:left; border-bottom:2px solid var(--gray-200);">AI Feedback</th>
                         </tr></thead>
                         <tbody>${rows}</tbody>
-                    </table>`;
+                    </table>
+                    <div style="display:flex; align-items:center; gap:12px; padding:16px; background:var(--gray-50); border-radius:8px; border:1px solid var(--gray-200);">
+                        <label style="font-size:14px; font-weight:600; white-space:nowrap;">Teacher Final Score:</label>
+                        <input type="number" id="quizTeacherScore" value="${teacherFinal}" min="0" max="28" step="1"
+                            style="width:70px; padding:6px 10px; border:1px solid var(--gray-300); border-radius:6px; font-size:15px; font-weight:700; text-align:center;">
+                        <span style="font-size:13px; color:var(--gray-500);">/ 28 pts (26 + 2 bonus)</span>
+                        <button class="btn btn-primary" style="font-size:13px; padding:7px 16px; margin-left:auto;"
+                            onclick="saveQuizGrade('${student.email}', this)">
+                            <i class="fas fa-save"></i> Save Grade
+                        </button>
+                    </div>`;
             }
         } else {
             quizTab.style.display = 'none';
@@ -1033,6 +1048,65 @@ function openStudentDetail(email) {
     document.querySelectorAll('.detail-panel').forEach(p => p.classList.remove('active'));
     document.querySelector('.detail-tab').classList.add('active');
     document.getElementById('reflectionsPanel').classList.add('active');
+}
+
+async function regradeQuiz(email, btn) {
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Grading…';
+    try {
+        const course = CONFIG.COURSES['robotics'];
+        const res = await fetch(course.apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({ action: 'regradeQuiz', token: CONFIG.TEACHER_TOKEN, email })
+        });
+        const data = await res.json();
+        if (data.success) {
+            btn.innerHTML = '<i class="fas fa-check"></i> Graded!';
+            // Reload data so the panel refreshes
+            await loadCourseData();
+            const student = state.students.find(s => s.email === email);
+            if (student) openStudentModal(student);
+        } else {
+            btn.disabled = false;
+            btn.innerHTML = orig;
+            alert('Re-grade failed: ' + (data.error || 'Unknown error'));
+        }
+    } catch(err) {
+        btn.disabled = false;
+        btn.innerHTML = orig;
+        alert('Re-grade error: ' + err.message);
+    }
+}
+
+async function saveQuizGrade(email, btn) {
+    const score = document.getElementById('quizTeacherScore')?.value;
+    if (score === '' || score === null) { alert('Enter a score first.'); return; }
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
+    try {
+        const course = CONFIG.COURSES['robotics'];
+        const res = await fetch(course.apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({ action: 'saveQuizGrade', token: CONFIG.TEACHER_TOKEN, email, score: Number(score) })
+        });
+        const data = await res.json();
+        if (data.success) {
+            btn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+            setTimeout(() => { btn.disabled = false; btn.innerHTML = orig; }, 2000);
+        } else {
+            btn.disabled = false;
+            btn.innerHTML = orig;
+            alert('Save failed: ' + (data.error || 'Unknown error'));
+        }
+    } catch(err) {
+        btn.disabled = false;
+        btn.innerHTML = orig;
+        alert('Save error: ' + err.message);
+    }
 }
 
 function closeModal() {

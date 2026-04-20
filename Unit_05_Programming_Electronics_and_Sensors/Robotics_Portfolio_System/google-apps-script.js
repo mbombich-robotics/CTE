@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.27';
+const BACKEND_VERSION = 'v2.9.28';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -110,6 +110,12 @@ function doPost(e) {
 
       case 'submitQuiz':
         return jsonResponse(handleSubmitQuiz(data));
+
+      case 'regradeQuiz':
+        return jsonResponse(handleRegradeQuiz(data));
+
+      case 'saveQuizGrade':
+        return jsonResponse(handleSaveQuizGrade(data));
 
       default:
         return jsonResponse({ error: 'Unknown action' });
@@ -1567,7 +1573,61 @@ function handleSubmitQuiz(data) {
   sheet.appendRow(row);
 
   logActivity('QUIZ_SUBMIT', email, gradingError ? 'AI grading failed — saved for manual grading' : `AI Total: ${aiTotal}/26`);
-  return { success: true, grades: gradeMap, aiTotal, gradingPending: !!gradingError };
+  return { success: true, grades: gradeMap, aiTotal, gradingPending: !!gradingError, gradingErrorMessage: gradingError || null };
+}
+
+function handleRegradeQuiz(data) {
+  if (data.token !== TEACHER_TOKEN) return { error: 'Unauthorized' };
+  const email = (data.email || '').trim();
+  if (!email) return { error: 'Missing email' };
+
+  const sheet = getOrCreateQuizSheet();
+  const rowNum = quizEmailSubmitted(sheet, email);
+  if (!rowNum) return { error: 'No submission found for ' + email };
+
+  const rowData = sheet.getRange(rowNum, 1, 1, sheet.getLastColumn()).getValues()[0];
+  // Reconstruct answers from stored row (col 3 = first answer, every 3rd after that)
+  const answers = {};
+  let col = 3;
+  QUIZ_QUESTIONS.forEach(q => { answers[q.id] = rowData[col]; col += 3; });
+
+  let gradeMap, gradingError = null;
+  try {
+    gradeMap = gradeClawQuiz(answers);
+  } catch(err) {
+    gradingError = err.toString();
+    logActivity('QUIZ_REGRADE_ERROR', email, gradingError);
+    return { success: false, error: gradingError };
+  }
+
+  let aiTotal = 0;
+  col = 3;
+  QUIZ_QUESTIONS.forEach(q => {
+    const g = gradeMap[q.id] || { score: 0, feedback: '' };
+    const score = Math.min(Number(g.score) || 0, q.maxPts);
+    aiTotal += score;
+    sheet.getRange(rowNum, col + 2).setValue(score);     // AI Score column
+    sheet.getRange(rowNum, col + 3).setValue(g.feedback || ''); // AI Feedback column
+    col += 3;
+  });
+  sheet.getRange(rowNum, col + 1).setValue(aiTotal); // AI Total
+
+  logActivity('QUIZ_REGRADE', email, `AI Total: ${aiTotal}/26`);
+  return { success: true, grades: gradeMap, aiTotal };
+}
+
+function handleSaveQuizGrade(data) {
+  if (data.token !== TEACHER_TOKEN) return { error: 'Unauthorized' };
+  const email = (data.email || '').trim();
+  if (!email) return { error: 'Missing email' };
+  const sheet = getOrCreateQuizSheet();
+  const rowNum = quizEmailSubmitted(sheet, email);
+  if (!rowNum) return { error: 'No submission found' };
+  // Teacher Final Score is the last column (3 + 7*3 + 2 = col 26)
+  const teacherFinalCol = 3 + QUIZ_QUESTIONS.length * 3 + 2;
+  sheet.getRange(rowNum, teacherFinalCol).setValue(data.score);
+  logActivity('QUIZ_GRADE_SAVED', email, 'Teacher final: ' + data.score);
+  return { success: true };
 }
 
 function gradeClawQuiz(answers) {
