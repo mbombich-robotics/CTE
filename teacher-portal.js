@@ -22,7 +22,7 @@ const CONFIG = {
         robotics: {
             name: 'Robotics Portfolio',
             apiUrl: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
-            currentAppVersion: 'v2.9.40',  // keep in sync with Robotics app.js CONFIG.VERSION
+            currentAppVersion: 'v2.9.41',  // keep in sync with Robotics app.js CONFIG.VERSION
             hasTeams: false,
             totalDeliverables: 9,
             totalReflections: 11,
@@ -985,20 +985,34 @@ function openStudentDetail(email) {
             if (!quizRow) {
                 quizPanel.innerHTML = '<p class="empty-state">No quiz submission yet.</p>';
             } else {
-                const qLabels = ['Q1 (PWM)', 'Q2 (Contact Detection)', 'Q3 (abs/slip)', 'Q4 (Rate of Closure)', 'Q5 (Object Detection)', 'Q6 (Blocking Code)', 'Bonus (Active Low)'];
+                const qMeta = [
+                    { label: 'Q1 — PWM',               max: 4 },
+                    { label: 'Q2 — Contact Detection',  max: 4 },
+                    { label: 'Q3 — abs() / Slip',       max: 4 },
+                    { label: 'Q4 — Rate of Closure',    max: 4 },
+                    { label: 'Q5 — Object Detection',   max: 4 },
+                    { label: 'Q6 — Blocking Code',      max: 6 },
+                    { label: 'Bonus — Active Low',      max: 2 },
+                ];
                 let col = 3;
                 let rows = '';
-                const gradingPending = qLabels.every((_, i) => quizRow[col + i*3 + 1] === '' || quizRow[col + i*3 + 1] === null);
-                qLabels.forEach((label, i) => {
-                    const answer   = quizRow[col]   || '';
-                    const aiScore  = quizRow[col+1] !== '' && quizRow[col+1] !== null ? quizRow[col+1] : '—';
-                    const feedback = quizRow[col+2] || (gradingPending ? '<em style="color:var(--gray-400);">AI grading pending</em>' : '');
+                const gradingPending = qMeta.every((_, i) => quizRow[col + i*3 + 1] === '' || quizRow[col + i*3 + 1] === null);
+                qMeta.forEach(({ label, max }, i) => {
+                    const answer    = quizRow[col]   || '';
+                    const aiScore   = quizRow[col+1] !== '' && quizRow[col+1] !== null ? quizRow[col+1] : '';
+                    const feedback  = quizRow[col+2] || (gradingPending ? '<em style="color:var(--gray-400);">AI grading pending</em>' : '');
                     col += 3;
                     rows += `
                         <tr style="border-bottom:1px solid var(--gray-100);">
                             <td style="padding:10px 8px; font-weight:600; font-size:13px; white-space:nowrap; vertical-align:top;">${label}</td>
-                            <td style="padding:10px 8px; font-size:13px; vertical-align:top;">${answer}</td>
-                            <td style="padding:10px 8px; text-align:center; font-weight:700; vertical-align:top;">${aiScore}</td>
+                            <td style="padding:10px 8px; font-size:13px; vertical-align:top; max-width:260px;">${answer}</td>
+                            <td style="padding:6px 8px; text-align:center; vertical-align:top; white-space:nowrap;">
+                                <input type="number" class="quiz-q-score" data-max="${max}"
+                                    value="${aiScore}" min="0" max="${max}" step="1"
+                                    oninput="tallyQuizScore()"
+                                    style="width:48px; padding:4px 6px; border:1px solid var(--gray-300); border-radius:4px; text-align:center; font-size:13px; font-weight:700;">
+                                <span style="font-size:12px; color:var(--gray-400);">/${max}</span>
+                            </td>
                             <td style="padding:10px 8px; font-size:12px; color:var(--gray-500); vertical-align:top;">${feedback}</td>
                         </tr>`;
                 });
@@ -1017,23 +1031,26 @@ function openStudentDetail(email) {
                     </div>
                     <table style="width:100%; border-collapse:collapse; font-size:13px; margin-bottom:20px;">
                         <thead><tr style="background:var(--gray-50);">
-                            <th style="padding:8px; text-align:left; border-bottom:2px solid var(--gray-200); white-space:nowrap;">Question</th>
+                            <th style="padding:8px; text-align:left; border-bottom:2px solid var(--gray-200);">Question</th>
                             <th style="padding:8px; text-align:left; border-bottom:2px solid var(--gray-200);">Student Answer</th>
-                            <th style="padding:8px; text-align:center; border-bottom:2px solid var(--gray-200); width:50px;">AI</th>
+                            <th style="padding:8px; text-align:center; border-bottom:2px solid var(--gray-200); width:80px;">Score</th>
                             <th style="padding:8px; text-align:left; border-bottom:2px solid var(--gray-200);">AI Feedback</th>
                         </tr></thead>
                         <tbody>${rows}</tbody>
-                    </table>
-                    <div style="display:flex; align-items:center; gap:12px; padding:16px; background:var(--gray-50); border-radius:8px; border:1px solid var(--gray-200);">
-                        <label style="font-size:14px; font-weight:600; white-space:nowrap;">Teacher Final Score:</label>
-                        <input type="number" id="quizTeacherScore" value="${teacherFinal}" min="0" max="28" step="1"
-                            style="width:70px; padding:6px 10px; border:1px solid var(--gray-300); border-radius:6px; font-size:15px; font-weight:700; text-align:center;">
-                        <span style="font-size:13px; color:var(--gray-500);">/ 28 pts (26 + 2 bonus)</span>
-                        <button class="btn btn-primary" style="font-size:13px; padding:7px 16px; margin-left:auto;"
-                            onclick="saveQuizGrade('${student.email}', this)">
-                            <i class="fas fa-save"></i> Save Grade
-                        </button>
-                    </div>`;
+                        <tfoot><tr style="background:var(--gray-50); border-top:2px solid var(--gray-200);">
+                            <td colspan="2" style="padding:10px 8px; font-weight:700; font-size:14px;">Total</td>
+                            <td style="padding:10px 8px; text-align:center;">
+                                <span id="quizScoreTotal" style="font-size:15px; font-weight:900; color:var(--primary);">${teacherFinal !== '' ? teacherFinal : (aiTotal !== '—' ? aiTotal : '—')}</span>
+                                <span style="font-size:12px; color:var(--gray-400);">/28</span>
+                            </td>
+                            <td style="padding:10px 8px; text-align:right;">
+                                <button class="btn btn-primary" style="font-size:13px; padding:7px 16px;"
+                                    onclick="saveQuizGrade('${student.email}', this)">
+                                    <i class="fas fa-save"></i> Save Grade
+                                </button>
+                            </td>
+                        </tr></tfoot>
+                    </table>`;
             }
         } else {
             quizTab.style.display = 'none';
@@ -1080,9 +1097,21 @@ async function regradeQuiz(email, btn) {
     }
 }
 
+function tallyQuizScore() {
+    let total = 0;
+    document.querySelectorAll('.quiz-q-score').forEach(inp => {
+        const max = parseInt(inp.dataset.max) || 0;
+        total += Math.min(parseInt(inp.value) || 0, max);
+    });
+    const el = document.getElementById('quizScoreTotal');
+    if (el) el.textContent = total;
+}
+
 async function saveQuizGrade(email, btn) {
-    const score = document.getElementById('quizTeacherScore')?.value;
-    if (score === '' || score === null) { alert('Enter a score first.'); return; }
+    const inputs = document.querySelectorAll('.quiz-q-score');
+    let total = 0;
+    inputs.forEach(inp => { total += Math.min(parseInt(inp.value) || 0, parseInt(inp.dataset.max) || 0); });
+    const score = total;
     const orig = btn.innerHTML;
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
