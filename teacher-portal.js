@@ -1084,7 +1084,7 @@ async function regradeQuiz(email, btn) {
             // Reload data so the panel refreshes
             await loadCourseData();
             const student = state.students.find(s => s.email === email);
-            if (student) openStudentModal(student);
+            if (student) openStudentDetail(student.email);
         } else {
             btn.disabled = false;
             btn.innerHTML = orig;

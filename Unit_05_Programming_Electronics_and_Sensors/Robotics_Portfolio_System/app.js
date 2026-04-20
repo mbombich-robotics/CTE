@@ -2279,8 +2279,8 @@ function openDeliverableForm(id) {
             ` : ''}
 
             <div class="form-group">
-                <label for="deliverableContent">${id === 3 ? 'Code & Observations' : id === 4 ? 'Sweep Code & Explanation' : id === 5 ? 'Commented Code & Reflection' : id === 7 ? 'Problem & Solution' : id === 8 ? 'Google Doc Link & AI Log Summary' : id === 9 ? 'Google Doc Link & Project Summary' : 'Your Submission'}</label>
-                <textarea id="deliverableContent" rows="8" placeholder="${id === 3 ? 'Paste your code with comments, and describe your observations about sensor behavior...' : id === 4 ? 'Paste your servo sweep code and briefly explain how it works (what does each part do?)...' : id === 5 ? 'Paste a key section of your code (e.g. loop() or a motor function) and add comments explaining:\n- What each part does and why\n- Which constants you tuned (THRESHOLD, TURN_TIME, etc.) and what values you used\n- At least one problem you ran into and how you fixed it' : id === 7 ? 'Describe at least one problem you ran into (e.g. robot oscillating, veering, not stopping) and explain how you solved it or what you tried...' : id === 8 ? 'Paste your Google Doc spec sheet link here (make sure sharing is set to "Anyone with the link can view").\n\nThen briefly describe your AI Log — how many prompts, what you asked, and one thing AI got wrong or that you had to correct.' : id === 9 ? 'Paste your Google Doc spec sheet link here (make sure sharing is set to "Anyone with the link can view").\n\nBriefly describe your testing results and at least one case where you had to correct or verify AI output.' : 'Describe what you did, paste your code, explain your process...'}">${id === 3 ? (existing.rawContent || existing.content || '') : id === 5 ? (existing.rawContent || existing.content || '') : id === 7 ? (existing.rawContent || existing.content || '') : (existing.content || '')}</textarea>
+                <label for="deliverableContent">${id === 3 ? 'Code & Observations' : id === 4 ? 'Sweep Code & Explanation' : id === 5 ? 'Commented Code & Reflection' : id === 7 ? 'Problem & Solution' : id === 8 ? 'AI Log Summary' : id === 9 ? 'Project Summary' : 'Your Submission'}</label>
+                <textarea id="deliverableContent" rows="8" placeholder="${id === 3 ? 'Paste your code with comments, and describe your observations about sensor behavior...' : id === 4 ? 'Paste your servo sweep code and briefly explain how it works (what does each part do?)...' : id === 5 ? 'Paste a key section of your code (e.g. loop() or a motor function) and add comments explaining:\n- What each part does and why\n- Which constants you tuned (THRESHOLD, TURN_TIME, etc.) and what values you used\n- At least one problem you ran into and how you fixed it' : id === 7 ? 'Describe at least one problem you ran into (e.g. robot oscillating, veering, not stopping) and explain how you solved it or what you tried...' : id === 8 ? 'How many prompts did you use? What did you ask? Describe one thing AI got wrong or that you had to correct.' : id === 9 ? 'Describe your testing results and at least one case where you had to correct or verify AI output.' : 'Describe what you did, paste your code, explain your process...'}">${id === 3 ? (existing.rawContent || existing.content || '') : id === 5 ? (existing.rawContent || existing.content || '') : id === 7 ? (existing.rawContent || existing.content || '') : (existing.content || '')}</textarea>
             </div>
 
             <div class="form-group">
@@ -2318,11 +2318,17 @@ function openDeliverableForm(id) {
                 </div>
             </div>
 
-            ${id !== 8 && id !== 9 ? `
+            ${id === 8 || id === 9 ? `
+            <div class="form-group">
+                <label for="deliverableDocLink">Google Doc Link</label>
+                <input type="text" id="deliverableDocLink" value="${existing.links || ''}" placeholder="https://docs.google.com/..."
+                       style="width:100%; padding:10px; border:1px solid var(--gray-200); border-radius:6px; font-size:14px; box-sizing:border-box;">
+                <span style="font-size:12px; color:var(--gray-500); display:block; margin-top:4px;">Make sure sharing is set to "Anyone with the link can view"</span>
+            </div>` : `
             <div class="form-group">
                 <label for="deliverableLinks">Supporting Documentation</label>
                 <textarea id="deliverableLinks" rows="3" placeholder="Brief vital code snippets (not full code)">${existing.links || ''}</textarea>
-            </div>` : ''}
+            </div>`}
 
             <div class="form-group">
                 <label for="deliverableSelfAssessment">Self-Assessment (1-10)</label>
@@ -2457,7 +2463,7 @@ function saveDeliverableDraft(id) {
     state.deliverables[id] = {
         ...state.deliverables[id],
         content: document.getElementById('deliverableContent').value,
-        links: document.getElementById('deliverableLinks').value,
+        links: (id === 8 || id === 9) ? (document.getElementById('deliverableDocLink')?.value || '') : (document.getElementById('deliverableLinks')?.value || ''),
         selfAssessment: document.getElementById('deliverableSelfAssessment').value,
         completionTime: completionTimeEl ? parseInt(completionTimeEl.value) || null : null,
         ...(id === 3 ? collectDeliverable3CustomData() : {}),
@@ -2585,7 +2591,7 @@ function submitDeliverable(id) {
     state.deliverables[id] = {
         content: finalContent,
         rawContent: (id === 3 || id === 5 || id === 7) ? content : undefined,
-        links: document.getElementById('deliverableLinks').value,
+        links: (id === 8 || id === 9) ? (document.getElementById('deliverableDocLink')?.value || '') : (document.getElementById('deliverableLinks')?.value || ''),
         selfAssessment: document.getElementById('deliverableSelfAssessment').value,
         completionTime: completionTimeEl ? parseInt(completionTimeEl.value) || null : null,
         ...customData,
