@@ -22,7 +22,7 @@ const CONFIG = {
         robotics: {
             name: 'Robotics Portfolio',
             apiUrl: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
-            currentAppVersion: 'v2.9.43',  // keep in sync with Robotics app.js CONFIG.VERSION
+            currentAppVersion: 'v2.9.43',  // keep in sync with Robotics app.js CONFIG.VERSION — no app.js change this release
             hasTeams: false,
             totalDeliverables: 9,
             totalReflections: 11,
@@ -73,6 +73,33 @@ const RUBRICS = {
             ]
         }
     }
+};
+
+// Criteria definitions for Design Brief AI grading
+const BRIEF_CRITERIA = {
+    8: [
+        { id: 's1_purpose',      label: 'S1 — Purpose & Context',    max: 3 },
+        { id: 's1_goals',        label: 'S1 — Learning Goals',        max: 3 },
+        { id: 's2_completeness', label: 'S2 — BOM Completeness',      max: 4 },
+        { id: 's2_links',        label: 'S2 — Datasheet Links',       max: 4 },
+        { id: 's3_pins',         label: 'S3 — Pin Table',             max: 5 },
+        { id: 's3_diagram',      label: 'S3 — Diagram / Photo',       max: 3 },
+        { id: 's4_pwm',          label: 'S4 — PWM Explanation',       max: 6 },
+        { id: 's4_adc',          label: 'S4 — ADC Explanation',       max: 6 },
+        { id: 's4_additional',   label: 'S4 — Additional Concept',    max: 6 },
+        { id: 's8_prompts',      label: 'S8 — AI Log: Prompts',       max: 5 },
+        { id: 's8_reflection',   label: 'S8 — AI Log: Reflection',    max: 5 },
+    ],
+    9: [
+        { id: 's5_flowchart',    label: 'S5 — Flowchart/Pseudocode',  max: 4 },
+        { id: 's5_clarity',      label: 'S5 — Clarity',               max: 2 },
+        { id: 's6_annotations',  label: 'S6 — Annotation Quality',    max: 5 },
+        { id: 's6_accuracy',     label: 'S6 — Code Accuracy',         max: 3 },
+        { id: 's7_table',        label: 'S7 — Testing Data Table',    max: 3 },
+        { id: 's7_analysis',     label: 'S7 — Analysis',              max: 2 },
+        { id: 's9_challenges',   label: 'S9 — Challenges',            max: 3 },
+        { id: 's9_solutions',    label: 'S9 — Solutions',             max: 3 },
+    ]
 };
 
 function renderGradeSection(courseKey, deliverableId, maxPoints, existingGrade, existingFeedback, email) {
@@ -881,6 +908,13 @@ function openStudentDetail(email) {
             const dStatusLabel = isResubmitted ? 'Resubmitted' : (isUngraded ? 'Needs Grading' : 'Graded');
             const dStatusClass = isResubmitted ? 'status-behind' : (isUngraded ? 'status-behind' : 'status-on-track');
             const dBorderStyle = isResubmitted ? 'border-left: 4px solid #e53935;' : (isUngraded ? 'border-left: 4px solid var(--warning);' : '');
+            const docUrl = submitted[5] || draft?.links || '';
+            const isDesignBrief = (id === 8 || id === 9) && docUrl.includes('docs.google.com');
+            const aiBriefBtn = isDesignBrief ? `
+                <button onclick="openDesignBriefGrader('${email.replace(/'/g,"\\'")}', ${id}, '${docUrl.replace(/'/g,"\\'")}', '${(submitted[3]||'Deliverable '+id).replace(/'/g,"\\'")}', '${(student.name||'').replace(/'/g,"\\'")}' )"
+                        style="margin-top:10px; padding:6px 14px; background:var(--primary); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">
+                    <i class="fas fa-robot"></i> AI Grade Design Brief
+                </button>` : '';
             deliverablesPanel.innerHTML += `
                 <div class="item-card" style="${dBorderStyle}">
                     <div class="item-header">
@@ -891,6 +925,7 @@ function openStudentDetail(email) {
                         ${previewContent}
                     </div>
                     ${needsExpand ? `<button onclick="toggleDeliverableContent('${contentId}', ${id})" style="margin-top: 8px; padding: 4px 12px; background: var(--gray-100); border: 1px solid var(--gray-300); border-radius: 4px; cursor: pointer; font-size: 12px; color: var(--primary);">Show More</button>` : ''}
+                    ${aiBriefBtn}
                     ${renderGradeSection(state.activeCourse, id, maxPoints, existingGrade, existingFeedback, email)}
                 </div>
             `;
@@ -2355,4 +2390,130 @@ async function applyWeekSettings() {
         saveBtn.disabled = false;
         setTimeout(() => { saveBtn.innerHTML = originalHTML; closeWeekSettings(); }, 2500);
     }
+}
+
+// ============================================
+// DESIGN BRIEF AI GRADER
+// ============================================
+
+async function openDesignBriefGrader(email, deliverableId, docUrl, deliverableTitle, studentName) {
+    const overlay = document.getElementById('designBriefOverlay');
+    const frame   = document.getElementById('designBriefFrame');
+    const panel   = document.getElementById('designBriefGradesPanel');
+    const subtitle = document.getElementById('designBriefSubtitle');
+
+    // Extract doc ID for the preview URL
+    const idMatch = docUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    const previewUrl = idMatch
+        ? 'https://docs.google.com/document/d/' + idMatch[1] + '/preview'
+        : docUrl;
+
+    subtitle.textContent = studentName + ' — ' + deliverableTitle;
+    frame.src = previewUrl;
+    panel.innerHTML = `
+        <div style="text-align:center; padding:48px 20px; color:var(--gray-400);">
+            <i class="fas fa-spinner fa-spin" style="font-size:28px; margin-bottom:14px; display:block;"></i>
+            <p style="font-size:14px;">Running AI grading…</p>
+            <p style="font-size:12px; margin-top:6px; color:var(--gray-300);">This may take 10–20 seconds</p>
+        </div>`;
+    overlay.style.display = 'block';
+
+    try {
+        const course = CONFIG.COURSES['robotics'];
+        const res = await fetch(course.apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({ action: 'gradeDesignBrief', token: CONFIG.TEACHER_TOKEN, email, docUrl, deliverableId })
+        });
+        const data = await res.json();
+        if (data.success) {
+            panel.innerHTML = renderBriefGradesPanel(email, deliverableId, data.grades);
+        } else {
+            panel.innerHTML = `<div style="padding:20px; color:#b91c1c; background:#fef2f2; border-radius:8px; font-size:13px;">
+                <strong>Error:</strong> ${data.error || 'Unknown error'}</div>`;
+        }
+    } catch(err) {
+        panel.innerHTML = `<div style="padding:20px; color:#b91c1c; background:#fef2f2; border-radius:8px; font-size:13px;">
+            <strong>Network error:</strong> ${err.message}</div>`;
+    }
+}
+
+function closeDesignBriefGrader() {
+    const overlay = document.getElementById('designBriefOverlay');
+    overlay.style.display = 'none';
+    document.getElementById('designBriefFrame').src = 'about:blank';
+}
+
+function renderBriefGradesPanel(email, deliverableId, grades) {
+    const criteria = BRIEF_CRITERIA[deliverableId] || [];
+    const maxTotal  = criteria.reduce((s, c) => s + c.max, 0);
+    let aiTotal = 0;
+    let hasManual = false;
+
+    const rows = criteria.map(c => {
+        const g = grades[c.id] || {};
+        const isManual = g.score === null || g.score === undefined;
+        const scoreVal = isManual ? '' : Math.min(Number(g.score) || 0, c.max);
+        if (!isManual) aiTotal += Number(scoreVal);
+        else hasManual = true;
+
+        return `<div style="border:1px solid var(--gray-200); border-radius:6px; padding:11px 12px; margin-bottom:9px; ${isManual ? 'background:#fffbeb; border-color:#fbbf24;' : ''}">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:${g.feedback ? '7px' : '0'};">
+                <span style="font-size:12px; font-weight:700; color:var(--gray-700);">${c.label}</span>
+                <div style="display:flex; align-items:center; gap:4px; flex-shrink:0;">
+                    <input type="number" class="brief-score-input" data-id="${c.id}" data-max="${c.max}"
+                           value="${scoreVal}" min="0" max="${c.max}" step="1"
+                           oninput="tallyBriefScore()"
+                           style="width:44px; padding:3px 6px; border:1px solid ${isManual ? '#fbbf24' : 'var(--gray-300)'}; border-radius:4px; text-align:center; font-size:13px; font-weight:700;">
+                    <span style="font-size:12px; color:var(--gray-400);">/ ${c.max}</span>
+                </div>
+            </div>
+            ${g.feedback ? `<p style="font-size:12px; color:var(--gray-600); line-height:1.5; margin:0;">${g.feedback}</p>` : ''}
+            ${isManual ? `<p style="font-size:11px; color:#92400e; margin-top:5px; margin-bottom:0;"><i class="fas fa-exclamation-triangle"></i> Manually verify</p>` : ''}
+        </div>`;
+    }).join('');
+
+    const escapedEmail = email.replace(/'/g, "\\'");
+    return `
+        <div style="margin-bottom:14px; padding:10px 12px; background:var(--gray-50); border-radius:6px; border:1px solid var(--gray-200); font-size:12px; color:var(--gray-600); line-height:1.5;">
+            <strong style="color:var(--gray-700);">AI-suggested scores.</strong>
+            Review the doc on the left and adjust any score before saving.
+            ${hasManual ? '<br><span style="color:#92400e;"><i class="fas fa-exclamation-triangle"></i> Yellow rows require manual verification (images).</span>' : ''}
+        </div>
+        ${rows}
+        <div style="border-top:2px solid var(--gray-200); padding-top:14px; margin-top:4px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <span style="font-size:12px; color:var(--gray-500);">Total: </span>
+                <span id="briefScoreTotal" style="font-size:22px; font-weight:900; color:var(--primary);">${aiTotal}</span>
+                <span style="font-size:13px; color:var(--gray-400);"> / ${maxTotal}</span>
+            </div>
+            <button onclick="applyAndSaveBriefGrade('${escapedEmail}', ${deliverableId})"
+                    style="padding:9px 22px; background:var(--primary); color:white; border:none; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer;">
+                <i class="fas fa-save"></i> Apply Grade & Save
+            </button>
+        </div>`;
+}
+
+function tallyBriefScore() {
+    let total = 0;
+    document.querySelectorAll('.brief-score-input').forEach(inp => {
+        total += Math.min(parseInt(inp.value) || 0, parseInt(inp.dataset.max) || 0);
+    });
+    const el = document.getElementById('briefScoreTotal');
+    if (el) el.textContent = total;
+}
+
+async function applyAndSaveBriefGrade(email, deliverableId) {
+    let total = 0;
+    document.querySelectorAll('.brief-score-input').forEach(inp => {
+        total += Math.min(parseInt(inp.value) || 0, parseInt(inp.dataset.max) || 0);
+    });
+
+    // Push into the grade input in the student modal so saveStudentGrades() picks it up
+    const gradeInput = document.querySelector(`.grade-input[data-type="deliverable"][data-id="${deliverableId}"][data-email="${email}"]`);
+    if (gradeInput) gradeInput.value = total;
+
+    closeDesignBriefGrader();
+    await saveStudentGrades();
+    showToast(`Design Brief grade saved: ${total} pts`);
 }

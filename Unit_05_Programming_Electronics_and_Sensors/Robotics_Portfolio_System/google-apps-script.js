@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.32';
+const BACKEND_VERSION = 'v2.9.33';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -116,6 +116,9 @@ function doPost(e) {
 
       case 'saveQuizGrade':
         return jsonResponse(handleSaveQuizGrade(data));
+
+      case 'gradeDesignBrief':
+        return jsonResponse(handleGradeDesignBrief(data));
 
       default:
         return jsonResponse({ error: 'Unknown action' });
@@ -1693,4 +1696,159 @@ function onOpen() {
     .addItem('Generate Summary Report', 'generateSummaryReport')
     .addItem('Send Reminder Emails', 'sendReminderEmails')
     .addToUi();
+}
+
+// ============================================
+// DESIGN BRIEF AI GRADING
+// ============================================
+
+function handleGradeDesignBrief(data) {
+  if (data.token !== TEACHER_TOKEN) return { error: 'Unauthorized' };
+  const docUrl = (data.docUrl || '').trim();
+  if (!docUrl) return { error: 'Missing docUrl' };
+  const deliverableId = Number(data.deliverableId);
+  if (deliverableId !== 8 && deliverableId !== 9) return { error: 'Only deliverables 8 and 9 support Design Brief grading' };
+
+  const idMatch = docUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (!idMatch) return { error: 'Could not extract Google Doc ID from URL' };
+  const docId = idMatch[1];
+
+  let docHtml;
+  try {
+    const exportUrl = 'https://docs.google.com/document/d/' + docId + '/export?format=html';
+    const resp = UrlFetchApp.fetch(exportUrl, { muteHttpExceptions: true });
+    if (resp.getResponseCode() !== 200) {
+      return { error: 'Could not access document (HTTP ' + resp.getResponseCode() + '). Make sure sharing is set to "Anyone with the link can view".' };
+    }
+    docHtml = resp.getContentText();
+  } catch(e) {
+    return { error: 'Failed to fetch document: ' + e.message };
+  }
+
+  try {
+    const grades = gradeDesignBriefWithGemini(docHtml, deliverableId);
+    return { success: true, grades };
+  } catch(e) {
+    return { success: false, error: e.message };
+  }
+}
+
+function gradeDesignBriefWithGemini(docHtml, deliverableId) {
+  // Extract external hyperlink URLs before stripping HTML
+  const urls = [];
+  const hrefRe = /href="([^"]+)"/g;
+  let m;
+  while ((m = hrefRe.exec(docHtml)) !== null) {
+    const u = m[1];
+    if (u.startsWith('http') && !u.includes('docs.google.com/document') && !u.includes('accounts.google.com') && !u.includes('drive.google.com')) {
+      urls.push(u);
+    }
+  }
+
+  // Strip HTML to plain text
+  let docText = docHtml
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/[ \t]{2,}/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+
+  if (docText.length > 50000) docText = docText.substring(0, 50000) + '\n[...document truncated...]';
+
+  const urlNote = urls.length > 0
+    ? 'External hyperlinks found in document: ' + urls.slice(0, 20).join(' | ')
+    : 'No external hyperlinks detected in document.';
+
+  const rubricD8 = `RUBRIC — DELIVERABLE 8 CHECKPOINT (50 pts):
+
+Section 1 — Project Overview:
+s1_purpose (max 3): Clearly states what the project is, what the system does (grip/classify/slip detection), and WHY it is useful. Written in student's own voice (2-4 sentences, NOT AI-sounding). 3=all present, own voice; 2=vague/incomplete; 1=AI-paste, no personal voice; 0=missing.
+s1_goals (max 3): Lists 2-3 SPECIFIC learning goals (e.g. "I will learn how PWM controls servo position" not "I will learn programming"). 3=2-3 specific; 2=generic; 1=one vague; 0=missing.
+
+Section 2 — Bill of Materials:
+s2_completeness (max 4): All major components listed: microcontroller, servo, potentiometer, LED, resistor, claw hardware, power supply. 4=all; 2-3=1-2 missing; 1=fewer than half; 0=absent.
+s2_links (max 4): Hyperlinks to datasheets for servo, potentiometer, and at least one other component. Use the "External hyperlinks" list — if 3+ URLs found, give full credit. 4=3+ URLs; 2-3=2 URLs; 1=1 URL; 0=no URLs.
+
+Section 3 — Hardware Setup:
+s3_pins (max 5): Pin table with all components, pin number/name, wire color, signal type. 5=complete; 3-4=minor errors; 1-2=significant errors; 0=absent.
+s3_diagram (max 3): Wiring diagram or photo. You CANNOT see images — if document text references a diagram, image, or figure, give score=2 and note manual verification needed. Otherwise score=null. NEVER give 0 if the section text mentions any visual.
+
+Section 4 — Key Concepts (highest weight):
+s4_pwm (max 6): Explains in OWN WORDS: what PWM stands for, what duty cycle means, how it controls servo position, includes analogy or example. PENALIZE AI-sounding text with no personal voice. 6=complete, own voice, analogy; 3-5=mostly correct but incomplete or AI-sounding; 1-2=definition only, no servo connection; 0=missing.
+s4_adc (max 6): Explains in OWN WORDS: what ADC does, what 0-1023 means, how potentiometer ADC values detect claw position/contact. 6=full, own voice, project connection; 3-5=mostly correct, missing pot connection or AI-sounding; 1-2=surface definition; 0=missing.
+s4_additional (max 6): At least one additional concept explained accurately (e.g. control loop, threshold logic, serial communication, map(), slip detection algorithm). 6=accurate, own words; 3-5=shallow; 1-2=names without explaining; 0=none.
+
+Section 8 — AI Conversation Log:
+s8_prompts (max 5): At least 3 prompts logged covering DIFFERENT topics, matching real project work. 5=3+ varied real; 3-4=2 or 3 very similar; 1-2=1 or fabricated; 0=none.
+s8_reflection (max 5): For each prompt: what AI got right, what it missed, what student did with output. At least one critical entry. 5=full reflection each entry, at least one critical; 3-4=partial reflection or all positive; 1-2=just lists prompts; 0=none.`;
+
+  const rubricD9 = `RUBRIC — DELIVERABLE 9 FINAL BRIEF SECTIONS (25 pts):
+
+Section 5 — Algorithm:
+s5_flowchart (max 4): Flowchart or pseudocode showing main loop: open→read ADC→check contact→classify→set LED→check slip→repeat. Must have decision branches. Should match actual code. 4=accurate, branches, matches code; 2-3=high-level only or missing branches; 1=rough/missing steps; 0=absent.
+s5_clarity (max 2): Another student could follow the algorithm without reading the code. 2=clear; 1=understandable with effort; 0=unclear.
+
+Section 6 — Annotated Code:
+s6_annotations (max 5): Every function/block has a comment explaining WHAT IT DOES AND WHY in student's own words. NOT AI boilerplate. 5=all annotated, explain why, own words; 3-4=most annotated, some just restate code; 1-2=sparse; 0=none or no code.
+s6_accuracy (max 3): Code is complete with no unexplained placeholders. 3=appears complete; 2=minor gaps; 1=incomplete; 0=no code or clearly not student's work.
+
+Section 7 — Testing Results:
+s7_table (max 3): Table with 5+ objects: name, estimated size, ADC at contact, classified size, correct?. Real data (not suspiciously round numbers). 3=5+ real data; 2=3-4 or missing columns; 1=<3 or fabricated; 0=absent.
+s7_analysis (max 2): Notes misclassifications, explains why, proposes one improvement. 2=specific with cause + improvement; 1=superficial; 0=none.
+
+Section 9 — Challenges & Solutions:
+s9_challenges (max 3): At least 2 SPECIFIC challenges (not generic). Good example: "ADC readings fluctuated ±30 at rest, causing false contact triggers." 3=2+ specific; 2=1 specific + 1 vague; 1=generic only; 0=absent.
+s9_solutions (max 3): For each challenge: solution tried and whether it worked. Unresolved challenges noted honestly. 3=tied to each challenge, honest; 2=present but vague/disconnected; 1=missing some; 0=none.`;
+
+  const rubric = deliverableId === 8 ? rubricD8 : rubricD9;
+  const criteriaKeys = deliverableId === 8
+    ? ['s1_purpose','s1_goals','s2_completeness','s2_links','s3_pins','s3_diagram','s4_pwm','s4_adc','s4_additional','s8_prompts','s8_reflection']
+    : ['s5_flowchart','s5_clarity','s6_annotations','s6_accuracy','s7_table','s7_analysis','s9_challenges','s9_solutions'];
+
+  const prompt = `You are grading a high school robotics student's Claw Project Design Brief. Be fair but rigorous. Partial credit is appropriate.
+
+${rubric}
+
+${urlNote}
+
+Return ONLY a valid JSON object — no markdown fences, no explanation. Use null for scores requiring manual image verification. Feedback must be 1-2 specific sentences that reference the student's actual text.
+
+Required keys: ${criteriaKeys.join(', ')}
+
+Example format: {"s1_purpose": {"score": 2, "max": 3, "feedback": "Describes the system but missing the why-useful element."}, ...}
+
+STUDENT DOCUMENT:
+${docText}`;
+
+  const apiKey = PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY');
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + apiKey;
+  const payload = {
+    contents: [{ parts: [{ text: prompt }] }],
+    generationConfig: { temperature: 0.1, maxOutputTokens: 2048 }
+  };
+  const opts = { method: 'POST', contentType: 'application/json', payload: JSON.stringify(payload), muteHttpExceptions: true };
+
+  let resp = UrlFetchApp.fetch(url, opts);
+  let result = JSON.parse(resp.getContentText());
+  if (result.error && result.error.code === 429) {
+    Utilities.sleep(10000);
+    resp = UrlFetchApp.fetch(url, opts);
+    result = JSON.parse(resp.getContentText());
+  }
+  if (result.error) throw new Error('Gemini: ' + (result.error.message || JSON.stringify(result.error)));
+
+  const text = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  try {
+    const cleaned = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '').trim();
+    return JSON.parse(cleaned);
+  } catch(e) {
+    throw new Error('Could not parse Gemini response: ' + text.substring(0, 300));
+  }
 }
