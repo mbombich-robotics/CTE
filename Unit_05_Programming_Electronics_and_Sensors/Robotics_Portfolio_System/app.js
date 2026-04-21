@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.43',
+    VERSION: 'v2.9.44',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -2464,7 +2464,7 @@ function saveDeliverableDraft(id) {
     const completionTimeEl = document.getElementById('completionTime');
     state.deliverables[id] = {
         ...state.deliverables[id],
-        content: document.getElementById('deliverableContent').value,
+        content: document.getElementById('deliverableContent')?.value || '',
         links: (id === 8 || id === 9) ? (document.getElementById('deliverableDocLink')?.value || '') : (document.getElementById('deliverableLinks')?.value || ''),
         selfAssessment: document.getElementById('deliverableSelfAssessment').value,
         completionTime: completionTimeEl ? parseInt(completionTimeEl.value) || null : null,
@@ -2556,7 +2556,7 @@ function formatDeliverable7Content(content, customData) {
 
 function submitDeliverable(id) {
     const deliverable = DELIVERABLES.find(d => d.id === id);
-    const content = document.getElementById('deliverableContent').value;
+    const content = document.getElementById('deliverableContent')?.value || '';
     const completionTimeEl = document.getElementById('completionTime');
     const photos = state.deliverables[id]?.photos || [];
 
@@ -2948,7 +2948,7 @@ if (AI_FEEDBACK_ENABLED) {
             payload.title = deliverable?.title || `Deliverable ${deliverableId}`;
             payload.week = deliverable?.week;
             payload.content = {
-                text: document.getElementById('deliverableContent').value
+                text: document.getElementById('deliverableContent')?.value || ''
             };
         }
 
