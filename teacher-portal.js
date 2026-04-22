@@ -38,7 +38,7 @@ const CONFIG = {
             hasTeams: true,
             teams: ['drivetrain', 'intake', 'shooter', 'climber', 'autonomous', 'integration'],
             totalDeliverables: 13,
-            totalReflections: 9,
+            totalReflections: 13,
             totalPoints: 890,
             deliverablePoints: { 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 75, 9: 100, 10: 100, 11: 75, 12: 100, 13: 100 }
         }
@@ -2288,13 +2288,16 @@ async function openWeekSettings() {
 
     modal.classList.add('active');
 
-    // Populate version display fields with current code versions
+    // Populate version display fields and initialize hidden inputs from local weekSettings
     ['robotics', 'frc'].forEach(courseId => {
         const codeVersionEl = document.getElementById('codeVersion_' + courseId);
         if (codeVersionEl) codeVersionEl.textContent = CONFIG.COURSES[courseId].currentAppVersion || '—';
+        const hiddenEl = document.getElementById('expectedVersion_' + courseId);
+        if (hiddenEl) hiddenEl.value = weekSettings[courseId]?.expectedVersion || '';
     });
 
-    // Fetch current backend config to show what students are currently expecting
+    // Fetch current backend config — only update status display, never overwrite hiddenEl
+    // (hiddenEl is the save value; overwriting it after user clicks "Use current" caused a race)
     try {
         const [roboCfg, frcCfg] = await Promise.all([
             fetch(CONFIG.COURSES.robotics.apiUrl + '?action=getConfig&_t=' + Date.now()).then(r => r.json()),
@@ -2304,14 +2307,12 @@ async function openWeekSettings() {
         ['robotics', 'frc'].forEach(courseId => {
             const cfg = configs[courseId];
             const backendEl = document.getElementById('backendVersion_' + courseId);
-            const hiddenEl  = document.getElementById('expectedVersion_' + courseId);
             const current   = CONFIG.COURSES[courseId].currentAppVersion;
             const stored    = cfg.expectedVersion || '(not set)';
             if (backendEl) {
                 backendEl.textContent = stored;
                 backendEl.style.color = (cfg.expectedVersion && cfg.expectedVersion === current) ? 'var(--success)' : 'var(--danger)';
             }
-            if (hiddenEl) hiddenEl.value = cfg.expectedVersion || '';
         });
     } catch(e) {
         ['robotics', 'frc'].forEach(courseId => {
