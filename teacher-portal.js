@@ -34,7 +34,7 @@ const CONFIG = {
         frc: {
             name: 'FRC Portfolio',
             apiUrl: 'https://script.google.com/macros/s/AKfycbyXSBw_lCaHusiocLh3B_U1kyOmxyV3WlXhoqEdVAAzUN6U6_6ZCELqSTzzfhH6rUKc/exec',
-            currentAppVersion: 'v2.9.24',  // keep in sync with FRC app.js CONFIG.VERSION
+            currentAppVersion: 'v2.9.25',  // keep in sync with FRC app.js CONFIG.VERSION
             hasTeams: true,
             teams: ['drivetrain', 'intake', 'shooter', 'climber', 'autonomous', 'integration'],
             totalDeliverables: 13,

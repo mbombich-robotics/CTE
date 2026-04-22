@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.24',
+    VERSION: 'v2.9.25',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyXSBw_lCaHusiocLh3B_U1kyOmxyV3WlXhoqEdVAAzUN6U6_6ZCELqSTzzfhH6rUKc/exec',
@@ -1046,8 +1046,9 @@ function updateUI() {
 
     const completedDeliverables = Object.values(state.deliverables).filter(d => d.status === 'completed').length;
     const completedReflections = Object.keys(state.weeklyReflections).filter(k => state.weeklyReflections[k].submitted).length;
-    const completedRequiredDeliverables = DELIVERABLES.filter(d => !d.optional && !state.config.skipDeliverableWeeks.includes(d.week) && state.deliverables[d.id]?.status === 'completed').length;
-    const requiredDeliverableCount = DELIVERABLES.filter(d => !d.optional && !state.config.skipDeliverableWeeks.includes(d.week)).length;
+    const skipWeeksUI = (state.config.skipDeliverableWeeks || []).map(Number);
+    const completedRequiredDeliverables = DELIVERABLES.filter(d => !d.optional && !skipWeeksUI.includes(d.week) && state.deliverables[d.id]?.status === 'completed').length;
+    const requiredDeliverableCount = DELIVERABLES.filter(d => !d.optional && !skipWeeksUI.includes(d.week)).length;
 
     document.getElementById('completedCount').textContent = completedDeliverables + completedReflections;
     const requiredReflectionCount = 13 - state.config.skipReflectionWeeks.length;
@@ -1143,8 +1144,9 @@ function updateUpcoming() {
         upcoming.push({ title: `Week ${state.currentWeek} Reflection`, due: 'Friday', points: 20, overdue: false });
     }
 
+    const skipWeeksUpcoming = (state.config.skipDeliverableWeeks || []).map(Number);
     const currentDeliverable = DELIVERABLES.find(d => d.week === state.currentWeek);
-    if (currentDeliverable && !currentDeliverable.optional && !state.config.skipDeliverableWeeks.includes(currentDeliverable.week) && state.deliverables[currentDeliverable.id]?.status !== 'completed') {
+    if (currentDeliverable && !currentDeliverable.optional && !skipWeeksUpcoming.includes(currentDeliverable.week) && state.deliverables[currentDeliverable.id]?.status !== 'completed') {
         upcoming.push({ title: currentDeliverable.title, due: `End of Week ${state.currentWeek}`, points: currentDeliverable.points, overdue: false });
     }
 
@@ -1176,8 +1178,9 @@ function updateWeekButtons() {
 function updateDeliverablesList() {
     const list = document.getElementById('deliverablesList');
 
+    const skipWeeks = (state.config.skipDeliverableWeeks || []).map(Number);
     list.innerHTML = DELIVERABLES.map(d => {
-        const isSkipped = state.config.skipDeliverableWeeks.includes(d.week);
+        const isSkipped = skipWeeks.includes(d.week);
         const status = isSkipped ? 'skipped' : (state.deliverables[d.id]?.status || 'pending');
         const isCurrent = d.week === state.currentWeek && !isSkipped;
         return `
@@ -1662,6 +1665,9 @@ function initDeliverables() {
 
 function openDeliverableForm(id) {
     const deliverable = DELIVERABLES.find(d => d.id === id);
+    if (!deliverable) return;
+    const skipWeeks = (state.config.skipDeliverableWeeks || []).map(Number);
+    if (skipWeeks.includes(deliverable.week)) return;
     const existing = state.deliverables[id] || {};
     const modal = document.getElementById('deliverableModal');
     const content = document.getElementById('deliverableFormContent');
