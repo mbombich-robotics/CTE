@@ -607,6 +607,7 @@
             </div>
 
             <button type="submit" class="submit-btn" id="submit-btn">Submit Quiz</button>
+            <div id="draft-status" style="text-align:center; margin-top:12px; font-size:12px; color:#6b7a99; min-height:18px; letter-spacing:0.04em;"></div>
 
         </form>
     </div><!-- end quiz-section -->
@@ -748,6 +749,7 @@
     function showQuiz() {
         document.getElementById('user-email').textContent = userEmail;
         document.getElementById('quiz-section').classList.remove('hidden');
+        restoreDraft();
     }
 
     function markAnswered(qid) {
@@ -756,7 +758,75 @@
         if (ta && card) {
             card.classList.toggle('answered', ta.value.trim().length > 0);
         }
+        scheduleDraftSave();
     }
+
+    // ── Draft auto-save (localStorage) ──────────────────────
+    const DRAFT_IDS = ['q1','q2','q3','q4','q5','q6','bonus'];
+    let draftSaveTimer = null;
+
+    function draftKey() {
+        return 'clawQuizDraft_' + userEmail;
+    }
+
+    function saveDraft() {
+        if (!userEmail) return;
+        const draft = {};
+        DRAFT_IDS.forEach(id => {
+            const el = document.getElementById('ans-' + id);
+            if (el) draft[id] = el.value;
+        });
+        try {
+            localStorage.setItem(draftKey(), JSON.stringify(draft));
+            const el = document.getElementById('draft-status');
+            if (el) {
+                el.textContent = '✓ Draft saved — your answers are safe if you reload';
+                clearTimeout(el._fadeTimer);
+                el._fadeTimer = setTimeout(() => { el.textContent = ''; }, 4000);
+            }
+        } catch(e) { /* storage full or private mode */ }
+    }
+
+    function scheduleDraftSave() {
+        clearTimeout(draftSaveTimer);
+        draftSaveTimer = setTimeout(saveDraft, 800);
+    }
+
+    function restoreDraft() {
+        if (!userEmail) return;
+        try {
+            const raw = localStorage.getItem(draftKey());
+            if (!raw) return;
+            const draft = JSON.parse(raw);
+            DRAFT_IDS.forEach(id => {
+                const el = document.getElementById('ans-' + id);
+                if (el && draft[id]) {
+                    el.value = draft[id];
+                    markAnswered(id);
+                }
+            });
+            const el = document.getElementById('draft-status');
+            if (el) el.textContent = '↩ Draft restored — answers reloaded from your last session';
+        } catch(e) {}
+    }
+
+    function clearDraft() {
+        try { localStorage.removeItem(draftKey()); } catch(e) {}
+    }
+
+    // Warn before closing/refreshing if quiz is active and has content
+    window.addEventListener('beforeunload', function(e) {
+        const quizVisible = !document.getElementById('quiz-section').classList.contains('hidden');
+        if (!quizVisible) return;
+        const hasContent = DRAFT_IDS.some(id => {
+            const el = document.getElementById('ans-' + id);
+            return el && el.value.trim().length > 0;
+        });
+        if (hasContent) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
 
     // ── Form submission ──────────────────────────────────────
     document.getElementById('quiz-form').addEventListener('submit', async function(e) {
@@ -800,6 +870,7 @@
             hideLoading();
 
             if (data.success) {
+                clearDraft();
                 showResults(payload, data.grades, data.aiTotal);
             } else if (data.error === 'already_submitted') {
                 showAlreadySubmitted();
