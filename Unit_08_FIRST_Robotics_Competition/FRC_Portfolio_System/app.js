@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.23',
+    VERSION: 'v2.9.24',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyXSBw_lCaHusiocLh3B_U1kyOmxyV3WlXhoqEdVAAzUN6U6_6ZCELqSTzzfhH6rUKc/exec',
@@ -1046,11 +1046,11 @@ function updateUI() {
 
     const completedDeliverables = Object.values(state.deliverables).filter(d => d.status === 'completed').length;
     const completedReflections = Object.keys(state.weeklyReflections).filter(k => state.weeklyReflections[k].submitted).length;
-    const completedRequiredDeliverables = DELIVERABLES.filter(d => !d.optional && state.deliverables[d.id]?.status === 'completed').length;
-    const requiredDeliverableCount = DELIVERABLES.filter(d => !d.optional).length;
+    const completedRequiredDeliverables = DELIVERABLES.filter(d => !d.optional && !state.config.skipDeliverableWeeks.includes(d.week) && state.deliverables[d.id]?.status === 'completed').length;
+    const requiredDeliverableCount = DELIVERABLES.filter(d => !d.optional && !state.config.skipDeliverableWeeks.includes(d.week)).length;
 
     document.getElementById('completedCount').textContent = completedDeliverables + completedReflections;
-    const requiredReflectionCount = 9 - state.config.skipReflectionWeeks.length;
+    const requiredReflectionCount = 13 - state.config.skipReflectionWeeks.length;
     document.getElementById('pendingCount').textContent = (requiredDeliverableCount - completedRequiredDeliverables) + (requiredReflectionCount - completedReflections);
     document.getElementById('totalPoints').textContent = calculatePoints();
     document.getElementById('currentWeek').textContent = state.currentWeek;
@@ -1109,7 +1109,7 @@ function updateTimeline() {
 
     timeline.innerHTML = '';
 
-    for (let week = 1; week <= 9; week++) {
+    for (let week = 1; week <= 13; week++) {
         const weekData = state.weeklyReflections[week];
         const isCompleted = weekData?.submitted;
         const isCurrent = week === state.currentWeek;
@@ -1144,7 +1144,7 @@ function updateUpcoming() {
     }
 
     const currentDeliverable = DELIVERABLES.find(d => d.week === state.currentWeek);
-    if (currentDeliverable && !currentDeliverable.optional && state.deliverables[currentDeliverable.id]?.status !== 'completed') {
+    if (currentDeliverable && !currentDeliverable.optional && !state.config.skipDeliverableWeeks.includes(currentDeliverable.week) && state.deliverables[currentDeliverable.id]?.status !== 'completed') {
         upcoming.push({ title: currentDeliverable.title, due: `End of Week ${state.currentWeek}`, points: currentDeliverable.points, overdue: false });
     }
 
@@ -1177,20 +1177,21 @@ function updateDeliverablesList() {
     const list = document.getElementById('deliverablesList');
 
     list.innerHTML = DELIVERABLES.map(d => {
-        const status = state.deliverables[d.id]?.status || 'pending';
-        const isCurrent = d.week === state.currentWeek;
+        const isSkipped = state.config.skipDeliverableWeeks.includes(d.week);
+        const status = isSkipped ? 'skipped' : (state.deliverables[d.id]?.status || 'pending');
+        const isCurrent = d.week === state.currentWeek && !isSkipped;
         return `
-            <div class="deliverable-card ${status} ${isCurrent ? 'current' : ''}" data-id="${d.id}">
-                <div class="deliverable-number">${status === 'completed' ? '<i class="fas fa-check"></i>' : d.id}</div>
+            <div class="deliverable-card ${status} ${isCurrent ? 'current' : ''}" data-id="${d.id}" style="${isSkipped ? 'opacity:0.4;pointer-events:none;' : ''}">
+                <div class="deliverable-number">${status === 'completed' ? '<i class="fas fa-check"></i>' : (isSkipped ? '—' : d.id)}</div>
                 <div class="deliverable-info">
                     <div class="deliverable-title">${d.title}</div>
                     <div class="deliverable-meta">
                         <span>Week ${d.week}</span>
                         <span>${d.phase}</span>
-                        <span class="deliverable-points">${d.points} pts</span>
+                        <span class="deliverable-points">${isSkipped ? 'Skipped' : d.points + ' pts'}</span>
                     </div>
                 </div>
-                <div class="deliverable-status status-${status}">${formatStatus(status)}</div>
+                <div class="deliverable-status status-${status}">${isSkipped ? 'Skipped' : formatStatus(status)}</div>
             </div>
         `;
     }).join('');
