@@ -501,6 +501,9 @@
             ⚠ You have <strong>one attempt</strong>. Once you submit, the quiz is locked.
             Make sure you are ready before signing in.
         </div>
+        <div id="draft-notice" style="display:none; margin-top:16px; padding:10px 16px; background:rgba(80,250,123,0.12); border:1px solid rgba(80,250,123,0.3); border-radius:6px; font-size:13px; color:#50fa7b;">
+            ↩ A saved draft was found — sign in to restore your answers.
+        </div>
     </div>
 
     <!-- ── Already Submitted ──────────────────────── -->
@@ -540,7 +543,7 @@
                     <span class="q-points">4 points</span>
                 </div>
                 <p>In your own words, what is PWM? How does the pulse width physically cause the servo to move to a different position?</p>
-                <textarea id="ans-q1" name="q1" placeholder="Write your answer here..." oninput="markAnswered('q1')"></textarea>
+                <textarea id="ans-q1" name="q1" placeholder="Write your answer here..." oninput="markAnswered('q1')" onblur="saveDraft()"></textarea>
             </div>
 
             <!-- Q2: Contact Detection -->
@@ -550,7 +553,7 @@
                     <span class="q-points">4 points</span>
                 </div>
                 <p>Describe in plain English how your code knows the claw has touched an object — without being able to see it. Why is this better than just closing the claw all the way every time?</p>
-                <textarea id="ans-q2" name="q2" placeholder="Write your answer here..." oninput="markAnswered('q2')"></textarea>
+                <textarea id="ans-q2" name="q2" placeholder="Write your answer here..." oninput="markAnswered('q2')" onblur="saveDraft()"></textarea>
             </div>
 
             <!-- Q3: Code Reading -->
@@ -563,7 +566,7 @@
                 <div class="code-snippet">if (abs(currentFeedback - holdFeedback) &gt; 15)</div>
                 <p class="sub-question">a) What does <span class="inline-code">abs()</span> do, and why is it needed here?</p>
                 <p class="sub-question">b) What real-world event does this line detect?</p>
-                <textarea id="ans-q3" name="q3" placeholder="Answer both parts (a) and (b) here..." oninput="markAnswered('q3')"></textarea>
+                <textarea id="ans-q3" name="q3" placeholder="Answer both parts (a) and (b) here..." oninput="markAnswered('q3')" onblur="saveDraft()"></textarea>
             </div>
 
             <!-- Q4: Rate of Closure -->
@@ -573,7 +576,7 @@
                     <span class="q-points">4 points</span>
                 </div>
                 <p>What controls how fast your claw closes — meaning, what determines the speed of each small servo step? Point to the specific line, value, or variable in your code that is responsible, and explain what would happen if you changed it.</p>
-                <textarea id="ans-q4" name="q4" placeholder="Write your answer here..." oninput="markAnswered('q4')"></textarea>
+                <textarea id="ans-q4" name="q4" placeholder="Write your answer here..." oninput="markAnswered('q4')" onblur="saveDraft()"></textarea>
             </div>
 
             <!-- Q5: Object Detection Line -->
@@ -583,7 +586,7 @@
                     <span class="q-points">4 points</span>
                 </div>
                 <p>Which specific line or lines in your code actually read the potentiometer and compare the result against your contact threshold? Write the line out (or reconstruct it as best you can) and explain what each part does.</p>
-                <textarea id="ans-q5" name="q5" class="tall" placeholder="Write your answer here..." oninput="markAnswered('q5')"></textarea>
+                <textarea id="ans-q5" name="q5" class="tall" placeholder="Write your answer here..." oninput="markAnswered('q5')" onblur="saveDraft()"></textarea>
             </div>
 
             <!-- Q6: Blocking Code -->
@@ -593,7 +596,7 @@
                     <span class="q-points">6 points</span>
                 </div>
                 <p>What is <strong>blocking code</strong>? Using <span class="inline-code">delay()</span> as an example, explain why a blocking approach would have made it impossible to close the claw and check for contact at the same time — and describe how your program was structured to avoid this problem.</p>
-                <textarea id="ans-q6" name="q6" class="tall" placeholder="Write your answer here..." oninput="markAnswered('q6')"></textarea>
+                <textarea id="ans-q6" name="q6" class="tall" placeholder="Write your answer here..." oninput="markAnswered('q6')" onblur="saveDraft()"></textarea>
             </div>
 
             <!-- Bonus -->
@@ -603,7 +606,7 @@
                     <span class="q-points" style="color:#50fa7b;">+2 points</span>
                 </div>
                 <p>What does <strong>"active low"</strong> mean for the RGB LED on the RP2040 Connect? Why does it matter when you write code to turn on a specific color?</p>
-                <textarea id="ans-bonus" name="bonus" placeholder="Write your answer here (optional)..." oninput="markAnswered('bonus')"></textarea>
+                <textarea id="ans-bonus" name="bonus" placeholder="Write your answer here (optional)..." oninput="markAnswered('bonus')" onblur="saveDraft()"></textarea>
             </div>
 
             <button type="submit" class="submit-btn" id="submit-btn">Submit Quiz</button>
@@ -728,6 +731,14 @@
 
     window.onload = function() {
         if (typeof google !== 'undefined') initGoogleSignIn();
+        // Show draft notice on auth gate if any draft exists
+        try {
+            const hasDraft = Object.keys(localStorage).some(k => k.startsWith('clawQuizDraft_'));
+            if (hasDraft) {
+                const notice = document.getElementById('draft-notice');
+                if (notice) notice.style.display = 'block';
+            }
+        } catch(e) {}
     };
 
     // ── View helpers ─────────────────────────────────────────
@@ -766,11 +777,10 @@
     let draftSaveTimer = null;
 
     function draftKey() {
-        return 'clawQuizDraft_' + userEmail;
+        return 'clawQuizDraft_' + (userEmail || 'pending');
     }
 
     function saveDraft() {
-        if (!userEmail) return;
         const draft = {};
         DRAFT_IDS.forEach(id => {
             const el = document.getElementById('ans-' + id);
@@ -788,14 +798,13 @@
     }
 
     function scheduleDraftSave() {
-        clearTimeout(draftSaveTimer);
-        draftSaveTimer = setTimeout(saveDraft, 800);
+        saveDraft();
     }
 
     function restoreDraft() {
-        if (!userEmail) return;
         try {
-            const raw = localStorage.getItem(draftKey());
+            // Check email-keyed draft first, then fall back to pending draft
+            const raw = localStorage.getItem(draftKey()) || localStorage.getItem('clawQuizDraft_pending');
             if (!raw) return;
             const draft = JSON.parse(raw);
             DRAFT_IDS.forEach(id => {
