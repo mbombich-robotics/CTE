@@ -733,7 +733,8 @@
         if (typeof google !== 'undefined') initGoogleSignIn();
         // Show draft notice on auth gate if any draft exists
         try {
-            const hasDraft = Object.keys(localStorage).some(k => k.startsWith('clawQuizDraft_'));
+            const hasDraft = Object.keys(localStorage).some(k => k.startsWith('clawQuizDraft_'))
+                          || Object.keys(sessionStorage).some(k => k.startsWith('clawQuizDraft_'));
             if (hasDraft) {
                 const notice = document.getElementById('draft-notice');
                 if (notice) notice.style.display = 'block';
@@ -786,15 +787,16 @@
             const el = document.getElementById('ans-' + id);
             if (el) draft[id] = el.value;
         });
-        try {
-            localStorage.setItem(draftKey(), JSON.stringify(draft));
-            const el = document.getElementById('draft-status');
-            if (el) {
-                el.textContent = '✓ Draft saved — your answers are safe if you reload';
-                clearTimeout(el._fadeTimer);
-                el._fadeTimer = setTimeout(() => { el.textContent = ''; }, 4000);
-            }
-        } catch(e) { /* storage full or private mode */ }
+        const json = JSON.stringify(draft);
+        const key  = draftKey();
+        try { localStorage.setItem(key, json); }    catch(e) {}
+        try { sessionStorage.setItem(key, json); }  catch(e) {}
+        const el = document.getElementById('draft-status');
+        if (el) {
+            el.textContent = '✓ Draft saved — your answers are safe if you reload';
+            clearTimeout(el._fadeTimer);
+            el._fadeTimer = setTimeout(() => { el.textContent = ''; }, 4000);
+        }
     }
 
     function scheduleDraftSave() {
@@ -803,8 +805,11 @@
 
     function restoreDraft() {
         try {
-            // Check email-keyed draft first, then fall back to pending draft
-            const raw = localStorage.getItem(draftKey()) || localStorage.getItem('clawQuizDraft_pending');
+            const key = draftKey();
+            const pending = 'clawQuizDraft_pending';
+            // sessionStorage survives hard refresh; localStorage survives tab close
+            const raw = sessionStorage.getItem(key) || localStorage.getItem(key)
+                     || sessionStorage.getItem(pending) || localStorage.getItem(pending);
             if (!raw) return;
             const draft = JSON.parse(raw);
             DRAFT_IDS.forEach(id => {
