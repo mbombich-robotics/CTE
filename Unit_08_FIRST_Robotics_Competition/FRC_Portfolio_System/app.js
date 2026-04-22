@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.22',
+    VERSION: 'v2.9.23',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyXSBw_lCaHusiocLh3B_U1kyOmxyV3WlXhoqEdVAAzUN6U6_6ZCELqSTzzfhH6rUKc/exec',
@@ -213,6 +213,18 @@ const DELIVERABLES = [
             'Use AI to polish the writing — but every fact must be something you actually did',
             'Have a teammate read your draft and give written feedback (include their name)',
             'Export your final section as a PDF and submit the link in Supporting Links'
+        ]
+    },
+    {
+        id: 13,
+        title: 'FRC Robot Project — Final',
+        week: 12,
+        points: 100,
+        phase: 'Portfolio',
+        description: 'Submit your completed FRC Robot Project documentation as a Google Doc.',
+        requirements: [
+            'Paste the link to your Google Doc below',
+            'Make sure sharing is set to "Anyone with the link can view"'
         ]
     }
 ];
@@ -1902,6 +1914,13 @@ function openDeliverableForm(id) {
                 </button>
             </div>
 
+            ` : id === 13 ? `
+            <div class="form-group">
+                <label for="deliverableDocLink">Google Doc Link</label>
+                <input type="text" id="deliverableDocLink" value="${existing.links || ''}" placeholder="https://docs.google.com/..."
+                       style="width:100%; padding:10px; border:1px solid var(--gray-200); border-radius:6px; font-size:14px; box-sizing:border-box;">
+                <span style="font-size:12px; color:var(--gray-500); display:block; margin-top:4px;">Make sure sharing is set to "Anyone with the link can view"</span>
+            </div>
             ` : `
             <div class="form-group">
                 <label for="deliverableContent">Your Submission</label>
@@ -1909,10 +1928,11 @@ function openDeliverableForm(id) {
             </div>
             `}
 
+            ${id !== 13 ? `
             <div class="form-group">
                 <label for="deliverableLinks">Supporting Links (Google Drive, images, etc.)</label>
                 <textarea id="deliverableLinks" rows="3" placeholder="https://drive.google.com/...">${existing.links || ''}</textarea>
-            </div>
+            </div>` : ''}
 
             <div class="form-group">
                 <label for="deliverableSelfAssessment">Self-Assessment: How well did you meet the requirements? (1-10)</label>
@@ -2380,8 +2400,8 @@ function saveDeliverableDraft(id) {
                      : {};
     state.deliverables[id] = {
         ...state.deliverables[id],
-        content: (id === 4 || id === 6) ? '' : document.getElementById('deliverableContent').value,
-        links: document.getElementById('deliverableLinks').value,
+        content: (id === 4 || id === 6 || id === 13) ? '' : document.getElementById('deliverableContent').value,
+        links: id === 13 ? (document.getElementById('deliverableDocLink')?.value || '') : document.getElementById('deliverableLinks').value,
         selfAssessment: document.getElementById('deliverableSelfAssessment').value,
         ...customData,
         status: 'in-progress',
@@ -2449,6 +2469,19 @@ function submitDeliverable(id) {
             rawContent: '',
             ...customData,
             links: document.getElementById('deliverableLinks').value,
+            selfAssessment: document.getElementById('deliverableSelfAssessment').value,
+            status: 'completed',
+            submittedAt: new Date().toISOString()
+        };
+    } else if (id === 13) {
+        const docLink = document.getElementById('deliverableDocLink')?.value || '';
+        if (!docLink || !docLink.includes('docs.google.com')) {
+            showToast('Please provide a valid Google Doc link', 'error');
+            return;
+        }
+        state.deliverables[id] = {
+            content: '',
+            links: docLink,
             selfAssessment: document.getElementById('deliverableSelfAssessment').value,
             status: 'completed',
             submittedAt: new Date().toISOString()

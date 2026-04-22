@@ -34,13 +34,13 @@ const CONFIG = {
         frc: {
             name: 'FRC Portfolio',
             apiUrl: 'https://script.google.com/macros/s/AKfycbyXSBw_lCaHusiocLh3B_U1kyOmxyV3WlXhoqEdVAAzUN6U6_6ZCELqSTzzfhH6rUKc/exec',
-            currentAppVersion: 'v2.9.21',  // keep in sync with FRC app.js CONFIG.VERSION
+            currentAppVersion: 'v2.9.23',  // keep in sync with FRC app.js CONFIG.VERSION
             hasTeams: true,
             teams: ['drivetrain', 'intake', 'shooter', 'climber', 'autonomous', 'integration'],
-            totalDeliverables: 10,
+            totalDeliverables: 13,
             totalReflections: 9,
             totalPoints: 890,
-            deliverablePoints: { 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 75, 9: 100, 10: 100 }
+            deliverablePoints: { 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 75, 9: 100, 10: 100, 11: 75, 12: 100, 13: 100 }
         }
     },
 
