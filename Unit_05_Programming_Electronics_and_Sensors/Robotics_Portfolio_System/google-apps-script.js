@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.33';
+const BACKEND_VERSION = 'v2.9.34';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -60,6 +60,9 @@ function doGet(e) {
 
       case 'checkQuiz':
         return jsonResponse(handleCheckQuiz(e));
+
+      case 'getQuizMeta':
+        return jsonResponse(handleGetQuizMeta(e));
 
       case 'repair':
         return jsonResponse(repairStudent(e.parameter.email));
@@ -1436,9 +1439,52 @@ Remember: respond with ONLY the JSON object, no other text.`;
 }
 
 // ============================================
-// CLAW QUIZ
+// QUIZ INFRASTRUCTURE
 // ============================================
+//
+// Quiz questions and rubrics are stored in a SEPARATE file called quiz-content.js
+// which is NOT tracked in git (see .gitignore) to keep questions private from students.
+//
+// To set up: in the Apps Script editor, create a second script file named quiz-content.js
+// and paste the contents from your local copy (ask Mr. Bombich if you need it).
+//
+// quiz-content.js must define:
+//   const QUIZ_REGISTRY = {
+//     claw: { name, sheetName, maxPoints, context, questions: [{id, label, maxPts, question, rubric}, ...] }
+//   };
 
+// Helper — returns questions array for a quiz ID (falls back to [] if registry not loaded)
+function quizQuestions(quizId) {
+  if (typeof QUIZ_REGISTRY !== 'undefined' && QUIZ_REGISTRY[quizId]) {
+    return QUIZ_REGISTRY[quizId].questions;
+  }
+  return [];
+}
+
+// Helper — returns the sheet name for a quiz ID
+function quizSheetName(quizId) {
+  if (typeof QUIZ_REGISTRY !== 'undefined' && QUIZ_REGISTRY[quizId]) {
+    return QUIZ_REGISTRY[quizId].sheetName;
+  }
+  return SHEET_NAMES.QUIZ; // fallback to legacy constant
+}
+
+function handleGetQuizMeta(e) {
+  const quizId = (e.parameter.quizId || 'claw').trim();
+  if (typeof QUIZ_REGISTRY === 'undefined' || !QUIZ_REGISTRY[quizId]) {
+    return { error: 'Quiz registry not loaded or quiz not found: ' + quizId };
+  }
+  const quiz = QUIZ_REGISTRY[quizId];
+  return {
+    quizId,
+    name: quiz.name,
+    maxPoints: quiz.maxPoints,
+    questions: quiz.questions.map(q => ({ id: q.id, label: q.label, pts: q.maxPts, text: q.question }))
+  };
+}
+
+// Legacy constant name kept for any code that still references it directly
+// (actual data lives in quiz-content.js via QUIZ_REGISTRY)
 const QUIZ_QUESTIONS = [
   { id: 'q1', maxPts: 4, label: 'Q1 – PWM',
     question: 'In your own words, what is PWM? How does the pulse width physically cause the servo to move to a different position?',
@@ -1482,28 +1528,30 @@ Part b: Detects an object slipping in the grip. Object movement shifts the claw 
 1 pt – Practical consequence: to turn a color ON you write LOW (0) to that pin — opposite of what most expect. Writing HIGH turns it OFF.` }
 ];
 
-function getOrCreateQuizSheet() {
+function getOrCreateQuizSheet(quizId) {
+  quizId = quizId || 'claw';
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  let sheet = ss.getSheetByName(SHEET_NAMES.QUIZ);
+  const sName = quizSheetName(quizId);
+  let sheet = ss.getSheetByName(sName);
   if (!sheet) {
-    sheet = ss.insertSheet(SHEET_NAMES.QUIZ);
+    sheet = ss.insertSheet(sName);
+    const questions = quizQuestions(quizId).length ? quizQuestions(quizId) : QUIZ_QUESTIONS;
     const headers = ['Timestamp', 'Email', 'Name'];
-    QUIZ_QUESTIONS.forEach(q => {
+    questions.forEach(q => {
       headers.push(q.label + ' Answer', q.label + ' AI Score', q.label + ' AI Feedback');
     });
     headers.push('AI Total', 'Teacher Final Score');
     sheet.appendRow(headers);
     sheet.setFrozenRows(1);
-    // Widen answer and feedback columns
     let col = 4;
-    QUIZ_QUESTIONS.forEach(() => {
-      sheet.setColumnWidth(col,     320); // answer
-      sheet.setColumnWidth(col + 1, 80);  // score
-      sheet.setColumnWidth(col + 2, 260); // feedback
+    questions.forEach(() => {
+      sheet.setColumnWidth(col,     320);
+      sheet.setColumnWidth(col + 1, 80);
+      sheet.setColumnWidth(col + 2, 260);
       col += 3;
     });
-    sheet.setColumnWidth(col, 80);      // AI Total
-    sheet.setColumnWidth(col + 1, 120); // Teacher Final
+    sheet.setColumnWidth(col, 80);
+    sheet.setColumnWidth(col + 1, 120);
   }
   return sheet;
 }
@@ -1519,15 +1567,16 @@ function quizEmailSubmitted(sheet, email) {
 function handleCheckQuiz(e) {
   const email = (e.parameter.email || '').trim();
   if (!email) return { error: 'Missing email' };
-  const sheet = getOrCreateQuizSheet();
+  const quizId = (e.parameter.quizId || 'claw').trim();
+  const sheet = getOrCreateQuizSheet(quizId);
   const row = quizEmailSubmitted(sheet, email);
   if (!row) return { submitted: false };
 
-  // Return their stored results
   const rowData = sheet.getRange(row, 1, 1, sheet.getLastColumn()).getValues()[0];
+  const questions = quizQuestions(quizId).length ? quizQuestions(quizId) : QUIZ_QUESTIONS;
   const grades = {};
   let col = 3; // 0-based: col 0=timestamp, 1=email, 2=name, 3=first answer
-  QUIZ_QUESTIONS.forEach(q => {
+  questions.forEach(q => {
     grades[q.id] = { answer: rowData[col], score: rowData[col + 1], feedback: rowData[col + 2] };
     col += 3;
   });
@@ -1539,46 +1588,45 @@ function handleSubmitQuiz(data) {
   if (data.token !== TEACHER_TOKEN && !data.email) return { error: 'Unauthorized' };
   const email = (data.email || '').trim();
   if (!email) return { error: 'Missing email' };
+  const quizId = (data.quizId || 'claw').trim();
+  const questions = quizQuestions(quizId).length ? quizQuestions(quizId) : QUIZ_QUESTIONS;
 
-  const sheet = getOrCreateQuizSheet();
+  const sheet = getOrCreateQuizSheet(quizId);
   if (quizEmailSubmitted(sheet, email)) return { success: false, error: 'already_submitted' };
 
-  // Grade with Gemini — if it fails, still save the submission
   let gradeMap = {};
   let gradingError = null;
   try {
-    gradeMap = gradeClawQuiz(data);
+    gradeMap = gradeQuiz(quizId, data);
   } catch(err) {
     gradingError = err.toString();
     logActivity('QUIZ_GRADE_ERROR', email, gradingError);
-    QUIZ_QUESTIONS.forEach(q => {
+    questions.forEach(q => {
       gradeMap[q.id] = { score: null, feedback: 'AI grading unavailable — Mr. Bombich will grade manually.' };
     });
   }
 
-  // Calculate total (null scores excluded)
   let aiTotal = gradingError ? null : 0;
   if (!gradingError) {
-    QUIZ_QUESTIONS.forEach(q => {
+    questions.forEach(q => {
       const g = gradeMap[q.id] || { score: 0 };
       aiTotal += Math.min(Number(g.score) || 0, q.maxPts);
     });
   }
 
-  // Build and append row
   const row = [data.timestamp || new Date().toLocaleString(), email, data.name || ''];
-  QUIZ_QUESTIONS.forEach(q => {
+  questions.forEach(q => {
     const g = gradeMap[q.id] || { score: null, feedback: '' };
     const score = g.score === null ? '' : Math.min(Number(g.score) || 0, q.maxPts);
     row.push((data[q.id] || '').trim(), score, g.feedback || '');
   });
-  row.push(aiTotal !== null ? aiTotal : '', ''); // AI Total, Teacher Final (blank)
+  row.push(aiTotal !== null ? aiTotal : '', '');
   sheet.appendRow(row);
 
-  // Merge student answers into gradeMap so the client can display them
-  QUIZ_QUESTIONS.forEach(q => { if (gradeMap[q.id]) gradeMap[q.id].answer = (data[q.id] || '').trim(); });
+  questions.forEach(q => { if (gradeMap[q.id]) gradeMap[q.id].answer = (data[q.id] || '').trim(); });
 
-  logActivity('QUIZ_SUBMIT', email, gradingError ? 'AI grading failed — saved for manual grading' : `AI Total: ${aiTotal}/26`);
+  const maxPts = (typeof QUIZ_REGISTRY !== 'undefined' && QUIZ_REGISTRY[quizId]) ? QUIZ_REGISTRY[quizId].maxPoints : 26;
+  logActivity('QUIZ_SUBMIT', email, gradingError ? 'AI grading failed — saved for manual grading' : `AI Total: ${aiTotal}/${maxPts}`);
   return { success: true, grades: gradeMap, aiTotal, gradingPending: !!gradingError, gradingErrorMessage: gradingError || null };
 }
 
@@ -1586,20 +1634,21 @@ function handleRegradeQuiz(data) {
   if (data.token !== TEACHER_TOKEN) return { error: 'Unauthorized' };
   const email = (data.email || '').trim();
   if (!email) return { error: 'Missing email' };
+  const quizId = (data.quizId || 'claw').trim();
+  const questions = quizQuestions(quizId).length ? quizQuestions(quizId) : QUIZ_QUESTIONS;
 
-  const sheet = getOrCreateQuizSheet();
+  const sheet = getOrCreateQuizSheet(quizId);
   const rowNum = quizEmailSubmitted(sheet, email);
   if (!rowNum) return { error: 'No submission found for ' + email };
 
   const rowData = sheet.getRange(rowNum, 1, 1, sheet.getLastColumn()).getValues()[0];
-  // Reconstruct answers from stored row (col 3 = first answer, every 3rd after that)
   const answers = {};
   let col = 3;
-  QUIZ_QUESTIONS.forEach(q => { answers[q.id] = rowData[col]; col += 3; });
+  questions.forEach(q => { answers[q.id] = rowData[col]; col += 3; });
 
   let gradeMap, gradingError = null;
   try {
-    gradeMap = gradeClawQuiz(answers);
+    gradeMap = gradeQuiz(quizId, answers);
   } catch(err) {
     gradingError = err.toString();
     logActivity('QUIZ_REGRADE_ERROR', email, gradingError);
@@ -1608,17 +1657,18 @@ function handleRegradeQuiz(data) {
 
   let aiTotal = 0;
   col = 3;
-  QUIZ_QUESTIONS.forEach(q => {
+  questions.forEach(q => {
     const g = gradeMap[q.id] || { score: 0, feedback: '' };
     const score = Math.min(Number(g.score) || 0, q.maxPts);
     aiTotal += score;
-    sheet.getRange(rowNum, col + 2).setValue(score);     // AI Score column
-    sheet.getRange(rowNum, col + 3).setValue(g.feedback || ''); // AI Feedback column
+    sheet.getRange(rowNum, col + 2).setValue(score);
+    sheet.getRange(rowNum, col + 3).setValue(g.feedback || '');
     col += 3;
   });
-  sheet.getRange(rowNum, col + 1).setValue(aiTotal); // AI Total
+  sheet.getRange(rowNum, col + 1).setValue(aiTotal);
 
-  logActivity('QUIZ_REGRADE', email, `AI Total: ${aiTotal}/26`);
+  const maxPts = (typeof QUIZ_REGISTRY !== 'undefined' && QUIZ_REGISTRY[quizId]) ? QUIZ_REGISTRY[quizId].maxPoints : 26;
+  logActivity('QUIZ_REGRADE', email, `AI Total: ${aiTotal}/${maxPts}`);
   return { success: true, grades: gradeMap, aiTotal };
 }
 
@@ -1626,37 +1676,41 @@ function handleSaveQuizGrade(data) {
   if (data.token !== TEACHER_TOKEN) return { error: 'Unauthorized' };
   const email = (data.email || '').trim();
   if (!email) return { error: 'Missing email' };
-  const sheet = getOrCreateQuizSheet();
+  const quizId = (data.quizId || 'claw').trim();
+  const questions = quizQuestions(quizId).length ? quizQuestions(quizId) : QUIZ_QUESTIONS;
+  const sheet = getOrCreateQuizSheet(quizId);
   const rowNum = quizEmailSubmitted(sheet, email);
   if (!rowNum) return { error: 'No submission found' };
-  // Teacher Final Score is the last column (3 + 7*3 + 2 = col 26)
-  const teacherFinalCol = 3 + QUIZ_QUESTIONS.length * 3 + 2;
+  // Teacher Final Score column: 1-indexed = 3(fixed cols) + N*3(question cols) + 1(aiTotal) + 1 = N*3 + 5
+  // But Apps Script setRange is 1-indexed: col 1 = timestamp, so offset by 1
+  // 0-indexed: col = 3 + N*3 + 1 = N*3+4; 1-indexed: N*3+5
+  const teacherFinalCol = questions.length * 3 + 5;
   sheet.getRange(rowNum, teacherFinalCol).setValue(data.score);
   logActivity('QUIZ_GRADE_SAVED', email, 'Teacher final: ' + data.score);
   return { success: true };
 }
 
-function gradeClawQuiz(answers) {
+function gradeQuiz(quizId, answers) {
+  const questions = quizQuestions(quizId).length ? quizQuestions(quizId) : QUIZ_QUESTIONS;
+  if (!questions.length) throw new Error('No questions found for quiz: ' + quizId);
+
+  const context = (typeof QUIZ_REGISTRY !== 'undefined' && QUIZ_REGISTRY[quizId])
+    ? (QUIZ_REGISTRY[quizId].context || 'robotics and programming')
+    : 'robotics and programming';
+
   const apiKey = PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY');
   if (!apiKey) throw new Error('GEMINI_API_KEY not set in Script Properties.');
 
-  let prompt = `You are grading a high school robotics quiz. Students built a servo claw with potentiometer feedback on an Arduino-compatible microcontroller.
+  const responseTemplate = questions.map(q => `  "${q.id}": {"score": <int 0-${q.maxPts}>, "feedback": "<1-2 sentences>"}`).join(',\n');
+  let prompt = `You are grading a high school robotics quiz about ${context}.
 Grade each answer using only its rubric. Be fair but strict. Award partial credit for partial understanding.
 
 Respond with ONLY a valid JSON object — no markdown fences, no other text:
-{
-  "q1":    {"score": <int>, "feedback": "<1-2 sentences: what they got right and what was missing>"},
-  "q2":    {"score": <int>, "feedback": "..."},
-  "q3":    {"score": <int>, "feedback": "..."},
-  "q4":    {"score": <int>, "feedback": "..."},
-  "q5":    {"score": <int>, "feedback": "..."},
-  "q6":    {"score": <int>, "feedback": "..."},
-  "bonus": {"score": <int>, "feedback": "..."}
-}
+{\n${responseTemplate}\n}
 
 `;
 
-  QUIZ_QUESTIONS.forEach(q => {
+  questions.forEach(q => {
     const answer = (answers[q.id] || '').trim() || '(no answer)';
     prompt += `---\nid: ${q.id} | max: ${q.maxPts}\nQuestion: ${q.question}\nRubric: ${q.rubric}\nStudent answer: "${answer.replace(/"/g, "'").substring(0, 800)}"\n\n`;
   });
@@ -1675,7 +1729,7 @@ Respond with ONLY a valid JSON object — no markdown fences, no other text:
   let response = UrlFetchApp.fetch(url, fetchOpts);
   let result = JSON.parse(response.getContentText());
   if (result.error && result.error.code === 429) {
-    Utilities.sleep(10000); // wait 10s and try once more
+    Utilities.sleep(10000);
     response = UrlFetchApp.fetch(url, fetchOpts);
     result = JSON.parse(response.getContentText());
   }

@@ -22,14 +22,16 @@ const CONFIG = {
         robotics: {
             name: 'Robotics Portfolio',
             apiUrl: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
-            currentAppVersion: 'v2.9.44',  // keep in sync with Robotics app.js CONFIG.VERSION
+            currentAppVersion: 'v2.9.45',  // keep in sync with Robotics app.js CONFIG.VERSION
             hasTeams: false,
             totalDeliverables: 9,
             totalReflections: 11,
             totalPoints: 735,
             deliverablePoints: { 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75 },
-            // deliverable id → week it is due (defaults to same number if not listed)
-            deliverableWeeks: { 8: 10, 9: 11 }
+            deliverableWeeks: { 8: 10, 9: 11 },
+            quizzes: [
+                { id: 'claw', name: 'Claw Quiz', questionCount: 7, maxPoints: 28 }
+            ]
         },
         frc: {
             name: 'FRC Portfolio',
@@ -1465,6 +1467,8 @@ function updateGradeReport() {
     const thead = document.getElementById('gradeReportHead');
     const tbody = document.getElementById('gradeReportBody');
 
+    const showQuizzes = (typeFilter === 'quiz' || typeFilter === 'all') && course.quizzes?.length;
+
     // Build headers based on type filter
     let headers = ['Name', 'Period'];
     if (typeFilter === 'reflections' || typeFilter === 'all') {
@@ -1476,6 +1480,9 @@ function updateGradeReport() {
         for (let d = 1; d <= course.totalDeliverables; d++) {
             headers.push(`D${d}`);
         }
+    }
+    if (showQuizzes) {
+        course.quizzes.forEach(q => headers.push(q.name));
     }
     headers.push('Total');
 
@@ -1527,6 +1534,26 @@ function updateGradeReport() {
                 const cellStyle = grade !== '' ? '' : (submitted ? 'color: var(--warning);' : 'color: var(--gray-300);');
                 row.push(`<td style="padding: 6px 8px; text-align: center; ${cellStyle}">${grade !== '' && grade !== undefined ? grade : (submitted ? '-' : '')}</td>`);
             }
+        }
+
+        // Quiz scores
+        if (showQuizzes) {
+            course.quizzes.forEach(quiz => {
+                const quizRow = (state.rawData?.quiz || []).find(r => r[1] === email);
+                let quizScore = '';
+                if (quizRow) {
+                    const aiTotalIdx    = 3 + quiz.questionCount * 3;
+                    const teacherFinalIdx = aiTotalIdx + 1;
+                    const tf = quizRow[teacherFinalIdx];
+                    const ai = quizRow[aiTotalIdx];
+                    quizScore = (tf !== '' && tf !== null && tf !== undefined) ? tf
+                              : (ai !== '' && ai !== null && ai !== undefined) ? ai : '';
+                    if (quizScore !== '') total += parseFloat(quizScore) || 0;
+                    maxTotal += quiz.maxPoints;
+                }
+                const cellStyle = quizScore !== '' ? '' : (quizRow ? 'color: var(--warning);' : 'color: var(--gray-300);');
+                row.push(`<td style="padding: 6px 8px; text-align: center; ${cellStyle}">${quizScore !== '' ? quizScore : (quizRow ? '-' : '')}</td>`);
+            });
         }
 
         row.push(`<td style="padding: 6px 8px; text-align: center; font-weight: 600;">${total}${maxTotal > 0 ? '/' + maxTotal : ''}</td>`);

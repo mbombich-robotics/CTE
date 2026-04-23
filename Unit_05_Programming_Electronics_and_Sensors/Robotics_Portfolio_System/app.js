@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.44',
+    VERSION: 'v2.9.45',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -3056,21 +3056,15 @@ if (AI_FEEDBACK_ENABLED) {
 // CLAW QUIZ PAGE
 // ============================================
 
+// Minimal metadata for results display — question text is fetched from backend (kept private)
 const QUIZ_QUESTION_META = [
-    { id: 'q1',    pts: 4, label: 'Question 1',
-      text: 'In your own words, what is PWM? How does the pulse width physically cause the servo to move to a different position?' },
-    { id: 'q2',    pts: 4, label: 'Question 2',
-      text: 'Describe in plain English how your code knows the claw has touched an object — without being able to see it. Why is this better than just closing the claw all the way every time?' },
-    { id: 'q3',    pts: 4, label: 'Question 3',
-      text: '<strong>Given:</strong> <code>if (abs(currentFeedback - oldFeedback) > 15)</code><br>a) What does <code>abs()</code> do and why is it needed here?<br>b) What real-world event does this line detect?' },
-    { id: 'q4',    pts: 4, label: 'Question 4',
-      text: 'What controls how fast your claw closes? Point to the specific line, value, or variable in your code that is responsible, and explain what would happen if you changed it.' },
-    { id: 'q5',    pts: 4, label: 'Question 5',
-      text: 'Which specific line(s) in your code read the potentiometer and compare against your contact threshold? Write the line out (or reconstruct it) and explain what each part does.' },
-    { id: 'q6',    pts: 6, label: 'Question 6',
-      text: 'What is <strong>blocking code</strong>? Using <code>delay()</code> as an example, explain why a blocking approach would have made it impossible to close the claw and check for contact at the same time — and describe how your program avoided this problem.' },
-    { id: 'bonus', pts: 2, label: 'Bonus',
-      text: 'What does <strong>"active low"</strong> mean for the RGB LED on the RP2040 Connect? Why does it matter when you write code to turn on a specific color?' }
+    { id: 'q1',    pts: 4, label: 'Question 1' },
+    { id: 'q2',    pts: 4, label: 'Question 2' },
+    { id: 'q3',    pts: 4, label: 'Question 3' },
+    { id: 'q4',    pts: 4, label: 'Question 4' },
+    { id: 'q5',    pts: 4, label: 'Question 5' },
+    { id: 'q6',    pts: 6, label: 'Question 6' },
+    { id: 'bonus', pts: 2, label: 'Bonus'       }
 ];
 
 async function loadQuizPage() {
@@ -3109,14 +3103,34 @@ async function loadQuizPage() {
 
     if (state.quiz.submitted && state.quiz.grades) {
         renderQuizResults(page);
-    } else {
-        renderQuizForm(page);
+        return;
     }
+
+    // Fetch quiz meta (question text) from backend if not yet loaded
+    if (!state.quiz.meta) {
+        try {
+            const res = await fetch(`${CONFIG.SHEETS_API_URL}?action=getQuizMeta&quizId=claw&_t=${Date.now()}`);
+            const data = await res.json();
+            if (data.questions) state.quiz.meta = data;
+        } catch(e) { /* falls through to error render below */ }
+    }
+
+    if (!state.quiz.meta) {
+        page.innerHTML = `
+            <div class="page-header"><h1 class="page-title"><i class="fas fa-pencil-alt"></i> Claw Project Quiz</h1></div>
+            <div class="card" style="color:var(--danger); padding:20px;">
+                Unable to load quiz questions. Please refresh the page or notify Mr. Bombich.
+            </div>`;
+        return;
+    }
+
+    renderQuizForm(page);
 }
 
 function renderQuizForm(page) {
+    const questions = state.quiz.meta?.questions || [];
     let questionsHtml = '';
-    QUIZ_QUESTION_META.forEach((q, i) => {
+    questions.forEach((q) => {
         const isBonus = q.id === 'bonus';
         const cardStyle = isBonus
             ? 'border: 1px solid var(--success); background: rgba(16,185,129,0.04);'
@@ -3167,8 +3181,8 @@ async function submitQuiz(e) {
     const btn = e.target.querySelector('button[type=submit]');
     if (btn.disabled) return;
 
-    // Validate required questions
-    const required = ['q1','q2','q3','q4','q5','q6'];
+    const quizQuestions = state.quiz.meta?.questions || QUIZ_QUESTION_META;
+    const required = quizQuestions.filter(q => q.id !== 'bonus').map(q => q.id);
     const missing = required.filter(id => !document.getElementById('ans-' + id)?.value.trim());
     if (missing.length) {
         showToast(`Please answer all required questions (${missing.map(s => s.toUpperCase()).join(', ')})`, 'error');
@@ -3180,11 +3194,12 @@ async function submitQuiz(e) {
 
     const payload = {
         action:    'submitQuiz',
+        quizId:    'claw',
         email:     state.student.email,
         name:      state.student.name,
         timestamp: new Date().toLocaleString()
     };
-    QUIZ_QUESTION_META.forEach(q => {
+    quizQuestions.forEach(q => {
         payload[q.id] = document.getElementById('ans-' + q.id)?.value || '';
     });
 
