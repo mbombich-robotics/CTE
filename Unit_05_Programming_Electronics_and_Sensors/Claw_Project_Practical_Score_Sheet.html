@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Claw Project — Practical Score Sheet</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10pt;
+            color: #000;
+            background: #fff;
+            padding: 18px 22px;
+        }
+
+        /* ── Header ── */
+        .sheet-header {
+            border-bottom: 2.5px solid #000;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .sheet-header .title-block h1 {
+            font-size: 14pt;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sheet-header .title-block p {
+            font-size: 9pt;
+            color: #444;
+            margin-top: 2px;
+        }
+
+        .sheet-header .school-block {
+            text-align: right;
+            font-size: 9pt;
+            color: #444;
+            line-height: 1.5;
+        }
+
+        /* ── Student Info ── */
+        .student-info {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 11px;
+            padding: 7px 10px;
+            border: 1.5px solid #000;
+            border-radius: 4px;
+            background: #f9f9f9;
+        }
+
+        .info-field {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .info-field label {
+            font-weight: 700;
+            font-size: 9pt;
+            white-space: nowrap;
+        }
+
+        .info-field .line {
+            flex: 1;
+            border-bottom: 1px solid #555;
+            height: 16px;
+        }
+
+        /* ── Rubric Table ── */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 9px;
+        }
+
+        thead tr {
+            background: #222;
+            color: #fff;
+        }
+
+        thead th {
+            padding: 4px 6px;
+            font-size: 9pt;
+            text-align: left;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        thead th.score-col { text-align: center; width: 56px; }
+        thead th.notes-col { width: 120px; }
+
+        .section-row td {
+            background: #ddd;
+            font-weight: 700;
+            font-size: 9pt;
+            padding: 3px 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid #aaa;
+        }
+
+        .section-row .score-col {
+            text-align: center;
+        }
+
+        tbody tr.item-row td {
+            padding: 4px 6px;
+            vertical-align: top;
+            border: 1px solid #ccc;
+            line-height: 1.35;
+        }
+
+        .criterion {
+            font-weight: 700;
+            font-size: 9pt;
+            width: 130px;
+        }
+
+        .bands {
+            font-size: 8.5pt;
+            color: #222;
+        }
+
+        .band-line {
+            margin-bottom: 1px;
+        }
+
+        .band-pts {
+            display: inline-block;
+            font-weight: 700;
+            min-width: 28px;
+        }
+
+        .score-box {
+            text-align: center;
+            vertical-align: middle !important;
+        }
+
+        .score-circle {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            border: 2px solid #000;
+            border-radius: 50%;
+            line-height: 36px;
+            font-size: 9pt;
+            color: #aaa;
+            margin: 2px auto;
+        }
+
+        .notes-cell {
+            border-left: 1px dashed #aaa !important;
+        }
+
+        /* ── Totals & Summary ── */
+        .totals-row td {
+            background: #f0f0f0;
+            font-weight: 700;
+            font-size: 9pt;
+            padding: 4px 6px;
+            border: 1px solid #aaa;
+        }
+
+        .totals-row .score-col {
+            text-align: center;
+        }
+
+        /* ── Score Summary Bar ── */
+        .summary {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 9px;
+            align-items: stretch;
+        }
+
+        .sum-box {
+            flex: 1;
+            border: 1.5px solid #000;
+            border-radius: 4px;
+            padding: 5px 8px;
+            text-align: center;
+        }
+
+        .sum-box .sum-label {
+            font-size: 7.5pt;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #555;
+            margin-bottom: 3px;
+        }
+
+        .sum-box .sum-score {
+            font-size: 13pt;
+            font-weight: 900;
+            border-bottom: 1.5px solid #000;
+            display: inline-block;
+            min-width: 32px;
+            padding-bottom: 1px;
+        }
+
+        .sum-box .sum-max {
+            font-size: 9pt;
+            color: #555;
+            margin-top: 1px;
+        }
+
+        .sum-box.total-box {
+            flex: 1.4;
+            border-width: 2.5px;
+            background: #f5f5f5;
+        }
+
+        .sum-box.total-box .sum-score {
+            font-size: 18pt;
+        }
+
+        /* ── Notes ── */
+        .notes-section {
+            border: 1.5px solid #000;
+            border-radius: 4px;
+            padding: 6px 10px;
+        }
+
+        .notes-section .notes-label {
+            font-weight: 700;
+            font-size: 9pt;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .note-line {
+            border-bottom: 1px solid #ccc;
+            height: 20px;
+            margin-bottom: 0;
+        }
+
+        /* ── Print ── */
+        @media print {
+            @page { size: letter portrait; margin: 0.5in 0.55in; }
+            body { padding: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="sheet-header">
+        <div class="title-block">
+            <h1>Claw Project — Practical Score Sheet</h1>
+            <p>Unit 5 &nbsp;|&nbsp; Live Hardware Demo &nbsp;|&nbsp; 50 Points</p>
+        </div>
+        <div class="school-block">
+            Vicksburg High School &nbsp;|&nbsp; Applied Engineering &amp; Robotics<br>
+            Mr. Bombich &nbsp;|&nbsp; Room 70
+        </div>
+    </div>
+
+    <!-- Student Info -->
+    <div class="student-info">
+        <div class="info-field" style="flex:2.5;">
+            <label>Student Name:</label>
+            <div class="line"></div>
+        </div>
+        <div class="info-field">
+            <label>Period:</label>
+            <div class="line"></div>
+        </div>
+        <div class="info-field" style="flex:1.5;">
+            <label>Date:</label>
+            <div class="line"></div>
+        </div>
+    </div>
+
+    <!-- Rubric Table -->
+    <table>
+        <thead>
+            <tr>
+                <th style="width:130px;">Criterion</th>
+                <th>Performance Descriptors</th>
+                <th class="score-col">Score</th>
+                <th class="notes-col">Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <!-- Section 1 -->
+            <tr class="section-row">
+                <td colspan="2">1 — Startup &amp; Hardware</td>
+                <td class="score-col">/ 8</td>
+                <td></td>
+            </tr>
+            <tr class="item-row">
+                <td class="criterion">Physical Assembly</td>
+                <td class="bands">
+                    <div class="band-line"><span class="band-pts">4</span> Fully assembled; no loose wires; all components secured.</div>
+                    <div class="band-line"><span class="band-pts">2–3</span> Minor issues but functional.</div>
+                    <div class="band-line"><span class="band-pts">1</span> Multiple loose connections; sloppy build.</div>
+                    <div class="band-line"><span class="band-pts">0</span> Non-functional / not assembled.</div>
+                </td>
+                <td class="score-box"><div class="score-circle">/4</div></td>
+                <td class="notes-cell"></td>
+            </tr>
+            <tr class="item-row">
+                <td class="criterion">Code Uploads &amp; Runs</td>
+                <td class="bands">
+                    <div class="band-line"><span class="band-pts">4</span> Uploads &amp; runs independently; claw responds within 30 s.</div>
+                    <div class="band-line"><span class="band-pts">2–3</span> Runs with one minor prompt (COM port, etc.).</div>
+                    <div class="band-line"><span class="band-pts">1</span> Needs significant instructor help to run.</div>
+                    <div class="band-line"><span class="band-pts">0</span> Code does not run.</div>
+                </td>
+                <td class="score-box"><div class="score-circle">/4</div></td>
+                <td class="notes-cell"></td>
+            </tr>
+
+            <!-- Section 2 -->
+            <tr class="section-row">
+                <td colspan="2">2 — Core Functionality</td>
+                <td class="score-col">/ 18</td>
+                <td></td>
+            </tr>
+            <tr class="item-row">
+                <td class="criterion">Servo Control (Open / Close)</td>
+                <td class="bands">
+                    <div class="band-line"><span class="band-pts">6</span> Opens fully &amp; closes smoothly; motion is controlled (no slamming).</div>
+                    <div class="band-line"><span class="band-pts">3–5</span> Opens &amp; closes but inconsistent or limited range.</div>
+                    <div class="band-line"><span class="band-pts">1–2</span> Partial movement only (one direction reliable).</div>
+                    <div class="band-line"><span class="band-pts">0</span> Servo does not respond.</div>
+                </td>
+                <td class="score-box"><div class="score-circle">/6</div></td>
+                <td class="notes-cell"></td>
+            </tr>
+            <tr class="item-row">
+                <td class="criterion">Potentiometer to Serial</td>
+                <td class="bands">
+                    <div class="band-line"><span class="band-pts">6</span> Live ADC readings change visibly as claw opens/closes; values sensible (0–1023 or mapped).</div>
+                    <div class="band-line"><span class="band-pts">3–5</span> Readings appear but noisy, stuck, or intermittent.</div>
+                    <div class="band-line"><span class="band-pts">1–2</span> Serial prints something; values don't reflect position.</div>
+                    <div class="band-line"><span class="band-pts">0</span> No Serial output.</div>
+                </td>
+                <td class="score-box"><div class="score-circle">/6</div></td>
+                <td class="notes-cell"></td>
+            </tr>
+            <tr class="item-row">
+                <td class="criterion">Contact Detection</td>
+                <td class="bands">
+                    <div class="band-line"><span class="band-pts">6</span> Claw stops autonomously on contact; demonstrated on ≥2 objects.</div>
+                    <div class="band-line"><span class="band-pts">3–5</span> Works reliably on 1 object, or works on 2 inconsistently.</div>
+                    <div class="band-line"><span class="band-pts">1–2</span> Detection logic present but claw overshoots most of the time.</div>
+                    <div class="band-line"><span class="band-pts">0</span> No contact detection; stalls or requires manual stop.</div>
+                </td>
+                <td class="score-box"><div class="score-circle">/6</div></td>
+                <td class="notes-cell"></td>
+            </tr>
+
+            <!-- Section 3 -->
+            <tr class="section-row">
+                <td colspan="2">3 — Object Classification &amp; LED Feedback</td>
+                <td class="score-col">/ 12</td>
+                <td></td>
+            </tr>
+            <tr class="item-row">
+                <td class="criterion">Size Classification Logic</td>
+                <td class="bands">
+                    <div class="band-line"><span class="band-pts">6</span> ≥2 size categories distinguished by ADC threshold; correct category printed/indicated for each graded object.</div>
+                    <div class="band-line"><span class="band-pts">3–5</span> Works for one category consistently, or both with occasional errors.</div>
+                    <div class="band-line"><span class="band-pts">1–2</span> Classification code present; rarely correct result.</div>
+                    <div class="band-line"><span class="band-pts">0</span> No classification logic.</div>
+                </td>
+                <td class="score-box"><div class="score-circle">/6</div></td>
+                <td class="notes-cell"></td>
+            </tr>
+            <tr class="item-row">
+                <td class="criterion">LED Visual Feedback</td>
+                <td class="bands">
+                    <div class="band-line"><span class="band-pts">6</span> LED changes (color or on/off) to match classified size; consistent and matches Design Brief.</div>
+                    <div class="band-line"><span class="band-pts">3–5</span> LED responds but inconsistent or partially matches design.</div>
+                    <div class="band-line"><span class="band-pts">1–2</span> LED wired and lit but doesn't reflect classification.</div>
+                    <div class="band-line"><span class="band-pts">0</span> LED does not function.</div>
+                </td>
+                <td class="score-box"><div class="score-circle">/6</div></td>
+                <td class="notes-cell"></td>
+            </tr>
+
+            <!-- Section 4 -->
+            <tr class="section-row">
+                <td colspan="2">4 — Slip Detection</td>
+                <td class="score-col">/ 8</td>
+                <td></td>
+            </tr>
+            <tr class="item-row">
+                <td class="criterion">Slip Event Detection</td>
+                <td class="bands">
+                    <div class="band-line"><span class="band-pts">5</span> When object slips/is pulled, claw detects ADC change and responds (re-grips or signals); demonstrated live.</div>
+                    <div class="band-line"><span class="band-pts">3–4</span> Logic present; sometimes responds correctly but unreliable.</div>
+                    <div class="band-line"><span class="band-pts">1–2</span> Code contains slip logic; no observable response during demo.</div>
+                    <div class="band-line"><span class="band-pts">0</span> No slip detection.</div>
+                </td>
+                <td class="score-box"><div class="score-circle">/5</div></td>
+                <td class="notes-cell"></td>
+            </tr>
+            <tr class="item-row">
+                <td class="criterion">Serial / Visual Indicator</td>
+                <td class="bands">
+                    <div class="band-line"><span class="band-pts">3</span> Distinct Serial message (e.g., "SLIP DETECTED") or LED change occurs at moment of slip.</div>
+                    <div class="band-line"><span class="band-pts">2</span> Indicator fires but inconsistent or fires at wrong times.</div>
+                    <div class="band-line"><span class="band-pts">1</span> Indicator code present; never triggered during demo.</div>
+                    <div class="band-line"><span class="band-pts">0</span> No indicator.</div>
+                </td>
+                <td class="score-box"><div class="score-circle">/3</div></td>
+                <td class="notes-cell"></td>
+            </tr>
+
+            <!-- Section 5 -->
+            <tr class="section-row">
+                <td colspan="2">5 — Reliability &amp; Code Quality</td>
+                <td class="score-col">/ 4</td>
+                <td></td>
+            </tr>
+            <tr class="item-row">
+                <td class="criterion">Demo Reliability</td>
+                <td class="bands">
+                    <div class="band-line"><span class="band-pts">2</span> All features work on first attempt; no crashes or freezes.</div>
+                    <div class="band-line"><span class="band-pts">1</span> One crash or retry; recovered without instructor help.</div>
+                    <div class="band-line"><span class="band-pts">0</span> Multiple failures or instructor intervention needed.</div>
+                </td>
+                <td class="score-box"><div class="score-circle">/2</div></td>
+                <td class="notes-cell"></td>
+            </tr>
+            <tr class="item-row">
+                <td class="criterion">Student Explains Code</td>
+                <td class="bands">
+                    <div class="band-line"><span class="band-pts">2</span> Answers 1–2 spot questions correctly in own words.</div>
+                    <div class="band-line"><span class="band-pts">1</span> Answers one correctly; struggles with the other.</div>
+                    <div class="band-line"><span class="band-pts">0</span> Cannot explain any part to instructor's satisfaction.</div>
+                </td>
+                <td class="score-box"><div class="score-circle">/2</div></td>
+                <td class="notes-cell"></td>
+            </tr>
+
+        </tbody>
+    </table>
+
+    <!-- Score Summary -->
+    <div class="summary">
+        <div class="sum-box">
+            <div class="sum-label">1 — Startup &amp; HW</div>
+            <div class="sum-score">&nbsp;</div>
+            <div class="sum-max">/ 8</div>
+        </div>
+        <div class="sum-box">
+            <div class="sum-label">2 — Core Function</div>
+            <div class="sum-score">&nbsp;</div>
+            <div class="sum-max">/ 18</div>
+        </div>
+        <div class="sum-box">
+            <div class="sum-label">3 — Class. &amp; LED</div>
+            <div class="sum-score">&nbsp;</div>
+            <div class="sum-max">/ 12</div>
+        </div>
+        <div class="sum-box">
+            <div class="sum-label">4 — Slip Detection</div>
+            <div class="sum-score">&nbsp;</div>
+            <div class="sum-max">/ 8</div>
+        </div>
+        <div class="sum-box">
+            <div class="sum-label">5 — Reliability</div>
+            <div class="sum-score">&nbsp;</div>
+            <div class="sum-max">/ 4</div>
+        </div>
+        <div class="sum-box total-box">
+            <div class="sum-label" style="font-weight:700;">TOTAL</div>
+            <div class="sum-score">&nbsp;</div>
+            <div class="sum-max">/ 50</div>
+        </div>
+    </div>
+
+    <!-- Notes -->
+    <div class="notes-section">
+        <div class="notes-label">Instructor Notes / Feedback</div>
+        <div class="note-line"></div>
+        <div class="note-line"></div>
+        <div class="note-line"></div>
+    </div>
+
+</body>
+</html>
