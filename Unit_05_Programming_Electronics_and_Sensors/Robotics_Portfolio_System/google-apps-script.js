@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.34';
+const BACKEND_VERSION = 'v2.9.35';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -1698,8 +1698,8 @@ function gradeQuiz(quizId, answers) {
     ? (QUIZ_REGISTRY[quizId].context || 'robotics and programming')
     : 'robotics and programming';
 
-  const apiKey = PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY');
-  if (!apiKey) throw new Error('GEMINI_API_KEY not set in Script Properties.');
+  const apiKey = PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY');
+  if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set in Script Properties.');
 
   const responseTemplate = questions.map(q => `  "${q.id}": {"score": <int 0-${q.maxPts}>, "feedback": "<1-2 sentences>"}`).join(',\n');
   let prompt = `You are grading a high school robotics quiz about ${context}.
@@ -1715,27 +1715,27 @@ Respond with ONLY a valid JSON object — no markdown fences, no other text:
     prompt += `---\nid: ${q.id} | max: ${q.maxPts}\nQuestion: ${q.question}\nRubric: ${q.rubric}\nStudent answer: "${answer.replace(/"/g, "'").substring(0, 800)}"\n\n`;
   });
 
-  const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + apiKey;
+  const url = 'https://api.anthropic.com/v1/messages';
   const fetchOpts = {
     method: 'post',
-    contentType: 'application/json',
+    headers: {
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json'
+    },
     payload: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.1, maxOutputTokens: 2048 }
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: prompt }]
     }),
     muteHttpExceptions: true
   };
 
-  let response = UrlFetchApp.fetch(url, fetchOpts);
-  let result = JSON.parse(response.getContentText());
-  if (result.error && result.error.code === 429) {
-    Utilities.sleep(10000);
-    response = UrlFetchApp.fetch(url, fetchOpts);
-    result = JSON.parse(response.getContentText());
-  }
-  if (result.error) throw new Error('Gemini: ' + result.error.message);
+  const response = UrlFetchApp.fetch(url, fetchOpts);
+  const result = JSON.parse(response.getContentText());
+  if (result.type === 'error') throw new Error('Claude: ' + result.error.message);
 
-  const text = result.candidates[0].content.parts[0].text;
+  const text = result.content[0].text;
   const cleaned = text.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
   return JSON.parse(cleaned);
 }
