@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vicksburg High School Countdown</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0d0d0d;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px 50px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding-top: 10px;
+        }
+
+        header img {
+            width: 90px;
+            height: auto;
+            margin-bottom: 14px;
+            filter: drop-shadow(0 0 12px rgba(204, 0, 0, 0.5));
+        }
+
+        header h1 {
+            font-size: 2.4rem;
+            color: #ffffff;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        header .subtitle {
+            color: #cc0000;
+            font-size: 0.85rem;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin-top: 6px;
+        }
+
+        .divider {
+            width: 80px;
+            height: 3px;
+            background: #cc0000;
+            margin: 14px auto 0;
+            border-radius: 2px;
+        }
+
+        /* === LAYOUT === */
+        .timers-wrapper {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .row {
+            display: flex;
+            gap: 24px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* === CARDS === */
+        .timer-card {
+            background: #181818;
+            border: 1px solid #2a2a2a;
+            border-radius: 14px;
+            padding: 28px 22px 22px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            flex: 1;
+            max-width: 480px;
+        }
+
+        .timer-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: #cc0000;
+            border-radius: 14px 14px 0 0;
+        }
+
+        .timer-card.past {
+            opacity: 0.45;
+        }
+
+        .timer-card.past::before {
+            background: #444;
+        }
+
+        /* Prominent center card */
+        .timer-card.prominent {
+            background: #160000;
+            border: 2px solid #cc0000;
+            border-radius: 16px;
+            padding: 48px 40px 36px;
+            box-shadow: 0 0 40px rgba(204, 0, 0, 0.25), 0 0 80px rgba(204, 0, 0, 0.1);
+            max-width: 640px;
+            width: 100%;
+        }
+
+        .timer-card.prominent::before {
+            height: 4px;
+            background: linear-gradient(90deg, #880000, #ff2222, #880000);
+        }
+
+        /* === CARD TEXT === */
+        .timer-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .timer-card.prominent .timer-label {
+            font-size: 0.8rem;
+            color: #cc0000;
+            letter-spacing: 5px;
+        }
+
+        .timer-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 22px;
+            letter-spacing: 1px;
+        }
+
+        .timer-card.prominent .timer-title {
+            font-size: 2rem;
+            margin-bottom: 36px;
+        }
+
+        /* === COUNTDOWN DISPLAY === */
+        .countdown {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .time-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 54px;
+        }
+
+        .timer-card.prominent .time-unit {
+            min-width: 90px;
+        }
+
+        .time-number {
+            font-size: 2.8rem;
+            font-weight: 900;
+            color: #cc0000;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -1px;
+        }
+
+        .timer-card.prominent .time-number {
+            font-size: 5.5rem;
+            color: #ff2020;
+            text-shadow: 0 0 20px rgba(255, 32, 32, 0.4);
+        }
+
+        .time-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #555;
+            margin-top: 6px;
+        }
+
+        .timer-card.prominent .time-label {
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 8px;
+        }
+
+        .separator {
+            font-size: 2.8rem;
+            font-weight: 900;
+            color: #2a2a2a;
+            line-height: 1;
+            padding-top: 0;
+        }
+
+        .timer-card.prominent .separator {
+            font-size: 5.5rem;
+            color: #3a0000;
+        }
+
+        /* === BADGES & DATES === */
+        .done-badge {
+            display: inline-block;
+            background: #242424;
+            color: #555;
+            padding: 4px 18px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 16px;
+        }
+
+        .date-display {
+            font-size: 0.8rem;
+            color: #555;
+            margin-top: 16px;
+            letter-spacing: 1px;
+        }
+
+        .timer-card.prominent .date-display {
+            color: #884444;
+            font-size: 1rem;
+            margin-top: 20px;
+        }
+
+        /* === FOOTER === */
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            color: #2a2a2a;
+            font-size: 0.7rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 680px) {
+            .row {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .timer-card {
+                max-width: 100%;
+                width: 100%;
+            }
+
+            .timer-card.prominent .time-number {
+                font-size: 3.8rem;
+            }
+
+            .timer-card.prominent .separator {
+                font-size: 3.8rem;
+            }
+
+            header h1 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="https://vicksburgschools-cdn.fxbrt.com/downloads/logos_assets/v-logo-glyph.png" alt="Vicksburg V Logo">
+        <h1>Vicksburg High School</h1>
+        <p class="subtitle">School Year Countdown</p>
+        <div class="divider"></div>
+    </header>
+
+    <div class="timers-wrapper">
+
+        <!-- Row 1: Thanksgiving & Christmas (past) -->
+        <div class="row">
+            <div class="timer-card past">
+                <div class="timer-label">Countdown to</div>
+                <div class="timer-title">Thanksgiving Break</div>
+                <div class="countdown">
+                    <div class="time-unit">
+                        <div class="time-number">00</div>
+                        <div class="time-label">Days</div>
+                    </div>
+                    <div class="separator">:</div>
+                    <div class="time-unit">
+                        <div class="time-number">00</div>
+                        <div class="time-label">Hours</div>
+                    </div>
+                    <div class="separator">:</div>
+                    <div class="time-unit">
+                        <div class="time-number">00</div>
+                        <div class="time-label">Mins</div>
+                    </div>
+                    <div class="separator">:</div>
+                    <div class="time-unit">
+                        <div class="time-number">00</div>
+                        <div class="time-label">Secs</div>
+                    </div>
+                </div>
+                <div class="done-badge">Break Complete</div>
+            </div>
+
+            <div class="timer-card past">
+                <div class="timer-label">Countdown to</div>
+                <div class="timer-title">Christmas Break</div>
+                <div class="countdown">
+                    <div class="time-unit">
+                        <div class="time-number">00</div>
+                        <div class="time-label">Days</div>
+                    </div>
+                    <div class="separator">:</div>
+                    <div class="time-unit">
+                        <div class="time-number">00</div>
+                        <div class="time-label">Hours</div>
+                    </div>
+                    <div class="separator">:</div>
+                    <div class="time-unit">
+                        <div class="time-number">00</div>
+                        <div class="time-label">Mins</div>
+                    </div>
+                    <div class="separator">:</div>
+                    <div class="time-unit">
+                        <div class="time-number">00</div>
+                        <div class="time-label">Secs</div>
+                    </div>
+                </div>
+                <div class="done-badge">Break Complete</div>
+            </div>
+        </div>
+
+        <!-- Row 2: Seniors Last Day — PROMINENT CENTER -->
+        <div class="row">
+            <div class="timer-card prominent">
+                <div class="timer-label">Countdown to</div>
+                <div class="timer-title">Seniors' Last Day</div>
+                <div class="countdown">
+                    <div class="time-unit">
+                        <div class="time-number" id="seniors-days">00</div>
+                        <div class="time-label">Days</div>
+                    </div>
+                    <div class="separator">:</div>
+                    <div class="time-unit">
+                        <div class="time-number" id="seniors-hours">00</div>
+                        <div class="time-label">Hours</div>
+                    </div>
+                    <div class="separator">:</div>
+                    <div class="time-unit">
+                        <div class="time-number" id="seniors-mins">00</div>
+                        <div class="time-label">Mins</div>
+                    </div>
+                    <div class="separator">:</div>
+                    <div class="time-unit">
+                        <div class="time-number" id="seniors-secs">00</div>
+                        <div class="time-label">Secs</div>
+                    </div>
+                </div>
+                <div class="date-display">May 14, 2026</div>
+            </div>
+        </div>
+
+        <!-- Row 3: Spring Break (past) & Last Day of School -->
+        <div class="row">
+            <div class="timer-card past">
+                <div class="timer-label">Countdown to</div>
+                <div class="timer-title">Spring Break</div>
+                <div class="countdown">
+                    <div class="time-unit">
+                        <div class="time-number">00</div>
+                        <div class="time-label">Days</div>
+                    </div>
+                    <div class="separator">:</div>
+                    <div class="time-unit">
+                        <div class="time-number">00</div>
+                        <div class="time-label">Hours</div>
+                    </div>
+                    <div class="separator">:</div>
+                    <div class="time-unit">
+                        <div class="time-number">00</div>
+                        <div class="time-label">Mins</div>
+                    </div>
+                    <div class="separator">:</div>
+                    <div class="time-unit">
+                        <div class="time-number">00</div>
+                        <div class="time-label">Secs</div>
+                    </div>
+                </div>
+                <div class="done-badge">Break Complete</div>
+            </div>
+
+            <div class="timer-card">
+                <div class="timer-label">Countdown to</div>
+                <div class="timer-title">Last Day of School</div>
+                <div class="countdown">
+                    <div class="time-unit">
+                        <div class="time-number" id="lastday-days">00</div>
+                        <div class="time-label">Days</div>
+                    </div>
+                    <div class="separator">:</div>
+                    <div class="time-unit">
+                        <div class="time-number" id="lastday-hours">00</div>
+                        <div class="time-label">Hours</div>
+                    </div>
+                    <div class="separator">:</div>
+                    <div class="time-unit">
+                        <div class="time-number" id="lastday-mins">00</div>
+                        <div class="time-label">Mins</div>
+                    </div>
+                    <div class="separator">:</div>
+                    <div class="time-unit">
+                        <div class="time-number" id="lastday-secs">00</div>
+                        <div class="time-label">Secs</div>
+                    </div>
+                </div>
+                <div class="date-display">June 5, 2026</div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>Vicksburg High School &mdash; 2025&ndash;2026</p>
+    </footer>
+
+    <script>
+        function pad(n) {
+            return String(n).padStart(2, '0');
+        }
+
+        function updateCountdown(targetDate, dayId, hourId, minId, secId) {
+            const now = new Date();
+            const target = new Date(targetDate);
+            const diff = target - now;
+
+            if (diff <= 0) {
+                document.getElementById(dayId).textContent = '00';
+                document.getElementById(hourId).textContent = '00';
+                document.getElementById(minId).textContent = '00';
+                document.getElementById(secId).textContent = '00';
+                return;
+            }
+
+            const days  = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const mins  = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const secs  = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById(dayId).textContent = pad(days);
+            document.getElementById(hourId).textContent = pad(hours);
+            document.getElementById(minId).textContent = pad(mins);
+            document.getElementById(secId).textContent = pad(secs);
+        }
+
+        function tick() {
+            // Counting down to start of each day (midnight)
+            updateCountdown('2026-05-14T00:00:00', 'seniors-days', 'seniors-hours', 'seniors-mins', 'seniors-secs');
+            updateCountdown('2026-06-05T00:00:00', 'lastday-days', 'lastday-hours', 'lastday-mins', 'lastday-secs');
+        }
+
+        tick();
+        setInterval(tick, 1000);
+    </script>
+
+</body>
+</html>
