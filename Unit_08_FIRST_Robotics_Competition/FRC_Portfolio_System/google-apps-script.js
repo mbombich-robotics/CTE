@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.22';
+const BACKEND_VERSION = 'v2.9.23';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -692,17 +692,30 @@ function loadStudentData(email) {
             }
           }
 
-          // Also merge deliverable grades/feedback
+          // Merge deliverable grades/feedback — and recover any deliverables missing from fullState JSON
           const deliverablesSheet = ss.getSheetByName(SHEET_NAMES.DELIVERABLES);
           const deliverablesData = deliverablesSheet.getDataRange().getValues();
+
+          if (!fullState.deliverables) fullState.deliverables = {};
 
           for (let j = 1; j < deliverablesData.length; j++) {
             if (deliverablesData[j][0] === email) {
               const id = deliverablesData[j][2];
-              if (fullState.deliverables && fullState.deliverables[id]) {
-                // Grade in column J (index 9), Feedback in column K (index 10)
-                fullState.deliverables[id].teacherGrade = deliverablesData[j][9] || undefined;
+              if (fullState.deliverables[id]) {
+                // Deliverable exists in fullState — just merge teacher grades/feedback
+                fullState.deliverables[id].teacherGrade    = deliverablesData[j][9]  || undefined;
                 fullState.deliverables[id].teacherFeedback = deliverablesData[j][10] || '';
+              } else {
+                // Deliverable is missing from fullState — reconstruct from Deliverables sheet (data recovery)
+                fullState.deliverables[id] = {
+                  content:         deliverablesData[j][4]  || '',
+                  links:           deliverablesData[j][5]  || '',
+                  selfAssessment:  deliverablesData[j][6]  || '',
+                  status:          deliverablesData[j][7]  || 'completed',
+                  submittedAt:     deliverablesData[j][8]  || '',
+                  teacherGrade:    deliverablesData[j][9]  || undefined,
+                  teacherFeedback: deliverablesData[j][10] || ''
+                };
               }
             }
           }
