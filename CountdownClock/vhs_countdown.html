@@ -18,8 +18,56 @@
             flex-direction: column;
         }
 
+        /* === HEADER === */
+        header.page-header {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            padding: 14px 20px 12px;
+            text-align: center;
+        }
+
+        header.page-header .logo {
+            width: 96px;
+            height: auto;
+            filter: drop-shadow(0 0 10px rgba(204, 0, 0, 0.55));
+        }
+
+        header.page-header .title-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        header.page-header .school-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(3.6rem, 7.8vw, 6rem);
+            font-weight: 800;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #fff;
+            line-height: 1;
+        }
+
+        header.page-header .year-subtitle {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: clamp(1.05rem, 1.65vw, 1.4rem);
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: #cc0000;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 600px) {
+            header.page-header { gap: 10px; padding: 10px 12px 12px; }
+            header.page-header .logo { width: 64px; }
+            header.page-header .title-stack { align-items: center; }
+        }
+
         #featured {
-            flex: 0 0 66.666%;
+            flex: 2 1 0;
             position: relative;
             display: flex;
             flex-direction: column;
@@ -41,7 +89,21 @@
             position: relative;
             z-index: 1;
             text-align: center;
-            padding: 20px;
+            padding: 20px 32px 22px;
+            width: fit-content;
+            border: 2px solid #cc0000;
+            border-radius: 8px;
+            box-shadow: 0 0 14px rgba(204, 0, 0, 0.25);
+        }
+
+        #featured .countdown-prefix {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: clamp(0.7rem, 1.4vw, 1rem);
+            font-weight: 600;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: #cc0000;
+            margin-bottom: 8px;
         }
 
         #featured .event-label {
@@ -68,7 +130,7 @@
         #featured .digits {
             display: flex;
             gap: clamp(16px, 3vw, 40px);
-            align-items: flex-end;
+            align-items: flex-start;
             justify-content: center;
         }
 
@@ -103,9 +165,9 @@
         #featured .sep {
             font-family: 'Orbitron', sans-serif;
             font-size: clamp(3rem, 7vw, 6rem);
+            line-height: clamp(4rem, 10vw, 9rem);
             font-weight: 900;
             color: rgba(255,255,255,0.5);
-            padding-bottom: 10px;
             text-shadow: 0 2px 8px rgba(0,0,0,0.9);
         }
 
@@ -119,9 +181,10 @@
         }
 
         #mini-row {
-            flex: 0 0 33.333%;
+            flex: 1 1 0;
             display: flex;
-            border-top: 2px solid rgba(255,255,255,0.15);
+            gap: 6px;
+            padding: 4px 6px 6px 6px;
         }
 
         .mini-clock {
@@ -132,10 +195,7 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            border-right: 1px solid rgba(255,255,255,0.12);
         }
-
-        .mini-clock:last-child { border-right: none; }
 
         .mini-clock .bg {
             position: absolute;
@@ -150,34 +210,48 @@
             position: relative;
             z-index: 1;
             text-align: center;
-            padding: 10px;
+            padding: 14px 18px 16px;
+            width: fit-content;
+            border: 2px solid #cc0000;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(204, 0, 0, 0.22);
+        }
+
+        .mini-clock .countdown-prefix {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: clamp(0.75rem, 1.35vw, 1.05rem);
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(204, 0, 0, 0.85);
+            margin-bottom: 4px;
         }
 
         .mini-clock .event-label {
             font-family: 'Rajdhani', sans-serif;
-            font-size: clamp(0.6rem, 1.3vw, 1rem);
+            font-size: clamp(0.9rem, 1.95vw, 1.5rem);
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 2px;
             color: rgba(255,255,255,0.9);
             text-shadow: 0 1px 4px rgba(0,0,0,0.9);
-            margin-bottom: 2px;
+            margin-bottom: 3px;
         }
 
         .mini-clock .event-date {
             font-family: 'Rajdhani', sans-serif;
-            font-size: clamp(0.5rem, 1vw, 0.8rem);
+            font-size: clamp(0.75rem, 1.5vw, 1.2rem);
             font-weight: 600;
             letter-spacing: 2px;
             color: rgba(255,255,255,0.55);
             text-shadow: 0 1px 3px rgba(0,0,0,0.9);
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
 
         .mini-clock .digits {
             display: flex;
-            gap: 4px;
-            align-items: flex-end;
+            gap: 8px;
+            align-items: flex-start;
             justify-content: center;
         }
 
@@ -189,7 +263,7 @@
 
         .mini-clock .num {
             font-family: 'Orbitron', sans-serif;
-            font-size: clamp(1.2rem, 2.8vw, 2.6rem);
+            font-size: clamp(1.8rem, 4.2vw, 3.9rem);
             font-weight: 900;
             line-height: 1;
             color: #fff;
@@ -200,26 +274,26 @@
 
         .mini-clock .lbl {
             font-family: 'Rajdhani', sans-serif;
-            font-size: clamp(0.5rem, 0.9vw, 0.75rem);
+            font-size: clamp(0.75rem, 1.35vw, 1.13rem);
             font-weight: 600;
             letter-spacing: 2px;
             text-transform: uppercase;
             color: rgba(255,255,255,0.7);
             text-shadow: 0 1px 3px rgba(0,0,0,0.9);
-            margin-top: 3px;
+            margin-top: 5px;
         }
 
         .mini-clock .sep {
             font-family: 'Orbitron', sans-serif;
-            font-size: clamp(1rem, 2vw, 1.8rem);
+            font-size: clamp(1.5rem, 3vw, 2.7rem);
+            line-height: clamp(1.8rem, 4.2vw, 3.9rem);
             font-weight: 900;
             color: rgba(255,255,255,0.35);
-            padding-bottom: 6px;
         }
 
         .mini-clock .zero-msg {
             font-family: 'Orbitron', sans-serif;
-            font-size: clamp(0.9rem, 1.8vw, 1.5rem);
+            font-size: clamp(1.35rem, 2.7vw, 2.25rem);
             font-weight: 900;
             color: #fff;
             letter-spacing: 2px;
@@ -236,6 +310,15 @@
 <body>
 
 <canvas id="confetti-canvas"></canvas>
+
+<header class="page-header">
+    <img class="logo" src="https://vicksburgschools-cdn.fxbrt.com/downloads/logos_assets/v-logo-glyph.png" alt="Vicksburg V Logo">
+    <div class="title-stack">
+        <div class="school-name">Vicksburg High School</div>
+        <div class="year-subtitle">School Year Countdown</div>
+    </div>
+</header>
+
 <div id="featured"><div class="bg"></div><div class="content"></div></div>
 <div id="mini-row"></div>
 
@@ -687,7 +770,7 @@ events.forEach(e => {
     const div = document.createElement('div');
     div.className = 'mini-clock';
     div.id = `mini-${e.id}`;
-    div.innerHTML = `<div class="bg"></div><div class="content"><div class="event-label">${e.label}</div><div class="event-date">${formatDate(e.date)}</div><div class="clock-display"></div></div>`;
+    div.innerHTML = `<div class="bg"></div><div class="content"><div class="countdown-prefix">Countdown to</div><div class="event-label">${e.label}</div><div class="event-date">${formatDate(e.date)}</div><div class="clock-display"></div></div>`;
     applySvgBg(div.querySelector('.bg'), e.id);
     miniRow.appendChild(div);
 });
@@ -717,7 +800,7 @@ function updateFeatured(ev) {
     }
     const t = formatCountdown(ev.targetMs - Date.now());
     featured.querySelector('.content').innerHTML =
-        `<div class="event-label">${ev.label}</div><div class="event-date">${formatDate(ev.date)} &bull; 10:56 AM</div>${digitsHTML(t)}`;
+        `<div class="countdown-prefix">Countdown to</div><div class="event-label">${ev.label}</div><div class="event-date">${formatDate(ev.date)} &bull; 10:56 AM</div>${digitsHTML(t)}`;
 }
 
 function updateMinis() {
