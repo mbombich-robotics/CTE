@@ -716,7 +716,13 @@ function renderStudentTable(students) {
     tbody.querySelectorAll('.repair-btn').forEach(btn => {
         btn.addEventListener('click', e => {
             e.stopPropagation();
-            repairStudentData(btn.dataset.email);
+            try {
+                if (!confirm(`Repair portfolio for ${btn.dataset.email}?\n\nThis clears their cached state and rebuilds it from the individual sheet rows. Use this only if their portfolio won't load.`)) return;
+                repairStudentData(btn.dataset.email);
+            } catch (err) {
+                console.error('Repair click handler threw:', err);
+                showToast('Repair handler error: ' + err.message, 'error', 6000);
+            }
         });
     });
 }
@@ -747,28 +753,53 @@ function updateStats(students) {
 // STUDENT DETAIL MODAL
 // ============================================
 async function repairStudentData(email) {
-    const student = state.students.find(s => s.email === email);
+    if (!email) {
+        showToast('Repair: missing email', 'error', 5000);
+        return;
+    }
+
+    // Look up student name from current state — but don't fail if the list isn't loaded
+    const student = (state.students || []).find(s => s.email === email);
     const name = student ? student.name : email;
-    const apiUrl = CONFIG.COURSES[state.activeCourse].apiUrl;
+
+    // Resolve the backend URL safely — surface a clear toast if something is off
+    const courseCfg = CONFIG.COURSES?.[state.activeCourse];
+    if (!courseCfg || !courseCfg.apiUrl) {
+        showToast(`Repair: no API URL configured for course "${state.activeCourse}"`, 'error', 6000);
+        return;
+    }
+    const apiUrl = courseCfg.apiUrl;
 
     const btn = document.querySelector(`.repair-btn[data-email="${CSS.escape(email)}"]`);
     if (btn) {
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     }
+    showToast(`Repairing ${name}…`, 'info', 3000);
 
     try {
         const res = await fetch(`${apiUrl}?action=repair&email=${encodeURIComponent(email)}`);
-        const data = await res.json();
+        if (!res.ok) {
+            showToast(`Repair HTTP ${res.status} ${res.statusText}`, 'error', 6000);
+            return;
+        }
+        const text = await res.text();
+        let data;
+        try { data = JSON.parse(text); }
+        catch (e) {
+            showToast(`Repair: backend returned non-JSON (${text.slice(0,80)}…)`, 'error', 7000);
+            return;
+        }
 
         if (data.success) {
-            const r = data.recovered;
-            showToast(`Repaired ${name}: recovered ${r.reflections} reflection(s), ${r.deliverables} deliverable(s), ${r.evidence} photo(s). Ask them to refresh.`, 'success', 7000);
+            const r = data.recovered || {};
+            showToast(`Repaired ${name}: recovered ${r.reflections ?? '?'} reflection(s), ${r.deliverables ?? '?'} deliverable(s), ${r.evidence ?? '?'} photo(s). Ask them to refresh.`, 'success', 7000);
         } else {
-            showToast(`Repair failed for ${name}: ${data.error}`, 'error', 6000);
+            showToast(`Repair failed for ${name}: ${data.error || 'unknown error'}`, 'error', 6000);
         }
     } catch (err) {
-        showToast(`Repair request failed: ${err.message}`, 'error', 5000);
+        console.error('repairStudentData fetch threw:', err);
+        showToast(`Repair request failed: ${err.message || err}`, 'error', 5000);
     } finally {
         if (btn) {
             btn.disabled = false;
