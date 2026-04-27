@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.46',
+    VERSION: 'v2.9.47',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -3158,7 +3158,8 @@ function renderQuizForm(page) {
                 <textarea id="ans-${q.id}" rows="4"
                     placeholder="${isBonus ? 'Optional — write your answer here…' : 'Write your answer here…'}"
                     style="width:100%; padding:12px; border:1px solid var(--gray-300); border-radius:6px; font-family:inherit; font-size:14px; resize:vertical; line-height:1.6; transition: border-color 0.2s;"
-                    oninput="document.getElementById('qcard-${q.id}').style.borderColor = this.value.trim() ? 'var(--primary)' : '${isBonus ? 'var(--success)' : 'var(--gray-200)'}';"
+                    oninput="onQuizAnswerInput('${q.id}', ${isBonus})"
+                    onblur="saveQuizDraft()"
                 ></textarea>
             </div>`;
     });
@@ -3179,6 +3180,8 @@ function renderQuizForm(page) {
             </p>
         </div>
 
+        <div id="quizSaveIndicator" style="font-size:13px; color:var(--success, #10b981); margin-bottom:14px; min-height:18px; font-weight:600;"></div>
+
         <form id="quizForm">
             ${questionsHtml}
             <button type="submit" class="btn btn-primary" style="width:100%; padding:14px; font-size:16px; margin-top:8px;">
@@ -3187,6 +3190,96 @@ function renderQuizForm(page) {
         </form>`;
 
     document.getElementById('quizForm').addEventListener('submit', submitQuiz);
+
+    // Restore any draft saved from a previous session before the page was lost
+    restoreQuizDraft();
+
+    // Warn before closing/refreshing if quiz has typed content (and is not yet submitted)
+    if (!quizUnloadHandlerInstalled) {
+        window.addEventListener('beforeunload', function(e) {
+            if (state.quiz.submitted) return;
+            const formExists = !!document.getElementById('quizForm');
+            if (!formExists) return;
+            const hasContent = QUIZ_QUESTION_META.some(q => {
+                const el = document.getElementById('ans-' + q.id);
+                return el && el.value.trim().length > 0;
+            });
+            if (hasContent) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+        quizUnloadHandlerInstalled = true;
+    }
+}
+
+let quizUnloadHandlerInstalled = false;
+
+// ── Quiz draft autosave (defends against tab close, hard refresh, browser crash) ──
+const QUIZ_DRAFT_KEY_PREFIX = 'clawQuizDraft_';
+
+function quizDraftKey() {
+    return QUIZ_DRAFT_KEY_PREFIX + (state.student?.email || 'pending');
+}
+
+function onQuizAnswerInput(qid, isBonus) {
+    const ta = document.getElementById('ans-' + qid);
+    const card = document.getElementById('qcard-' + qid);
+    if (ta && card) {
+        const empty = !ta.value.trim();
+        card.style.borderColor = empty
+            ? (isBonus ? 'var(--success)' : 'var(--gray-200)')
+            : 'var(--primary)';
+    }
+    saveQuizDraft();
+}
+window.onQuizAnswerInput = onQuizAnswerInput;
+
+function saveQuizDraft() {
+    const draft = {};
+    QUIZ_QUESTION_META.forEach(q => {
+        const el = document.getElementById('ans-' + q.id);
+        if (el) draft[q.id] = el.value;
+    });
+    const json = JSON.stringify(draft);
+    const key = quizDraftKey();
+    try { localStorage.setItem(key, json); }   catch(e) {}
+    try { sessionStorage.setItem(key, json); } catch(e) {}
+    const indicator = document.getElementById('quizSaveIndicator');
+    if (indicator) {
+        const t = new Date();
+        const hh = String(t.getHours()).padStart(2,'0');
+        const mm = String(t.getMinutes()).padStart(2,'0');
+        const ss = String(t.getSeconds()).padStart(2,'0');
+        indicator.textContent = `✓ Draft saved at ${hh}:${mm}:${ss} — your answers are safe if the page reloads`;
+    }
+}
+window.saveQuizDraft = saveQuizDraft;
+
+function restoreQuizDraft() {
+    try {
+        const key = quizDraftKey();
+        const pending = QUIZ_DRAFT_KEY_PREFIX + 'pending';
+        const raw = sessionStorage.getItem(key) || localStorage.getItem(key)
+                 || sessionStorage.getItem(pending) || localStorage.getItem(pending);
+        if (!raw) return;
+        const draft = JSON.parse(raw);
+        QUIZ_QUESTION_META.forEach(q => {
+            const el = document.getElementById('ans-' + q.id);
+            if (el && draft[q.id]) {
+                el.value = draft[q.id];
+                onQuizAnswerInput(q.id, q.id === 'bonus');
+            }
+        });
+        const indicator = document.getElementById('quizSaveIndicator');
+        if (indicator) indicator.textContent = '↩ Draft restored from your last session — keep typing.';
+    } catch(e) {}
+}
+
+function clearQuizDraft() {
+    const key = quizDraftKey();
+    try { localStorage.removeItem(key); }   catch(e) {}
+    try { sessionStorage.removeItem(key); } catch(e) {}
 }
 
 async function submitQuiz(e) {
@@ -3230,6 +3323,7 @@ async function submitQuiz(e) {
             state.quiz.aiTotal        = data.aiTotal;
             state.quiz.gradingPending = !!data.gradingPending;
             state.quiz.loaded         = true;
+            clearQuizDraft();
             updateUI();
             renderQuizResults(document.getElementById('quizPage'));
             showToast(data.gradingPending
@@ -3238,6 +3332,7 @@ async function submitQuiz(e) {
         } else if (data.error === 'already_submitted') {
             state.quiz.submitted = true;
             state.quiz.loaded    = true;
+            clearQuizDraft();
             showToast('Already submitted — reload to see your results.', 'warning');
         } else {
             throw new Error(data.error || 'Submission failed');
