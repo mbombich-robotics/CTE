@@ -22,10 +22,10 @@ const CONFIG = {
         robotics: {
             name: 'Robotics Portfolio',
             apiUrl: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
-            currentAppVersion: 'v2.9.47',  // keep in sync with Robotics app.js CONFIG.VERSION
+            currentAppVersion: 'v2.9.48',  // keep in sync with Robotics app.js CONFIG.VERSION
             hasTeams: false,
             totalDeliverables: 9,
-            totalReflections: 11,
+            totalReflections: 14,
             totalPoints: 735,
             deliverablePoints: { 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75 },
             deliverableWeeks: { 8: 10, 9: 11 },
@@ -1504,7 +1504,8 @@ function updateGradeReport() {
     let headers = ['Name', 'Period'];
     if (typeFilter === 'reflections' || typeFilter === 'all') {
         for (let w = 1; w <= course.totalReflections; w++) {
-            headers.push(`W${w}`);
+            const wLabel = w === 12 ? 'U9R1' : w === 13 ? 'U9R2' : w === 14 ? 'U9R3' : `W${w}`;
+            headers.push(wLabel);
         }
     }
     if (typeFilter === 'deliverables' || typeFilter === 'all') {
@@ -1804,7 +1805,8 @@ function updateAssignmentSelect() {
         for (let week = 1; week <= course.totalReflections; week++) {
             const option = document.createElement('option');
             option.value = week;
-            option.textContent = `Week ${week} Reflection (20 pts)`;
+            const weekName = week === 12 ? 'Unit 9 · Reflection 1' : week === 13 ? 'Unit 9 · Reflection 2' : week === 14 ? 'Unit 9 · Reflection 3' : `Week ${week}`;
+            option.textContent = `${weekName} Reflection (20 pts)`;
             select.appendChild(option);
         }
     } else {
@@ -2329,7 +2331,7 @@ async function openWeekSettings() {
             const skipRef  = (weekSettings[courseId].skipReflections  || []).includes(w);
             const skipDel  = (weekSettings[courseId].skipDeliverables || []).includes(w);
             tbody.innerHTML += `<tr>
-                <td style="padding: 8px 12px; font-weight: 600;">Week ${w}</td>
+                <td style="padding: 8px 12px; font-weight: 600;">${w === 12 ? 'Unit 9 · R1' : w === 13 ? 'Unit 9 · R2' : w === 14 ? 'Unit 9 · R3' : 'Week ' + w}</td>
                 <td style="padding: 8px 12px; text-align: center;">
                     <input type="checkbox" id="skipRef_${courseId}_${w}" ${skipRef ? 'checked' : ''}>
                 </td>

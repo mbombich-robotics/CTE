@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.47',
+    VERSION: 'v2.9.48',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -43,8 +43,21 @@ const WEEK_TOPICS = {
     8: { title: 'Claw Programming', phase: 'claw', focus: 'Servo control, grip functions' },
     9: { title: 'Integrated Systems', phase: 'claw', focus: 'Scanner + claw + drive integration' },
     10: { title: 'Claw Project — Week 1 Checkpoint', phase: 'claw', focus: 'Spec sheet draft, servo control, feedback readings' },
-    11: { title: 'Claw Project — Final', phase: 'claw', focus: 'Full grip-and-classify demo, annotated code, testing results' }
+    11: { title: 'Claw Project — Final', phase: 'claw', focus: 'Full grip-and-classify demo, annotated code, testing results' },
+    12: { title: 'Unit 9 Reflection 1', phase: 'final', focus: 'Reflect on your growth and accomplishments this year' },
+    13: { title: 'Unit 9 Reflection 2', phase: 'final', focus: 'Reflect on your growth and accomplishments this year' },
+    14: { title: 'Unit 9 Reflection 3', phase: 'final', focus: 'Reflect on your growth and accomplishments this year' }
 };
+
+const WEEK_LABELS = {
+    12: 'Unit 9 · Reflection 1',
+    13: 'Unit 9 · Reflection 2',
+    14: 'Unit 9 · Reflection 3'
+};
+
+function weekLabel(w) {
+    return WEEK_LABELS[w] || `Week ${w}`;
+}
 
 // skipReflectionWeeks is now stored in state.config and loaded from the backend at runtime.
 
@@ -1265,7 +1278,7 @@ function updateUI() {
     const requiredDeliverableCount = DELIVERABLES.filter(d => !d.optional && !d.hidden).length;
 
     document.getElementById('completedCount').textContent = completedDeliverables + completedReflections;
-    const requiredReflectionCount = 11 - state.config.skipReflectionWeeks.length;
+    const requiredReflectionCount = 14 - state.config.skipReflectionWeeks.length;
     document.getElementById('pendingCount').textContent = (requiredDeliverableCount - completedRequiredDeliverables) + (requiredReflectionCount - completedReflections);
     document.getElementById('totalPoints').textContent = calculatePoints();
     document.getElementById('currentWeek').textContent = state.currentWeek;
@@ -1305,7 +1318,7 @@ function updateFeedbackNotification() {
                     type: 'reflection',
                     key: key,
                     week: week,
-                    label: `Week ${week} Reflection`,
+                    label: `${weekLabel(week)} Reflection`,
                     grade: reflection.teacherGrade,
                     hasFeedback: !!reflection.teacherFeedback
                 });
@@ -1405,7 +1418,7 @@ function calculateCurrentWeek() {
     const diffTime = now - CONFIG.SEMESTER_START;
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     const diffWeeks = Math.floor(diffDays / 7) + 1;
-    state.currentWeek = Math.min(Math.max(1, diffWeeks), 11);
+    state.currentWeek = Math.min(Math.max(1, diffWeeks), 14);
 }
 
 function updatePhaseIndicators() {
@@ -1433,7 +1446,7 @@ function updateUpcoming() {
     const upcoming = [];
 
     if (!state.config.skipReflectionWeeks.includes(state.currentWeek) && !state.weeklyReflections[state.currentWeek]?.submitted) {
-        upcoming.push({ title: `Week ${state.currentWeek} Reflection`, due: 'Friday', points: 20, overdue: false });
+        upcoming.push({ title: `${weekLabel(state.currentWeek)} Reflection`, due: 'Friday', points: 20, overdue: false });
     }
 
     const currentDeliverable = DELIVERABLES.find(d => !d.hidden && d.week === state.currentWeek);
@@ -1445,7 +1458,7 @@ function updateUpcoming() {
 
     for (let week = 1; week < state.currentWeek; week++) {
         if (!state.config.skipReflectionWeeks.includes(week) && !state.weeklyReflections[week]?.submitted) {
-            upcoming.unshift({ title: `Week ${week} Reflection`, due: 'OVERDUE', points: 20, overdue: true });
+            upcoming.unshift({ title: `${weekLabel(week)} Reflection`, due: 'OVERDUE', points: 20, overdue: true });
         }
         // Check for overdue deliverables from previous weeks (skip optional and skipped weeks)
         const overdueDeliverable = DELIVERABLES.find(d => !d.hidden && d.week === week);
@@ -1483,7 +1496,7 @@ function updateWeekTopic() {
     if (topic && topicEl) {
         topicEl.innerHTML = `
             <div class="card" style="background: var(--primary-light); border-left: 4px solid var(--primary);">
-                <h4 style="margin-bottom: 5px;">Week ${state.selectedWeek}: ${topic.title}</h4>
+                <h4 style="margin-bottom: 5px;">${weekLabel(state.selectedWeek)}: ${topic.title}</h4>
                 <p style="color: var(--gray-600); margin: 0;">Focus: ${topic.focus}</p>
             </div>
         `;
@@ -1871,7 +1884,7 @@ function submitWeeklyReflection(e) {
     // Hide validation errors on success
     document.getElementById('validationErrors').style.display = 'none';
 
-    showCelebration(`Week ${data.week} Reflection Submitted!`);
+    showCelebration(`${weekLabel(data.week)} Reflection Submitted!`);
 }
 
 // ============================================
