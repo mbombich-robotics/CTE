@@ -453,6 +453,18 @@ body {
     color: white;
 }
 
+.week-btn.not-assigned {
+    opacity: 0.4;
+    background: var(--gray-100);
+    color: var(--gray-500);
+    border-color: var(--gray-300);
+}
+
+.week-btn.not-assigned:hover {
+    border-color: var(--gray-400);
+    color: var(--gray-600);
+}
+
 /* Forms */
 .form-section {
     margin-bottom: 30px;
@@ -690,6 +702,17 @@ textarea {
 .deliverable-card.current {
     border-left-color: var(--primary);
     background: var(--primary-light);
+}
+
+.deliverable-card.not-assigned {
+    opacity: 0.45;
+    filter: grayscale(30%);
+    cursor: default;
+}
+
+.deliverable-card.not-assigned:hover {
+    transform: none;
+    box-shadow: var(--shadow-sm);
 }
 
 .deliverable-number {

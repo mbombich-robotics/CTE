@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.48',
+    VERSION: 'v2.9.49',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -625,6 +625,8 @@ let state = {
         skipReflectionWeeks: [8],  // default — overwritten by backend on load
         skipDeliverableWeeks: [],
         expectedVersion: null,
+        reflectionDueDates: {},
+        deliverableDueDates: {},
         quizEnabled: false
     },
     quiz: {
@@ -775,7 +777,7 @@ async function handleTokenResponse(tokenResponse) {
             if (!Array.isArray(state.codeSnippets)) state.codeSnippets = [];
             if (!Array.isArray(state.viewedFeedback)) state.viewedFeedback = [];
             // config is not persisted in cloud state — restore default so it's never undefined
-            state.config = { skipReflectionWeeks: [8], skipDeliverableWeeks: [], expectedVersion: null, quizEnabled: false };
+            state.config = { skipReflectionWeeks: [8], skipDeliverableWeeks: [], expectedVersion: null, quizEnabled: false, reflectionDueDates: {}, deliverableDueDates: {} };
             state.quiz = { loaded: false, submitted: false, grades: null, aiTotal: null };
             restoreEvidenceLocal();
             calculateCurrentWeek();
@@ -1188,6 +1190,8 @@ async function fetchConfig() {
         state.config.skipReflectionWeeks  = (cfg.skipReflectionWeeks  || []).map(Number);
         state.config.skipDeliverableWeeks = (cfg.skipDeliverableWeeks || []).map(Number);
         state.config.quizEnabled          = cfg.quizEnabled === true || cfg.quizEnabled === 'true';
+        state.config.reflectionDueDates   = cfg.reflectionDueDates  || {};
+        state.config.deliverableDueDates  = cfg.deliverableDueDates || {};
 
         const expected = cfg.expectedVersion;
         if (expected && expected !== CONFIG.VERSION) {
@@ -1483,10 +1487,13 @@ function updateUpcoming() {
 function updateWeekButtons() {
     document.querySelectorAll('.week-btn').forEach(btn => {
         const week = parseInt(btn.dataset.week);
-        const skipped = state.config.skipReflectionWeeks.includes(week);
+        const skipped    = state.config.skipReflectionWeeks.includes(week);
+        const isSubmitted = !!state.weeklyReflections[week]?.submitted;
+        const hasDate     = !!state.config.reflectionDueDates[week];
         btn.style.display = skipped ? 'none' : '';
-        btn.classList.toggle('completed', !!state.weeklyReflections[week]?.submitted);
-        btn.classList.toggle('active', week === state.selectedWeek);
+        btn.classList.toggle('completed',    isSubmitted);
+        btn.classList.toggle('active',       week === state.selectedWeek);
+        btn.classList.toggle('not-assigned', !isSubmitted && !hasDate && !skipped);
     });
 }
 
@@ -1513,8 +1520,9 @@ function updateDeliverablesList() {
     list.innerHTML = filtered.map(d => {
         const status = state.deliverables[d.id]?.status || 'pending';
         const isCurrent = d.week === state.currentWeek;
+        const isAssigned = status === 'completed' || !!state.config.deliverableDueDates[d.week];
         return `
-            <div class="deliverable-card ${status} ${isCurrent ? 'current' : ''}" data-id="${d.id}">
+            <div class="deliverable-card ${status} ${isCurrent ? 'current' : ''} ${!isAssigned ? 'not-assigned' : ''}" data-id="${d.id}">
                 <div class="deliverable-number">${status === 'completed' ? '<i class="fas fa-check"></i>' : d.id}</div>
                 <div class="deliverable-info">
                     <div class="deliverable-title">${d.title}</div>
@@ -1858,6 +1866,12 @@ function updateRubricScore() {
 
 function submitWeeklyReflection(e) {
     e.preventDefault();
+
+    if (!state.config.reflectionDueDates[state.selectedWeek]) {
+        showToast('This reflection hasn\'t been assigned yet.', 'error');
+        return;
+    }
+
     const data = getReflectionFormData();
 
     // Validate
@@ -2576,6 +2590,10 @@ function formatDeliverable7Content(content, customData) {
 
 function submitDeliverable(id) {
     const deliverable = DELIVERABLES.find(d => d.id === id);
+    if (state.deliverables[id]?.status !== 'completed' && !state.config.deliverableDueDates[deliverable?.week]) {
+        showToast('This deliverable hasn\'t been assigned yet.', 'error');
+        return;
+    }
     const content = document.getElementById('deliverableContent')?.value || '';
     const completionTimeEl = document.getElementById('completionTime');
     const photos = state.deliverables[id]?.photos || [];

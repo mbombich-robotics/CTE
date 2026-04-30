@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.23';
+const BACKEND_VERSION = 'v2.9.24';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -130,13 +130,15 @@ function jsonResponse(data) {
 function handleGetConfig() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const configSheet = ss.getSheetByName(SHEET_NAMES.CONFIG);
-  const config = { skipReflectionWeeks: [], skipDeliverableWeeks: [], expectedVersion: '' };
+  const config = { skipReflectionWeeks: [], skipDeliverableWeeks: [], expectedVersion: '', reflectionDueDates: {}, deliverableDueDates: {} };
   if (configSheet && configSheet.getLastRow() > 0) {
     configSheet.getDataRange().getValues().forEach(row => {
       try {
         if (row[0] === 'skipReflectionWeeks')  config.skipReflectionWeeks  = JSON.parse(row[1] || '[]');
         if (row[0] === 'skipDeliverableWeeks') config.skipDeliverableWeeks = JSON.parse(row[1] || '[]');
         if (row[0] === 'expectedVersion')       config.expectedVersion      = row[1] || '';
+        if (row[0] === 'reflectionDueDates')    config.reflectionDueDates   = JSON.parse(row[1] || '{}');
+        if (row[0] === 'deliverableDueDates')   config.deliverableDueDates  = JSON.parse(row[1] || '{}');
       } catch(e) {}
     });
   }
@@ -156,7 +158,9 @@ function handleSetConfig(data) {
   const updates = {
     skipReflectionWeeks:  JSON.stringify(data.skipReflectionWeeks  || []),
     skipDeliverableWeeks: JSON.stringify(data.skipDeliverableWeeks || []),
-    expectedVersion:      data.expectedVersion || ''
+    expectedVersion:      data.expectedVersion || '',
+    reflectionDueDates:   JSON.stringify(data.reflectionDueDates  || {}),
+    deliverableDueDates:  JSON.stringify(data.deliverableDueDates || {})
   };
 
   Object.entries(updates).forEach(([key, value]) => {

@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.25',
+    VERSION: 'v2.9.26',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyXSBw_lCaHusiocLh3B_U1kyOmxyV3WlXhoqEdVAAzUN6U6_6ZCELqSTzzfhH6rUKc/exec',
@@ -381,7 +381,9 @@ let state = {
     config: {
         skipReflectionWeeks: [],   // default — overwritten by backend on load
         skipDeliverableWeeks: [],
-        expectedVersion: null
+        expectedVersion: null,
+        reflectionDueDates: {},
+        deliverableDueDates: {}
     }
 };
 
@@ -518,7 +520,7 @@ async function handleTokenResponse(tokenResponse) {
             state = cloudData;
             state.student.name = name;
             // config is not persisted in cloud state — restore default so it's never undefined
-            state.config = { skipReflectionWeeks: [], skipDeliverableWeeks: [], expectedVersion: null };
+            state.config = { skipReflectionWeeks: [], skipDeliverableWeeks: [], expectedVersion: null, reflectionDueDates: {}, deliverableDueDates: {} };
             restoreEvidenceLocal();
             calculateCurrentWeek();
             hideAllModals();
@@ -963,6 +965,8 @@ async function fetchConfig() {
 
         state.config.skipReflectionWeeks  = cfg.skipReflectionWeeks  || [];
         state.config.skipDeliverableWeeks = cfg.skipDeliverableWeeks || [];
+        state.config.reflectionDueDates   = cfg.reflectionDueDates  || {};
+        state.config.deliverableDueDates  = cfg.deliverableDueDates || {};
 
         const expected = cfg.expectedVersion;
         if (expected && expected !== CONFIG.VERSION) {
@@ -1170,8 +1174,11 @@ function updateUpcoming() {
 function updateWeekButtons() {
     document.querySelectorAll('.week-btn').forEach(btn => {
         const week = parseInt(btn.dataset.week);
-        btn.classList.toggle('completed', !!state.weeklyReflections[week]?.submitted);
-        btn.classList.toggle('active', week === state.selectedWeek);
+        const isSubmitted = !!state.weeklyReflections[week]?.submitted;
+        const hasDate     = !!state.config.reflectionDueDates[week];
+        btn.classList.toggle('completed',    isSubmitted);
+        btn.classList.toggle('active',       week === state.selectedWeek);
+        btn.classList.toggle('not-assigned', !isSubmitted && !hasDate);
     });
 }
 
@@ -1183,8 +1190,9 @@ function updateDeliverablesList() {
         const isSkipped = skipWeeks.includes(d.week);
         const status = isSkipped ? 'skipped' : (state.deliverables[d.id]?.status || 'pending');
         const isCurrent = d.week === state.currentWeek && !isSkipped;
+        const isAssigned = status === 'completed' || isSkipped || !!state.config.deliverableDueDates[d.week];
         return `
-            <div class="deliverable-card ${status} ${isCurrent ? 'current' : ''}" data-id="${d.id}" style="${isSkipped ? 'opacity:0.4;pointer-events:none;' : ''}">
+            <div class="deliverable-card ${status} ${isCurrent ? 'current' : ''} ${!isAssigned ? 'not-assigned' : ''}" data-id="${d.id}" style="${isSkipped ? 'opacity:0.4;pointer-events:none;' : ''}">
                 <div class="deliverable-number">${status === 'completed' ? '<i class="fas fa-check"></i>' : (isSkipped ? '—' : d.id)}</div>
                 <div class="deliverable-info">
                     <div class="deliverable-title">${d.title}</div>
@@ -1521,6 +1529,12 @@ function updateRubricScore() {
 
 function submitWeeklyReflection(e) {
     e.preventDefault();
+
+    if (!state.config.reflectionDueDates[state.selectedWeek]) {
+        showToast('This reflection hasn\'t been assigned yet.', 'error');
+        return;
+    }
+
     const data = getReflectionFormData();
 
     // Validate
@@ -2421,6 +2435,10 @@ function saveDeliverableDraft(id) {
 
 function submitDeliverable(id) {
     const deliverable = DELIVERABLES.find(d => d.id === id);
+    if (state.deliverables[id]?.status !== 'completed' && !state.config.deliverableDueDates[deliverable?.week]) {
+        showToast('This deliverable hasn\'t been assigned yet.', 'error');
+        return;
+    }
 
     if (id === 4) {
         const customData = collectDeliverable4CustomData();

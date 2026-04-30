@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.35';
+const BACKEND_VERSION = 'v2.9.36';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -148,7 +148,7 @@ function jsonResponse(data) {
 function handleGetConfig() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const configSheet = ss.getSheetByName(SHEET_NAMES.CONFIG);
-  const config = { skipReflectionWeeks: [], skipDeliverableWeeks: [], expectedVersion: '', quizEnabled: false };
+  const config = { skipReflectionWeeks: [], skipDeliverableWeeks: [], expectedVersion: '', quizEnabled: false, reflectionDueDates: {}, deliverableDueDates: {} };
   if (configSheet && configSheet.getLastRow() > 0) {
     configSheet.getDataRange().getValues().forEach(row => {
       try {
@@ -156,6 +156,8 @@ function handleGetConfig() {
         if (row[0] === 'skipDeliverableWeeks') config.skipDeliverableWeeks = JSON.parse(row[1] || '[]');
         if (row[0] === 'expectedVersion')       config.expectedVersion      = row[1] || '';
         if (row[0] === 'quizEnabled')           config.quizEnabled          = row[1] === true || row[1] === 'true';
+        if (row[0] === 'reflectionDueDates')    config.reflectionDueDates   = JSON.parse(row[1] || '{}');
+        if (row[0] === 'deliverableDueDates')   config.deliverableDueDates  = JSON.parse(row[1] || '{}');
       } catch(e) {}
     });
   }
@@ -176,7 +178,9 @@ function handleSetConfig(data) {
     skipReflectionWeeks:  JSON.stringify(data.skipReflectionWeeks  || []),
     skipDeliverableWeeks: JSON.stringify(data.skipDeliverableWeeks || []),
     expectedVersion:      data.expectedVersion || '',
-    quizEnabled:          data.quizEnabled === true ? true : false
+    quizEnabled:          data.quizEnabled === true ? true : false,
+    reflectionDueDates:   JSON.stringify(data.reflectionDueDates  || {}),
+    deliverableDueDates:  JSON.stringify(data.deliverableDueDates || {})
   };
 
   Object.entries(updates).forEach(([key, value]) => {

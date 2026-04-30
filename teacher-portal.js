@@ -22,7 +22,7 @@ const CONFIG = {
         robotics: {
             name: 'Robotics Portfolio',
             apiUrl: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
-            currentAppVersion: 'v2.9.48',  // keep in sync with Robotics app.js CONFIG.VERSION
+            currentAppVersion: 'v2.9.49',  // keep in sync with Robotics app.js CONFIG.VERSION
             hasTeams: false,
             totalDeliverables: 9,
             totalReflections: 14,
@@ -36,7 +36,7 @@ const CONFIG = {
         frc: {
             name: 'FRC Portfolio',
             apiUrl: 'https://script.google.com/macros/s/AKfycbyXSBw_lCaHusiocLh3B_U1kyOmxyV3WlXhoqEdVAAzUN6U6_6ZCELqSTzzfhH6rUKc/exec',
-            currentAppVersion: 'v2.9.25',  // keep in sync with FRC app.js CONFIG.VERSION
+            currentAppVersion: 'v2.9.26',  // keep in sync with FRC app.js CONFIG.VERSION
             hasTeams: true,
             teams: ['drivetrain', 'intake', 'shooter', 'climber', 'autonomous', 'integration'],
             totalDeliverables: 13,
@@ -166,8 +166,8 @@ function tallyRubric(uid, deliverableId, email) {
 // WEEK SETTINGS (localStorage)
 // ============================================
 let weekSettings = {
-    robotics: { skipReflections: [], skipDeliverables: [], quizEnabled: false },
-    frc:      { skipReflections: [], skipDeliverables: [] },
+    robotics: { skipReflections: [], skipDeliverables: [], quizEnabled: false, reflectionDueDates: {}, deliverableDueDates: {} },
+    frc:      { skipReflections: [], skipDeliverables: [], reflectionDueDates: {}, deliverableDueDates: {} },
     currentWeekOverride: null
 };
 
@@ -177,8 +177,8 @@ function loadWeekSettings() {
         if (saved) {
             const parsed = JSON.parse(saved);
             weekSettings = { ...weekSettings, ...parsed };
-            weekSettings.robotics = { skipReflections: [], skipDeliverables: [], quizEnabled: false, ...parsed.robotics };
-            weekSettings.frc      = { skipReflections: [], skipDeliverables: [], ...parsed.frc };
+            weekSettings.robotics = { skipReflections: [], skipDeliverables: [], quizEnabled: false, reflectionDueDates: {}, deliverableDueDates: {}, ...parsed.robotics };
+            weekSettings.frc      = { skipReflections: [], skipDeliverables: [], reflectionDueDates: {}, deliverableDueDates: {}, ...parsed.frc };
         }
     } catch(e) {}
 }
@@ -2330,13 +2330,24 @@ async function openWeekSettings() {
         for (let w = 1; w <= maxWeeks; w++) {
             const skipRef  = (weekSettings[courseId].skipReflections  || []).includes(w);
             const skipDel  = (weekSettings[courseId].skipDeliverables || []).includes(w);
+            const refDate  = (weekSettings[courseId].reflectionDueDates  || {})[w] || '';
+            const delDate  = (weekSettings[courseId].deliverableDueDates || {})[w] || '';
+            const label    = w === 12 ? 'Unit 9 · R1' : w === 13 ? 'Unit 9 · R2' : w === 14 ? 'Unit 9 · R3' : 'Week ' + w;
             tbody.innerHTML += `<tr>
-                <td style="padding: 8px 12px; font-weight: 600;">${w === 12 ? 'Unit 9 · R1' : w === 13 ? 'Unit 9 · R2' : w === 14 ? 'Unit 9 · R3' : 'Week ' + w}</td>
-                <td style="padding: 8px 12px; text-align: center;">
+                <td style="padding: 8px 10px; font-weight: 600; white-space: nowrap;">${label}</td>
+                <td style="padding: 8px 10px; text-align: center;">
                     <input type="checkbox" id="skipRef_${courseId}_${w}" ${skipRef ? 'checked' : ''}>
                 </td>
-                <td style="padding: 8px 12px; text-align: center;">
+                <td style="padding: 8px 10px; text-align: center;">
                     <input type="checkbox" id="skipDel_${courseId}_${w}" ${skipDel ? 'checked' : ''}>
+                </td>
+                <td style="padding: 4px 8px;">
+                    <input type="date" id="refDate_${courseId}_${w}" value="${refDate}"
+                           style="font-size:12px;padding:3px 5px;border:1px solid var(--gray-300);border-radius:4px;width:130px;">
+                </td>
+                <td style="padding: 4px 8px;">
+                    <input type="date" id="delDate_${courseId}_${w}" value="${delDate}"
+                           style="font-size:12px;padding:3px 5px;border:1px solid var(--gray-300);border-radius:4px;width:130px;">
                 </td>
             </tr>`;
         }
@@ -2404,9 +2415,15 @@ async function applyWeekSettings() {
         const maxWeeks = CONFIG.COURSES[courseId].totalReflections;
         weekSettings[courseId].skipReflections  = [];
         weekSettings[courseId].skipDeliverables = [];
+        weekSettings[courseId].reflectionDueDates  = {};
+        weekSettings[courseId].deliverableDueDates = {};
         for (let w = 1; w <= maxWeeks; w++) {
             if (document.getElementById(`skipRef_${courseId}_${w}`)?.checked)  weekSettings[courseId].skipReflections.push(w);
             if (document.getElementById(`skipDel_${courseId}_${w}`)?.checked)  weekSettings[courseId].skipDeliverables.push(w);
+            const refDate = document.getElementById(`refDate_${courseId}_${w}`)?.value || '';
+            const delDate = document.getElementById(`delDate_${courseId}_${w}`)?.value || '';
+            if (refDate) weekSettings[courseId].reflectionDueDates[w]  = refDate;
+            if (delDate) weekSettings[courseId].deliverableDueDates[w] = delDate;
         }
         weekSettings[courseId].expectedVersion = document.getElementById(`expectedVersion_${courseId}`)?.value.trim() || '';
     });
@@ -2430,7 +2447,9 @@ async function applyWeekSettings() {
                 token: CONFIG.TEACHER_TOKEN,
                 skipReflectionWeeks:  weekSettings[courseId].skipReflections,
                 skipDeliverableWeeks: weekSettings[courseId].skipDeliverables,
-                expectedVersion:      weekSettings[courseId].expectedVersion
+                expectedVersion:      weekSettings[courseId].expectedVersion,
+                reflectionDueDates:   weekSettings[courseId].reflectionDueDates  || {},
+                deliverableDueDates:  weekSettings[courseId].deliverableDueDates || {}
             };
             if (courseId === 'robotics') body.quizEnabled = weekSettings.robotics.quizEnabled;
             return fetch(CONFIG.COURSES[courseId].apiUrl, { method: 'POST', body: JSON.stringify(body) });
