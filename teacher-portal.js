@@ -2312,6 +2312,14 @@ async function openWeekSettings() {
     const modal = document.getElementById('weekSettingsModal');
     if (!modal) return;
 
+    const activeCourse = state.activeCourse;
+
+    // Show only the active course's column; hide the other.
+    ['robotics', 'frc'].forEach(courseId => {
+        const col = document.getElementById('weekSettingsCol_' + courseId);
+        if (col) col.style.display = (courseId === activeCourse) ? '' : 'none';
+    });
+
     // Show auto-calculated week
     const now = new Date();
     const diffWeeks = Math.floor(Math.floor((now - CONFIG.SEMESTER_START) / (1000 * 60 * 60 * 24)) / 7) + 1;
@@ -2322,79 +2330,68 @@ async function openWeekSettings() {
     const overrideSelect = document.getElementById('weekOverrideSelect');
     overrideSelect.value = weekSettings.currentWeekOverride !== null ? weekSettings.currentWeekOverride : '';
 
-    // Populate checkboxes for each course
-    ['robotics', 'frc'].forEach(courseId => {
-        const maxWeeks = CONFIG.COURSES[courseId].totalReflections;
-        const tbody = document.getElementById(courseId + 'WeekSettingsBody');
-        tbody.innerHTML = '';
-        for (let w = 1; w <= maxWeeks; w++) {
-            const skipRef  = (weekSettings[courseId].skipReflections  || []).includes(w);
-            const skipDel  = (weekSettings[courseId].skipDeliverables || []).includes(w);
-            const refDate  = (weekSettings[courseId].reflectionDueDates  || {})[w] || '';
-            const delDate  = (weekSettings[courseId].deliverableDueDates || {})[w] || '';
-            // FRC students do Unit 9 work via the Robotics portfolio, so the
-            // Unit 9 labels only apply to the Robotics column.
-            const label    = (courseId === 'robotics' && w === 12) ? 'Unit 9 · R1'
-                           : (courseId === 'robotics' && w === 13) ? 'Unit 9 · R2'
-                           : (courseId === 'robotics' && w === 14) ? 'Unit 9 · R3'
-                           : 'Week ' + w;
-            tbody.innerHTML += `<tr>
-                <td style="padding: 8px 10px; font-weight: 600; white-space: nowrap;">${label}</td>
-                <td style="padding: 8px 10px; text-align: center;">
-                    <input type="checkbox" id="skipRef_${courseId}_${w}" ${skipRef ? 'checked' : ''}>
-                </td>
-                <td style="padding: 8px 10px; text-align: center;">
-                    <input type="checkbox" id="skipDel_${courseId}_${w}" ${skipDel ? 'checked' : ''}>
-                </td>
-                <td style="padding: 4px 8px;">
-                    <input type="date" id="refDate_${courseId}_${w}" value="${refDate}"
-                           style="font-size:12px;padding:3px 5px;border:1px solid var(--gray-300);border-radius:4px;width:130px;">
-                </td>
-                <td style="padding: 4px 8px;">
-                    <input type="date" id="delDate_${courseId}_${w}" value="${delDate}"
-                           style="font-size:12px;padding:3px 5px;border:1px solid var(--gray-300);border-radius:4px;width:130px;">
-                </td>
-            </tr>`;
-        }
-    });
+    // Populate checkboxes for the active course only
+    const courseId = activeCourse;
+    const maxWeeks = CONFIG.COURSES[courseId].totalReflections;
+    const tbody = document.getElementById(courseId + 'WeekSettingsBody');
+    tbody.innerHTML = '';
+    for (let w = 1; w <= maxWeeks; w++) {
+        const skipRef  = (weekSettings[courseId].skipReflections  || []).includes(w);
+        const skipDel  = (weekSettings[courseId].skipDeliverables || []).includes(w);
+        const refDate  = (weekSettings[courseId].reflectionDueDates  || {})[w] || '';
+        const delDate  = (weekSettings[courseId].deliverableDueDates || {})[w] || '';
+        // FRC students do Unit 9 work via the Robotics portfolio, so the
+        // Unit 9 labels only apply to the Robotics column.
+        const label    = (courseId === 'robotics' && w === 12) ? 'Unit 9 · R1'
+                       : (courseId === 'robotics' && w === 13) ? 'Unit 9 · R2'
+                       : (courseId === 'robotics' && w === 14) ? 'Unit 9 · R3'
+                       : 'Week ' + w;
+        tbody.innerHTML += `<tr>
+            <td style="padding: 8px 10px; font-weight: 600; white-space: nowrap;">${label}</td>
+            <td style="padding: 8px 10px; text-align: center;">
+                <input type="checkbox" id="skipRef_${courseId}_${w}" ${skipRef ? 'checked' : ''}>
+            </td>
+            <td style="padding: 8px 10px; text-align: center;">
+                <input type="checkbox" id="skipDel_${courseId}_${w}" ${skipDel ? 'checked' : ''}>
+            </td>
+            <td style="padding: 4px 8px;">
+                <input type="date" id="refDate_${courseId}_${w}" value="${refDate}"
+                       style="font-size:12px;padding:3px 5px;border:1px solid var(--gray-300);border-radius:4px;width:130px;">
+            </td>
+            <td style="padding: 4px 8px;">
+                <input type="date" id="delDate_${courseId}_${w}" value="${delDate}"
+                       style="font-size:12px;padding:3px 5px;border:1px solid var(--gray-300);border-radius:4px;width:130px;">
+            </td>
+        </tr>`;
+    }
 
-    // Set quiz toggle
-    const quizToggle = document.getElementById('quizEnabledToggle');
-    if (quizToggle) quizToggle.checked = weekSettings.robotics.quizEnabled || false;
+    // Set quiz toggle (Robotics only)
+    if (courseId === 'robotics') {
+        const quizToggle = document.getElementById('quizEnabledToggle');
+        if (quizToggle) quizToggle.checked = weekSettings.robotics.quizEnabled || false;
+    }
 
     modal.classList.add('active');
 
-    // Populate version display fields and initialize hidden inputs from local weekSettings
-    ['robotics', 'frc'].forEach(courseId => {
-        const codeVersionEl = document.getElementById('codeVersion_' + courseId);
-        if (codeVersionEl) codeVersionEl.textContent = CONFIG.COURSES[courseId].currentAppVersion || '—';
-        const hiddenEl = document.getElementById('expectedVersion_' + courseId);
-        if (hiddenEl) hiddenEl.value = weekSettings[courseId]?.expectedVersion || '';
-    });
+    // Populate version display fields and initialize hidden input from local weekSettings
+    const codeVersionEl = document.getElementById('codeVersion_' + courseId);
+    if (codeVersionEl) codeVersionEl.textContent = CONFIG.COURSES[courseId].currentAppVersion || '—';
+    const hiddenEl = document.getElementById('expectedVersion_' + courseId);
+    if (hiddenEl) hiddenEl.value = weekSettings[courseId]?.expectedVersion || '';
 
-    // Fetch current backend config — only update status display, never overwrite hiddenEl
-    // (hiddenEl is the save value; overwriting it after user clicks "Use current" caused a race)
+    // Fetch active course's backend config to display "Students expect: …"
     try {
-        const [roboCfg, frcCfg] = await Promise.all([
-            fetch(CONFIG.COURSES.robotics.apiUrl + '?action=getConfig&_t=' + Date.now()).then(r => r.json()),
-            fetch(CONFIG.COURSES.frc.apiUrl     + '?action=getConfig&_t=' + Date.now()).then(r => r.json())
-        ]);
-        const configs = { robotics: roboCfg, frc: frcCfg };
-        ['robotics', 'frc'].forEach(courseId => {
-            const cfg = configs[courseId];
-            const backendEl = document.getElementById('backendVersion_' + courseId);
-            const current   = CONFIG.COURSES[courseId].currentAppVersion;
-            const stored    = cfg.expectedVersion || '(not set)';
-            if (backendEl) {
-                backendEl.textContent = stored;
-                backendEl.style.color = (cfg.expectedVersion && cfg.expectedVersion === current) ? 'var(--success)' : 'var(--danger)';
-            }
-        });
+        const cfg = await fetch(CONFIG.COURSES[courseId].apiUrl + '?action=getConfig&_t=' + Date.now()).then(r => r.json());
+        const backendEl = document.getElementById('backendVersion_' + courseId);
+        const current   = CONFIG.COURSES[courseId].currentAppVersion;
+        const stored    = cfg.expectedVersion || '(not set)';
+        if (backendEl) {
+            backendEl.textContent = stored;
+            backendEl.style.color = (cfg.expectedVersion && cfg.expectedVersion === current) ? 'var(--success)' : 'var(--danger)';
+        }
     } catch(e) {
-        ['robotics', 'frc'].forEach(courseId => {
-            const el = document.getElementById('backendVersion_' + courseId);
-            if (el) { el.textContent = 'fetch failed'; el.style.color = 'var(--danger)'; }
-        });
+        const el = document.getElementById('backendVersion_' + courseId);
+        if (el) { el.textContent = 'fetch failed'; el.style.color = 'var(--danger)'; }
     }
 }
 
@@ -2415,50 +2412,50 @@ async function applyWeekSettings() {
     const overrideVal = document.getElementById('weekOverrideSelect').value;
     weekSettings.currentWeekOverride = overrideVal ? parseInt(overrideVal) : null;
 
-    // Collect checkboxes and version fields
-    ['robotics', 'frc'].forEach(courseId => {
-        const maxWeeks = CONFIG.COURSES[courseId].totalReflections;
-        weekSettings[courseId].skipReflections  = [];
-        weekSettings[courseId].skipDeliverables = [];
-        weekSettings[courseId].reflectionDueDates  = {};
-        weekSettings[courseId].deliverableDueDates = {};
-        for (let w = 1; w <= maxWeeks; w++) {
-            if (document.getElementById(`skipRef_${courseId}_${w}`)?.checked)  weekSettings[courseId].skipReflections.push(w);
-            if (document.getElementById(`skipDel_${courseId}_${w}`)?.checked)  weekSettings[courseId].skipDeliverables.push(w);
-            const refDate = document.getElementById(`refDate_${courseId}_${w}`)?.value || '';
-            const delDate = document.getElementById(`delDate_${courseId}_${w}`)?.value || '';
-            if (refDate) weekSettings[courseId].reflectionDueDates[w]  = refDate;
-            if (delDate) weekSettings[courseId].deliverableDueDates[w] = delDate;
-        }
-        weekSettings[courseId].expectedVersion = document.getElementById(`expectedVersion_${courseId}`)?.value.trim() || '';
-    });
+    // Only mutate / save the active course — the modal only renders one course
+    // at a time, so reading the inactive course's checkboxes would clear it.
+    const courseId = state.activeCourse;
+    const maxWeeks = CONFIG.COURSES[courseId].totalReflections;
+    weekSettings[courseId].skipReflections  = [];
+    weekSettings[courseId].skipDeliverables = [];
+    weekSettings[courseId].reflectionDueDates  = {};
+    weekSettings[courseId].deliverableDueDates = {};
+    for (let w = 1; w <= maxWeeks; w++) {
+        if (document.getElementById(`skipRef_${courseId}_${w}`)?.checked)  weekSettings[courseId].skipReflections.push(w);
+        if (document.getElementById(`skipDel_${courseId}_${w}`)?.checked)  weekSettings[courseId].skipDeliverables.push(w);
+        const refDate = document.getElementById(`refDate_${courseId}_${w}`)?.value || '';
+        const delDate = document.getElementById(`delDate_${courseId}_${w}`)?.value || '';
+        if (refDate) weekSettings[courseId].reflectionDueDates[w]  = refDate;
+        if (delDate) weekSettings[courseId].deliverableDueDates[w] = delDate;
+    }
+    weekSettings[courseId].expectedVersion = document.getElementById(`expectedVersion_${courseId}`)?.value.trim() || '';
 
-    // Collect quiz toggle (robotics only)
-    weekSettings.robotics.quizEnabled = document.getElementById('quizEnabledToggle')?.checked || false;
+    // Quiz toggle is robotics-only
+    if (courseId === 'robotics') {
+        weekSettings.robotics.quizEnabled = document.getElementById('quizEnabledToggle')?.checked || false;
+    }
 
     saveWeekSettings();
     calculateCurrentWeek();
 
-    // Save to backends
+    // Save to the active course's backend
     const saveBtn = document.querySelector('#weekSettingsModal .btn-primary');
     const originalHTML = saveBtn.innerHTML;
     saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
     saveBtn.disabled = true;
 
     try {
-        await Promise.all(['robotics', 'frc'].map(courseId => {
-            const body = {
-                action: 'setConfig',
-                token: CONFIG.TEACHER_TOKEN,
-                skipReflectionWeeks:  weekSettings[courseId].skipReflections,
-                skipDeliverableWeeks: weekSettings[courseId].skipDeliverables,
-                expectedVersion:      weekSettings[courseId].expectedVersion,
-                reflectionDueDates:   weekSettings[courseId].reflectionDueDates  || {},
-                deliverableDueDates:  weekSettings[courseId].deliverableDueDates || {}
-            };
-            if (courseId === 'robotics') body.quizEnabled = weekSettings.robotics.quizEnabled;
-            return fetch(CONFIG.COURSES[courseId].apiUrl, { method: 'POST', body: JSON.stringify(body) });
-        }));
+        const body = {
+            action: 'setConfig',
+            token: CONFIG.TEACHER_TOKEN,
+            skipReflectionWeeks:  weekSettings[courseId].skipReflections,
+            skipDeliverableWeeks: weekSettings[courseId].skipDeliverables,
+            expectedVersion:      weekSettings[courseId].expectedVersion,
+            reflectionDueDates:   weekSettings[courseId].reflectionDueDates  || {},
+            deliverableDueDates:  weekSettings[courseId].deliverableDueDates || {}
+        };
+        if (courseId === 'robotics') body.quizEnabled = weekSettings.robotics.quizEnabled;
+        await fetch(CONFIG.COURSES[courseId].apiUrl, { method: 'POST', body: JSON.stringify(body) });
         saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
         setTimeout(() => {
             saveBtn.innerHTML = originalHTML;
