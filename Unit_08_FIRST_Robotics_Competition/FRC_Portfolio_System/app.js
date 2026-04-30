@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.26',
+    VERSION: 'v2.9.27',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyXSBw_lCaHusiocLh3B_U1kyOmxyV3WlXhoqEdVAAzUN6U6_6ZCELqSTzzfhH6rUKc/exec',
@@ -970,11 +970,9 @@ async function fetchConfig() {
 
         const expected = cfg.expectedVersion;
         if (expected && expected !== CONFIG.VERSION) {
-            if (!isDirty) {
-                location.reload();
-            } else {
-                showUpdateBanner();
-            }
+            // Always show the banner — never auto-reload. (Robotics ran into a
+            // login vortex when the auto-reload branch fired before markDirty.)
+            showUpdateBanner();
         }
 
         updateUI();

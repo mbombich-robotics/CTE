@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.49',
+    VERSION: 'v2.9.50',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -1195,12 +1195,10 @@ async function fetchConfig() {
 
         const expected = cfg.expectedVersion;
         if (expected && expected !== CONFIG.VERSION) {
-            if (!isDirty) {
-                location.reload();
-                return;
-            } else {
-                showUpdateBanner();
-            }
+            // Always show the banner — never auto-reload. Auto-reload caused a
+            // login vortex when the teacher portal had pushed an older expected
+            // version than the deployed code.
+            showUpdateBanner();
         }
 
         updateUI();

@@ -22,7 +22,7 @@ const CONFIG = {
         robotics: {
             name: 'Robotics Portfolio',
             apiUrl: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
-            currentAppVersion: 'v2.9.49',  // keep in sync with Robotics app.js CONFIG.VERSION
+            currentAppVersion: 'v2.9.50',  // keep in sync with Robotics app.js CONFIG.VERSION
             hasTeams: false,
             totalDeliverables: 9,
             totalReflections: 14,
@@ -36,7 +36,7 @@ const CONFIG = {
         frc: {
             name: 'FRC Portfolio',
             apiUrl: 'https://script.google.com/macros/s/AKfycbyXSBw_lCaHusiocLh3B_U1kyOmxyV3WlXhoqEdVAAzUN6U6_6ZCELqSTzzfhH6rUKc/exec',
-            currentAppVersion: 'v2.9.26',  // keep in sync with FRC app.js CONFIG.VERSION
+            currentAppVersion: 'v2.9.27',  // keep in sync with FRC app.js CONFIG.VERSION
             hasTeams: true,
             teams: ['drivetrain', 'intake', 'shooter', 'climber', 'autonomous', 'integration'],
             totalDeliverables: 13,
@@ -2332,7 +2332,12 @@ async function openWeekSettings() {
             const skipDel  = (weekSettings[courseId].skipDeliverables || []).includes(w);
             const refDate  = (weekSettings[courseId].reflectionDueDates  || {})[w] || '';
             const delDate  = (weekSettings[courseId].deliverableDueDates || {})[w] || '';
-            const label    = w === 12 ? 'Unit 9 · R1' : w === 13 ? 'Unit 9 · R2' : w === 14 ? 'Unit 9 · R3' : 'Week ' + w;
+            // FRC students do Unit 9 work via the Robotics portfolio, so the
+            // Unit 9 labels only apply to the Robotics column.
+            const label    = (courseId === 'robotics' && w === 12) ? 'Unit 9 · R1'
+                           : (courseId === 'robotics' && w === 13) ? 'Unit 9 · R2'
+                           : (courseId === 'robotics' && w === 14) ? 'Unit 9 · R3'
+                           : 'Week ' + w;
             tbody.innerHTML += `<tr>
                 <td style="padding: 8px 10px; font-weight: 600; white-space: nowrap;">${label}</td>
                 <td style="padding: 8px 10px; text-align: center;">
