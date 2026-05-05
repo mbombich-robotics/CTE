@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.39';
+const BACKEND_VERSION = 'v2.9.40';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -1970,17 +1970,23 @@ s9_solutions (max 3): For each challenge: solution tried and whether it worked. 
     ? ['s1_purpose','s1_goals','s2_completeness','s2_links','s3_pins','s3_diagram','s4_pwm','s4_adc','s4_additional','s8_prompts','s8_reflection']
     : ['s5_flowchart','s5_clarity','s6_annotations','s6_accuracy','s7_table','s7_analysis','s9_challenges','s9_solutions'];
 
-  const prompt = `You are grading a high school robotics student's Claw Project Design Brief. Be fair but rigorous. Partial credit is appropriate.
+  const prompt = `You are grading a high school robotics student's Claw Project Design Brief.
+
+SCORING PHILOSOPHY:
+Award points generously when the student demonstrates genuine effort and understanding of the concept, even if their explanation is brief or imperfectly worded. Reserve scores of 0-1 for sections that are truly absent or fundamentally misunderstood. If a student shows real engagement with a concept — even partially — award at least 60-70% of available points for that criterion. A strong, hardworking student should score in the 85-95% range overall.
+
+FEEDBACK TONE:
+Write feedback in an encouraging but specific voice — you are a supportive teacher, not a critic. Speak directly to the student using "you." Lead with what they did well in that section, then give one specific, actionable suggestion for improvement. Never use empty praise ("Great job!"). Be concrete: instead of "missing detail," say "Add a sentence explaining how duty cycle percentage maps to servo angle in degrees."
 
 ${rubric}
 
 ${urlNote}
 
-Return ONLY a valid JSON object — no markdown fences, no explanation. Use null for scores requiring manual image verification. Feedback must be 1-2 specific sentences that reference the student's actual text.
+Return ONLY a valid JSON object — no markdown fences, no explanation. Use null for scores requiring manual image verification. Feedback must be 1-2 specific sentences per criterion.
 
 Required keys: ${criteriaKeys.join(', ')}
 
-Example format: {"s1_purpose": {"score": 2, "max": 3, "feedback": "Describes the system but missing the why-useful element."}, ...}
+Example format: {"s1_purpose": {"score": 2, "max": 3, "feedback": "You clearly described what the claw does — add one sentence on why grip detection matters in real robotics applications to complete this section."}, ...}
 
 STUDENT DOCUMENT:
 ${docText}`;
