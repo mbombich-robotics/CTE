@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.37';
+const BACKEND_VERSION = 'v2.9.38';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -104,6 +104,9 @@ function doPost(e) {
 
       case 'saveGrades':
         return jsonResponse(saveGrades(data.grades));
+
+      case 'recordDeliverableUrl':
+        return jsonResponse(handleRecordDeliverableUrl(data));
 
       case 'sendReminders':
         return jsonResponse(sendRemindersWeb(data.semesterStart));
@@ -566,6 +569,84 @@ function saveDeliverable(student, id, deliverable) {
       '' // Grade (teacher fills in)
     ]);
   }
+}
+
+/**
+ * Teacher records a student's email-submitted deliverable.
+ * Creates (or updates) a Deliverables row marked completed with the URL
+ * pasted by the teacher. Grade and Feedback columns are preserved if the
+ * row already exists.
+ */
+function handleRecordDeliverableUrl(data) {
+  if (data.token !== TEACHER_TOKEN) return { error: 'Unauthorized' };
+  if (!data.email || !data.deliverableId) return { error: 'Missing email or deliverableId' };
+
+  initializeSheets();
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  // Look up student name
+  const studentsSheet = ss.getSheetByName(SHEET_NAMES.STUDENTS);
+  const studentsData  = studentsSheet.getDataRange().getValues();
+  let studentName = '';
+  for (let i = 1; i < studentsData.length; i++) {
+    if (studentsData[i][0] === data.email) { studentName = studentsData[i][1]; break; }
+  }
+  if (!studentName) return { error: 'Student not found: ' + data.email };
+
+  const titles = {
+    1: 'Line Following Practical #1',
+    2: 'Line Following Practical #2',
+    3: 'Ultrasonic Sensor Lab Report',
+    4: 'Scanner Assembly',
+    5: 'Scanning Practical',
+    6: 'Wall Following Robot',
+    7: 'Motor Functions & PWM Values',
+    8: 'Claw Practical',
+    9: 'Final Robot Demonstration'
+  };
+
+  const sheet = ss.getSheetByName(SHEET_NAMES.DELIVERABLES);
+  const sheetData = sheet.getDataRange().getValues();
+  let rowIndex = -1;
+  for (let i = 1; i < sheetData.length; i++) {
+    if (sheetData[i][0] === data.email && sheetData[i][2] == data.deliverableId) {
+      rowIndex = i + 1;
+      break;
+    }
+  }
+
+  const now = new Date().toISOString();
+  if (rowIndex > 0) {
+    // Update content columns A-I; preserve Grade (J), Feedback (K), Graded At (L)
+    const contentData = [
+      data.email,
+      studentName,
+      data.deliverableId,
+      titles[data.deliverableId] || `Deliverable ${data.deliverableId}`,
+      'Submitted by email — recorded by teacher',
+      data.url || '',
+      '',
+      'completed',
+      now
+    ];
+    sheet.getRange(rowIndex, 1, 1, contentData.length).setValues([contentData]);
+  } else {
+    sheet.appendRow([
+      data.email,
+      studentName,
+      data.deliverableId,
+      titles[data.deliverableId] || `Deliverable ${data.deliverableId}`,
+      'Submitted by email — recorded by teacher',
+      data.url || '',
+      '',
+      'completed',
+      now,
+      '' // Grade (teacher fills in)
+    ]);
+  }
+
+  logActivity('TEACHER_SUBMIT', data.email, 'Recorded email submission for deliverable ' + data.deliverableId);
+  return { success: true };
 }
 
 /**

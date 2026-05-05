@@ -808,6 +808,49 @@ async function repairStudentData(email) {
     }
 }
 
+// Teacher-facing: record a URL for a deliverable a student submitted via email.
+// Creates (or updates) a Deliverables row in the active course's backend, then
+// reloads course data and reopens the student detail modal so the new card
+// renders normally with the grading UI.
+async function recordDeliverableUrl(email, deliverableId, url) {
+    url = (url || '').trim();
+    if (!url) {
+        showToast('Please paste a URL before saving.', 'error', 4000);
+        return;
+    }
+    const course = CONFIG.COURSES?.[state.activeCourse];
+    if (!course || !course.apiUrl) {
+        showToast(`Record URL: no API URL for course "${state.activeCourse}"`, 'error', 6000);
+        return;
+    }
+
+    showToast('Saving email submission…', 'info', 2500);
+
+    try {
+        const res = await fetch(course.apiUrl, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'recordDeliverableUrl',
+                token: CONFIG.TEACHER_TOKEN,
+                email,
+                deliverableId,
+                url
+            })
+        });
+        const data = await res.json();
+        if (!data.success) {
+            showToast('Save failed: ' + (data.error || 'unknown error'), 'error', 6000);
+            return;
+        }
+        showToast('Recorded — refreshing…', 'success', 2500);
+        await loadCourseData();
+        openStudentDetail(email);
+    } catch (err) {
+        console.error('recordDeliverableUrl threw:', err);
+        showToast('Save error: ' + (err.message || err), 'error', 5000);
+    }
+}
+
 function openStudentDetail(email) {
     const student = state.students.find(s => s.email === email);
     if (!student) return;
@@ -997,6 +1040,32 @@ function openStudentDetail(email) {
                     </div>
                 </div>
             `;
+        } else {
+            // No submission, no draft — placeholder for teacher to record an email submission URL
+            const skipped = !isDeliverableRequired(state.activeCourse, deliverableWeek(course, id));
+            if (!skipped) {
+                const urlInputId = `email-url-${email.replace(/[^a-zA-Z0-9]/g,'-')}-${id}`;
+                deliverablesPanel.innerHTML += `
+                    <div class="item-card" style="opacity: 0.85; border-left: 3px dashed var(--gray-400);">
+                        <div class="item-header">
+                            <span class="item-title">Deliverable ${id}</span>
+                            <span class="item-status status-badge status-very-behind">Not Submitted</span>
+                        </div>
+                        <div class="item-content"><em>Student has not submitted via the portfolio.</em></div>
+                        <div style="margin-top:10px; padding-top:10px; border-top:1px dashed var(--gray-200);">
+                            <label style="font-size:12px; color:var(--gray-600); display:block; margin-bottom:4px;">Recorded an email submission? Paste the URL here:</label>
+                            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                                <input id="${urlInputId}" type="text" placeholder="https://docs.google.com/..."
+                                       style="flex:1; min-width:220px; padding:5px 10px; border:1px solid var(--gray-300); border-radius:6px; font-size:12px;"/>
+                                <button onclick="recordDeliverableUrl('${email.replace(/'/g,"\\'")}', ${id}, document.getElementById('${urlInputId}').value)"
+                                        style="padding:6px 14px; background:var(--primary); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600;">
+                                    <i class="fas fa-save"></i> Record URL
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
         }
     }
 
