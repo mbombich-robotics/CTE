@@ -2016,3 +2016,29 @@ ${docText}`;
     throw new Error('Could not parse Claude response: ' + text.substring(0, 300));
   }
 }
+
+// ============================================
+// DIAGNOSTICS (run manually from editor)
+// ============================================
+
+function testDriveAccess() {
+  try {
+    const iter = DriveApp.getFiles();
+    Logger.log('Drive scope OK. Has files: ' + iter.hasNext());
+  } catch(e) {
+    Logger.log('Drive scope FAILED: ' + e.message);
+  }
+}
+
+function testDocAccess() {
+  const docUrl = 'PASTE_DOC_URL_HERE';
+  const match = docUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (!match) { Logger.log('Bad URL'); return; }
+  const docId = match[1];
+  try {
+    const name = DriveApp.getFileById(docId).getName();
+    Logger.log('SUCCESS — file name: ' + name);
+  } catch(e) {
+    Logger.log('FAILED — ' + e.message);
+  }
+}
