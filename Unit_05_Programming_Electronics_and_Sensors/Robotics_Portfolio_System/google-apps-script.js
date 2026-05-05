@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.40';
+const BACKEND_VERSION = 'v2.9.41';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -1950,16 +1950,16 @@ s8_reflection (max 5): For each prompt: what AI got right, what it missed, what 
   const rubricD9 = `RUBRIC — DELIVERABLE 9 FINAL BRIEF SECTIONS (25 pts):
 
 Section 5 — Algorithm:
-s5_flowchart (max 4): Flowchart or pseudocode showing main loop: open→read ADC→check contact→classify→set LED→check slip→repeat. Must have decision branches. Should match actual code. 4=accurate, branches, matches code; 2-3=high-level only or missing branches; 1=rough/missing steps; 0=absent.
-s5_clarity (max 2): Another student could follow the algorithm without reading the code. 2=clear; 1=understandable with effort; 0=unclear.
+s5_flowchart (max 4): Flowchart or pseudocode showing main loop: open→read ADC→check contact→classify→set LED→check slip→repeat. 4=accurate flow with explicit decision branches matching code; 3=accurate flow showing all major steps, branches implied but not fully drawn; 2=high-level but understandable; 1=rough or major gaps; 0=absent.
+s5_clarity (max 2): Another student could follow the algorithm without reading the code. 2=clear enough to follow; 1=understandable with effort but missing specific details; 0=unclear.
 
 Section 6 — Annotated Code:
-s6_annotations (max 5): Every function/block has a comment explaining WHAT IT DOES AND WHY in student's own words. NOT AI boilerplate. 5=all annotated, explain why, own words; 3-4=most annotated, some just restate code; 1-2=sparse; 0=none or no code.
+s6_annotations (max 5): Functions and key blocks have comments explaining WHAT and WHY in student's own words. NOT AI boilerplate. 5=most code annotated with genuine explanations, not just code restatements; 4=well annotated with a few unexplained calculation lines; 3=most functions annotated, some just restate code; 1-2=sparse; 0=none or no code.
 s6_accuracy (max 3): Code is complete with no unexplained placeholders. 3=appears complete; 2=minor gaps; 1=incomplete; 0=no code or clearly not student's work.
 
 Section 7 — Testing Results:
-s7_table (max 3): Table with 5+ objects: name, estimated size, ADC at contact, classified size, correct?. Real data (not suspiciously round numbers). 3=5+ real data; 2=3-4 or missing columns; 1=<3 or fabricated; 0=absent.
-s7_analysis (max 2): Notes misclassifications, explains why, proposes one improvement. 2=specific with cause + improvement; 1=superficial; 0=none.
+s7_table (max 3): Table with object test data including name, estimated size, ADC at contact, classified size, correct?. Real data (not suspiciously round numbers). 3=3+ objects with all required columns and real data; 2=3+ objects but missing 1-2 columns; 1=fewer than 3 objects or data appears fabricated; 0=absent.
+s7_analysis (max 2): Reflects honestly on results and identifies at least one specific issue. 2=identifies a specific observation with either a cause or a proposed improvement (does not require both); 1=notes something went wrong but stays vague; 0=none.
 
 Section 9 — Challenges & Solutions:
 s9_challenges (max 3): At least 2 SPECIFIC challenges (not generic). Good example: "ADC readings fluctuated ±30 at rest, causing false contact triggers." 3=2+ specific; 2=1 specific + 1 vague; 1=generic only; 0=absent.
