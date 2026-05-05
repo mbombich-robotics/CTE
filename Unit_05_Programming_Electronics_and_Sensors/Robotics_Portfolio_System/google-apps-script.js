@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.38';
+const BACKEND_VERSION = 'v2.9.39';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -1852,12 +1852,31 @@ function handleGradeDesignBrief(data) {
   if (!idMatch) return { error: 'Could not extract Google Doc ID from URL' };
   const docId = idMatch[1];
 
+  // Fetch the doc via Drive API using the script owner's OAuth token. The
+  // anonymous /export?format=html URL fails with 401 unless sharing is "Anyone
+  // with the link"; this path uses the executing user's credentials (Mr.
+  // Bombich, since the web app is "Execute as: Me") so any doc shared with
+  // him — including domain-shared "Vicksburg" docs — works.
+  //
+  // The DriveApp.getFileById call does two things: it verifies the executing
+  // user actually has access (gives a clean error if not), AND it tells Apps
+  // Script's static analyzer to include the Drive scope in the OAuth token.
   let docHtml;
   try {
-    const exportUrl = 'https://docs.google.com/document/d/' + docId + '/export?format=html';
-    const resp = UrlFetchApp.fetch(exportUrl, { muteHttpExceptions: true });
-    if (resp.getResponseCode() !== 200) {
-      return { error: 'Could not access document (HTTP ' + resp.getResponseCode() + '). Make sure sharing is set to "Anyone with the link can view".' };
+    try {
+      DriveApp.getFileById(docId).getName();
+    } catch(driveErr) {
+      return { error: 'Cannot open the document. The student needs to share their Google Doc with mbombich@vicksburgschools.org (or set link sharing to "Anyone at Vicksburg Schools").' };
+    }
+
+    const exportUrl = 'https://www.googleapis.com/drive/v3/files/' + docId + '/export?mimeType=text/html';
+    const resp = UrlFetchApp.fetch(exportUrl, {
+      headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() },
+      muteHttpExceptions: true
+    });
+    const code = resp.getResponseCode();
+    if (code !== 200) {
+      return { error: 'Drive API export failed: HTTP ' + code + ' — ' + resp.getContentText().substring(0, 200) };
     }
     docHtml = resp.getContentText();
   } catch(e) {
