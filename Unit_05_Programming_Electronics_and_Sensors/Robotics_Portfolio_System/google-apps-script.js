@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.41';
+const BACKEND_VERSION = 'v2.9.42';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -1950,7 +1950,7 @@ s8_reflection (max 5): For each prompt: what AI got right, what it missed, what 
   const rubricD9 = `RUBRIC — DELIVERABLE 9 FINAL BRIEF SECTIONS (25 pts):
 
 Section 5 — Algorithm:
-s5_flowchart (max 4): Flowchart or pseudocode showing main loop: open→read ADC→check contact→classify→set LED→check slip→repeat. 4=accurate flow with explicit decision branches matching code; 3=accurate flow showing all major steps, branches implied but not fully drawn; 2=high-level but understandable; 1=rough or major gaps; 0=absent.
+s5_flowchart (max 4): Flowchart or pseudocode showing main loop: open→read ADC→check contact→classify→set LED→check slip→repeat. Format may be a diagram OR a numbered/bulleted list. 4=accurate flow with explicit decision branches matching code; 3=accurate flow showing all major steps in correct order, even as a numbered list without decision notation; 2=high-level, missing steps, or order unclear; 1=rough or major gaps; 0=absent.
 s5_clarity (max 2): Another student could follow the algorithm without reading the code. 2=clear enough to follow; 1=understandable with effort but missing specific details; 0=unclear.
 
 Section 6 — Annotated Code:
