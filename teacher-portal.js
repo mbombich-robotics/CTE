@@ -942,12 +942,18 @@ function openStudentDetail(email) {
             const dStatusClass = isResubmitted ? 'status-behind' : (isUngraded ? 'status-behind' : 'status-on-track');
             const dBorderStyle = isResubmitted ? 'border-left: 4px solid #e53935;' : (isUngraded ? 'border-left: 4px solid var(--warning);' : '');
             const docUrl = submitted[5] || draft?.links || '';
-            const isDesignBrief = (id === 8 || id === 9) && docUrl.includes('docs.google.com');
+            const isDesignBrief = (id === 8 || id === 9);
+            const briefInputId = `brief-url-${email.replace(/[^a-zA-Z0-9]/g,'-')}-${id}`;
             const aiBriefBtn = isDesignBrief ? `
-                <button onclick="openDesignBriefGrader('${email.replace(/'/g,"\\'")}', ${id}, '${docUrl.replace(/'/g,"\\'")}', '${(submitted[3]||'Deliverable '+id).replace(/'/g,"\\'")}', '${(student.name||'').replace(/'/g,"\\'")}' )"
-                        style="margin-top:10px; padding:6px 14px; background:var(--primary); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">
-                    <i class="fas fa-robot"></i> AI Grade Design Brief
-                </button>` : '';
+                <div style="margin-top:10px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <input id="${briefInputId}" type="text" placeholder="Paste Google Doc URL here"
+                           value="${docUrl.replace(/"/g,'&quot;')}"
+                           style="flex:1; min-width:220px; padding:5px 10px; border:1px solid var(--gray-300); border-radius:6px; font-size:12px;"/>
+                    <button onclick="openDesignBriefGrader('${email.replace(/'/g,"\\'")}', ${id}, document.getElementById('${briefInputId}').value, '${(submitted[3]||'Deliverable '+id).replace(/'/g,"\\'")}', '${(student.name||'').replace(/'/g,"\\'")}' )"
+                            style="padding:6px 14px; background:var(--primary); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">
+                        <i class="fas fa-robot"></i> AI Grade Design Brief
+                    </button>
+                </div>` : '';
             deliverablesPanel.innerHTML += `
                 <div class="item-card" style="${dBorderStyle}">
                     <div class="item-header">
@@ -2544,6 +2550,7 @@ function renderBriefGradesPanel(email, deliverableId, grades) {
                 <span style="font-size:12px; font-weight:700; color:var(--gray-700);">${c.label}</span>
                 <div style="display:flex; align-items:center; gap:4px; flex-shrink:0;">
                     <input type="number" class="brief-score-input" data-id="${c.id}" data-max="${c.max}"
+                           data-label="${c.label}" data-feedback="${(g.feedback||'').replace(/"/g,'&quot;')}"
                            value="${scoreVal}" min="0" max="${c.max}" step="1"
                            oninput="tallyBriefScore()"
                            style="width:44px; padding:3px 6px; border:1px solid ${isManual ? '#fbbf24' : 'var(--gray-300)'}; border-radius:4px; text-align:center; font-size:13px; font-weight:700;">
@@ -2587,13 +2594,22 @@ function tallyBriefScore() {
 
 async function applyAndSaveBriefGrade(email, deliverableId) {
     let total = 0;
+    const lines = [];
     document.querySelectorAll('.brief-score-input').forEach(inp => {
-        total += Math.min(parseInt(inp.value) || 0, parseInt(inp.dataset.max) || 0);
+        const score = Math.min(parseInt(inp.value) || 0, parseInt(inp.dataset.max) || 0);
+        total += score;
+        const label    = inp.dataset.label || inp.dataset.id;
+        const max      = inp.dataset.max;
+        const feedback = inp.dataset.feedback || '';
+        lines.push(`${label}: ${score}/${max}${feedback ? ' — ' + feedback : ''}`);
     });
+    const feedbackText = lines.join('\n') + `\n\nTotal: ${total} pts`;
 
-    // Push into the grade input in the student modal so saveStudentGrades() picks it up
     const gradeInput = document.querySelector(`.grade-input[data-type="deliverable"][data-id="${deliverableId}"][data-email="${email}"]`);
     if (gradeInput) gradeInput.value = total;
+
+    const feedbackInput = document.querySelector(`.feedback-input[data-type="deliverable"][data-id="${deliverableId}"][data-email="${email}"]`);
+    if (feedbackInput && !feedbackInput.value.trim()) feedbackInput.value = feedbackText;
 
     closeDesignBriefGrader();
     await saveStudentGrades();

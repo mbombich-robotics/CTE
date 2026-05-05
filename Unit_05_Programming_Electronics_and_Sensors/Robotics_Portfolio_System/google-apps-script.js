@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.36';
+const BACKEND_VERSION = 'v2.9.37';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -1784,14 +1784,14 @@ function handleGradeDesignBrief(data) {
   }
 
   try {
-    const grades = gradeDesignBriefWithGemini(docHtml, deliverableId);
+    const grades = gradeDesignBriefWithClaude(docHtml, deliverableId);
     return { success: true, grades };
   } catch(e) {
     return { success: false, error: e.message };
   }
 }
 
-function gradeDesignBriefWithGemini(docHtml, deliverableId) {
+function gradeDesignBriefWithClaude(docHtml, deliverableId) {
   // Extract external hyperlink URLs before stripping HTML
   const urls = [];
   const hrefRe = /href="([^"]+)"/g;
@@ -1885,28 +1885,34 @@ Example format: {"s1_purpose": {"score": 2, "max": 3, "feedback": "Describes the
 STUDENT DOCUMENT:
 ${docText}`;
 
-  const apiKey = PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY');
-  const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + apiKey;
-  const payload = {
-    contents: [{ parts: [{ text: prompt }] }],
-    generationConfig: { temperature: 0.1, maxOutputTokens: 2048 }
+  const apiKey = PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY');
+  if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set in Script Properties.');
+
+  const url = 'https://api.anthropic.com/v1/messages';
+  const fetchOpts = {
+    method: 'post',
+    headers: {
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json'
+    },
+    payload: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 2048,
+      messages: [{ role: 'user', content: prompt }]
+    }),
+    muteHttpExceptions: true
   };
-  const opts = { method: 'POST', contentType: 'application/json', payload: JSON.stringify(payload), muteHttpExceptions: true };
 
-  let resp = UrlFetchApp.fetch(url, opts);
-  let result = JSON.parse(resp.getContentText());
-  if (result.error && result.error.code === 429) {
-    Utilities.sleep(10000);
-    resp = UrlFetchApp.fetch(url, opts);
-    result = JSON.parse(resp.getContentText());
-  }
-  if (result.error) throw new Error('Gemini: ' + (result.error.message || JSON.stringify(result.error)));
+  const response = UrlFetchApp.fetch(url, fetchOpts);
+  const result = JSON.parse(response.getContentText());
+  if (result.type === 'error') throw new Error('Claude: ' + result.error.message);
 
-  const text = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const text = result.content[0].text;
   try {
     const cleaned = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '').trim();
     return JSON.parse(cleaned);
   } catch(e) {
-    throw new Error('Could not parse Gemini response: ' + text.substring(0, 300));
+    throw new Error('Could not parse Claude response: ' + text.substring(0, 300));
   }
 }
