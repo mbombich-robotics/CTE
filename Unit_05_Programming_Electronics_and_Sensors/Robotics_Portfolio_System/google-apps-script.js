@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.43';
+const BACKEND_VERSION = 'v2.9.44';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2004,7 +2004,7 @@ ${docText}`;
     },
     payload: JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 4096,
+      max_tokens: 8192,
       messages: [{ role: 'user', content: prompt }]
     }),
     muteHttpExceptions: true
@@ -2013,6 +2013,7 @@ ${docText}`;
   const response = UrlFetchApp.fetch(url, fetchOpts);
   const result = JSON.parse(response.getContentText());
   if (result.type === 'error') throw new Error('Claude: ' + result.error.message);
+  if (result.stop_reason === 'max_tokens') throw new Error('Claude response was cut off (max_tokens reached at 8192). Brief may be too long.');
 
   const text = result.content[0].text;
   try {
