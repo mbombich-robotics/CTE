@@ -1950,7 +1950,7 @@ s8_reflection (max 5): For each prompt: what AI got right, what it missed, what 
   const rubricD9 = `RUBRIC — DELIVERABLE 9 FINAL BRIEF SECTIONS (25 pts):
 
 Section 5 — Algorithm:
-s5_flowchart (max 4): Flowchart or pseudocode showing main loop: open→read ADC→check contact→classify→set LED→check slip→repeat. Format may be a diagram OR a numbered/bulleted list. 4=accurate flow with explicit decision branches matching code; 3=accurate flow showing all major steps in correct order, even as a numbered list without decision notation; 2=high-level, missing steps, or order unclear; 1=rough or major gaps; 0=absent.
+s5_flowchart (max 4): Flowchart or pseudocode showing main loop: open→read ADC→check contact→classify→set LED→check slip→repeat. Format may be a diagram OR a numbered/bulleted list. IMPORTANT: if the student's code (visible below) correctly implements the full control flow, a high-level description that covers all major steps in the right order earns 3/4 — do NOT penalize for omitting decision notation that is already proven correct in the code. Reserve 2/4 for descriptions that are vague, out of order, or missing major steps. 4=written algorithm itself contains explicit decision branches; 3=correct sequence of major steps with working code as evidence; 2=vague or incomplete; 1=major gaps; 0=absent.
 s5_clarity (max 2): Another student could follow the algorithm without reading the code. 2=clear enough to follow; 1=understandable with effort but missing specific details; 0=unclear.
 
 Section 6 — Annotated Code:
