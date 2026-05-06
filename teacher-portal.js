@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.25',
+    VERSION: 'v2.9.26',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -2614,19 +2614,22 @@ function renderBriefGradesPanel(email, deliverableId, grades) {
         if (!isManual) aiTotal += Number(scoreVal);
         else hasManual = true;
 
+        const escapedFeedback = (g.feedback||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
         return `<div style="border:1px solid var(--gray-200); border-radius:6px; padding:11px 12px; margin-bottom:9px; ${isManual ? 'background:#fffbeb; border-color:#fbbf24;' : ''}">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:${g.feedback ? '7px' : '0'};">
                 <span style="font-size:12px; font-weight:700; color:var(--gray-700);">${c.label}</span>
                 <div style="display:flex; align-items:center; gap:4px; flex-shrink:0;">
                     <input type="number" class="brief-score-input" data-id="${c.id}" data-max="${c.max}"
-                           data-label="${c.label}" data-feedback="${(g.feedback||'').replace(/"/g,'&quot;')}"
+                           data-label="${c.label}"
                            value="${scoreVal}" min="0" max="${c.max}" step="1"
                            oninput="tallyBriefScore()"
                            style="width:44px; padding:3px 6px; border:1px solid ${isManual ? '#fbbf24' : 'var(--gray-300)'}; border-radius:4px; text-align:center; font-size:13px; font-weight:700;">
                     <span style="font-size:12px; color:var(--gray-400);">/ ${c.max}</span>
                 </div>
             </div>
-            ${g.feedback ? `<p style="font-size:12px; color:var(--gray-600); line-height:1.5; margin:0;">${g.feedback}</p>` : ''}
+            ${g.feedback ? `<textarea class="brief-feedback-text" data-id="${c.id}"
+                style="width:100%; font-size:12px; color:var(--gray-600); line-height:1.5; border:1px solid var(--gray-200); border-radius:4px; padding:5px 7px; resize:vertical; background:var(--gray-50); box-sizing:border-box;"
+                rows="3">${escapedFeedback}</textarea>` : ''}
             ${isManual ? `<p style="font-size:11px; color:#92400e; margin-top:5px; margin-bottom:0;"><i class="fas fa-exclamation-triangle"></i> Manually verify</p>` : ''}
         </div>`;
     }).join('');
@@ -2669,7 +2672,8 @@ async function applyAndSaveBriefGrade(email, deliverableId) {
         total += score;
         const label    = inp.dataset.label || inp.dataset.id;
         const max      = inp.dataset.max;
-        const feedback = inp.dataset.feedback || '';
+        const feedbackEl = document.querySelector(`.brief-feedback-text[data-id="${inp.dataset.id}"]`);
+        const feedback = feedbackEl ? feedbackEl.value.trim() : '';
         lines.push(`${label}: ${score}/${max}${feedback ? ' — ' + feedback : ''}`);
     });
     const feedbackText = lines.join('\n') + `\n\nTotal: ${total} pts`;
@@ -2678,7 +2682,7 @@ async function applyAndSaveBriefGrade(email, deliverableId) {
     if (gradeInput) gradeInput.value = total;
 
     const feedbackInput = document.querySelector(`.feedback-input[data-type="deliverable"][data-id="${deliverableId}"][data-email="${email}"]`);
-    if (feedbackInput && !feedbackInput.value.trim()) feedbackInput.value = feedbackText;
+    if (feedbackInput) feedbackInput.value = feedbackText;
 
     closeDesignBriefGrader();
     await saveStudentGrades();
