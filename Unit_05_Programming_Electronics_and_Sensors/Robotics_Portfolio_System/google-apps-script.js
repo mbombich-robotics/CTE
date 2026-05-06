@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.44';
+const BACKEND_VERSION = 'v2.9.45';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2017,8 +2017,10 @@ ${docText}`;
 
   const text = result.content[0].text;
   try {
-    const cleaned = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '').trim();
-    return JSON.parse(cleaned);
+    const first = text.indexOf('{');
+    const last = text.lastIndexOf('}');
+    if (first === -1 || last === -1) throw new Error('no JSON object found');
+    return JSON.parse(text.substring(first, last + 1));
   } catch(e) {
     throw new Error('Could not parse Claude response: ' + text.substring(0, 300));
   }
