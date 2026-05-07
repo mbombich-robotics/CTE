@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FRC Team 8126 · Sponsor Thank You · April 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=Barlow+Semi+Condensed:ital,wght@1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red:        #C41230;
+    --red-dark:   #8B0D22;
+    --red-light:  #E8192E;
+    --black:      #0D0D0D;
+    --dark:       #1A1A1A;
+    --mid:        #2E2E2E;
+    --gray:       #6B6B6B;
+    --light-gray: #F0F0F0;
+    --off-white:  #F8F8F8;
+    --white:      #FFFFFF;
+    --rule:       1px solid #D0D0D0;
+    --rule-heavy: 3px solid var(--red);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 400;
+    color: var(--black);
+    background: var(--white);
+    font-size: 20px;
+    line-height: 1.7;
+  }
+
+  /* ── MASTHEAD ─────────────────────────────────────────── */
+  .masthead {
+    background: var(--black);
+    color: var(--white);
+    padding: 36px 40px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .masthead-left {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .masthead-number {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 56px;
+    line-height: 1;
+    color: var(--red-light);
+    letter-spacing: -0.02em;
+  }
+
+  .masthead-divider {
+    width: 2px;
+    height: 48px;
+    background: #444;
+  }
+
+  .masthead-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--white);
+    line-height: 1.2;
+  }
+
+  .masthead-sub {
+    font-size: 12px;
+    color: #888;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .masthead-right {
+    text-align: right;
+    font-size: 12px;
+    color: #888;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1.8;
+  }
+
+  .masthead-right strong {
+    color: var(--red-light);
+    font-weight: 600;
+  }
+
+  /* ── RED RULE BAND ──────────────────────────────────────── */
+  .red-band {
+    background: var(--red);
+    height: 5px;
+  }
+
+  /* ── HERO PHOTO ─────────────────────────────────────────── */
+  .hero {
+    width: 100%;
+    max-height: 420px;
+    object-fit: cover;
+    object-position: center 30%;
+    display: block;
+  }
+
+  .hero-caption {
+    background: var(--dark);
+    color: #AAA;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 10px 40px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+  }
+
+  /* ── MAIN LAYOUT ────────────────────────────────────────── */
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 56px 40px;
+  }
+
+  /* ── LETTER HEADER ──────────────────────────────────────── */
+  .letter-header {
+    margin-bottom: 36px;
+    padding-bottom: 32px;
+    border-bottom: var(--rule);
+  }
+
+  .letter-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 6px;
+  }
+
+  .letter-date {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    color: var(--gray);
+    letter-spacing: 0.06em;
+    margin-bottom: 24px;
+  }
+
+  .letter-salutation {
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--black);
+    margin-bottom: 0;
+  }
+
+  /* ── BODY TEXT ──────────────────────────────────────────── */
+  .body-text p {
+    font-size: 20px;
+    line-height: 1.8;
+    color: #222;
+    margin-bottom: 24px;
+  }
+
+  /* ── INLINE PHOTOS ──────────────────────────────────────── */
+  .photo-block {
+    margin: 32px 0;
+  }
+
+  .photo-block img {
+    width: 100%;
+    display: block;
+    border: 1px solid var(--light-gray);
+  }
+
+  .photo-block.half {
+    float: right;
+    width: 44%;
+    margin: 8px 0 20px 32px;
+  }
+
+  .photo-block.half img {
+    width: 100%;
+  }
+
+  .photo-caption {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray);
+    padding: 8px 0 4px;
+    border-bottom: 1px solid var(--light-gray);
+    margin-top: 6px;
+  }
+
+  .clearfix::after { content: ''; display: table; clear: both; }
+
+  /* ── HIGHLIGHTS BOX ─────────────────────────────────────── */
+  .highlights {
+    background: var(--off-white);
+    border-left: 4px solid var(--red);
+    padding: 22px 24px;
+    margin: 28px 0;
+  }
+
+  .highlights-head {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--red-dark);
+    margin-bottom: 14px;
+  }
+
+  .highlights ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .highlights ul li {
+    font-size: 19px;
+    line-height: 1.7;
+    color: #333;
+    padding: 12px 0;
+    border-bottom: 1px solid #E0E0E0;
+  }
+
+  .highlights ul li:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .highlights ul li::before {
+    content: "›";
+    color: var(--red);
+    font-weight: 700;
+    margin-right: 10px;
+  }
+
+  /* ── PULL QUOTE ─────────────────────────────────────────── */
+  .pull-quote {
+    border-top: 3px solid var(--red);
+    border-bottom: 1px solid var(--light-gray);
+    padding: 28px 0 24px;
+    margin: 36px 0;
+  }
+
+  .pull-quote p {
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.5;
+    color: var(--dark);
+    margin-bottom: 12px;
+  }
+
+  .pull-quote cite {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gray);
+    font-style: normal;
+  }
+
+  /* ── SIGNATURE ──────────────────────────────────────────── */
+  .signature-block {
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: var(--rule);
+  }
+
+  .signature-close {
+    font-size: 20px;
+    color: #222;
+    margin-bottom: 40px;
+    line-height: 1.8;
+  }
+
+  .signature-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 26px;
+    color: var(--black);
+    letter-spacing: 0.02em;
+  }
+
+  .signature-title {
+    font-size: 17px;
+    color: var(--gray);
+    line-height: 1.9;
+    margin-top: 4px;
+  }
+
+  /* ── FOOTER ─────────────────────────────────────────────── */
+  .footer {
+    background: var(--off-white);
+    border-top: var(--rule);
+    padding: 28px 40px;
+    margin-top: 0;
+  }
+
+  .footer-head {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 10px;
+  }
+
+  .footer p {
+    font-size: 17px;
+    color: var(--gray);
+    line-height: 1.65;
+    max-width: 800px;
+  }
+
+  @media (max-width: 640px) {
+    .masthead { padding: 24px 20px; }
+    .container { padding: 36px 20px; }
+    .photo-block.half { float: none; width: 100%; margin: 20px 0; }
+    .footer { padding: 24px 20px; }
+    .hero-caption { padding: 10px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<header class="masthead">
+  <div class="masthead-left">
+    <div class="masthead-number">8126</div>
+    <div class="masthead-divider"></div>
+    <div>
+      <div class="masthead-name">Vicksburg Control Freaks</div>
+      <div class="masthead-sub">FRC Team 8126 &nbsp;·&nbsp; Vicksburg, Michigan</div>
+    </div>
+  </div>
+  <div class="masthead-right">
+    <div><strong>Sponsor Thank You</strong></div>
+    <div>April 2026</div>
+    <div>Applied Engineering &amp; Robotics</div>
+    <div>Vicksburg High School</div>
+  </div>
+</header>
+<div class="red-band"></div>
+
+<!-- HERO PHOTO -->
+<img class="hero" src="team pit.jpg" alt="Team 8126 in the competition pit">
+<div class="hero-caption">Team 8126 — Competition Pit, 2026 FIRST in Michigan District Championship</div>
+
+<!-- LETTER BODY -->
+<div class="container">
+
+  <div class="letter-header">
+    <div class="letter-label">A Message from the Control Freaks</div>
+    <div class="letter-date">April 2026</div>
+    <p class="letter-salutation">Dear Friend and Supporter of the Control Freaks,</p>
+  </div>
+
+  <div class="body-text">
+    <p>Every spring, when the competition season wraps up and the robot gets put away, I find myself wanting to reach out to the people who made it all possible. This year especially, I wanted to make sure you heard directly from us — because this season was something worth sharing.</p>
+
+    <p>The short version: Team 8126 qualified for the FIRST in Michigan District Championship and came home with two awards — the Team Sustainability Award at our second district event, and the Innovation in Controls Award at the state competition. Winning a judged award at the state level, competing against Michigan's top programs, is a milestone this team has been working toward for years. Your support is a part of why we got there.</p>
+  </div>
+
+  <!-- WHAT YOUR INVESTMENT MADE POSSIBLE -->
+  <div class="highlights">
+    <div class="highlights-head">What Your Investment Made Possible This Season</div>
+    <ul>
+      <li>A competition robot built from scratch over a twelve-week season — six weeks of design and build, six weeks of district competition. Students designed four integrated subsystems: a collector, conveyor, indexer, and flywheel shooter, along with a custom multi-camera vision system built in-house on a Raspberry Pi.</li>
+      <li>Two major awards, including recognition at the state level for the team's controls system — a reflection of the depth of technical work students put in far beyond just making the robot move.</li>
+      <li>A pipeline that's proving itself. Seven students on this year's roster started in our FIRST LEGO League program in the fourth grade — one led all of our awards submissions, coached the team through judging, and ran our competition scouting operation. That kind of development doesn't happen by accident.</li>
+    </ul>
+  </div>
+
+  <!-- ROBOT INLINE PHOTO -->
+  <div class="clearfix">
+    <div class="photo-block half">
+      <img src="Three shooter paths — visually and mechanically identical.jpg" alt="Three shooter paths — visually and mechanically identical">
+      <div class="photo-caption">Three Shooter Paths — Visually and Mechanically Identical</div>
+    </div>
+
+    <div class="body-text">
+      <p>The Control Freaks program has been building engineers in Vicksburg for years, and its growth ultimately led to the creation of a dedicated Applied Engineering and Robotics class at Vicksburg High School — formalizing what the team had been doing all along. Students in that class use the same tools, workflows, and design processes that professionals use: CAD software, CNC machining, 3D printing, and structured engineering documentation. The competitive season is woven directly into the curriculum as a real-world engineering project with real stakes.</p>
+      <p>The program operates a team facility equipped with CNC machining, ten 3D printers, and a practice field built at two-thirds regulation size — giving students professional-grade resources for prototyping and driver training.</p>
+    </div>
+  </div>
+
+  <!-- AWARD PHOTO -->
+  <div class="photo-block">
+    <img src="Award.JPG" alt="Team 8126 receiving the Innovation in Controls Award" style="max-height:400px; object-fit:cover; object-position:center top;">
+    <div class="photo-caption">Innovation in Controls Award — FIM District Championship, 2026</div>
+  </div>
+
+  <!-- SCORING CLIP VIDEO -->
+  <div class="photo-block" style="margin-top:32px;">
+    <video controls style="width:100%; display:block; border:1px solid var(--light-gray); background:#000;">
+      <source src="Scoring Clip.mp4" type="video/mp4">
+    </video>
+    <div class="photo-caption">Scoring Clip — 2026 FRC Season</div>
+  </div>
+
+  <!-- PULL QUOTE -->
+  <div class="pull-quote">
+    <p>"We have seven students this year who started in FIRST LEGO League in the fourth grade. One ran all of our awards submissions and led the team through judging. One was the CAD project manager for a major subsystem. One was our master mechanic. That's not a coincidence — that's what a pipeline looks like when it works. That's exactly what this was always supposed to look like."</p>
+    <cite>— Matt Bombich, Applied Engineering and Robotics, Vicksburg High School</cite>
+  </div>
+
+  <div class="body-text">
+    <p>Looking ahead, we are already planning for the 2027 season. We have a growing roster, a program that's earning recognition at the state level, and students who are more capable every year. What we need most is the continued partnership of supporters like you — people and organizations who believe that investing in young engineers is worth it.</p>
+    <p>Thank you for being part of what we are building here. Your name is on this season just as much as ours is. We are proud to represent our community, and we hope to keep doing it for years to come.</p>
+  </div>
+
+  <!-- SIGNATURE -->
+  <div class="signature-block">
+    <p class="signature-close">With gratitude,</p>
+    <div class="signature-name">Matt Bombich</div>
+    <div class="signature-title">
+      Applied Engineering and Robotics<br>
+      Vicksburg High School &nbsp;·&nbsp; Control Freaks FRC Team 8126
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-head">Support the 2027 Season</div>
+  <p>To learn more or to renew your sponsorship for the 2027 season, please visit <strong><a href="https://vicksburgschools.revtrak.net/robotics-club" style="color:var(--red);">vicksburgschools.revtrak.net/robotics-club</a></strong> or reach out directly. FRC Team 8126, the Vicksburg Control Freaks, is a high school robotics team operating as part of the FIRST in Michigan district program, affiliated with the Applied Engineering and Robotics program at Vicksburg High School.</p>
+</div>
+
+<!-- SPONSORS -->
+<div style="background:var(--white); border-top:var(--rule); padding:36px 40px; text-align:center;">
+  <div style="font-family:'Barlow Condensed',sans-serif; font-weight:900; font-size:48px; letter-spacing:0.04em; text-transform:uppercase; color:var(--red); margin-bottom:20px;">Thank You to Our Sponsors</div>
+  <img src="Sponsors.png" alt="Team 8126 Sponsors" style="max-width:100%; height:auto; display:inline-block;">
+</div>
+
+</body>
+</html>
