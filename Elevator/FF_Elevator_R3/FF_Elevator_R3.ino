@@ -153,6 +153,7 @@ uint32_t      displayBits     = 0;
 bool          ledOn           = false;
 unsigned long lastLedToggle   = 0;
 SimState      stateBeforeHold = STATE_IDLE;
+int           phase2Destination = 0;  // 0 = no destination, 1-3 = traveling to that floor in Phase 2
 
 // ═══════════════════════════════════════════════════════════════════════════
 // DISPLAY
@@ -269,6 +270,8 @@ void updateSerialLink() {
 
 void enterState(SimState s) {
   simState = s; stateTimer = millis();
+  // Phase 2 destination is only meaningful inside PHASE2; clear it when leaving.
+  if (s != STATE_PHASE2) phase2Destination = 0;
   if (s == STATE_IDLE) {
     currentFloor = 3; showFloor(3); faultMode = FAULT_NONE;
   }
@@ -347,10 +350,23 @@ void runStateMachine() {
       if (keyPh2Hold.state) {
         stateBeforeHold = STATE_PHASE2; enterState(STATE_HOLD); break;
       }
-      if (btnCancel.pressed) { showFloor(currentFloor); break; }
-      if (btnFloor1.pressed && currentFloor != 1) { currentFloor=1; showFloor(1); }
-      if (btnFloor2.pressed && currentFloor != 2) { currentFloor=2; showFloor(2); }
-      if (btnFloor3.pressed && currentFloor != 3) { currentFloor=3; showFloor(3); }
+      if (btnCancel.pressed) {
+        phase2Destination = 0; stateTimer = now;
+        showFloor(currentFloor); break;
+      }
+      // Set destination — the actual floor change is delayed by TRAVEL_MS per
+      // floor, mirroring how Phase 1 / Hall Call travel downward.
+      if (btnFloor1.pressed && currentFloor != 1) { phase2Destination = 1; stateTimer = now; }
+      if (btnFloor2.pressed && currentFloor != 2) { phase2Destination = 2; stateTimer = now; }
+      if (btnFloor3.pressed && currentFloor != 3) { phase2Destination = 3; stateTimer = now; }
+      // Step toward destination one floor per TRAVEL_MS
+      if (phase2Destination != 0 && phase2Destination != currentFloor && elapsed >= TRAVEL_MS) {
+        if (currentFloor < phase2Destination) currentFloor++;
+        else                                   currentFloor--;
+        showFloor(currentFloor);
+        stateTimer = now;
+        if (currentFloor == phase2Destination) phase2Destination = 0;
+      }
       break;
 
     case STATE_HOLD:
