@@ -387,9 +387,32 @@ function armAudio(){
   const u=new SpeechSynthesisUtterance("Audio armed.");
   u.rate=0.9; speechSynthesis.speak(u);
   audioArmed=true;
+  try{ localStorage.setItem('elevatorAudioArmed','1'); }catch(e){}
   const b=document.getElementById("armBtn");
   b.className="arm-btn armed"; b.innerHTML="&#x1F508; Audio Armed";
 }
+
+// Browsers require a user gesture to unlock AudioContext, but localStorage
+// remembers the user's preference across refreshes. If audio was armed before,
+// silently re-arm on the very next tap anywhere on the page — no need to hunt
+// for the dedicated Arm button.
+function setupAutoArm(){
+  let wasArmed=false;
+  try{ wasArmed = localStorage.getItem('elevatorAudioArmed')==='1'; }catch(e){}
+  if(!wasArmed) return;
+  const b=document.getElementById("armBtn");
+  if(b){ b.innerHTML="&#x1F50A; Audio &mdash; tap anywhere to enable"; }
+  const silentArm=()=>{
+    if(audioArmed) return;
+    ensureAudioCtx();
+    audioArmed=true;
+    if(b){ b.className="arm-btn armed"; b.innerHTML="&#x1F508; Audio Armed"; }
+  };
+  ['pointerdown','touchstart','keydown'].forEach(ev=>{
+    document.addEventListener(ev, silentArm, {once:true, capture:true, passive:true});
+  });
+}
+setupAutoArm();
 
 function speak(text){
   if(!audioArmed) return;
