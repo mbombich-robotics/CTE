@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.45';
+const BACKEND_VERSION = 'v2.9.46';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -32,6 +32,180 @@ const SHEET_NAMES = {
   CONFIG: 'Config',
   LOG: 'Activity Log',
   QUIZ: 'Claw Quiz'
+};
+
+// ============================================
+// AI TUTOR — LESSON CONFIGS
+// Each lesson defines: unit info, step sequence (with gate questions),
+// and the confidential target code the AI uses to guide students.
+// To add a new unit: copy the 'unit5_motors' block and fill in the fields.
+// ============================================
+const TUTOR_LESSONS = {
+  'unit5_motors': {
+    unit: 'Unit 5 — Programming, Electronics & Sensors',
+    title: 'Robot Motor Control Library',
+    board: 'Arduino Nano RP2040 Connect',
+    language: 'C++ / Arduino',
+    objective: 'Build a complete motor control library for the class robot from scratch, one function at a time. By the end you will have a working sketch with forward, backward, stop, pivot, distance sensing, encoder tracking, and closed-loop straight driving.',
+    steps: [
+      { title: 'Declare pin constants',
+        detail: 'Define all motor, encoder, ultrasonic, servo, and IR sensor pins as const uint8_t variables at the top of the sketch, before setup().',
+        gateQuestion: 'What is const uint8_t and why use it instead of writing the number 6 directly in your code everywhere?' },
+      { title: 'Configure pinMode in setup()',
+        detail: 'Call pinMode() for each motor direction pin (OUTPUT) and each encoder pin (INPUT_PULLUP).',
+        gateQuestion: 'What happens at runtime if you forget to call pinMode for an output pin? Test it.' },
+      { title: 'Write driveForward(speed)',
+        detail: 'A function that sets the INA/INB direction pins and calls analogWrite on both PWM pins to drive both motors forward.',
+        gateQuestion: 'What is the valid range for the speed parameter? What does analogWrite do with a value outside 0–255?' },
+      { title: 'Write driveBackward(speed)',
+        detail: 'Same structure as driveForward but with direction pins reversed for both motors.',
+        gateQuestion: 'What is the only thing that changes between driveForward and driveBackward?' },
+      { title: 'Write stopMotors()',
+        detail: 'Cut power to both motors completely — both direction pins LOW, both PWM pins 0.',
+        gateQuestion: 'What is the difference between stopping by setting both direction pins LOW vs just setting PWM to 0? Try both.' },
+      { title: 'Write pivotLeft() and pivotRight()',
+        detail: 'Spin the robot in place by driving one wheel forward and the other backward.',
+        gateQuestion: 'What is the difference between a pivot turn and an arc turn? When is each useful?' },
+      { title: 'Write readDistance()',
+        detail: 'Fire a 10 µs ultrasonic pulse on the TRIG pin and measure the echo duration to return distance in centimeters.',
+        gateQuestion: 'The formula divides the echo duration by 58. Where does 58 come from — what physics is behind it?' },
+      { title: 'Add encoder variables and ISRs',
+        detail: 'Declare two volatile long variables for encoder counts, write ISR functions that increment them, and attach them with attachInterrupt() on RISING edge of channel A.',
+        gateQuestion: 'Why must encoder count variables be declared volatile? What happens to the program if you forget?' },
+      { title: 'Write driveStraight() with P-controller',
+        detail: 'Drive forward a target number of encoder ticks. Use a proportional error term (left ticks minus right ticks) to trim the faster motor down and the slower motor up.',
+        gateQuestion: 'What happens if KP is too high? Too low? How would you tune it on the real robot?' }
+    ],
+    targetCode: `// VHS Robotics — Master Codebase for Arduino Nano RP2040 Connect
+// Motor driver: L298N-style (INA/INB direction + PWM speed)
+
+#include <Servo.h>
+#include <Arduino.h>
+
+#undef A4
+#define A4 18
+
+// PIN MAP
+const uint8_t MTR_R_INA    = 6;
+const uint8_t MTR_R_INB    = 4;
+const uint8_t MTR_R_PWM    = 3;
+const uint8_t MTR_R_QUAD_A = 9;
+const uint8_t MTR_R_QUAD_B = 10;
+const uint8_t MTR_L_INA    = 8;
+const uint8_t MTR_L_INB    = 7;
+const uint8_t MTR_L_PWM    = 5;
+const uint8_t MTR_L_QUAD_A = 11;
+const uint8_t MTR_L_QUAD_B = 12;
+const uint8_t USONIC_TRIG  = 15;
+const uint8_t USONIC_ECHO  = 13;
+const uint8_t SCAN_SERVO_PIN    = A4;
+const uint8_t GRIPPER_SERVO_PIN = 19;
+const uint8_t IR_1 = A2;
+const uint8_t IR_2 = 0;
+const uint8_t IR_3 = 2;
+const uint8_t IR_4 = 1;
+const uint8_t IR_5 = A3;
+const uint8_t MTR_R_CS = A3;
+const uint8_t MTR_L_CS = A1;
+
+// ENCODER GLOBALS
+volatile long encoderRight = 0;
+volatile long encoderLeft  = 0;
+void rightEncoderISR() { encoderRight++; }
+void leftEncoderISR()  { encoderLeft++;  }
+
+// TUNING
+const int   BASE_SPEED   = 150;
+const int   TURN_SPEED   = 180;
+const long  TICKS_PER_CM = 20;
+const float STRAIGHT_KP  = 2.0;
+
+void setup() {
+  Serial.begin(115200);
+  while (!Serial && millis() < 3000);
+  pinMode(MTR_R_INA, OUTPUT); pinMode(MTR_R_INB, OUTPUT); pinMode(MTR_R_PWM, OUTPUT);
+  pinMode(MTR_L_INA, OUTPUT); pinMode(MTR_L_INB, OUTPUT); pinMode(MTR_L_PWM, OUTPUT);
+  pinMode(MTR_R_QUAD_A, INPUT_PULLUP); pinMode(MTR_R_QUAD_B, INPUT_PULLUP);
+  pinMode(MTR_L_QUAD_A, INPUT_PULLUP); pinMode(MTR_L_QUAD_B, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(MTR_R_QUAD_A), rightEncoderISR, RISING);
+  attachInterrupt(digitalPinToInterrupt(MTR_L_QUAD_A), leftEncoderISR,  RISING);
+  pinMode(USONIC_TRIG, OUTPUT); pinMode(USONIC_ECHO, INPUT);
+  digitalWrite(USONIC_TRIG, LOW);
+  stopMotors();
+}
+
+void loop() {
+  driveStraight(BASE_SPEED, 50 * TICKS_PER_CM);
+  stopMotors();
+  delay(2000);
+}
+
+void driveStraight(int speed, long targetTicks) {
+  noInterrupts(); encoderLeft = 0; encoderRight = 0; interrupts();
+  while (true) {
+    long L, R;
+    noInterrupts(); L = encoderLeft; R = encoderRight; interrupts();
+    if (L >= targetTicks || R >= targetTicks) break;
+    long error = L - R;
+    int leftSpeed  = constrain(speed - (int)(STRAIGHT_KP * error), 0, 255);
+    int rightSpeed = constrain(speed + (int)(STRAIGHT_KP * error), 0, 255);
+    setMotorSpeeds(leftSpeed, rightSpeed);
+    delay(10);
+  }
+  stopMotors();
+}
+
+void setMotorSpeeds(int leftSpeed, int rightSpeed) {
+  digitalWrite(MTR_L_INA, LOW); digitalWrite(MTR_L_INB, HIGH);
+  analogWrite(MTR_L_PWM, constrain(leftSpeed, 0, 255));
+  digitalWrite(MTR_R_INA, LOW); digitalWrite(MTR_R_INB, HIGH);
+  analogWrite(MTR_R_PWM, constrain(rightSpeed, 0, 255));
+}
+
+void driveForward(int speed) { setMotorSpeeds(speed, speed); }
+
+void driveBackward(int speed) {
+  digitalWrite(MTR_L_INA, HIGH); digitalWrite(MTR_L_INB, LOW);
+  analogWrite(MTR_L_PWM, constrain(speed, 0, 255));
+  digitalWrite(MTR_R_INA, HIGH); digitalWrite(MTR_R_INB, LOW);
+  analogWrite(MTR_R_PWM, constrain(speed, 0, 255));
+}
+
+void pivotLeft(int speed) {
+  digitalWrite(MTR_L_INA, HIGH); digitalWrite(MTR_L_INB, LOW);
+  analogWrite(MTR_L_PWM, constrain(speed, 0, 255));
+  digitalWrite(MTR_R_INA, LOW);  digitalWrite(MTR_R_INB, HIGH);
+  analogWrite(MTR_R_PWM, constrain(speed, 0, 255));
+}
+
+void pivotRight(int speed) {
+  digitalWrite(MTR_L_INA, LOW);  digitalWrite(MTR_L_INB, HIGH);
+  analogWrite(MTR_L_PWM, constrain(speed, 0, 255));
+  digitalWrite(MTR_R_INA, HIGH); digitalWrite(MTR_R_INB, LOW);
+  analogWrite(MTR_R_PWM, constrain(speed, 0, 255));
+}
+
+void stopMotors() {
+  digitalWrite(MTR_L_INA, LOW); digitalWrite(MTR_L_INB, LOW); analogWrite(MTR_L_PWM, 0);
+  digitalWrite(MTR_R_INA, LOW); digitalWrite(MTR_R_INB, LOW); analogWrite(MTR_R_PWM, 0);
+}
+
+long readDistance() {
+  digitalWrite(USONIC_TRIG, LOW);  delayMicroseconds(2);
+  digitalWrite(USONIC_TRIG, HIGH); delayMicroseconds(10);
+  digitalWrite(USONIC_TRIG, LOW);
+  long duration = pulseIn(USONIC_ECHO, HIGH, 30000);
+  if (duration == 0) return 0;
+  return duration / 58;
+}`
+  }
+  // ── ADD FUTURE LESSONS HERE ──────────────────────────────────────────────────
+  // 'unit6_sensors': {
+  //   unit: 'Unit 6 — Sensors & Robot Behaviors',
+  //   title: 'IR Line Following & Obstacle Avoidance',
+  //   steps: [ ... ],
+  //   targetCode: `...`
+  // }
 };
 
 // ============================================
@@ -69,6 +243,9 @@ function doGet(e) {
 
       case 'export':
         return jsonResponse(exportAllData());
+
+      case 'getTutorProgress':
+        return jsonResponse(getTutorProgress(e.parameter.email, e.parameter.lessonId));
 
       default:
         return jsonResponse({ error: 'Unknown action', validActions: ['load', 'team', 'all', 'export'] });
@@ -125,6 +302,12 @@ function doPost(e) {
 
       case 'gradeDesignBrief':
         return jsonResponse(handleGradeDesignBrief(data));
+
+      case 'chatWithTutor':
+        return jsonResponse(chatWithTutor(data));
+
+      case 'saveTutorProgress':
+        return jsonResponse(saveTutorProgress(data));
 
       default:
         return jsonResponse({ error: 'Unknown action' });
@@ -2024,6 +2207,135 @@ ${docText}`;
   } catch(e) {
     throw new Error('Could not parse Claude response: ' + text.substring(0, 300));
   }
+}
+
+// ============================================
+// AI TUTOR FUNCTIONS
+// ============================================
+
+function getTutorProgress(email, lessonId) {
+  if (!email || !lessonId) return { success: false, error: 'Missing email or lessonId' };
+  const sheet = getOrCreateTutorSheet();
+  const data  = sheet.getDataRange().getValues();
+  for (let r = 1; r < data.length; r++) {
+    if (data[r][0] === email && data[r][2] === lessonId) {
+      return {
+        success:      true,
+        found:        true,
+        step:         Number(data[r][3]) || 1,
+        sessions:     Number(data[r][4]) || 0,
+        lastActive:   data[r][5] ? data[r][5].toString() : '',
+        teacherNotes: data[r][6] || ''
+      };
+    }
+  }
+  return { success: true, found: false, step: 1, sessions: 0 };
+}
+
+function saveTutorProgress(data) {
+  const { email, name, lessonId, step, incrementSession } = data;
+  if (!email || !lessonId) return { success: false, error: 'Missing email or lessonId' };
+  const sheet = getOrCreateTutorSheet();
+  const rows  = sheet.getDataRange().getValues();
+  const today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd');
+  for (let r = 1; r < rows.length; r++) {
+    if (rows[r][0] === email && rows[r][2] === lessonId) {
+      const sessions = (Number(rows[r][4]) || 0) + (incrementSession ? 1 : 0);
+      sheet.getRange(r + 1, 4, 1, 3).setValues([[step, sessions, today]]);
+      return { success: true };
+    }
+  }
+  sheet.appendRow([email, name || email, lessonId, step, incrementSession ? 1 : 0, today, '']);
+  return { success: true };
+}
+
+function chatWithTutor(data) {
+  const { lessonId, message, step, history } = data;
+  if (!lessonId || !message) return { success: false, error: 'Missing lessonId or message' };
+  const lesson = TUTOR_LESSONS[lessonId];
+  if (!lesson) return { success: false, error: 'Unknown lesson: ' + lessonId };
+
+  const apiKey = PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY');
+  if (!apiKey) return { success: false, error: 'ANTHROPIC_API_KEY not configured in Script Properties' };
+
+  // Cap history at last 30 exchanges to keep payload size reasonable
+  const trimmedHistory = (history || []).slice(-60);
+
+  const fetchOpts = {
+    method: 'post',
+    headers: {
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json'
+    },
+    payload: JSON.stringify({
+      model:      'claude-sonnet-4-6',
+      max_tokens: 1024,
+      system:     buildTutorPrompt(lesson, Number(step) || 1),
+      messages:   [...trimmedHistory, { role: 'user', content: message }]
+    }),
+    muteHttpExceptions: true
+  };
+
+  const response = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', fetchOpts);
+  const result   = JSON.parse(response.getContentText());
+  if (result.type === 'error')          return { success: false, error: 'Claude: ' + result.error.message };
+  if (result.stop_reason === 'max_tokens') return { success: false, error: 'Response truncated. Try a shorter question.' };
+  return { success: true, reply: result.content[0].text };
+}
+
+function buildTutorPrompt(lesson, currentStep) {
+  const stepList = lesson.steps.map((s, i) => {
+    const n   = i + 1;
+    const tag = n < currentStep ? '[DONE]' : n === currentStep ? '[CURRENT]' : '[AHEAD]';
+    return `Step ${n} ${tag}: ${s.title}\n  Goal: ${s.detail}\n  Gate question: ${s.gateQuestion}`;
+  }).join('\n\n');
+
+  const cur = lesson.steps[currentStep - 1] || lesson.steps[lesson.steps.length - 1];
+
+  return `You are a Socratic coding tutor for Applied Engineering & Robotics at Vicksburg High School.
+
+LESSON: ${lesson.title}
+UNIT: ${lesson.unit}
+BOARD: ${lesson.board} | LANGUAGE: ${lesson.language}
+OBJECTIVE: ${lesson.objective}
+
+WORKING SOLUTION — CONFIDENTIAL. Never reproduce this directly. Use it only to understand what students are building toward:
+\`\`\`cpp
+${lesson.targetCode}
+\`\`\`
+
+STEP SEQUENCE:
+${stepList}
+
+THE STUDENT IS CURRENTLY ON STEP ${currentStep}: "${cur.title}"
+Do not help them with any step beyond Step ${currentStep} until they demonstrate understanding of the current one.
+
+YOUR ROLE: Socratic tutor — not a code generator. Guide students to discover answers through questions, not by providing answers.
+
+RULES (follow strictly):
+1. Never reproduce the target code or write complete functions. At most 3–4 lines as a hint, and only after a genuine student attempt.
+2. Never advance past Step ${currentStep}. If they ask about a later step: "Let's lock in Step ${currentStep} first."
+3. Always ask what the student has already tried before explaining anything. Don't explain what hasn't been attempted.
+4. Vague prompts ("make it go forward") get redirected: help the student write a specific prompt, then ask them to try again.
+5. When a step looks complete, ask the gate question before confirming they can move on.
+6. If asked for the full solution: "That one's yours to build. Let's look at what you have right now."
+7. Keep responses SHORT: 3–5 sentences, then ask a question back.
+8. Be warm. Getting stuck is expected and normal.
+9. When stuck: ask ONE guiding question — not a hint, a question.
+10. For bugs: don't fix them. Ask "What do you think this line does? What did you expect?"`;
+}
+
+function getOrCreateTutorSheet() {
+  const ss   = SpreadsheetApp.getActiveSpreadsheet();
+  let   sheet = ss.getSheetByName('Tutor Progress');
+  if (!sheet) {
+    sheet = ss.insertSheet('Tutor Progress');
+    const headers = [['Email', 'Name', 'Lesson ID', 'Current Step', 'Sessions', 'Last Active', 'Teacher Notes']];
+    sheet.getRange(1, 1, 1, 7).setValues(headers).setFontWeight('bold');
+    sheet.setFrozenRows(1);
+  }
+  return sheet;
 }
 
 // ============================================

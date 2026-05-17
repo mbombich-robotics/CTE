@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VHS AI Coding Tutor</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red:     #e81929;
+    --bg:      #0f0f0f;
+    --bg2:     #161616;
+    --bg3:     #1e1e1e;
+    --bg4:     #272727;
+    --border:  #2c2c2c;
+    --text:    #e4e4e4;
+    --muted:   #5a5a5a;
+    --student: #1a3554;
+    --code:    #0d1117;
+    --green:   #4caf50;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text);
+               font-family: 'Barlow', sans-serif; font-size: 15px; }
+
+  /* ── SETUP SCREEN ──────────────────────────────────────────── */
+  #setup {
+    position: fixed; inset: 0; background: var(--bg);
+    display: flex; align-items: center; justify-content: center; z-index: 200; padding: 20px;
+  }
+  .card {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 14px;
+    padding: 40px; width: 100%; max-width: 420px;
+  }
+  .card-logo { font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+               font-size: 26px; color: var(--red); letter-spacing: .04em; margin-bottom: 2px; }
+  .card-sub  { font-size: 11px; color: var(--muted); text-transform: uppercase;
+               letter-spacing: .12em; margin-bottom: 30px; }
+  .field-label { font-size: 11px; color: var(--muted); text-transform: uppercase;
+                 letter-spacing: .1em; margin-bottom: 6px; }
+  .field-input, .field-select {
+    width: 100%; padding: 11px 14px; background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 7px; color: var(--text); font-family: 'Barlow', sans-serif; font-size: 15px;
+    margin-bottom: 18px; outline: none; transition: border-color .15s;
+  }
+  .field-input:focus, .field-select:focus { border-color: var(--red); }
+  .field-hint { font-size: 12px; color: var(--muted); margin-top: -12px; margin-bottom: 18px; }
+  .start-btn {
+    width: 100%; padding: 13px; background: var(--red); color: #fff; border: none;
+    border-radius: 7px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+    font-size: 17px; letter-spacing: .05em; text-transform: uppercase; cursor: pointer;
+    transition: background .15s;
+  }
+  .start-btn:hover { background: #c41220; }
+  .resume-banner {
+    display: none; background: #0d2e0d; border: 1px solid #2a5a2a; border-radius: 7px;
+    padding: 12px 14px; margin-bottom: 18px; font-size: 13px; color: var(--green); line-height: 1.5;
+  }
+
+  /* ── APP SHELL ─────────────────────────────────────────────── */
+  #app { display: none; height: 100vh; flex-direction: column; }
+  #app.active { display: flex; }
+
+  /* ── HEADER ────────────────────────────────────────────────── */
+  .hdr {
+    background: var(--bg2); border-bottom: 1px solid var(--border);
+    padding: 10px 20px; display: flex; align-items: center; gap: 14px; flex-shrink: 0;
+  }
+  .hdr-logo { font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+              font-size: 19px; color: var(--red); letter-spacing: .04em; white-space: nowrap; }
+  .hdr-sep  { width: 1px; height: 18px; background: var(--border); flex-shrink: 0; }
+  .hdr-lesson { font-size: 13px; font-weight: 600; color: var(--text); }
+  .hdr-student { font-size: 12px; color: var(--muted); margin-left: auto; white-space: nowrap; }
+  .hdr-btn {
+    padding: 5px 11px; background: none; border: 1px solid var(--border); border-radius: 5px;
+    color: var(--muted); font-size: 11px; cursor: pointer; font-family: 'Barlow', sans-serif;
+    text-transform: uppercase; letter-spacing: .08em; white-space: nowrap;
+    transition: border-color .15s, color .15s;
+  }
+  .hdr-btn:hover { border-color: var(--red); color: var(--red); }
+
+  /* ── MAIN ──────────────────────────────────────────────────── */
+  .main { display: flex; flex: 1; overflow: hidden; }
+
+  /* ── SIDEBAR ───────────────────────────────────────────────── */
+  .sidebar {
+    width: 210px; flex-shrink: 0; background: var(--bg2); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .sb-head {
+    padding: 16px 16px 10px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+    font-size: 11px; text-transform: uppercase; letter-spacing: .12em; color: var(--muted);
+    border-bottom: 1px solid var(--border); flex-shrink: 0;
+  }
+  .sb-steps { flex: 1; overflow-y: auto; padding: 10px 10px; }
+  .step-row {
+    display: flex; align-items: flex-start; gap: 9px; padding: 7px 8px; border-radius: 6px;
+    margin-bottom: 2px; cursor: default;
+  }
+  .step-row.current { background: var(--bg4); }
+  .step-n {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 11px;
+    color: var(--muted); min-width: 14px; margin-top: 2px; flex-shrink: 0;
+  }
+  .step-row.current .step-n { color: var(--red); }
+  .step-row.done    .step-n { color: var(--green); }
+  .step-t { font-size: 12px; color: var(--muted); line-height: 1.4; }
+  .step-row.current .step-t { color: var(--text); }
+  .step-row.done    .step-t { color: var(--green); text-decoration: line-through; opacity: .6; }
+  .sb-foot { padding: 12px 10px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; flex-direction: column; gap: 6px; }
+  .sb-act {
+    width: 100%; padding: 7px 10px; background: none; border: 1px solid var(--border);
+    border-radius: 5px; color: var(--muted); font-size: 11px; cursor: pointer;
+    font-family: 'Barlow', sans-serif; text-transform: uppercase; letter-spacing: .08em;
+    transition: border-color .15s, color .15s; text-align: left;
+  }
+  .sb-act:hover { border-color: var(--red); color: var(--red); }
+  .progress-bar { height: 3px; background: var(--border); border-radius: 2px; margin-bottom: 8px; }
+  .progress-fill { height: 100%; background: var(--red); border-radius: 2px; transition: width .4s; }
+
+  /* ── CHAT ──────────────────────────────────────────────────── */
+  .chat { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .msgs {
+    flex: 1; overflow-y: auto; padding: 24px 20px;
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  .msgs::-webkit-scrollbar { width: 5px; }
+  .msgs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .msg { display: flex; flex-direction: column; max-width: 80%; }
+  .msg.student { align-self: flex-end; align-items: flex-end; }
+  .msg.ai      { align-self: flex-start; align-items: flex-start; }
+  .msg-who { font-size: 10px; text-transform: uppercase; letter-spacing: .1em;
+             color: var(--muted); margin-bottom: 4px; padding: 0 4px; }
+  .msg-body {
+    padding: 12px 15px; border-radius: 12px; line-height: 1.7; font-size: 14px;
+  }
+  .msg.student .msg-body { background: var(--student); border-bottom-right-radius: 3px; }
+  .msg.ai      .msg-body { background: var(--bg3); border: 1px solid var(--border);
+                            border-bottom-left-radius: 3px; }
+  .msg-body p { margin-bottom: 10px; }
+  .msg-body p:last-child { margin-bottom: 0; }
+  .msg-body strong { color: #fff; }
+  .msg-body em { color: #999; }
+  .msg-body code {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    background: var(--code); color: #98c379; padding: 2px 6px; border-radius: 3px;
+  }
+  .msg-body pre {
+    background: var(--code); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 16px; margin: 10px 0; overflow-x: auto; position: relative;
+  }
+  .msg-body pre code { background: none; padding: 0; font-size: 12px; line-height: 1.65; }
+  .copy-btn {
+    position: absolute; top: 8px; right: 8px; background: var(--bg4); border: 1px solid var(--border);
+    color: var(--muted); font-size: 10px; padding: 3px 8px; border-radius: 3px;
+    cursor: pointer; font-family: 'Barlow', sans-serif;
+  }
+  .copy-btn:hover { color: var(--text); }
+
+  /* typing dots */
+  .typing { display: none; align-self: flex-start; }
+  .typing.show { display: flex; }
+  .typing-inner {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 12px; border-bottom-left-radius: 3px;
+    padding: 12px 18px; display: flex; gap: 5px; align-items: center;
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted);
+         animation: pulse 1.2s infinite; }
+  .dot:nth-child(2) { animation-delay: .2s; }
+  .dot:nth-child(3) { animation-delay: .4s; }
+  @keyframes pulse { 0%,80%,100%{opacity:.2} 40%{opacity:1} }
+
+  /* welcome */
+  .welcome {
+    align-self: center; text-align: center; max-width: 380px; padding: 48px 20px; color: var(--muted);
+  }
+  .welcome-icon { font-size: 36px; margin-bottom: 14px; }
+  .welcome h2 { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 22px;
+                color: var(--text); margin-bottom: 10px; letter-spacing: .03em; }
+  .welcome p  { font-size: 13px; line-height: 1.75; }
+
+  /* ── INPUT AREA ────────────────────────────────────────────── */
+  .input-area {
+    border-top: 1px solid var(--border); background: var(--bg);
+    padding: 14px 20px; display: flex; flex-direction: column; gap: 10px; flex-shrink: 0;
+  }
+  .quick-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .qbtn {
+    padding: 5px 13px; background: none; border: 1px solid var(--border); border-radius: 20px;
+    color: var(--muted); font-size: 11px; cursor: pointer; font-family: 'Barlow', sans-serif;
+    text-transform: uppercase; letter-spacing: .08em; transition: all .15s;
+  }
+  .qbtn:hover { border-color: var(--red); color: var(--red); }
+  .send-row { display: flex; gap: 10px; align-items: flex-end; }
+  #inputBox {
+    flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 14px; color: var(--text); font-family: 'Barlow', sans-serif; font-size: 14px;
+    resize: none; outline: none; min-height: 44px; max-height: 140px; line-height: 1.55;
+  }
+  #inputBox:focus { border-color: var(--red); }
+  #sendBtn {
+    padding: 10px 22px; background: var(--red); color: #fff; border: none; border-radius: 8px;
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px;
+    letter-spacing: .04em; cursor: pointer; height: 44px; white-space: nowrap;
+  }
+  #sendBtn:disabled { background: var(--bg4); color: var(--muted); cursor: not-allowed; }
+
+  @media (max-width: 600px) { .sidebar { display: none; } }
+</style>
+</head>
+<body>
+
+<!-- ── SETUP ──────────────────────────────────────────────────── -->
+<div id="setup">
+  <div class="card">
+    <div class="card-logo">VHS CODING TUTOR</div>
+    <div class="card-sub">Applied Engineering &amp; Robotics · Vicksburg High School</div>
+
+    <div class="resume-banner" id="resumeBanner"></div>
+
+    <div class="field-label">Lesson</div>
+    <select class="field-select" id="lessonSelect"></select>
+
+    <div class="field-label">Your school email</div>
+    <input class="field-input" id="emailInput" type="email"
+           placeholder="student@vicksburgschools.org" autocomplete="email">
+    <div class="field-hint">Used to save your progress between sessions.</div>
+
+    <div class="field-label">Your name</div>
+    <input class="field-input" id="nameInput" type="text"
+           placeholder="First name" autocomplete="given-name">
+
+    <button class="start-btn" onclick="startSession()">Start Session</button>
+  </div>
+</div>
+
+<!-- ── APP ────────────────────────────────────────────────────── -->
+<div id="app">
+  <div class="hdr">
+    <div class="hdr-logo">8126 TUTOR</div>
+    <div class="hdr-sep"></div>
+    <div class="hdr-lesson" id="hdrLesson"></div>
+    <div class="hdr-student" id="hdrStudent"></div>
+    <button class="hdr-btn" onclick="exitToSetup()">Switch Lesson</button>
+  </div>
+
+  <div class="main">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sb-head">Your Progress</div>
+      <div class="sb-steps" id="stepList"></div>
+      <div class="sb-foot">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <button class="sb-act" onclick="markDone()">✓ Step complete — next</button>
+        <button class="sb-act" onclick="sendQuick('I think I finished step ' + state.step + '. Can you ask me the gate question before I move on?')">Ask gate question</button>
+      </div>
+    </div>
+
+    <!-- Chat -->
+    <div class="chat">
+      <div class="msgs" id="msgs">
+        <div class="welcome" id="welcome">
+          <div class="welcome-icon">⚙️</div>
+          <h2>Ready when you are.</h2>
+          <p>Start by telling me what your code looks like right now and what you're trying to build next. The more specific your prompt, the more useful I can be.</p>
+        </div>
+        <div class="typing" id="typing">
+          <div class="typing-inner">
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="input-area">
+        <div class="quick-row">
+          <button class="qbtn" onclick="sendQuick('I\'m stuck and don\'t know how to start step ' + state.step + '.')">I\'m stuck</button>
+          <button class="qbtn" onclick="sendQuick('Can you give me a hint without giving me the answer?')">Hint</button>
+          <button class="qbtn" onclick="sendQuick('Here is my code so far:\n\n```cpp\n\n```\n\nWhat am I doing wrong or missing?')">Share code</button>
+          <button class="qbtn" onclick="sendQuick('Why does this matter? What breaks if I skip this step?')">Why does this matter?</button>
+        </div>
+        <div class="send-row">
+          <textarea id="inputBox" rows="1"
+            placeholder="Describe what your code does now and what you're trying to do next..."
+            onkeydown="handleKey(event)" oninput="resize(this)"></textarea>
+          <button id="sendBtn" onclick="send()">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+//  CONFIG
+// ─────────────────────────────────────────────────────────────
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec';
+
+// Step titles shown to students. Gate questions and target code live in the backend only.
+// To add a new lesson: add an entry here AND a matching entry in the backend TUTOR_LESSONS.
+const LESSONS = {
+  'unit5_motors': {
+    unit: 'Unit 5',
+    title: 'Robot Motor Control Library',
+    steps: [
+      'Declare pin constants',
+      'Configure pinMode in setup()',
+      'Write driveForward(speed)',
+      'Write driveBackward(speed)',
+      'Write stopMotors()',
+      'Write pivotLeft() and pivotRight()',
+      'Write readDistance()',
+      'Add encoder variables and ISRs',
+      'Write driveStraight() with P-controller',
+    ]
+  }
+  // Add future lessons here — must match a key in the backend TUTOR_LESSONS
+};
+
+// ─────────────────────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────────────────────
+const state = {
+  email:    '',
+  name:     '',
+  lessonId: '',
+  step:     1,
+  sessions: 0,
+  history:  [],   // [{role, content}] — current session only
+  busy:     false,
+  sessionStarted: false
+};
+
+// ─────────────────────────────────────────────────────────────
+//  SETUP SCREEN
+// ─────────────────────────────────────────────────────────────
+function initSetup() {
+  const sel = document.getElementById('lessonSelect');
+  for (const [id, l] of Object.entries(LESSONS)) {
+    const o = document.createElement('option');
+    o.value = id; o.textContent = l.unit + ' — ' + l.title;
+    sel.appendChild(o);
+  }
+  // Restore saved email / name
+  const savedEmail = localStorage.getItem('tutorEmail') || '';
+  const savedName  = localStorage.getItem('tutorName')  || '';
+  if (savedEmail) document.getElementById('emailInput').value = savedEmail;
+  if (savedName)  document.getElementById('nameInput').value  = savedName;
+
+  // Pre-check progress if email already saved
+  if (savedEmail) checkProgress(savedEmail, sel.value);
+
+  document.getElementById('lessonSelect').addEventListener('change', () => {
+    const email = document.getElementById('emailInput').value.trim();
+    if (email) checkProgress(email, document.getElementById('lessonSelect').value);
+  });
+  document.getElementById('emailInput').addEventListener('blur', () => {
+    const email = document.getElementById('emailInput').value.trim();
+    const lid   = document.getElementById('lessonSelect').value;
+    if (email) checkProgress(email, lid);
+  });
+}
+
+async function checkProgress(email, lessonId) {
+  try {
+    const res  = await fetch(`${SCRIPT_URL}?action=getTutorProgress&email=${encodeURIComponent(email)}&lessonId=${encodeURIComponent(lessonId)}`);
+    const data = await res.json();
+    const banner = document.getElementById('resumeBanner');
+    if (data.success && data.found && data.step > 1) {
+      banner.style.display = 'block';
+      banner.innerHTML = `✓ Progress found — you're on <strong>Step ${data.step}</strong> of ${LESSONS[lessonId]?.steps.length || '?'}. Session will resume from here.`;
+    } else {
+      banner.style.display = 'none';
+    }
+  } catch(e) { /* ignore */ }
+}
+
+async function startSession() {
+  const email = document.getElementById('emailInput').value.trim();
+  const name  = document.getElementById('nameInput').value.trim();
+  const lid   = document.getElementById('lessonSelect').value;
+
+  if (!email || !name) {
+    if (!email) document.getElementById('emailInput').focus();
+    else        document.getElementById('nameInput').focus();
+    return;
+  }
+
+  state.email    = email;
+  state.name     = name;
+  state.lessonId = lid;
+  state.history  = [];
+  state.busy     = false;
+  state.sessionStarted = false;
+
+  localStorage.setItem('tutorEmail', email);
+  localStorage.setItem('tutorName',  name);
+
+  // Load saved progress
+  try {
+    const res  = await fetch(`${SCRIPT_URL}?action=getTutorProgress&email=${encodeURIComponent(email)}&lessonId=${encodeURIComponent(lid)}`);
+    const data = await res.json();
+    state.step     = (data.success && data.found) ? (data.step || 1) : 1;
+    state.sessions = (data.success && data.found) ? (data.sessions || 0) : 0;
+  } catch(e) {
+    state.step = 1; state.sessions = 0;
+  }
+
+  document.getElementById('setup').style.display = 'none';
+  document.getElementById('app').classList.add('active');
+  document.getElementById('hdrLesson').textContent  = LESSONS[lid].title;
+  document.getElementById('hdrStudent').textContent = name;
+
+  renderSteps();
+}
+
+function exitToSetup() {
+  document.getElementById('setup').style.display = 'flex';
+  document.getElementById('app').classList.remove('active');
+  resetChat();
+}
+
+// ─────────────────────────────────────────────────────────────
+//  STEPS SIDEBAR
+// ─────────────────────────────────────────────────────────────
+function renderSteps() {
+  const steps = LESSONS[state.lessonId].steps;
+  const list  = document.getElementById('stepList');
+  list.innerHTML = steps.map((title, i) => {
+    const n   = i + 1;
+    const cls = n < state.step ? 'done' : n === state.step ? 'current' : '';
+    const num = n < state.step ? '✓' : n + '.';
+    return `<div class="step-row ${cls}">
+      <span class="step-n">${num}</span>
+      <span class="step-t">${title}</span>
+    </div>`;
+  }).join('');
+
+  const pct = ((state.step - 1) / steps.length * 100).toFixed(1);
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+async function markDone() {
+  const total = LESSONS[state.lessonId].steps.length;
+  if (state.step >= total) return;
+  state.step++;
+  renderSteps();
+  await saveProgress(false);
+  sendQuick('I marked step ' + (state.step - 1) + ' complete and I\'m moving to step ' + state.step + ': "' + LESSONS[state.lessonId].steps[state.step - 1] + '". What should I think about before writing any code?');
+}
+
+// ─────────────────────────────────────────────────────────────
+//  MESSAGING
+// ─────────────────────────────────────────────────────────────
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+}
+
+function resize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+}
+
+function sendQuick(text) {
+  document.getElementById('inputBox').value = text;
+  resize(document.getElementById('inputBox'));
+  send();
+}
+
+async function send() {
+  if (state.busy) return;
+  const box  = document.getElementById('inputBox');
+  const text = box.value.trim();
+  if (!text) return;
+
+  box.value = ''; resize(box);
+  hideWelcome();
+  addMsg('student', text);
+  setTyping(true);
+  state.busy = true;
+  document.getElementById('sendBtn').disabled = true;
+
+  // First message of session — increment session counter
+  if (!state.sessionStarted) {
+    state.sessionStarted = true;
+    saveProgress(true);
+  }
+
+  try {
+    const res  = await fetch(SCRIPT_URL, {
+      method:  'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        action:   'chatWithTutor',
+        lessonId: state.lessonId,
+        message:  text,
+        step:     state.step,
+        history:  state.history.slice(-40) // last 20 exchanges
+      })
+    });
+    const data = await res.json();
+    const reply = data.success ? data.reply : '⚠️ ' + (data.error || 'Error — try again.');
+    state.history.push({ role: 'user',      content: text  });
+    state.history.push({ role: 'assistant', content: reply });
+    addMsg('ai', reply);
+  } catch(e) {
+    addMsg('ai', '⚠️ Could not reach the server. Check your connection.');
+  } finally {
+    state.busy = false;
+    document.getElementById('sendBtn').disabled = false;
+    setTyping(false);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+//  PROGRESS PERSISTENCE
+// ─────────────────────────────────────────────────────────────
+async function saveProgress(incrementSession) {
+  try {
+    await fetch(SCRIPT_URL, {
+      method:  'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        action:           'saveTutorProgress',
+        email:            state.email,
+        name:             state.name,
+        lessonId:         state.lessonId,
+        step:             state.step,
+        incrementSession: incrementSession
+      })
+    });
+  } catch(e) { /* non-fatal */ }
+}
+
+// ─────────────────────────────────────────────────────────────
+//  RENDER
+// ─────────────────────────────────────────────────────────────
+function hideWelcome() {
+  const w = document.getElementById('welcome');
+  if (w) w.remove();
+}
+
+function setTyping(show) {
+  const t = document.getElementById('typing');
+  t.classList.toggle('show', show);
+  if (show) scrollBottom();
+}
+
+function addMsg(role, content) {
+  const typing = document.getElementById('typing');
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  div.innerHTML =
+    `<div class="msg-who">${role === 'student' ? state.name : 'Tutor'}</div>` +
+    `<div class="msg-body">${renderMd(content)}</div>`;
+  document.getElementById('msgs').insertBefore(div, typing);
+  scrollBottom();
+}
+
+function scrollBottom() {
+  const m = document.getElementById('msgs');
+  m.scrollTop = m.scrollHeight;
+}
+
+function resetChat() {
+  document.getElementById('msgs').innerHTML =
+    '<div class="welcome" id="welcome"><div class="welcome-icon">⚙️</div>' +
+    '<h2>Ready when you are.</h2>' +
+    '<p>Start by telling me what your code looks like right now and what you\'re trying to build next.</p></div>' +
+    '<div class="typing" id="typing"><div class="typing-inner">' +
+    '<div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>';
+  state.history = [];
+  state.sessionStarted = false;
+}
+
+// Minimal markdown renderer: fenced code, inline code, bold, italic, paragraphs
+function renderMd(text) {
+  text = text.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) => {
+    const esc = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return `<pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>${esc}</code></pre>`;
+  });
+  text = text.replace(/`([^`\n]+)`/g,   '<code>$1</code>');
+  text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  text = text.replace(/\*(.+?)\*/g,     '<em>$1</em>');
+  return text.split(/\n\n+/).map(p => p.trim() ? '<p>' + p.replace(/\n/g,'<br>') + '</p>' : '').join('');
+}
+
+function copyCode(btn) {
+  navigator.clipboard.writeText(btn.nextElementSibling.textContent).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+
+// ─────────────────────────────────────────────────────────────
+initSetup();
+</script>
+</body>
+</html>
