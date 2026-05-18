@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VHS AI Coding Tutor</title>
+<title>VHS AER Coding Tutor</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -239,7 +239,7 @@
 <!-- ── APP ────────────────────────────────────────────────────── -->
 <div id="app">
   <div class="hdr">
-    <div class="hdr-logo">8126 TUTOR</div>
+    <div class="hdr-logo">VHS AER TUTOR</div>
     <div class="hdr-sep"></div>
     <div class="hdr-lesson" id="hdrLesson"></div>
     <div class="hdr-student" id="hdrStudent"></div>
@@ -313,6 +313,22 @@ const LESSONS = {
       'Write readDistance()',
       'Add encoder variables and ISRs',
       'Write driveStraight() with P-controller',
+    ]
+  }
+  ,
+  'battle_royale': {
+    unit: 'Unit 5',
+    title: 'Battle Royale Tilt Controller',
+    steps: [
+      'Include WiFiNINA, declare server and globals',
+      'Write setup(): motor pins, WiFi AP, server.begin()',
+      'Read HTTP requests in loop()',
+      'Route requests: /drive, /stop, default',
+      'Write extractParam() to parse URL query params',
+      'Write applyTilt(): dead zone and normalize to ±1',
+      'Add expo curve and write setMotorsBidi()',
+      'Implement the watchdog timer',
+      'Write serveControlPage() — HTML, CSS, and JavaScript',
     ]
   }
   // Add future lessons here — must match a key in the backend TUTOR_LESSONS

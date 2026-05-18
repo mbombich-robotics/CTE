@@ -23,12 +23,12 @@
 #include <WiFiNINA.h>
 
 // ── CHANGE THIS FOR EACH ROBOT ──────────────────────────────────────────────
-#define ROBOT_ID  "1"       // unique label: "1" … "24"
-#define WIFI_PASS "vhs8126"
+#define ROBOT_ID  "Mr_Bombich"       // unique label: "1" … "24"
+#define WIFI_PASS "bombich1"
 
 // ── PIN MAP  (matches Robot_Master_RP2040.ino — do not change) ──────────────
-#undef A4
-#define A4 18
+#undef A4        // throw away WiFiNINA's definition of A4
+#define A4 18    // redefine it as the plain integer 18 (the actual pin number)
 
 const uint8_t MTR_R_INA = 6,  MTR_R_INB = 4,  MTR_R_PWM = 3;
 const uint8_t MTR_L_INA = 8,  MTR_L_INB = 7,  MTR_L_PWM = 5;

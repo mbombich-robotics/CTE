@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.46';
+const BACKEND_VERSION = 'v2.9.47';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -197,6 +197,147 @@ long readDistance() {
   long duration = pulseIn(USONIC_ECHO, HIGH, 30000);
   if (duration == 0) return 0;
   return duration / 58;
+}`
+  }
+  ,
+  'battle_royale': {
+    unit: 'Unit 5 — Programming, Electronics & Sensors',
+    title: 'Battle Royale Tilt Controller',
+    board: 'Arduino Nano RP2040 Connect',
+    language: 'C++ / Arduino',
+    objective: 'Build a WiFi access point on the robot that serves a phone-based tilt controller. The phone browser reads DeviceOrientation (beta/gamma), sends tilt values to /drive every 100 ms, and the robot maps those values to bidirectional motor speeds with a dead zone and exponential response curve.',
+    steps: [
+      { title: 'Include WiFiNINA, declare server and globals',
+        detail: 'Add #include <SPI.h> and #include <WiFiNINA.h>. Define ROBOT_ID and WIFI_PASS macros. Add the A4 undefine/redefine workaround. Declare the six motor pin constants (MTR_R_INA/INB/PWM, MTR_L_INA/INB/PWM). Declare DEAD_ZONE, MAX_TILT, EXPO tuning constants. Declare a WiFiServer on port 80 and a lastCmd unsigned long for the watchdog.',
+        gateQuestion: 'Why do we need to #undef A4 and then #define it as 18? What would go wrong if we skipped that step?' },
+
+      { title: 'Write setup(): motor pins, WiFi AP, server.begin()',
+        detail: 'In setup(), call Serial.begin(115200). Use pinMode OUTPUT for all six motor pins, then call stopMotors(). Call WiFi.beginAP() with the SSID "Robot-" concatenated with ROBOT_ID and the password. Delay 1000 ms, then call server.begin(). Print the SSID and the AP\'s local IP to Serial.',
+        gateQuestion: 'What does WiFi.beginAP() do differently from WiFi.begin()? Why do we want the robot to be the access point rather than connecting to the school Wi-Fi?' },
+
+      { title: 'Read HTTP requests in loop()',
+        detail: 'In loop(), call server.available() and return early if no client. Read the first line of the request character-by-character into a String until a newline or timeout (300 ms). Then drain all remaining bytes with client.available()/client.read() so the client buffer is empty before you respond.',
+        gateQuestion: 'Why do we stop reading at the first newline? What is in the rest of the HTTP request that we are discarding, and why is it safe to ignore it here?' },
+
+      { title: 'Route requests: /drive, /stop, default',
+        detail: 'After reading the request line, use indexOf() to check for "GET /drive", "GET /stop", or neither. For /drive: call extractParam for "fwd" and "turn", call applyTilt, update lastCmd = millis(), and send a 200 OK plain-text response of "OK". For /stop: call stopMotors, clear lastCmd, send 200 OK. For anything else: call serveControlPage(client). Always call client.stop() at the end.',
+        gateQuestion: 'What happens if we forget to call client.stop()? Why does the phone need a fast "OK" response on every /drive request rather than the full HTML page?' },
+
+      { title: 'Write extractParam() to parse URL query params',
+        detail: 'Write int extractParam(const String& req, const String& key). Find the index of key + "=" in the request string. Starting after the "=", advance an end index while the characters are digits or "-". Return the substring converted with toInt(). Return 0 if the key is not found.',
+        gateQuestion: 'The URL looks like /drive?fwd=23&turn=-15. Walk through exactly what extractParam does when called with key "turn" on that string. What would it return?' },
+
+      { title: 'Write applyTilt(): dead zone and normalize to ±1',
+        detail: 'Write void applyTilt(int fwd, int turn). First apply the dead zone: if abs(fwd) < DEAD_ZONE set fwd to 0; same for turn. Then normalize each to a float in the range -1.0 to +1.0 by dividing by MAX_TILT and clamping with constrain(). Store as float f and t.',
+        gateQuestion: 'What is the purpose of the dead zone? What happens physically on the robot if we remove it and the phone is sitting flat on a desk?' },
+
+      { title: 'Add expo curve and write setMotorsBidi()',
+        detail: 'After normalizing, apply the exponential response curve: f = sign(f) * pow(abs(f), EXPO), and same for t. Then compute int spd = f * 255 and int steer = t * 130. Call setMotorsBidi(spd - steer, spd + steer). In setMotorsBidi(int L, int R): constrain both to ±255. For each motor, if the speed is >= 0 write LOW/HIGH to INA/INB (forward); if negative write HIGH/LOW (backward). Call analogWrite with abs(speed).',
+        gateQuestion: 'With EXPO = 1.6, how does a 50% tilt (0.5 normalized) compare to a linear response? Why might a gentle center response make the robot easier to control in a crowded gym?' },
+
+      { title: 'Implement the watchdog timer',
+        detail: 'At the top of loop(), check: if (lastCmd > 0 && millis() - lastCmd > 600). If true, call stopMotors() and reset lastCmd to 0. This fires if no /drive command arrives within 600 ms.',
+        gateQuestion: 'Name three real-world situations where the watchdog would trigger and stop the robot. Why do we check lastCmd > 0 before comparing the elapsed time?' },
+
+      { title: 'Write serveControlPage() — HTML, CSS, and JavaScript',
+        detail: 'Write void serveControlPage(WiFiClient& client). Send the HTTP header with Content-Type text/html. Then use multiple client.print(F("...")) calls to send the page in chunks (F() macro keeps strings in flash, not RAM). The page needs: a visual tilt indicator dot in a circular arena, a status div, and an "Enable Tilt" button (iOS only). The JavaScript must: (1) listen for deviceorientation events to get beta (fwd) and gamma (turn), (2) apply the same dead zone as the firmware, (3) use setInterval every 100 ms with a "sending" flag to prevent overlapping fetches to /drive, (4) use DeviceOrientationEvent.requestPermission() for iOS, and (5) send /stop when the tab is hidden.',
+        gateQuestion: 'Why does iOS require DeviceOrientationEvent.requestPermission() but Android does not? Why do we recommend Firefox on Android instead of Chrome for plain HTTP sites?' }
+    ],
+    targetCode: `// VHS Robotics — Battle Royale Tilt Controller
+// Board: Arduino Nano RP2040 Connect (or Nano 33 IoT)
+// Library: WiFiNINA
+
+#include <SPI.h>
+#include <WiFiNINA.h>
+
+#define ROBOT_ID  "1"
+#define WIFI_PASS "vhs8126"
+
+#undef A4
+#define A4 18
+
+const uint8_t MTR_R_INA = 6,  MTR_R_INB = 4,  MTR_R_PWM = 3;
+const uint8_t MTR_L_INA = 8,  MTR_L_INB = 7,  MTR_L_PWM = 5;
+
+const int   DEAD_ZONE = 10;
+const int   MAX_TILT  = 40;
+const float EXPO      = 1.6;
+
+WiFiServer server(80);
+unsigned long lastCmd = 0;
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(MTR_R_INA, OUTPUT); pinMode(MTR_R_INB, OUTPUT); pinMode(MTR_R_PWM, OUTPUT);
+  pinMode(MTR_L_INA, OUTPUT); pinMode(MTR_L_INB, OUTPUT); pinMode(MTR_L_PWM, OUTPUT);
+  stopMotors();
+  WiFi.beginAP("Robot-" ROBOT_ID, WIFI_PASS);
+  delay(1000);
+  server.begin();
+  Serial.print("AP: Robot-"); Serial.println(ROBOT_ID);
+  Serial.println(WiFi.localIP());
+}
+
+void loop() {
+  if (lastCmd > 0 && millis() - lastCmd > 600) { stopMotors(); lastCmd = 0; }
+
+  WiFiClient client = server.available();
+  if (!client) return;
+
+  String req = "";
+  unsigned long start = millis();
+  while (client.connected() && millis() - start < 300) {
+    if (client.available()) { char c = client.read(); if (c == '\\n') break; req += c; }
+  }
+  while (client.available()) client.read();
+
+  if (req.indexOf("GET /drive") >= 0) {
+    applyTilt(extractParam(req, "fwd"), extractParam(req, "turn"));
+    lastCmd = millis();
+    client.print(F("HTTP/1.1 200 OK\\r\\nContent-Type: text/plain\\r\\nContent-Length: 2\\r\\n\\r\\nOK"));
+  } else if (req.indexOf("GET /stop") >= 0) {
+    stopMotors(); lastCmd = 0;
+    client.print(F("HTTP/1.1 200 OK\\r\\nContent-Type: text/plain\\r\\nContent-Length: 2\\r\\n\\r\\nOK"));
+  } else {
+    serveControlPage(client);
+  }
+  client.stop();
+}
+
+void applyTilt(int fwd, int turn) {
+  if (abs(fwd)  < DEAD_ZONE) fwd  = 0;
+  if (abs(turn) < DEAD_ZONE) turn = 0;
+  float f = constrain((float)fwd  / MAX_TILT, -1.0f, 1.0f);
+  float t = constrain((float)turn / MAX_TILT, -1.0f, 1.0f);
+  f = (f >= 0 ? 1.0f : -1.0f) * pow(abs(f), EXPO);
+  t = (t >= 0 ? 1.0f : -1.0f) * pow(abs(t), EXPO);
+  setMotorsBidi((int)(f * 255) - (int)(t * 130), (int)(f * 255) + (int)(t * 130));
+}
+
+void setMotorsBidi(int L, int R) {
+  L = constrain(L, -255, 255); R = constrain(R, -255, 255);
+  digitalWrite(MTR_L_INA, L >= 0 ? LOW : HIGH); digitalWrite(MTR_L_INB, L >= 0 ? HIGH : LOW);
+  analogWrite(MTR_L_PWM, abs(L));
+  digitalWrite(MTR_R_INA, R >= 0 ? LOW : HIGH); digitalWrite(MTR_R_INB, R >= 0 ? HIGH : LOW);
+  analogWrite(MTR_R_PWM, abs(R));
+}
+
+void stopMotors() {
+  digitalWrite(MTR_L_INA, LOW); digitalWrite(MTR_L_INB, LOW); analogWrite(MTR_L_PWM, 0);
+  digitalWrite(MTR_R_INA, LOW); digitalWrite(MTR_R_INB, LOW); analogWrite(MTR_R_PWM, 0);
+}
+
+int extractParam(const String& req, const String& key) {
+  int idx = req.indexOf(key + "=");
+  if (idx < 0) return 0;
+  int s = idx + key.length() + 1, e = s;
+  while (e < (int)req.length() && (isDigit(req[e]) || req[e] == '-')) e++;
+  return req.substring(s, e).toInt();
+}
+
+void serveControlPage(WiFiClient& client) {
+  client.print(F("HTTP/1.1 200 OK\\r\\nContent-Type: text/html\\r\\n\\r\\n"));
+  // [full HTML/CSS/JS page with DeviceOrientation polling — see BattleRoyale_TiltControl.ino]
 }`
   }
   // ── ADD FUTURE LESSONS HERE ──────────────────────────────────────────────────

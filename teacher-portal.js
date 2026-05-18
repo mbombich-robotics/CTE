@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.26',
+    VERSION: 'v2.9.27',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -891,7 +891,7 @@ function openStudentDetail(email) {
             const isUngraded = existingGrade === '' || existingGrade === null || existingGrade === undefined;
             const isResubmitted = !isUngraded && gradedAt && submittedAt && new Date(submittedAt) > new Date(gradedAt);
             const contentId = `reflection-content-${week}`;
-            const fullContent = `<strong>Contributions:</strong><br>${(submitted[3] || '').replace(/\n/g, '<br>')}${submitted[5] ? `<br><br><strong>Challenges:</strong> ${submitted[5]}` : ''}${submitted[6] ? `<br><strong>Solutions:</strong> ${submitted[6]}` : ''}`;
+            const fullContent = `<strong>Contributions:</strong><br>${(submitted[3] || '').replace(/\n/g, '<br>')}${submitted[4] ? `<br><br><strong>Evidence Links:</strong> ${submitted[4]}` : ''}${submitted[5] ? `<br><br><strong>Challenges:</strong> ${submitted[5]}` : ''}${submitted[6] ? `<br><strong>Solutions:</strong> ${submitted[6]}` : ''}${submitted[7] ? `<br><br><strong>Goals for Next Week:</strong><br>${submitted[7].replace(/\n/g, '<br>')}` : ''}`;
             const needsExpand = fullContent.length > 400;
             const statusLabel = isResubmitted ? 'Resubmitted' : (isUngraded ? 'Needs Grading' : 'Graded');
             const statusClass = isResubmitted ? 'status-behind' : (isUngraded ? 'status-behind' : 'status-on-track');
