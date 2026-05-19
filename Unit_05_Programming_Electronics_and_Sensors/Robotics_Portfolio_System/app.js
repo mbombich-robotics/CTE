@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.57',
+    VERSION: 'v2.9.58',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -2367,7 +2367,7 @@ function openDeliverableForm(id) {
               <!-- DAY 2 -->
               <div style="background:var(--gray-800);color:#fff;padding:12px 16px;border-radius:8px;margin-bottom:14px;">
                 <h3 style="margin:0;font-size:15px;font-weight:700;">Day 2 — The Real Numbers</h3>
-                <p style="margin:3px 0 0;font-size:12px;opacity:.75;">smartasset.com/taxes/paycheck-calculator (Michigan, Single) &nbsp;·&nbsp; nerdwallet.com/cost-of-living-calculator</p>
+                <p style="margin:3px 0 0;font-size:12px;opacity:.75;"><a href="https://smartasset.com/taxes/paycheck-calculator" target="_blank" style="color:#adf;">smartasset.com/taxes/paycheck-calculator</a> (Michigan, Single) &nbsp;·&nbsp; <a href="https://www.nerdwallet.com/cost-of-living-calculator" target="_blank" style="color:#adf;">nerdwallet.com/cost-of-living-calculator</a></p>
               </div>
 
               <!-- Part A: Paycheck -->
