@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.58',
+    VERSION: 'v2.9.59',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -2711,7 +2711,7 @@ function saveDeliverableDraft(id) {
         status: 'in-progress',
         updatedAt: new Date().toISOString()
     };
-    markDirty();
+    saveToCloud();
     updateUI();
     showToast('Draft saved!', 'success');
 }
