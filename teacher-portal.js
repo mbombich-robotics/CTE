@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.27',
+    VERSION: 'v2.9.28',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -24,10 +24,10 @@ const CONFIG = {
             apiUrl: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
             currentAppVersion: 'v2.9.51',  // keep in sync with Robotics app.js CONFIG.VERSION
             hasTeams: false,
-            totalDeliverables: 9,
+            totalDeliverables: 10,
             totalReflections: 14,
-            totalPoints: 735,
-            deliverablePoints: { 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75 },
+            totalPoints: 755,
+            deliverablePoints: { 0: 20, 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75 },
             deliverableWeeks: { 8: 10, 9: 11 },
             quizzes: [
                 { id: 'claw', name: 'Claw Quiz', questionCount: 7, maxPoints: 28 }
@@ -79,6 +79,13 @@ const RUBRICS = {
 
 // Criteria definitions for Design Brief AI grading
 const BRIEF_CRITERIA = {
+    0: [
+        { id: 'cr_career',    label: 'Career Interest & Class Connection', max: 4 },
+        { id: 'cr_education', label: 'Education / Training Path',          max: 4 },
+        { id: 'cr_financial', label: 'Financial Literacy',                 max: 4 },
+        { id: 'cr_goal',      label: 'Financial Goal Specificity',         max: 4 },
+        { id: 'cr_skills',    label: 'Career Ready Skills',                max: 4 },
+    ],
     8: [
         { id: 's1_purpose',      label: 'S1 — Purpose & Context',    max: 3 },
         { id: 's1_goals',        label: 'S1 — Learning Goals',        max: 3 },
@@ -987,7 +994,13 @@ function openStudentDetail(email) {
             const docUrl = submitted[5] || draft?.links || '';
             const isDesignBrief = (id === 8 || id === 9);
             const briefInputId = `brief-url-${email.replace(/[^a-zA-Z0-9]/g,'-')}-${id}`;
-            const aiBriefBtn = isDesignBrief ? `
+            const aiBriefBtn = id === 0 ? `
+                <div style="margin-top:10px;">
+                    <button onclick="openD0Grader('${email.replace(/'/g,"\\'")}', '${(submitted[4]||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,'\\n')}', '${(student.name||'').replace(/'/g,"\\'")}' )"
+                            style="padding:6px 14px; background:var(--primary); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">
+                        <i class="fas fa-robot"></i> AI Grade Reflection
+                    </button>
+                </div>` : isDesignBrief ? `
                 <div style="margin-top:10px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
                     <input id="${briefInputId}" type="text" placeholder="Paste Google Doc URL here"
                            value="${docUrl.replace(/"/g,'&quot;')}"
@@ -2552,6 +2565,38 @@ async function applyWeekSettings() {
 // ============================================
 // DESIGN BRIEF AI GRADER
 // ============================================
+
+async function openD0Grader(email, content, studentName) {
+    const overlay = document.getElementById('designBriefOverlay');
+    const frame   = document.getElementById('designBriefFrame');
+    const panel   = document.getElementById('designBriefGradesPanel');
+    const subtitle = document.getElementById('designBriefSubtitle');
+
+    subtitle.textContent = studentName + ' — Career Ready Practices Reflection';
+    frame.src = 'about:blank';
+    frame.style.display = 'none';
+    overlay.style.display = 'flex';
+
+    panel.innerHTML = `<div style="padding:20px;color:var(--gray-500);">
+        <i class="fas fa-spinner fa-spin"></i> Grading with AI…</div>`;
+
+    try {
+        const course = CONFIG.COURSES['robotics'];
+        const res = await fetch(course.apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({ action: 'gradeDesignBrief', token: CONFIG.TEACHER_TOKEN, email, content, deliverableId: 0 })
+        });
+        const data = await res.json();
+        if (data.success) {
+            panel.innerHTML = renderBriefGradesPanel(email, 0, data.grades);
+        } else {
+            panel.innerHTML = `<div style="padding:20px;color:var(--danger);">Error: ${data.error || 'Unknown error'}</div>`;
+        }
+    } catch(e) {
+        panel.innerHTML = `<div style="padding:20px;color:var(--danger);">Network error: ${e.message}</div>`;
+    }
+}
 
 async function openDesignBriefGrader(email, deliverableId, docUrl, deliverableTitle, studentName) {
     const overlay = document.getElementById('designBriefOverlay');

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Career Ready Practices — Student Activity</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --red: #C41230; --dark: #1a1a1a; --gray: #4a4a4a; --light: #f5f5f5; --border: #d0d0d0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Barlow', sans-serif; font-size: 17px; color: var(--dark); background: #fff; max-width: 860px; margin: 0 auto; padding: 32px 24px; }
+
+  /* MASTHEAD */
+  .masthead { display: flex; align-items: flex-end; justify-content: space-between; border-bottom: 4px solid var(--red); padding-bottom: 10px; margin-bottom: 28px; }
+  .masthead-left h1 { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 900; color: var(--red); letter-spacing: .04em; line-height: 1; }
+  .masthead-left p { font-size: 13px; color: var(--gray); text-transform: uppercase; letter-spacing: .1em; margin-top: 4px; }
+  .masthead-right { font-size: 13px; color: var(--gray); text-align: right; }
+
+  /* STUDENT INFO */
+  .info-row { display: flex; gap: 16px; margin-bottom: 28px; }
+  .info-field { flex: 1; }
+  .info-field label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--gray); margin-bottom: 4px; }
+  .info-field .line { border-bottom: 1px solid var(--dark); height: 28px; }
+
+  /* DAY HEADERS */
+  .day-header { background: var(--red); color: #fff; padding: 10px 16px; margin: 32px 0 16px; border-radius: 4px; }
+  .day-header h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 900; letter-spacing: .06em; }
+  .day-header p { font-size: 13px; opacity: .9; margin-top: 2px; }
+
+  /* SECTION LABELS */
+  .section-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: .08em; color: var(--red); margin: 20px 0 8px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+
+  /* CALLOUT BOXES */
+  .callout { background: var(--light); border-left: 4px solid var(--red); padding: 12px 16px; margin: 12px 0 16px; font-size: 15px; line-height: 1.6; }
+  .callout a { color: var(--red); font-weight: 600; }
+  .callout ul { margin-left: 20px; margin-top: 6px; }
+
+  /* TABLES */
+  table { width: 100%; border-collapse: collapse; margin: 10px 0 20px; font-size: 15px; }
+  th { background: var(--dark); color: #fff; padding: 8px 10px; text-align: left; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+  td { border: 1px solid var(--border); padding: 8px 10px; vertical-align: top; }
+  td.label-col { background: var(--light); font-weight: 600; font-size: 14px; white-space: nowrap; width: 1%; }
+  .write-row td { height: 36px; }
+
+  /* WRITE-IN AREAS */
+  .write-in { border: none; border-bottom: 1px solid var(--border); width: 100%; height: 28px; font-family: 'Barlow', sans-serif; font-size: 15px; background: transparent; }
+  .write-block { border: 1px solid var(--border); width: 100%; min-height: 80px; border-radius: 4px; padding: 8px; font-family: 'Barlow', sans-serif; font-size: 15px; resize: vertical; }
+
+  /* BUDGET TABLE */
+  .budget-total td { font-weight: 700; background: #f0f0f0; }
+  .budget-remaining td { font-weight: 700; color: var(--red); }
+
+  /* PAGE BREAK */
+  @media print {
+    .day-header { break-before: page; }
+    .day-header:first-of-type { break-before: avoid; }
+    body { font-size: 14px; padding: 16px; }
+    .write-block { min-height: 60px; }
+  }
+
+  .tip { font-size: 13px; color: var(--gray); font-style: italic; margin-bottom: 10px; }
+  .pair-box { border: 2px dashed var(--border); border-radius: 6px; padding: 12px 16px; margin: 12px 0; }
+  .pair-box strong { color: var(--red); }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-left">
+    <h1>Career Ready Practices</h1>
+    <p>Applied Engineering &amp; Robotics &nbsp;·&nbsp; Vicksburg High School</p>
+  </div>
+  <div class="masthead-right">Unit 00 &nbsp;·&nbsp; 3 Days</div>
+</div>
+
+<div class="info-row">
+  <div class="info-field"><label>Name</label><div class="line"></div></div>
+  <div class="info-field"><label>Period</label><div class="line"></div></div>
+  <div class="info-field"><label>Date</label><div class="line"></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════════ DAY 1 ══ -->
+<div class="day-header">
+  <h2>Day 1 — Where Could This Take You?</h2>
+  <p>Standard: PM2 — Career Pathways &nbsp;|&nbsp; Tool: bls.gov/ooh</p>
+</div>
+
+<div class="callout">
+  <strong>Bureau of Labor Statistics — Occupational Outlook Handbook</strong><br>
+  Go to <a href="https://www.bls.gov/ooh/" target="_blank">bls.gov/ooh</a> and search for careers that interest you.
+  You can search by name or browse categories like <em>Architecture &amp; Engineering</em>, <em>Installation, Maintenance &amp; Repair</em>, or <em>Construction &amp; Extraction</em>.
+  <ul>
+    <li><strong>Engineering careers:</strong> Electrical Engineer, Mechanical Engineer, Robotics Technician, Mechatronics Technician, Industrial Engineer, Computer Hardware Engineer</li>
+    <li><strong>Trades careers:</strong> Electrician, Plumber, HVAC Technician, Welder, CNC Machinist, Industrial Machinery Mechanic, Millwright</li>
+  </ul>
+</div>
+
+<div class="section-label">Career Research Table — Research 3 careers or trades</div>
+<p class="tip">Use the BLS page for each career to fill in the table below. "Connection to This Class" means something you actually did — motors, wiring, CAD, sensors, programming, etc.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Career / Trade Title</th>
+      <th>Median Annual Salary</th>
+      <th>Education / Training Required</th>
+      <th>10-Year Job Growth</th>
+      <th>Connection to This Class</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="write-row"><td class="label-col">1</td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr class="write-row"><td class="label-col">2</td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr class="write-row"><td class="label-col">3</td><td></td><td></td><td></td><td></td><td></td></tr>
+  </tbody>
+</table>
+
+<div class="pair-box">
+  <strong>Partner Share-Out</strong><br>
+  Turn to a partner. Each person shares: (1) your top pick and why, (2) one thing that surprised you about that career.<br><br>
+  <em>What surprised your partner?</em><br>
+  <div style="border-bottom:1px solid var(--border);height:28px;margin-top:6px;"></div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════ DAY 2 ══ -->
+<div class="day-header">
+  <h2>Day 2 — The Real Numbers</h2>
+  <p>Standard: PM1 — Financial Literacy &nbsp;|&nbsp; Tools: SmartAsset + NerdWallet</p>
+</div>
+
+<div class="section-label">Part A — Your Paycheck</div>
+
+<div class="callout">
+  Go to <a href="https://smartasset.com/taxes/paycheck-calculator" target="_blank">smartasset.com/taxes/paycheck-calculator</a><br>
+  Enter your career's <strong>median annual salary</strong> from Day 1. Select <strong>Michigan</strong> and <strong>Single</strong> filing status. Then record the results below.
+</div>
+
+<p class="tip">Career you chose: <span style="border-bottom:1px solid var(--dark);display:inline-block;min-width:240px;">&nbsp;</span></p>
+
+<table>
+  <thead><tr><th>Pay Category</th><th>Annual Amount</th><th>Monthly Amount</th></tr></thead>
+  <tbody>
+    <tr class="write-row"><td class="label-col">Gross Pay (before taxes)</td><td></td><td></td></tr>
+    <tr class="write-row"><td class="label-col">Federal Income Tax</td><td></td><td></td></tr>
+    <tr class="write-row"><td class="label-col">Michigan State Tax (4.25%)</td><td></td><td></td></tr>
+    <tr class="write-row"><td class="label-col">Social Security (6.2%)</td><td></td><td></td></tr>
+    <tr class="write-row"><td class="label-col">Medicare (1.45%)</td><td></td><td></td></tr>
+    <tr><td class="label-col" style="background:#C41230;color:#fff;font-weight:700;">Monthly Take-Home (Net Pay)</td><td></td><td style="font-weight:700;font-size:16px;"></td></tr>
+  </tbody>
+</table>
+
+
+<div class="section-label">Part B — Monthly Budget</div>
+<p class="tip">Use your monthly take-home pay. Fill in realistic estimates for each category. Michigan averages are provided as a guide — adjust for your situation.</p>
+
+<table>
+  <thead><tr><th>Category</th><th>Estimated Monthly Cost</th><th>Notes / Assumptions</th></tr></thead>
+  <tbody>
+    <tr class="write-row"><td class="label-col">Housing (1BR Michigan avg: $950–$1,100)</td><td></td><td></td></tr>
+    <tr class="write-row"><td class="label-col">Transportation (car payment + insurance + gas)</td><td></td><td></td></tr>
+    <tr class="write-row"><td class="label-col">Groceries</td><td></td><td></td></tr>
+    <tr class="write-row"><td class="label-col">Utilities (electric, gas, internet)</td><td></td><td></td></tr>
+    <tr class="write-row"><td class="label-col">Cell phone</td><td></td><td></td></tr>
+    <tr class="write-row"><td class="label-col">Health insurance / co-pays</td><td></td><td></td></tr>
+    <tr class="write-row"><td class="label-col">Savings (goal: 10–20% of take-home)</td><td></td><td></td></tr>
+    <tr class="write-row"><td class="label-col">Personal / Entertainment</td><td></td><td></td></tr>
+    <tr class="budget-total write-row"><td>Total Monthly Expenses</td><td></td><td></td></tr>
+    <tr class="budget-remaining write-row"><td>Remaining After Expenses</td><td></td><td></td></tr>
+  </tbody>
+</table>
+
+<div class="pair-box">
+  <strong>Budget Check Questions</strong>
+  <ol style="margin-left:20px;margin-top:8px;line-height:2;">
+    <li>Does your budget balance? If not, what would you cut first?</li>
+    <li>If an unexpected expense hit — car repair ($800), medical bill — where does that money come from?</li>
+  </ol>
+  <textarea class="write-block" rows="3" placeholder="Your answers…"></textarea>
+</div>
+
+
+<div class="section-label">Part C — Location Matters</div>
+
+<div class="callout">
+  Go to <a href="https://www.nerdwallet.com/cost-of-living-calculator" target="_blank">nerdwallet.com/cost-of-living-calculator</a><br>
+  Compare your career's salary in <strong>Vicksburg / Kalamazoo, MI</strong> to one other city of your choice.
+</div>
+
+<table>
+  <thead><tr><th>Location</th><th>Salary Needed for Same Lifestyle</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr class="write-row"><td class="label-col">Kalamazoo, MI (baseline)</td><td>$ (your median salary)</td><td>—</td></tr>
+    <tr class="write-row"><td class="label-col">City you chose: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td></td><td></td></tr>
+  </tbody>
+</table>
+
+<p>What does this tell you about where you might want to live after training or graduation?</p>
+<div style="border:1px solid var(--border);border-radius:4px;min-height:56px;margin-top:8px;"></div>
+
+
+<!-- ══════════════════════════════════════════════ DAY 3 ══ -->
+<div class="day-header">
+  <h2>Day 3 — Your Engineering Career Plan</h2>
+  <p>Standards: PM1 + PM2 &nbsp;|&nbsp; Submit in the Portfolio as Deliverable 0</p>
+</div>
+
+<div class="callout">
+  Use your research from Days 1 and 2 to answer the five prompts below. Write <strong>2–4 sentences per prompt</strong>.
+  When you are done, open your portfolio and submit your responses as <strong>Deliverable 0 — Career Ready Practices Reflection</strong>.
+</div>
+
+<div class="section-label">Prompt 1 — Career Interest</div>
+<p class="tip">Which career or trade interests you most, and why? Connect your answer to something specific you built or learned in this class.</p>
+<textarea class="write-block" rows="5" placeholder="Write 2–4 sentences…"></textarea>
+
+<div class="section-label">Prompt 2 — Education Path</div>
+<p class="tip">What education or training would you need to pursue this career? Be specific to your career (apprenticeship, associate degree, bachelor's, certification, etc.) and describe your plan for getting there.</p>
+<textarea class="write-block" rows="5" placeholder="Write 2–4 sentences…"></textarea>
+
+<div class="section-label">Prompt 3 — Financial Reality</div>
+<p class="tip">Based on your research, what would your monthly take-home be on a starting salary in your field? Was that more or less than you expected, and why does that gap matter?</p>
+<textarea class="write-block" rows="5" placeholder="Write 2–4 sentences…"></textarea>
+
+<div class="section-label">Prompt 4 — Financial Goal</div>
+<p class="tip">Name one specific financial goal you would set in your first year of working. Be specific — include an amount and a purpose (not just "save money").</p>
+<textarea class="write-block" rows="5" placeholder="Write 2–4 sentences…"></textarea>
+
+<div class="section-label">Prompt 5 — Career Ready Skills</div>
+<p class="tip">Name one Career Ready skill you practiced in this class this year and give a specific example of when you used it.</p>
+<textarea class="write-block" rows="5" placeholder="Write 2–4 sentences…"></textarea>
+
+<div style="margin-top:28px;padding:16px;background:var(--light);border-radius:6px;font-size:14px;text-align:center;color:var(--gray);">
+  When your prompts are complete, open your portfolio and submit them as <strong>Deliverable 0 — Career Ready Practices Reflection</strong>.
+</div>
+
+</body>
+</html>

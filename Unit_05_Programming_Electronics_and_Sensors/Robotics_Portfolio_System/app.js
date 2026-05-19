@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.51',
+    VERSION: 'v2.9.52',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -65,6 +65,21 @@ function weekLabel(w) {
 // DELIVERABLES DATA
 // ============================================
 const DELIVERABLES = [
+    {
+        id: 0,
+        title: 'Career Ready Practices Reflection',
+        unit: '00',
+        points: 20,
+        phase: 'foundations',
+        alwaysOpen: true,
+        description: 'Research an engineering or trades career, analyze real take-home pay and a monthly budget, then write a personal reflection connecting the work to your future.',
+        requirements: [
+            'Complete the Day 1 career research activity on bls.gov/ooh — research at least 3 careers or trades',
+            'Complete the Day 2 paycheck and monthly budget analysis using the SmartAsset calculator',
+            'Answer all 5 reflection prompts with 2–4 sentences each',
+            'Connect at least one prompt specifically to work or skills from this class'
+        ]
+    },
     {
         id: 1,
         title: 'Line Following Practical #1',
@@ -2086,7 +2101,7 @@ function openDeliverableForm(id) {
 
         <div style="display: flex; gap: 16px; margin-bottom: 20px;">
             <span style="background: var(--primary-light); color: var(--primary); padding: 6px 12px; border-radius: 20px; font-size: 14px;">
-                Week ${deliverable.week}
+                ${deliverable.unit ? 'Unit ' + deliverable.unit : 'Week ' + deliverable.week}
             </span>
             <span style="background: #e8f5e9; color: var(--success); padding: 6px 12px; border-radius: 20px; font-size: 14px;">
                 ${deliverable.points} points
@@ -2305,13 +2320,62 @@ function openDeliverableForm(id) {
             </div>
             ` : ''}
 
-            ${id !== 9 ? `
+            ${id === 0 ? `
+            <div style="background:var(--gray-50);border-radius:8px;padding:20px;margin-bottom:20px;border:1px solid var(--gray-200);">
+                <p style="font-size:13px;color:var(--gray-500);margin-bottom:16px;">Complete the Day 1 and Day 2 activity sheet before filling this in.</p>
+                <div class="form-group">
+                    <label for="d0Career">Career or Trade You Chose</label>
+                    <input type="text" id="d0Career" value="${existing.careerTitle || ''}"
+                           placeholder="e.g. Electrician, Robotics Technician, Industrial Engineer"
+                           style="width:100%;padding:10px;border:1px solid var(--gray-200);border-radius:6px;font-size:14px;box-sizing:border-box;">
+                </div>
+                <div style="display:flex;gap:12px;margin-bottom:18px;">
+                    <div style="flex:1;">
+                        <label style="display:block;margin-bottom:6px;font-size:14px;font-weight:500;">Median Annual Salary (BLS.gov)</label>
+                        <input type="number" id="d0Salary" value="${existing.medianSalary || ''}" placeholder="e.g. 62000"
+                               style="width:100%;padding:10px;border:1px solid var(--gray-200);border-radius:6px;font-size:14px;box-sizing:border-box;">
+                    </div>
+                    <div style="flex:1;">
+                        <label style="display:block;margin-bottom:6px;font-size:14px;font-weight:500;">Monthly Take-Home (paycheck calculator)</label>
+                        <input type="number" id="d0MonthlyNet" value="${existing.monthlyNet || ''}" placeholder="e.g. 3800"
+                               style="width:100%;padding:10px;border:1px solid var(--gray-200);border-radius:6px;font-size:14px;box-sizing:border-box;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="d0Prompt1">Prompt 1 — Career Interest</label>
+                    <p style="font-size:12px;color:var(--gray-500);margin-bottom:6px;margin-top:-4px;">Which career or trade interests you most, and why? Connect your answer to something specific you built or learned in this class.</p>
+                    <textarea id="d0Prompt1" rows="4" placeholder="Write 2–4 sentences...">${existing.prompt1 || ''}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="d0Prompt2">Prompt 2 — Education Path</label>
+                    <p style="font-size:12px;color:var(--gray-500);margin-bottom:6px;margin-top:-4px;">What education or training would you need? Be specific to your career (e.g., apprenticeship, associate degree, bachelor's).</p>
+                    <textarea id="d0Prompt2" rows="4" placeholder="Write 2–4 sentences...">${existing.prompt2 || ''}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="d0Prompt3">Prompt 3 — Financial Reality</label>
+                    <p style="font-size:12px;color:var(--gray-500);margin-bottom:6px;margin-top:-4px;">What would your monthly take-home be on a starting salary in this field? Was it more or less than you expected, and why does it matter?</p>
+                    <textarea id="d0Prompt3" rows="4" placeholder="Write 2–4 sentences...">${existing.prompt3 || ''}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="d0Prompt4">Prompt 4 — Financial Goal</label>
+                    <p style="font-size:12px;color:var(--gray-500);margin-bottom:6px;margin-top:-4px;">Name one specific financial goal for your first year of working. Include an amount and a purpose — not just "save money."</p>
+                    <textarea id="d0Prompt4" rows="4" placeholder="Write 2–4 sentences...">${existing.prompt4 || ''}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="d0Prompt5">Prompt 5 — Career Ready Skills</label>
+                    <p style="font-size:12px;color:var(--gray-500);margin-bottom:6px;margin-top:-4px;">Name one Career Ready skill you practiced in this class and give a specific example of when you used it.</p>
+                    <textarea id="d0Prompt5" rows="4" placeholder="Write 2–4 sentences...">${existing.prompt5 || ''}</textarea>
+                </div>
+            </div>
+            ` : ''}
+
+            ${id !== 9 && id !== 0 ? `
             <div class="form-group">
                 <label for="deliverableContent">${id === 3 ? 'Code & Observations' : id === 4 ? 'Sweep Code & Explanation' : id === 5 ? 'Commented Code & Reflection' : id === 7 ? 'Problem & Solution' : id === 8 ? 'AI Log Summary' : 'Your Submission'}</label>
                 <textarea id="deliverableContent" rows="8" placeholder="${id === 3 ? 'Paste your code with comments, and describe your observations about sensor behavior...' : id === 4 ? 'Paste your servo sweep code and briefly explain how it works (what does each part do?)...' : id === 5 ? 'Paste a key section of your code (e.g. loop() or a motor function) and add comments explaining:\n- What each part does and why\n- Which constants you tuned (THRESHOLD, TURN_TIME, etc.) and what values you used\n- At least one problem you ran into and how you fixed it' : id === 7 ? 'Describe at least one problem you ran into (e.g. robot oscillating, veering, not stopping) and explain how you solved it or what you tried...' : id === 8 ? 'How many prompts did you use? What did you ask? Describe one thing AI got wrong or that you had to correct.' : 'Describe what you did, paste your code, explain your process...'}">${id === 3 ? (existing.rawContent || existing.content || '') : id === 5 ? (existing.rawContent || existing.content || '') : id === 7 ? (existing.rawContent || existing.content || '') : (existing.content || '')}</textarea>
             </div>` : ''}
 
-            ${id !== 9 ? `
+            ${id !== 9 && id !== 0 ? `
             <div class="form-group">
                 <label>
                     ${id === 8 ? 'Screenshots' : 'Photos'}
@@ -2495,6 +2559,7 @@ function saveDeliverableDraft(id) {
         links: (id === 8 || id === 9) ? (document.getElementById('deliverableDocLink')?.value || '') : (document.getElementById('deliverableLinks')?.value || ''),
         selfAssessment: document.getElementById('deliverableSelfAssessment').value,
         completionTime: completionTimeEl ? parseInt(completionTimeEl.value) || null : null,
+        ...(id === 0 ? collectDeliverable0CustomData() : {}),
         ...(id === 3 ? collectDeliverable3CustomData() : {}),
         ...(id === 5 ? collectDeliverable5CustomData() : {}),
         ...(id === 7 ? collectDeliverable7CustomData() : {}),
@@ -2581,9 +2646,46 @@ function formatDeliverable7Content(content, customData) {
     return formatted;
 }
 
+function collectDeliverable0CustomData() {
+    return {
+        careerTitle:  (document.getElementById('d0Career')?.value    || '').trim(),
+        medianSalary: parseInt(document.getElementById('d0Salary')?.value)    || 0,
+        monthlyNet:   parseInt(document.getElementById('d0MonthlyNet')?.value) || 0,
+        prompt1: (document.getElementById('d0Prompt1')?.value || '').trim(),
+        prompt2: (document.getElementById('d0Prompt2')?.value || '').trim(),
+        prompt3: (document.getElementById('d0Prompt3')?.value || '').trim(),
+        prompt4: (document.getElementById('d0Prompt4')?.value || '').trim(),
+        prompt5: (document.getElementById('d0Prompt5')?.value || '').trim(),
+    };
+}
+
+function formatDeliverable0Content(d) {
+    return [
+        'CAREER READY PRACTICES REFLECTION',
+        `Career/Trade: ${d.careerTitle}`,
+        `Median Annual Salary: $${(d.medianSalary || 0).toLocaleString()}`,
+        `Monthly Take-Home: $${(d.monthlyNet || 0).toLocaleString()}`,
+        '',
+        'PROMPT 1 — CAREER INTEREST:',
+        d.prompt1 || '(not answered)',
+        '',
+        'PROMPT 2 — EDUCATION PATH:',
+        d.prompt2 || '(not answered)',
+        '',
+        'PROMPT 3 — FINANCIAL REALITY:',
+        d.prompt3 || '(not answered)',
+        '',
+        'PROMPT 4 — FINANCIAL GOAL:',
+        d.prompt4 || '(not answered)',
+        '',
+        'PROMPT 5 — CAREER READY SKILLS:',
+        d.prompt5 || '(not answered)',
+    ].join('\n');
+}
+
 function submitDeliverable(id) {
     const deliverable = DELIVERABLES.find(d => d.id === id);
-    if (state.deliverables[id]?.status !== 'completed' && !state.config.deliverableDueDates[deliverable?.week]) {
+    if (!deliverable?.alwaysOpen && state.deliverables[id]?.status !== 'completed' && !state.config.deliverableDueDates[deliverable?.week]) {
         showToast('This deliverable hasn\'t been assigned yet.', 'error');
         return;
     }
@@ -2591,8 +2693,14 @@ function submitDeliverable(id) {
     const completionTimeEl = document.getElementById('completionTime');
     const photos = state.deliverables[id]?.photos || [];
 
-    // Deliverable 4: require at least one photo and code explanation
-    if (id === 4) {
+    // Deliverable 0: all five prompts must have meaningful text
+    if (id === 0) {
+        const d0 = collectDeliverable0CustomData();
+        if (!d0.careerTitle) { showToast('Please enter the career or trade you chose', 'error'); return; }
+        const prompts = [d0.prompt1, d0.prompt2, d0.prompt3, d0.prompt4, d0.prompt5];
+        const short = prompts.findIndex(p => !p || p.length < 50);
+        if (short >= 0) { showToast(`Prompt ${short + 1} needs more detail (at least 50 characters)`, 'error'); return; }
+    } else if (id === 4) {
         if (photos.length === 0) {
             showToast('Please upload at least one CAD screenshot', 'error');
             return;
@@ -2619,8 +2727,8 @@ function submitDeliverable(id) {
         }
     }
 
-    const customData = id === 3 ? collectDeliverable3CustomData() : id === 5 ? collectDeliverable5CustomData() : id === 7 ? collectDeliverable7CustomData() : {};
-    let finalContent = id === 3 ? formatDeliverable3Content(content, customData) : id === 5 ? formatDeliverable5Content(content, customData) : id === 7 ? formatDeliverable7Content(content, customData) : content;
+    const customData = id === 0 ? collectDeliverable0CustomData() : id === 3 ? collectDeliverable3CustomData() : id === 5 ? collectDeliverable5CustomData() : id === 7 ? collectDeliverable7CustomData() : {};
+    let finalContent = id === 0 ? formatDeliverable0Content(customData) : id === 3 ? formatDeliverable3Content(content, customData) : id === 5 ? formatDeliverable5Content(content, customData) : id === 7 ? formatDeliverable7Content(content, customData) : content;
 
     // Append photo links to content for Sheets storage
     if (photos.length > 0) {

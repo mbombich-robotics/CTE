@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.47';
+const BACKEND_VERSION = 'v2.9.48';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2170,7 +2170,19 @@ function handleGradeDesignBrief(data) {
   const docUrl = (data.docUrl || '').trim();
   if (!docUrl) return { error: 'Missing docUrl' };
   const deliverableId = Number(data.deliverableId);
-  if (deliverableId !== 8 && deliverableId !== 9) return { error: 'Only deliverables 8 and 9 support Design Brief grading' };
+  if (![0, 8, 9].includes(deliverableId)) return { error: 'Only deliverables 0, 8, and 9 support AI grading' };
+
+  // D0: content is passed directly (no Google Doc)
+  if (deliverableId === 0) {
+    const content = (data.content || '').trim();
+    if (!content) return { error: 'No reflection content provided' };
+    try {
+      const grades = gradeDesignBriefWithClaude(content, 0);
+      return { success: true, grades };
+    } catch(e) {
+      return { success: false, error: e.message };
+    }
+  }
 
   const idMatch = docUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
   if (!idMatch) return { error: 'Could not extract Google Doc ID from URL' };
@@ -2215,7 +2227,74 @@ function handleGradeDesignBrief(data) {
   }
 }
 
+function gradeWithRubric(docText, urlNote, deliverableId) {
+  const rubricD0 = `RUBRIC — DELIVERABLE 0: Career Ready Practices (20 pts):
+
+cr_career (max 4): Student identifies a career or trade and explains their interest. Connects to something concrete from class (names a project, concept, or skill). 4=specific interest + direct class connection; 3=specific interest, generic class mention; 2=vague interest, no class connection; 1=names a career only; 0=missing.
+
+cr_education (max 4): Describes the education or training path specific to their career (e.g., apprenticeship, associate degree, bachelor's — not just "go to college"). 4=specific path with program type and rough timeline; 3=correct path type with some detail; 2=generic ("college" or "training"); 1=present but vague or incorrect; 0=missing.
+
+cr_financial (max 4): Shows understanding of gross vs. net pay. References actual numbers from the paycheck activity. 4=mentions take-home vs. gross, cites specific numbers, shows budget awareness; 3=mentions both but numbers are vague; 2=mentions salary only, no take-home analysis; 1=present but shows no understanding of the distinction; 0=missing.
+
+cr_goal (max 4): States a specific financial goal for year 1 of working — must include an amount AND a purpose (e.g., "save $3,000 for a used car" not just "save money"). 4=amount + purpose + rough plan; 3=amount + purpose, no plan; 2=purpose but no amount; 1=vague ("save money", "be smart"); 0=missing.
+
+cr_skills (max 4): Names a Career Ready skill (e.g., communication, collaboration, problem-solving) and gives a specific example of using it in class. 4=skill named + specific class example with context; 3=skill named + brief example; 2=skill named, no example; 1=generic statement; 0=missing.`;
+
+  const criteriaKeys = ['cr_career','cr_education','cr_financial','cr_goal','cr_skills'];
+
+  const prompt = `You are grading a high school student's Career Ready Practices reflection for an Applied Engineering & Robotics course.
+
+SCORING PHILOSOPHY:
+Award points generously when the student demonstrates genuine effort and self-awareness, even if imperfectly worded. Reserve 0-1 for sections that are truly absent or show no engagement. A thoughtful, hardworking student should score in the 85-95% range overall.
+
+FEEDBACK TONE:
+Write in an encouraging, specific voice. Speak directly to the student using "you." Lead with what they did well, then give one concrete, actionable suggestion. No empty praise. Be specific — instead of "add more detail," say "add the specific dollar amount you'd save each month."
+
+${rubricD0}
+
+${urlNote}
+
+Return ONLY a valid JSON object — no markdown fences, no explanation. Feedback must be 1-2 specific sentences per criterion.
+
+Required keys: ${criteriaKeys.join(', ')}
+
+Example format: {"cr_career": {"score": 3, "max": 4, "feedback": "You clearly identified electrician as your top choice and connected it to the motor wiring work — add one sentence on what specifically excites you about that day-to-day work."}, ...}
+
+STUDENT SUBMISSION:
+${docText}`;
+
+  const apiKey = PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY');
+  if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set in Script Properties.');
+
+  const response = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
+    method: 'post',
+    headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+    payload: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 4096,
+      messages: [{ role: 'user', content: prompt }]
+    }),
+    muteHttpExceptions: true
+  });
+
+  const result = JSON.parse(response.getContentText());
+  if (result.type === 'error') throw new Error('Claude: ' + result.error.message);
+  const text = result.content[0].text;
+  const first = text.indexOf('{');
+  const last  = text.lastIndexOf('}');
+  if (first === -1 || last === -1) throw new Error('No JSON in Claude response: ' + text.substring(0, 200));
+  return JSON.parse(text.substring(first, last + 1));
+}
+
 function gradeDesignBriefWithClaude(docHtml, deliverableId) {
+  // D0 content arrives as plain text — skip HTML extraction and stripping
+  if (deliverableId === 0) {
+    const docText = docHtml.substring(0, 50000);
+    const urlNote = 'No external hyperlinks (plain text submission).';
+    // Jump directly to rubric/criteria/prompt block below
+    return gradeWithRubric(docText, urlNote, deliverableId);
+  }
+
   // Extract external hyperlink URLs before stripping HTML
   const urls = [];
   const hrefRe = /href="([^"]+)"/g;
@@ -2289,8 +2368,22 @@ Section 9 — Challenges & Solutions:
 s9_challenges (max 3): At least 2 SPECIFIC challenges (not generic). Good example: "ADC readings fluctuated ±30 at rest, causing false contact triggers." 3=2+ specific; 2=1 specific + 1 vague; 1=generic only; 0=absent.
 s9_solutions (max 3): For each challenge: solution tried and whether it worked. Unresolved challenges noted honestly. 3=tied to each challenge, honest; 2=present but vague/disconnected; 1=missing some; 0=none.`;
 
-  const rubric = deliverableId === 8 ? rubricD8 : rubricD9;
-  const criteriaKeys = deliverableId === 8
+  const rubricD0 = `RUBRIC — DELIVERABLE 0: Career Ready Practices (20 pts):
+
+cr_career (max 4): Student identifies a career or trade and explains their interest. Connects to something concrete from class (names a project, concept, or skill). 4=specific interest + direct class connection; 3=specific interest, generic class mention; 2=vague interest, no class connection; 1=names a career only; 0=missing.
+
+cr_education (max 4): Describes the education or training path specific to their career (e.g., apprenticeship, associate degree, bachelor's — not just "go to college"). 4=specific path with program type and rough timeline; 3=correct path type with some detail; 2=generic ("college" or "training"); 1=present but vague or incorrect; 0=missing.
+
+cr_financial (max 4): Shows understanding of gross vs. net pay. References actual numbers from the paycheck activity. 4=mentions take-home vs. gross, cites specific numbers, shows budget awareness; 3=mentions both but numbers are vague; 2=mentions salary only, no take-home analysis; 1=present but shows no understanding of the distinction; 0=missing.
+
+cr_goal (max 4): States a specific financial goal for year 1 of working — must include an amount AND a purpose (e.g., "save $3,000 for a used car" not just "save money"). 4=amount + purpose + rough plan; 3=amount + purpose, no plan; 2=purpose but no amount; 1=vague ("save money", "be smart"); 0=missing.
+
+cr_skills (max 4): Names a Career Ready skill (e.g., communication, collaboration, problem-solving) and gives a specific example of using it in class. 4=skill named + specific class example with context; 3=skill named + brief example; 2=skill named, no example; 1=generic statement; 0=missing.`;
+
+  const rubric = deliverableId === 0 ? rubricD0 : deliverableId === 8 ? rubricD8 : rubricD9;
+  const criteriaKeys = deliverableId === 0
+    ? ['cr_career','cr_education','cr_financial','cr_goal','cr_skills']
+    : deliverableId === 8
     ? ['s1_purpose','s1_goals','s2_completeness','s2_links','s3_pins','s3_diagram','s4_pwm','s4_adc','s4_additional','s8_prompts','s8_reflection']
     : ['s5_flowchart','s5_clarity','s6_annotations','s6_accuracy','s7_table','s7_analysis','s9_challenges','s9_solutions'];
 
