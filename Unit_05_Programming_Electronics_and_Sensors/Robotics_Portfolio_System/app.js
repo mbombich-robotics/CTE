@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.55',
+    VERSION: 'v2.9.56',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -74,8 +74,8 @@ const DELIVERABLES = [
         alwaysOpen: true,
         description: 'Research an engineering or trades career, analyze real take-home pay and a monthly budget, then write a personal reflection connecting the work to your future.',
         requirements: [
-            'Complete the Day 1 career research activity on bls.gov/ooh — research at least 3 careers or trades',
-            'Complete the Day 2 paycheck and monthly budget analysis using the SmartAsset calculator',
+            'Research at least 3 careers or trades using bls.gov/ooh and record salary, education, and job growth data',
+            'Complete a paycheck breakdown and monthly budget analysis using the SmartAsset paycheck calculator',
             'Answer all 5 reflection prompts with 2–4 sentences each',
             'Connect at least one prompt specifically to work or skills from this class'
         ]
@@ -2322,7 +2322,14 @@ function openDeliverableForm(id) {
 
             ${id === 0 ? `
             <div style="background:var(--gray-50);border-radius:8px;padding:20px;margin-bottom:20px;border:1px solid var(--gray-200);">
-                <p style="font-size:13px;color:var(--gray-500);margin-bottom:16px;">Complete the Day 1 and Day 2 activity sheet before filling this in.</p>
+                <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px;">
+                    Complete the Unit 00 activity sheet before filling this in.
+                    <a href="../../Unit_00_Career_Ready_Practices/CRP_Student_Activity.html"
+                       target="_blank"
+                       style="color:var(--primary);font-weight:600;margin-left:6px;">
+                        Open Activity Sheet ↗
+                    </a>
+                </p>
                 <div class="form-group">
                     <label for="d0Career">Career or Trade You Chose</label>
                     <input type="text" id="d0Career" value="${existing.careerTitle || ''}"
