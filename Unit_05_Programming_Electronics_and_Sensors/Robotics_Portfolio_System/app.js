@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.52',
+    VERSION: 'v2.9.55',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -1533,14 +1533,14 @@ function updateDeliverablesList() {
     list.innerHTML = filtered.map(d => {
         const status = state.deliverables[d.id]?.status || 'pending';
         const isCurrent = d.week === state.currentWeek;
-        const isAssigned = status === 'completed' || !!state.config.deliverableDueDates[d.week];
+        const isAssigned = d.alwaysOpen || status === 'completed' || !!state.config.deliverableDueDates[d.week];
         return `
             <div class="deliverable-card ${status} ${isCurrent ? 'current' : ''} ${!isAssigned ? 'not-assigned' : ''}" data-id="${d.id}">
                 <div class="deliverable-number">${status === 'completed' ? '<i class="fas fa-check"></i>' : d.id}</div>
                 <div class="deliverable-info">
                     <div class="deliverable-title">${d.title}</div>
                     <div class="deliverable-meta">
-                        <span>Week ${d.week}</span>
+                        <span>${d.unit ? 'Unit ' + d.unit : 'Week ' + d.week}</span>
                         <span>${formatPhase(d.phase)}</span>
                         <span class="deliverable-points">${d.points} pts</span>
                     </div>
@@ -2438,11 +2438,15 @@ function openDeliverableForm(id) {
                 <button type="button" class="btn btn-secondary" onclick="saveDeliverableDraft(${id})">
                     <i class="fas fa-save"></i> Save Draft
                 </button>
+                ${id === 0 ? `<button type="button" class="btn btn-secondary" onclick="checkD0Work()">
+                    <i class="fas fa-comments"></i> Check My Work
+                </button>` : ''}
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-paper-plane"></i> Submit
                 </button>
             </div>
         </form>
+        ${id === 0 ? '<div id="d0FeedbackResult" style="margin-top:16px;"></div>' : ''}
     `;
 
     // Attach dirty listeners to form inputs
@@ -2751,6 +2755,79 @@ function submitDeliverable(id) {
     updateUI();
     document.getElementById('deliverableModal').classList.remove('active');
     showCelebration(`${deliverable.title} Submitted!`);
+}
+
+// ============================================
+// D0 FEEDBACK (CHECK MY WORK)
+// ============================================
+async function checkD0Work() {
+    const panel = document.getElementById('d0FeedbackResult');
+    if (!panel) return;
+
+    const d0 = collectDeliverable0CustomData();
+    if (!d0.careerTitle) {
+        panel.innerHTML = `<p style="color:var(--danger,#c62828);font-size:14px;">Enter the career or trade you chose before checking your work.</p>`;
+        return;
+    }
+
+    panel.innerHTML = `
+        <div style="text-align:center;padding:24px;color:var(--gray-500,#888);">
+            <i class="fas fa-spinner fa-spin" style="font-size:20px;margin-bottom:10px;display:block;"></i>
+            Checking your work…
+        </div>`;
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    const content = formatDeliverable0Content(d0);
+    try {
+        const res = await fetch(CONFIG.SHEETS_API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'getStudentAIFeedback', deliverableId: 0, content })
+        });
+        const data = await res.json();
+        if (data.success && data.grades) {
+            panel.innerHTML = renderD0FeedbackPanel(data.grades);
+        } else {
+            panel.innerHTML = `<p style="color:var(--danger,#c62828);font-size:14px;">Feedback unavailable right now — try again in a moment.</p>`;
+        }
+    } catch(e) {
+        panel.innerHTML = `<p style="color:var(--danger,#c62828);font-size:14px;">Feedback unavailable right now — try again in a moment.</p>`;
+    }
+}
+
+function renderD0FeedbackPanel(grades) {
+    const criteria = [
+        { key: 'cr_career',    label: 'Career Interest & Class Connection' },
+        { key: 'cr_education', label: 'Education / Training Path' },
+        { key: 'cr_financial', label: 'Financial Literacy' },
+        { key: 'cr_goal',      label: 'Financial Goal Specificity' },
+        { key: 'cr_skills',    label: 'Career Ready Skills' },
+    ];
+    const total = criteria.reduce((sum, c) => sum + (grades[c.key]?.score || 0), 0);
+    const maxTotal = criteria.reduce((sum, c) => sum + (grades[c.key]?.max || 4), 0);
+
+    const rows = criteria.map(c => {
+        const g = grades[c.key] || { score: 0, max: 4, feedback: '' };
+        const pct = g.max > 0 ? g.score / g.max : 0;
+        const color = pct >= 0.75 ? 'var(--success, #2e7d32)' : pct >= 0.5 ? 'var(--warning, #f57c00)' : 'var(--danger, #c62828)';
+        return `
+            <div style="border:1px solid var(--gray-200,#e0e0e0);border-radius:8px;padding:12px 14px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                    <span style="font-weight:600;font-size:14px;">${c.label}</span>
+                    <span style="font-weight:700;font-size:15px;color:${color};">${g.score}/${g.max}</span>
+                </div>
+                <p style="font-size:13px;color:var(--gray-700,#444);margin:0;line-height:1.5;">${g.feedback}</p>
+            </div>`;
+    }).join('');
+
+    return `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--gray-100,#f5f5f5);border-radius:8px;margin-bottom:4px;">
+            <span style="font-weight:700;">Total</span>
+            <span style="font-weight:700;font-size:18px;">${total} / ${maxTotal}</span>
+        </div>
+        ${rows}
+        <p style="font-size:12px;color:var(--gray-500,#999);margin-top:8px;">This feedback is a guide — your teacher assigns the final grade.</p>
+    `;
 }
 
 // ============================================

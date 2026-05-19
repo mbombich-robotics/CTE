@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.48';
+const BACKEND_VERSION = 'v2.9.49';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -443,6 +443,9 @@ function doPost(e) {
 
       case 'gradeDesignBrief':
         return jsonResponse(handleGradeDesignBrief(data));
+
+      case 'getStudentAIFeedback':
+        return jsonResponse(handleGetStudentAIFeedback(data));
 
       case 'chatWithTutor':
         return jsonResponse(chatWithTutor(data));
@@ -2221,6 +2224,19 @@ function handleGradeDesignBrief(data) {
 
   try {
     const grades = gradeDesignBriefWithClaude(docHtml, deliverableId);
+    return { success: true, grades };
+  } catch(e) {
+    return { success: false, error: e.message };
+  }
+}
+
+function handleGetStudentAIFeedback(data) {
+  const deliverableId = Number(data.deliverableId);
+  if (deliverableId !== 0) return { success: false, error: 'AI feedback only supported for D0' };
+  const content = (data.content || '').trim();
+  if (!content) return { success: false, error: 'No content provided' };
+  try {
+    const grades = gradeWithRubric(content, 'No external hyperlinks (plain text submission).', 0);
     return { success: true, grades };
   } catch(e) {
     return { success: false, error: e.message };

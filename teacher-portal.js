@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.28',
+    VERSION: 'v2.9.29',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -22,7 +22,7 @@ const CONFIG = {
         robotics: {
             name: 'Robotics Portfolio',
             apiUrl: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
-            currentAppVersion: 'v2.9.51',  // keep in sync with Robotics app.js CONFIG.VERSION
+            currentAppVersion: 'v2.9.55',  // keep in sync with Robotics app.js CONFIG.VERSION
             hasTeams: false,
             totalDeliverables: 10,
             totalReflections: 14,
@@ -967,7 +967,7 @@ function openStudentDetail(email) {
     const deliverablesPanel = document.getElementById('deliverablesPanel');
     deliverablesPanel.innerHTML = '';
 
-    for (let id = 1; id <= course.totalDeliverables; id++) {
+    for (let id = 0; id < course.totalDeliverables; id++) {
         const submitted = state.rawData.deliverables?.find(d => d[0] === email && d[2] == id);
         const draft = student.fullState?.deliverables?.[id];
 
