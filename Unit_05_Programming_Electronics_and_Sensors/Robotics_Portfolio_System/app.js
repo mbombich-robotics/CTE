@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.56',
+    VERSION: 'v2.9.57',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -2321,58 +2321,167 @@ function openDeliverableForm(id) {
             ` : ''}
 
             ${id === 0 ? `
-            <div style="background:var(--gray-50);border-radius:8px;padding:20px;margin-bottom:20px;border:1px solid var(--gray-200);">
-                <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px;">
-                    Complete the Unit 00 activity sheet before filling this in.
-                    <a href="../../Unit_00_Career_Ready_Practices/CRP_Student_Activity.html"
-                       target="_blank"
-                       style="color:var(--primary);font-weight:600;margin-left:6px;">
-                        Open Activity Sheet ↗
-                    </a>
-                </p>
+            <div style="margin-bottom:8px;">
+
+              <!-- top bar -->
+              <div style="background:var(--gray-50);border-radius:8px;padding:10px 16px;margin-bottom:20px;border:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                <span style="font-size:13px;color:var(--gray-600);">Work through all three days — your draft saves automatically.</span>
+                <a href="../../Unit_00_Career_Ready_Practices/CRP_Student_Activity.html" target="_blank"
+                   style="font-size:13px;color:var(--primary);font-weight:600;white-space:nowrap;">Printable Version ↗</a>
+              </div>
+
+              <!-- DAY 1 -->
+              <div style="background:var(--gray-800);color:#fff;padding:12px 16px;border-radius:8px;margin-bottom:14px;">
+                <h3 style="margin:0;font-size:15px;font-weight:700;">Day 1 — Where Could This Take You?</h3>
+                <p style="margin:3px 0 0;font-size:12px;opacity:.75;">Research at least 3 careers or trades on bls.gov/ooh — engineering AND trades both qualify.</p>
+              </div>
+              <div class="card" style="margin-bottom:20px;border-left:3px solid var(--primary);overflow-x:auto;">
+                <p style="font-size:13px;color:var(--gray-500);margin-bottom:10px;">Browse Architecture &amp; Engineering, Installation &amp; Repair, or Construction &amp; Extraction. Electricians, welders, HVAC techs, CNC machinists, and plumbers all qualify. "Connection to This Class" = something you actually did — motors, wiring, programming, CAD, sensors.</p>
+                <div style="overflow-x:auto;">
+                  <table style="width:100%;border-collapse:collapse;font-size:13px;min-width:620px;">
+                    <thead>
+                      <tr style="border-bottom:2px solid var(--gray-200);">
+                        <th style="padding:7px 6px;text-align:left;font-size:11px;color:var(--gray-500);font-weight:600;">#</th>
+                        <th style="padding:7px 6px;text-align:left;font-size:11px;color:var(--gray-500);font-weight:600;">Career / Trade Title</th>
+                        <th style="padding:7px 6px;text-align:left;font-size:11px;color:var(--gray-500);font-weight:600;">Median Annual Salary</th>
+                        <th style="padding:7px 6px;text-align:left;font-size:11px;color:var(--gray-500);font-weight:600;">Education / Training</th>
+                        <th style="padding:7px 6px;text-align:left;font-size:11px;color:var(--gray-500);font-weight:600;">10-Yr Growth</th>
+                        <th style="padding:7px 6px;text-align:left;font-size:11px;color:var(--gray-500);font-weight:600;">Connection to This Class</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${[1,2,3].map(n => `
+                      <tr style="border-bottom:1px solid var(--gray-100);">
+                        <td style="padding:5px 6px;font-weight:700;color:var(--gray-400);">${n}</td>
+                        <td style="padding:4px 3px;"><input type="text" id="d0C${n}Title" value="${existing['career'+n+'Title']||''}" placeholder="e.g. Electrician" style="width:100%;padding:5px;border:1px solid var(--gray-200);border-radius:4px;font-size:12px;min-width:110px;"></td>
+                        <td style="padding:4px 3px;"><input type="text" id="d0C${n}Salary" value="${existing['career'+n+'Salary']||''}" placeholder="$61,590" style="width:80px;padding:5px;border:1px solid var(--gray-200);border-radius:4px;font-size:12px;"></td>
+                        <td style="padding:4px 3px;"><input type="text" id="d0C${n}Edu" value="${existing['career'+n+'Edu']||''}" placeholder="Apprenticeship" style="width:100%;padding:5px;border:1px solid var(--gray-200);border-radius:4px;font-size:12px;min-width:100px;"></td>
+                        <td style="padding:4px 3px;"><input type="text" id="d0C${n}Growth" value="${existing['career'+n+'Growth']||''}" placeholder="11%" style="width:48px;padding:5px;border:1px solid var(--gray-200);border-radius:4px;font-size:12px;"></td>
+                        <td style="padding:4px 3px;"><input type="text" id="d0C${n}Connect" value="${existing['career'+n+'Connect']||''}" placeholder="Motor wiring, sensors…" style="width:100%;padding:5px;border:1px solid var(--gray-200);border-radius:4px;font-size:12px;min-width:120px;"></td>
+                      </tr>`).join('')}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- DAY 2 -->
+              <div style="background:var(--gray-800);color:#fff;padding:12px 16px;border-radius:8px;margin-bottom:14px;">
+                <h3 style="margin:0;font-size:15px;font-weight:700;">Day 2 — The Real Numbers</h3>
+                <p style="margin:3px 0 0;font-size:12px;opacity:.75;">smartasset.com/taxes/paycheck-calculator (Michigan, Single) &nbsp;·&nbsp; nerdwallet.com/cost-of-living-calculator</p>
+              </div>
+
+              <!-- Part A: Paycheck -->
+              <div class="card" style="margin-bottom:14px;border-left:3px solid var(--success);">
+                <h4 style="margin-bottom:10px;font-size:14px;"><i class="fas fa-dollar-sign"></i> Part A — Your Paycheck</h4>
+                <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px;">Pick the career you want to analyze in depth. Enter its median salary into the SmartAsset calculator (Michigan, Single filing status) and record the results.</p>
+                <div class="form-group" style="margin-bottom:12px;">
+                  <label style="font-size:13px;font-weight:600;">Career chosen for this analysis</label>
+                  <input type="text" id="d0Career" value="${existing.careerTitle||''}" placeholder="e.g. Electrician"
+                         style="width:100%;padding:8px;border:1px solid var(--gray-200);border-radius:6px;font-size:14px;margin-top:4px;box-sizing:border-box;">
+                </div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                  <div style="flex:1;min-width:130px;">
+                    <label style="display:block;font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:4px;">Median Annual Salary (BLS)</label>
+                    <input type="number" id="d0Salary" value="${existing.medianSalary||''}" placeholder="e.g. 61590"
+                           style="width:100%;padding:8px;border:1px solid var(--gray-200);border-radius:6px;font-size:14px;box-sizing:border-box;">
+                  </div>
+                  <div style="flex:1;min-width:130px;">
+                    <label style="display:block;font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:4px;">Monthly Take-Home (Net Pay)</label>
+                    <input type="number" id="d0MonthlyNet" value="${existing.monthlyNet||''}" placeholder="e.g. 3800"
+                           class="d0-net-input"
+                           style="width:100%;padding:8px;border:1px solid var(--gray-200);border-radius:6px;font-size:14px;box-sizing:border-box;">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Part B: Monthly Budget -->
+              <div class="card" style="margin-bottom:14px;border-left:3px solid #f59e0b;">
+                <h4 style="margin-bottom:8px;font-size:14px;"><i class="fas fa-wallet"></i> Part B — Monthly Budget</h4>
+                <p style="font-size:13px;color:var(--gray-500);margin-bottom:10px;">Use your monthly take-home as your income. Michigan averages shown as a guide — adjust for your situation.</p>
+                <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                  <thead>
+                    <tr style="border-bottom:2px solid var(--gray-200);">
+                      <th style="text-align:left;padding:6px 8px;font-size:12px;color:var(--gray-500);font-weight:600;">Category</th>
+                      <th style="text-align:center;padding:6px 8px;font-size:12px;color:var(--gray-500);font-weight:600;">Monthly ($)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style="border-bottom:1px solid var(--gray-100);"><td style="padding:5px 8px;">Housing <span style="font-size:11px;color:var(--gray-400);">~$950–1,100</span></td><td style="padding:4px 8px;text-align:center;"><input type="number" id="d0BudgHousing" value="${existing.budgHousing||''}" placeholder="0" class="d0-budget-input" style="width:84px;padding:5px;text-align:center;border:1px solid var(--gray-200);border-radius:4px;font-size:13px;"></td></tr>
+                    <tr style="border-bottom:1px solid var(--gray-100);"><td style="padding:5px 8px;">Transportation <span style="font-size:11px;color:var(--gray-400);">~$400–600</span></td><td style="padding:4px 8px;text-align:center;"><input type="number" id="d0BudgTransport" value="${existing.budgTransport||''}" placeholder="0" class="d0-budget-input" style="width:84px;padding:5px;text-align:center;border:1px solid var(--gray-200);border-radius:4px;font-size:13px;"></td></tr>
+                    <tr style="border-bottom:1px solid var(--gray-100);"><td style="padding:5px 8px;">Groceries <span style="font-size:11px;color:var(--gray-400);">~$250–350</span></td><td style="padding:4px 8px;text-align:center;"><input type="number" id="d0BudgGroceries" value="${existing.budgGroceries||''}" placeholder="0" class="d0-budget-input" style="width:84px;padding:5px;text-align:center;border:1px solid var(--gray-200);border-radius:4px;font-size:13px;"></td></tr>
+                    <tr style="border-bottom:1px solid var(--gray-100);"><td style="padding:5px 8px;">Utilities <span style="font-size:11px;color:var(--gray-400);">~$150–200</span></td><td style="padding:4px 8px;text-align:center;"><input type="number" id="d0BudgUtilities" value="${existing.budgUtilities||''}" placeholder="0" class="d0-budget-input" style="width:84px;padding:5px;text-align:center;border:1px solid var(--gray-200);border-radius:4px;font-size:13px;"></td></tr>
+                    <tr style="border-bottom:1px solid var(--gray-100);"><td style="padding:5px 8px;">Cell phone <span style="font-size:11px;color:var(--gray-400);">~$50–80</span></td><td style="padding:4px 8px;text-align:center;"><input type="number" id="d0BudgPhone" value="${existing.budgPhone||''}" placeholder="0" class="d0-budget-input" style="width:84px;padding:5px;text-align:center;border:1px solid var(--gray-200);border-radius:4px;font-size:13px;"></td></tr>
+                    <tr style="border-bottom:1px solid var(--gray-100);"><td style="padding:5px 8px;">Health insurance / co-pays <span style="font-size:11px;color:var(--gray-400);">~$100–200</span></td><td style="padding:4px 8px;text-align:center;"><input type="number" id="d0BudgHealth" value="${existing.budgHealth||''}" placeholder="0" class="d0-budget-input" style="width:84px;padding:5px;text-align:center;border:1px solid var(--gray-200);border-radius:4px;font-size:13px;"></td></tr>
+                    <tr style="border-bottom:1px solid var(--gray-100);"><td style="padding:5px 8px;">Savings <span style="font-size:11px;color:var(--gray-400);">goal: 10–20% of take-home</span></td><td style="padding:4px 8px;text-align:center;"><input type="number" id="d0BudgSavings" value="${existing.budgSavings||''}" placeholder="0" class="d0-budget-input" style="width:84px;padding:5px;text-align:center;border:1px solid var(--gray-200);border-radius:4px;font-size:13px;"></td></tr>
+                    <tr style="border-bottom:1px solid var(--gray-100);"><td style="padding:5px 8px;">Personal / Entertainment <span style="font-size:11px;color:var(--gray-400);">~$100–200</span></td><td style="padding:4px 8px;text-align:center;"><input type="number" id="d0BudgEntertain" value="${existing.budgEntertain||''}" placeholder="0" class="d0-budget-input" style="width:84px;padding:5px;text-align:center;border:1px solid var(--gray-200);border-radius:4px;font-size:13px;"></td></tr>
+                    <tr style="border-top:2px solid var(--gray-200);background:var(--gray-50);">
+                      <td style="padding:7px 8px;font-weight:700;font-size:13px;">Total Monthly Expenses</td>
+                      <td style="padding:7px 8px;text-align:center;font-weight:700;" id="d0BudgTotal">—</td>
+                    </tr>
+                    <tr style="background:var(--gray-50);">
+                      <td style="padding:7px 8px;font-weight:700;font-size:13px;">Remaining After Expenses</td>
+                      <td style="padding:7px 8px;text-align:center;font-weight:700;" id="d0BudgRemaining">—</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div style="margin-top:14px;">
+                  <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">Budget Check</label>
+                  <p style="font-size:12px;color:var(--gray-500);margin-bottom:6px;">1) Does your budget balance? If not, what would you cut first?&nbsp;&nbsp;2) If an unexpected expense hit ($800 car repair, medical bill) — where does that money come from?</p>
+                  <textarea id="d0BudgetResp" rows="3" placeholder="Answer both questions in 2–4 sentences…" style="width:100%;padding:8px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;resize:vertical;box-sizing:border-box;">${existing.budgetResp||''}</textarea>
+                </div>
+              </div>
+
+              <!-- Part C: Location -->
+              <div class="card" style="margin-bottom:20px;border-left:3px solid var(--primary);">
+                <h4 style="margin-bottom:8px;font-size:14px;"><i class="fas fa-map-marker-alt"></i> Part C — Location Matters</h4>
+                <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px;">Compare your salary in Kalamazoo, MI to one other city using the NerdWallet cost-of-living calculator. What would you need to earn there to maintain the same lifestyle?</p>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;">
+                  <div style="flex:2;min-width:140px;">
+                    <label style="display:block;font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:4px;">City you compared to Kalamazoo</label>
+                    <input type="text" id="d0CompCity" value="${existing.compCity||''}" placeholder="e.g. Austin, TX"
+                           style="width:100%;padding:8px;border:1px solid var(--gray-200);border-radius:6px;font-size:14px;box-sizing:border-box;">
+                  </div>
+                  <div style="flex:1;min-width:120px;">
+                    <label style="display:block;font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:4px;">Salary needed there ($)</label>
+                    <input type="number" id="d0CompSalary" value="${existing.compSalary||''}" placeholder="e.g. 82000"
+                           style="width:100%;padding:8px;border:1px solid var(--gray-200);border-radius:6px;font-size:14px;box-sizing:border-box;">
+                  </div>
+                </div>
+                <textarea id="d0LocationResp" rows="2" placeholder="What does this tell you about where you might want to live after training or graduation?" style="width:100%;padding:8px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;resize:vertical;box-sizing:border-box;">${existing.locationResp||''}</textarea>
+              </div>
+
+              <!-- DAY 3 -->
+              <div style="background:var(--gray-800);color:#fff;padding:12px 16px;border-radius:8px;margin-bottom:14px;">
+                <h3 style="margin:0;font-size:15px;font-weight:700;">Day 3 — Your Engineering Career Plan</h3>
+                <p style="margin:3px 0 0;font-size:12px;opacity:.75;">Write 2–4 sentences per prompt. This is Deliverable 0 — submit it here when done.</p>
+              </div>
+              <div class="card" style="margin-bottom:8px;border-left:3px solid var(--primary);">
                 <div class="form-group">
-                    <label for="d0Career">Career or Trade You Chose</label>
-                    <input type="text" id="d0Career" value="${existing.careerTitle || ''}"
-                           placeholder="e.g. Electrician, Robotics Technician, Industrial Engineer"
-                           style="width:100%;padding:10px;border:1px solid var(--gray-200);border-radius:6px;font-size:14px;box-sizing:border-box;">
-                </div>
-                <div style="display:flex;gap:12px;margin-bottom:18px;">
-                    <div style="flex:1;">
-                        <label style="display:block;margin-bottom:6px;font-size:14px;font-weight:500;">Median Annual Salary (BLS.gov)</label>
-                        <input type="number" id="d0Salary" value="${existing.medianSalary || ''}" placeholder="e.g. 62000"
-                               style="width:100%;padding:10px;border:1px solid var(--gray-200);border-radius:6px;font-size:14px;box-sizing:border-box;">
-                    </div>
-                    <div style="flex:1;">
-                        <label style="display:block;margin-bottom:6px;font-size:14px;font-weight:500;">Monthly Take-Home (paycheck calculator)</label>
-                        <input type="number" id="d0MonthlyNet" value="${existing.monthlyNet || ''}" placeholder="e.g. 3800"
-                               style="width:100%;padding:10px;border:1px solid var(--gray-200);border-radius:6px;font-size:14px;box-sizing:border-box;">
-                    </div>
+                  <label for="d0Prompt1">Prompt 1 — Career Interest</label>
+                  <p style="font-size:12px;color:var(--gray-500);margin-bottom:6px;margin-top:-4px;">Which career or trade interests you most, and why? Connect your answer to something specific you built or learned in this class.</p>
+                  <textarea id="d0Prompt1" rows="4" placeholder="Write 2–4 sentences…">${existing.prompt1||''}</textarea>
                 </div>
                 <div class="form-group">
-                    <label for="d0Prompt1">Prompt 1 — Career Interest</label>
-                    <p style="font-size:12px;color:var(--gray-500);margin-bottom:6px;margin-top:-4px;">Which career or trade interests you most, and why? Connect your answer to something specific you built or learned in this class.</p>
-                    <textarea id="d0Prompt1" rows="4" placeholder="Write 2–4 sentences...">${existing.prompt1 || ''}</textarea>
+                  <label for="d0Prompt2">Prompt 2 — Education Path</label>
+                  <p style="font-size:12px;color:var(--gray-500);margin-bottom:6px;margin-top:-4px;">What education or training would you need? Be specific (e.g., apprenticeship, associate degree, bachelor's).</p>
+                  <textarea id="d0Prompt2" rows="4" placeholder="Write 2–4 sentences…">${existing.prompt2||''}</textarea>
                 </div>
                 <div class="form-group">
-                    <label for="d0Prompt2">Prompt 2 — Education Path</label>
-                    <p style="font-size:12px;color:var(--gray-500);margin-bottom:6px;margin-top:-4px;">What education or training would you need? Be specific to your career (e.g., apprenticeship, associate degree, bachelor's).</p>
-                    <textarea id="d0Prompt2" rows="4" placeholder="Write 2–4 sentences...">${existing.prompt2 || ''}</textarea>
+                  <label for="d0Prompt3">Prompt 3 — Financial Reality</label>
+                  <p style="font-size:12px;color:var(--gray-500);margin-bottom:6px;margin-top:-4px;">What would your monthly take-home be on a starting salary in this field? Was it more or less than you expected, and why does it matter?</p>
+                  <textarea id="d0Prompt3" rows="4" placeholder="Write 2–4 sentences…">${existing.prompt3||''}</textarea>
                 </div>
                 <div class="form-group">
-                    <label for="d0Prompt3">Prompt 3 — Financial Reality</label>
-                    <p style="font-size:12px;color:var(--gray-500);margin-bottom:6px;margin-top:-4px;">What would your monthly take-home be on a starting salary in this field? Was it more or less than you expected, and why does it matter?</p>
-                    <textarea id="d0Prompt3" rows="4" placeholder="Write 2–4 sentences...">${existing.prompt3 || ''}</textarea>
+                  <label for="d0Prompt4">Prompt 4 — Financial Goal</label>
+                  <p style="font-size:12px;color:var(--gray-500);margin-bottom:6px;margin-top:-4px;">Name one specific financial goal for your first year of working. Include an amount and a purpose — not just "save money."</p>
+                  <textarea id="d0Prompt4" rows="4" placeholder="Write 2–4 sentences…">${existing.prompt4||''}</textarea>
                 </div>
-                <div class="form-group">
-                    <label for="d0Prompt4">Prompt 4 — Financial Goal</label>
-                    <p style="font-size:12px;color:var(--gray-500);margin-bottom:6px;margin-top:-4px;">Name one specific financial goal for your first year of working. Include an amount and a purpose — not just "save money."</p>
-                    <textarea id="d0Prompt4" rows="4" placeholder="Write 2–4 sentences...">${existing.prompt4 || ''}</textarea>
+                <div class="form-group" style="margin-bottom:0;">
+                  <label for="d0Prompt5">Prompt 5 — Career Ready Skills</label>
+                  <p style="font-size:12px;color:var(--gray-500);margin-bottom:6px;margin-top:-4px;">Name one Career Ready skill you practiced in this class and give a specific example of when you used it.</p>
+                  <textarea id="d0Prompt5" rows="4" placeholder="Write 2–4 sentences…">${existing.prompt5||''}</textarea>
                 </div>
-                <div class="form-group">
-                    <label for="d0Prompt5">Prompt 5 — Career Ready Skills</label>
-                    <p style="font-size:12px;color:var(--gray-500);margin-bottom:6px;margin-top:-4px;">Name one Career Ready skill you practiced in this class and give a specific example of when you used it.</p>
-                    <textarea id="d0Prompt5" rows="4" placeholder="Write 2–4 sentences...">${existing.prompt5 || ''}</textarea>
-                </div>
+              </div>
             </div>
             ` : ''}
 
@@ -2460,6 +2569,30 @@ function openDeliverableForm(id) {
     content.querySelectorAll('textarea, input').forEach(el => {
         el.addEventListener('input', markDirty);
     });
+
+    // Live budget total/remaining for D0
+    if (id === 0) {
+        const budgetInputIds = ['d0BudgHousing','d0BudgTransport','d0BudgGroceries','d0BudgUtilities','d0BudgPhone','d0BudgHealth','d0BudgSavings','d0BudgEntertain'];
+        function updateBudgetTotals() {
+            const net = parseFloat(document.getElementById('d0MonthlyNet')?.value) || 0;
+            const total = budgetInputIds.reduce((sum, bid) => sum + (parseFloat(document.getElementById(bid)?.value) || 0), 0);
+            const remaining = net - total;
+            const totalEl = document.getElementById('d0BudgTotal');
+            const remainEl = document.getElementById('d0BudgRemaining');
+            if (totalEl) totalEl.textContent = total > 0 ? '$' + total.toLocaleString() : '—';
+            if (remainEl) {
+                if (net > 0 || total > 0) {
+                    remainEl.textContent = (remaining >= 0 ? '+$' : '-$') + Math.abs(remaining).toLocaleString();
+                    remainEl.style.color = remaining >= 0 ? 'var(--success)' : 'var(--danger)';
+                } else {
+                    remainEl.textContent = '—';
+                    remainEl.style.color = '';
+                }
+            }
+        }
+        content.querySelectorAll('.d0-budget-input, .d0-net-input').forEach(el => el.addEventListener('input', updateBudgetTotals));
+        updateBudgetTotals();
+    }
 
     // Auto-calculate average error for deliverable 3 accuracy table
     if (id === 3) {
@@ -2658,25 +2791,74 @@ function formatDeliverable7Content(content, customData) {
 }
 
 function collectDeliverable0CustomData() {
+    const g = id => (document.getElementById(id)?.value || '').trim();
+    const n = id => parseInt(document.getElementById(id)?.value) || 0;
     return {
-        careerTitle:  (document.getElementById('d0Career')?.value    || '').trim(),
-        medianSalary: parseInt(document.getElementById('d0Salary')?.value)    || 0,
-        monthlyNet:   parseInt(document.getElementById('d0MonthlyNet')?.value) || 0,
-        prompt1: (document.getElementById('d0Prompt1')?.value || '').trim(),
-        prompt2: (document.getElementById('d0Prompt2')?.value || '').trim(),
-        prompt3: (document.getElementById('d0Prompt3')?.value || '').trim(),
-        prompt4: (document.getElementById('d0Prompt4')?.value || '').trim(),
-        prompt5: (document.getElementById('d0Prompt5')?.value || '').trim(),
+        // Day 1 research table
+        career1Title:   g('d0C1Title'),  career1Salary: g('d0C1Salary'), career1Edu: g('d0C1Edu'), career1Growth: g('d0C1Growth'), career1Connect: g('d0C1Connect'),
+        career2Title:   g('d0C2Title'),  career2Salary: g('d0C2Salary'), career2Edu: g('d0C2Edu'), career2Growth: g('d0C2Growth'), career2Connect: g('d0C2Connect'),
+        career3Title:   g('d0C3Title'),  career3Salary: g('d0C3Salary'), career3Edu: g('d0C3Edu'), career3Growth: g('d0C3Growth'), career3Connect: g('d0C3Connect'),
+        // Day 2 paycheck
+        careerTitle:    g('d0Career'),
+        medianSalary:   n('d0Salary'),
+        monthlyNet:     n('d0MonthlyNet'),
+        // Day 2 budget
+        budgHousing:    n('d0BudgHousing'),   budgTransport: n('d0BudgTransport'),
+        budgGroceries:  n('d0BudgGroceries'), budgUtilities: n('d0BudgUtilities'),
+        budgPhone:      n('d0BudgPhone'),      budgHealth:    n('d0BudgHealth'),
+        budgSavings:    n('d0BudgSavings'),    budgEntertain: n('d0BudgEntertain'),
+        budgetResp:     g('d0BudgetResp'),
+        // Day 2 location
+        compCity:       g('d0CompCity'),  compSalary: n('d0CompSalary'),
+        locationResp:   g('d0LocationResp'),
+        // Day 3 prompts
+        prompt1: g('d0Prompt1'), prompt2: g('d0Prompt2'), prompt3: g('d0Prompt3'),
+        prompt4: g('d0Prompt4'), prompt5: g('d0Prompt5'),
     };
 }
 
 function formatDeliverable0Content(d) {
+    const fmt = v => v ? '$' + Number(v).toLocaleString() : '—';
+    const budgetTotal = ['budgHousing','budgTransport','budgGroceries','budgUtilities','budgPhone','budgHealth','budgSavings','budgEntertain']
+        .reduce((sum, k) => sum + (Number(d[k]) || 0), 0);
+    const budgetRemaining = (d.monthlyNet || 0) - budgetTotal;
+
+    const careerRow = n => [d['career'+n+'Title'], d['career'+n+'Salary'], d['career'+n+'Edu'], d['career'+n+'Growth'], d['career'+n+'Connect']]
+        .map(v => v || '—').join(' | ');
+
     return [
-        'CAREER READY PRACTICES REFLECTION',
-        `Career/Trade: ${d.careerTitle}`,
-        `Median Annual Salary: $${(d.medianSalary || 0).toLocaleString()}`,
-        `Monthly Take-Home: $${(d.monthlyNet || 0).toLocaleString()}`,
+        'CAREER READY PRACTICES — UNIT 00',
         '',
+        '=== DAY 1: CAREER RESEARCH ===',
+        'Format: Title | Median Salary | Education | 10-Yr Growth | Connection to Class',
+        '1. ' + careerRow(1),
+        '2. ' + careerRow(2),
+        '3. ' + careerRow(3),
+        '',
+        '=== DAY 2: PAYCHECK & BUDGET ===',
+        `Career analyzed: ${d.careerTitle || '—'}`,
+        `Median Annual Salary: ${fmt(d.medianSalary)}`,
+        `Monthly Take-Home (Net Pay): ${fmt(d.monthlyNet)}`,
+        '',
+        'Monthly Budget:',
+        `  Housing: ${fmt(d.budgHousing)}`,
+        `  Transportation: ${fmt(d.budgTransport)}`,
+        `  Groceries: ${fmt(d.budgGroceries)}`,
+        `  Utilities: ${fmt(d.budgUtilities)}`,
+        `  Cell phone: ${fmt(d.budgPhone)}`,
+        `  Health insurance: ${fmt(d.budgHealth)}`,
+        `  Savings: ${fmt(d.budgSavings)}`,
+        `  Entertainment: ${fmt(d.budgEntertain)}`,
+        `  TOTAL EXPENSES: ${fmt(budgetTotal)}`,
+        `  REMAINING: ${budgetRemaining >= 0 ? '+' : ''}${fmt(budgetRemaining)}`,
+        '',
+        d.budgetResp ? 'Budget check response: ' + d.budgetResp : '',
+        '',
+        `Location comparison: Kalamazoo, MI vs. ${d.compCity || '(not entered)'}`,
+        d.compSalary ? `Salary needed in ${d.compCity}: ${fmt(d.compSalary)}` : '',
+        d.locationResp ? 'Location reflection: ' + d.locationResp : '',
+        '',
+        '=== DAY 3: REFLECTION PROMPTS ===',
         'PROMPT 1 — CAREER INTEREST:',
         d.prompt1 || '(not answered)',
         '',
@@ -2691,7 +2873,7 @@ function formatDeliverable0Content(d) {
         '',
         'PROMPT 5 — CAREER READY SKILLS:',
         d.prompt5 || '(not answered)',
-    ].join('\n');
+    ].filter(line => line !== null && line !== undefined).join('\n');
 }
 
 function submitDeliverable(id) {
