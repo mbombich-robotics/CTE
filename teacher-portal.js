@@ -173,7 +173,7 @@ function tallyRubric(uid, deliverableId, email) {
 // WEEK SETTINGS (localStorage)
 // ============================================
 let weekSettings = {
-    robotics: { skipReflections: [], skipDeliverables: [], quizEnabled: false, reflectionDueDates: {}, deliverableDueDates: {} },
+    robotics: { skipReflections: [], skipDeliverables: [], quizEnabled: false, quizKey: 'claw', reflectionDueDates: {}, deliverableDueDates: {} },
     frc:      { skipReflections: [], skipDeliverables: [], reflectionDueDates: {}, deliverableDueDates: {} },
     currentWeekOverride: null
 };
@@ -184,7 +184,7 @@ function loadWeekSettings() {
         if (saved) {
             const parsed = JSON.parse(saved);
             weekSettings = { ...weekSettings, ...parsed };
-            weekSettings.robotics = { skipReflections: [], skipDeliverables: [], quizEnabled: false, reflectionDueDates: {}, deliverableDueDates: {}, ...parsed.robotics };
+            weekSettings.robotics = { skipReflections: [], skipDeliverables: [], quizEnabled: false, quizKey: 'claw', reflectionDueDates: {}, deliverableDueDates: {}, ...parsed.robotics };
             weekSettings.frc      = { skipReflections: [], skipDeliverables: [], reflectionDueDates: {}, deliverableDueDates: {}, ...parsed.frc };
         }
     } catch(e) {}
@@ -2453,10 +2453,12 @@ async function openWeekSettings() {
         </tr>`;
     }
 
-    // Set quiz toggle (Robotics only)
+    // Set quiz toggle + key selector (Robotics only)
     if (courseId === 'robotics') {
         const quizToggle = document.getElementById('quizEnabledToggle');
         if (quizToggle) quizToggle.checked = weekSettings.robotics.quizEnabled || false;
+        const quizKeySelect = document.getElementById('quizKeySelect');
+        if (quizKeySelect) quizKeySelect.value = weekSettings.robotics.quizKey || 'claw';
     }
 
     modal.classList.add('active');
@@ -2518,9 +2520,10 @@ async function applyWeekSettings() {
     }
     weekSettings[courseId].expectedVersion = document.getElementById(`expectedVersion_${courseId}`)?.value.trim() || '';
 
-    // Quiz toggle is robotics-only
+    // Quiz toggle + key selector are robotics-only
     if (courseId === 'robotics') {
         weekSettings.robotics.quizEnabled = document.getElementById('quizEnabledToggle')?.checked || false;
+        weekSettings.robotics.quizKey     = document.getElementById('quizKeySelect')?.value || 'claw';
     }
 
     saveWeekSettings();
@@ -2542,7 +2545,10 @@ async function applyWeekSettings() {
             reflectionDueDates:   weekSettings[courseId].reflectionDueDates  || {},
             deliverableDueDates:  weekSettings[courseId].deliverableDueDates || {}
         };
-        if (courseId === 'robotics') body.quizEnabled = weekSettings.robotics.quizEnabled;
+        if (courseId === 'robotics') {
+            body.quizEnabled = weekSettings.robotics.quizEnabled;
+            body.quizKey     = weekSettings.robotics.quizKey || 'claw';
+        }
         await fetch(CONFIG.COURSES[courseId].apiUrl, { method: 'POST', body: JSON.stringify(body) });
         saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
         setTimeout(() => {

@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.49';
+const BACKEND_VERSION = 'v2.9.51';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -478,7 +478,7 @@ function jsonResponse(data) {
 function handleGetConfig() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const configSheet = ss.getSheetByName(SHEET_NAMES.CONFIG);
-  const config = { skipReflectionWeeks: [], skipDeliverableWeeks: [], expectedVersion: '', quizEnabled: false, reflectionDueDates: {}, deliverableDueDates: {} };
+  const config = { skipReflectionWeeks: [], skipDeliverableWeeks: [], expectedVersion: '', quizEnabled: false, quizKey: 'claw', reflectionDueDates: {}, deliverableDueDates: {} };
   if (configSheet && configSheet.getLastRow() > 0) {
     configSheet.getDataRange().getValues().forEach(row => {
       try {
@@ -486,6 +486,7 @@ function handleGetConfig() {
         if (row[0] === 'skipDeliverableWeeks') config.skipDeliverableWeeks = JSON.parse(row[1] || '[]');
         if (row[0] === 'expectedVersion')       config.expectedVersion      = row[1] || '';
         if (row[0] === 'quizEnabled')           config.quizEnabled          = row[1] === true || row[1] === 'true';
+        if (row[0] === 'quizKey')               config.quizKey              = row[1] || 'claw';
         if (row[0] === 'reflectionDueDates')    config.reflectionDueDates   = JSON.parse(row[1] || '{}');
         if (row[0] === 'deliverableDueDates')   config.deliverableDueDates  = JSON.parse(row[1] || '{}');
       } catch(e) {}
@@ -509,6 +510,7 @@ function handleSetConfig(data) {
     skipDeliverableWeeks: JSON.stringify(data.skipDeliverableWeeks || []),
     expectedVersion:      data.expectedVersion || '',
     quizEnabled:          data.quizEnabled === true ? true : false,
+    quizKey:              data.quizKey || 'claw',
     reflectionDueDates:   JSON.stringify(data.reflectionDueDates  || {}),
     deliverableDueDates:  JSON.stringify(data.deliverableDueDates || {})
   };
@@ -1891,7 +1893,7 @@ function handleGetQuizMeta(e) {
     quizId,
     name: quiz.name,
     maxPoints: quiz.maxPoints,
-    questions: quiz.questions.map(q => ({ id: q.id, label: q.label, pts: q.maxPts, text: q.question }))
+    questions: quiz.questions.map(q => ({ id: q.id, label: q.label, pts: q.maxPts, text: q.question, type: q.type || 'open', options: q.options || null }))
   };
 }
 
@@ -2106,6 +2108,25 @@ function gradeQuiz(quizId, answers) {
   const questions = quizQuestions(quizId).length ? quizQuestions(quizId) : QUIZ_QUESTIONS;
   if (!questions.length) throw new Error('No questions found for quiz: ' + quizId);
 
+  const gradeMap = {};
+
+  // Grade MC questions deterministically — no Claude needed
+  const mcQuestions   = questions.filter(q => q.type === 'mc');
+  const openQuestions = questions.filter(q => q.type !== 'mc');
+
+  mcQuestions.forEach(q => {
+    const given   = (answers[q.id] || '').trim().toUpperCase();
+    const correct = (q.correctAnswer || '').toUpperCase();
+    const isRight = given === correct;
+    gradeMap[q.id] = {
+      score:    isRight ? q.maxPts : 0,
+      feedback: isRight ? 'Correct!' : 'Incorrect — the correct answer is ' + q.correctAnswer + '.'
+    };
+  });
+
+  // If there are no open-ended questions, skip Claude entirely
+  if (!openQuestions.length) return gradeMap;
+
   const context = (typeof QUIZ_REGISTRY !== 'undefined' && QUIZ_REGISTRY[quizId])
     ? (QUIZ_REGISTRY[quizId].context || 'robotics and programming')
     : 'robotics and programming';
@@ -2113,7 +2134,7 @@ function gradeQuiz(quizId, answers) {
   const apiKey = PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY');
   if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set in Script Properties.');
 
-  const responseTemplate = questions.map(q => `  "${q.id}": {"score": <int 0-${q.maxPts}>, "feedback": "<1-2 sentences>"}`).join(',\n');
+  const responseTemplate = openQuestions.map(q => `  "${q.id}": {"score": <int 0-${q.maxPts}>, "feedback": "<1-2 sentences>"}`).join(',\n');
   let prompt = `You are grading a high school robotics quiz about ${context}.
 Grade each answer using only its rubric. Be fair but strict. Award partial credit for partial understanding.
 
@@ -2122,7 +2143,7 @@ Respond with ONLY a valid JSON object — no markdown fences, no other text:
 
 `;
 
-  questions.forEach(q => {
+  openQuestions.forEach(q => {
     const answer = (answers[q.id] || '').trim() || '(no answer)';
     prompt += `---\nid: ${q.id} | max: ${q.maxPts}\nQuestion: ${q.question}\nRubric: ${q.rubric}\nStudent answer: "${answer.replace(/"/g, "'").substring(0, 800)}"\n\n`;
   });
@@ -2149,7 +2170,9 @@ Respond with ONLY a valid JSON object — no markdown fences, no other text:
 
   const text = result.content[0].text;
   const cleaned = text.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
-  return JSON.parse(cleaned);
+  const openGrades = JSON.parse(cleaned);
+  Object.assign(gradeMap, openGrades);
+  return gradeMap;
 }
 
 /**
@@ -2170,8 +2193,6 @@ function onOpen() {
 
 function handleGradeDesignBrief(data) {
   if (data.token !== TEACHER_TOKEN) return { error: 'Unauthorized' };
-  const docUrl = (data.docUrl || '').trim();
-  if (!docUrl) return { error: 'Missing docUrl' };
   const deliverableId = Number(data.deliverableId);
   if (![0, 8, 9].includes(deliverableId)) return { error: 'Only deliverables 0, 8, and 9 support AI grading' };
 
@@ -2187,6 +2208,8 @@ function handleGradeDesignBrief(data) {
     }
   }
 
+  const docUrl = (data.docUrl || '').trim();
+  if (!docUrl) return { error: 'Missing docUrl' };
   const idMatch = docUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
   if (!idMatch) return { error: 'Could not extract Google Doc ID from URL' };
   const docId = idMatch[1];

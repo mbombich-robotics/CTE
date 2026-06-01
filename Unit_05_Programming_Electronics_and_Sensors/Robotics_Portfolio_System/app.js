@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.61',
+    VERSION: 'v2.9.62',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -642,7 +642,8 @@ let state = {
         expectedVersion: null,
         reflectionDueDates: {},
         deliverableDueDates: {},
-        quizEnabled: false
+        quizEnabled: false,
+        quizKey: 'claw'
     },
     quiz: {
         loaded: false,      // true once we've checked the backend
@@ -792,7 +793,7 @@ async function handleTokenResponse(tokenResponse) {
             if (!Array.isArray(state.codeSnippets)) state.codeSnippets = [];
             if (!Array.isArray(state.viewedFeedback)) state.viewedFeedback = [];
             // config is not persisted in cloud state — restore default so it's never undefined
-            state.config = { skipReflectionWeeks: [8], skipDeliverableWeeks: [], expectedVersion: null, quizEnabled: false, reflectionDueDates: {}, deliverableDueDates: {} };
+            state.config = { skipReflectionWeeks: [8], skipDeliverableWeeks: [], expectedVersion: null, quizEnabled: false, quizKey: 'claw', reflectionDueDates: {}, deliverableDueDates: {} };
             state.quiz = { loaded: false, submitted: false, grades: null, aiTotal: null };
             restoreEvidenceLocal();
             calculateCurrentWeek();
@@ -1205,6 +1206,7 @@ async function fetchConfig() {
         state.config.skipReflectionWeeks  = (cfg.skipReflectionWeeks  || []).map(Number);
         state.config.skipDeliverableWeeks = (cfg.skipDeliverableWeeks || []).map(Number);
         state.config.quizEnabled          = cfg.quizEnabled === true || cfg.quizEnabled === 'true';
+        state.config.quizKey              = cfg.quizKey || 'claw';
         state.config.reflectionDueDates   = cfg.reflectionDueDates  || {};
         state.config.deliverableDueDates  = cfg.deliverableDueDates || {};
 
@@ -3499,7 +3501,7 @@ async function loadQuizPage() {
 
     if (!state.quiz.loaded) {
         try {
-            const res = await fetch(`${CONFIG.SHEETS_API_URL}?action=checkQuiz&email=${encodeURIComponent(state.student.email)}&_t=${Date.now()}`);
+            const res = await fetch(`${CONFIG.SHEETS_API_URL}?action=checkQuiz&email=${encodeURIComponent(state.student.email)}&quizId=${encodeURIComponent(state.config.quizKey || 'claw')}&_t=${Date.now()}`);
             const data = await res.json();
             state.quiz.loaded = true;
             if (data.submitted) {
@@ -3521,7 +3523,7 @@ async function loadQuizPage() {
     // Fetch quiz meta (question text) from backend if not yet loaded
     if (!state.quiz.meta) {
         try {
-            const res = await fetch(`${CONFIG.SHEETS_API_URL}?action=getQuizMeta&quizId=claw&_t=${Date.now()}`);
+            const res = await fetch(`${CONFIG.SHEETS_API_URL}?action=getQuizMeta&quizId=${encodeURIComponent(state.config.quizKey || 'claw')}&_t=${Date.now()}`);
             const data = await res.json();
             if (data.questions) state.quiz.meta = data;
         } catch(e) { /* falls through to error render below */ }
@@ -3541,50 +3543,77 @@ async function loadQuizPage() {
 
 function renderQuizForm(page) {
     const questions = state.quiz.meta?.questions || [];
+    const quizName  = state.quiz.meta?.name || 'Quiz';
+    const maxPts    = state.quiz.meta?.maxPoints;
+    const isMC      = questions.length > 0 && questions.every(q => q.type === 'mc');
     let questionsHtml = '';
     questions.forEach((q) => {
         const isBonus = q.id === 'bonus';
         const cardStyle = isBonus
             ? 'border: 1px solid var(--success); background: rgba(16,185,129,0.04);'
             : 'border: 1px solid var(--gray-200);';
-        questionsHtml += `
-            <div class="card" id="qcard-${q.id}" style="${cardStyle} margin-bottom: 20px; padding: 24px;">
-                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
-                    <span style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:${isBonus ? 'var(--success)' : 'var(--gray-400)'};">${q.label}</span>
-                    <span style="font-size:12px; font-weight:700; color: var(--primary); background: var(--primary-light, rgba(99,102,241,0.1)); padding: 2px 10px; border-radius:12px;">${q.pts} pts</span>
-                </div>
-                <p style="font-size:15px; line-height:1.65; margin-bottom:14px; color: var(--gray-700);">${q.text}</p>
-                <textarea id="ans-${q.id}" rows="4"
+        let inputHtml;
+        if (q.type === 'mc' && q.options) {
+            inputHtml = `<div style="display:flex; flex-direction:column; gap:10px; margin-top:4px;">` +
+                q.options.map(opt => {
+                    const val = opt.charAt(0);
+                    return `<label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:14px; color:var(--gray-700); padding:10px 14px; border:1px solid var(--gray-200); border-radius:6px; transition:background 0.15s;" onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background=''">
+                        <input type="radio" name="ans-${q.id}" value="${val}" style="width:16px; height:16px; cursor:pointer; accent-color:var(--primary);" onchange="onQuizAnswerInput('${q.id}', false)">
+                        ${escapeHtmlQuiz(opt)}
+                    </label>`;
+                }).join('') +
+                `</div>`;
+        } else {
+            inputHtml = `<textarea id="ans-${q.id}" rows="4"
                     placeholder="${isBonus ? 'Optional — write your answer here…' : 'Write your answer here…'}"
                     style="width:100%; padding:12px; border:1px solid var(--gray-300); border-radius:6px; font-family:inherit; font-size:14px; resize:vertical; line-height:1.6; transition: border-color 0.2s;"
                     oninput="onQuizAnswerInput('${q.id}', ${isBonus})"
                     onblur="saveQuizDraft()"
-                ></textarea>
+                ></textarea>`;
+        }
+        questionsHtml += `
+            <div class="card" id="qcard-${q.id}" style="${cardStyle} margin-bottom: 20px; padding: 24px;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+                    <span style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:${isBonus ? 'var(--success)' : 'var(--gray-400)'};">${q.label}</span>
+                    <span style="font-size:12px; font-weight:700; color: var(--primary); background: var(--primary-light, rgba(99,102,241,0.1)); padding: 2px 10px; border-radius:12px;">${q.pts} pt${q.pts !== 1 ? 's' : ''}</span>
+                </div>
+                <p style="font-size:15px; line-height:1.65; margin-bottom:14px; color: var(--gray-700);">${q.text}</p>
+                ${inputHtml}
             </div>`;
     });
 
-    page.innerHTML = `
-        <div class="page-header">
-            <h1 class="page-title"><i class="fas fa-pencil-alt"></i> Claw Project Quiz</h1>
-            <p style="color:var(--gray-500); margin-top:6px;">Unit 5 · Lesson 14 — No notes permitted · 26 pts + 2 bonus</p>
-        </div>
-
-        <div class="card" style="border-left: 4px solid var(--warning, #f59e0b); background: rgba(245,158,11,0.05); margin-bottom:24px; padding:16px 20px;">
+    const ptsLabel = maxPts != null ? `${maxPts} pts` : '';
+    const noticeHtml = isMC
+        ? `<div class="card" style="border-left: 4px solid var(--warning, #f59e0b); background: rgba(245,158,11,0.05); margin-bottom:24px; padding:16px 20px;">
             <p style="font-size:14px; color:var(--gray-600); line-height:1.6;">
                 <strong style="color:var(--warning, #b45309);">No notes, no devices, no AI.</strong>
-                Answer all 6 required questions in your own words.
+                Select the best answer for each question.
+                You have <strong>one attempt</strong> — once you submit, the exam is locked.
+            </p>
+           </div>`
+        : `<div class="card" style="border-left: 4px solid var(--warning, #f59e0b); background: rgba(245,158,11,0.05); margin-bottom:24px; padding:16px 20px;">
+            <p style="font-size:14px; color:var(--gray-600); line-height:1.6;">
+                <strong style="color:var(--warning, #b45309);">No notes, no devices, no AI.</strong>
+                Answer all required questions in your own words.
                 You have <strong>one attempt</strong> — once you submit, the quiz is locked.
                 After submitting you will receive AI-generated feedback.
                 Mr. Bombich reviews all responses and <strong>has final say on your grade</strong>.
             </p>
+           </div>`;
+
+    page.innerHTML = `
+        <div class="page-header">
+            <h1 class="page-title"><i class="fas fa-pencil-alt"></i> ${escapeHtmlQuiz(quizName)}</h1>
+            <p style="color:var(--gray-500); margin-top:6px;">${ptsLabel ? `No notes permitted · ${ptsLabel}` : 'No notes permitted'}</p>
         </div>
+        ${noticeHtml}
 
         <div id="quizSaveIndicator" style="font-size:13px; color:var(--success, #10b981); margin-bottom:14px; min-height:18px; font-weight:600;"></div>
 
         <form id="quizForm">
             ${questionsHtml}
             <button type="submit" class="btn btn-primary" style="width:100%; padding:14px; font-size:16px; margin-top:8px;">
-                <i class="fas fa-paper-plane"></i> Submit Quiz
+                <i class="fas fa-paper-plane"></i> Submit ${isMC ? 'Exam' : 'Quiz'}
             </button>
         </form>`;
 
@@ -3599,7 +3628,9 @@ function renderQuizForm(page) {
             if (state.quiz.submitted) return;
             const formExists = !!document.getElementById('quizForm');
             if (!formExists) return;
-            const hasContent = QUIZ_QUESTION_META.some(q => {
+            const activeQs = state.quiz.meta?.questions || QUIZ_QUESTION_META;
+            const hasContent = activeQs.some(q => {
+                if (q.type === 'mc') return !!document.querySelector(`input[name="ans-${q.id}"]:checked`);
                 const el = document.getElementById('ans-' + q.id);
                 return el && el.value.trim().length > 0;
             });
@@ -3622,13 +3653,14 @@ function quizDraftKey() {
 }
 
 function onQuizAnswerInput(qid, isBonus) {
-    const ta = document.getElementById('ans-' + qid);
     const card = document.getElementById('qcard-' + qid);
-    if (ta && card) {
-        const empty = !ta.value.trim();
-        card.style.borderColor = empty
-            ? (isBonus ? 'var(--success)' : 'var(--gray-200)')
-            : 'var(--primary)';
+    if (card) {
+        const radio = document.querySelector(`input[name="ans-${qid}"]:checked`);
+        const ta = document.getElementById('ans-' + qid);
+        const hasAnswer = radio ? true : (ta ? !!ta.value.trim() : false);
+        card.style.borderColor = hasAnswer
+            ? 'var(--primary)'
+            : (isBonus ? 'var(--success)' : 'var(--gray-200)');
     }
     saveQuizDraft();
 }
@@ -3636,7 +3668,8 @@ window.onQuizAnswerInput = onQuizAnswerInput;
 
 function saveQuizDraft() {
     const draft = {};
-    QUIZ_QUESTION_META.forEach(q => {
+    (state.quiz.meta?.questions || QUIZ_QUESTION_META).forEach(q => {
+        if (q.type === 'mc') return; // radio buttons persist in DOM; no draft needed
         const el = document.getElementById('ans-' + q.id);
         if (el) draft[q.id] = el.value;
     });
@@ -3663,7 +3696,8 @@ function restoreQuizDraft() {
                  || sessionStorage.getItem(pending) || localStorage.getItem(pending);
         if (!raw) return;
         const draft = JSON.parse(raw);
-        QUIZ_QUESTION_META.forEach(q => {
+        (state.quiz.meta?.questions || QUIZ_QUESTION_META).forEach(q => {
+            if (q.type === 'mc') return;
             const el = document.getElementById('ans-' + q.id);
             if (el && draft[q.id]) {
                 el.value = draft[q.id];
@@ -3687,8 +3721,11 @@ async function submitQuiz(e) {
     if (btn.disabled) return;
 
     const quizQuestions = state.quiz.meta?.questions || QUIZ_QUESTION_META;
-    const required = quizQuestions.filter(q => q.id !== 'bonus').map(q => q.id);
-    const missing = required.filter(id => !document.getElementById('ans-' + id)?.value.trim());
+    const required = quizQuestions.filter(q => q.id !== 'bonus');
+    const missing = required.filter(q => {
+        if (q.type === 'mc') return !document.querySelector(`input[name="ans-${q.id}"]:checked`);
+        return !document.getElementById('ans-' + q.id)?.value.trim();
+    }).map(q => q.id);
     if (missing.length) {
         showToast(`Please answer all required questions (${missing.map(s => s.toUpperCase()).join(', ')})`, 'error');
         return;
@@ -3699,13 +3736,17 @@ async function submitQuiz(e) {
 
     const payload = {
         action:    'submitQuiz',
-        quizId:    'claw',
+        quizId:    state.config.quizKey || 'claw',
         email:     state.student.email,
         name:      state.student.name,
         timestamp: new Date().toLocaleString()
     };
     quizQuestions.forEach(q => {
-        payload[q.id] = document.getElementById('ans-' + q.id)?.value || '';
+        if (q.type === 'mc') {
+            payload[q.id] = document.querySelector(`input[name="ans-${q.id}"]:checked`)?.value || '';
+        } else {
+            payload[q.id] = document.getElementById('ans-' + q.id)?.value || '';
+        }
     });
 
     try {
@@ -3756,14 +3797,25 @@ function renderQuizResults(page) {
         return 'background:#fee2e2; color:#991b1b;';
     }
 
+    const resultQuestions = state.quiz.meta?.questions || QUIZ_QUESTION_META;
+    const quizMaxPts = state.quiz.meta?.maxPoints;
     let cardsHtml = '';
-    QUIZ_QUESTION_META.forEach(q => {
+    resultQuestions.forEach(q => {
         const g = grades[q.id] || { score: null, feedback: '' };
         const scoreNull = g.score === null || g.score === undefined || g.score === '';
         const score = scoreNull ? null : Math.min(Number(g.score) || 0, q.pts);
         const badgePart = scoreNull
             ? `<span style="font-size:13px; font-weight:700; padding:3px 12px; border-radius:12px; background:#f3f4f6; color:#6b7280;">Pending</span>`
             : `<span style="font-size:13px; font-weight:700; padding:3px 12px; border-radius:12px; ${badgeStyle(score, q.pts)}">${score} / ${q.pts}</span>`;
+        const answerBlock = g.answer
+            ? `<p style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--gray-400); margin-bottom:6px;">Your Answer</p>
+               <p style="font-size:14px; color:var(--gray-700); line-height:1.65; background:#f8fafc; border-radius:6px; padding:12px 14px; border-left:3px solid var(--gray-300); margin-bottom:12px; white-space:pre-wrap;">${escapeHtmlQuiz(g.answer)}</p>`
+            : '';
+        const feedbackLabel = q.type === 'mc' ? 'Result' : 'AI Feedback';
+        const feedbackBlock = g.feedback
+            ? `<p style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--gray-400); margin-bottom:6px;">${feedbackLabel}</p>
+               <p style="font-size:14px; color:var(--gray-600); line-height:1.65; background:var(--gray-50); border-radius:6px; padding:12px 14px; border-left:3px solid var(--primary);">${escapeHtmlQuiz(g.feedback)}</p>`
+            : '';
         cardsHtml += `
             <div class="card" style="margin-bottom:18px; padding:22px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
@@ -3771,10 +3823,8 @@ function renderQuizResults(page) {
                     ${badgePart}
                 </div>
                 <p style="font-size:14px; color:var(--gray-400); font-style:italic; line-height:1.6; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--gray-100);">${q.text}</p>
-                ${g.answer ? `<p style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--gray-400); margin-bottom:6px;">Your Answer</p>
-                <p style="font-size:14px; color:var(--gray-700); line-height:1.65; background:#f8fafc; border-radius:6px; padding:12px 14px; border-left:3px solid var(--gray-300); margin-bottom:12px; white-space:pre-wrap;">${escapeHtmlQuiz(g.answer)}</p>` : ''}
-                ${g.feedback ? `<p style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--gray-400); margin-bottom:6px;">AI Feedback</p>
-                <p style="font-size:14px; color:var(--gray-600); line-height:1.65; background:var(--gray-50); border-radius:6px; padding:12px 14px; border-left:3px solid var(--primary);">${escapeHtmlQuiz(g.feedback)}</p>` : ''}
+                ${answerBlock}
+                ${feedbackBlock}
             </div>`;
     });
 
@@ -3798,7 +3848,7 @@ function renderQuizResults(page) {
         <div class="card" style="text-align:center; padding:30px; background: linear-gradient(135deg, rgba(99,102,241,0.05), rgba(99,102,241,0.1)); border:2px solid var(--primary);">
             <p style="font-size:12px; text-transform:uppercase; letter-spacing:1px; color:var(--gray-400); margin-bottom:8px;">AI-Generated Score</p>
             <p style="font-family:monospace; font-size:3rem; font-weight:900; color:var(--primary); line-height:1;">${aiTotal}</p>
-            <p style="font-size:13px; color:var(--gray-400); margin-top:6px;">out of 26 points (+ up to 2 bonus)</p>
+            <p style="font-size:13px; color:var(--gray-400); margin-top:6px;">out of ${quizMaxPts || '—'} points</p>
             <p style="font-size:13px; color:var(--gray-500); margin-top:12px;">This is a starting point for teacher review, not your official grade.</p>
         </div>`;
 
