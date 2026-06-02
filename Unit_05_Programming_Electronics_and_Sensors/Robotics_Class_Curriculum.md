@@ -541,3 +541,21 @@ void loop() {
 ## Web Portfolio Integration
 
 Students use the same portfolio system as the FRC class, with project-specific deliverables. See [Robotics_Portfolio_System](Robotics_Portfolio_System/) folder for the adapted version.
+
+---
+
+## Curriculum Planning TODO
+
+### Test Security Protocol (Final Exam)
+The Apps Script backend currently exposes two leakage paths students could exploit before / during the final exam:
+- `?action=getQuizMeta&quizId=final_exam` returns all question text and MC options to anyone who knows the API URL (which is in the public `app.js`).
+- `?action=checkQuiz&email=ANYONE&quizId=final_exam` returns any other student's answers + scores with no authentication.
+
+Before relying on the final exam at high stakes, draft a protocol that includes some combination of:
+- A teacher-controlled "quiz open window" (`quizOpenAt` / `quizCloseAt` in Config) gating `getQuizMeta` and `submitQuiz`.
+- Stripping the raw answer text from `checkQuiz` responses (return score/feedback only).
+- Optional: forward the student's Google ID token from the portfolio frontend and have the backend verify it matches the queried email.
+- A physical-room protocol (no phones, lockdown browser, etc.) for in-class administration.
+- Random question subsetting per attempt so a dump of the full bank doesn't equal a dump of any single student's exam.
+
+See git commit `5962f71` for the final exam implementation. Question content lives in `quiz-content.js` (gitignored) and on the deployed Apps Script — not on GitHub.

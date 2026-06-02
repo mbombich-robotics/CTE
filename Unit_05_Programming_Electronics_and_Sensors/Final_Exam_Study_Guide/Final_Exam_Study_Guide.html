@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Applied Engineering &amp; Robotics — Final Exam Study Guide</title>
+    <style>
+        @page { size: letter portrait; margin: 0.6in; }
+
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 11pt;
+            color: #1a1a1a;
+            line-height: 1.45;
+            max-width: 7.5in;
+            margin: 0 auto;
+            padding: 24px 18px;
+        }
+
+        h1 {
+            font-size: 22pt;
+            color: #1f2937;
+            border-bottom: 3px solid #7c3aed;
+            padding-bottom: 8px;
+            margin: 0 0 4px;
+        }
+        h1 + .subtitle {
+            color: #4b5563;
+            font-size: 11pt;
+            margin-bottom: 22px;
+        }
+
+        h2 {
+            font-size: 13pt;
+            color: #fff;
+            background: #7c3aed;
+            padding: 8px 14px;
+            border-radius: 6px;
+            margin: 22px 0 12px;
+            page-break-after: avoid;
+            page-break-before: auto;
+        }
+        h2 .unit-tag {
+            background: rgba(255,255,255,0.22);
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 9.5pt;
+            margin-right: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        h3 {
+            font-size: 11.5pt;
+            color: #374151;
+            margin: 14px 0 4px;
+            border-left: 3px solid #c4b5fd;
+            padding-left: 8px;
+            page-break-after: avoid;
+        }
+
+        ul { margin: 4px 0 10px 0; padding-left: 22px; }
+        li { margin: 2px 0; }
+
+        .callout {
+            background: #f9fafb;
+            border-left: 4px solid #9ca3af;
+            padding: 9px 13px;
+            margin: 10px 0;
+            font-size: 10.5pt;
+        }
+        .callout.warn { border-left-color: #f59e0b; background: #fffbeb; }
+        .callout.tip  { border-left-color: #10b981; background: #ecfdf5; }
+        .callout strong { color: #1f2937; }
+
+        code, .term {
+            background: #f3f4f6;
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-family: 'JetBrains Mono', Consolas, monospace;
+            font-size: 10pt;
+            color: #6d28d9;
+        }
+
+        .checklist {
+            list-style: none;
+            padding-left: 4px;
+        }
+        .checklist li::before {
+            content: "\2610  ";
+            color: #7c3aed;
+            font-weight: bold;
+            margin-right: 4px;
+        }
+
+        .toc {
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin: 16px 0 24px;
+        }
+        .toc h3 {
+            border: none;
+            padding: 0;
+            margin: 0 0 6px;
+            font-size: 11pt;
+            color: #1f2937;
+        }
+        .toc ol {
+            margin: 0;
+            padding-left: 20px;
+            font-size: 10.5pt;
+            column-count: 2;
+            column-gap: 24px;
+        }
+
+        .footer-note {
+            margin-top: 24px;
+            padding-top: 12px;
+            border-top: 1px solid #d1d5db;
+            font-size: 9.5pt;
+            color: #6b7280;
+        }
+
+        @media print {
+            h2 { page-break-after: avoid; }
+            h3 { page-break-after: avoid; }
+            .callout { page-break-inside: avoid; }
+            ul, ol { orphans: 3; widows: 3; }
+        }
+    </style>
+</head>
+<body>
+
+<h1>Applied Engineering &amp; Robotics — Final Exam Study Guide</h1>
+<div class="subtitle">Cumulative final · all six units · Vicksburg High School</div>
+
+<div class="callout">
+    <strong>How to use this guide.</strong> The final is cumulative — it pulls from every unit we covered this year, not just our last project. Each section below lists the concepts and vocabulary you are responsible for. If you can answer the "Be ready to…" prompt for every topic without notes, you'll be in good shape.
+</div>
+
+<div class="toc">
+    <h3>Sections</h3>
+    <ol>
+        <li>Career Ready Practices</li>
+        <li>Engineering Design Process</li>
+        <li>CAD Fundamentals</li>
+        <li>Rapid Prototyping &amp; Manufacturing</li>
+        <li>Shop Safety &amp; Standard Practices</li>
+        <li>Programming, Electronics &amp; Sensors</li>
+    </ol>
+</div>
+
+<h2><span class="unit-tag">UNIT 0</span> Career Ready Practices</h2>
+<ul>
+    <li>What it means for a career to be a good fit — interests vs. aptitudes vs. lifestyle</li>
+    <li>The general education paths after high school: trade/apprenticeship, two-year, four-year, military, direct-to-work</li>
+    <li>The difference between gross pay and net pay — and what categories of deductions show up between them</li>
+    <li>What a budget is and how a take-home figure should shape one</li>
+    <li>What "career-ready skills" means (communication, collaboration, problem-solving, work ethic) and how those show up in class</li>
+</ul>
+<div class="callout tip"><strong>Be ready to…</strong> explain why two people with the same gross salary could have very different take-home pay.</div>
+
+<h2><span class="unit-tag">UNIT 1</span> Engineering Design Process</h2>
+<ul>
+    <li>The seven steps of the EDP: <strong>Ask, Research, Imagine, Plan, Create, Test, Improve</strong> — and why it's a loop, not a line</li>
+    <li>The difference between a <span class="term">criterion</span> (what success looks like) and a <span class="term">constraint</span> (a limit you must work within)</li>
+    <li>What a design brief is and what should always be in it</li>
+    <li>Why we prototype and iterate instead of jumping to a final design</li>
+    <li>What we learned from the paper airplane and spaghetti tower challenges about constraints, testing, and revision</li>
+    <li>Common measurement tools and what each is used for: ruler, tape measure, calipers, micrometer, square</li>
+    <li>Reading a ruler in inches (down to 1/16) and in millimeters</li>
+</ul>
+<div class="callout tip"><strong>Be ready to…</strong> name a step of the EDP and give a concrete example of what you did in that step on one of our class projects.</div>
+
+<h2><span class="unit-tag">UNIT 2</span> CAD Fundamentals</h2>
+<ul>
+    <li>What CAD is and what advantages it has over hand-drawn engineering drawings</li>
+    <li>The difference between a 2D sketch and a 3D model — and how sketches become models</li>
+    <li>Common sketch operations: line, rectangle, circle, trim, extend, offset</li>
+    <li>What a <span class="term">geometric constraint</span> is (horizontal, vertical, parallel, perpendicular, tangent, coincident, equal) and why constraints make a sketch "fully defined"</li>
+    <li>What a <span class="term">dimension</span> does in a sketch and why it locks the size</li>
+    <li>Basic 3D operations: extrude, revolve, fillet, chamfer, hole</li>
+    <li>What a technical drawing is, why we use multiview projection, and what views are typically shown (front, top, side)</li>
+</ul>
+<div class="callout warn"><strong>Common confusion:</strong> a sketch can be over-constrained (impossible) or under-constrained (floppy). Know what each one looks like and what to do about it.</div>
+
+<h2><span class="unit-tag">UNIT 3</span> Rapid Prototyping &amp; Manufacturing</h2>
+<ul>
+    <li>What "rapid prototyping" means in engineering — making fast, cheap test versions to learn from</li>
+    <li>The basic principle of 3D printing (FDM): adding material in layers from a digital model</li>
+    <li>The basic principle of subtractive manufacturing (CNC routing/milling, laser cutting, plasma cutting): removing material from a stock piece</li>
+    <li>What a <span class="term">CAM toolpath</span> is and why we need it between a CAD model and a CNC machine</li>
+    <li>Key CAM concepts: stock setup, work coordinate origin, tool selection, feed rate, spindle speed, depth of cut</li>
+    <li>What "iterative design" looks like in practice — testing a part, observing what fails or fits poorly, revising the CAD, reprinting/recutting</li>
+    <li>Why we keep an iteration log and what goes in it</li>
+    <li>Reading a caliper to 0.01 inch or 0.1 mm</li>
+</ul>
+<div class="callout tip"><strong>Be ready to…</strong> describe one part you iterated on this year — what didn't work the first time, what you changed, and how you knew it was better.</div>
+
+<h2><span class="unit-tag">UNIT 4</span> Shop Safety &amp; Standard Practices</h2>
+<ul>
+    <li>Required <span class="term">PPE</span> in the shop: safety glasses, closed-toe shoes, no loose clothing/jewelry, hearing protection where needed</li>
+    <li>The <span class="term">5S</span> approach to a clean, organized shop (Sort, Set in order, Shine, Standardize, Sustain)</li>
+    <li>What <span class="term">lockout / tagout</span> means and when you would use it</li>
+    <li>Where to find an <span class="term">SDS</span> (Safety Data Sheet) and what kind of information it gives you about a chemical</li>
+    <li>The "stop work" principle — anyone in the shop can stop work for safety, no questions asked</li>
+    <li>Why we discussed real-world incidents in class (the Henne and Lac-Mégantic case reviews) — what failures of procedure or safety culture led to harm</li>
+    <li>The general categories of shop hazards: mechanical (pinch points, rotating machinery), thermal, electrical, chemical, and ergonomic</li>
+</ul>
+<div class="callout warn"><strong>Common confusion:</strong> safety isn't just about following rules — it's about recognizing hazards <em>before</em> something goes wrong. Be ready to identify hazards in a described scenario.</div>
+
+<h2><span class="unit-tag">UNIT 5</span> Programming, Electronics &amp; Sensors</h2>
+
+<h3>Microcontrollers &amp; the Arduino Environment</h3>
+<ul>
+    <li>What a microcontroller is and how it differs from a general-purpose computer</li>
+    <li>The board we used and the two required functions in every Arduino sketch (<code>setup()</code> and <code>loop()</code>)</li>
+    <li>How a sketch gets from your laptop onto the board, and what the Serial Monitor is for</li>
+</ul>
+
+<h3>Variables &amp; Types</h3>
+<ul>
+    <li>Common types: <code>int</code>, <code>float</code>, <code>bool</code>, <code>long</code></li>
+    <li>Why we use <code>const</code> for pin numbers and tuning values</li>
+    <li>Variable scope — what "local" vs. "global" means and why it matters</li>
+</ul>
+
+<h3>Digital &amp; Analog I/O</h3>
+<ul>
+    <li>HIGH vs. LOW, and what voltage each represents on the RP2040</li>
+    <li><code>pinMode</code> with INPUT, OUTPUT, INPUT_PULLUP — when to use each</li>
+    <li><code>analogRead</code> — what it returns and what range it covers (the ADC)</li>
+    <li><code>analogWrite</code> / PWM — what range it accepts and what <span class="term">duty cycle</span> means</li>
+</ul>
+<div class="callout warn"><strong>Common confusion:</strong> "Analog output" on Arduino is not a true analog voltage — it's a square wave with a varying duty cycle. Know why that's still useful for motor speed and LED brightness.</div>
+
+<h3>Sensors</h3>
+<ul>
+    <li><strong>IR sensors</strong> — how they distinguish light vs. dark surfaces; digital vs. analog reading; what calibration means</li>
+    <li><strong>Ultrasonic (HC-SR04)</strong> — TRIG/ECHO roles, the send-pulse-time-the-echo flow, and why we convert pulse duration to distance using the speed of sound (and a factor for the round trip)</li>
+    <li><strong>Potentiometer feedback</strong> from the claw servo — what it means when an ADC reading stops changing</li>
+</ul>
+
+<h3>Actuators — Motors &amp; Servos</h3>
+<ul>
+    <li>The two things a motor driver needs: <em>direction</em> and <em>speed</em></li>
+    <li>The role of an H-bridge in reversing direction</li>
+    <li>What an RC servo expects on its signal wire (a PWM pulse whose width sets the angle)</li>
+    <li>The difference between <code>Servo.write()</code> and <code>analogWrite</code> to a regular pin</li>
+</ul>
+
+<h3>Control Flow &amp; Functions</h3>
+<ul>
+    <li><code>if</code> / <code>else</code>, <code>for</code> loops, <code>while</code> loops — when to use each</li>
+    <li>Operators: <code>==</code>, <code>!=</code>, <code>&amp;&amp;</code>, <code>||</code>, <code>!</code></li>
+    <li>The classic <code>=</code> vs. <code>==</code> mistake and what it does</li>
+    <li>Writing functions — return type, parameters, what <code>void</code> means</li>
+    <li>What "blocking" code is — <code>delay()</code> as the textbook example, and how <code>millis()</code> lets you do timing without blocking</li>
+</ul>
+
+<h3>The Three Big Projects</h3>
+<ul>
+    <li><strong>Line following</strong> — how left/right IR readings steer the robot; what P-control is and what happens if KP is too high or too low</li>
+    <li><strong>Ultrasonic scanner</strong> — why sweeping a servo with an ultrasonic sensor on it is useful; combining angle and distance</li>
+    <li><strong>Servo claw</strong> — how the claw knows it has touched something without a switch or camera; why closing all the way every time is bad; what "slip detection" means; what "active low" means for the on-board RGB LED</li>
+</ul>
+
+<h3>Wiring, Power &amp; Debugging</h3>
+<ul>
+    <li>3.3 V vs. 5 V logic — what happens if you mix them</li>
+    <li>Why a microcontroller pin can't drive a motor directly (current limits)</li>
+    <li>Common ground — every powered part of the system must share GND</li>
+    <li>Debugging with <code>Serial.print</code>, and how to isolate a hardware problem from a code problem</li>
+    <li>Syntax error vs. runtime error vs. logic error</li>
+</ul>
+
+<h2>Pre-Exam Checklist</h2>
+<p style="margin-bottom: 6px;">If every one of these is checked, you're ready:</p>
+<ul class="checklist">
+    <li>I can list the seven steps of the Engineering Design Process and give an example of each.</li>
+    <li>I can explain the difference between a criterion and a constraint.</li>
+    <li>I can describe how a 2D sketch becomes a 3D part in CAD, and what geometric constraints do.</li>
+    <li>I can list at least three PPE requirements in our shop and explain when each is needed.</li>
+    <li>I can read a caliper and a ruler to the precision the tool allows.</li>
+    <li>I can explain the difference between additive (3D printing) and subtractive (CNC) manufacturing.</li>
+    <li>I can describe PWM and duty cycle in my own words.</li>
+    <li>I know what range <code>analogRead</code> returns and what range <code>analogWrite</code> accepts.</li>
+    <li>I can describe how the ultrasonic sensor measures distance, start to finish.</li>
+    <li>I know why <code>delay()</code> is called "blocking" and what we can use instead.</li>
+    <li>I can describe at least one challenge I encountered in each of our big projects and how I solved it.</li>
+    <li>I can explain the difference between gross and net pay.</li>
+</ul>
+
+<div class="callout">
+    <strong>What's NOT on the exam:</strong> the exam is conceptual — you won't be asked to write a full sketch from memory, recite specific pin numbers, or recreate CAD operations step-by-step. You should know <em>why</em> each piece of the engineering and robotics process works, not memorize exact syntax or measurements.
+</div>
+
+<div class="footer-note">
+    Vicksburg High School &middot; Applied Engineering &amp; Robotics &middot; Mr. Bombich &middot; Room 70
+</div>
+
+</body>
+</html>
