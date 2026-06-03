@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.63',
+    VERSION: 'v2.9.64',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -3595,7 +3595,7 @@ function renderQuizForm(page) {
     const noticeHtml = isMC
         ? `<div class="card" style="border-left: 4px solid var(--warning, #f59e0b); background: rgba(245,158,11,0.05); margin-bottom:24px; padding:16px 20px;">
             <p style="font-size:14px; color:var(--gray-600); line-height:1.6;">
-                <strong style="color:var(--warning, #b45309);">No notes, no devices, no AI.</strong>
+                <strong style="color:var(--warning, #b45309);">No other browser tabs. No AI tools.</strong>
                 Select the best answer for each question.
                 You have <strong>one attempt</strong> — once you submit, the exam is locked.
             </p>
@@ -3613,7 +3613,7 @@ function renderQuizForm(page) {
     page.innerHTML = `
         <div class="page-header">
             <h1 class="page-title"><i class="fas fa-pencil-alt"></i> ${escapeHtmlQuiz(quizName)}</h1>
-            <p style="color:var(--gray-500); margin-top:6px;">${ptsLabel ? `No notes permitted · ${ptsLabel}` : 'No notes permitted'}</p>
+            <p style="color:var(--gray-500); margin-top:6px;">${isMC ? (ptsLabel || '') : (ptsLabel ? `No notes permitted · ${ptsLabel}` : 'No notes permitted')}</p>
         </div>
         ${noticeHtml}
 
@@ -3678,9 +3678,15 @@ window.onQuizAnswerInput = onQuizAnswerInput;
 function saveQuizDraft() {
     const draft = {};
     (state.quiz.meta?.questions || QUIZ_QUESTION_META).forEach(q => {
-        if (q.type === 'mc') return; // radio buttons persist in DOM; no draft needed
-        const el = document.getElementById('ans-' + q.id);
-        if (el) draft[q.id] = el.value;
+        if (q.type === 'mc') {
+            // Capture the selected radio value (e.g. "A"). Radio state does NOT
+            // survive a page reload — without this, MC drafts were always empty.
+            const radio = document.querySelector(`input[name="ans-${q.id}"]:checked`);
+            if (radio) draft[q.id] = radio.value;
+        } else {
+            const el = document.getElementById('ans-' + q.id);
+            if (el) draft[q.id] = el.value;
+        }
     });
     const json = JSON.stringify(draft);
     const key = quizDraftKey();
@@ -3706,11 +3712,19 @@ function restoreQuizDraft() {
         if (!raw) return;
         const draft = JSON.parse(raw);
         (state.quiz.meta?.questions || QUIZ_QUESTION_META).forEach(q => {
-            if (q.type === 'mc') return;
-            const el = document.getElementById('ans-' + q.id);
-            if (el && draft[q.id]) {
-                el.value = draft[q.id];
-                onQuizAnswerInput(q.id, q.id === 'bonus');
+            if (!draft[q.id]) return;
+            if (q.type === 'mc') {
+                const radio = document.querySelector(`input[name="ans-${q.id}"][value="${draft[q.id]}"]`);
+                if (radio) {
+                    radio.checked = true;
+                    onQuizAnswerInput(q.id, false);
+                }
+            } else {
+                const el = document.getElementById('ans-' + q.id);
+                if (el) {
+                    el.value = draft[q.id];
+                    onQuizAnswerInput(q.id, q.id === 'bonus');
+                }
             }
         });
         const indicator = document.getElementById('quizSaveIndicator');
