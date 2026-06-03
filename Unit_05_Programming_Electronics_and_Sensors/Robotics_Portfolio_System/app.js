@@ -8,7 +8,7 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.62',
+    VERSION: 'v2.9.63',
 
     // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -1313,11 +1313,16 @@ function updateUI() {
     updateWeekTopic();
     updateFeedbackNotification();
 
-    // Show/hide quiz nav item based on teacher toggle
+    // Show/hide quiz nav item based on teacher toggle + label it based on which quiz is active
     const quizNav = document.getElementById('quizNavItem');
     if (quizNav) {
         // Show if teacher enabled, OR if this student already submitted (so they can always see their results)
         quizNav.style.display = (state.config.quizEnabled || state.quiz.submitted) ? 'flex' : 'none';
+        const quizLabel = quizNav.querySelector('span');
+        if (quizLabel) {
+            const QUIZ_LABELS = { claw: 'Claw Quiz', final_exam: 'Final Exam' };
+            quizLabel.textContent = QUIZ_LABELS[state.config.quizKey] || 'Quiz';
+        }
     }
 }
 
@@ -3493,7 +3498,7 @@ async function loadQuizPage() {
 
     // Show loading while we check backend
     page.innerHTML = `
-        <div class="page-header"><h1 class="page-title"><i class="fas fa-pencil-alt"></i> Claw Project Quiz</h1></div>
+        <div class="page-header"><h1 class="page-title"><i class="fas fa-pencil-alt"></i> ${({claw:'Claw Project Quiz', final_exam:'Final Exam'})[state.config.quizKey] || 'Quiz'}</h1></div>
         <div style="text-align:center; padding: 60px 20px; color: var(--gray-500);">
             <i class="fas fa-spinner fa-spin" style="font-size:2rem; margin-bottom:16px;"></i>
             <p>Checking submission status…</p>
@@ -3526,14 +3531,18 @@ async function loadQuizPage() {
             const res = await fetch(`${CONFIG.SHEETS_API_URL}?action=getQuizMeta&quizId=${encodeURIComponent(state.config.quizKey || 'claw')}&_t=${Date.now()}`);
             const data = await res.json();
             if (data.questions) state.quiz.meta = data;
-        } catch(e) { /* falls through to error render below */ }
+            else state.quiz.metaError = data.error || 'Backend returned no questions.';
+        } catch(e) {
+            state.quiz.metaError = 'Network error: ' + (e.message || e);
+        }
     }
 
     if (!state.quiz.meta) {
+        const errDetail = state.quiz.metaError ? `<br><br><span style="font-size:12px; color:var(--gray-500);">Detail: ${escapeHtmlQuiz(state.quiz.metaError)}</span>` : '';
         page.innerHTML = `
-            <div class="page-header"><h1 class="page-title"><i class="fas fa-pencil-alt"></i> Claw Project Quiz</h1></div>
+            <div class="page-header"><h1 class="page-title"><i class="fas fa-pencil-alt"></i> ${({claw:'Claw Project Quiz', final_exam:'Final Exam'})[state.config.quizKey] || 'Quiz'}</h1></div>
             <div class="card" style="color:var(--danger); padding:20px;">
-                Unable to load quiz questions. Please refresh the page or notify Mr. Bombich.
+                Unable to load quiz questions. Please refresh the page or notify Mr. Bombich.${errDetail}
             </div>`;
         return;
     }
