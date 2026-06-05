@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.51';
+const BACKEND_VERSION = 'v2.9.53';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -1377,14 +1377,25 @@ function loadAllData() {
   const reflections  = safeGetSheet(SHEET_NAMES.REFLECTIONS);
   const deliverables = safeGetSheet(SHEET_NAMES.DELIVERABLES);
   const evidence     = safeGetSheet(SHEET_NAMES.EVIDENCE);
-  const quiz         = safeGetSheet(SHEET_NAMES.QUIZ);
+  const quiz         = safeGetSheet(SHEET_NAMES.QUIZ);  // legacy 'Claw Quiz' sheet
+
+  // Load every quiz sheet registered in QUIZ_REGISTRY, keyed by quizId so the
+  // teacher portal can pick the right rows per quiz (e.g. final_exam vs claw).
+  const quizzes = {};
+  if (typeof QUIZ_REGISTRY !== 'undefined') {
+    Object.keys(QUIZ_REGISTRY).forEach(quizId => {
+      const sheetName = QUIZ_REGISTRY[quizId].sheetName || SHEET_NAMES.QUIZ;
+      quizzes[quizId] = safeGetSheet(sheetName).slice(1);
+    });
+  }
 
   return {
     students:     students.slice(1),
     reflections:  reflections.slice(1),
     deliverables: deliverables.slice(1),
     evidence:     evidence.slice(1),
-    quiz:         quiz.slice(1),
+    quiz:         quiz.slice(1),     // legacy — kept so older frontends still work
+    quizzes:      quizzes,           // new — keyed by quizId
     summary: {
       totalStudents:     Math.max(0, students.length - 1),
       totalReflections:  Math.max(0, reflections.length - 1),
@@ -2118,9 +2129,21 @@ function gradeQuiz(quizId, answers) {
     const given   = (answers[q.id] || '').trim().toUpperCase();
     const correct = (q.correctAnswer || '').toUpperCase();
     const isRight = given === correct;
+
+    // Look up the full option text so the feedback shows the actual answer,
+    // not just the letter. Options are stored as e.g. "A) Foo bar"; strip the
+    // leading "X) " prefix to leave just the answer content.
+    let correctText = '';
+    if (Array.isArray(q.options)) {
+      const match = q.options.find(opt => String(opt).trim().toUpperCase().startsWith(correct + ')'));
+      if (match) correctText = String(match).replace(/^\s*[A-Z]\)\s*/i, '').trim();
+    }
+
     gradeMap[q.id] = {
       score:    isRight ? q.maxPts : 0,
-      feedback: isRight ? 'Correct!' : 'Incorrect — the correct answer is ' + q.correctAnswer + '.'
+      feedback: isRight
+        ? 'Correct!'
+        : 'Incorrect — the correct answer is ' + q.correctAnswer + (correctText ? ': ' + correctText : '') + '.'
     };
   });
 
