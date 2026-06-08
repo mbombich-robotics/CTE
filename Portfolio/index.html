@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
     <title>Robotics Portfolio</title>
     <meta name="google-signin-client_id" content="1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com">
     <link rel="stylesheet" href="styles.css">
@@ -15,7 +15,7 @@
     <nav class="sidebar">
         <div class="logo">
             <i class="fas fa-microchip"></i>
-            <span>Robotics Portfolio</span>
+            <span>Robotics Portfolio <span id="appVersion" style="font-size: 11px; font-weight: normal; color: var(--gray-400); margin-left: 4px;">--</span></span>
         </div>
         <div class="student-info" id="studentInfo">
             <div class="avatar" id="avatarInitials">--</div>
@@ -50,20 +50,21 @@
                 <i class="fas fa-book"></i>
                 <span>Resources</span>
             </li>
+            <li class="nav-item" id="quizNavItem" data-page="quiz" style="display:none;">
+                <i class="fas fa-pencil-alt"></i>
+                <span>Claw Quiz</span>
+            </li>
         </ul>
         <div class="progress-summary">
             <h4>Progress</h4>
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill" style="width: 0%"></div>
             </div>
-            <span class="progress-text" id="progressText">0 / 800 pts</span>
+            <span class="progress-text" id="progressText">0 / 820 pts</span>
         </div>
         <div class="save-status" id="saveStatus" style="padding: 10px 20px; font-size: 12px; color: var(--gray-500); text-align: center; display: none;">
             <i class="fas fa-check-circle" id="saveIcon"></i>
             <span id="saveText">Saved</span>
-        </div>
-        <div class="version-info" id="versionInfo" style="padding: 8px 20px; font-size: 11px; color: var(--gray-400); text-align: center; border-top: 1px solid var(--gray-200); margin-top: auto;">
-            <span id="appVersion">--</span>
         </div>
     </nav>
 
@@ -180,7 +181,7 @@
                             <div class="phase-icon"><i class="fas fa-radar"></i></div>
                             <div class="phase-info">
                                 <div class="phase-title">Ultrasonic Scanner</div>
-                                <div class="phase-weeks">Weeks 3-5</div>
+                                <div class="phase-weeks">Weeks 3-6</div>
                             </div>
                             <div class="phase-status" id="phaseScanner">Upcoming</div>
                         </div>
@@ -188,7 +189,7 @@
                             <div class="phase-icon"><i class="fas fa-hand-rock"></i></div>
                             <div class="phase-info">
                                 <div class="phase-title">Servo Claw</div>
-                                <div class="phase-weeks">Weeks 6-8</div>
+                                <div class="phase-weeks">Weeks 7-9</div>
                             </div>
                             <div class="phase-status" id="phaseClaw">Upcoming</div>
                         </div>
@@ -196,7 +197,7 @@
                             <div class="phase-icon"><i class="fas fa-trophy"></i></div>
                             <div class="phase-info">
                                 <div class="phase-title">Final Demo</div>
-                                <div class="phase-weeks">Week 9</div>
+                                <div class="phase-weeks">Week 10</div>
                             </div>
                             <div class="phase-status" id="phaseFinal">Upcoming</div>
                         </div>
@@ -208,8 +209,8 @@
         <!-- Weekly Reflections Page -->
         <div class="page" id="weeklyPage">
             <header class="page-header">
-                <h1>Weekly Reflections</h1>
-                <p class="subtitle">Document your progress every week (20 pts each)</p>
+                <h1>Reflections</h1>
+                <p class="subtitle">Document your progress (20 pts each)</p>
             </header>
 
             <div class="week-selector">
@@ -222,6 +223,11 @@
                 <button class="week-btn" data-week="7">Week 7</button>
                 <button class="week-btn" data-week="8">Week 8</button>
                 <button class="week-btn" data-week="9">Week 9</button>
+                <button class="week-btn" data-week="10">Week 10</button>
+                <button class="week-btn" data-week="11">Week 11</button>
+                <button class="week-btn" data-week="12">U9 · R1</button>
+                <button class="week-btn" data-week="13">U9 · R2</button>
+                <button class="week-btn" data-week="14">U9 · R3</button>
             </div>
 
             <div class="week-topic" id="weekTopic">
@@ -270,20 +276,20 @@
                     </div>
 
                     <div class="form-section">
-                        <h3><i class="fas fa-camera"></i> Evidence of Work (5 pts)</h3>
-                        <p class="form-hint">Upload at least 2 photos/screenshots of YOUR work.</p>
+                        <h3><i class="fas fa-camera"></i> Evidence of Work <span style="color: var(--gray-500); font-weight: 400; font-size: 0.85em;">(Optional · 5 pts)</span></h3>
+                        <p class="form-hint">Optional — upload screenshots/photos or paste links to document your work. Not required to submit, but counts toward your evidence rubric score.</p>
 
                         <div class="evidence-upload">
                             <div class="upload-zone" id="uploadZone">
                                 <i class="fas fa-cloud-upload-alt"></i>
-                                <p>Drag & drop images or click to browse</p>
+                                <p>Drag & drop images or click to browse <span style="color: var(--gray-500); font-weight: 400;">(optional)</span></p>
                                 <input type="file" id="evidenceFiles" multiple accept="image/*" hidden>
                             </div>
                             <div class="evidence-preview" id="evidencePreview"></div>
                         </div>
 
                         <div class="form-group">
-                            <label for="evidenceLinks">Or paste image URLs / Google Drive links</label>
+                            <label for="evidenceLinks">Or paste image URLs / Google Drive links <span style="color: var(--gray-500); font-weight: 400;">(optional)</span></label>
                             <textarea id="evidenceLinks" rows="2" placeholder="https://drive.google.com/..."></textarea>
                         </div>
                     </div>
@@ -304,12 +310,11 @@
 
                     <div class="form-section">
                         <h3><i class="fas fa-bullseye"></i> Next Week's Goals (5 pts)</h3>
-                        <p class="form-hint">List 3 specific, measurable goals for next week.</p>
+                        <p class="form-hint">List 2 specific, measurable goals for next week.</p>
 
                         <div class="goals-list">
                             <input type="text" class="goal-input" placeholder="Goal 1: I will finish..." required>
                             <input type="text" class="goal-input" placeholder="Goal 2: I will test..." required>
-                            <input type="text" class="goal-input" placeholder="Goal 3: I will document..." required>
                         </div>
                     </div>
 
@@ -394,7 +399,7 @@
         <div class="page" id="deliverablesPage">
             <header class="page-header">
                 <h1>Deliverables</h1>
-                <p class="subtitle">Complete these assignments throughout the 9 weeks</p>
+                <p class="subtitle">Complete these assignments throughout the 10 weeks</p>
             </header>
 
             <div class="phase-tabs">
@@ -541,6 +546,9 @@
                 </div>
             </div>
         </div>
+        <!-- Quiz Page (content rendered by app.js) -->
+        <div class="page" id="quizPage"></div>
+
     </main>
 
     <!-- Toast Notifications -->
