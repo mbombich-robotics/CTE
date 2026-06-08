@@ -30,7 +30,7 @@ const CONFIG = {
             deliverablePoints: { 0: 20, 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75 },
             deliverableWeeks: { 8: 10, 9: 11 },
             quizzes: [
-                { id: 'claw', name: 'Claw Quiz', questionCount: 7, maxPoints: 28 },
+                { id: 'claw',       name: 'Claw Quiz',  questionCount: 7,  maxPoints: 28 },
                 { id: 'final_exam', name: 'Final Exam', questionCount: 20, maxPoints: 20 }
             ]
         },
@@ -1678,7 +1678,12 @@ function updateGradeReport() {
         // Quiz scores
         if (showQuizzes) {
             course.quizzes.forEach(quiz => {
-                const quizRow = (state.rawData?.quiz || []).find(r => r[1] === email);
+                // Prefer per-quiz data from the backend (keyed by quizId), falling
+                // back to the legacy single-quiz array for the original claw quiz.
+                const quizRows = state.rawData?.quizzes?.[quiz.id]
+                              || (quiz.id === 'claw' ? state.rawData?.quiz : [])
+                              || [];
+                const quizRow = quizRows.find(r => r[1] === email);
                 let quizScore = '';
                 if (quizRow) {
                     const aiTotalIdx    = 3 + quiz.questionCount * 3;
