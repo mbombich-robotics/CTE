@@ -1,12 +1,12 @@
 // Teacher Portal - Dashboard for viewing student portfolios
-// Supports both Robotics and FRC Portfolio systems
+// Tracks: HS AE&R (robotics), 8th Grade AE&R (aer8), Design & Build Lab (dbl)
 
 // ============================================
 // CONFIGURATION
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.29',
+    VERSION: 'v2.9.30',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -20,9 +20,9 @@ const CONFIG = {
     // Course configurations
     COURSES: {
         robotics: {
-            name: 'Robotics Portfolio',
+            name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
-            currentAppVersion: 'v2.9.64',  // keep in sync with Robotics app.js CONFIG.VERSION
+            currentAppVersion: 'v2.9.64',
             hasTeams: false,
             totalDeliverables: 10,
             totalReflections: 14,
@@ -30,19 +30,36 @@ const CONFIG = {
             deliverablePoints: { 0: 20, 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75 },
             deliverableWeeks: { 8: 10, 9: 11 },
             quizzes: [
-                { id: 'claw', name: 'Claw Quiz', questionCount: 7, maxPoints: 28 }
+                { id: 'claw', name: 'Claw Quiz', questionCount: 7, maxPoints: 28 },
+                { id: 'final_exam', name: 'Final Exam', questionCount: 20, maxPoints: 20 }
             ]
         },
-        frc: {
-            name: 'FRC Portfolio',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbyXSBw_lCaHusiocLh3B_U1kyOmxyV3WlXhoqEdVAAzUN6U6_6ZCELqSTzzfhH6rUKc/exec',
-            currentAppVersion: 'v2.9.27',  // keep in sync with FRC app.js CONFIG.VERSION
-            hasTeams: true,
-            teams: ['drivetrain', 'intake', 'shooter', 'climber', 'autonomous', 'integration'],
-            totalDeliverables: 13,
-            totalReflections: 13,
-            totalPoints: 890,
-            deliverablePoints: { 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 75, 9: 100, 10: 100, 11: 75, 12: 100, 13: 100 }
+        aer8: {
+            name: '8th Grade Applied Engineering & Robotics',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbzhj6I_RMovDMqE7WS4r6IecvVQzx2KuNcX4il5LGKBhObb-oFLlL9gpg4cyXte_vfI/exec',
+            currentAppVersion: 'v2.9.64',
+            hasTeams: false,
+            totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
+            totalReflections: 9,     // ~1 semester
+            totalPoints: 755,        // TODO: update when pacing is finalized
+            deliverablePoints: { 0: 20, 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75 },
+            deliverableWeeks: { 8: 10, 9: 11 },
+            quizzes: [
+                { id: 'claw', name: 'Claw Quiz', questionCount: 7, maxPoints: 28 },
+                { id: 'final_exam', name: 'Final Exam', questionCount: 20, maxPoints: 20 }
+            ]
+        },
+        dbl: {
+            name: 'Design & Build Lab',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbyNDk5WZ5Fb6YpvszhIECCO_dMDoE7_WVdkqSpJc2_4gtH3gkKMib55i1Ecq5clcGl6Kg/exec',
+            currentAppVersion: 'v2.9.64',
+            hasTeams: false,
+            totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
+            totalReflections: 14,
+            totalPoints: 0,          // TODO: update when D&B Lab grading is defined
+            deliverablePoints: {},
+            deliverableWeeks: {},
+            quizzes: []
         }
     },
 
@@ -174,7 +191,8 @@ function tallyRubric(uid, deliverableId, email) {
 // ============================================
 let weekSettings = {
     robotics: { skipReflections: [], skipDeliverables: [], quizEnabled: false, quizKey: 'claw', reflectionDueDates: {}, deliverableDueDates: {} },
-    frc:      { skipReflections: [], skipDeliverables: [], reflectionDueDates: {}, deliverableDueDates: {} },
+    aer8:     { skipReflections: [], skipDeliverables: [], quizEnabled: false, quizKey: 'claw', reflectionDueDates: {}, deliverableDueDates: {} },
+    dbl:      { skipReflections: [], skipDeliverables: [], reflectionDueDates: {}, deliverableDueDates: {} },
     currentWeekOverride: null
 };
 
@@ -185,7 +203,8 @@ function loadWeekSettings() {
             const parsed = JSON.parse(saved);
             weekSettings = { ...weekSettings, ...parsed };
             weekSettings.robotics = { skipReflections: [], skipDeliverables: [], quizEnabled: false, quizKey: 'claw', reflectionDueDates: {}, deliverableDueDates: {}, ...parsed.robotics };
-            weekSettings.frc      = { skipReflections: [], skipDeliverables: [], reflectionDueDates: {}, deliverableDueDates: {}, ...parsed.frc };
+            weekSettings.aer8     = { skipReflections: [], skipDeliverables: [], quizEnabled: false, quizKey: 'claw', reflectionDueDates: {}, deliverableDueDates: {}, ...parsed.aer8 };
+            weekSettings.dbl      = { skipReflections: [], skipDeliverables: [], reflectionDueDates: {}, deliverableDueDates: {}, ...parsed.dbl };
         }
     } catch(e) {}
 }
@@ -2453,12 +2472,13 @@ async function openWeekSettings() {
         </tr>`;
     }
 
-    // Set quiz toggle + key selector (Robotics only)
-    if (courseId === 'robotics') {
-        const quizToggle = document.getElementById('quizEnabledToggle');
-        if (quizToggle) quizToggle.checked = weekSettings.robotics.quizEnabled || false;
-        const quizKeySelect = document.getElementById('quizKeySelect');
-        if (quizKeySelect) quizKeySelect.value = weekSettings.robotics.quizKey || 'claw';
+    // Set quiz toggle + key selector (AE&R courses only)
+    if (courseId === 'robotics' || courseId === 'aer8') {
+        const suffix = courseId === 'aer8' ? '_aer8' : '';
+        const quizToggle = document.getElementById('quizEnabledToggle' + suffix);
+        if (quizToggle) quizToggle.checked = weekSettings[courseId].quizEnabled || false;
+        const quizKeySelect = document.getElementById('quizKeySelect' + suffix);
+        if (quizKeySelect) quizKeySelect.value = weekSettings[courseId].quizKey || 'claw';
     }
 
     modal.classList.add('active');
@@ -2520,10 +2540,11 @@ async function applyWeekSettings() {
     }
     weekSettings[courseId].expectedVersion = document.getElementById(`expectedVersion_${courseId}`)?.value.trim() || '';
 
-    // Quiz toggle + key selector are robotics-only
-    if (courseId === 'robotics') {
-        weekSettings.robotics.quizEnabled = document.getElementById('quizEnabledToggle')?.checked || false;
-        weekSettings.robotics.quizKey     = document.getElementById('quizKeySelect')?.value || 'claw';
+    // Quiz toggle + key selector for AE&R courses
+    if (courseId === 'robotics' || courseId === 'aer8') {
+        const suffix = courseId === 'aer8' ? '_aer8' : '';
+        weekSettings[courseId].quizEnabled = document.getElementById('quizEnabledToggle' + suffix)?.checked || false;
+        weekSettings[courseId].quizKey     = document.getElementById('quizKeySelect' + suffix)?.value || 'claw';
     }
 
     saveWeekSettings();
@@ -2545,9 +2566,9 @@ async function applyWeekSettings() {
             reflectionDueDates:   weekSettings[courseId].reflectionDueDates  || {},
             deliverableDueDates:  weekSettings[courseId].deliverableDueDates || {}
         };
-        if (courseId === 'robotics') {
-            body.quizEnabled = weekSettings.robotics.quizEnabled;
-            body.quizKey     = weekSettings.robotics.quizKey || 'claw';
+        if (courseId === 'robotics' || courseId === 'aer8') {
+            body.quizEnabled = weekSettings[courseId].quizEnabled;
+            body.quizKey     = weekSettings[courseId].quizKey || 'claw';
         }
         await fetch(CONFIG.COURSES[courseId].apiUrl, { method: 'POST', body: JSON.stringify(body) });
         saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';

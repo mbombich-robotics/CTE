@@ -828,10 +828,13 @@
     <!-- Course Tabs -->
     <div class="course-tabs">
         <button class="course-tab active" data-course="robotics">
-            <i class="fas fa-robot"></i> Robotics Portfolio
+            <i class="fas fa-robot"></i> HS AE&amp;R
         </button>
-        <button class="course-tab" data-course="frc">
-            <i class="fas fa-cogs"></i> FRC Portfolio
+        <button class="course-tab" data-course="aer8">
+            <i class="fas fa-graduation-cap"></i> 8th Grade AE&amp;R
+        </button>
+        <button class="course-tab" data-course="dbl">
+            <i class="fas fa-hammer"></i> Design &amp; Build Lab
         </button>
     </div>
 
@@ -1232,17 +1235,17 @@
                         </div>
                     </div>
 
-                    <!-- FRC -->
-                    <div id="weekSettingsCol_frc">
-                        <h3 style="font-size: 15px; margin-bottom: 8px;"><i class="fas fa-cogs" style="color: var(--primary);"></i> FRC Portfolio</h3>
-                        <div id="versionRow_frc" style="margin-bottom: 10px; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 6px; padding: 8px 10px; font-size: 13px;">
+                    <!-- 8th Grade AE&R -->
+                    <div id="weekSettingsCol_aer8">
+                        <h3 style="font-size: 15px; margin-bottom: 8px;"><i class="fas fa-graduation-cap" style="color: var(--primary);"></i> 8th Grade AE&amp;R Portfolio</h3>
+                        <div id="versionRow_aer8" style="margin-bottom: 10px; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 6px; padding: 8px 10px; font-size: 13px;">
                             <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-                                <span style="color:var(--gray-500);">Students expect: <strong id="backendVersion_frc" style="font-family:monospace;">loading…</strong></span>
-                                <button onclick="setExpectedVersion('frc')" style="padding:3px 10px; font-size:12px; background:var(--primary); color:white; border:none; border-radius:4px; cursor:pointer;" title="Set students to expect the current code version">Use current</button>
+                                <span style="color:var(--gray-500);">Students expect: <strong id="backendVersion_aer8" style="font-family:monospace;">loading…</strong></span>
+                                <button onclick="setExpectedVersion('aer8')" style="padding:3px 10px; font-size:12px; background:var(--primary); color:white; border:none; border-radius:4px; cursor:pointer;" title="Set students to expect the current code version">Use current</button>
                             </div>
-                            <div style="margin-top:4px; color:var(--gray-500);">Current code: <strong id="codeVersion_frc" style="font-family:monospace; color:var(--primary);"></strong></div>
+                            <div style="margin-top:4px; color:var(--gray-500);">Current code: <strong id="codeVersion_aer8" style="font-family:monospace; color:var(--primary);"></strong></div>
                         </div>
-                        <input type="hidden" id="expectedVersion_frc">
+                        <input type="hidden" id="expectedVersion_aer8">
                         <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
                             <thead>
                                 <tr style="background: var(--gray-50);">
@@ -1253,7 +1256,53 @@
                                     <th style="padding: 8px 10px; text-align: left; border: 1px solid var(--gray-200);">Deliverable Due</th>
                                 </tr>
                             </thead>
-                            <tbody id="frcWeekSettingsBody"></tbody>
+                            <tbody id="aer8WeekSettingsBody"></tbody>
+                        </table>
+                        <!-- Quiz toggle -->
+                        <div style="margin-top: 16px; padding: 12px 16px; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+                            <div>
+                                <div style="font-weight: 600; font-size: 14px; color: var(--gray-700);">
+                                    <i class="fas fa-pencil-alt" style="color: var(--primary); margin-right: 6px;"></i> Quiz
+                                </div>
+                                <div style="font-size: 12px; color: var(--gray-500); margin-top: 2px;">
+                                    When enabled, the Quiz tab appears in student portfolios.
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                                <select id="quizKeySelect_aer8" style="font-size: 13px; padding: 5px 8px; border: 1px solid var(--gray-300); border-radius: 6px; background: white; color: var(--gray-700);">
+                                    <option value="claw">Claw Quiz</option>
+                                    <option value="final_exam">Final Exam</option>
+                                </select>
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; white-space: nowrap;">
+                                    <input type="checkbox" id="quizEnabledToggle_aer8" style="width: 16px; height: 16px; cursor: pointer;">
+                                    <span style="font-size: 13px; font-weight: 600; color: var(--gray-600);">Visible to students</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Design & Build Lab -->
+                    <div id="weekSettingsCol_dbl">
+                        <h3 style="font-size: 15px; margin-bottom: 8px;"><i class="fas fa-hammer" style="color: var(--primary);"></i> Design &amp; Build Lab Portfolio</h3>
+                        <div id="versionRow_dbl" style="margin-bottom: 10px; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 6px; padding: 8px 10px; font-size: 13px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                                <span style="color:var(--gray-500);">Students expect: <strong id="backendVersion_dbl" style="font-family:monospace;">loading…</strong></span>
+                                <button onclick="setExpectedVersion('dbl')" style="padding:3px 10px; font-size:12px; background:var(--primary); color:white; border:none; border-radius:4px; cursor:pointer;" title="Set students to expect the current code version">Use current</button>
+                            </div>
+                            <div style="margin-top:4px; color:var(--gray-500);">Current code: <strong id="codeVersion_dbl" style="font-family:monospace; color:var(--primary);"></strong></div>
+                        </div>
+                        <input type="hidden" id="expectedVersion_dbl">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                            <thead>
+                                <tr style="background: var(--gray-50);">
+                                    <th style="padding: 8px 10px; text-align: left; border: 1px solid var(--gray-200);">Week</th>
+                                    <th style="padding: 8px 10px; text-align: center; border: 1px solid var(--gray-200);">Skip Reflection</th>
+                                    <th style="padding: 8px 10px; text-align: center; border: 1px solid var(--gray-200);">Skip Deliverable</th>
+                                    <th style="padding: 8px 10px; text-align: left; border: 1px solid var(--gray-200);">Reflection Due</th>
+                                    <th style="padding: 8px 10px; text-align: left; border: 1px solid var(--gray-200);">Deliverable Due</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dblWeekSettingsBody"></tbody>
                         </table>
                     </div>
                 </div>
