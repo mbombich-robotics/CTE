@@ -31,7 +31,7 @@ const CONFIG = {
             deliverableWeeks: { 8: 10, 9: 11 },
             quizzes: [
                 { id: 'claw',       name: 'Claw Quiz',  questionCount: 7,  maxPoints: 28 },
-                { id: 'final_exam', name: 'Final Exam', questionCount: 20, maxPoints: 20 }
+                { id: 'final_exam', name: 'Final Exam', questionCount: 41, maxPoints: 41 }
             ]
         },
         aer8: {
@@ -45,8 +45,8 @@ const CONFIG = {
             deliverablePoints: { 0: 20, 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75 },
             deliverableWeeks: { 8: 10, 9: 11 },
             quizzes: [
-                { id: 'claw', name: 'Claw Quiz', questionCount: 7, maxPoints: 28 },
-                { id: 'final_exam', name: 'Final Exam', questionCount: 20, maxPoints: 20 }
+                { id: 'claw',       name: 'Claw Quiz',  questionCount: 7,  maxPoints: 28 },
+                { id: 'final_exam', name: 'Final Exam', questionCount: 41, maxPoints: 41 }
             ]
         },
         dbl: {
