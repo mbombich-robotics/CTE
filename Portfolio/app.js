@@ -8,10 +8,17 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.64',
+    VERSION: 'v2.9.65',
 
-    // Google Sheets Web App URL (deploy your Apps Script and paste URL here)
+    // Backend URL — swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
+
+    // One entry per course track — keys match state.student.course
+    BACKEND_URLS: {
+        hsaer:  'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
+        aer8th: 'https://script.google.com/macros/s/AKfycbzhj6I_RMovDMqE7WS4r6IecvVQzx2KuNcX4il5LGKBhObb-oFLlL9gpg4cyXte_vfI/exec',
+        dbl:    'https://script.google.com/macros/s/AKfycbyNDk5WZ5Fb6YpvszhIECCO_dMDoE7_WVdkqSpJc2_4gtH3gkKMib55i1Ecq5clcGl6Kg/exec',
+    },
 
     // Google OAuth Client ID
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -28,6 +35,10 @@ const CONFIG = {
     // Auto-save interval in milliseconds
     AUTO_SAVE_INTERVAL: 30000
 };
+
+function setBackendForCourse(course) {
+    CONFIG.SHEETS_API_URL = CONFIG.BACKEND_URLS[course] || CONFIG.BACKEND_URLS.hsaer;
+}
 
 // ============================================
 // WEEK TOPICS
@@ -795,6 +806,8 @@ async function handleTokenResponse(tokenResponse) {
             // config is not persisted in cloud state — restore default so it's never undefined
             state.config = { skipReflectionWeeks: [8], skipDeliverableWeeks: [], expectedVersion: null, quizEnabled: false, quizKey: 'claw', reflectionDueDates: {}, deliverableDueDates: {} };
             state.quiz = { loaded: false, submitted: false, grades: null, aiTotal: null };
+            // Students without a saved course (registered before multi-track) default to HS AE&R
+            setBackendForCourse(state.student.course || 'hsaer');
             restoreEvidenceLocal();
             calculateCurrentWeek();
             hideAllModals();
@@ -1161,12 +1174,15 @@ function initProfileForm() {
 
     fresh.addEventListener('submit', (e) => {
         e.preventDefault();
+        const course = document.getElementById('setupCourse').value;
         state.student = {
             name: state.student.name,
             email: state.student.email,
+            course: course,
             period: document.getElementById('setupPeriod').value,
             createdAt: new Date().toISOString()
         };
+        setBackendForCourse(course);
         document.getElementById('profileModal').classList.remove('active');
         onAuthenticated();
         showToast('Welcome! Your portfolio is ready.', 'success');
