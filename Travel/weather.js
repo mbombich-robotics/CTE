@@ -53,10 +53,61 @@ async function loadDayWeather(opts) {
 
         el.innerHTML = `
             ${date}${locationLabel ? ` (${locationLabel})` : ''} — ${desc}.
-            High ${hiC}°C (${hiF}°F), low ${loC}°C (${loF}°F), ${precip}mm precipitation, wind up to ${wind} km/h.
+            High ${hiF}°F, low ${loF}°F, ${precip}mm precipitation, wind up to ${wind} km/h.
             <br><span style="opacity:0.6; font-size:0.85em;">Live forecast via Open-Meteo — fetched ${fetchedAt}.</span>
         `;
     } catch (err) {
         el.innerHTML = `<em>Couldn't load the live forecast right now (${err.message}). Try refreshing the page.</em>`;
+    }
+}
+
+// Compact table-row version for a trip-wide forecast overview (see packing-checklist.html).
+// Usage: loadForecastRow({ idPrefix, lat, lon, date: "YYYY-MM-DD", timezone })
+// Fills in elements with ids `${idPrefix}-hi`, `-lo`, `-precip`, `-desc`.
+async function loadForecastRow(opts) {
+    const { idPrefix, lat, lon, date, timezone } = opts;
+    const hiEl = document.getElementById(`${idPrefix}-hi`);
+    const loEl = document.getElementById(`${idPrefix}-lo`);
+    const precipEl = document.getElementById(`${idPrefix}-precip`);
+    const descEl = document.getElementById(`${idPrefix}-desc`);
+    if (!hiEl || !loEl || !precipEl || !descEl) return;
+
+    const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: timezone || 'UTC' });
+    const daysOut = Math.round((new Date(date) - new Date(todayStr)) / 86400000);
+
+    if (daysOut < 0) {
+        descEl.textContent = 'Date has passed';
+        hiEl.textContent = loEl.textContent = precipEl.textContent = '—';
+        return;
+    }
+    if (daysOut > 16) {
+        descEl.textContent = 'Not available yet (>16 days out)';
+        hiEl.textContent = loEl.textContent = precipEl.textContent = '—';
+        return;
+    }
+
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+        `&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum` +
+        `&timezone=${encodeURIComponent(timezone)}&start_date=${date}&end_date=${date}`;
+
+    try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`API returned ${res.status}`);
+        const data = await res.json();
+
+        const code = data.daily.weathercode[0];
+        const hiC = Math.round(data.daily.temperature_2m_max[0]);
+        const loC = Math.round(data.daily.temperature_2m_min[0]);
+        const hiF = Math.round(hiC * 9 / 5 + 32);
+        const loF = Math.round(loC * 9 / 5 + 32);
+        const precip = data.daily.precipitation_sum[0];
+
+        hiEl.textContent = `${hiF}°F`;
+        loEl.textContent = `${loF}°F`;
+        precipEl.textContent = `${precip}mm`;
+        descEl.textContent = WMO_WEATHER_CODES[code] || 'Unavailable';
+    } catch (err) {
+        hiEl.textContent = loEl.textContent = precipEl.textContent = '—';
+        descEl.textContent = `Couldn't load (${err.message})`;
     }
 }

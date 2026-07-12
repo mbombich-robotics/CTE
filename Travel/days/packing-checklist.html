@@ -300,6 +300,49 @@
             margin: -8px 0 12px;
         }
 
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0 25px;
+            border-radius: 8px;
+            overflow: hidden;
+            font-size: 0.98rem;
+        }
+
+        .info-table th {
+            background: #1f4e4a;
+            color: #f8f1e0;
+            font-family: 'Lora', serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 2px solid #163a37;
+        }
+
+        .info-table td {
+            padding: 12px 16px;
+            color: #4a3826;
+            border-bottom: 1px solid rgba(61, 43, 31, 0.1);
+            background: rgba(255, 255, 255, 0.45);
+            line-height: 1.5;
+        }
+
+        .info-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .forecast-table th,
+        .forecast-table td {
+            padding: 16px 28px;
+        }
+
         .reset-btn {
             margin-left: auto;
             background: rgba(255, 255, 255, 0.18);
@@ -527,6 +570,37 @@
                 </ul>
             </div>
 
+            <!-- Trip Forecast -->
+            <div class="content-section">
+                <h2 class="section-title">Trip Forecast</h2>
+                <p class="body-text">Live forecast for each night's location, pulled fresh every time you load this page — use it to decide what to pack. Open-Meteo only forecasts about 16 days out, so early days may show real numbers while later days are still blank until closer to departure.</p>
+                <div class="table-wrap">
+                    <table class="info-table forecast-table">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Date</th>
+                                <th>Location</th>
+                                <th>High</th>
+                                <th>Low</th>
+                                <th>Precip</th>
+                                <th>Conditions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Day 1</td><td>Jul 19</td><td>Tanis, France</td><td id="fc-day01-hi">…</td><td id="fc-day01-lo">…</td><td id="fc-day01-precip">…</td><td id="fc-day01-desc">…</td></tr>
+                            <tr><td>Day 2</td><td>Jul 20</td><td>Bayeux / D-Day Beaches</td><td id="fc-day02-hi">…</td><td id="fc-day02-lo">…</td><td id="fc-day02-precip">…</td><td id="fc-day02-desc">…</td></tr>
+                            <tr><td>Day 3</td><td>Jul 21</td><td>Paris</td><td id="fc-day03-hi">…</td><td id="fc-day03-lo">…</td><td id="fc-day03-precip">…</td><td id="fc-day03-desc">…</td></tr>
+                            <tr><td>Day 4</td><td>Jul 22</td><td>Westhofen, Germany</td><td id="fc-day04-hi">…</td><td id="fc-day04-lo">…</td><td id="fc-day04-precip">…</td><td id="fc-day04-desc">…</td></tr>
+                            <tr><td>Day 5</td><td>Jul 23</td><td>Westhofen, Germany</td><td id="fc-day05-hi">…</td><td id="fc-day05-lo">…</td><td id="fc-day05-precip">…</td><td id="fc-day05-desc">…</td></tr>
+                            <tr><td>Day 6</td><td>Jul 24</td><td>Reutte, Austria</td><td id="fc-day06-hi">…</td><td id="fc-day06-lo">…</td><td id="fc-day06-precip">…</td><td id="fc-day06-desc">…</td></tr>
+                            <tr><td>Day 7</td><td>Jul 25</td><td>Königssee / Berchtesgaden</td><td id="fc-day07-hi">…</td><td id="fc-day07-lo">…</td><td id="fc-day07-precip">…</td><td id="fc-day07-desc">…</td></tr>
+                            <tr><td>Day 8</td><td>Jul 26</td><td>Munich Airport area</td><td id="fc-day08-hi">…</td><td id="fc-day08-lo">…</td><td id="fc-day08-precip">…</td><td id="fc-day08-desc">…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <!-- Packing List -->
             <div class="content-section">
                 <h2 class="section-title">Packing List</h2>
@@ -620,6 +694,17 @@
         <p>Personal travel itinerary — not affiliated with Vicksburg High School</p>
     </footer>
 
+    <script src="../weather.js"></script>
+    <script>
+        loadForecastRow({ idPrefix: 'fc-day01', lat: 48.58333, lon: -1.45, date: '2026-07-19', timezone: 'Europe/Paris' });
+        loadForecastRow({ idPrefix: 'fc-day02', lat: 49.27732, lon: -0.7039, date: '2026-07-20', timezone: 'Europe/Paris' });
+        loadForecastRow({ idPrefix: 'fc-day03', lat: 48.8566, lon: 2.3522, date: '2026-07-21', timezone: 'Europe/Paris' });
+        loadForecastRow({ idPrefix: 'fc-day04', lat: 49.70444, lon: 8.24806, date: '2026-07-22', timezone: 'Europe/Berlin' });
+        loadForecastRow({ idPrefix: 'fc-day05', lat: 49.70444, lon: 8.24806, date: '2026-07-23', timezone: 'Europe/Berlin' });
+        loadForecastRow({ idPrefix: 'fc-day06', lat: 47.48333, lon: 10.71667, date: '2026-07-24', timezone: 'Europe/Vienna' });
+        loadForecastRow({ idPrefix: 'fc-day07', lat: 47.63236, lon: 13.00187, date: '2026-07-25', timezone: 'Europe/Berlin' });
+        loadForecastRow({ idPrefix: 'fc-day08', lat: 48.31667, lon: 11.85, date: '2026-07-26', timezone: 'Europe/Berlin' });
+    </script>
     <script>
         (function () {
             var KEY_PREFIX = 'travelChecklist_';
