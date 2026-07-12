@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+    <title>Packing List &amp; Departure Checklist | Summer Travel 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lora', serif;
+            background: #f4ead9;
+            color: #3d2b1f;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Top Title Bar */
+        .top-bar {
+            background: linear-gradient(135deg, #8a3620 0%, #c1502e 50%, #8a3620 100%);
+            height: 80px;
+            border-bottom: 3px solid #d4a017;
+            box-shadow: 0 4px 16px rgba(58, 34, 20, 0.35);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            z-index: 100;
+        }
+
+        .circuit-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.5;
+            background-image: repeating-conic-gradient(from 0deg at 50% 130%, rgba(255,255,255,0.12) 0deg 3deg, transparent 3deg 14deg);
+        }
+
+        .top-bar-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+            color: #f8f1e0;
+        }
+
+        .school-badge {
+            background: rgba(255, 255, 255, 0.18);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+        }
+
+        .course-title-compact {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #f8f1e0;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0 rgba(58, 34, 20, 0.25);
+        }
+
+        /* Layout */
+        .layout-container {
+            display: flex;
+            flex: 1;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #1f4e4a;
+            border-right: 3px solid #c1502e;
+            padding: 30px 0;
+            overflow-y: auto;
+            height: calc(100vh - 80px);
+            position: sticky;
+            top: 0;
+            color: #d8e8e5;
+        }
+
+        .sidebar-section {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-header {
+            font-family: 'Lora', serif;
+            font-size: 0.85rem;
+            color: #8fb8b2;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 15px 25px 10px;
+            font-weight: 700;
+        }
+
+        .unit-link {
+            display: block;
+            padding: 12px 25px;
+            color: #cfe3e0;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .unit-link:hover {
+            background: rgba(212, 160, 23, 0.15);
+            border-left-color: #d4a017;
+            color: #f8f1e0;
+        }
+
+        .unit-link.active {
+            background: rgba(212, 160, 23, 0.22);
+            border-left-color: #d4a017;
+            color: #f8f1e0;
+        }
+
+        .unit-number {
+            font-family: 'Lora', serif;
+            color: #d4a017;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 60px 80px;
+            background: linear-gradient(135deg, #f7f0e1 0%, #ede0c8 100%);
+        }
+
+        .hero-section {
+            max-width: 1000px;
+            margin: 0 auto 50px;
+        }
+
+        .course-hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: #3d2b1f;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            text-shadow: 3px 3px 0 rgba(193, 80, 46, 0.18);
+            line-height: 1.2;
+        }
+
+        .course-subtitle {
+            font-family: 'Lora', serif;
+            font-style: italic;
+            font-size: 1.3rem;
+            color: #2f6f6a;
+            font-weight: 500;
+            margin-bottom: 25px;
+            letter-spacing: 0.5px;
+        }
+
+        .flight-bar {
+            background: linear-gradient(135deg, rgba(47, 111, 106, 0.12) 0%, rgba(47, 111, 106, 0.04) 100%);
+            border-left: 5px solid #2f6f6a;
+            padding: 20px 25px;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            color: #4a3826;
+            line-height: 1.7;
+            max-width: 1000px;
+        }
+
+        .content-section {
+            max-width: 1000px;
+            margin: 50px 0;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: #a8461f;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+
+        .subsection-title {
+            font-family: 'Lora', serif;
+            font-size: 1.2rem;
+            color: #3d2b1f;
+            font-weight: 700;
+            margin: 25px 0 12px;
+        }
+
+        .body-text {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: #4a3826;
+            margin-bottom: 15px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: #1f4e4a;
+            border-top: 3px solid #c1502e;
+            color: #a9c9c4;
+            font-size: 0.9rem;
+        }
+
+        .section-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 25px 0 12px;
+        }
+
+        .section-title-row .subsection-title {
+            margin: 0;
+        }
+
+        .progress-counter {
+            font-family: 'Lora', serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #2f6f6a;
+            background: rgba(47, 111, 106, 0.12);
+            border: 1px solid rgba(47, 111, 106, 0.4);
+            border-radius: 20px;
+            padding: 4px 14px;
+            white-space: nowrap;
+        }
+
+        .check-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: rgba(193, 80, 46, 0.06);
+            border-left: 4px solid #a8461f;
+            padding: 14px 18px;
+            border-radius: 8px;
+            font-size: 1.02rem;
+            color: #4a3826;
+            line-height: 1.5;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .check-item:hover {
+            background: rgba(193, 80, 46, 0.11);
+        }
+
+        .check-item input[type="checkbox"] {
+            margin-top: 3px;
+            width: 18px;
+            height: 18px;
+            accent-color: #2f6f6a;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .check-item.checked {
+            border-left-color: #2f6f6a;
+            background: rgba(47, 111, 106, 0.08);
+        }
+
+        .check-item.checked span {
+            text-decoration: line-through;
+            opacity: 0.55;
+        }
+
+        .subsection-note {
+            font-size: 0.95rem;
+            color: #6b5842;
+            font-style: italic;
+            margin: -8px 0 12px;
+        }
+
+        .reset-btn {
+            margin-left: auto;
+            background: rgba(255, 255, 255, 0.18);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: #f8f1e0;
+            padding: 7px 16px;
+            border-radius: 20px;
+            font-family: 'Lora', serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .reset-btn:hover {
+            background: rgba(255, 255, 255, 0.32);
+        }
+
+        .day-nav {
+            max-width: 1000px;
+            margin: 60px auto 0;
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .day-nav-btn {
+            flex: 1;
+            min-width: 220px;
+            background: linear-gradient(135deg, rgba(193, 80, 46, 0.10) 0%, rgba(193, 80, 46, 0.03) 100%);
+            border: 2px solid rgba(193, 80, 46, 0.35);
+            border-radius: 12px;
+            padding: 18px 24px;
+            text-decoration: none;
+            color: #3d2b1f;
+            font-weight: 600;
+            font-size: 0.98rem;
+            line-height: 1.4;
+            transition: all 0.3s ease;
+        }
+
+        .day-nav-btn:hover {
+            border-color: #2f6f6a;
+            box-shadow: 0 8px 24px rgba(47, 111, 106, 0.2);
+            transform: translateY(-3px);
+        }
+
+        @media print {
+            .sidebar, .top-bar, footer, .reset-btn, .day-nav {
+                display: none !important;
+            }
+            body, .main-content {
+                background: #ffffff !important;
+                color: #000000 !important;
+            }
+            .main-content { padding: 20px !important; }
+            .course-hero-title, .section-title, .subsection-title {
+                color: #000000 !important;
+                text-shadow: none !important;
+            }
+            .body-text, .check-item, .flight-bar {
+                color: #000000 !important;
+            }
+            .check-item, .flight-bar {
+                background: #fff !important;
+                border: 1px solid #999 !important;
+            }
+            .progress-counter { display: none !important; }
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+
+            .main-content {
+                padding: 40px 40px;
+            }
+
+            .course-hero-title {
+                font-size: 2.3rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .layout-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .main-content {
+                padding: 30px 20px;
+            }
+
+            .course-hero-title {
+                font-size: 1.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Title Bar -->
+    <div class="top-bar">
+        <div class="circuit-overlay"></div>
+        <div class="top-bar-content">
+            <div class="school-badge">Personal · Not Class Content</div>
+            <div class="course-title-compact">Summer Travel 2026</div>
+            <button id="reset-checklist" class="reset-btn">Reset Checklist</button>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="layout-container">
+        <!-- Left Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-header">Overview</div>
+                <a href="../index.html" class="unit-link">
+                    <span class="unit-number">⌂</span> Trip Overview
+                </a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-header">Trip Prep</div>
+                <a href="packing-checklist.html" class="unit-link active">
+                    <span class="unit-number">✓</span> Packing &amp; Departure Checklist
+                </a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-header">Travel Days</div>
+                <a href="day-01.html" class="unit-link">
+                    <span class="unit-number">Day 1</span> Jul 19 · CDG → Tanis
+                </a>
+                <a href="day-02.html" class="unit-link">
+                    <span class="unit-number">Day 2</span> Jul 20 · Normandy: D-Day Beaches
+                </a>
+                <a href="day-03.html" class="unit-link">
+                    <span class="unit-number">Day 3</span> Jul 21 · Mont Saint-Michel → Reims
+                </a>
+                <a href="day-04.html" class="unit-link">
+                    <span class="unit-number">Day 4</span> Jul 22 · Reims → Westhofen Wine Country
+                </a>
+                <a href="day-05.html" class="unit-link">
+                    <span class="unit-number">Day 5</span> Jul 23 · Rheinhessen & Aschaffenburg
+                </a>
+                <a href="day-06.html" class="unit-link">
+                    <span class="unit-number">Day 6</span> Jul 24 · Neuschwanstein → Reutte, Austria
+                </a>
+                <a href="day-07.html" class="unit-link">
+                    <span class="unit-number">Day 7</span> Jul 25 · Königssee → Munich
+                </a>
+                <a href="day-08.html" class="unit-link">
+                    <span class="unit-number">Day 8</span> Jul 26 · Fly Home: MUC → DTW
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="hero-section">
+                <h1 class="course-hero-title">Packing List &amp;<br>Departure Checklist</h1>
+                <p class="course-subtitle">Get the house — and your bags — ready before Day 1</p>
+
+                <div class="flight-bar">
+                    Check items off as you go — your progress is saved automatically on this device, so you can close the tab and pick up where you left off. Each traveler can run through this on their own phone.
+                </div>
+            </div>
+
+            <!-- Departure Checklist -->
+            <div class="content-section">
+                <h2 class="section-title">Departure Checklist (Home Prep)</h2>
+                <p class="body-text">Things to take care of before you lock the door — grouped by how far out you should handle them.</p>
+
+                <div class="section-title-row">
+                    <h3 class="subsection-title">1–2 Weeks Before</h3>
+                    <span class="progress-counter" data-progress-group="dep-2wk"></span>
+                </div>
+                <ul class="check-list" data-group="dep-2wk">
+                    <li><label class="check-item"><input type="checkbox" data-check-id="dep-2wk-bank"><span>Notify banks &amp; credit card companies of travel dates (France, Germany, Austria) — avoids fraud holds on your cards</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="dep-2wk-passport"><span>Check passport expiration — Schengen countries require 3+ months' validity past your return date; 6 months is safer</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="dep-2wk-bookings"><span>Confirm and save/print all VRBO and hotel booking confirmations</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="dep-2wk-idp"><span>Get an International Driving Permit if you want one (available at AAA — pairs with your US license)</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="dep-2wk-esim"><span>Set up an international phone plan or order eSIMs for data roaming</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="dep-2wk-insurance"><span>Check that your travel/car insurance covers the rental van, or add coverage</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="dep-2wk-money"><span>Order euros or confirm your cards have no foreign transaction fees</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="dep-2wk-meds"><span>Refill prescriptions — bring enough for the full trip, in original bottles</span></label></li>
+                </ul>
+
+                <div class="section-title-row">
+                    <h3 class="subsection-title">Few Days Before</h3>
+                    <span class="progress-counter" data-progress-group="dep-days"></span>
+                </div>
+                <ul class="check-list" data-group="dep-days">
+                    <li><label class="check-item"><input type="checkbox" data-check-id="dep-days-mail"><span>Arrange a mail hold (USPS) or ask a neighbor to collect it</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="dep-days-trash"><span>Arrange trash/recycling — put bins out or ask a neighbor, depending on pickup day</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="dep-days-pets"><span>Arrange pet care / plant watering</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="dep-days-checkin"><span>Check in online for the outbound flight, download boarding passes</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="dep-days-charge"><span>Charge all electronics and portable battery packs</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="dep-days-maps"><span>Download offline map areas for France/Germany/Austria in case of spotty signal</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="dep-days-copies"><span>Save copies of passports, itinerary, and confirmations to your phone + email them to yourself</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="dep-days-thermostat"><span>Set the thermostat to away/vacation mode</span></label></li>
+                </ul>
+
+                <div class="section-title-row">
+                    <h3 class="subsection-title">Day of Departure</h3>
+                    <span class="progress-counter" data-progress-group="dep-day"></span>
+                </div>
+                <ul class="check-list" data-group="dep-day">
+                    <li><label class="check-item"><input type="checkbox" data-check-id="dep-day-trash"><span>Take out the trash — final walk-through of the house</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="dep-day-unplug"><span>Unplug non-essential appliances</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="dep-day-lock"><span>Lock all doors and windows</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="dep-day-lights"><span>Set indoor lights on a timer or smart plug for security</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="dep-day-neighbor"><span>Leave a spare key + copy of the itinerary with a trusted neighbor or family member</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="dep-day-docs"><span>Double-check passports, boarding passes, and rental car confirmation are all in hand</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="dep-day-ride"><span>Confirm the ride to the airport / parking arrangements</span></label></li>
+                </ul>
+            </div>
+
+            <!-- Packing List -->
+            <div class="content-section">
+                <h2 class="section-title">Packing List</h2>
+                <p class="body-text">This trip runs from the Normandy coast to wine country to the Alps — pack for cool/wet mornings, warm afternoons, and everything in between.</p>
+
+                <div class="section-title-row">
+                    <h3 class="subsection-title">Documents &amp; Money</h3>
+                    <span class="progress-counter" data-progress-group="pack-docs"></span>
+                </div>
+                <ul class="check-list" data-group="pack-docs">
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-docs-passport"><span>Passport (check expiration!)</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-docs-license"><span>Driver's license + International Driving Permit</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-docs-bookings"><span>Printed or downloaded VRBO &amp; hotel confirmations</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-docs-rental"><span>Rental car reservation confirmation</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-docs-insurance"><span>Travel/health insurance info</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-docs-cards"><span>Credit/debit cards + some euros in cash</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-docs-itinerary"><span>Copy of this itinerary (printed or saved offline)</span></label></li>
+                </ul>
+
+                <div class="section-title-row">
+                    <h3 class="subsection-title">Electronics</h3>
+                    <span class="progress-counter" data-progress-group="pack-elec"></span>
+                </div>
+                <ul class="check-list" data-group="pack-elec">
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-elec-phone"><span>Phone + charger</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-elec-adapter"><span>EU power adapter (Type C/F, 230V) — one per person or a multi-port strip</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-elec-battery"><span>Portable battery pack</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-elec-camera"><span>Camera + charger/extra memory card</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-elec-headphones"><span>Headphones</span></label></li>
+                </ul>
+
+                <div class="section-title-row">
+                    <h3 class="subsection-title">Clothing</h3>
+                    <span class="progress-counter" data-progress-group="pack-clothing"></span>
+                </div>
+                <p class="subsection-note">Layers are the theme — coastal Normandy can be cool and wet, Rheinhessen runs warm in July, and the Alps are chilly even in summer.</p>
+                <ul class="check-list" data-group="pack-clothing">
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-cloth-shoes"><span>Comfortable walking/hiking shoes (Mont Saint-Michel, Neuschwanstein, Königssee)</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-cloth-rain"><span>Light rain jacket — Normandy weather is unpredictable</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-cloth-fleece"><span>Warm layer/fleece for the Alps (Reutte, Neuschwanstein, Königssee mornings)</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-cloth-sun"><span>Sun hat &amp; sunglasses</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-cloth-swim"><span>Swimsuit (optional — Königssee)</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-cloth-nice"><span>One nicer outfit (champagne tasting, dinners)</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-cloth-everyday"><span>Everyday clothes for 8 days — plan to do laundry or pack light</span></label></li>
+                </ul>
+
+                <div class="section-title-row">
+                    <h3 class="subsection-title">Toiletries &amp; Health</h3>
+                    <span class="progress-counter" data-progress-group="pack-health"></span>
+                </div>
+                <ul class="check-list" data-group="pack-health">
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-health-meds"><span>Prescription medications — enough for the trip plus a few extra days</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-health-sunscreen"><span>Sunscreen</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-health-firstaid"><span>Basic first-aid kit (band-aids, pain reliever, motion sickness meds)</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-health-toiletries"><span>Toiletries (travel-size)</span></label></li>
+                </ul>
+
+                <div class="section-title-row">
+                    <h3 class="subsection-title">Trip-Specific Gear</h3>
+                    <span class="progress-counter" data-progress-group="pack-gear"></span>
+                </div>
+                <ul class="check-list" data-group="pack-gear">
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-gear-bottle"><span>Reusable water bottle</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-gear-daypack"><span>Small day backpack for castle/hiking days</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-gear-picnic"><span>Picnic gear (reusable bag, small cooler) — for the grocery-store picnic lunches</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-gear-binoculars"><span>Binoculars (optional — Alps/Königssee views)</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-gear-poncho"><span>Umbrella or packable poncho</span></label></li>
+                </ul>
+
+                <div class="section-title-row">
+                    <h3 class="subsection-title">Car Essentials</h3>
+                    <span class="progress-counter" data-progress-group="pack-car"></span>
+                </div>
+                <ul class="check-list" data-group="pack-car">
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-car-maps"><span>GPS / offline maps downloaded</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-car-snacks"><span>Snacks &amp; water for the long drives</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-car-mount"><span>Phone mount for the rental van</span></label></li>
+                    <li><label class="check-item"><input type="checkbox" data-check-id="pack-car-aux"><span>Aux cable or Bluetooth for music</span></label></li>
+                </ul>
+            </div>
+
+            <div class="day-nav">
+                <a href="../index.html" class="day-nav-btn">← Trip Overview</a>
+                <a href="day-01.html" class="day-nav-btn" style="text-align: right;">Day 1: CDG → Tanis →</a>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>Personal travel itinerary — not affiliated with Vicksburg High School</p>
+    </footer>
+
+    <script>
+        (function () {
+            var KEY_PREFIX = 'travelChecklist_';
+
+            function updateProgress() {
+                document.querySelectorAll('.progress-counter').forEach(function (el) {
+                    var group = el.getAttribute('data-progress-group');
+                    var list = document.querySelector('.check-list[data-group="' + group + '"]');
+                    if (!list) return;
+                    var boxes = list.querySelectorAll('input[type="checkbox"]');
+                    var checked = list.querySelectorAll('input[type="checkbox"]:checked');
+                    el.textContent = checked.length + ' / ' + boxes.length + ' done';
+                });
+            }
+
+            var checkboxes = document.querySelectorAll('.check-item input[type="checkbox"]');
+            checkboxes.forEach(function (cb) {
+                var id = cb.getAttribute('data-check-id');
+                if (localStorage.getItem(KEY_PREFIX + id) === '1') {
+                    cb.checked = true;
+                    cb.closest('.check-item').classList.add('checked');
+                }
+                cb.addEventListener('change', function () {
+                    localStorage.setItem(KEY_PREFIX + id, cb.checked ? '1' : '0');
+                    cb.closest('.check-item').classList.toggle('checked', cb.checked);
+                    updateProgress();
+                });
+            });
+            updateProgress();
+
+            var resetBtn = document.getElementById('reset-checklist');
+            resetBtn.addEventListener('click', function () {
+                if (!confirm('Reset all checked items on this checklist?')) return;
+                checkboxes.forEach(function (cb) {
+                    var id = cb.getAttribute('data-check-id');
+                    localStorage.removeItem(KEY_PREFIX + id);
+                    cb.checked = false;
+                    cb.closest('.check-item').classList.remove('checked');
+                });
+                updateProgress();
+            });
+        })();
+    </script>
+</body>
+</html>

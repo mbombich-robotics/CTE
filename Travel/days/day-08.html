@@ -339,6 +339,84 @@
             line-height: 1.8;
         }
 
+        .section-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .section-title-row .section-title {
+            margin-bottom: 0;
+        }
+
+        .progress-counter {
+            font-family: 'Lora', serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #2f6f6a;
+            background: rgba(47, 111, 106, 0.12);
+            border: 1px solid rgba(47, 111, 106, 0.4);
+            border-radius: 20px;
+            padding: 4px 14px;
+            white-space: nowrap;
+        }
+
+        .check-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: rgba(193, 80, 46, 0.06);
+            border-left: 4px solid #a8461f;
+            padding: 14px 18px;
+            border-radius: 8px;
+            font-size: 1.02rem;
+            color: #4a3826;
+            line-height: 1.5;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .check-item:hover {
+            background: rgba(193, 80, 46, 0.11);
+        }
+
+        .check-item input[type="checkbox"] {
+            margin-top: 3px;
+            width: 18px;
+            height: 18px;
+            accent-color: #2f6f6a;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .check-item.checked {
+            border-left-color: #2f6f6a;
+            background: rgba(47, 111, 106, 0.08);
+        }
+
+        .check-item.checked span {
+            text-decoration: line-through;
+            opacity: 0.55;
+        }
+
+        .subsection-note {
+            font-size: 0.95rem;
+            color: #6b5842;
+            font-style: italic;
+            margin: -8px 0 12px;
+        }
+
         .map-link {
             color: #2f6f6a;
             font-weight: 600;
@@ -538,6 +616,13 @@
                 <div class="sidebar-header">Overview</div>
                 <a href="../index.html" class="unit-link">
                     <span class="unit-number">⌂</span> Trip Overview
+                </a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-header">Trip Prep</div>
+                <a href="packing-checklist.html" class="unit-link">
+                    <span class="unit-number">✓</span> Packing &amp; Departure Checklist
                 </a>
             </div>
 
