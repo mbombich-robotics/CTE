@@ -206,6 +206,44 @@
             max-width: 900px;
         }
 
+        .hero-info-row {
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .hero-info-row .flight-bar {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .qr-card {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            background: #f7f0e1;
+            border: 2px solid #d4a017;
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 4px 14px rgba(58, 34, 20, 0.15);
+        }
+
+        .qr-code-img {
+            width: 130px;
+            height: 130px;
+            display: block;
+        }
+
+        .qr-caption {
+            margin-top: 8px;
+            font-size: 0.82rem;
+            color: #4a3826;
+            font-style: italic;
+            text-align: center;
+            line-height: 1.4;
+        }
+
         .objectives-section {
             max-width: 1000px;
             margin: 60px 0;
@@ -395,10 +433,16 @@
                     An 8-day road trip through France, Germany, and Austria. Each day gets its own page in the sidebar — accommodation, driving directions, a timeline, live weather, and estimated costs.
                 </p>
 
-                <div class="flight-bar">
-                    <strong>Dates:</strong> July 19–26, 2026 &nbsp;·&nbsp; <strong>Group:</strong> 6 adults &nbsp;·&nbsp; <strong>Vehicle:</strong> Mercedes Vito 7-seat van (rental)<br>
-                    <strong>Route:</strong> Paris → Normandy → Reims → Westhofen (Germany) → Reutte (Austria) → Bavaria → Munich<br>
-                    <strong>Budget:</strong> ~$19,000 total (~$3,242 per person)
+                <div class="hero-info-row">
+                    <div class="flight-bar">
+                        <strong>Dates:</strong> July 19–26, 2026 &nbsp;·&nbsp; <strong>Group:</strong> 6 adults &nbsp;·&nbsp; <strong>Vehicle:</strong> Mercedes Vito 7-seat van (rental)<br>
+                        <strong>Route:</strong> Paris → Normandy → Reims → Westhofen (Germany) → Reutte (Austria) → Bavaria → Munich<br>
+                        <strong>Budget:</strong> ~$19,000 total (~$3,242 per person)
+                    </div>
+                    <div class="qr-card">
+                        <img src="images/qr-code.png" alt="QR code linking to this trip itinerary" class="qr-code-img">
+                        <p class="qr-caption">Scan to open<br>on your phone</p>
+                    </div>
                 </div>
             </div>
 
