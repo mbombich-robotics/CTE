@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Summer Travel 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lora', serif;
+            background: #f4ead9;
+            color: #3d2b1f;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Top Title Bar */
+        .top-bar {
+            background: linear-gradient(135deg, #8a3620 0%, #c1502e 50%, #8a3620 100%);
+            height: 80px;
+            border-bottom: 3px solid #d4a017;
+            box-shadow: 0 4px 16px rgba(58, 34, 20, 0.35);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            z-index: 100;
+        }
+
+        .circuit-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.5;
+            background-image: repeating-conic-gradient(from 0deg at 50% 130%, rgba(255,255,255,0.12) 0deg 3deg, transparent 3deg 14deg);
+        }
+
+        .top-bar-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            color: #f8f1e0;
+        }
+
+        .school-badge {
+            background: rgba(255, 255, 255, 0.18);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+        }
+
+        .course-title-compact {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #f8f1e0;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0 rgba(58, 34, 20, 0.25);
+        }
+
+        /* Layout */
+        .layout-container {
+            display: flex;
+            flex: 1;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #1f4e4a;
+            border-right: 3px solid #c1502e;
+            padding: 30px 0;
+            overflow-y: auto;
+            height: calc(100vh - 80px);
+            position: sticky;
+            top: 0;
+            color: #d8e8e5;
+        }
+
+        .sidebar-section {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-header {
+            font-family: 'Lora', serif;
+            font-size: 0.85rem;
+            color: #8fb8b2;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 15px 25px 10px;
+            font-weight: 700;
+        }
+
+        .unit-link {
+            display: block;
+            padding: 12px 25px;
+            color: #cfe3e0;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .unit-link:hover {
+            background: rgba(212, 160, 23, 0.15);
+            border-left-color: #d4a017;
+            color: #f8f1e0;
+        }
+
+        .unit-link.active {
+            background: rgba(212, 160, 23, 0.22);
+            border-left-color: #d4a017;
+            color: #f8f1e0;
+        }
+
+        .unit-number {
+            font-family: 'Lora', serif;
+            color: #d4a017;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        .coming-soon-badge {
+            float: right;
+            font-size: 0.7rem;
+            background: rgba(255, 255, 255, 0.15);
+            color: #cfe3e0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .unit-link.coming-soon {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 60px 80px;
+            background: linear-gradient(135deg, #f7f0e1 0%, #ede0c8 100%);
+        }
+
+        .hero-section {
+            max-width: 1200px;
+            margin: 0 auto 60px;
+        }
+
+        .course-hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            font-weight: 900;
+            color: #3d2b1f;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            text-shadow: 4px 4px 0 rgba(193, 80, 46, 0.18);
+            line-height: 1.2;
+        }
+
+        .course-subtitle {
+            font-family: 'Lora', serif;
+            font-style: italic;
+            font-size: 1.5rem;
+            color: #2f6f6a;
+            font-weight: 500;
+            margin-bottom: 40px;
+            letter-spacing: 0.5px;
+        }
+
+        .course-description {
+            font-size: 1.2rem;
+            line-height: 1.9;
+            color: #4a3826;
+            margin-bottom: 30px;
+            max-width: 900px;
+        }
+
+        .flight-bar {
+            background: linear-gradient(135deg, rgba(47, 111, 106, 0.12) 0%, rgba(47, 111, 106, 0.04) 100%);
+            border-left: 5px solid #2f6f6a;
+            padding: 20px 25px;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            color: #4a3826;
+            line-height: 1.7;
+            max-width: 900px;
+        }
+
+        .objectives-section {
+            max-width: 1000px;
+            margin: 60px 0;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: #a8461f;
+            margin-bottom: 30px;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+
+        .day-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .day-card {
+            display: block;
+            background: linear-gradient(135deg, rgba(193, 80, 46, 0.10) 0%, rgba(193, 80, 46, 0.03) 100%);
+            border: 2px solid rgba(193, 80, 46, 0.35);
+            border-radius: 15px;
+            padding: 25px 30px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .day-card:hover {
+            border-color: #2f6f6a;
+            box-shadow: 0 8px 30px rgba(47, 111, 106, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .day-card-label {
+            font-family: 'Lora', serif;
+            color: #a8461f;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+        }
+
+        .day-card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #3d2b1f;
+            margin-bottom: 6px;
+        }
+
+        .day-card-sub {
+            font-size: 0.95rem;
+            color: #6b5842;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: #1f4e4a;
+            border-top: 3px solid #c1502e;
+            color: #a9c9c4;
+            font-size: 0.9rem;
+        }
+
+        @media print {
+            .sidebar, .top-bar, footer {
+                display: none !important;
+            }
+            body, .main-content {
+                background: #ffffff !important;
+                color: #000000 !important;
+            }
+            .main-content { padding: 20px !important; }
+            .course-hero-title, .section-title {
+                color: #000000 !important;
+                text-shadow: none !important;
+            }
+            .course-description, .flight-bar, .day-card-sub, .day-card-title {
+                color: #000000 !important;
+            }
+            .day-card, .flight-bar {
+                background: #fff !important;
+                border: 1px solid #999 !important;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+
+            .main-content {
+                padding: 40px 40px;
+            }
+
+            .course-hero-title {
+                font-size: 2.8rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .layout-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .main-content {
+                padding: 30px 20px;
+            }
+
+            .course-hero-title {
+                font-size: 2.2rem;
+            }
+
+            .day-card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Title Bar -->
+    <div class="top-bar">
+        <div class="circuit-overlay"></div>
+        <div class="top-bar-content">
+            <div class="school-badge">Personal · Not Class Content</div>
+            <div class="course-title-compact">Summer Travel 2026</div>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="layout-container">
+        <!-- Left Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-header">Overview</div>
+                <a href="index.html" class="unit-link active">
+                    <span class="unit-number">⌂</span> Trip Overview
+                </a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-header">Travel Days</div>
+                <a href="days/day-01.html" class="unit-link">
+                    <span class="unit-number">Day 1</span> Jul 19 · CDG → Tanis
+                </a>
+                <a href="days/day-02.html" class="unit-link">
+                    <span class="unit-number">Day 2</span> Jul 20 · Normandy: D-Day Beaches
+                </a>
+                <a href="days/day-03.html" class="unit-link">
+                    <span class="unit-number">Day 3</span> Jul 21 · Mont Saint-Michel → Reims
+                </a>
+                <a href="days/day-04.html" class="unit-link">
+                    <span class="unit-number">Day 4</span> Jul 22 · Reims → Westhofen Wine Country
+                </a>
+                <a href="days/day-05.html" class="unit-link">
+                    <span class="unit-number">Day 5</span> Jul 23 · Rheinhessen & Aschaffenburg
+                </a>
+                <a href="days/day-06.html" class="unit-link">
+                    <span class="unit-number">Day 6</span> Jul 24 · Neuschwanstein → Reutte, Austria
+                </a>
+                <a href="days/day-07.html" class="unit-link">
+                    <span class="unit-number">Day 7</span> Jul 25 · Königssee → Munich
+                </a>
+                <a href="days/day-08.html" class="unit-link">
+                    <span class="unit-number">Day 8</span> Jul 26 · Fly Home: MUC → DTW
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="hero-section">
+                <h1 class="course-hero-title">Summer Travel<br>2026</h1>
+                <p class="course-subtitle">A Day-by-Day Itinerary</p>
+
+                <p class="course-description">
+                    An 8-day road trip through France, Germany, and Austria. Each day gets its own page in the sidebar — accommodation, driving directions, a timeline, live weather, and estimated costs.
+                </p>
+
+                <div class="flight-bar">
+                    <strong>Dates:</strong> July 19–26, 2026 &nbsp;·&nbsp; <strong>Group:</strong> 6 adults &nbsp;·&nbsp; <strong>Vehicle:</strong> Mercedes Vito 7-seat van (rental)<br>
+                    <strong>Route:</strong> Paris → Normandy → Reims → Westhofen (Germany) → Reutte (Austria) → Bavaria → Munich<br>
+                    <strong>Budget:</strong> ~$19,000 total (~$3,242 per person)
+                </div>
+            </div>
+
+            <div class="objectives-section">
+                <h2 class="section-title">Trip Days</h2>
+                <div class="day-card-grid">
+                    <a href="days/day-01.html" class="day-card">
+                        <div class="day-card-label">Day 1 · Sunday, July 19</div>
+                        <div class="day-card-title">CDG → Tanis</div>
+                        <div class="day-card-sub">Land Paris CDG 6:45 AM · drive via Dreux, Bellême, Domfront · VRBO check-in 4:00 PM</div>
+                    </a>
+                    <a href="days/day-02.html" class="day-card">
+                        <div class="day-card-label">Day 2 · Monday, July 20</div>
+                        <div class="day-card-title">D-Day Beaches & Normandy History</div>
+                        <div class="day-card-sub">Normandy American Cemetery · Omaha Beach · Pointe du Hoc · Utah Beach · dinner in Bayeux</div>
+                    </a>
+                    <a href="days/day-03.html" class="day-card">
+                        <div class="day-card-label">Day 3 · Tuesday, July 21</div>
+                        <div class="day-card-title">Mont Saint-Michel & Gateway to Germany</div>
+                        <div class="day-card-sub">Abbey tour, then a long 4.5-hr drive to Reims (accommodation change)</div>
+                    </a>
+                    <a href="days/day-04.html" class="day-card">
+                        <div class="day-card-label">Day 4 · Wednesday, July 22</div>
+                        <div class="day-card-title">Champagne & Wine Tasting</div>
+                        <div class="day-card-sub">Reims champagne/cathedral, then drive to Westhofen wine country (accommodation change)</div>
+                    </a>
+                    <a href="days/day-05.html" class="day-card">
+                        <div class="day-card-label">Day 5 · Thursday, July 23</div>
+                        <div class="day-card-title">Rheinhessen Wine Country & Aschaffenburg</div>
+                        <div class="day-card-sub">Wine tasting in Westhofen, then an afternoon in Aschaffenburg — where Dad served as an MP in the 1970s</div>
+                    </a>
+                    <a href="days/day-06.html" class="day-card">
+                        <div class="day-card-label">Day 6 · Friday, July 24</div>
+                        <div class="day-card-title">Neuschwanstein Castle & Bavarian Alps</div>
+                        <div class="day-card-sub">Timed castle tour + Marienbrücke, then on to Reutte, Austria (accommodation change)</div>
+                    </a>
+                    <a href="days/day-07.html" class="day-card">
+                        <div class="day-card-label">Day 7 · Saturday, July 25</div>
+                        <div class="day-card-title">Alpine Lakes & Königssee</div>
+                        <div class="day-card-sub">Electric boat tour on Königssee, then on to Munich Airport area (accommodation change)</div>
+                    </a>
+                    <a href="days/day-08.html" class="day-card">
+                        <div class="day-card-label">Day 8 · Sunday, July 26</div>
+                        <div class="day-card-title">Return to Detroit</div>
+                        <div class="day-card-sub">7-min drive to MUC, 9:00 AM departure, arrive Detroit 12:35 PM</div>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>Personal travel itinerary — not affiliated with Vicksburg High School</p>
+    </footer>
+</body>
+</html>

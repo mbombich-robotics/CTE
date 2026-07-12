@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+    <title>Day 5 — Rheinhessen Wine Country & Aschaffenburg | Summer Travel 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lora', serif;
+            background: #f4ead9;
+            color: #3d2b1f;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Top Title Bar */
+        .top-bar {
+            background: linear-gradient(135deg, #8a3620 0%, #c1502e 50%, #8a3620 100%);
+            height: 80px;
+            border-bottom: 3px solid #d4a017;
+            box-shadow: 0 4px 16px rgba(58, 34, 20, 0.35);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            z-index: 100;
+        }
+
+        .circuit-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.5;
+            background-image: repeating-conic-gradient(from 0deg at 50% 130%, rgba(255,255,255,0.12) 0deg 3deg, transparent 3deg 14deg);
+        }
+
+        .top-bar-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+            color: #f8f1e0;
+        }
+
+        .school-badge {
+            background: rgba(255, 255, 255, 0.18);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+        }
+
+        .course-title-compact {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #f8f1e0;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0 rgba(58, 34, 20, 0.25);
+        }
+
+        /* Layout */
+        .layout-container {
+            display: flex;
+            flex: 1;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #1f4e4a;
+            border-right: 3px solid #c1502e;
+            padding: 30px 0;
+            overflow-y: auto;
+            height: calc(100vh - 80px);
+            position: sticky;
+            top: 0;
+            color: #d8e8e5;
+        }
+
+        .sidebar-section {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-header {
+            font-family: 'Lora', serif;
+            font-size: 0.85rem;
+            color: #8fb8b2;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 15px 25px 10px;
+            font-weight: 700;
+        }
+
+        .unit-link {
+            display: block;
+            padding: 12px 25px;
+            color: #cfe3e0;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .unit-link:hover {
+            background: rgba(212, 160, 23, 0.15);
+            border-left-color: #d4a017;
+            color: #f8f1e0;
+        }
+
+        .unit-link.active {
+            background: rgba(212, 160, 23, 0.22);
+            border-left-color: #d4a017;
+            color: #f8f1e0;
+        }
+
+        .unit-number {
+            font-family: 'Lora', serif;
+            color: #d4a017;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 60px 80px;
+            background: linear-gradient(135deg, #f7f0e1 0%, #ede0c8 100%);
+        }
+
+        .hero-section {
+            max-width: 1000px;
+            margin: 0 auto 50px;
+        }
+
+        .course-hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: #3d2b1f;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            text-shadow: 3px 3px 0 rgba(193, 80, 46, 0.18);
+            line-height: 1.2;
+        }
+
+        .course-subtitle {
+            font-family: 'Lora', serif;
+            font-style: italic;
+            font-size: 1.3rem;
+            color: #2f6f6a;
+            font-weight: 500;
+            margin-bottom: 25px;
+            letter-spacing: 0.5px;
+        }
+
+        .flight-bar {
+            background: linear-gradient(135deg, rgba(47, 111, 106, 0.12) 0%, rgba(47, 111, 106, 0.04) 100%);
+            border-left: 5px solid #2f6f6a;
+            padding: 20px 25px;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            color: #4a3826;
+            line-height: 1.7;
+            max-width: 1000px;
+        }
+
+        .content-section {
+            max-width: 1000px;
+            margin: 50px 0;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: #a8461f;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+
+        .subsection-title {
+            font-family: 'Lora', serif;
+            font-size: 1.2rem;
+            color: #3d2b1f;
+            font-weight: 700;
+            margin: 25px 0 12px;
+        }
+
+        .body-text {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: #4a3826;
+            margin-bottom: 15px;
+        }
+
+        .step-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        .step-list li {
+            background: rgba(193, 80, 46, 0.06);
+            border-left: 4px solid #a8461f;
+            padding: 16px 20px;
+            border-radius: 8px;
+            font-size: 1.02rem;
+            color: #4a3826;
+            line-height: 1.6;
+        }
+
+        .step-list li::before {
+            content: "▸";
+            color: #a8461f;
+            font-weight: bold;
+            margin-right: 12px;
+            font-size: 1.2rem;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0 25px;
+            border-radius: 8px;
+            overflow: hidden;
+            font-size: 0.98rem;
+        }
+
+        .info-table th {
+            background: #1f4e4a;
+            color: #f8f1e0;
+            font-family: 'Lora', serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 2px solid #163a37;
+        }
+
+        .info-table td {
+            padding: 12px 16px;
+            color: #4a3826;
+            border-bottom: 1px solid rgba(61, 43, 31, 0.1);
+            background: rgba(255, 255, 255, 0.45);
+            line-height: 1.5;
+        }
+
+        .info-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .info-table td:first-child {
+            color: #a8461f;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        .weather-box {
+            background: linear-gradient(135deg, rgba(212, 160, 23, 0.14) 0%, rgba(212, 160, 23, 0.04) 100%);
+            border: 2px solid rgba(212, 160, 23, 0.5);
+            border-radius: 12px;
+            padding: 20px 25px;
+            font-size: 1.02rem;
+            color: #4a3826;
+            line-height: 1.7;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: #1f4e4a;
+            border-top: 3px solid #c1502e;
+            color: #a9c9c4;
+            font-size: 0.9rem;
+        }
+
+        .day-photo-wrap {
+            max-width: 1000px;
+            margin: 0 0 25px;
+        }
+
+        .day-photo {
+            width: 100%;
+            height: 460px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 4px solid #f7f0e1;
+            outline: 2px solid #d4a017;
+            box-shadow: 0 6px 20px rgba(58, 34, 20, 0.25);
+            display: block;
+        }
+
+        .day-photo-credit {
+            font-size: 0.78rem;
+            color: #8a7660;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .day-photo-credit a {
+            color: #8a7660;
+        }
+
+        .personal-note-box {
+            background: linear-gradient(135deg, rgba(212, 160, 23, 0.14) 0%, rgba(212, 160, 23, 0.04) 100%);
+            border: 2px dashed #d4a017;
+            border-radius: 12px;
+            padding: 24px 28px;
+            font-size: 1.05rem;
+            color: #4a3826;
+            line-height: 1.8;
+        }
+
+        .map-link {
+            color: #2f6f6a;
+            font-weight: 600;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .map-link:hover {
+            text-decoration: underline;
+        }
+
+        .accommodation-map-link {
+            display: inline-block;
+            margin-top: 6px;
+            color: #2f6f6a;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .accommodation-map-link:hover {
+            text-decoration: underline;
+        }
+
+        .accommodation-box {
+            background: linear-gradient(135deg, rgba(47, 111, 106, 0.12) 0%, rgba(47, 111, 106, 0.04) 100%);
+            border-left: 5px solid #2f6f6a;
+            padding: 20px 25px;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            color: #4a3826;
+            line-height: 1.7;
+            max-width: 1000px;
+            margin-top: 20px;
+        }
+
+        .driving-box {
+            background: linear-gradient(135deg, rgba(193, 80, 46, 0.10) 0%, rgba(193, 80, 46, 0.03) 100%);
+            border-left: 5px solid #a8461f;
+            padding: 20px 25px;
+            border-radius: 8px;
+            font-size: 1.02rem;
+            color: #4a3826;
+            line-height: 1.8;
+        }
+
+        .cost-table tr.total-row td {
+            font-weight: 700;
+            color: #a8461f;
+            border-top: 2px solid #d4a017;
+            background: rgba(212, 160, 23, 0.18);
+        }
+
+        .costs-hidden-note {
+            display: none;
+            color: #8a7660;
+            font-style: italic;
+        }
+
+        body.costs-hidden .costs-body {
+            display: none;
+        }
+
+        body.costs-hidden .costs-hidden-note {
+            display: block;
+        }
+
+        .toggle-btn {
+            margin-left: auto;
+            background: rgba(255, 255, 255, 0.18);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: #f8f1e0;
+            padding: 7px 16px;
+            border-radius: 20px;
+            font-family: 'Lora', serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.32);
+        }
+
+        .day-nav {
+            max-width: 1000px;
+            margin: 60px auto 0;
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .day-nav-btn {
+            flex: 1;
+            min-width: 220px;
+            background: linear-gradient(135deg, rgba(193, 80, 46, 0.10) 0%, rgba(193, 80, 46, 0.03) 100%);
+            border: 2px solid rgba(193, 80, 46, 0.35);
+            border-radius: 12px;
+            padding: 18px 24px;
+            text-decoration: none;
+            color: #3d2b1f;
+            font-weight: 600;
+            font-size: 0.98rem;
+            line-height: 1.4;
+            transition: all 0.3s ease;
+        }
+
+        .day-nav-btn:hover {
+            border-color: #2f6f6a;
+            box-shadow: 0 8px 24px rgba(47, 111, 106, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .day-nav-btn.next {
+            text-align: right;
+        }
+
+        @media print {
+            .sidebar, .top-bar, footer, .toggle-btn, .day-nav {
+                display: none !important;
+            }
+            body, .main-content {
+                background: #ffffff !important;
+                color: #000000 !important;
+            }
+            .main-content { padding: 20px !important; }
+            .course-hero-title, .section-title, .subsection-title {
+                color: #000000 !important;
+                text-shadow: none !important;
+            }
+            .body-text, .step-list li, .info-table td, .accommodation-box, .driving-box, .weather-box {
+                color: #000000 !important;
+            }
+            .info-table th { background: #ddd !important; color: #000 !important; }
+            .info-table td, .step-list li, .accommodation-box, .driving-box, .weather-box {
+                background: #fff !important;
+                border: 1px solid #999 !important;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+
+            .main-content {
+                padding: 40px 40px;
+            }
+
+            .course-hero-title {
+                font-size: 2.3rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .layout-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .main-content {
+                padding: 30px 20px;
+            }
+
+            .course-hero-title {
+                font-size: 1.9rem;
+            }
+
+            .day-nav-btn.next { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Title Bar -->
+    <div class="top-bar">
+        <div class="circuit-overlay"></div>
+        <div class="top-bar-content">
+            <div class="school-badge">Personal · Not Class Content</div>
+            <div class="course-title-compact">Summer Travel 2026</div>
+            <button id="cost-toggle" class="toggle-btn">Hide Costs</button>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="layout-container">
+        <!-- Left Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-header">Overview</div>
+                <a href="../index.html" class="unit-link">
+                    <span class="unit-number">⌂</span> Trip Overview
+                </a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-header">Travel Days</div>
+                <a href="day-01.html" class="unit-link">
+                    <span class="unit-number">Day 1</span> Jul 19 · CDG → Tanis
+                </a>
+                <a href="day-02.html" class="unit-link">
+                    <span class="unit-number">Day 2</span> Jul 20 · Normandy: D-Day Beaches
+                </a>
+                <a href="day-03.html" class="unit-link">
+                    <span class="unit-number">Day 3</span> Jul 21 · Mont Saint-Michel → Reims
+                </a>
+                <a href="day-04.html" class="unit-link">
+                    <span class="unit-number">Day 4</span> Jul 22 · Reims → Westhofen Wine Country
+                </a>
+                <a href="day-05.html" class="unit-link active">
+                    <span class="unit-number">Day 5</span> Jul 23 · Rheinhessen & Aschaffenburg
+                </a>
+                <a href="day-06.html" class="unit-link">
+                    <span class="unit-number">Day 6</span> Jul 24 · Neuschwanstein → Reutte, Austria
+                </a>
+                <a href="day-07.html" class="unit-link">
+                    <span class="unit-number">Day 7</span> Jul 25 · Königssee → Munich
+                </a>
+                <a href="day-08.html" class="unit-link">
+                    <span class="unit-number">Day 8</span> Jul 26 · Fly Home: MUC → DTW
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="hero-section">
+                <h1 class="course-hero-title">Rheinhessen Wine Country & Aschaffenburg</h1>
+                <p class="course-subtitle">Thursday, July 23, 2026</p>
+
+                <div class="day-photo-wrap">
+                    <img class="day-photo" src="../images/day-05-rheinhessen-vineyards.jpg" alt="Rolling vineyard hills near Bechtolsheim in the Rheinhessen wine region, Germany">
+                    <p class="day-photo-credit">Vineyards near Bechtolsheim, Rheinhessen — photo by Dguendel, <a href="https://commons.wikimedia.org/wiki/File:Bechtolsheim,_Weinberge.jpg" target="_blank" rel="noopener">Wikimedia Commons</a> (CC BY 3.0)</p>
+                </div>
+
+                <div class="accommodation-box">
+                    <strong>Tonight's stay:</strong> VRBO — Westhofen (2nd night, same as last night)<br>
+                    <strong>Check-in:</strong> — &nbsp;·&nbsp; <strong>Checkout:</strong> —<br>
+                    No checkout or check-in today — a full relaxation day before tomorrow's long drive to Austria.<br>
+                    <a class="accommodation-map-link" href="https://www.google.com/maps/search/?api=1&query=Mozartstra%C3%9Fe%2013%2C%2067593%20Westhofen%2C%20Germany" target="_blank" rel="noopener">📍 Open in Google Maps →</a>
+                </div>
+            </div>
+
+            <!-- Weather -->
+            <div class="content-section">
+                <h2 class="section-title">Weather Forecast</h2>
+                <div class="weather-box" id="weather-day05">
+                    <em>Loading live forecast…</em>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h2 class="section-title">A Personal Stop: Dad's Army Days in Aschaffenburg</h2>
+                <div class="personal-note-box">
+                    In the 1970s, your dad served as a Military Police officer stationed in Aschaffenburg. The U.S. Army's community headquarters there was <strong>Jaeger Kaserne</strong> — home to MP, finance, medical, and postal units from 1949 through the Cold War. The barracks still stand today: the historic buildings are a protected landmark and now form the campus of Technische Hochschule Aschaffenburg. This afternoon, take some time to walk the grounds where he served, along with the old town and Schloss Johannisburg.
+                </div>
+            </div>
+
+            <!-- Driving -->
+            <div class="content-section">
+                <h2 class="section-title">Driving Today</h2>
+                <div class="driving-box">
+                    <strong>Leg 1:</strong> Westhofen → Aschaffenburg — ~100 km / ~1h10 via A61 → A67 → A3<br><strong>Leg 2:</strong> Aschaffenburg → Westhofen — same route back, ~1h10<br><strong>Tolls:</strong> None — German autobahns are toll-free for cars.
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h2 class="section-title">Key Locations &amp; Directions</h2>
+                <div class="table-wrap">
+                    <table class="info-table locations-table">
+                        <thead>
+                            <tr>
+                                <th>Place</th>
+                                <th>Address</th>
+                                <th>Map</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Weingut Rettig (nearby winery — one option for this morning's tasting)</td><td>Gundheimer Straße 1, 67593 Westhofen, Germany</td><td><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Gundheimer%20Stra%C3%9Fe%201%2C%2067593%20Westhofen%2C%20Germany" target="_blank" rel="noopener">Open in Maps →</a></td></tr>
+                            <tr><td>Former Jaeger Kaserne (now Technische Hochschule Aschaffenburg)</td><td>Würzburger Straße 45, 63743 Aschaffenburg, Germany</td><td><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=W%C3%BCrzburger%20Stra%C3%9Fe%2045%2C%2063743%20Aschaffenburg%2C%20Germany" target="_blank" rel="noopener">Open in Maps →</a></td></tr>
+                            <tr><td>Schloss Johannisburg</td><td>Schlossplatz 4, 63739 Aschaffenburg, Germany</td><td><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Schlossplatz%204%2C%2063739%20Aschaffenburg%2C%20Germany" target="_blank" rel="noopener">Open in Maps →</a></td></tr>
+                            <tr><td>Aschaffenburg Old Town</td><td>Theaterplatz, 63739 Aschaffenburg, Germany</td><td><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Theaterplatz%2C%2063739%20Aschaffenburg%2C%20Germany" target="_blank" rel="noopener">Open in Maps →</a></td></tr>
+                            <tr><td>VRBO — tonight's stay</td><td>Mozartstraße 13, 67593 Westhofen, Germany</td><td><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Mozartstra%C3%9Fe%2013%2C%2067593%20Westhofen%2C%20Germany" target="_blank" rel="noopener">Open in Maps →</a></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Timeline -->
+            <div class="content-section">
+                <h2 class="section-title">Timeline</h2>
+                <div class="table-wrap">
+                    <table class="info-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Activity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>8:00 AM</td><td>Breakfast at VRBO</td></tr>
+                            <tr><td>9:00–10:30 AM</td><td>Choose one: wine tasting at a Weingut (€15–25/person), vineyard trail walk (FREE), or bike rental through wine country (€10–15/person)</td></tr>
+                            <tr><td>10:30–11:30 AM</td><td>Explore Westhofen town — wine shops, local crafts, café</td></tr>
+                            <tr><td>11:30 AM–12:15 PM</td><td>Lunch at a wine village restaurant (€20/person)</td></tr>
+                            <tr><td>12:15 PM</td><td>Depart for Aschaffenburg — 100 km / ~1h10 via A61 → A67 → A3</td></tr>
+                            <tr><td>1:30–4:30 PM</td><td>Aschaffenburg: walk the former Jaeger Kaserne grounds (now TH Aschaffenburg), Schloss Johannisburg, and the half-timbered old town</td></tr>
+                            <tr><td>4:30 PM</td><td>Depart Aschaffenburg for Westhofen — ~1h10</td></tr>
+                            <tr><td>~5:45 PM</td><td>Arrive back at VRBO, freshen up</td></tr>
+                            <tr><td>7:30 PM</td><td>Dinner — self-catering or local restaurant (€35/person × 6)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Costs -->
+            <div class="content-section costs-section">
+                <h2 class="section-title">Estimated Costs</h2>
+                <div class="costs-body">
+                    <div class="table-wrap">
+                        <table class="info-table cost-table">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <tr><td>Wine tasting</td><td>€90–150</td></tr>
+                            <tr><td>Lunch — €20/person × 6</td><td>€120</td></tr>
+                            <tr><td>Aschaffenburg trip — parking + optional Schloss Johannisburg entry</td><td>€30</td></tr>
+                            <tr><td>Dinner — €35/person × 6</td><td>€210</td></tr>
+                            <tr><td>Miscellaneous (bikes, shops, etc.)</td><td>€50</td></tr>
+                            <tr class="total-row"><td>Day Total</td><td>€500–560</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <p class="costs-hidden-note">Costs are hidden. Click "Show Costs" in the top bar to reveal.</p>
+            </div>
+
+            <!-- Tips -->
+            <div class="content-section">
+                <h2 class="section-title">Tips &amp; Notes</h2>
+                <ul class="step-list">
+                    <li>This is a lighter day, but not a full rest day anymore — the Aschaffenburg round trip adds ~2.5 hours of driving to the afternoon.</li>
+                    <li>Jaeger Kaserne is now a working university campus — it's publicly walkable, but it's also a place people study and work, so keep visits low-key and respectful.</li>
+                    <li>German wine here is excellent and affordable — worth stocking up this morning before you head out.</li>
+                    <li>Rheinhessen produces mainly white wines (Riesling, Müller-Thurgau).</li>
+                    <li>Tomorrow is a 6+ hour driving day to Austria — try to be back at the VRBO by early evening to rest up.</li>
+                </ul>
+            </div>
+
+            <!-- Photos -->
+            <div class="content-section">
+                <h2 class="section-title">Photo Suggestions</h2>
+                <ul class="step-list">
+                    <li><strong>Former Jaeger Kaserne / TH Aschaffenburg:</strong> the preserved historic barracks buildings — a meaningful one for the family album.</li>
+                    <li><strong>Schloss Johannisburg:</strong> the red-sandstone castle above the Main River.</li>
+                    <li><strong>Aschaffenburg old town:</strong> half-timbered houses along Metzgergasse.</li>
+                    <li><strong>Rheinhessen vineyard trails:</strong> panoramic rows of vines, from this morning.</li>
+                </ul>
+            </div>
+
+            <div class="day-nav">
+                <a href="day-04.html" class="day-nav-btn prev">← Day 4: Reims → Westhofen Wine Country</a>
+                <a href="day-06.html" class="day-nav-btn next">Day 6: Neuschwanstein → Reutte, Austria →</a>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>Personal travel itinerary — not affiliated with Vicksburg High School</p>
+    </footer>
+
+    <script src="../weather.js"></script>
+    <script>
+        loadDayWeather({
+            elementId: "weather-day05",
+            lat: 49.70444,
+            lon: 8.24806,
+            date: "2026-07-23",
+            timezone: "Europe/Berlin",
+            locationLabel: "Westhofen, Rheinhessen"
+        });
+    </script>
+    <script>
+        (function () {
+            var btn = document.getElementById('cost-toggle');
+            if (!btn) return;
+            var KEY = 'travelCostsHidden';
+            function apply(hidden) {
+                document.body.classList.toggle('costs-hidden', hidden);
+                btn.textContent = hidden ? 'Show Costs' : 'Hide Costs';
+            }
+            apply(localStorage.getItem(KEY) === '1');
+            btn.addEventListener('click', function () {
+                var hidden = !document.body.classList.contains('costs-hidden');
+                localStorage.setItem(KEY, hidden ? '1' : '0');
+                apply(hidden);
+            });
+        })();
+    </script>
+</body>
+</html>
