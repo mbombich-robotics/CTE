@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Applied Engineering &amp; Robotics — Final Exam</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 11pt;
+    color: #000;
+    background: #fff;
+  }
+
+  /* ── Page layout ── */
+  .page {
+    width: 8.5in;
+    min-height: 11in;
+    margin: 0 auto;
+    padding: 0.75in 0.85in 0.75in 0.85in;
+  }
+
+  @media print {
+    .page { margin: 0; padding: 0.75in 0.85in 0.75in 0.85in; }
+    .page-break { page-break-before: always; }
+    .no-print { display: none !important; }
+  }
+
+  /* ── Header ── */
+  .exam-header {
+    border-bottom: 2.5pt solid #000;
+    padding-bottom: 10pt;
+    margin-bottom: 14pt;
+  }
+  .exam-title {
+    font-size: 15pt;
+    font-weight: bold;
+    text-align: center;
+    letter-spacing: .04em;
+  }
+  .exam-subtitle {
+    font-size: 10.5pt;
+    text-align: center;
+    margin-top: 3pt;
+    color: #333;
+  }
+  .student-info {
+    display: flex;
+    gap: 24pt;
+    margin-top: 14pt;
+  }
+  .info-field {
+    flex: 1;
+    border-bottom: 1pt solid #000;
+    padding-bottom: 2pt;
+    font-size: 10pt;
+  }
+  .info-label {
+    font-size: 9pt;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: 6pt;
+  }
+
+  /* ── Instructions ── */
+  .instructions {
+    background: #f5f5f5;
+    border: 1pt solid #ccc;
+    border-radius: 3pt;
+    padding: 8pt 11pt;
+    margin-bottom: 18pt;
+    font-size: 10pt;
+    line-height: 1.5;
+  }
+  .instructions strong { font-size: 10.5pt; }
+
+  /* ── Section header ── */
+  .section-header {
+    font-size: 10pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    border-bottom: 1pt solid #999;
+    padding-bottom: 3pt;
+    margin: 18pt 0 10pt;
+    color: #333;
+  }
+
+  /* ── Questions ── */
+  .question-block {
+    margin-bottom: 16pt;
+    page-break-inside: avoid;
+  }
+  .question-text {
+    display: flex;
+    gap: 7pt;
+    font-size: 10.5pt;
+    line-height: 1.45;
+    margin-bottom: 7pt;
+  }
+  .q-num {
+    font-weight: bold;
+    min-width: 20pt;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4pt 18pt;
+    padding-left: 27pt;
+  }
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 5pt;
+    font-size: 10pt;
+    line-height: 1.4;
+  }
+  .bubble {
+    width: 10pt;
+    height: 10pt;
+    border: 1pt solid #000;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 1pt;
+  }
+
+  /* ── Answer key ── */
+  .key-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8pt 16pt;
+    margin-top: 12pt;
+  }
+  .key-row {
+    display: flex;
+    align-items: center;
+    gap: 8pt;
+    font-size: 11pt;
+  }
+  .key-num {
+    font-weight: bold;
+    min-width: 26pt;
+    text-align: right;
+  }
+  .key-ans {
+    font-size: 13pt;
+    font-weight: bold;
+    width: 20pt;
+    height: 20pt;
+    border: 1.5pt solid #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    color: #fff;
+  }
+
+  /* ── Print button (screen only) ── */
+  .print-btn {
+    display: block;
+    margin: 24pt auto;
+    padding: 10pt 28pt;
+    font-size: 13pt;
+    background: #1a56db;
+    color: #fff;
+    border: none;
+    border-radius: 6pt;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+  }
+  .print-btn:hover { background: #1240a8; }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">⬇ Print / Save as PDF</button>
+
+<!-- ═══════════════════════════════════════════════ STUDENT EXAM -->
+<div class="page">
+
+  <div class="exam-header">
+    <div class="exam-title">Applied Engineering &amp; Robotics — Final Exam</div>
+    <div class="exam-subtitle">Units 1–5 &nbsp;·&nbsp; Multiple Choice &nbsp;·&nbsp; 20 Questions &nbsp;·&nbsp; 20 Points</div>
+    <div class="student-info">
+      <div class="info-field"><div class="info-label">Name</div>&nbsp;</div>
+      <div class="info-field"><div class="info-label">Period</div>&nbsp;</div>
+      <div class="info-field"><div class="info-label">Date</div>&nbsp;</div>
+    </div>
+  </div>
+
+  <div class="instructions">
+    <strong>Directions:</strong> Circle or fill in the bubble next to the best answer for each question.
+    Each question is worth <strong>1 point</strong>. No notes, no devices, no AI assistance.
+    You have one attempt — do your best work.
+  </div>
+
+  <!-- Unit 1 -->
+  <div class="section-header">Unit 1 — Engineering Design Process</div>
+
+  <div class="question-block">
+    <div class="question-text"><span class="q-num">1.</span><span>What is the FIRST step of the Engineering Design Process?</span></div>
+    <div class="options">
+      <div class="option"><div class="bubble"></div><span>A)&nbsp; Create a prototype</span></div>
+      <div class="option"><div class="bubble"></div><span>B)&nbsp; Ask — define the problem</span></div>
+      <div class="option"><div class="bubble"></div><span>C)&nbsp; Test your solution</span></div>
+      <div class="option"><div class="bubble"></div><span>D)&nbsp; Research existing solutions</span></div>
+    </div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-text"><span class="q-num">2.</span><span>In the 7-step EDP, what happens during the "Improve" step?</span></div>
+    <div class="options">
+      <div class="option"><div class="bubble"></div><span>A)&nbsp; Build the final product</span></div>
+      <div class="option"><div class="bubble"></div><span>B)&nbsp; Research what others have done</span></div>
+      <div class="option"><div class="bubble"></div><span>C)&nbsp; Reflect on test results and revise the design</span></div>
+      <div class="option"><div class="bubble"></div><span>D)&nbsp; Identify the problem to solve</span></div>
+    </div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-text"><span class="q-num">3.</span><span>What is the purpose of a design brief?</span></div>
+    <div class="options">
+      <div class="option"><div class="bubble"></div><span>A)&nbsp; Document the final solution after it's built</span></div>
+      <div class="option"><div class="bubble"></div><span>B)&nbsp; Define the problem, constraints, and criteria before designing</span></div>
+      <div class="option"><div class="bubble"></div><span>C)&nbsp; List the materials needed for construction</span></div>
+      <div class="option"><div class="bubble"></div><span>D)&nbsp; Grade the finished project</span></div>
+    </div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-text"><span class="q-num">4.</span><span>During the "Imagine" step of the EDP, a team should:</span></div>
+    <div class="options">
+      <div class="option"><div class="bubble"></div><span>A)&nbsp; Select one idea and begin building immediately</span></div>
+      <div class="option"><div class="bubble"></div><span>B)&nbsp; Test the prototype against criteria</span></div>
+      <div class="option"><div class="bubble"></div><span>C)&nbsp; Generate multiple possible solutions without judging them</span></div>
+      <div class="option"><div class="bubble"></div><span>D)&nbsp; Write the final report</span></div>
+    </div>
+  </div>
+
+  <!-- Unit 2 -->
+  <div class="section-header">Unit 2 — CAD Fundamentals</div>
+
+  <div class="question-block">
+    <div class="question-text"><span class="q-num">5.</span><span>In CAD software, what does a sketch "constraint" do?</span></div>
+    <div class="options">
+      <div class="option"><div class="bubble"></div><span>A)&nbsp; Sets the material properties of the part</span></div>
+      <div class="option"><div class="bubble"></div><span>B)&nbsp; Adds color or texture to the model</span></div>
+      <div class="option"><div class="bubble"></div><span>C)&nbsp; Locks the position or relationship between sketch elements</span></div>
+      <div class="option"><div class="bubble"></div><span>D)&nbsp; Exports the file for 3D printing</span></div>
+    </div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-text"><span class="q-num">6.</span><span>What does the Extrude tool do in CAD?</span></div>
+    <div class="options">
+      <div class="option"><div class="bubble"></div><span>A)&nbsp; Adds color or material to a 3D body</span></div>
+      <div class="option"><div class="bubble"></div><span>B)&nbsp; Copies and mirrors a shape across an axis</span></div>
+      <div class="option"><div class="bubble"></div><span>C)&nbsp; Turns a 2D sketch profile into a 3D solid by extending it along an axis</span></div>
+      <div class="option"><div class="bubble"></div><span>D)&nbsp; Creates a 2D drawing from a 3D model</span></div>
+    </div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-text"><span class="q-num">7.</span><span>Why is it important to fully constrain a sketch before extruding?</span></div>
+    <div class="options">
+      <div class="option"><div class="bubble"></div><span>A)&nbsp; Unconstrained sketches use more memory</span></div>
+      <div class="option"><div class="bubble"></div><span>B)&nbsp; The software won't render colors on unconstrained geometry</span></div>
+      <div class="option"><div class="bubble"></div><span>C)&nbsp; Unconstrained geometry can shift or change dimensions unexpectedly</span></div>
+      <div class="option"><div class="bubble"></div><span>D)&nbsp; Constraints are only required for assembly files</span></div>
+    </div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-text"><span class="q-num">8.</span><span>Before sending a 3D model to a printer, what must you do with the file?</span></div>
+    <div class="options">
+      <div class="option"><div class="bubble"></div><span>A)&nbsp; Convert it to a PDF for documentation</span></div>
+      <div class="option"><div class="bubble"></div><span>B)&nbsp; Run it through a slicer to generate the tool paths the printer follows</span></div>
+      <div class="option"><div class="bubble"></div><span>C)&nbsp; Export it as a 2D engineering drawing</span></div>
+      <div class="option"><div class="bubble"></div><span>D)&nbsp; Compress it to reduce file size</span></div>
+    </div>
+  </div>
+
+  <!-- Unit 3 -->
+  <div class="section-header">Unit 3 — Rapid Prototyping &amp; Manufacturing</div>
+
+  <div class="question-block">
+    <div class="question-text"><span class="q-num">9.</span><span>What does iterative design mean?</span></div>
+    <div class="options">
+      <div class="option"><div class="bubble"></div><span>A)&nbsp; Building one perfect prototype and submitting it</span></div>
+      <div class="option"><div class="bubble"></div><span>B)&nbsp; Designing, testing, finding problems, and revising — repeatedly</span></div>
+      <div class="option"><div class="bubble"></div><span>C)&nbsp; Simulating the design before building anything</span></div>
+      <div class="option"><div class="bubble"></div><span>D)&nbsp; Having multiple students work on the same design simultaneously</span></div>
+    </div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-text"><span class="q-num">10.</span><span>Which is a key advantage of 3D printing for prototyping?</span></div>
+    <div class="options">
+      <div class="option"><div class="bubble"></div><span>A)&nbsp; It produces stronger parts than CNC machining in all cases</span></div>
+      <div class="option"><div class="bubble"></div><span>B)&nbsp; Parts are available instantly with no setup time</span></div>
+      <div class="option"><div class="bubble"></div><span>C)&nbsp; Complex shapes can be produced quickly without custom tooling</span></div>
+      <div class="option"><div class="bubble"></div><span>D)&nbsp; All materials can be 3D printed on the same printer</span></div>
+    </div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-text"><span class="q-num">11.</span><span>When measuring a part, "tolerance" means:</span></div>
+    <div class="options">
+      <div class="option"><div class="bubble"></div><span>A)&nbsp; The total weight the part can support</span></div>
+      <div class="option"><div class="bubble"></div><span>B)&nbsp; The acceptable range of variation from the nominal dimension</span></div>
+      <div class="option"><div class="bubble"></div><span>C)&nbsp; The hardness rating of the material</span></div>
+      <div class="option"><div class="bubble"></div><span>D)&nbsp; The maximum temperature the part can withstand</span></div>
+    </div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-text"><span class="q-num">12.</span><span>What is the purpose of a CNC machine's "home" position?</span></div>
+    <div class="options">
+      <div class="option"><div class="bubble"></div><span>A)&nbsp; Where the machine parks when powered off for shipping</span></div>
+      <div class="option"><div class="bubble"></div><span>B)&nbsp; A known reference point the machine uses to calculate all movement coordinates</span></div>
+      <div class="option"><div class="bubble"></div><span>C)&nbsp; Where the spindle runs at maximum speed</span></div>
+      <div class="option"><div class="bubble"></div><span>D)&nbsp; The location of the emergency stop button</span></div>
+    </div>
+  </div>
+
+</div><!-- end page 1 -->
+
+<!-- ═══════════════ PAGE 2 -->
+<div class="page page-break">
+
+  <!-- Unit 4 -->
+  <div class="section-header" style="margin-top:0;">Unit 4 — Shop Safety</div>
+
+  <div class="question-block">
+    <div class="question-text"><span class="q-num">13.</span><span>If a machine behaves unexpectedly while you're operating it, what should you do FIRST?</span></div>
+    <div class="options">
+      <div class="option"><div class="bubble"></div><span>A)&nbsp; Call a classmate to come look at it</span></div>
+      <div class="option"><div class="bubble"></div><span>B)&nbsp; Finish the cut since you've already started</span></div>
+      <div class="option"><div class="bubble"></div><span>C)&nbsp; Stop the machine immediately using the nearest stop control</span></div>
+      <div class="option"><div class="bubble"></div><span>D)&nbsp; Continue and report the issue after class</span></div>
+    </div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-text"><span class="q-num">14.</span><span>Why must bystanders — not just the operator — wear eye protection in the shop?</span></div>
+    <div class="options">
+      <div class="option"><div class="bubble"></div><span>A)&nbsp; Eye protection is only required for the machine operator</span></div>
+      <div class="option"><div class="bubble"></div><span>B)&nbsp; Debris and chips can travel across the room and injure bystanders</span></div>
+      <div class="option"><div class="bubble"></div><span>C)&nbsp; Eye protection improves vision near bright work lights</span></div>
+      <div class="option"><div class="bubble"></div><span>D)&nbsp; It is only required when handling chemicals</span></div>
+    </div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-text"><span class="q-num">15.</span><span>What is the purpose of a machine's safety guard?</span></div>
+    <div class="options">
+      <div class="option"><div class="bubble"></div><span>A)&nbsp; To prevent the operator from seeing the cutting area</span></div>
+      <div class="option"><div class="bubble"></div><span>B)&nbsp; To reduce the noise level in the shop</span></div>
+      <div class="option"><div class="bubble"></div><span>C)&nbsp; To shield the operator from flying debris and accidental contact with moving parts</span></div>
+      <div class="option"><div class="bubble"></div><span>D)&nbsp; To hold the workpiece in place during cutting</span></div>
+    </div>
+  </div>
+
+  <!-- Unit 5 -->
+  <div class="section-header">Unit 5 — Programming &amp; Electronics</div>
+
+  <div class="question-block">
+    <div class="question-text"><span class="q-num">16.</span><span>An ultrasonic distance sensor measures distance by:</span></div>
+    <div class="options">
+      <div class="option"><div class="bubble"></div><span>A)&nbsp; Detecting changes in light reflected off a surface</span></div>
+      <div class="option"><div class="bubble"></div><span>B)&nbsp; Emitting a sound pulse and measuring the time it takes for the echo to return</span></div>
+      <div class="option"><div class="bubble"></div><span>C)&nbsp; Measuring electrical resistance between two probes</span></div>
+      <div class="option"><div class="bubble"></div><span>D)&nbsp; Counting the number of wheel rotations</span></div>
+    </div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-text"><span class="q-num">17.</span><span>What is the key difference between a digital pin and an analog pin on an Arduino?</span></div>
+    <div class="options">
+      <div class="option"><div class="bubble"></div><span>A)&nbsp; Digital pins can only be inputs; analog pins can only be outputs</span></div>
+      <div class="option"><div class="bubble"></div><span>B)&nbsp; Digital pins read/write only HIGH or LOW (0 V or 5 V); analog pins read a range of voltages (0–5 V mapped to 0–1023)</span></div>
+      <div class="option"><div class="bubble"></div><span>C)&nbsp; Digital pins are faster but analog pins are more accurate</span></div>
+      <div class="option"><div class="bubble"></div><span>D)&nbsp; There is no functional difference — the names are just labels</span></div>
+    </div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-text"><span class="q-num">18.</span><span>On an Arduino, when you call <code>analogWrite(pin, 128)</code>, what does the pin actually output?</span></div>
+    <div class="options">
+      <div class="option"><div class="bubble"></div><span>A)&nbsp; A true 2.5 V analog voltage</span></div>
+      <div class="option"><div class="bubble"></div><span>B)&nbsp; A PWM signal that is HIGH 50% of the time, averaging roughly 2.5 V</span></div>
+      <div class="option"><div class="bubble"></div><span>C)&nbsp; A constant 128 mV signal</span></div>
+      <div class="option"><div class="bubble"></div><span>D)&nbsp; Nothing — <code>analogWrite()</code> only works on analog input pins</span></div>
+    </div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-text"><span class="q-num">19.</span><span>Why is <code>millis()</code> preferred over <code>delay()</code> when a program needs to do multiple things at once?</span></div>
+    <div class="options">
+      <div class="option"><div class="bubble"></div><span>A)&nbsp; <code>millis()</code> is more precise than <code>delay()</code> for timing</span></div>
+      <div class="option"><div class="bubble"></div><span>B)&nbsp; <code>delay()</code> only works on analog pins</span></div>
+      <div class="option"><div class="bubble"></div><span>C)&nbsp; <code>delay()</code> blocks ALL other code from running during the wait; <code>millis()</code> lets <code>loop()</code> keep executing</span></div>
+      <div class="option"><div class="bubble"></div><span>D)&nbsp; <code>millis()</code> uses less memory than <code>delay()</code></span></div>
+    </div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-text"><span class="q-num">20.</span><span>A potentiometer is useful as a position sensor because:</span></div>
+    <div class="options">
+      <div class="option"><div class="bubble"></div><span>A)&nbsp; It generates its own voltage from mechanical movement</span></div>
+      <div class="option"><div class="bubble"></div><span>B)&nbsp; Its resistance — and therefore output voltage — changes proportionally as the shaft rotates</span></div>
+      <div class="option"><div class="bubble"></div><span>C)&nbsp; It can directly drive a servo motor without a microcontroller</span></div>
+      <div class="option"><div class="bubble"></div><span>D)&nbsp; It measures temperature and converts it to a voltage</span></div>
+    </div>
+  </div>
+
+  <!-- Score box -->
+  <div style="margin-top: 32pt; border: 1.5pt solid #000; border-radius: 4pt; padding: 12pt 18pt; display: flex; align-items: center; justify-content: space-between; max-width: 3.5in; margin-left: auto;">
+    <span style="font-size: 11pt; font-weight: bold;">SCORE</span>
+    <span style="font-size: 11pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / 20</span>
+  </div>
+
+</div><!-- end page 2 -->
+
+<!-- ═══════════════ ANSWER KEY -->
+<div class="page page-break">
+
+  <div class="exam-header">
+    <div class="exam-title">Applied Engineering &amp; Robotics — Final Exam</div>
+    <div class="exam-subtitle">ANSWER KEY &nbsp;·&nbsp; For Instructor Use Only</div>
+  </div>
+
+  <div class="section-header" style="margin-top: 8pt;">Correct Answers</div>
+
+  <div class="key-grid" style="margin-top: 18pt;">
+    <div class="key-row"><span class="key-num">1.</span><div class="key-ans">B</div><span style="font-size:9.5pt; color:#444; margin-left:4pt;">Ask</span></div>
+    <div class="key-row"><span class="key-num">2.</span><div class="key-ans">C</div><span style="font-size:9.5pt; color:#444; margin-left:4pt;">Improve</span></div>
+    <div class="key-row"><span class="key-num">3.</span><div class="key-ans">B</div><span style="font-size:9.5pt; color:#444; margin-left:4pt;">Design brief purpose</span></div>
+    <div class="key-row"><span class="key-num">4.</span><div class="key-ans">C</div><span style="font-size:9.5pt; color:#444; margin-left:4pt;">Imagine step</span></div>
+    <div class="key-row"><span class="key-num">5.</span><div class="key-ans">C</div><span style="font-size:9.5pt; color:#444; margin-left:4pt;">Constraints</span></div>
+    <div class="key-row"><span class="key-num">6.</span><div class="key-ans">C</div><span style="font-size:9.5pt; color:#444; margin-left:4pt;">Extrude</span></div>
+    <div class="key-row"><span class="key-num">7.</span><div class="key-ans">C</div><span style="font-size:9.5pt; color:#444; margin-left:4pt;">Fully constrained</span></div>
+    <div class="key-row"><span class="key-num">8.</span><div class="key-ans">B</div><span style="font-size:9.5pt; color:#444; margin-left:4pt;">Slicer</span></div>
+    <div class="key-row"><span class="key-num">9.</span><div class="key-ans">B</div><span style="font-size:9.5pt; color:#444; margin-left:4pt;">Iterative design</span></div>
+    <div class="key-row"><span class="key-num">10.</span><div class="key-ans">C</div><span style="font-size:9.5pt; color:#444; margin-left:4pt;">3D printing advantage</span></div>
+    <div class="key-row"><span class="key-num">11.</span><div class="key-ans">B</div><span style="font-size:9.5pt; color:#444; margin-left:4pt;">Tolerance</span></div>
+    <div class="key-row"><span class="key-num">12.</span><div class="key-ans">B</div><span style="font-size:9.5pt; color:#444; margin-left:4pt;">Home position</span></div>
+    <div class="key-row"><span class="key-num">13.</span><div class="key-ans">C</div><span style="font-size:9.5pt; color:#444; margin-left:4pt;">Unexpected machine behavior</span></div>
+    <div class="key-row"><span class="key-num">14.</span><div class="key-ans">B</div><span style="font-size:9.5pt; color:#444; margin-left:4pt;">Eye protection</span></div>
+    <div class="key-row"><span class="key-num">15.</span><div class="key-ans">C</div><span style="font-size:9.5pt; color:#444; margin-left:4pt;">Safety guard</span></div>
+    <div class="key-row"><span class="key-num">16.</span><div class="key-ans">B</div><span style="font-size:9.5pt; color:#444; margin-left:4pt;">Ultrasonic sensor</span></div>
+    <div class="key-row"><span class="key-num">17.</span><div class="key-ans">B</div><span style="font-size:9.5pt; color:#444; margin-left:4pt;">Digital vs. analog</span></div>
+    <div class="key-row"><span class="key-num">18.</span><div class="key-ans">B</div><span style="font-size:9.5pt; color:#444; margin-left:4pt;">analogWrite / PWM</span></div>
+    <div class="key-row"><span class="key-num">19.</span><div class="key-ans">C</div><span style="font-size:9.5pt; color:#444; margin-left:4pt;">millis() vs delay()</span></div>
+    <div class="key-row"><span class="key-num">20.</span><div class="key-ans">B</div><span style="font-size:9.5pt; color:#444; margin-left:4pt;">Potentiometer</span></div>
+  </div>
+
+  <div style="margin-top: 36pt; border-top: 1pt solid #ccc; padding-top: 14pt;">
+    <div style="font-size: 10pt; font-weight: bold; margin-bottom: 8pt;">Distribution by Unit</div>
+    <table style="border-collapse: collapse; font-size: 10pt; width: 4in;">
+      <thead>
+        <tr style="border-bottom: 1.5pt solid #000;">
+          <th style="text-align:left; padding: 4pt 10pt 4pt 0;">Unit</th>
+          <th style="text-align:center; padding: 4pt 10pt;">Questions</th>
+          <th style="text-align:center; padding: 4pt 0;">Points</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom: .5pt solid #ccc;">
+          <td style="padding: 4pt 10pt 4pt 0;">1 — Engineering Design Process</td>
+          <td style="text-align:center; padding: 4pt 10pt;">1–4</td>
+          <td style="text-align:center; padding: 4pt 0;">4</td>
+        </tr>
+        <tr style="border-bottom: .5pt solid #ccc;">
+          <td style="padding: 4pt 10pt 4pt 0;">2 — CAD Fundamentals</td>
+          <td style="text-align:center; padding: 4pt 10pt;">5–8</td>
+          <td style="text-align:center; padding: 4pt 0;">4</td>
+        </tr>
+        <tr style="border-bottom: .5pt solid #ccc;">
+          <td style="padding: 4pt 10pt 4pt 0;">3 — Rapid Prototyping &amp; Manufacturing</td>
+          <td style="text-align:center; padding: 4pt 10pt;">9–12</td>
+          <td style="text-align:center; padding: 4pt 0;">4</td>
+        </tr>
+        <tr style="border-bottom: .5pt solid #ccc;">
+          <td style="padding: 4pt 10pt 4pt 0;">4 — Shop Safety</td>
+          <td style="text-align:center; padding: 4pt 10pt;">13–15</td>
+          <td style="text-align:center; padding: 4pt 0;">3</td>
+        </tr>
+        <tr style="border-bottom: 1.5pt solid #000;">
+          <td style="padding: 4pt 10pt 4pt 0;">5 — Programming &amp; Electronics</td>
+          <td style="text-align:center; padding: 4pt 10pt;">16–20</td>
+          <td style="text-align:center; padding: 4pt 0;">5</td>
+        </tr>
+        <tr>
+          <td style="padding: 6pt 10pt 4pt 0; font-weight: bold;">Total</td>
+          <td style="text-align:center; padding: 6pt 10pt; font-weight: bold;">20</td>
+          <td style="text-align:center; padding: 6pt 0; font-weight: bold;">20</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- end answer key -->
+
+<button class="print-btn no-print" onclick="window.print()">⬇ Print / Save as PDF</button>
+
+</body>
+</html>
