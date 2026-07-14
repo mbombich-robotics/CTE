@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
-    <title>Day 1 — CDG to Tanis | Summer Travel 2026</title>
+    <title>Day 1 — Versailles to Tanis | Summer Travel 2026</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
     <style>
         * {
@@ -53,6 +53,7 @@
             display: flex;
             align-items: center;
             gap: 20px;
+            width: 100%;
             color: #f8f1e0;
         }
 
@@ -282,6 +283,47 @@
             overflow-x: auto;
         }
 
+        .cost-table tr.total-row td {
+            font-weight: 700;
+            color: #a8461f;
+            border-top: 2px solid #d4a017;
+            background: rgba(212, 160, 23, 0.18);
+        }
+
+        .costs-hidden-note {
+            display: none;
+            color: #8a7660;
+            font-style: italic;
+        }
+
+        body.costs-hidden .costs-body {
+            display: none;
+        }
+
+        body.costs-hidden .costs-hidden-note {
+            display: block;
+        }
+
+        .toggle-btn {
+            margin-left: auto;
+            background: rgba(255, 255, 255, 0.18);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: #f8f1e0;
+            padding: 7px 16px;
+            border-radius: 20px;
+            font-family: 'Lora', serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.32);
+        }
+
         .weather-box {
             background: linear-gradient(135deg, rgba(212, 160, 23, 0.14) 0%, rgba(212, 160, 23, 0.04) 100%);
             border: 2px solid rgba(212, 160, 23, 0.5);
@@ -452,6 +494,7 @@
         <div class="top-bar-content">
             <div class="school-badge">Personal · Not Class Content</div>
             <div class="course-title-compact">Summer Travel 2026</div>
+            <button id="cost-toggle" class="toggle-btn">Hide Costs</button>
         </div>
     </div>
 
@@ -476,7 +519,7 @@
             <div class="sidebar-section">
                 <div class="sidebar-header">Travel Days</div>
                 <a href="day-01.html" class="unit-link active">
-                    <span class="unit-number">Day 1</span> Jul 19 · CDG → Tanis
+                    <span class="unit-number">Day 1</span> Jul 19 · Versailles → Tanis
                 </a>
                 <a href="day-02.html" class="unit-link">
                     <span class="unit-number">Day 2</span> Jul 20 · Normandy: D-Day Beaches
@@ -505,17 +548,17 @@
         <!-- Main Content -->
         <main class="main-content">
             <div class="hero-section">
-                <h1 class="course-hero-title">CDG → Tanis</h1>
+                <h1 class="course-hero-title">CDG → Versailles → Tanis</h1>
                 <p class="course-subtitle">Sunday, July 19, 2026</p>
 
                 <div class="day-photo-wrap">
-                    <img class="day-photo" src="../images/day-01-dreux.jpg" alt="Place Mésirard in the old town of Dreux, France, a stop on the drive from CDG to Tanis">
-                    <p class="day-photo-credit">Place Mésirard, Dreux — photo by Adrien Goussard, <a href="https://commons.wikimedia.org/wiki/File:Place_Mesirard_Dreux.jpg" target="_blank" rel="noopener">Wikimedia Commons</a> (CC BY-SA 4.0)</p>
+                    <img class="day-photo" src="../images/day-01-versailles.jpg" alt="Aerial view of the Palace of Versailles, courtyard, and formal gardens">
+                    <p class="day-photo-credit">Palace of Versailles — photo by ToucanWings, <a href="https://commons.wikimedia.org/wiki/File:Vue_a%C3%A9rienne_du_domaine_de_Versailles_par_ToucanWings_-_Creative_Commons_By_Sa_3.0_-_073.jpg" target="_blank" rel="noopener">Wikimedia Commons</a> (CC BY-SA 3.0)</p>
                 </div>
 
                 <div class="flight-bar">
                     <strong>Flight:</strong> Delta DL — Detroit (DTW) to Paris (CDG), landing 6:45 AM, Terminal 2E<br>
-                    <strong>VRBO check-in in Tanis:</strong> 4:00 PM<br>
+                    <strong>VRBO check-in in Tanis:</strong> flexible — a full day at Versailles pushes tonight's arrival into the evening<br>
                     <a class="accommodation-map-link" href="https://www.google.com/maps/search/?api=1&query=Clos%20des%20Miaulys%2C%204%20Rue%20de%20la%20Carri%C3%A8re%2C%2050170%20Tanis%2C%20France" target="_blank" rel="noopener">📍 Open in Google Maps →</a>
                 </div>
             </div>
@@ -609,15 +652,14 @@
 
             <!-- Road Directions -->
             <div class="content-section">
-                <h2 class="section-title">Road Directions Out of CDG (toward Tanis via N12)</h2>
+                <h2 class="section-title">Road Directions: CDG → Versailles → Tanis</h2>
                 <ul class="step-list">
-                    <li>Leaving the Sixt garage, follow signs for "Toutes Directions" / A1.</li>
-                    <li>Merge onto A1 toward Paris, then pick up A104 ("La Francilienne") westbound toward Cergy-Pontoise / Survilliers.</li>
-                    <li>Continue on A104/N104 until it connects to N12, heading toward Mantes-la-Jolie and Dreux.</li>
-                    <li>Stay on N12 through the Perche region: Dreux → (Bellême / Nogent-le-Rotrou) → Domfront.</li>
-                    <li>From Domfront, continue toward Avranches, then local roads into Tanis.</li>
+                    <li>Leaving the Sixt garage, follow signs for "Toutes Directions" / A1 toward Paris.</li>
+                    <li>Pick up A104, then A86 (the ring highway around Paris) heading toward Versailles / Saint-Quentin-en-Yvelines — this detour only adds about 15 minutes over heading straight out to the old Normandy route, since CDG → Versailles is itself just a 49-minute, 30-mile drive.</li>
+                    <li>Exit A86 for Versailles / Château de Versailles; signs lead directly to the Place d'Armes car park at the palace gates.</li>
+                    <li>Leaving Versailles, pick up A13 toward Rouen/Caen, then A84 toward Avranches, exiting for local roads into Tanis.</li>
                 </ul>
-                <p class="body-text">These interchanges around CDG have several ramps in quick succession — set your GPS to "Dreux" as a first waypoint and let it handle the turn-by-turn; the above is the highway skeleton so you know what you're looking for on the signs.</p>
+                <p class="body-text">Set your GPS to "Château de Versailles" as the first waypoint, then "Tanis" for the afternoon leg — the above is just the highway skeleton so you know what to look for on the signs. Versailles → Tanis is about 4 hours, mostly A13/A84, so budget for a full driving day on the back end.</p>
             </div>
 
             <!-- Timed Schedule -->
@@ -638,14 +680,14 @@
                             <tr><td>7:45–8:10</td><td>Baggage claim, customs (green channel if nothing to declare)</td></tr>
                             <tr><td>8:10–8:45</td><td>Walk to Sixt counter (connecting building between T2E/T2F) and complete rental paperwork</td></tr>
                             <tr><td>8:45–9:00</td><td>Elevator/escalator down to the pickup garage, load car, confirm GPS route</td></tr>
-                            <tr><td>9:00 AM</td><td>Depart CDG — 103 km / ~1h15 to Dreux</td></tr>
-                            <tr><td>~10:15 AM</td><td>Arrive Dreux — coffee/pastry stop, short walk of the old town (30–40 min)</td></tr>
-                            <tr><td>~10:50 AM</td><td>Depart Dreux — 90 km / ~1h25 to Bellême</td></tr>
-                            <tr><td>~12:15 PM</td><td>Arrive Bellême — sit-down lunch, walled-village walk (~1 hr)</td></tr>
-                            <tr><td>~1:15 PM</td><td>Depart Bellême — ~55 km / ~55 min to Domfront</td></tr>
-                            <tr><td>~2:10 PM</td><td>Arrive Domfront — medieval clifftop town walk, cider/poiré tasting (45 min–1 hr)</td></tr>
-                            <tr><td>~3:00 PM</td><td>Depart Domfront — 53 km / ~50 min to Avranches, then ~15 km / ~20 min to Tanis</td></tr>
-                            <tr><td>~4:00–4:15 PM</td><td>Arrive Tanis, check in to VRBO</td></tr>
+                            <tr><td>9:00 AM</td><td>Depart CDG — 30 mi / ~49 min to Versailles</td></tr>
+                            <tr><td>~9:50 AM</td><td>Arrive Versailles, park at Place d'Armes (flat-rate or hourly parking, ~€12/day)</td></tr>
+                            <tr><td>~10:00–11:00 AM</td><td>Pick up pre-booked Passport tickets, explore the courtyard and Place d'Armes while waiting for timed entry</td></tr>
+                            <tr><td>~11:00 AM</td><td>Palace timed entry — State Apartments, Hall of Mirrors, Royal Chapel (~1.5–2 hrs)</td></tr>
+                            <tr><td>~1:00 PM</td><td>Lunch at La Petite Venise, in the gardens</td></tr>
+                            <tr><td>~2:00–3:00 PM</td><td>Gardens &amp; Grand Canal — Grandes Eaux Musicales fountain show runs today (Sundays, Apr–Nov); visit the Trianon Estate if time and energy allow, otherwise stay closer to the main gardens</td></tr>
+                            <tr><td>~3:30 PM</td><td>Depart Versailles — ~4 hrs to Tanis via A13/A84 through Avranches</td></tr>
+                            <tr><td>~7:30–7:45 PM</td><td>Arrive Tanis, check in to VRBO</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -666,9 +708,7 @@
                         </thead>
                         <tbody>
                             <tr><td>Sixt Rental Counter — CDG</td><td>Aéroport Roissy Charles-de-Gaulle, Terminal 2EF, 95711 Roissy-en-France, France</td><td><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=A%C3%A9roport%20Roissy%20Charles-de-Gaulle%2C%20Terminal%202EF%2C%2095711%20Roissy-en-France%2C%20France" target="_blank" rel="noopener">Open in Maps →</a></td><td><a class="map-link" href="https://www.sixt.com/car-rental/france/roissy/paris-cdg-airport/" target="_blank" rel="noopener">Website →</a></td></tr>
-                            <tr><td>Dreux (coffee stop)</td><td>Place Mésirard, 28100 Dreux, France</td><td><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Place%20M%C3%A9sirard%2C%2028100%20Dreux%2C%20France" target="_blank" rel="noopener">Open in Maps →</a></td><td>—</td></tr>
-                            <tr><td>Bellême (lunch stop)</td><td>61130 Bellême, France</td><td><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=61130%20Bell%C3%AAme%2C%20France" target="_blank" rel="noopener">Open in Maps →</a></td><td>—</td></tr>
-                            <tr><td>Domfront (cider stop)</td><td>61700 Domfront-en-Poiraie, France</td><td><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=61700%20Domfront-en-Poiraie%2C%20France" target="_blank" rel="noopener">Open in Maps →</a></td><td>—</td></tr>
+                            <tr><td>Palace of Versailles</td><td>Place d'Armes, 78000 Versailles, France</td><td><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Place%20d%27Armes%2C%2078000%20Versailles%2C%20France" target="_blank" rel="noopener">Open in Maps →</a></td><td><a class="map-link" href="https://www.chateauversailles.fr/en" target="_blank" rel="noopener">Website →</a></td></tr>
                             <tr><td>VRBO — tonight's stay (Clos des Miaulys)</td><td>Clos des Miaulys, 4 Rue de la Carrière, 50170 Tanis, France</td><td><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Clos%20des%20Miaulys%2C%204%20Rue%20de%20la%20Carri%C3%A8re%2C%2050170%20Tanis%2C%20France" target="_blank" rel="noopener">Open in Maps →</a></td><td><a class="map-link" href="https://www.vrbo.com/trips/egti-LWP-LFF-GMOP" target="_blank" rel="noopener">Website →</a></td></tr>
                         </tbody>
                     </table>
@@ -688,12 +728,45 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr><td>Café de l'Époque (Dreux)</td><td>7 Place Métézeau — outdoor seating, easy stop for coffee and pastries in the old town.</td><td><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Caf%C3%A9%20de%20l%27%C3%89poque%2C%207%20Place%20M%C3%A9sirard%2C%20Dreux%2C%20France" target="_blank" rel="noopener">Open in Maps →</a></td></tr>
-                            <tr><td>Restaurant De La Paix (Bellême)</td><td>Brasserie in the walled village — regional lunch fare.</td><td><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Restaurant%20De%20La%20Paix%2C%20Bell%C3%AAme%2C%20France" target="_blank" rel="noopener">Open in Maps →</a></td></tr>
-                            <tr><td>Bar à cidre, Domfront</td><td>No single spot booked — look for a cidery in the medieval quarter for a taste of Poiré de Domfront (AOC pear cider).</td><td><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=cidre%20Domfront-en-Poiraie%2C%20France" target="_blank" rel="noopener">Open in Maps →</a></td></tr>
+                            <tr><td>La Petite Venise</td><td>Italian-inspired restaurant inside the gardens, between the Apollo Fountain and the Grand Canal — a convenient lunch stop without leaving the estate. Open ~11:45 AM–6 PM (lunch kitchen until ~3:30 PM).</td><td><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=La%20Petite%20Venise%2C%20Versailles%2C%20France" target="_blank" rel="noopener">Open in Maps →</a></td></tr>
                         </tbody>
                     </table>
                 </div>
+            </div>
+
+            <!-- Costs -->
+            <div class="content-section costs-section">
+                <h2 class="section-title">Estimated Costs</h2>
+                <div class="costs-body">
+                    <div class="table-wrap">
+                        <table class="info-table cost-table">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Versailles Passport ticket (Palace + Trianon + Gardens + Musical Fountains Show), 6 adults @ €35</td><td>€210</td></tr>
+                                <tr><td>Place d'Armes parking, full day</td><td>€12</td></tr>
+                                <tr><td>Lunch at La Petite Venise, 6 @ ~€25</td><td>€150</td></tr>
+                                <tr class="total-row"><td>Day Total</td><td>€372</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <p class="costs-hidden-note">Costs are hidden. Click "Show Costs" in the top bar to reveal.</p>
+            </div>
+
+            <!-- Tips -->
+            <div class="content-section">
+                <h2 class="section-title">Tips &amp; Notes</h2>
+                <ul class="step-list">
+                    <li>Book Passport tickets online in advance and reserve a Palace timed-entry slot — walk-up lines can run long, and slots (hourly, 9 AM–3 PM) can sell out on busy summer Sundays.</li>
+                    <li>Today is a Sunday, so the Grandes Eaux Musicales fountain show is running and already included in the Passport ticket — worth timing the gardens visit around it.</li>
+                    <li>This is a jet-lag day on top of a big attraction — keep the schedule loose. If anyone needs to sit down and rest, do it; the Trianon Estate is the easiest thing to skip if you're running behind, since the Palace and main gardens are the priority.</li>
+                    <li>The drive from Versailles to Tanis is a real 4 hours — stop for a break if needed rather than pushing straight through after an overnight flight and a full day of walking.</li>
+                </ul>
             </div>
 
             <div class="day-nav">
@@ -712,12 +785,29 @@
     <script>
         loadDayWeather({
             elementId: "weather-day01",
-            lat: 48.58333,
-            lon: -1.45,
+            lat: 48.8049,
+            lon: 2.1204,
             date: "2026-07-19",
             timezone: "Europe/Paris",
-            locationLabel: "Avranches / Tanis area"
+            locationLabel: "Versailles"
         });
+    </script>
+    <script>
+        (function () {
+            var btn = document.getElementById('cost-toggle');
+            if (!btn) return;
+            var KEY = 'travelCostsHidden';
+            function apply(hidden) {
+                document.body.classList.toggle('costs-hidden', hidden);
+                btn.textContent = hidden ? 'Show Costs' : 'Hide Costs';
+            }
+            apply(localStorage.getItem(KEY) === '1');
+            btn.addEventListener('click', function () {
+                var hidden = !document.body.classList.contains('costs-hidden');
+                localStorage.setItem(KEY, hidden ? '1' : '0');
+                apply(hidden);
+            });
+        })();
     </script>
 </body>
 </html>
