@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.10.3',
+    VERSION: 'v2.11.0',
 
     // Backend URL — swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -1418,8 +1418,6 @@ function navigateTo(pageId) {
     });
 
     if (pageId === 'dashboard') updateUI();
-    if (pageId === 'evidence') loadEvidenceGallery();
-    if (pageId === 'code') loadCodeSnippets();
     if (pageId === 'quiz') loadQuizPage();
 }
 
@@ -1436,31 +1434,19 @@ function updateUI() {
     document.getElementById('projectBadge').textContent = phase.name;
 
     const completedDeliverables = Object.values(state.deliverables).filter(d => d.status === 'completed').length;
-    const completedReflections = Object.keys(state.weeklyReflections).filter(k => state.weeklyReflections[k].submitted).length;
-    const completedRequiredDeliverables = DELIVERABLES.filter(d => !d.optional && !d.hidden && state.deliverables[d.id]?.status === 'completed').length;
-    const requiredDeliverableCount = DELIVERABLES.filter(d => !d.optional && !d.hidden).length;
-
-    document.getElementById('completedCount').textContent = completedDeliverables + completedReflections;
-    const requiredReflectionCount = 14 - state.config.skipReflectionWeeks.length;
-    document.getElementById('pendingCount').textContent = (requiredDeliverableCount - completedRequiredDeliverables) + (requiredReflectionCount - completedReflections);
+    document.getElementById('completedCount').textContent = completedDeliverables;
     document.getElementById('totalPoints').textContent = calculatePoints();
-    document.getElementById('currentWeek').textContent = state.currentWeek;
 
     const progress = calculateProgress();
     document.getElementById('progressFill').style.width = `${progress}%`;
     document.getElementById('progressText').textContent = `${calculatePoints()} / ${CONFIG.POINTS.TOTAL_POSSIBLE} pts`;
 
-    updatePhaseIndicators();
-    updateUpcoming();
-    updateWeekButtons();
+    updateDashboardDeliverables();
     updateDeliverablesList();
-    updateWeekTopic();
     updateFeedbackNotification();
 
-    // Show/hide quiz nav item based on teacher toggle + label it based on which quiz is active
     const quizNav = document.getElementById('quizNavItem');
     if (quizNav) {
-        // Show if teacher enabled, OR if this student already submitted (so they can always see their results)
         quizNav.style.display = (state.config.quizEnabled || state.quiz.submitted) ? 'flex' : 'none';
         const quizLabel = quizNav.querySelector('span');
         if (quizLabel) {
@@ -1468,6 +1454,64 @@ function updateUI() {
             quizLabel.textContent = QUIZ_LABELS[state.config.quizKey] || 'Quiz';
         }
     }
+}
+
+function updateDashboardDeliverables() {
+    const list = document.getElementById('dashboardDeliverablesList');
+    if (!list) return;
+
+    const unitGroups = [
+        { key: '00', label: 'Unit 0 — Career Ready Practices' },
+        { key: '01', label: 'Unit 1 — Engineering Design Process' },
+        { key: '05', label: 'Unit 5 — Programming, Electronics & Sensors' },
+    ];
+
+    const skipWeeks = state.config.skipDeliverableWeeks || [];
+
+    list.innerHTML = unitGroups.map(u => {
+        const unitDeliverables = DELIVERABLES.filter(d =>
+            d.unit === u.key && !d.hidden && !skipWeeks.includes(d.week)
+        );
+        if (!unitDeliverables.length) return '';
+        return `
+            <div style="margin-bottom: 24px;">
+                <div style="font-size: 0.72rem; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 1px; padding-bottom: 6px; margin-bottom: 4px; border-bottom: 1px solid var(--border);">${u.label}</div>
+                ${unitDeliverables.map(d => renderDashboardRow(d)).join('')}
+            </div>
+        `;
+    }).join('');
+
+    list.querySelectorAll('[data-dash-id]').forEach(row => {
+        row.addEventListener('click', () => openDeliverableForm(parseInt(row.dataset.dashId)));
+    });
+}
+
+function renderDashboardRow(d) {
+    const status = state.deliverables[d.id]?.status || 'pending';
+    const isAssigned = d.alwaysOpen || status === 'completed' || !!((state.config.deliverableDueDates || {})[d.week]);
+    const isCompleted = status === 'completed';
+    const isClickable = !isCompleted && isAssigned;
+
+    const icon = isCompleted
+        ? `<i class="fas fa-check-circle" style="color:var(--success);"></i>`
+        : isAssigned
+            ? `<i class="far fa-circle" style="color:#f59e0b;"></i>`
+            : `<i class="far fa-circle" style="color:var(--gray-300);"></i>`;
+
+    const titleStyle = isCompleted
+        ? 'color:var(--gray-400);text-decoration:line-through;'
+        : isClickable ? 'color:var(--primary);font-weight:500;' : 'color:var(--gray-400);';
+
+    const optionalTag = d.optional ? ' <span style="font-size:0.72rem;color:var(--gray-400);">(optional)</span>' : '';
+
+    return `<div
+        ${isClickable ? `data-dash-id="${d.id}"` : ''}
+        style="display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--border);cursor:${isClickable ? 'pointer' : 'default'};"
+        ${isClickable ? `onmouseover="this.style.background='var(--primary-light)'" onmouseout="this.style.background=''"` : ''}>
+        <span style="width:20px;text-align:center;flex-shrink:0;">${icon}</span>
+        <span style="flex:1;font-size:0.95rem;${titleStyle}">${d.title}${optionalTag}</span>
+        <span style="font-size:0.85rem;color:var(--gray-500);white-space:nowrap;">${d.points} pts</span>
+    </div>`;
 }
 
 function updateFeedbackNotification() {
