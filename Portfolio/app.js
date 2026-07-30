@@ -12,16 +12,16 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.12.0',
+    VERSION: 'v2.12.1',
 
     // Backend URL — swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
 
     // One entry per course track — keys match state.student.course
     BACKEND_URLS: {
-        hsaer:  'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
-        aer8th: 'https://script.google.com/macros/s/AKfycbzhj6I_RMovDMqE7WS4r6IecvVQzx2KuNcX4il5LGKBhObb-oFLlL9gpg4cyXte_vfI/exec',
-        dbl:    'https://script.google.com/macros/s/AKfycbyNDk5WZ5Fb6YpvszhIECCO_dMDoE7_WVdkqSpJc2_4gtH3gkKMib55i1Ecq5clcGl6Kg/exec',
+        hsaer:  'https://script.google.com/macros/s/AKfycbzS9ZL5tLSnzGaHBD6jRp0LSR-TMTX6jnBVBK_xDghG1HSgfmrSx3nUWdWXWcA8xHSP1g/exec',
+        aer8th: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
+        dbl:    'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
     },
 
     // Google OAuth Client ID
