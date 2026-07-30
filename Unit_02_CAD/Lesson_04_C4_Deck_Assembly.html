@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>C4 — Robot Deck &amp; Assembly Intro</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #050f0a 0%, #0d1f17 100%);
+            color: #e0e6f0;
+            height: 100vh;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute; width: 100%; min-height: 100%;
+            display: none; flex-direction: column;
+            justify-content: flex-start; align-items: center;
+            padding: 55px 60px 120px 60px;
+            opacity: 0; transition: opacity 0.5s ease;
+            overflow-y: auto; overflow-x: hidden;
+        }
+        .slide.active { display: flex; opacity: 1; }
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif; font-size: 3.5rem; font-weight: 900;
+            color: #00d084; margin-bottom: 15px; text-transform: uppercase;
+            letter-spacing: 2px; text-shadow: 0 0 20px rgba(0,208,132,0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(0,208,132,0.5); }
+            to   { text-shadow: 0 0 35px rgba(0,208,132,0.9); }
+        }
+        h2 {
+            font-family: 'Orbitron', sans-serif; font-size: 2.4rem; font-weight: 700;
+            color: #00d084; margin-bottom: 18px; text-transform: uppercase;
+        }
+        h3 { font-family: 'Exo 2', sans-serif; font-size: 1.5rem; font-weight: 600; color: #ffd166; margin-bottom: 12px; }
+        p { font-size: 1.15rem; line-height: 1.6; margin-bottom: 12px; color: #b8c5d6; }
+        .subtitle { font-size: 1.3rem; color: #ffd166; font-weight: 600; margin-bottom: 30px; }
+
+        .objective-box {
+            background: linear-gradient(135deg, rgba(0,208,132,0.1) 0%, rgba(0,208,132,0.04) 100%);
+            border: 3px solid #00d084; border-radius: 12px; padding: 20px; margin: 20px 0;
+            box-shadow: 0 0 30px rgba(0,208,132,0.15);
+        }
+        .objective-box h3 { color: #00d084; }
+
+        .bullet-list { list-style: none; padding-left: 0; }
+        .bullet-list li {
+            font-size: 1.15rem; margin: 12px 0; padding-left: 35px;
+            position: relative; color: #b8c5d6; line-height: 1.5;
+        }
+        .bullet-list li::before {
+            content: '▸'; position: absolute; left: 0;
+            color: #ffd166; font-size: 1.5rem; line-height: 1;
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px; }
+
+        .box {
+            background: rgba(0,208,132,0.05); border: 2px solid #00d084;
+            border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(0,208,132,0.1);
+        }
+        .box-amber {
+            background: rgba(255,209,102,0.07); border: 2px solid #ffd166;
+            border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(255,209,102,0.1);
+        }
+
+        .highlight { color: #00d084; font-weight: 700; }
+        .warning   { color: #ffd166; font-weight: 700; }
+        .success   { color: #50fa7b; font-weight: 700; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
+            color: #00d084; background: rgba(0,208,132,0.1); padding: 1px 5px;
+            border-radius: 4px; white-space: nowrap;
+        }
+
+        /* Comparison / workflow table */
+        .cmp-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 1.05rem; }
+        .cmp-table th {
+            background: rgba(0,208,132,0.2); color: #00d084;
+            padding: 12px 16px; border: 2px solid #00d084; font-weight: 700; text-align: left;
+        }
+        .cmp-table td { padding: 11px 16px; border: 1px solid rgba(0,208,132,0.25); color: #b8c5d6; }
+        .cmp-table tr:nth-child(even) td { background: rgba(0,208,132,0.03); }
+        .cmp-table .yes { color: #50fa7b; font-weight: 700; }
+        .cmp-table .no  { color: #ff5555; }
+
+        /* Numbered step list */
+        .step-list { list-style: none; padding: 0; }
+        .step-list li {
+            display: flex; align-items: flex-start;
+            gap: 18px; margin-bottom: 18px;
+        }
+        .step-num {
+            flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%;
+            background: #00d084; color: #050f0a; font-family: 'Orbitron', sans-serif;
+            font-weight: 900; font-size: 1rem; display: flex; align-items: center;
+            justify-content: center; box-shadow: 0 0 12px rgba(0,208,132,0.5);
+        }
+        .step-body { flex: 1; }
+        .step-body strong { color: #00d084; font-size: 1.1rem; }
+        .step-body p { font-size: 1.05rem; margin-top: 4px; color: #b8c5d6; margin-bottom: 0; }
+
+        /* Submission checklist */
+        .checklist { list-style: none; padding: 0; }
+        .checklist li {
+            font-size: 1.1rem; margin: 10px 0; padding-left: 36px;
+            position: relative; color: #b8c5d6; line-height: 1.5;
+        }
+        .checklist li::before {
+            content: '☐'; position: absolute; left: 0;
+            color: #00d084; font-size: 1.2rem; line-height: 1.2;
+        }
+        .checklist li.screenshot::before { color: #ffd166; }
+
+        /* Video placeholder */
+        .video-placeholder {
+            border: 3px dashed rgba(0,208,132,0.4); border-radius: 16px;
+            padding: 40px; margin: 20px 0; text-align: center;
+            background: rgba(0,208,132,0.03);
+        }
+
+        /* Nav controls */
+        .controls {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            display: flex; justify-content: center; align-items: center; gap: 20px; z-index: 1000;
+        }
+        button {
+            background: linear-gradient(135deg, #00d084 0%, #009960 100%);
+            border: none; color: #050f0a; padding: 15px 30px; font-size: 1rem;
+            font-weight: 700; border-radius: 8px; cursor: pointer;
+            font-family: 'Exo 2', sans-serif; transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,208,132,0.3);
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,208,132,0.5); }
+        button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+        .slide-number {
+            position: fixed; bottom: 30px; left: 30px;
+            font-family: 'Space Mono', monospace; font-size: 1rem;
+            color: #00d084; z-index: 1000;
+        }
+        .ref-link { position: fixed; bottom: 30px; right: 30px; z-index: 1000; }
+        .ref-link a {
+            background: rgba(0,208,132,0.12); border: 1px solid #00d084;
+            color: #00d084; font-family: 'Space Mono', monospace; font-size: 0.85rem;
+            padding: 8px 14px; border-radius: 6px; text-decoration: none;
+            transition: background 0.2s;
+        }
+        .ref-link a:hover { background: rgba(0,208,132,0.25); }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; } h2 { font-size: 1.8rem; }
+            .slide { padding: 30px 20px 100px; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="presentation">
+
+<!-- ─────────────────────────────────────── SLIDE 1: Title -->
+<div class="slide active">
+    <div class="slide-content" style="text-align:center;">
+        <h1>C4: Deck &amp; Assembly</h1>
+        <p class="subtitle">Unit 2 · CAD Component-Based Design · Lesson 2.4</p>
+
+        <div style="margin: 40px auto; max-width: 560px;">
+            <svg viewBox="0 0 440 280" fill="none" xmlns="http://www.w3.org/2000/svg"
+                 style="width:100%; filter:drop-shadow(0 0 18px rgba(0,208,132,0.45));">
+
+                <!-- Deck label -->
+                <text x="220" y="22" font-family="Orbitron" font-size="11" fill="rgba(0,208,132,0.55)"
+                      text-anchor="middle" font-weight="bold">L.E.O. ROBOT DECK — C4</text>
+
+                <!-- Main deck plate (polycarbonate); notched top-right corner -->
+                <path d="M 40,38 L 330,38 L 330,78 L 390,78 L 390,242 L 40,242 Z"
+                      fill="rgba(0,208,132,0.06)" stroke="#00d084" stroke-width="2.5" stroke-linejoin="round"/>
+
+                <!-- Corner notch call-out -->
+                <line x1="330" y1="38" x2="390" y2="78" stroke="rgba(255,209,102,0.35)" stroke-width="1" stroke-dasharray="4 3"/>
+                <text x="374" y="58" font-family="Space Mono" font-size="8" fill="#ffd166" text-anchor="middle">NOTCH</text>
+
+                <!-- Perimeter mounting holes -->
+                <circle cx="65"  cy="62"  r="7" fill="rgba(0,208,132,0.08)" stroke="#00d084" stroke-width="1.8"/>
+                <circle cx="65"  cy="218" r="7" fill="rgba(0,208,132,0.08)" stroke="#00d084" stroke-width="1.8"/>
+                <circle cx="365" cy="218" r="7" fill="rgba(0,208,132,0.08)" stroke="#00d084" stroke-width="1.8"/>
+                <circle cx="305" cy="62"  r="7" fill="rgba(0,208,132,0.08)" stroke="#00d084" stroke-width="1.8"/>
+
+                <!-- Motor mount holes (C3 T-slot pattern) -->
+                <circle cx="165" cy="168" r="6" fill="rgba(255,209,102,0.08)" stroke="#ffd166" stroke-width="2"/>
+                <circle cx="205" cy="168" r="6" fill="rgba(255,209,102,0.08)" stroke="#ffd166" stroke-width="2"/>
+                <circle cx="165" cy="200" r="6" fill="rgba(255,209,102,0.08)" stroke="#ffd166" stroke-width="2"/>
+                <circle cx="205" cy="200" r="6" fill="rgba(255,209,102,0.08)" stroke="#ffd166" stroke-width="2"/>
+                <text x="185" y="224" font-family="Space Mono" font-size="8" fill="#ffd166" text-anchor="middle">C3 HOLES</text>
+
+                <!-- Dimension line -->
+                <line x1="40"  y1="256" x2="390" y2="256" stroke="rgba(0,208,132,0.35)" stroke-width="1" stroke-dasharray="4 2"/>
+                <line x1="40"  y1="251" x2="40"  y2="261" stroke="rgba(0,208,132,0.55)" stroke-width="1"/>
+                <line x1="390" y1="251" x2="390" y2="261" stroke="rgba(0,208,132,0.55)" stroke-width="1"/>
+                <text x="215" y="270" font-family="Space Mono" font-size="8" fill="rgba(0,208,132,0.6)" text-anchor="middle">CNC — POLYCARBONATE</text>
+
+                <!-- Linked component icons (top-right) -->
+                <rect x="405" y="95"  width="30" height="22" rx="3"
+                      fill="rgba(0,208,132,0.08)" stroke="#00d084" stroke-width="1.5"/>
+                <text x="420" y="110" font-family="Space Mono" font-size="8" fill="#00d084" text-anchor="middle">C4</text>
+
+                <line x1="420" y1="117" x2="420" y2="132" stroke="#00d084" stroke-width="1.5" stroke-dasharray="3 2"/>
+                <text x="420" y="148" font-family="Space Mono" font-size="8" fill="rgba(0,208,132,0.7)" text-anchor="middle">linked</text>
+
+                <rect x="405" y="135" width="30" height="22" rx="3"
+                      fill="rgba(0,208,132,0.05)" stroke="rgba(0,208,132,0.5)" stroke-width="1.5" stroke-dasharray="4 2"/>
+                <text x="420" y="150" font-family="Space Mono" font-size="8" fill="rgba(0,208,132,0.7)" text-anchor="middle">C3</text>
+
+                <!-- Arrow from deck to link stack -->
+                <line x1="390" y1="155" x2="405" y2="146" stroke="rgba(0,208,132,0.45)" stroke-width="1.5"/>
+                <polygon points="405,146 400,152 407,153" fill="rgba(0,208,132,0.45)"/>
+            </svg>
+        </div>
+
+        <p style="color:#6272a4; font-size:1rem;">Lesson 2.4 · Week 6</p>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────── SLIDE 2: Learning Objectives -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Learning Objectives</h2>
+        <p class="subtitle">By the end of this lesson, you will be able to:</p>
+
+        <div style="display:flex; flex-direction:column; gap:32px; margin-top:40px; max-width:780px;">
+            <div style="display:flex; gap:28px; align-items:baseline;">
+                <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d084; flex-shrink:0; width:36px; line-height:1;">1</span>
+                <p style="margin:0; font-size:1.5rem; color:#e0e6f0; line-height:1.4;">
+                    <strong style="color:#00d084;">Sketch</strong> the robot deck outer profile with the motor mount holes and at least one notched corner
+                </p>
+            </div>
+            <div style="display:flex; gap:28px; align-items:baseline;">
+                <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d084; flex-shrink:0; width:36px; line-height:1;">2</span>
+                <p style="margin:0; font-size:1.5rem; color:#e0e6f0; line-height:1.4;">
+                    <strong style="color:#00d084;">Create</strong> a Fusion 360 assembly file and insert C3 as a linked component
+                </p>
+            </div>
+            <div style="display:flex; gap:28px; align-items:baseline;">
+                <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d084; flex-shrink:0; width:36px; line-height:1;">3</span>
+                <p style="margin:0; font-size:1.5rem; color:#e0e6f0; line-height:1.4;">
+                    <strong style="color:#00d084;">Constrain</strong> C3 to the deck holes using joints so it cannot move relative to the deck
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────── SLIDE 3: Component Overview -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Component Overview</h2>
+        <p class="subtitle">C4 — Robot Deck (CNC Cut — Polycarbonate)</p>
+
+        <p>The deck is the structural chassis of L.E.O. Unlike the printed components, the deck is CNC cut from polycarbonate. This means:</p>
+        <ul class="bullet-list" style="margin-bottom:20px;">
+            <li>All interior corners must be <strong style="color:#00d084;">filleted</strong> to at least the CNC bit radius (TBD — Mr. B will provide the bit diameter)</li>
+            <li>The deck is <strong style="color:#ffd166;">NOT cut</strong> until the full assembly passes an interference check in Fusion 360 — this mirrors real manufacturing workflow</li>
+        </ul>
+
+        <div class="box" style="margin-bottom:20px;">
+            <h3 style="color:#00d084;">Deck File — Version Naming</h3>
+            <p>The deck file is started this week but lives throughout the rest of the unit. You will add hole patterns for each new component as they are positioned in the assembly. Version naming matters:</p>
+            <table class="cmp-table" style="margin-top:8px;">
+                <thead>
+                    <tr><th>Version</th><th>What's Added</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="highlight">v1-Base</span> <em style="font-size:0.88em; color:#6272a4;">(this week)</em></td>
+                        <td>Outer profile + C3 motor mount holes</td>
+                    </tr>
+                    <tr>
+                        <td>v2-C5</td>
+                        <td>Add C5 hole pattern after C5 is positioned</td>
+                    </tr>
+                    <tr>
+                        <td>v3-C6</td>
+                        <td>Add C6 hole pattern</td>
+                    </tr>
+                    <tr>
+                        <td>v4-C7</td>
+                        <td>Add C7 hole pattern</td>
+                    </tr>
+                    <tr>
+                        <td>v5-Final</td>
+                        <td>All holes complete — cleared for CNC</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="box-amber">
+            <h3 style="color:#ffd166;">Assembly Concept</h3>
+            <p>In Fusion 360, an assembly is a <strong style="color:#ffd166;">separate file</strong> that <strong style="color:#ffd166;">links</strong> to your component files — not copies. If you change the C3 model, the assembly updates automatically. You insert components, drag them to rough position, then apply constraints (joints) to lock them in place.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────── SLIDE 4: Video Placeholder -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Watch First</h2>
+
+        <div class="video-placeholder">
+            <div style="font-size:4rem; margin-bottom:16px; line-height:1;">&#127916;</div>
+            <h3 style="color:#00d084; font-size:1.8rem; margin-bottom:8px;">VIDEO: C4 Deck + Fusion 360 Assembly Intro</h3>
+            <p style="color:#ffd166; font-weight:600; margin-bottom:20px;">~12–15 min &nbsp;·&nbsp; Watch full video before opening Fusion 360</p>
+            <p style="max-width:700px; margin:0 auto 24px;">
+                This lesson introduces Fusion 360 assemblies — the most important skill change of the unit.
+                Mr. B starts the deck file, creates a new assembly file, inserts C3, and shows the full constraint workflow.
+            </p>
+
+            <div class="box" style="text-align:left; max-width:700px; margin:0 auto;">
+                <h3 style="color:#ffd166;">What to watch for:</h3>
+                <ul class="bullet-list">
+                    <li>The difference between the <strong style="color:#00d084;">deck file</strong> and the <strong style="color:#00d084;">assembly file</strong></li>
+                    <li>How to insert a component into the assembly — the component stays as its own file</li>
+                    <li>The <strong style="color:#ffd166;">Move/Free Joint step</strong> — drag the component to roughly the right position <em>before</em> constraining</li>
+                    <li>How <strong style="color:#ffd166;">Edit-in-context</strong> works: edit the deck sketch from inside the assembly and watch holes appear where the component mounts</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────── SLIDE 5: F360 Techniques -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>F360 Techniques: What's New</h2>
+
+        <div class="grid-2" style="align-items:start;">
+
+            <div>
+                <h3 style="color:#00d084; margin-bottom:16px;">New Tools This Lesson</h3>
+                <ul class="step-list">
+                    <li>
+                        <div class="step-num">1</div>
+                        <div class="step-body">
+                            <strong>Assembly Environment</strong>
+                            <p>File → New Design, then use the <strong style="color:#ffd166;">ASSEMBLE</strong> tab to insert components</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="step-num">2</div>
+                        <div class="step-body">
+                            <strong>Insert Component</strong>
+                            <p>Browse to the C3 file — it <em>links</em>, not copies. Changes to C3 propagate here automatically.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="step-num">3</div>
+                        <div class="step-body">
+                            <strong>Move / Free Joint</strong>
+                            <p>Drag the inserted component freely to find a good position <em>before</em> locking it down</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="step-num">4</div>
+                        <div class="step-body">
+                            <strong>Edit Component In Context</strong>
+                            <p>Right-click the deck in the assembly → Edit Component; draw new holes in the deck sketch while seeing where C3 sits; changes propagate to the deck file</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="step-num">5</div>
+                        <div class="step-body">
+                            <strong>As-Built Joint / Rigid Joint</strong>
+                            <p>Constrains C3 to the deck holes so it cannot move relative to the deck</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="step-num">6</div>
+                        <div class="step-body">
+                            <strong>Interference Check</strong>
+                            <p>INSPECT → Interference — checks that no two bodies overlap; run before CNC</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 style="color:#ffd166; margin-bottom:16px;">Assembly Workflow</h3>
+                <table class="cmp-table">
+                    <thead>
+                        <tr><th>When</th><th>Action</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="highlight">This week</span></td>
+                            <td>Start deck file: outer profile + motor mount holes. Create assembly: insert deck + C3. Constrain C3.</td>
+                        </tr>
+                        <tr>
+                            <td>After C5</td>
+                            <td>Insert C5 → drag to position → edit deck sketch → add C5 holes → constrain C5</td>
+                        </tr>
+                        <tr>
+                            <td>After C6</td>
+                            <td>Insert C6 → drag → edit → add holes → constrain</td>
+                        </tr>
+                        <tr>
+                            <td>After C7</td>
+                            <td>Insert C7 → drag → edit → add holes → constrain</td>
+                        </tr>
+                        <tr>
+                            <td><span class="warning">Week 8</span></td>
+                            <td>Run Interference Check on full assembly. Fix any collisions. Finalize for CNC.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────── SLIDE 6: Deliverable -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Deliverable: C4 Deck (Version 1)</h2>
+        <p class="subtitle">Due end of Week 6 &nbsp;·&nbsp; Deck file continues in Weeks 7–8</p>
+
+        <div class="grid-2" style="align-items:start;">
+
+            <div class="box">
+                <h3 style="color:#00d084;">Submission Checklist</h3>
+                <ul class="checklist">
+                    <li>Deck file named <code>Lastname_Deck_v1-Base</code></li>
+                    <li>Assembly file named <code>Lastname_Assembly_v1-C3</code></li>
+                    <li>Outer deck profile with at least one notched corner sketched</li>
+                    <li>Motor mount holes matching C3 T-slot bolt pattern</li>
+                    <li>All interior corners filleted (CNC corner radius rule)</li>
+                    <li>C3 inserted and constrained in assembly (no free movement)</li>
+                    <li class="screenshot"><strong style="color:#ffd166;">Screenshot 1:</strong> top view of deck — outer profile + holes visible</li>
+                    <li class="screenshot"><strong style="color:#ffd166;">Screenshot 2:</strong> assembly isometric — deck + C3 constrained</li>
+                    <li>Iteration log: note any hole position adjustments, C3 clearance issues</li>
+                </ul>
+            </div>
+
+            <div>
+                <div class="box-amber" style="margin-bottom:20px;">
+                    <h3>Note on Deck Versions</h3>
+                    <p>This is <span class="warning">v1-Base</span> only. The deck file will be updated each time a new component is positioned in the assembly. Keep your version names consistent — <code>v2-C5</code>, <code>v3-C6</code>, etc. — so Mr. B can review the evolution of your design.</p>
+                </div>
+
+                <div class="box">
+                    <h3 style="color:#00d084;">How to Submit</h3>
+                    <p>Submit through the <span class="highlight">Student Portfolio</span> in the HS AE&amp;R course hub. Upload both screenshots and add your iteration log in the notes field.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</div><!-- /presentation -->
+
+<div class="slide-number" id="slideNum">1 / 6</div>
+
+<div class="ref-link">
+    <a href="index.html">Unit 2 Hub &#8599;</a>
+</div>
+
+<div class="controls">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>&#8592; Previous</button>
+    <button id="nextBtn" onclick="changeSlide(1)">Next &#8594;</button>
+</div>
+
+<script>
+    let current = 0;
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    document.getElementById('slideNum').textContent = `1 / ${total}`;
+
+    function changeSlide(dir) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(total - 1, current + dir));
+        slides[current].classList.add('active');
+        slides[current].scrollTop = 0;
+        document.getElementById('slideNum').textContent = `${current + 1} / ${total}`;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === total - 1;
+    }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+</body>
+</html>

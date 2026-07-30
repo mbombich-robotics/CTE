@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>C3: Motor Sleeve Mount</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #050f0a 0%, #0d1f17 100%);
+            color: #e0e6f0;
+            height: 100vh;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute; width: 100%; min-height: 100%;
+            display: none; flex-direction: column;
+            justify-content: flex-start; align-items: center;
+            padding: 55px 60px 120px 60px;
+            opacity: 0; transition: opacity 0.5s ease;
+            overflow-y: auto; overflow-x: hidden;
+        }
+        .slide.active { display: flex; opacity: 1; }
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif; font-size: 3.5rem; font-weight: 900;
+            color: #00d084; margin-bottom: 15px; text-transform: uppercase;
+            letter-spacing: 2px; text-shadow: 0 0 20px rgba(0,208,132,0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(0,208,132,0.5); }
+            to   { text-shadow: 0 0 35px rgba(0,208,132,0.9); }
+        }
+        h2 {
+            font-family: 'Orbitron', sans-serif; font-size: 2.4rem; font-weight: 700;
+            color: #00d084; margin-bottom: 18px; text-transform: uppercase;
+        }
+        h3 { font-family: 'Exo 2', sans-serif; font-size: 1.5rem; font-weight: 600; color: #ffd166; margin-bottom: 12px; }
+        p { font-size: 1.15rem; line-height: 1.6; margin-bottom: 12px; color: #b8c5d6; }
+        .subtitle { font-size: 1.3rem; color: #ffd166; font-weight: 600; margin-bottom: 30px; }
+
+        .objective-box {
+            background: linear-gradient(135deg, rgba(0,208,132,0.1) 0%, rgba(0,208,132,0.04) 100%);
+            border: 3px solid #00d084; border-radius: 12px; padding: 20px; margin: 20px 0;
+            box-shadow: 0 0 30px rgba(0,208,132,0.15);
+        }
+        .objective-box h3 { color: #00d084; }
+
+        .bullet-list { list-style: none; padding-left: 0; }
+        .bullet-list li {
+            font-size: 1.15rem; margin: 12px 0; padding-left: 35px;
+            position: relative; color: #b8c5d6; line-height: 1.5;
+        }
+        .bullet-list li::before {
+            content: '▸'; position: absolute; left: 0;
+            color: #ffd166; font-size: 1.5rem; line-height: 1;
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px; }
+
+        .box {
+            background: rgba(0,208,132,0.05); border: 2px solid #00d084;
+            border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(0,208,132,0.1);
+        }
+        .box-amber {
+            background: rgba(255,209,102,0.07); border: 2px solid #ffd166;
+            border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(255,209,102,0.1);
+        }
+
+        .highlight { color: #00d084; font-weight: 700; }
+        .warning   { color: #ffd166; font-weight: 700; }
+
+        /* Spec grid */
+        .spec-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin: 16px 0; }
+        .spec-item {
+            background: rgba(0,208,132,0.07); border: 1px solid rgba(0,208,132,0.3);
+            border-radius: 10px; padding: 13px 16px;
+        }
+        .spec-val {
+            font-family: 'JetBrains Mono', monospace; font-size: 1rem; font-weight: 700;
+            color: #00d084; line-height: 1.4;
+        }
+        .spec-label { font-size: 0.82rem; color: #6272a4; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.05em; }
+        .spec-note  { font-size: 0.82rem; color: #ffd166; margin-top: 3px; }
+
+        /* Checklist */
+        .check-list { list-style: none; padding: 0; }
+        .check-list li {
+            display: flex; align-items: flex-start; gap: 14px;
+            margin-bottom: 13px; font-size: 1.1rem; color: #b8c5d6; line-height: 1.5;
+        }
+        .check-list li::before {
+            content: '☐'; flex-shrink: 0; color: #00d084; font-size: 1.3rem; line-height: 1.2;
+        }
+
+        /* Technique cards in slide 5 */
+        .tech-card {
+            background: rgba(0,208,132,0.05); border: 2px solid #00d084;
+            border-radius: 10px; padding: 16px 18px; margin-bottom: 16px;
+            box-shadow: 0 0 12px rgba(0,208,132,0.08);
+        }
+        .tech-card h3 { color: #00d084; margin-bottom: 6px; font-size: 1.25rem; }
+        .tech-card p  { margin-bottom: 0; font-size: 1.05rem; }
+
+        /* Controls */
+        .controls {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            display: flex; justify-content: center; align-items: center; gap: 20px; z-index: 1000;
+        }
+        button {
+            background: linear-gradient(135deg, #00d084 0%, #00a066 100%);
+            border: none; color: #050f0a; padding: 15px 30px; font-size: 1rem;
+            font-weight: 700; border-radius: 8px; cursor: pointer;
+            font-family: 'Exo 2', sans-serif; transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,208,132,0.3);
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,208,132,0.5); }
+        button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+        .slide-number {
+            position: fixed; bottom: 30px; left: 30px;
+            font-family: 'Space Mono', monospace; font-size: 1rem;
+            color: #00d084; z-index: 1000;
+        }
+        .ref-link {
+            position: fixed; bottom: 30px; right: 30px; z-index: 1000;
+        }
+        .ref-link a {
+            background: rgba(0,208,132,0.12); border: 1px solid #00d084;
+            color: #00d084; font-family: 'Space Mono', monospace; font-size: 0.85rem;
+            padding: 8px 14px; border-radius: 6px; text-decoration: none;
+            transition: background 0.2s;
+        }
+        .ref-link a:hover { background: rgba(0,208,132,0.25); }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.2rem; } h2 { font-size: 1.8rem; }
+            .slide { padding: 30px 20px 100px; }
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="presentation">
+
+<!-- ─────────────────────────────────────────── SLIDE 1: Title -->
+<div class="slide active">
+    <div class="slide-content" style="text-align:center;">
+        <h1>C3: Motor Sleeve Mount</h1>
+        <p class="subtitle">Unit 2 · CAD Component-Based Design · Lesson 2.3</p>
+
+        <div style="margin: 36px auto; max-width: 480px;">
+            <svg viewBox="0 0 420 195" fill="none" xmlns="http://www.w3.org/2000/svg"
+                 style="width:100%; filter:drop-shadow(0 0 16px rgba(0,208,132,0.4));">
+
+                <!-- T-slot rail body (on top of sleeve) -->
+                <rect x="55" y="62" width="240" height="22" rx="2"
+                      fill="rgba(0,208,132,0.09)" stroke="#00d084" stroke-width="2"/>
+
+                <!-- T-slot cross-section profile (schematic, shown in rail)
+                     Narrow top slot opening: bolt shaft passes through
+                     Wide bottom cavity: nut head is captured here -->
+                <rect x="161" y="62" width="28" height="9"
+                      fill="#050f0a" stroke="#ffd166" stroke-width="1.5"/>
+                <rect x="147" y="71" width="56" height="13" rx="1"
+                      fill="#050f0a" stroke="#ffd166" stroke-width="1.5"/>
+
+                <!-- Main sleeve body (side view) -->
+                <rect x="55" y="84" width="240" height="74" rx="2"
+                      fill="rgba(0,208,132,0.06)" stroke="#00d084" stroke-width="2.5"/>
+
+                <!-- Sleeve bore (hidden feature — dashed) -->
+                <rect x="55" y="104" width="240" height="34"
+                      fill="rgba(0,0,0,0.25)" stroke="#00d084" stroke-width="1.5"
+                      stroke-dasharray="8,5" opacity="0.75"/>
+
+                <!-- Front face: outer annular ring -->
+                <circle cx="330" cy="121" r="36"
+                        fill="rgba(0,208,132,0.07)" stroke="#00d084" stroke-width="2.5"/>
+
+                <!-- Front face: bore (dashed inner circle) -->
+                <circle cx="330" cy="121" r="18"
+                        fill="rgba(0,0,0,0.45)" stroke="#00d084" stroke-width="1.5"
+                        stroke-dasharray="4,3"/>
+
+                <!-- 4 face screw holes on bolt circle r≈24 -->
+                <circle cx="313" cy="104" r="4"  fill="none" stroke="#ffd166" stroke-width="1.8"/>
+                <circle cx="347" cy="104" r="4"  fill="none" stroke="#ffd166" stroke-width="1.8"/>
+                <circle cx="313" cy="138" r="4"  fill="none" stroke="#ffd166" stroke-width="1.8"/>
+                <circle cx="347" cy="138" r="4"  fill="none" stroke="#ffd166" stroke-width="1.8"/>
+
+                <!-- Labels -->
+                <text x="175" y="56" font-family="Space Mono" font-size="11"
+                      fill="#ffd166" text-anchor="middle">T-slot rail</text>
+                <text x="175" y="121" font-family="Space Mono" font-size="11"
+                      fill="#00d084" text-anchor="middle">bore (ID)</text>
+                <text x="330" y="174" font-family="Space Mono" font-size="10"
+                      fill="#6272a4" text-anchor="middle">face view</text>
+            </svg>
+        </div>
+
+        <p style="color:#6272a4; font-size:1rem;">Lesson 2.3 · Week 5</p>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 2: Learning Objectives -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Learning Objectives</h2>
+        <p class="subtitle">By the end of this lesson, you will be able to:</p>
+
+        <div style="display:flex; flex-direction:column; gap:32px; margin-top:40px; max-width:860px;">
+            <div style="display:flex; gap:28px; align-items:baseline;">
+                <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900;
+                             color:#00d084; flex-shrink:0; width:36px; line-height:1;">1</span>
+                <p style="margin:0; font-size:1.5rem; color:#e0e6f0; line-height:1.4;">
+                    <strong style="color:#00d084;">Sketch</strong> a cylindrical sleeve bore sized to
+                    the motor body OD using Inspect &rarr; Measure on the provided F360 model
+                </p>
+            </div>
+            <div style="display:flex; gap:28px; align-items:baseline;">
+                <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900;
+                             color:#00d084; flex-shrink:0; width:36px; line-height:1;">2</span>
+                <p style="margin:0; font-size:1.5rem; color:#e0e6f0; line-height:1.4;">
+                    <strong style="color:#00d084;">Model</strong> a T-slot nut-capture rail as a
+                    cross-section profile extruded the full length of the mount
+                </p>
+            </div>
+            <div style="display:flex; gap:28px; align-items:baseline;">
+                <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900;
+                             color:#00d084; flex-shrink:0; width:36px; line-height:1;">3</span>
+                <p style="margin:0; font-size:1.5rem; color:#e0e6f0; line-height:1.4;">
+                    <strong style="color:#00d084;">Add</strong> face screw holes matching the motor
+                    flange bolt pattern
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 3: Component Overview -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Component Overview</h2>
+        <p class="subtitle">C3 — Motor Sleeve Mount</p>
+
+        <div class="grid-2" style="margin-top:12px; gap:30px; align-items:start;">
+
+            <!-- Left: How it works + key concept -->
+            <div>
+                <h3 style="color:#00d084;">How it works</h3>
+                <p>The motor's outer flange is <span class="highlight">removed</span>. The motor body slides into the sleeve bore. The flange is reattached through the <span class="highlight">front face of the mount</span> using four 10-32 &times; &frac12;&Prime; screws. The T-slot rail on top allows M5 nuts to slide in from the end before bolting the mount to the deck from above — no under-deck access needed during assembly.</p>
+
+                <div class="box-amber" style="margin-top:18px;">
+                    <h3 style="color:#ffd166;">Key concept: T-slot geometry</h3>
+                    <p style="color:#c8b572; margin-bottom:0;">
+                        The slot cavity must be <strong style="color:#ffd166;">wide enough</strong> for the nut
+                        to slide in, and the top opening must be <strong style="color:#ffd166;">narrow
+                        enough</strong> to trap the nut while still letting the bolt shaft through.
+                        Getting either dimension wrong by even 0.3&nbsp;mm breaks the mechanism.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right: Key dimensions spec grid -->
+            <div>
+                <h3 style="color:#00d084;">Key Dimensions</h3>
+                <p style="font-size:0.95rem; color:#6272a4; margin-bottom:10px;">
+                    All values TBD — measured from the F360 motor model in the class folder.
+                </p>
+
+                <div class="spec-grid">
+                    <div class="spec-item">
+                        <div class="spec-val">motor body OD + 0.3–0.5 mm</div>
+                        <div class="spec-label">Sleeve bore ID</div>
+                        <div class="spec-note">measure motor OD with Inspect &rarr; Measure</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-val">bolt shaft OD + clearance &lt; nut width</div>
+                        <div class="spec-label">T-slot top opening</div>
+                        <div class="spec-note">narrow enough to trap nut; wide enough for bolt shaft</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-val">nut width across flats + ~0.4 mm</div>
+                        <div class="spec-label">T-slot cavity width</div>
+                        <div class="spec-note">sliding clearance</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-val">nut thickness + ~0.3 mm</div>
+                        <div class="spec-label">T-slot cavity depth</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-val">4-hole bolt circle (TBD)</div>
+                        <div class="spec-label">Face screw pattern</div>
+                        <div class="spec-note">measure from motor flange model</div>
+                    </div>
+                </div>
+
+                <p style="font-size:0.9rem; color:#ffd166; margin-top:10px;">
+                    All dimensions measured with <strong>Inspect &rarr; Measure</strong> on the F360
+                    motor model provided in the class folder. You are not measuring with calipers.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 4: Video Placeholder -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Video Walkthrough</h2>
+
+        <div style="border: 3px dashed #00d084; border-radius: 16px; padding: 40px 48px;
+                    margin: 20px 0; text-align: center; background: rgba(0,208,132,0.03);">
+
+            <div style="font-size: 4rem; margin-bottom: 18px; line-height: 1;">&#127916;</div>
+
+            <h3 style="color: #00d084; font-size: 1.9rem; margin-bottom: 8px;">
+                VIDEO: C3 Motor Sleeve Mount Walkthrough
+            </h3>
+            <p style="color: #ffd166; font-size: 1.1rem; font-weight: 600; margin-bottom: 18px;">
+                ~12–15 min &middot; Watch the full video before opening Fusion 360
+            </p>
+
+            <p style="max-width: 700px; margin: 0 auto 24px; color: #b8c5d6;">
+                This is the most mechanically complex component so far. Mr.&nbsp;B will show how to use
+                Inspect &rarr; Measure to get the motor dimensions, how to sketch the T-slot
+                cross-section profile, and how to extrude-cut it the full length of the mount.
+            </p>
+
+            <div class="box" style="text-align: left; max-width: 660px; margin: 0 auto;">
+                <h3>What to watch for</h3>
+                <ul class="bullet-list">
+                    <li>How <strong style="color:#00d084;">Inspect &rarr; Measure</strong> gives you the exact motor body OD</li>
+                    <li>The T-slot cross-section sketch — what the T profile looks like on the end face</li>
+                    <li>Why the T-slot must run the <strong style="color:#ffd166;">FULL top length</strong> (nut must be inserted from the end)</li>
+                    <li>The face screw hole pattern (Hole tool or manual circles)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 5: F360 Techniques -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>F360 Techniques</h2>
+        <p class="subtitle">What's new this lesson</p>
+
+        <div class="grid-2" style="margin-top:12px; align-items:start;">
+
+            <!-- Left: technique cards -->
+            <div>
+                <div class="tech-card">
+                    <h3>Inspect &rarr; Measure</h3>
+                    <p>Click two faces or edges on the provided motor model to get exact dimensions.
+                       Use these values directly in your sleeve bore sketch and screw hole
+                       pattern — no guessing, no calipers.</p>
+                </div>
+                <div class="tech-card">
+                    <h3>Channel profile (T-slot)</h3>
+                    <p>Sketch the T cross-section on the <strong style="color:#00d084;">end face</strong>
+                       of the mount top. The T has a narrow top slot and a wider bottom cavity.
+                       Extrude-cut the full length of the rail so the nut can enter from either end.</p>
+                </div>
+                <div class="tech-card">
+                    <h3>Hole tool (face screws)</h3>
+                    <p>4 holes on the front face matching the motor flange bolt circle. Use
+                       Inspect &rarr; Measure to get the bolt circle diameter and hole size from
+                       the motor model before placing holes.</p>
+                </div>
+                <div class="tech-card">
+                    <h3>Sketch on a non-XZ plane</h3>
+                    <p>The T-slot cross-section sketch goes on the <strong style="color:#00d084;">end face</strong>
+                       of the rail — not the default XZ plane. Select the correct face before
+                       activating Sketch or your geometry will land in the wrong location.</p>
+                </div>
+            </div>
+
+            <!-- Right: assembly thinking box -->
+            <div>
+                <div class="box-amber">
+                    <h3 style="color:#ffd166;">Think through assembly before you model</h3>
+                    <p style="color:#c8b572; margin-bottom:14px;">
+                        Work through the assembly sequence mentally first:
+                    </p>
+                    <ol style="padding-left:22px; color:#b8c5d6; line-height:2.1; font-size:1.1rem;">
+                        <li>Nut slides into T-slot from the end</li>
+                        <li>Mount sits on the deck</li>
+                        <li>M5 bolt comes down through deck into captured nut</li>
+                    </ol>
+                    <p style="margin-top:18px; color:#ffd166; font-size:1rem;">
+                        <strong>If the slot doesn't run full length,</strong> the nut can't get in.
+                        If the top opening is too wide, the nut falls through.
+                        Test this mentally before you print.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 6: Deliverable -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Deliverable</h2>
+        <p class="subtitle">C3 Motor Sleeve Mount &middot; Due end of Week 5</p>
+
+        <div class="grid-2" style="margin-top:16px; align-items:start;">
+
+            <!-- Left: submission checklist -->
+            <div class="box">
+                <h3>Submission Checklist</h3>
+                <ul class="check-list">
+                    <li>
+                        File named
+                        <strong style="color:#00d084; font-family:'JetBrains Mono',monospace;">
+                            Lastname_SleevMount_v1-Base
+                        </strong>
+                    </li>
+                    <li>Sleeve bore ID measured from the motor model (not guessed)</li>
+                    <li>Face screw hole pattern measured from the motor model</li>
+                    <li>T-slot rail runs full top length — nut can be inserted from either end</li>
+                    <li>T-slot top opening and cavity width/depth correct — nut slides freely and does not fall through</li>
+                    <li>
+                        <strong style="color:#ffd166;">Screenshot 1:</strong>
+                        isometric view — rail channel visible on top surface
+                    </li>
+                    <li>
+                        <strong style="color:#ffd166;">Screenshot 2:</strong>
+                        front face view — all four screw holes visible
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Right: iteration log + submit -->
+            <div>
+                <div class="box-amber" style="margin-bottom:20px;">
+                    <h3 style="color:#ffd166;">Iteration Log</h3>
+                    <p style="color:#b8c5d6; margin-bottom:10px;">
+                        Include in your submission:
+                    </p>
+                    <ul class="bullet-list">
+                        <li>Sleeve bore spec vs. actual print result</li>
+                        <li>T-slot slot width spec vs. actual</li>
+                        <li>Whether nut slides freely and is correctly captured after printing</li>
+                    </ul>
+                </div>
+
+                <div style="padding:20px; background:rgba(0,208,132,0.07);
+                            border-radius:12px; border:1px solid rgba(0,208,132,0.3);">
+                    <h3 style="color:#00d084; margin-bottom:10px;">Where to submit</h3>
+                    <p style="margin-bottom:0; color:#b8c5d6;">
+                        Submit through the <span class="highlight">Student Portfolio</span>
+                        in the HS AE&amp;R course hub. Upload both screenshots and your
+                        iteration log with the model file link.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+</div><!-- /presentation -->
+
+<div class="slide-number" id="slideNum">1 / 6</div>
+
+<div class="ref-link">
+    <a href="index.html">Unit 2 Hub &#8599;</a>
+</div>
+
+<div class="controls">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>&larr; Previous</button>
+    <button id="nextBtn" onclick="changeSlide(1)">Next &rarr;</button>
+</div>
+
+<script>
+    let current = 0;
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    document.getElementById('slideNum').textContent = `1 / ${total}`;
+
+    function changeSlide(dir) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(total - 1, current + dir));
+        slides[current].classList.add('active');
+        slides[current].scrollTop = 0;
+        document.getElementById('slideNum').textContent = `${current + 1} / ${total}`;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === total - 1;
+    }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+</body>
+</html>
