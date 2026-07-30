@@ -804,7 +804,6 @@ window.onload = function () {
     // Init navigation and static components immediately
     initNavigation();
     initDeliverables();
-    initCodeLibrary();
 
     // Wire sign-out button
     document.getElementById('signOutBtn').addEventListener('click', signOut);
