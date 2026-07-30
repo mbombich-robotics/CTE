@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.11.0',
+    VERSION: 'v2.11.1',
 
     // Backend URL — swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -794,6 +794,11 @@ window.onload = function () {
     const versionEl = document.getElementById('appVersion');
     if (versionEl) versionEl.textContent = CONFIG.VERSION;
 
+    // Set portfolio title based on track param
+    const TRACK_TITLES = { hsaer: 'HS AE&R Portfolio', aer8th: '8th Grade Portfolio', dbl: 'D&B Lab Portfolio' };
+    const titleEl = document.getElementById('portfolioTitle');
+    if (titleEl && URL_TRACK) titleEl.textContent = TRACK_TITLES[URL_TRACK] || 'AE&R Portfolio';
+
     // Display version on sign-in modal
     const signinVersionEl = document.getElementById('signinVersion');
     if (signinVersionEl) signinVersionEl.textContent = `Version ${CONFIG.VERSION}`;
@@ -1429,8 +1434,9 @@ function updateUI() {
     document.getElementById('avatarInitials').textContent = getInitials(state.student.name);
     document.getElementById('studentName').textContent = state.student.name;
 
-    const phase = getCurrentPhase();
-    document.getElementById('projectBadge').textContent = phase.name;
+    const COURSE_DISPLAY = { hsaer: 'HS AE&R', aer8th: '8th Grade AE&R', dbl: 'Design & Build Lab' };
+    const course = URL_TRACK || state.student.course || 'hsaer';
+    document.getElementById('projectBadge').textContent = COURSE_DISPLAY[course] || course;
 
     const completedDeliverables = Object.values(state.deliverables).filter(d => d.status === 'completed').length;
     document.getElementById('completedCount').textContent = completedDeliverables;
