@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.30',
+    VERSION: 'v2.9.31',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -21,7 +21,7 @@ const CONFIG = {
     COURSES: {
         robotics: {
             name: 'HS Applied Engineering & Robotics',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
             currentAppVersion: 'v2.9.64',
             hasTeams: false,
             totalDeliverables: 10,
@@ -36,7 +36,7 @@ const CONFIG = {
         },
         aer8: {
             name: '8th Grade Applied Engineering & Robotics',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbzhj6I_RMovDMqE7WS4r6IecvVQzx2KuNcX4il5LGKBhObb-oFLlL9gpg4cyXte_vfI/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
             currentAppVersion: 'v2.9.64',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
@@ -51,7 +51,7 @@ const CONFIG = {
         },
         dbl: {
             name: 'Design & Build Lab',
-            apiUrl: 'https://script.google.com/macros/s/AKfycbyNDk5WZ5Fb6YpvszhIECCO_dMDoE7_WVdkqSpJc2_4gtH3gkKMib55i1Ecq5clcGl6Kg/exec',
+            apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
             currentAppVersion: 'v2.9.64',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
