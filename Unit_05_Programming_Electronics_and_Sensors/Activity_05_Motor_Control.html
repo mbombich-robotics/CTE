@@ -308,17 +308,25 @@ _R_INB <span class="op">=</span> <span class="cls">Pin</span>(<span class="num">
 _R_PWM <span class="op">=</span> <span class="cls">PWM</span>(<span class="cls">Pin</span>(<span class="num">7</span>)); _R_PWM.<span class="fn">freq</span>(<span class="num">20000</span>)
 
 <span class="cls">FULL</span> <span class="op">=</span> <span class="num">65535</span>
+_speed <span class="op">=</span> <span class="cls">FULL</span>           <span class="cm"># current default — change with set_speed()</span>
 
-<span class="kw">def</span> <span class="fn">_drive</span>(la, lb, ra, rb, spd<span class="op">=</span><span class="cls">FULL</span>):
-    _L_PWM.<span class="fn">duty_u16</span>(spd); _R_PWM.<span class="fn">duty_u16</span>(spd)
-    _L_INA.<span class="fn">value</span>(la);    _L_INB.<span class="fn">value</span>(lb)
-    _R_INA.<span class="fn">value</span>(ra);    _R_INB.<span class="fn">value</span>(rb)
+<span class="kw">def</span> <span class="fn">set_speed</span>(val):
+    <span class="kw">global</span> _speed
+    _speed <span class="op">=</span> val
 
-<span class="kw">def</span> <span class="fn">forward</span>(spd<span class="op">=</span><span class="cls">FULL</span>):  <span class="fn">_drive</span>(<span class="num">1</span>, <span class="num">0</span>, <span class="num">1</span>, <span class="num">0</span>, spd)
-<span class="kw">def</span> <span class="fn">backward</span>(spd<span class="op">=</span><span class="cls">FULL</span>): <span class="fn">_drive</span>(<span class="num">0</span>, <span class="num">1</span>, <span class="num">0</span>, <span class="num">1</span>, spd)
-<span class="kw">def</span> <span class="fn">left</span>(spd<span class="op">=</span><span class="cls">FULL</span>):     <span class="fn">_drive</span>(<span class="num">0</span>, <span class="num">1</span>, <span class="num">1</span>, <span class="num">0</span>, spd)
-<span class="kw">def</span> <span class="fn">right</span>(spd<span class="op">=</span><span class="cls">FULL</span>):    <span class="fn">_drive</span>(<span class="num">1</span>, <span class="num">0</span>, <span class="num">0</span>, <span class="num">1</span>, spd)
-<span class="kw">def</span> <span class="fn">stop</span>():              <span class="fn">_drive</span>(<span class="num">0</span>, <span class="num">0</span>, <span class="num">0</span>, <span class="num">0</span>, <span class="num">0</span>)</pre>
+<span class="kw">def</span> <span class="fn">_drive</span>(la, lb, ra, rb):
+    _L_PWM.<span class="fn">duty_u16</span>(_speed); _R_PWM.<span class="fn">duty_u16</span>(_speed)
+    _L_INA.<span class="fn">value</span>(la);       _L_INB.<span class="fn">value</span>(lb)
+    _R_INA.<span class="fn">value</span>(ra);       _R_INB.<span class="fn">value</span>(rb)
+
+<span class="kw">def</span> <span class="fn">forward</span>():  <span class="fn">_drive</span>(<span class="num">1</span>, <span class="num">0</span>, <span class="num">1</span>, <span class="num">0</span>)
+<span class="kw">def</span> <span class="fn">backward</span>(): <span class="fn">_drive</span>(<span class="num">0</span>, <span class="num">1</span>, <span class="num">0</span>, <span class="num">1</span>)
+<span class="kw">def</span> <span class="fn">left</span>():     <span class="fn">_drive</span>(<span class="num">0</span>, <span class="num">1</span>, <span class="num">1</span>, <span class="num">0</span>)
+<span class="kw">def</span> <span class="fn">right</span>():    <span class="fn">_drive</span>(<span class="num">1</span>, <span class="num">0</span>, <span class="num">0</span>, <span class="num">1</span>)
+<span class="kw">def</span> <span class="fn">stop</span>():
+    _L_PWM.<span class="fn">duty_u16</span>(<span class="num">0</span>); _R_PWM.<span class="fn">duty_u16</span>(<span class="num">0</span>)
+    _L_INA.<span class="fn">value</span>(<span class="num">0</span>);    _L_INB.<span class="fn">value</span>(<span class="num">0</span>)
+    _R_INA.<span class="fn">value</span>(<span class="num">0</span>);    _R_INB.<span class="fn">value</span>(<span class="num">0</span>)</pre>
         </div>
 
         <div class="steps">
@@ -526,7 +534,7 @@ _R_PWM <span class="op">=</span> <span class="cls">PWM</span>(<span class="cls">
                     <span class="challenge-num">C2</span>
                     <span class="challenge-title">Slow-Motion Square</span>
                 </div>
-                <p>Drive the same square at half speed. Pass <code>32767</code> as the speed argument: <code>motor.forward(32767)</code>. Does the turn time change at half speed? Why or why not?</p>
+                <p>Drive the same square at half speed. Add <code>motor.set_speed(32767)</code> at the top of your program, before the loop. Does the turn time need to change at half speed? Run it and find out.</p>
             </div>
 
             <div class="challenge">

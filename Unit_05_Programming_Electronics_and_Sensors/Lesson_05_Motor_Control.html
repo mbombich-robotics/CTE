@@ -405,17 +405,25 @@ _R_PWM <span class="op">=</span> <span class="cls">PWM</span>(<span class="cls">
 _R_PWM.<span class="fn">freq</span>(<span class="num">20000</span>)
 
 <span class="cls">FULL</span> <span class="op">=</span> <span class="num">65535</span>
+_speed <span class="op">=</span> <span class="cls">FULL</span>           <span class="cm"># current default — change with set_speed()</span>
 
-<span class="kw">def</span> <span class="fn">_drive</span>(la, lb, ra, rb, spd<span class="op">=</span><span class="cls">FULL</span>):
-    _L_PWM.<span class="fn">duty_u16</span>(spd); _R_PWM.<span class="fn">duty_u16</span>(spd)
-    _L_INA.<span class="fn">value</span>(la); _L_INB.<span class="fn">value</span>(lb)
-    _R_INA.<span class="fn">value</span>(ra); _R_INB.<span class="fn">value</span>(rb)
+<span class="kw">def</span> <span class="fn">set_speed</span>(val):
+    <span class="kw">global</span> _speed
+    _speed <span class="op">=</span> val
 
-<span class="kw">def</span> <span class="fn">forward</span>(spd<span class="op">=</span><span class="cls">FULL</span>):  <span class="fn">_drive</span>(<span class="num">1</span>,<span class="num">0</span>,<span class="num">1</span>,<span class="num">0</span>, spd)
-<span class="kw">def</span> <span class="fn">backward</span>(spd<span class="op">=</span><span class="cls">FULL</span>): <span class="fn">_drive</span>(<span class="num">0</span>,<span class="num">1</span>,<span class="num">0</span>,<span class="num">1</span>, spd)
-<span class="kw">def</span> <span class="fn">left</span>(spd<span class="op">=</span><span class="cls">FULL</span>):     <span class="fn">_drive</span>(<span class="num">0</span>,<span class="num">1</span>,<span class="num">1</span>,<span class="num">0</span>, spd)
-<span class="kw">def</span> <span class="fn">right</span>(spd<span class="op">=</span><span class="cls">FULL</span>):    <span class="fn">_drive</span>(<span class="num">1</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">1</span>, spd)
-<span class="kw">def</span> <span class="fn">stop</span>():              <span class="fn">_drive</span>(<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>, <span class="num">0</span>)</div>
+<span class="kw">def</span> <span class="fn">_drive</span>(la, lb, ra, rb):
+    _L_PWM.<span class="fn">duty_u16</span>(_speed); _R_PWM.<span class="fn">duty_u16</span>(_speed)
+    _L_INA.<span class="fn">value</span>(la);       _L_INB.<span class="fn">value</span>(lb)
+    _R_INA.<span class="fn">value</span>(ra);       _R_INB.<span class="fn">value</span>(rb)
+
+<span class="kw">def</span> <span class="fn">forward</span>():  <span class="fn">_drive</span>(<span class="num">1</span>, <span class="num">0</span>, <span class="num">1</span>, <span class="num">0</span>)
+<span class="kw">def</span> <span class="fn">backward</span>(): <span class="fn">_drive</span>(<span class="num">0</span>, <span class="num">1</span>, <span class="num">0</span>, <span class="num">1</span>)
+<span class="kw">def</span> <span class="fn">left</span>():     <span class="fn">_drive</span>(<span class="num">0</span>, <span class="num">1</span>, <span class="num">1</span>, <span class="num">0</span>)
+<span class="kw">def</span> <span class="fn">right</span>():    <span class="fn">_drive</span>(<span class="num">1</span>, <span class="num">0</span>, <span class="num">0</span>, <span class="num">1</span>)
+<span class="kw">def</span> <span class="fn">stop</span>():
+    _L_PWM.<span class="fn">duty_u16</span>(<span class="num">0</span>); _R_PWM.<span class="fn">duty_u16</span>(<span class="num">0</span>)
+    _L_INA.<span class="fn">value</span>(<span class="num">0</span>);    _L_INB.<span class="fn">value</span>(<span class="num">0</span>)
+    _R_INA.<span class="fn">value</span>(<span class="num">0</span>);    _R_INB.<span class="fn">value</span>(<span class="num">0</span>)</div>
             </div>
 
             <div>
@@ -424,9 +432,10 @@ _R_PWM.<span class="fn">freq</span>(<span class="num">20000</span>)
 <span class="kw">import</span> motor
 <span class="kw">import</span> time
 
-motor.<span class="fn">forward</span>()       <span class="cm"># full speed</span>
+motor.<span class="fn">forward</span>()           <span class="cm"># full speed (default)</span>
 time.<span class="fn">sleep</span>(<span class="num">1</span>)
-motor.<span class="fn">right</span>(<span class="num">30000</span>)    <span class="cm"># half speed turn</span>
+motor.<span class="fn">set_speed</span>(<span class="num">32767</span>)   <span class="cm"># switch to half speed</span>
+motor.<span class="fn">right</span>()
 time.<span class="fn">sleep</span>(<span class="num">0.5</span>)
 motor.<span class="fn">stop</span>()</div>
 
@@ -457,9 +466,9 @@ motor.<span class="fn">stop</span>()</div>
                         <div class="action-motors">L· R·</div>
                     </div>
                     <div class="action-card">
-                        <div class="action-fn">speed param</div>
-                        <div class="action-desc">Optional — 0 to 65535</div>
-                        <div class="action-motors">default = FULL</div>
+                        <div class="action-fn">set_speed()</div>
+                        <div class="action-desc">Set default speed 0–65535</div>
+                        <div class="action-motors">persists until changed</div>
                     </div>
                 </div>
             </div>
