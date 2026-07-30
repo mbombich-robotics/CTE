@@ -9,15 +9,16 @@
 
 | # | Component | Print Method | New Tools This Component |
 |---|-----------|:---:|--------------------------|
-| C1 | Wheel Hub (flanged collar) | 🖨 | Sketch plane · Circle (concentric) · Dimension · Extrude (multi-depth) · Hole tool · Fillet |
-| C2 | Drive Wheel (spoked, hex bore) | 🖨 | Polygon (hex) · Circular Pattern · Sketch offset or spoke rects |
-| C3 | Motor Mount (cylinder cradle + top plate) | 🖨 | Cut extrude · Sketch on face · Clamp gap feature |
+| C1 | Wheel Hub (simplified — inserts into soft silicone wheel) | 🖨 | Sketch plane · Circle (concentric) · Dimension · Extrude (multi-depth) · Fillet |
+| C2 | Drive Wheel (spoked, hex bore — spoke design = student's artistic choice) | 🖨 | Polygon (hex bore) · Circular Pattern (spokes) · Extrude-Cut |
+| C3 | Motor Mount (cylinder cradle + top plate) | 🖨 | Rectangle · Cut extrude (clamp gap) · Sketch on face |
 | C4 | Robot Deck | 🔲 | Rectangular pattern · Construction lines · CNC corner radius rule · Slot tool |
-| C5 | Rear Axle / Drive Assembly [confirm] | 🖨 | Multi-plane sketch · Reference geometry |
-| C6 | U-Bracket [confirm name/purpose] | 🖨 | Mirror · Shell or channel extrude · Slot |
-| C7 | Ultrasonic Sensor Mount | 🖨 | Large-bore circle fit · L-bracket multi-face sketch |
+| C5 | Omni Wheel Mount (front wheel assembly) | 🖨 | Multi-plane sketch · Reference geometry |
+| C6 | IR Sensor Mount (U-bracket, front underside — holds IR bar for line following) | 🖨 | Mirror · Slot tool |
+| C7 | Ultrasonic Sensor Mount (two-bore L-bracket, front-facing) | 🖨 | Large-bore circle · L-bracket two-face extrude |
 
-> **C2 note:** Circular Pattern + Polygon are more advanced than C3. Options: (A) simplify Level 1 of C2 — students draw 3 spokes manually, no pattern command; Circular Pattern moves to Level 2. (B) Swap C2 and C3 in the sequence so Rectangle/stepped extrude comes before pattern commands. Decision pending.
+> **Soft silicone wheels** are purchased items — students do not model them. C1 (hub) and C2 (drive wheel inner structure) insert into / attach to the silicone wheels.  
+> **C2 progression:** Circular Pattern is confirmed as a C2 skill. Students choose their own spoke count and style — the constraint is that spokes must be created with Circular Pattern, not drawn individually. This gives creative buy-in before the more constrained functional components (C3–C7).
 
 ---
 
@@ -122,49 +123,53 @@
 
 ---
 
-## C5 — Rear Axle / Drive Assembly  🖨  *(confirm name)*
-**Geometry:** Flat square top plate (4 corner holes) with two arms extending down on sides, each arm holding a wheel hub assembly; complex multi-feature part  
+## C5 — Omni Wheel Mount  🖨
+**Purpose:** Front wheel assembly — mounts at the front of the chassis and holds the front omni wheels, allowing the robot to pivot and turn smoothly while rear drive wheels push  
+**Geometry:** Flat top plate (4 corner mounting holes for deck attachment) with two arms extending downward on either side, each arm holds an omni wheel hub/axle  
 **Week:** 5–6  
-**New F360 tools:** Multi-plane sketch (sketch on side face of extrusion) · Reference geometry (use existing geometry as sketch reference)  
-**Key concepts:** Thinking in assembly context — how do the arms position the axle? · Choosing correct sketch plane for each feature  
+**New F360 tools:** Multi-plane sketch (sketch on side face of extrusion) · Reference geometry (use existing body face as sketch reference)  
+**Key concepts:** Thinking in assembly context — arm spacing must match the omni wheel axle width · Choosing the correct sketch plane for each feature  
 
 **Functional requirements (Level 1 must meet):**
 - [ ] Top plate dimensions: [TBD]
-- [ ] Arm spacing (must match axle width): [TBD]
-- [ ] Wheel hub bore in each arm: [TBD — matches C1 hub OD]
-- [ ] 4 mounting holes on top plate: [TBD — deck hole pattern]
+- [ ] Arm spacing (must match omni wheel axle width): [TBD]
+- [ ] Axle bore in each arm: [TBD]
+- [ ] 4 mounting holes on top plate: [TBD — match deck hole pattern]
 
-**Level 2 prompt:** [TBD]  
-**Level 3 prompt:** [TBD]  
+**Level 2 prompt:** [TBD — e.g., add a cable management channel, adjust arm thickness for weight]  
+**Level 3 prompt:** [TBD — custom front wheel mount geometry meeting same axle and deck mounting constraints]  
 
 **Submission checklist:**
-- [ ] File named `Lastname_AxleMount_v1-Base` (or correct name)
-- [ ] Arm spacing matches axle spec
-- [ ] Hub bores correct
+- [ ] File named `Lastname_OmniMount_v1-Base`
+- [ ] Arm spacing matches omni wheel axle spec
+- [ ] Axle bores correct diameter
 - [ ] 4 mounting holes correct pattern
 - [ ] Screenshot: isometric + front
 
 ---
 
-## C6 — U-Bracket  🖨  *(confirm name and purpose — IR sensor bar holder? Wire guide? Battery strap?)*
-**Geometry:** U-shape — two vertical arms each with a flat mounting tab (one hole each) on top; bottom web with a narrow slot running the length  
+## C6 — IR Sensor Mount  🖨
+**Purpose:** Mounts at the front underside of the deck; holds the IR sensor bar at a consistent height above the ground for line following  
+**Geometry:** U-shape — two vertical arms each with a flat mounting tab (one hole each) on top for deck attachment; bottom web with a narrow slot running the length (likely for IR bar wiring or bar retention)  
 **Week:** 6  
-**New F360 tools:** Mirror (feature or sketch — bracket is symmetric) · Slot tool (bottom channel) · Extrude-Cut for the U opening  
-**Key concepts:** Symmetric design with Mirror (draw half, mirror) · Slot as a real F360 feature vs. manual rectangle  
+**New F360 tools:** Mirror (bracket is symmetric — draw one arm, mirror it) · Slot tool (bottom channel)  
+**Key concepts:** Symmetric design with Mirror instead of drawing both sides · Slot as a real F360 feature · Designing for consistent ground clearance  
 
 **Functional requirements (Level 1 must meet):**
-- [ ] Overall width: [TBD]
-- [ ] U opening height + depth: [TBD — must clear whatever it holds]
-- [ ] Tab hole diameter: [TBD]
+- [ ] Overall width: [TBD — must span IR sensor bar width]
+- [ ] U opening height: [TBD — sets sensor ground clearance]
+- [ ] U opening depth: [TBD — must seat IR bar securely]
+- [ ] Tab mounting hole diameter: [TBD]
 - [ ] Bottom slot dimensions: [TBD]
 
-**Level 2 prompt:** [TBD — depends on confirmed purpose]  
-**Level 3 prompt:** [TBD]  
+**Level 2 prompt:** Add a retention lip or press-fit feature inside the U to hold the IR bar without hardware; document the fit tolerance choice  
+**Level 3 prompt:** Custom sensor mount that allows height adjustment (slotted holes in tabs) — must still hold the bar rigid during operation  
 
 **Submission checklist:**
-- [ ] File named `Lastname_[Bracket]_v1-Base`
+- [ ] File named `Lastname_IRSensorMount_v1-Base`
 - [ ] Mirror used (not two separately drawn arms)
-- [ ] Slot present and correct dimensions
+- [ ] U opening dimensions correct (bar fits without rocking)
+- [ ] Slot present in bottom web
 - [ ] Screenshot: isometric + front
 
 ---
@@ -211,8 +216,10 @@ Before recording any video, measure these from actual hardware:
 
 ## Other Open Items
 
-- [ ] Confirm component names for C5, C6 (C7 confirmed as ultrasonic mount)
-- [ ] Resolve C2 tool progression: simplify Level 1 (manual spokes) or swap C2/C3 order?
+- [ ] All component names confirmed ✓ — C1 Wheel Hub, C2 Drive Wheel, C3 Motor Mount, C4 Deck, C5 Omni Wheel Mount, C6 IR Sensor Mount, C7 Ultrasonic Sensor Mount
+- [ ] C2 progression confirmed ✓ — Circular Pattern required; students choose spoke count/style (artistic flair encouraged)
+- [ ] C1 confirmed ✓ — inserts into purchased soft silicone wheel; teacher will simplify Level 1 geometry
 - [ ] Confirm Level 2/3 placement: end-of-video tags, or activity guide only?
-- [ ] Update pacing map component list (currently shows 6 wrong names from 2025-26)
+- [ ] Update pacing map: change component list from 6 (2025-26 names) to 7 confirmed components with correct names
 - [ ] Point values per deliverable (tabled — finalize after full course is written)
+- [ ] Hardware measurements still needed (see table above) before recording any videos
