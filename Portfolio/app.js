@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.12.2',
+    VERSION: 'v2.12.3',
 
     // Backend URL — swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -1812,11 +1812,15 @@ function initWeeklyReflectionForm() {
         btn.addEventListener('click', () => selectWeek(parseInt(btn.dataset.week)));
     });
 
-    document.getElementById('addContribution').addEventListener('click', addContributionRow);
-    document.getElementById('weeklyReflectionForm').addEventListener('submit', submitWeeklyReflection);
-    document.getElementById('saveReflectionDraft').addEventListener('click', saveReflectionDraft);
+    const addContrib = document.getElementById('addContribution');
+    if (addContrib) addContrib.addEventListener('click', addContributionRow);
 
-    // Rubric change listeners for live score updates
+    const reflForm = document.getElementById('weeklyReflectionForm');
+    if (reflForm) reflForm.addEventListener('submit', submitWeeklyReflection);
+
+    const saveDraft = document.getElementById('saveReflectionDraft');
+    if (saveDraft) saveDraft.addEventListener('click', saveReflectionDraft);
+
     document.querySelectorAll('.rubric-options input[type="radio"]').forEach(radio => {
         radio.addEventListener('change', () => {
             updateRubricScore();
@@ -1824,7 +1828,7 @@ function initWeeklyReflectionForm() {
         });
     });
 
-    selectWeek(state.currentWeek);
+    if (document.getElementById('reflectionWeek')) selectWeek(state.currentWeek);
 }
 
 function selectWeek(week) {
