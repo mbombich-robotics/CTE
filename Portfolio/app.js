@@ -1,4 +1,4 @@
-// Robotics Portfolio - Main Application (Google Auth Edition)
+﻿// Robotics Portfolio - Main Application (Google Auth Edition)
 
 // ============================================
 // CONFIGURATION - UPDATE THESE VALUES
@@ -6,18 +6,18 @@
 // Placeholder image (data URI - won't be blocked by firewalls)
 const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iI2UwZTBlMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5QaG90bzwvdGV4dD48L3N2Zz4=';
 
-// Track param from URL — set by class hub pages (?track=hsaer / aer8th / dbl)
+// Track param from URL - set by class hub pages (?track=hsaer / aer8th / dbl)
 // Overrides stored course for returning students in multiple classes.
 const URL_TRACK = new URLSearchParams(window.location.search).get('track') || null;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.12.5',
+    VERSION: 'v2.12.6',
 
-    // Backend URL — swapped at login via setBackendForCourse(); default is HS AE&R
+    // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
 
-    // One entry per course track — keys match state.student.course
+    // One entry per course track - keys match state.student.course
     BACKEND_URLS: {
         hsaer:  'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
         aer8th: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
@@ -27,19 +27,18 @@ const CONFIG = {
     // Google OAuth Client ID
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
 
-    // First day of school — update each year
+    // First day of school - update each year
     SEMESTER_START: new Date('2026-08-31'),
 
     // Point values
     POINTS: {
         WEEKLY_REFLECTION: 20,
-        TOTAL_POSSIBLE: 1110  // placeholder — recalculate when all deliverables are finalized
+        TOTAL_POSSIBLE: 1110
     },
 
     // Auto-save interval in milliseconds
     AUTO_SAVE_INTERVAL: 30000
 };
-
 function setBackendForCourse(course) {
     CONFIG.SHEETS_API_URL = CONFIG.BACKEND_URLS[course] || CONFIG.BACKEND_URLS.hsaer;
 }
@@ -61,33 +60,35 @@ const WEEK_TOPICS = {
     // Unit 3 — Safety & Tool Certification (Oct 26 – Nov 6)
     9:  { title: 'Safety: Foundations + Drill Press', phase: 'safety', unit: '03', focus: 'OSHA, LOTO, PPE, SDS; Matthew Henne + Lac-Mégantic case reviews; drill press cert' },
     10: { title: 'Safety: Tool Certs + Quiz', phase: 'safety', unit: '03', focus: 'Pedestal grinder cert, hand drill cert, CNC awareness (Year 1: observe only); safety quiz' },
-    // Robot Build — Physical Assembly (Nov 9 – Dec 18)
-    11: { title: 'Build: CNC Deck Cut + Motor Mount', phase: 'build', unit: 'build', focus: 'Cut decks on CNC (all groups); motor mount final print. Nov 11 is a 20-min period day.' },
-    12: { title: 'Build: Frame Assembly', phase: 'build', unit: 'build', focus: 'Assemble frame: motors, wheels, caster; caliper measurements' },
-    13: { title: 'Build: Wiring Electronics', phase: 'build', unit: 'build', focus: 'Wire battery + Arduino mount. Short week — Thanksgiving break Thu–Fri.' },
-    14: { title: 'Build: Wiring Complete + Motor Test', phase: 'build', unit: 'build', focus: 'Finish wiring; motor test code; troubleshooting' },
-    15: { title: 'Build: Robot Rolling + Sensor Wiring', phase: 'build', unit: 'build', focus: 'Robot under manual control; begin sensor wiring' },
-    16: { title: 'Build: Buffer Week', phase: 'build', unit: 'build', focus: 'Build buffer / holiday 3D print projects if ahead of schedule. Winter Break starts ~Dec 21.' },
-    // Unit 5 — Programming & Electronics (Jan 4 – Feb 5)
-    17: { title: 'Programming: Arduino Intro', phase: 'linefollow', unit: '05', focus: 'Lessons 1–3: Arduino IDE setup, digital outputs, variables, serial monitor' },
-    18: { title: 'Programming: Control Structures + Quiz', phase: 'linefollow', unit: '05', focus: 'Lessons 4–5: loops, control structures. Quiz: Lessons 1–5. Jan 13 = 20-min period day.' },
-    19: { title: 'Programming: Finish Lesson 5', phase: 'linefollow', unit: '05', focus: 'Finish Lesson 5; review. Last week of Semester 1 — last student day Thu Jan 21. MLK Day Jan 18.' },
-    20: { title: 'Programming: Functions + Motor Control', phase: 'linefollow', unit: '05', focus: 'Lessons 8–9: serial monitor, functions; robot motor control code' },
-    21: { title: 'Programming: Robot Drives', phase: 'linefollow', unit: '05', focus: 'Basic motor sketch on physical robot; encoder intro' },
-    // Line Following (Feb 8 – Feb 26)
-    22: { title: 'Line Following: Sensor Setup', phase: 'linefollow', unit: '05', focus: 'IR sensor wiring + analogRead; threshold calibration' },
-    23: { title: 'Line Following: PID Control', phase: 'linefollow', unit: '05', focus: 'PID control intro; tune on Track 1. Presidents Day Feb 15 — 4-day week.' },
-    24: { title: 'Line Following: Track 1 Practical', phase: 'linefollow', unit: '05', focus: 'Track 1 practical (complete in under 1 min); begin Track 2 tuning' },
-    // Scanner Robot (Mar 1 – Mar 25)
-    25: { title: 'Scanner: Ultrasonic Sensor', phase: 'scanner', unit: '05', focus: 'HC-SR04 wiring, distance measurement, data collection' },
-    26: { title: 'Scanner: Servo Control + Sweep', phase: 'scanner', unit: '05', focus: 'Servo control; 180° sweep; data arrays. Mar 10 = 20-min period day.' },
-    27: { title: 'Scanner: Obstacle Detection Algorithm', phase: 'scanner', unit: '05', focus: 'Scanning algorithm; obstacle detection logic' },
-    28: { title: 'Scanner: Practical + Portfolio', phase: 'scanner', unit: '05', focus: 'Scanner practical; portfolio submission. Short week before Spring Break (Mar 26–Apr 4).' },
-    // Claw Project (Apr 5 – Apr 30)
-    29: { title: 'Claw: Intro + Design Brief', phase: 'claw', unit: '05', focus: 'Claw intro: servos + gripper mechanics; design brief D8' },
-    30: { title: 'Claw: Build + State Testing', phase: 'claw', unit: '05', focus: 'Work time; state testing Tue–Thu (independent coding). Short real-instruction week.' },
-    31: { title: 'Claw: Wiring + Potentiometer', phase: 'claw', unit: '05', focus: 'Claw build + wiring; potentiometer feedback control' },
-    32: { title: 'Claw: Practical + Final Submission', phase: 'claw', unit: '05', focus: 'Claw practical; design brief D9 due' },
+    // Robot Build — Physical Assembly (Nov 9–13)
+    11: { title: 'Build: Robot Assembly', phase: 'build', unit: 'build', focus: 'Assemble frame: motors, wheels, caster; mount electronics board; wire motors and battery; caliper check. Nov 11 = 20-min period day.' },
+    // Unit 5 — Programming Basics (Nov 16 – Dec 18)
+    12: { title: 'L5.1 Microcontroller Fundamentals + L5.2 Functions', phase: 'programming', unit: '05', focus: 'L5.1 Microcontroller Fundamentals + A5.1 Blink; L5.2 Python Functions + A5.2 SOS with Functions' },
+    13: { title: 'L5.3 Digital Input', phase: 'programming', unit: '05', focus: 'L5.3 Digital Input + begin A5.3 Switches. Short week — Thanksgiving Mon–Wed only.' },
+    14: { title: 'L5.4 PWM', phase: 'programming', unit: '05', focus: 'Finish A5.3 Switches; L5.4 PWM + A5.4' },
+    15: { title: 'L5.5 Motor Control + D51', phase: 'programming', unit: '05', focus: 'L5.5 Motor Control + A5.5; Programming Quiz; D51 Programming Basics due end of week' },
+    16: { title: '3D Print Holiday Project', phase: 'programming', unit: '05', focus: 'Design and 3D print a small item to take home — ornament, keychain, name plate. Winter Break ~Dec 21.' },
+    // Robot Tuning — Encoders & IMU (Jan 4–21)
+    17: { title: 'Robot Tuning: Motor Control + Encoders', phase: 'tuning', unit: '05', focus: 'Motor control on physical robot; drive + turn functions; encoder wiring and pulse counting' },
+    18: { title: 'Robot Tuning: Encoder Feedback + IMU', phase: 'tuning', unit: '05', focus: 'Drive-straight with encoder feedback; IMU intro — Qwiic plug-in, read yaw angle. Jan 13 = 20-min period day.' },
+    19: { title: 'Robot Tuning: IMU Heading + Midterm', phase: 'tuning', unit: '05', focus: 'IMU heading hold; catch-up; Midterm Exam (EDP, CAD, Safety, Programming Basics). MLK Day Jan 18 — last student day Thu Jan 21.' },
+    // Ultrasonic & Wall Following (Jan 25 – Feb 5)
+    20: { title: 'Ultrasonic: Distance + Obstacle Detection', phase: 'ultrasonic', unit: '05', focus: 'I2C ultrasonic via TCA9548A mux (3 sensors); distance measurement; obstacle detection logic. S2 begins Jan 25.' },
+    21: { title: 'Wall Following', phase: 'ultrasonic', unit: '05', focus: 'Maintain fixed distance from a wall using ultrasonic; proportional correction' },
+    // Line Following (Feb 8–19)
+    22: { title: 'Line Following: IR Array + Calibration', phase: 'linefollow', unit: '05', focus: '5-sensor IR array; per-sensor threshold calibration; binary line following' },
+    23: { title: 'Line Following: PID + Practical', phase: 'linefollow', unit: '05', focus: 'Weighted-sensor error; PID control; tune + course practical. Presidents Day Feb 15 — 4-day week.' },
+    // Mechanisms (Feb 22 – Mar 25)
+    24: { title: 'Mechanisms: Simple Machines + MA', phase: 'mechanisms', unit: '05', focus: 'Simple machines intro; mechanical advantage + efficiency (POE 111/113). Feb 26 mid-winter break.' },
+    25: { title: 'Mechanisms: Pulley Systems', phase: 'mechanisms', unit: '05', focus: 'Pulley systems — fixed, movable, compound (POE 114)' },
+    26: { title: 'Mechanisms: Gear Ratios', phase: 'mechanisms', unit: '05', focus: 'Gear ratios + multi-stage gear trains (POE 115). Mar 10 = 20-min period day.' },
+    27: { title: 'Mechanisms: Converting Motion', phase: 'mechanisms', unit: '05', focus: 'Cams, cranks, linkages, rotary→linear motion (POE 122)' },
+    28: { title: 'Mechanisms: Design Challenge', phase: 'mechanisms', unit: '05', focus: 'Mechanism design challenge. Short week before Spring Break (Mar 26–Apr 4).' },
+    // Servo Build Project (Apr 5–30)
+    29: { title: 'Servo Project: Intro + Design Brief', phase: 'servo', unit: '05', focus: 'Project intro + design brief; servo control review; begin build' },
+    30: { title: 'Servo Project: Build', phase: 'servo', unit: '05', focus: 'Build (limited time — state testing Tue–Thu)' },
+    31: { title: 'Servo Project: Build + Test + Iterate', phase: 'servo', unit: '05', focus: 'Build + test + iterate' },
+    32: { title: 'Servo Project: Final Demo', phase: 'servo', unit: '05', focus: 'Final demo + portfolio submission' },
     // Capstone, Portfolio & Review (May 3 – Jun 11)
     33: { title: 'Capstone: Open Challenge', phase: 'final', unit: '05', focus: 'Open-ended improvement project. May 5 = 20-min period day.' },
     34: { title: 'Portfolio Completion Push', phase: 'final', unit: '05', focus: 'All deliverables finalized; portfolio review' },
@@ -326,6 +327,23 @@ const DELIVERABLES = [
             'After completing C7 and the Interference Check passes with zero collisions, what is the next step? Why is the Interference Check the gate before that step?'
         ]
     },
+    // ── Unit 3: Safety Certification ────────────────────────────────────
+    {
+        id: 31,
+        title: 'Tool Safety Certifications',
+        unit: '03',
+        week: 10,
+        points: 50,
+        phase: 'safety',
+        description: 'Complete all required shop safety certifications before the build phase. Each certification requires passing the safety rules check and an observed hands-on demonstration with Mr. Bombich.',
+        requirements: [
+            'Drill press certification — safety rules + supervised demonstration',
+            'Pedestal grinder certification — safety rules + supervised demonstration',
+            'Hand drill certification — safety rules + supervised demonstration',
+            'Safety quiz passed (end of Week 10) — OSHA, PPE, LOTO, SDS',
+            'Signed certification card on file before Week 11 build phase begins'
+        ]
+    },
     // ── Unit 5: Programming Basics ───────────────────────────────────────
     {
         id: 51,
@@ -355,7 +373,12 @@ const DELIVERABLES = [
             '5.4 Q2: duty_u16() accepts values 0–65535. What value gives 75% duty cycle? Show your calculation.',
             '5.4 Q3: What does freq() control in a PWM signal? Would you notice a difference between freq(10) and freq(1000) on an LED? Explain.',
             '5.4 Q4: Write the line inside set_brightness(percent) that calculates the duty value. Why is int() required?',
-            '5.4 Q5: Identify the two bugs in the debug snippet from Activity 5.4 and write the corrected version of each line.'
+            '5.4 Q5: Identify the two bugs in the debug snippet from Activity 5.4 and write the corrected version of each line.',
+            '5.5 Q1: What does duty_u16() accept and what values map to stopped, half-speed, and full speed? Show the calculation for half-speed.',
+            '5.5 Q2: In set_speed(pct), the line pct = max(0, min(100, pct)) clamps the input. Trace what happens when you call set_speed(150) — what value does pct hold after that line, and why?',
+            '5.5 Q3: After calling set_speed(75), you call get_speed(). What does it return? Explain what happened to _speed during both calls.',
+            '5.5 Q4: You call set_speed(50) but the motor does not spin. List three distinct things you would check first, in order.',
+            '5.5 Q5: Identify and write the corrected lines for the two bugs in the debug snippet from Activity 5.5.'
         ]
     },
     // ── Unit 5: Robot Project — TBD (new Pico 2W curriculum) ────────────
@@ -368,312 +391,261 @@ const DELIVERABLES = [
 // CODE RESOURCES
 // ============================================
 const RESOURCES = {
-    ultrasonic: {
-        title: 'HC-SR04 Wiring Guide',
+    micropython: {
+        title: 'MicroPython Quick Reference',
         content: `
-## HC-SR04 Ultrasonic Sensor Wiring
+## MicroPython Quick Reference
 
-### Connections to Arduino RP2040
+### Variables & Types
+` + '```python' + `
+x = 10          # int
+y = 3.14        # float
+name = "LED"    # str
+flag = True     # bool (capital T/F)
+` + '```' + `
 
-| HC-SR04 Pin | Arduino Pin |
-|-------------|-------------|
-| VCC | 5V |
-| GND | GND |
-| TRIG | GPIO 2 |
-| ECHO | GPIO 3 |
+### Arithmetic Operators
+| Operator | Meaning | Example |
+|----------|---------|---------|
+| ` + '`+` `-` `*` `/`' + ` | Basic math | 5 + 3 → 8 |
+| ` + '`//`' + ` | Integer division | 7 // 2 → 3 |
+| ` + '`%`' + ` | Remainder | 7 % 2 → 1 |
+| ` + '`**`' + ` | Exponent | 2 ** 3 → 8 |
 
-### Important Notes
-- The HC-SR04 needs 5V power but works with 3.3V logic
-- Keep wires short to reduce noise
-- Mount sensor away from motors to avoid vibration interference
+### Type Conversions
+` + '```python' + `
+int(3.9)     # → 3  (truncates, does not round)
+float(5)     # → 5.0
+str(42)      # → "42"
+` + '```' + `
+
+### Conditionals
+` + '```python' + `
+if x > 0:
+    print("positive")
+elif x == 0:
+    print("zero")
+else:
+    print("negative")
+` + '```' + `
+
+### Loops
+` + '```python' + `
+while True:           # runs forever
+    do_something()
+
+for i in range(5):    # 0, 1, 2, 3, 4
+    print(i)
+` + '```' + `
+
+### Functions
+` + '```python' + `
+def blink(duration_ms):
+    led.value(1)
+    time.sleep_ms(duration_ms)
+    led.value(0)
+    time.sleep_ms(100)
+
+blink(400)   # call with argument
+` + '```' + `
+
+### Scope & global
+` + '```python' + `
+_speed = 0           # module-level variable
+
+def set_speed(pct):
+    global _speed    # must declare to write to it
+    _speed = pct
+
+def get_speed():
+    return _speed    # reading is fine without global
+` + '```' + `
+
+### Clamp Pattern
+` + '```python' + `
+# Keep a value between lo and hi
+value = max(lo, min(hi, value))
+
+# Example - clamp 0 to 100
+pct = max(0, min(100, pct))
+` + '```' + `
 `
     },
-    ultraCode: {
-        title: 'Distance Measurement Code',
+    pico_hw: {
+        title: 'Pico 2W Hardware Reference',
         content: `
-## Basic Ultrasonic Distance Code
+## Pico 2W Hardware Reference
 
-\`\`\`cpp
-// HC-SR04 with Arduino RP2040
-const int trigPin = 2;
-const int echoPin = 3;
+### Built-in LED
+` + '```python' + `
+from machine import Pin
+led = Pin("LED", Pin.OUT)   # use "LED" - not a number
+led.value(1)    # on
+led.value(0)    # off
+led.toggle()    # flip state
+` + '```' + `
 
-void setup() {
-  Serial.begin(115200);
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
-}
+### Digital GPIO
+` + '```python' + `
+from machine import Pin
+btn = Pin(15, Pin.IN, Pin.PULL_DOWN)
+val = btn.value()   # 0 = not pressed, 1 = pressed (PULL_DOWN)
+` + '```' + `
 
-long getDistance() {
-  // Send trigger pulse
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
+### PWM
+` + '```python' + `
+from machine import Pin, PWM
+pwm = PWM(Pin(16))
+pwm.freq(1000)          # frequency in Hz
+pwm.duty_u16(32768)     # 0 to 65535
 
-  // Measure echo time
-  long duration = pulseIn(echoPin, HIGH);
+# duty_u16 quick reference
+# 0%  = 0      25% = 16384
+# 50% = 32768  75% = 49152   100% = 65535
+# Formula: percent * 655  (approx 655.35)
+` + '```' + `
 
-  // Convert to centimeters
-  // Speed of sound = 343 m/s = 0.034 cm/µs
-  // Divide by 2 for round trip
-  long distance = duration * 0.034 / 2;
+### I2C (Qwiic / STEMMA QT)
+` + '```python' + `
+from machine import I2C, Pin
+i2c = I2C(0, scl=Pin(1), sda=Pin(0), freq=400_000)
+devices = i2c.scan()   # returns list of addresses
+` + '```' + `
 
-  return distance;
-}
-
-void loop() {
-  long dist = getDistance();
-  Serial.print("Distance: ");
-  Serial.print(dist);
-  Serial.println(" cm");
-  delay(100);
-}
-\`\`\`
+### Timing
+` + '```python' + `
+import time
+time.sleep(1)         # 1 second
+time.sleep_ms(500)    # 500 milliseconds
+time.sleep_us(100)    # 100 microseconds
+time.ticks_ms()       # current ms count (for timing)
+` + '```' + `
 `
     },
-    scanCode: {
-        title: 'Scanning Sweep Code',
+    leo_pins: {
+        title: 'L.E.O. Platform - Pin Reference',
         content: `
-## Servo Scanning Code
+## L.E.O. Platform - Pin Reference
 
-\`\`\`cpp
-#include <Servo.h>
+**L.E.O.** = Logic, Electronics, and Operations
 
-Servo scanServo;
-const int servoPin = 4;
-const int trigPin = 2;
-const int echoPin = 3;
+> Pin assignments are defined by the carrier board. Import from motor.py rather than hardcoding GPIO numbers directly.
 
-// Store scan data
-int distances[19]; // 0° to 180° in 10° steps
+### Motor Driver Pins
+| Signal | GPIO | Notes |
+|--------|------|-------|
+| Left IN1 | GP2 | Direction |
+| Left IN2 | GP3 | Direction |
+| Left PWM | GP4 | Speed (0-65535) |
+| Right IN1 | GP5 | Direction |
+| Right IN2 | GP6 | Direction |
+| Right PWM | GP7 | Speed (0-65535) |
 
-void setup() {
-  Serial.begin(115200);
-  scanServo.attach(servoPin);
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
-}
+*Confirm against your carrier board before running motor code.*
 
-long getDistance() {
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
-  long duration = pulseIn(echoPin, HIGH, 30000);
-  if (duration == 0) return 999; // No echo = far away
-  return duration * 0.034 / 2;
-}
+### I2C Bus
+| Signal | GPIO |
+|--------|------|
+| SDA | GP0 |
+| SCL | GP1 |
 
-void scan() {
-  Serial.println("Starting scan...");
+### Using motor.py
+` + '```python' + `
+import motor
 
-  for (int i = 0; i <= 18; i++) {
-    int angle = i * 10;
-    scanServo.write(angle);
-    delay(100); // Let servo settle
+motor.set_speed('left', 60)    # left motor at 60%
+motor.set_speed('right', 60)   # right motor at 60%
+motor.stop()                   # both motors off
 
-    distances[i] = getDistance();
-
-    Serial.print(angle);
-    Serial.print("°: ");
-    Serial.print(distances[i]);
-    Serial.println(" cm");
-  }
-
-  // Find closest obstacle
-  int minDist = 999;
-  int minAngle = 90;
-  for (int i = 0; i <= 18; i++) {
-    if (distances[i] < minDist) {
-      minDist = distances[i];
-      minAngle = i * 10;
-    }
-  }
-
-  Serial.print("Closest obstacle: ");
-  Serial.print(minDist);
-  Serial.print(" cm at ");
-  Serial.print(minAngle);
-  Serial.println("°");
-}
-
-void loop() {
-  scan();
-  delay(2000);
-}
-\`\`\`
+speed = motor.get_speed('left')  # returns current %
+` + '```' + `
 `
     },
-    servoCode: {
-        title: 'Servo Control Code',
+    pltw_sheet: {
+        title: 'PLTW Reference Sheet',
         content: `
-## Basic Servo Control
+## PLTW Reference Sheet
 
-\`\`\`cpp
-#include <Servo.h>
+### Mechanical Advantage
+**MA = Load Force / Effort Force**
 
-Servo myServo;
-const int servoPin = 5;
+- MA > 1: multiplies your force (easier lift, slower motion)
+- MA < 1: trades force for speed (harder lift, faster motion)
+- MA = 1: changes direction only
 
-void setup() {
-  myServo.attach(servoPin);
-  Serial.begin(115200);
-}
+### Efficiency
+**Efficiency (%) = (Work Output / Work Input) x 100**
 
-void loop() {
-  // Move to specific angles
-  myServo.write(0);    // Full one direction
-  delay(1000);
+- Always <= 100% (friction steals energy)
+- Ideal (theoretical) machines assume 100% efficiency
 
-  myServo.write(90);   // Center position
-  delay(1000);
+### Work & Power
+| Formula | Units |
+|---------|-------|
+| W = F x d | Joules (J) |
+| P = W / t | Watts (W) |
+| P = F x v | Watts (W) |
 
-  myServo.write(180);  // Full other direction
-  delay(1000);
-}
-\`\`\`
+### Pulley Systems
+| Type | IMA | Effect |
+|------|-----|--------|
+| Fixed | 1 | Direction change only |
+| Movable | 2 | Halves effort force |
+| Compound (n movable) | 2n | Multiplies MA |
 
-### Servo Tips
-- Most servos have 0-180° range
-- Some "continuous rotation" servos work differently
-- Don't force servo past its limits
-- Use \`delay()\` to let servo reach position
+### Gear Ratio
+**GR = Driven Teeth / Driver Teeth**
+
+- GR > 1: output slower, more torque
+- GR < 1: output faster, less torque
+- Multi-stage: multiply each stage GR together
+
+### Inclined Plane
+**IMA = Length of slope / Rise height**
+
+### Common Conversions
+| From | To | Factor |
+|------|-----|--------|
+| ft-lb | J | x 1.356 |
+| hp | W | x 745.7 |
+| rpm | rad/s | / 9.549 |
 `
     },
-    clawCode: {
-        title: 'Claw Functions Code',
+    thonny: {
+        title: 'Thonny Setup & Troubleshooting',
         content: `
-## Claw Control Functions
+## Thonny Setup & Common Errors
 
-\`\`\`cpp
-#include <Servo.h>
+### First-Time Setup
+1. Open Thonny -> **Tools -> Options -> Interpreter**
+2. Select **MicroPython (Raspberry Pi Pico)**
+3. Port: auto-detected (COMx on Windows)
+4. Click OK - red stop button appears at the bottom
 
-Servo clawServo;
-const int clawPin = 5;
+### Running Code
+- **F5 / Run**: runs in memory - lost on power off
+- **Save to Pico as main.py**: File -> Save As -> select Pico -> name it **main.py** (runs automatically on boot)
 
-// Adjust these for YOUR claw
-const int OPEN_POS = 10;     // Fully open
-const int CLOSED_POS = 90;   // Fully closed
+### Common Errors
+| Error | Likely Cause |
+|-------|-------------|
+| ` + '`NameError: name "x" is not defined`' + ` | Variable used before assignment; spelling typo |
+| ` + '`SyntaxError`' + ` | Missing colon after def/if/while; bad indentation |
+| ` + '`IndentationError`' + ` | Mixed tabs and spaces; body not indented |
+| ` + '`AttributeError: "NoneType"`' + ` | Called method on a function that returned None |
 
-void setup() {
-  clawServo.attach(clawPin);
-  Serial.begin(115200);
-  openClaw();
-}
+### If the Pico Won't Connect
+1. Unplug the USB cable
+2. Hold BOOTSEL button on Pico -> plug USB back in -> release
+3. Pico appears as USB drive (RPI-RP2)
+4. Drag a fresh MicroPython .uf2 file onto the drive
+5. Pico reboots - reconnect in Thonny
 
-void openClaw() {
-  clawServo.write(OPEN_POS);
-  Serial.println("Claw OPEN");
-}
-
-void closeClaw() {
-  clawServo.write(CLOSED_POS);
-  Serial.println("Claw CLOSED");
-}
-
-// Grip at a percentage (0 = open, 100 = closed)
-void gripPercent(int percent) {
-  percent = constrain(percent, 0, 100);
-  int pos = map(percent, 0, 100, OPEN_POS, CLOSED_POS);
-  clawServo.write(pos);
-  Serial.print("Grip: ");
-  Serial.print(percent);
-  Serial.println("%");
-}
-
-void loop() {
-  // Example: control via Serial
-  if (Serial.available()) {
-    char cmd = Serial.read();
-    if (cmd == 'o') openClaw();
-    if (cmd == 'c') closeClaw();
-    if (cmd == 'h') gripPercent(50); // Half grip
-  }
-}
-\`\`\`
-`
-    },
-    debug: {
-        title: 'Common Problems & Fixes',
-        content: `
-## Troubleshooting Guide
-
-### Servo Not Moving
-1. Check power - servos need 5V and decent current
-2. Verify signal wire on correct pin
-3. Make sure \`servo.attach(pin)\` is called
-4. Try a different servo to rule out hardware
-
-### Ultrasonic Reading 0 or 999
-1. Check wiring - TRIG and ECHO might be swapped
-2. Verify 5V power to sensor
-3. Make sure nothing is too close (< 2cm)
-4. Check for loose connections
-
-### Robot Driving Erratically
-1. Check battery voltage - low battery = weird behavior
-2. Verify motor connections aren't loose
-3. Look for shorts in wiring
-4. Test motors individually
-
-### Code Won't Upload
-1. Select correct board in Arduino IDE
-2. Check COM port selection
-3. Try pressing reset button during upload
-4. Disconnect any wires from TX/RX pins
-
-### Serial Monitor Shows Garbage
-1. Match baud rate (usually 115200)
-2. Check USB cable is data-capable
-3. Close and reopen Serial Monitor
-`
-    },
-    serial: {
-        title: 'Using Serial Monitor',
-        content: `
-## Serial Monitor Guide
-
-### Setup
-\`\`\`cpp
-void setup() {
-  Serial.begin(115200);  // Match this in Serial Monitor!
-}
-\`\`\`
-
-### Printing Values
-\`\`\`cpp
-// Print text
-Serial.println("Hello!");
-
-// Print numbers
-int distance = 42;
-Serial.println(distance);
-
-// Print with labels
-Serial.print("Distance: ");
-Serial.print(distance);
-Serial.println(" cm");
-\`\`\`
-
-### Reading Input
-\`\`\`cpp
-void loop() {
-  if (Serial.available()) {
-    char c = Serial.read();
-    Serial.print("You typed: ");
-    Serial.println(c);
-  }
-}
-\`\`\`
-
-### Tips
-- \`print()\` stays on same line
-- \`println()\` adds new line
-- Open Serial Monitor with Ctrl+Shift+M
-- Make sure baud rate matches your code
+### REPL Tips
+- Click **Stop/Restart** (red button) to get the >>> prompt
+- Type one line at a time to test quickly
+- Ctrl+C stops a running program
+- Ctrl+D soft-resets (re-runs main.py)
 `
     }
 };
