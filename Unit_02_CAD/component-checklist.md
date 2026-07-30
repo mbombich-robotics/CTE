@@ -9,37 +9,37 @@
 
 | # | Component | Print Method | New Tools This Component |
 |---|-----------|:---:|--------------------------|
-| C1 | Wheel Hub (simplified — inserts into soft silicone wheel) | 🖨 | Sketch plane · Circle (concentric) · Dimension · Extrude (multi-depth) · Fillet |
-| C2 | Drive Wheel (spoked, hex bore — spoke design = student's artistic choice) | 🖨 | Polygon (hex bore) · Circular Pattern (spokes) · Extrude-Cut |
-| C3 | Motor Mount (cylinder cradle + top plate) | 🖨 | Rectangle · Cut extrude (clamp gap) · Sketch on face |
-| C4 | Robot Deck | 🔲 | Rectangular pattern · Construction lines · CNC corner radius rule · Slot tool |
-| C5 | Omni Wheel Mount (front wheel assembly) | 🖨 | Multi-plane sketch · Reference geometry |
+| C1 | Wheel Hub | 🖨 | Sketch plane · Circle (concentric) · Dimension · Extrude (multi-depth) · Fillet |
+| C2 | Drive Wheel (spoked, hex bore — spoke design = student's artistic choice; inserts into soft silicone tire) | 🖨 | Polygon (hex bore) · Circular Pattern (spokes) · Extrude-Cut |
+| C3 | Motor Sleeve Mount (sleeve bore + face screws + nut-capture rail) | 🖨 | Rectangle · Channel profile extrude · Hole tool (face screws) |
+| C4 | Robot Deck | 🔲 | Base sketch: return and modify frequently · Construction lines · CNC corner radius rule · Slot tool |
+| C5 | Omni Wheel Mount | 🖨 | Multi-plane sketch · Reference geometry |
 | C6 | IR Sensor Mount (U-bracket, front underside — holds IR bar for line following) | 🖨 | Mirror · Slot tool |
 | C7 | Ultrasonic Sensor Mount (two-bore L-bracket, front-facing) | 🖨 | Large-bore circle · L-bracket two-face extrude |
 
-> **Soft silicone wheels** are purchased items — students do not model them. C1 (hub) and C2 (drive wheel inner structure) insert into / attach to the silicone wheels.  
+> **Soft silicone wheels** are purchased items already modeled — students do not model them. C1 (hub) x2 attach to either side of Omni wheel and C2 (drive wheel inner structure) insert into the silicone wheels.  
 > **C2 progression:** Circular Pattern is confirmed as a C2 skill. Students choose their own spoke count and style — the constraint is that spokes must be created with Circular Pattern, not drawn individually. This gives creative buy-in before the more constrained functional components (C3–C7).
 
 ---
 
 ## C1 — Wheel Hub  🖨
-**Geometry:** Flanged collar — flat ring (flange) + raised hub cylinder, 4 small bolt holes around the flange, large central bore  
+**Geometry:** Flanged collar — flat ring (flange) + raised hub cylinder, 4 small bolt holes around the flange, large central bore for bearing, clearance holes for bolt heads and nuts
 **Week:** 3  
 **New F360 tools:** Circle (multiple concentric) · Dimension constraint · Extrude (two depths: hub height + flange thickness) · Hole tool (4 mounting holes) · Fillet (outer flange edge)  
 **Key concepts:** Fully constrained sketch (all lines black) · Multi-depth extrude · File naming convention  
 
 **Functional requirements (Level 1 must meet):**
-- [ ] Central bore diameter: [TBD — measure motor shaft or caster axle]
-- [ ] Flange outer diameter: [TBD]
-- [ ] Hub height: [TBD]
-- [ ] Bolt hole diameter + spacing: [TBD — measure 4-hole pattern]
+- [ ] Central bore diameter: [12mm nominal bearing diameter, but final fit in 3d print is empirically driven]
+- [ ] Flange outer diameter: [25mm]
+- [ ] Hub height: [6.5mm]
+- [ ] Bolt hole diameter + spacing: [3.3mm hole size - empirically driven x 16mm pattern diameter]
 
-**Level 1 simplification:** Flat flange + hub cylinder only — no internal chamfer/fillet on bore  
-**Level 2 prompt:** Add a chamfer or lead-in on the central bore; adjust bolt hole pattern for a different mounting configuration  
+**Level 1 simplification:** Flat flange + hub cylinder only — no internal chamfer/fillet on bore, nominal hole sizes not adjusted from testing
+**Level 2 prompt:** Add a chamfer or lead-in on the central bore; hole sizes determined through multiple iterations and test fitting, documnet progression
 **Level 3 prompt:** Redesign hub for a different attachment method (press-fit, set-screw collar, etc.) — must fit the same axle diameter  
 
 **Submission checklist:**
-- [ ] File named `Lastname_WheelHub_v1-Base`
+- [ ] File named `Lastname_OmniWheelHub_v1-Base`
 - [ ] Sketch fully constrained before extruding
 - [ ] Central bore diameter matches spec
 - [ ] 4 bolt holes correct diameter and spacing
@@ -47,7 +47,7 @@
 
 ---
 
-## C2 — Drive Wheel  🖨
+## C2 — Drive Wheel Hub 🖨
 **Geometry:** Outer rim + 3 spokes (with groove detail) + central hub with hex bore; spoked design is rotationally symmetric  
 **Week:** 3–4  
 **New F360 tools:** Polygon tool (hex bore) · Circular Pattern (spokes) · Extrude-Cut (spoke openings)  
@@ -55,13 +55,13 @@
 **Key concepts:** Hex bore for motor shaft · Spoke design for weight reduction · Symmetric features  
 
 **Functional requirements (Level 1 must meet):**
-- [ ] Outer diameter: [TBD — matches track width]
-- [ ] Hex bore size: [TBD — measure motor shaft hex]
-- [ ] Wheel width/thickness: [TBD]
-- [ ] Spoke count: 3 (Level 1) — symmetric
+- [ ] Outer diameter: [Nominal 2.125in + (3mm) for interference fit in soft silicone, determined empirically]
+- [ ] Hex bore size: [3/8" nominal flat to flat, but final fit in 3d printed part is empirically driven]
+- [ ] Wheel width/thickness: [25.4mm]
+- [ ] Spoke count: (Level 1) — symmetric
 
 **Level 2 prompt:** Replace manually drawn spokes with Circular Pattern; add the groove detail visible on Mr. B's wheel  
-**Level 3 prompt:** Custom wheel design — same outer diameter and hex bore, otherwise free choice (different spoke pattern, tread features, etc.)  
+**Level 3 prompt:** Custom wheel design — same outer diameter and hex bore, otherwise free choice (different spoke pattern, spinning rim, etc.)  
 
 **Submission checklist:**
 - [ ] File named `Lastname_DriveWheel_v1-Base`
@@ -72,27 +72,31 @@
 
 ---
 
-## C3 — Motor Mount  🖨
-**Geometry:** Cylindrical clamp cradle (open on one side with clamp gap) + flat rectangular mounting plate on top with 4 bolt holes; grooves/ribs on cylinder exterior  
+## C3 — Motor Sleeve Mount  🖨
+**How it works:** Motor flange is removed → motor body slides into the sleeve bore → flange is reattached to motor housing through the front face of the mount → screws pass through the mount face into the flange to lock the motor axially. The rails along the top create a nut-capture channel: nuts are slid in, then bolts pass down through the deck from above into the captured nuts — no under-deck access needed.  
+**Geometry:** Cylindrical sleeve bore (open front face for flange screws) + nut-capture rail channel running the full length of the top surface; rails appear as two raised walls with a slot between them  
 **Week:** 4  
-**New F360 tools:** Cut extrude (for clamp gap) · Sketch on face (top plate sketched on top surface of cylinder) · Rectangle  
-**Key concepts:** Cut vs. Join extrude · Designing a clamp feature (gap allows bolt compression) · Sketch on an existing face  
+**New F360 tools:** Circle (sleeve bore) · Channel/rail profile sketch (cross-section of nut-capture slot extruded along top) · Hole tool (face screw holes through front face)  
+**Key concepts:** Nut-capture channel as a 3D-print design pattern · Sketch a profile cross-section, then extrude the full length · Designing for assembly sequence (not just the final shape, but how parts go in)  
 
 **Functional requirements (Level 1 must meet):**
-- [ ] Cylinder inner diameter: [TBD — measure motor body OD + clearance]
-- [ ] Clamp gap width: [TBD]
-- [ ] Mounting plate dimensions: [TBD]
-- [ ] Mounting hole pattern: [TBD — 4 holes, spacing for deck mount]
+- [ ] Sleeve bore inner diameter: [TBD — motor body OD + clearance, ~0.3–0.5mm each side]
+- [ ] Sleeve length: [TBD — motor body length]
+- [ ] Face screw hole pattern: [TBD — match motor flange bolt circle]
+- [ ] Rail channel width: [TBD — nut width + clearance for sliding]
+- [ ] Rail channel depth: [TBD — nut thickness + clearance]
+- [ ] Rail channel length: must run full top length so nut can be inserted from either end
 
-**Level 2 prompt:** Add a cable relief slot on the side of the cylinder; adjust mounting plate to reduce weight while maintaining 4-hole bolt pattern  
-**Level 3 prompt:** Redesign motor retention method — same motor OD and mounting plate footprint, different clamp or bracket strategy  
+**Level 2 prompt:** Add a chamfer or lead-in to both ends of the rail channel so nuts seat more easily; reduce material on non-load-bearing walls while keeping rail walls at full thickness  
+**Level 3 prompt:** Redesign the deck-attachment system — same sleeve bore and face screw pattern, but a different strategy for attaching to the deck (through-bolts, integrated standoffs, etc.)  
 
 **Submission checklist:**
-- [ ] File named `Lastname_MotorMount_v1-Base`
-- [ ] Cylinder ID matches motor body (with clearance)
-- [ ] Clamp gap present
-- [ ] 4 mounting holes correct pattern
-- [ ] Screenshot: isometric (clamp gap visible)
+- [ ] File named `Lastname_SleevMount_v1-Base`
+- [ ] Sleeve bore correct ID (check against motor body OD)
+- [ ] Face screw holes correct pattern
+- [ ] Rail channel runs full top length
+- [ ] Rail channel correct width and depth (M3/M4 nut fits and slides)
+- [ ] Screenshot: isometric (rail channel visible) + front face (screw holes visible)
 
 ---
 
