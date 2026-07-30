@@ -76,16 +76,17 @@
 **How it works:** Motor flange is removed → motor body slides into the sleeve bore → flange is reattached to motor housing through the front face of the mount → screws pass through the mount face into the flange to lock the motor axially. The rails along the top create a nut-capture channel: nuts are slid in, then bolts pass down through the deck from above into the captured nuts — no under-deck access needed.  
 **Geometry:** Cylindrical sleeve bore (open front face for flange screws) + nut-capture rail channel running the full length of the top surface; rails appear as two raised walls with a slot between them  
 **Week:** 4  
-**New F360 tools:** Circle (sleeve bore) · Channel/rail profile sketch (cross-section of nut-capture slot extruded along top) · Hole tool (face screw holes through front face)  
-**Key concepts:** Nut-capture channel as a 3D-print design pattern · Sketch a profile cross-section, then extrude the full length · Designing for assembly sequence (not just the final shape, but how parts go in)  
+**New F360 tools:** Circle (sleeve bore) · T-slot profile sketch (sketch the T cross-section on the end face, Extrude-Cut the full length of the top) · Hole tool (face screw holes)  
+**Key concepts:** T-slot nut-capture as a 3D-print design pattern — the bottom cavity must be wide enough for the nut head + insertion clearance; the top slot must be wide enough for the bolt shaft but narrow enough to trap the nut. Getting either dimension wrong breaks the mechanism. · Sketch a cross-section profile, then extrude-cut full length · Assembly sequence thinking: nut slides in from end before the mount is bolted to the deck  
 
 **Functional requirements (Level 1 must meet):**
 - [ ] Sleeve bore inner diameter: [TBD — motor body OD + clearance, ~0.3–0.5mm each side]
 - [ ] Sleeve length: [TBD — motor body length]
 - [ ] Face screw hole pattern: [TBD — match motor flange bolt circle]
-- [ ] Rail channel width: [TBD — nut width + clearance for sliding]
-- [ ] Rail channel depth: [TBD — nut thickness + clearance]
-- [ ] Rail channel length: must run full top length so nut can be inserted from either end
+- [ ] T-slot top slot width: [TBD — bolt shaft OD + clearance, but less than nut width across-flats]
+- [ ] T-slot bottom cavity width: [TBD — nut width across-flats + ~0.4mm sliding clearance]
+- [ ] T-slot bottom cavity depth: [TBD — nut thickness + ~0.3mm]
+- [ ] T-slot length: must run full top length so nut can be inserted from either end before mounting
 
 **Level 2 prompt:** Add a chamfer or lead-in to both ends of the rail channel so nuts seat more easily; reduce material on non-load-bearing walls while keeping rail walls at full thickness  
 **Level 3 prompt:** Redesign the deck-attachment system — same sleeve bore and face screw pattern, but a different strategy for attaching to the deck (through-bolts, integrated standoffs, etc.)  
