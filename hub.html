@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <title>Class Hub — VHS CTE</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: #111;
+            color: #f0f0f0;
+            min-height: 100vh;
+        }
+
+        /* ── Header ─────────────────────────── */
+        .header {
+            background: linear-gradient(135deg, #8B0000 0%, #c41e3a 55%, #8B0000 100%);
+            padding: 0 40px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 3px solid rgba(255,255,255,0.15);
+            box-shadow: 0 4px 24px rgba(196,30,58,0.45);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-left { display: flex; flex-direction: column; gap: 2px; }
+
+        .school-name {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.72rem;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .class-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .portfolio-btn-header {
+            background: rgba(255,255,255,0.12);
+            border: 2px solid rgba(255,255,255,0.4);
+            color: #fff;
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 9px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .portfolio-btn-header:hover {
+            background: rgba(255,255,255,0.22);
+            border-color: rgba(255,255,255,0.7);
+        }
+
+        /* ── Track selector ──────────────────── */
+        .track-selector {
+            max-width: 620px;
+            margin: 90px auto 0;
+            padding: 0 24px;
+            text-align: center;
+        }
+
+        .track-selector h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            font-size: 1.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .track-selector > p {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 40px;
+        }
+
+        .track-cards { display: flex; flex-direction: column; gap: 12px; }
+
+        .track-card {
+            background: rgba(196,30,58,0.07);
+            border: 2px solid rgba(196,30,58,0.25);
+            border-radius: 12px;
+            padding: 22px 28px;
+            text-decoration: none;
+            color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+        }
+
+        .track-card:hover {
+            background: rgba(196,30,58,0.14);
+            border-color: #c41e3a;
+            transform: translateX(5px);
+        }
+
+        .track-card-name {
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 700;
+            font-size: 1.05rem;
+            text-align: left;
+        }
+
+        .track-card-arrow { font-size: 1.3rem; color: #c41e3a; flex-shrink: 0; margin-left: 16px; }
+
+        /* ── Main hub layout ─────────────────── */
+        .hub-layout {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            min-height: calc(100vh - 72px);
+        }
+
+        /* ── Sidebar ─────────────────────────── */
+        .sidebar {
+            background: #0a0a0a;
+            border-right: 2px solid #1e1e1e;
+            padding: 28px 0;
+            position: sticky;
+            top: 72px;
+            height: calc(100vh - 72px);
+            overflow-y: auto;
+        }
+
+        .sidebar-label {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.7rem;
+            color: #444;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            padding: 14px 22px 6px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 22px;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 600;
+            border-left: 3px solid transparent;
+            transition: all 0.15s;
+        }
+
+        .sidebar-link:hover {
+            color: #f0f0f0;
+            background: rgba(196,30,58,0.08);
+            border-left-color: #c41e3a;
+        }
+
+        .sidebar-link.active {
+            color: #f0f0f0;
+            background: rgba(196,30,58,0.11);
+            border-left-color: #c41e3a;
+        }
+
+        .sidebar-link.disabled {
+            opacity: 0.3;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .pill {
+            font-size: 0.62rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-family: 'Rajdhani', sans-serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+
+        .pill-soon  { background: rgba(136,136,136,0.12); color: #555; }
+        .pill-now   { background: rgba(0,212,255,0.12);   color: #00d4ff; border: 1px solid rgba(0,212,255,0.25); }
+
+        /* ── Main ────────────────────────────── */
+        .main { padding: 48px 56px; }
+
+        /* Portfolio CTA */
+        .portfolio-cta {
+            background: linear-gradient(135deg, rgba(196,30,58,0.12) 0%, rgba(196,30,58,0.04) 100%);
+            border: 2px solid rgba(196,30,58,0.35);
+            border-radius: 16px;
+            padding: 32px 36px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 52px;
+        }
+
+        .cta-text h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #f0f0f0;
+            margin-bottom: 6px;
+        }
+
+        .cta-text p { color: #666; font-size: 0.95rem; }
+
+        .cta-btn {
+            background: linear-gradient(135deg, #c41e3a 0%, #e8223f 100%);
+            color: #fff;
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 800;
+            font-size: 1rem;
+            padding: 15px 32px;
+            border-radius: 10px;
+            text-decoration: none;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 20px rgba(196,30,58,0.35);
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .cta-btn:hover {
+            box-shadow: 0 6px 28px rgba(196,30,58,0.55);
+            transform: translateY(-2px);
+        }
+
+        /* Unit sections */
+        .unit-section { margin-bottom: 52px; }
+
+        .unit-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .unit-badge {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            flex-shrink: 0;
+        }
+
+        .unit-badge-active { background: #00d4ff; color: #0a0e27; }
+        .unit-badge-grey   { background: #2a2a2a; color: #666; }
+
+        .unit-title {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* Lesson grid */
+        .lesson-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 14px;
+        }
+
+        .lesson-card {
+            background: rgba(0,212,255,0.03);
+            border: 1px solid rgba(0,212,255,0.15);
+            border-radius: 12px;
+            padding: 18px 22px;
+            text-decoration: none;
+            color: #f0f0f0;
+            display: block;
+            transition: all 0.2s;
+        }
+
+        .lesson-card:hover {
+            background: rgba(0,212,255,0.07);
+            border-color: rgba(0,212,255,0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 18px rgba(0,212,255,0.08);
+        }
+
+        .lesson-card.grey-card {
+            background: rgba(255,255,255,0.02);
+            border-color: rgba(255,255,255,0.07);
+        }
+
+        .lesson-card.grey-card:hover {
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.12);
+            box-shadow: none;
+        }
+
+        .lesson-num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            color: #00d4ff;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .lesson-card.grey-card .lesson-num { color: #555; }
+
+        .lesson-title {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 5px;
+            line-height: 1.3;
+        }
+
+        .lesson-card.grey-card .lesson-title { color: #777; }
+
+        .lesson-desc {
+            font-size: 0.82rem;
+            color: #555;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .lesson-card.grey-card .lesson-desc { color: #444; }
+
+        .card-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+
+        .chip {
+            font-size: 0.66rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Rajdhani', sans-serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .chip-lesson   { background: rgba(0,212,255,0.08); color: #00d4ff; border: 1px solid rgba(0,212,255,0.2); }
+        .chip-activity { background: rgba(255,149,0,0.08); color: #ff9500; border: 1px solid rgba(255,149,0,0.2); }
+        .chip-grey     { background: rgba(136,136,136,0.08); color: #555; border: 1px solid rgba(136,136,136,0.15); }
+
+        /* Resources */
+        .resource-links { display: flex; gap: 10px; flex-wrap: wrap; }
+
+        .resource-link {
+            display: inline-block;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid #252525;
+            color: #888;
+            font-size: 0.88rem;
+            font-weight: 600;
+            padding: 9px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+
+        .resource-link:hover {
+            border-color: #00d4ff;
+            color: #00d4ff;
+            background: rgba(0,212,255,0.04);
+        }
+
+        .section-eyebrow {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.72rem;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: #444;
+            margin-bottom: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 840px) {
+            .hub-layout { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+            .main { padding: 28px 20px; }
+            .portfolio-cta { flex-direction: column; align-items: stretch; }
+            .cta-btn { text-align: center; }
+            .header { padding: 0 20px; }
+            .class-name { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────────── -->
+<header class="header">
+    <div class="header-left">
+        <span class="school-name">Vicksburg High School &middot; CTE</span>
+        <span class="class-name" id="headerClassName">Applied Engineering &amp; Robotics</span>
+    </div>
+    <a href="#" class="portfolio-btn-header" id="headerPortfolioBtn">My Portfolio →</a>
+</header>
+
+<!-- ── TRACK SELECTOR ──────────────────────────────────────── -->
+<div class="track-selector" id="trackSelector" style="display:none;">
+    <h2>Select Your Class</h2>
+    <p>Choose the class you're enrolled in. Bookmark the URL after you select so you land here directly next time.</p>
+    <div class="track-cards">
+        <a href="hub.html?track=hsaer" class="track-card">
+            <span class="track-card-name">HS Applied Engineering &amp; Robotics</span>
+            <span class="track-card-arrow">→</span>
+        </a>
+        <a href="hub.html?track=aer8th" class="track-card">
+            <span class="track-card-name">8th Grade Applied Engineering &amp; Robotics</span>
+            <span class="track-card-arrow">→</span>
+        </a>
+        <a href="hub.html?track=dbl" class="track-card">
+            <span class="track-card-name">Design &amp; Build Lab</span>
+            <span class="track-card-arrow">→</span>
+        </a>
+    </div>
+</div>
+
+<!-- ── HUB (when ?track= is present) ──────────────────────── -->
+<div class="hub-layout" id="hubLayout" style="display:none;">
+
+    <aside class="sidebar">
+        <div class="sidebar-label">Course Content</div>
+        <a href="Unit_01_Engineering_Design_Process/index.html" class="sidebar-link">
+            <span>Unit 1 &mdash; Design Process</span>
+        </a>
+        <a class="sidebar-link disabled">
+            <span>Unit 2 &mdash; Structures</span><span class="pill pill-soon">soon</span>
+        </a>
+        <a class="sidebar-link disabled">
+            <span>Unit 3 &mdash; Electricity</span><span class="pill pill-soon">soon</span>
+        </a>
+        <a class="sidebar-link disabled">
+            <span>Unit 4 &mdash; Mechanisms</span><span class="pill pill-soon">soon</span>
+        </a>
+        <a href="Unit_05_Programming_Electronics_and_Sensors/index.html" class="sidebar-link active">
+            <span>Unit 5 &mdash; Programming</span><span class="pill pill-now">active</span>
+        </a>
+
+        <div class="sidebar-label" style="margin-top:20px;">Tools</div>
+        <a href="resources/pico2w-reference.html" class="sidebar-link">Pico 2W Reference</a>
+        <a href="ai-tutor.html" class="sidebar-link">AI Tutor</a>
+        <a href="index.html" class="sidebar-link">Course Overview</a>
+    </aside>
+
+    <main class="main">
+
+        <!-- Portfolio CTA -->
+        <div class="portfolio-cta">
+            <div class="cta-text">
+                <h2>Your Portfolio</h2>
+                <p>Track deliverables, earn points, and submit your work.</p>
+            </div>
+            <a href="#" class="cta-btn" id="portfolioCTA">Open My Portfolio →</a>
+        </div>
+
+        <!-- Unit 5 — Active -->
+        <div class="unit-section">
+            <div class="unit-header">
+                <span class="unit-badge unit-badge-active">Unit 5</span>
+                <span class="unit-title">Programming, Electronics &amp; Sensors</span>
+            </div>
+            <div class="lesson-grid" id="u5Grid"></div>
+        </div>
+
+        <!-- Unit 1 -->
+        <div class="unit-section">
+            <div class="unit-header">
+                <span class="unit-badge unit-badge-grey">Unit 1</span>
+                <span class="unit-title" style="color:#666;">Engineering Design Process</span>
+            </div>
+            <div class="lesson-grid" id="u1Grid"></div>
+        </div>
+
+        <!-- Quick links -->
+        <div class="unit-section">
+            <p class="section-eyebrow">Quick Links</p>
+            <div class="resource-links">
+                <a href="resources/pico2w-reference.html" class="resource-link">📄 Pico 2W Reference</a>
+                <a href="ai-tutor.html" class="resource-link">🤖 AI Tutor</a>
+                <a href="index.html" class="resource-link">Course Info ↗</a>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<script>
+const TRACKS = {
+    hsaer:  { name: 'HS Applied Engineering & Robotics',        short: 'HS AE&R',  portfolio: 'Portfolio/?track=hsaer'  },
+    aer8th: { name: '8th Grade Applied Engineering & Robotics', short: '8th AE&R', portfolio: 'Portfolio/?track=aer8th' },
+    dbl:    { name: 'Design & Build Lab',                       short: 'D&B Lab',  portfolio: 'Portfolio/?track=dbl'    },
+};
+
+const U5 = [
+    { num: '5.1', title: 'Microcontroller Fundamentals',
+      desc: 'Pico 2W hardware, GPIO, Thonny IDE setup',
+      lesson: 'Unit_05_Programming_Electronics_and_Sensors/Lesson_01_Microcontroller_Fundamentals.html',
+      activity: 'Unit_05_Programming_Electronics_and_Sensors/Activity_01_Blink.html' },
+    { num: '5.2', title: 'Variables &amp; Types',
+      desc: 'int, float, str, bool · type() · int()/float() conversion · clamp',
+      lesson: 'Unit_05_Programming_Electronics_and_Sensors/Lesson_02_Variables_Types.html',
+      activity: 'Unit_05_Programming_Electronics_and_Sensors/Activity_02_Variables_Types.html' },
+    { num: '5.3', title: 'Functions',
+      desc: 'def, parameters, DRY · scope · global keyword',
+      lesson: 'Unit_05_Programming_Electronics_and_Sensors/Lesson_03_Functions.html',
+      activity: 'Unit_05_Programming_Electronics_and_Sensors/Activity_03_Functions.html' },
+    { num: '5.4', title: 'Digital Input',
+      desc: 'Button wiring · pull-up/pull-down · state detection',
+      lesson: 'Unit_05_Programming_Electronics_and_Sensors/Lesson_04_Digital_Input.html',
+      activity: 'Unit_05_Programming_Electronics_and_Sensors/Activity_04_Button.html' },
+    { num: '5.5', title: 'PWM &amp; Analog Output',
+      desc: 'Pulse-width modulation · duty cycle · LED dimming',
+      lesson: 'Unit_05_Programming_Electronics_and_Sensors/Lesson_05_PWM.html',
+      activity: 'Unit_05_Programming_Electronics_and_Sensors/Activity_05_PWM.html' },
+    { num: '5.6', title: 'Motor Control',
+      desc: 'H-bridge driver · motor.py · drive functions · L.E.O. bot',
+      lesson: 'Unit_05_Programming_Electronics_and_Sensors/Lesson_06_Motor_Control.html',
+      activity: 'Unit_05_Programming_Electronics_and_Sensors/Activity_06_Motor_Control.html' },
+];
+
+const U1 = [
+    { num: '1.1', title: 'Intro to Engineering Design',
+      desc: 'The engineering design process framework',
+      lesson: 'Unit_01_Engineering_Design_Process/Lesson_01_Intro_to_Engineering_Design.html',
+      activity: null },
+    { num: '1.2', title: 'Spaghetti Tower Challenge',
+      desc: 'Apply EDP: design, build, and test a tall structure',
+      lesson: 'Unit_01_Engineering_Design_Process/Lesson_02_Spaghetti_Tower_Challenge.html',
+      activity: null },
+    { num: '1.3', title: 'EDP Framework',
+      desc: 'Identify · Research · Brainstorm · Prototype · Test',
+      lesson: 'Unit_01_Engineering_Design_Process/Lesson_03_EDP_Framework.html',
+      activity: null },
+    { num: '1.4', title: 'Paper Glider Challenge',
+      desc: 'Iterate on a glider design through multiple test cycles',
+      lesson: 'Unit_01_Engineering_Design_Process/Lesson_04_Paper_Glider_Challenge.html',
+      activity: null },
+    { num: '1.5', title: 'Design Brief Workshop',
+      desc: 'Write and refine a structured engineering design brief',
+      lesson: 'Unit_01_Engineering_Design_Process/Lesson_05_Design_Brief_Workshop.html',
+      activity: null },
+];
+
+function renderCard(l, accent) {
+    const isGrey = !accent;
+    const numColor = isGrey ? 'color:#555' : '';
+    const lessonChip = isGrey
+        ? '<span class="chip chip-grey">Lesson</span>'
+        : '<span class="chip chip-lesson">Lesson</span>';
+    const actChip = l.activity
+        ? (isGrey ? '<span class="chip chip-grey">Activity</span>' : '<span class="chip chip-activity">Activity</span>')
+        : '';
+    return `
+        <a href="${l.lesson}" class="lesson-card${isGrey ? ' grey-card' : ''}">
+            <div class="lesson-num" style="${numColor}">L${l.num}</div>
+            <div class="lesson-title">${l.title}</div>
+            <div class="lesson-desc">${l.desc}</div>
+            <div class="card-chips">${lessonChip}${actChip}</div>
+        </a>`;
+}
+
+function init() {
+    const track = new URLSearchParams(window.location.search).get('track');
+    const cfg = TRACKS[track];
+
+    if (!cfg) {
+        document.getElementById('trackSelector').style.display = 'block';
+        document.title = 'Select Your Class — VHS CTE';
+        return;
+    }
+
+    document.getElementById('hubLayout').style.display = 'grid';
+    document.getElementById('headerClassName').textContent = cfg.name;
+    document.title = cfg.short + ' — VHS CTE';
+    document.getElementById('headerPortfolioBtn').href = cfg.portfolio;
+    document.getElementById('portfolioCTA').href = cfg.portfolio;
+
+    document.getElementById('u5Grid').innerHTML = U5.map(l => renderCard(l, true)).join('');
+    document.getElementById('u1Grid').innerHTML = U1.map(l => renderCard(l, false)).join('');
+}
+
+init();
+</script>
+</body>
+</html>

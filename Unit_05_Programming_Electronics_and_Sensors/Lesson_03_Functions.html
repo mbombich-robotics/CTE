@@ -163,7 +163,7 @@
 <div class="slide active">
     <div class="slide-content" style="text-align:center;">
         <h1>Python Functions</h1>
-        <p class="subtitle">Unit 5 · Programming, Electronics &amp; Sensors · Lesson 5.2</p>
+        <p class="subtitle">Unit 5 · Programming, Electronics &amp; Sensors · Lesson 5.3</p>
 
         <div style="margin: 30px auto; max-width: 480px;">
             <img src="Function%20Meme.png" alt="Function meme"
@@ -171,7 +171,7 @@
                         box-shadow:0 0 24px rgba(0,212,255,0.2);">
         </div>
 
-        <p style="color:#6272a4; font-size:1rem;">Lesson 5.2 · Week 12</p>
+        <p style="color:#6272a4; font-size:1rem;">Lesson 5.3 · Week 12</p>
     </div>
 </div>
 
@@ -192,7 +192,7 @@
             </div>
             <div style="display:flex; gap:28px; align-items:baseline;">
                 <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d4ff; flex-shrink:0; width:36px; line-height:1;">3</span>
-                <p style="margin:0; font-size:1.5rem; color:#e0e6f0; line-height:1.4;"><strong style="color:#00d4ff;">Replace</strong> repeated code with one reusable function (DRY)</p>
+                <p style="margin:0; font-size:1.5rem; color:#e0e6f0; line-height:1.4;"><strong style="color:#00d4ff;">Distinguish</strong> local from module-level scope and use <code>global</code> correctly</p>
             </div>
         </div>
     </div>
@@ -370,7 +370,141 @@ time.<span class="fn">sleep</span>(<span class="num">0.3</span>)  <span class="c
     </div>
 </div>
 
-<!-- ─────────────────────────────────────────── SLIDE 6: Today's Activity -->
+<!-- ─────────────────────────────────────────── SLIDE 6: Variable Scope -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Variable Scope</h2>
+        <p>Every variable in Python exists in a <span class="highlight">scope</span> — the region of code where it's visible. Functions introduce a second scope on top of the file's top-level scope.</p>
+
+        <div class="grid-2" style="margin-top:16px; align-items:start;">
+            <div class="box">
+                <h3>Local scope</h3>
+                <p>A variable created <em>inside</em> a function is <span class="highlight">local</span> — it's born when the function is called and discarded when it returns. Code outside the function can't see it at all.</p>
+                <div class="code-block" style="font-size:0.95rem; margin-top:12px;"><span class="kw">def</span> <span class="fn">blink</span>(<span class="op">duration_ms</span>):
+    count = <span class="num">0</span>          <span class="cm"># local</span>
+    led.<span class="fn">value</span>(<span class="num">1</span>)
+    ...
+
+<span class="cm"># Outside: count doesn't exist</span>
+<span class="fn">print</span>(count)  <span class="cm"># NameError!</span></div>
+            </div>
+
+            <div class="box-orange">
+                <h3>Module-level scope</h3>
+                <p>A variable created at the <em>top of the file</em> (not inside any function) is <span class="warning">module-level</span>. Every function in the file can <em>read</em> it — but writing to it requires a special keyword.</p>
+                <div class="code-block" style="font-size:0.95rem; margin-top:12px;"><span class="op">_speed</span> = <span class="num">0</span>         <span class="cm"># module-level</span>
+
+<span class="kw">def</span> <span class="fn">get_speed</span>():
+    <span class="kw">return</span> <span class="op">_speed</span>    <span class="cm"># reading: fine ✓</span>
+
+<span class="kw">def</span> <span class="fn">set_speed</span>(<span class="op">pct</span>):
+    <span class="op">_speed</span> = <span class="op">pct</span>     <span class="cm"># writing: creates a</span>
+                      <span class="cm"># NEW local _speed ✗</span></div>
+            </div>
+        </div>
+
+        <div class="box-red" style="margin-top:20px; max-width:700px;">
+            <h3 style="color:#ff5555;">The trap</h3>
+            <p>If you assign to a variable inside a function — anywhere in the function — Python treats it as <span class="warning">local for the entire function</span>. Even if a module-level variable has the same name, they are two different things. Writing to the local one has no effect on the module-level one.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 7: global keyword -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>The <code>global</code> Keyword</h2>
+        <p>To write to a module-level variable from inside a function, declare it with <code class="highlight">global</code> at the top of the function. This tells Python: <em>"don't create a local; reach out to the module-level one."</em></p>
+
+        <div class="grid-2" style="margin-top:16px; align-items:start;">
+            <div>
+                <div class="box-red" style="margin-bottom:16px;">
+                    <h3 style="color:#ff5555;">Without <code>global</code> — broken</h3>
+                    <div class="code-block" style="font-size:0.92rem; margin-top:10px;"><span class="op">_speed</span> = <span class="num">0</span>
+
+<span class="kw">def</span> <span class="fn">set_speed</span>(<span class="op">pct</span>):
+    <span class="op">_speed</span> = <span class="op">pct</span>   <span class="cm"># new local _speed</span>
+                    <span class="cm"># module-level unchanged</span>
+
+<span class="fn">set_speed</span>(<span class="num">50</span>)
+<span class="fn">print</span>(<span class="op">_speed</span>)  <span class="cm"># still prints: 0</span></div>
+                    <p style="margin-top:8px; font-size:0.95rem;"><code>_speed</code> at the module level never changes. The local copy is thrown away the moment <code>set_speed()</code> returns.</p>
+                </div>
+            </div>
+
+            <div>
+                <div class="box-green">
+                    <h3 style="color:#50fa7b;">With <code>global</code> — correct</h3>
+                    <div class="code-block" style="font-size:0.92rem; margin-top:10px;"><span class="op">_speed</span> = <span class="num">0</span>
+
+<span class="kw">def</span> <span class="fn">set_speed</span>(<span class="op">pct</span>):
+    <span class="kw">global</span> <span class="op">_speed</span>   <span class="cm"># use module-level</span>
+    <span class="op">_speed</span> = <span class="op">pct</span>   <span class="cm"># now it sticks</span>
+
+<span class="fn">set_speed</span>(<span class="num">50</span>)
+<span class="fn">print</span>(<span class="op">_speed</span>)  <span class="cm"># prints: 50 ✓</span></div>
+                    <p style="margin-top:8px; font-size:0.95rem;"><code>global _speed</code> tells Python: this name refers to the module-level <code>_speed</code>, not a new local one.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="objective-box" style="margin-top:20px; max-width:700px;">
+            <h3>Rule of thumb</h3>
+            <p>Only use <code>global</code> when a function needs to <em>write</em> to a module-level variable that other parts of the program need to read later. In motor.py, <code>set_speed()</code> updates <code>_speed</code> so that <code>get_speed()</code> can retrieve the current value.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 8: set_speed() in full -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Putting It Together: <code>set_speed()</code></h2>
+        <p>The real motor.py combines everything from L5.2 (types, clamp) and L5.3 (functions, global) into one 6-line function.</p>
+
+        <div class="grid-2" style="margin-top:16px; align-items:start;">
+            <div>
+                <h3>Annotated motor.py</h3>
+                <div class="code-block" style="font-size:0.95rem;"><span class="op">_speed</span> = <span class="num">0</span>           <span class="cm"># module-level state</span>
+
+<span class="kw">def</span> <span class="fn">set_speed</span>(<span class="op">pct</span>):
+    <span class="kw">global</span> <span class="op">_speed</span>       <span class="cm"># ① reach module-level</span>
+    <span class="op">pct</span> = <span class="fn">int</span>(<span class="op">pct</span>)      <span class="cm"># ② type safety</span>
+    <span class="op">pct</span> = <span class="fn">max</span>(<span class="num">0</span>, <span class="fn">min</span>(<span class="num">100</span>, <span class="op">pct</span>))  <span class="cm"># ③ clamp</span>
+    <span class="op">_speed</span> = <span class="op">pct</span>        <span class="cm"># ④ store for get_speed()</span>
+    <span class="op">duty</span> = <span class="op">pct</span> * <span class="num">655</span>    <span class="cm"># ⑤ scale 0–100 → 0–65500</span>
+    <span class="op">pwm</span>.<span class="fn">duty_u16</span>(<span class="op">duty</span>) <span class="cm"># ⑥ write to hardware</span>
+
+<span class="kw">def</span> <span class="fn">get_speed</span>():
+    <span class="kw">return</span> <span class="op">_speed</span>       <span class="cm"># reads module-level</span></div>
+            </div>
+
+            <div>
+                <div class="box" style="margin-bottom:16px;">
+                    <h3>Why each line is there</h3>
+                    <ul class="bullet-list">
+                        <li><span class="highlight">① global</span> — without this, <code>_speed = pct</code> would create a local that disappears on return</li>
+                        <li><span class="highlight">② int()</span> — converts <code>50.7</code> → <code>50</code> so the math stays clean</li>
+                        <li><span class="highlight">③ clamp</span> — enforces the contract: 0 ≤ speed ≤ 100, no matter what the caller passes</li>
+                        <li><span class="highlight">④ _speed</span> — stored so other functions (and the caller) can read the current value later</li>
+                        <li><span class="highlight">⑤ 655</span> — maps 0–100 to 0–65500 (hardware range is 0–65535)</li>
+                    </ul>
+                </div>
+
+                <div class="box-orange">
+                    <h3>Call it like this</h3>
+                    <div class="code-block" style="font-size:0.95rem; margin-top:8px;"><span class="fn">set_speed</span>(<span class="num">75</span>)     <span class="cm"># 75% power</span>
+<span class="fn">set_speed</span>(<span class="num">0</span>)      <span class="cm"># stop</span>
+<span class="fn">set_speed</span>(<span class="num">150</span>)    <span class="cm"># clamped to 100</span>
+<span class="fn">set_speed</span>(<span class="num">-10</span>)    <span class="cm"># clamped to 0</span>
+
+<span class="fn">print</span>(<span class="fn">get_speed</span>())  <span class="cm"># 0 (last clamped)</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 9: Today's Activity -->
 <div class="slide">
     <div class="slide-content" style="text-align:center;">
         <h2>Today's Activity</h2>
