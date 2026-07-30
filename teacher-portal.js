@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.31',
+    VERSION: 'v2.9.32',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -64,7 +64,7 @@ const CONFIG = {
     },
 
     // Semester start date
-    SEMESTER_START: new Date('2026-02-02'),
+    SEMESTER_START: new Date('2026-08-31'),
 
     // Shared secret for writing config to the backend (must match TEACHER_TOKEN in both Apps Scripts)
     TEACHER_TOKEN: 'rp-portal-teach-2026'
@@ -311,7 +311,7 @@ function calculateCurrentWeek() {
     const diffTime = now - CONFIG.SEMESTER_START;
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     const diffWeeks = Math.floor(diffDays / 7) + 1;
-    state.currentWeek = Math.min(Math.max(1, diffWeeks), 9);
+    state.currentWeek = Math.min(Math.max(1, diffWeeks), 38);
     if (weekSettings.currentWeekOverride !== null) {
         state.currentWeek = weekSettings.currentWeekOverride;
     }
@@ -2435,7 +2435,7 @@ async function openWeekSettings() {
     // Show auto-calculated week
     const now = new Date();
     const diffWeeks = Math.floor(Math.floor((now - CONFIG.SEMESTER_START) / (1000 * 60 * 60 * 24)) / 7) + 1;
-    const autoWeek = Math.min(Math.max(1, diffWeeks), 11);
+    const autoWeek = Math.min(Math.max(1, diffWeeks), 38);
     document.getElementById('autoWeekDisplay').textContent = autoWeek;
 
     // Set override dropdown
