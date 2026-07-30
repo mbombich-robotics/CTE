@@ -332,12 +332,13 @@
                 <p>In MicroPython, <code>duty_u16()</code> sets the duty cycle as a number from <code>0</code> (fully off) to <code>65535</code> (fully on). The interface board runs motors at 20 kHz — above human hearing so you won't hear a whine.</p>
 
                 <div class="box-orange" style="margin-top:16px;">
-                    <h3>Useful constants</h3>
+                    <h3>motor.py converts for you</h3>
                     <div class="code-block" style="font-size:0.95rem; padding:14px 18px;">
-<span class="cls">FULL</span>  <span class="op">=</span> <span class="num">65535</span>   <span class="cm"># 100% speed</span>
-<span class="cls">HALF</span>  <span class="op">=</span> <span class="num">32767</span>   <span class="cm"># 50% speed</span>
-<span class="cls">SLOW</span>  <span class="op">=</span> <span class="num">20000</span>   <span class="cm"># ~30% — barely moving</span>
-<span class="cls">STOP</span>  <span class="op">=</span> <span class="num">0</span>       <span class="cm"># motor off</span></div>
+motor.<span class="fn">set_speed</span>(<span class="num">100</span>)  <span class="cm"># full speed</span>
+motor.<span class="fn">set_speed</span>(<span class="num">50</span>)   <span class="cm"># half speed</span>
+motor.<span class="fn">set_speed</span>(<span class="num">25</span>)   <span class="cm"># quarter speed</span>
+motor.<span class="fn">stop</span>()           <span class="cm"># off</span></div>
+                    <p style="font-size:0.9rem; color:#6272a4; margin-top:8px; margin-bottom:0;">The library multiplies your 0–100 value by 655.35 internally — you never touch the raw number.</p>
                 </div>
             </div>
 
@@ -405,11 +406,11 @@ _R_PWM <span class="op">=</span> <span class="cls">PWM</span>(<span class="cls">
 _R_PWM.<span class="fn">freq</span>(<span class="num">20000</span>)
 
 <span class="cls">FULL</span> <span class="op">=</span> <span class="num">65535</span>
-_speed <span class="op">=</span> <span class="cls">FULL</span>           <span class="cm"># current default — change with set_speed()</span>
+_speed <span class="op">=</span> <span class="cls">FULL</span>           <span class="cm"># current duty cycle — set via set_speed()</span>
 
-<span class="kw">def</span> <span class="fn">set_speed</span>(val):
+<span class="kw">def</span> <span class="fn">set_speed</span>(pct):     <span class="cm"># pct = 0 to 100</span>
     <span class="kw">global</span> _speed
-    _speed <span class="op">=</span> val
+    _speed <span class="op">=</span> <span class="fn">max</span>(<span class="num">0</span>, <span class="fn">min</span>(<span class="num">65535</span>, <span class="fn">int</span>(pct <span class="op">/</span> <span class="num">100</span> <span class="op">*</span> <span class="num">65535</span>)))
 
 <span class="kw">def</span> <span class="fn">_drive</span>(la, lb, ra, rb):
     _L_PWM.<span class="fn">duty_u16</span>(_speed); _R_PWM.<span class="fn">duty_u16</span>(_speed)
@@ -432,9 +433,9 @@ _speed <span class="op">=</span> <span class="cls">FULL</span>           <span c
 <span class="kw">import</span> motor
 <span class="kw">import</span> time
 
-motor.<span class="fn">forward</span>()           <span class="cm"># full speed (default)</span>
+motor.<span class="fn">forward</span>()        <span class="cm"># full speed (default)</span>
 time.<span class="fn">sleep</span>(<span class="num">1</span>)
-motor.<span class="fn">set_speed</span>(<span class="num">32767</span>)   <span class="cm"># switch to half speed</span>
+motor.<span class="fn">set_speed</span>(<span class="num">50</span>)   <span class="cm"># switch to half speed</span>
 motor.<span class="fn">right</span>()
 time.<span class="fn">sleep</span>(<span class="num">0.5</span>)
 motor.<span class="fn">stop</span>()</div>

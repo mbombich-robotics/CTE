@@ -308,11 +308,11 @@ _R_INB <span class="op">=</span> <span class="cls">Pin</span>(<span class="num">
 _R_PWM <span class="op">=</span> <span class="cls">PWM</span>(<span class="cls">Pin</span>(<span class="num">7</span>)); _R_PWM.<span class="fn">freq</span>(<span class="num">20000</span>)
 
 <span class="cls">FULL</span> <span class="op">=</span> <span class="num">65535</span>
-_speed <span class="op">=</span> <span class="cls">FULL</span>           <span class="cm"># current default — change with set_speed()</span>
+_speed <span class="op">=</span> <span class="cls">FULL</span>           <span class="cm"># current duty cycle — set via set_speed()</span>
 
-<span class="kw">def</span> <span class="fn">set_speed</span>(val):
+<span class="kw">def</span> <span class="fn">set_speed</span>(pct):     <span class="cm"># pct = 0 to 100</span>
     <span class="kw">global</span> _speed
-    _speed <span class="op">=</span> val
+    _speed <span class="op">=</span> <span class="fn">max</span>(<span class="num">0</span>, <span class="fn">min</span>(<span class="num">65535</span>, <span class="fn">int</span>(pct <span class="op">/</span> <span class="num">100</span> <span class="op">*</span> <span class="num">65535</span>)))
 
 <span class="kw">def</span> <span class="fn">_drive</span>(la, lb, ra, rb):
     _L_PWM.<span class="fn">duty_u16</span>(_speed); _R_PWM.<span class="fn">duty_u16</span>(_speed)
@@ -534,7 +534,7 @@ _speed <span class="op">=</span> <span class="cls">FULL</span>           <span c
                     <span class="challenge-num">C2</span>
                     <span class="challenge-title">Slow-Motion Square</span>
                 </div>
-                <p>Drive the same square at half speed. Add <code>motor.set_speed(32767)</code> at the top of your program, before the loop. Does the turn time need to change at half speed? Run it and find out.</p>
+                <p>Drive the same square at half speed. Add <code>motor.set_speed(50)</code> at the top of your program, before the loop. Does the turn time need to change at half speed? Run it and find out.</p>
             </div>
 
             <div class="challenge">
