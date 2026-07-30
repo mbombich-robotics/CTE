@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Variables, Types & Conventions</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            height: 100vh;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute; width: 100%; min-height: 100%;
+            display: none; flex-direction: column;
+            justify-content: flex-start; align-items: center;
+            padding: 55px 60px 120px 60px;
+            opacity: 0; transition: opacity 0.5s ease;
+            overflow-y: auto; overflow-x: hidden;
+        }
+        .slide.active { display: flex; opacity: 1; }
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif; font-size: 3.5rem; font-weight: 900;
+            color: #00d4ff; margin-bottom: 15px; text-transform: uppercase;
+            letter-spacing: 2px; text-shadow: 0 0 20px rgba(0,212,255,0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(0,212,255,0.5); }
+            to   { text-shadow: 0 0 35px rgba(0,212,255,0.9); }
+        }
+        h2 {
+            font-family: 'Orbitron', sans-serif; font-size: 2.4rem; font-weight: 700;
+            color: #00d4ff; margin-bottom: 18px; text-transform: uppercase;
+        }
+        h3 { font-family: 'Exo 2', sans-serif; font-size: 1.5rem; font-weight: 600; color: #ff9500; margin-bottom: 12px; }
+        p { font-size: 1.15rem; line-height: 1.6; margin-bottom: 12px; color: #b8c5d6; }
+        .subtitle { font-size: 1.3rem; color: #ff9500; font-weight: 600; margin-bottom: 30px; }
+
+        .objective-box {
+            background: linear-gradient(135deg, rgba(0,212,255,0.1) 0%, rgba(0,212,255,0.04) 100%);
+            border: 3px solid #00d4ff; border-radius: 12px; padding: 20px; margin: 20px 0;
+            box-shadow: 0 0 30px rgba(0,212,255,0.15);
+        }
+        .objective-box h3 { color: #00d4ff; }
+
+        .bullet-list { list-style: none; padding-left: 0; }
+        .bullet-list li {
+            font-size: 1.15rem; margin: 12px 0; padding-left: 35px;
+            position: relative; color: #b8c5d6; line-height: 1.5;
+        }
+        .bullet-list li::before {
+            content: '▸'; position: absolute; left: 0;
+            color: #ff9500; font-size: 1.5rem; line-height: 1;
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px; }
+
+        .box {
+            background: rgba(0,212,255,0.05); border: 2px solid #00d4ff;
+            border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(0,212,255,0.1);
+        }
+        .box-orange {
+            background: rgba(255,149,0,0.07); border: 2px solid #ff9500;
+            border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(255,149,0,0.1);
+        }
+        .box-green {
+            background: rgba(80,250,123,0.07); border: 2px solid #50fa7b;
+            border-radius: 12px; padding: 20px;
+        }
+        .box-purple {
+            background: rgba(189,147,249,0.07); border: 2px solid #bd93f9;
+            border-radius: 12px; padding: 20px;
+        }
+
+        .highlight { color: #00d4ff; font-weight: 700; }
+        .warning   { color: #ff9500; font-weight: 700; }
+        .success   { color: #50fa7b; font-weight: 700; }
+        .purple    { color: #bd93f9; font-weight: 700; }
+
+        code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
+               color: #00d4ff; background: rgba(0,212,255,0.1); padding: 1px 5px; border-radius: 4px;
+               white-space: nowrap; font-variant-ligatures: none; }
+
+        .code-block {
+            background: #0d1117; border: 2px solid #00d4ff; border-radius: 10px;
+            padding: 20px 24px; margin: 16px 0; overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; line-height: 1.75;
+            white-space: pre; font-variant-ligatures: none;
+        }
+        .kw  { color: #ff79c6; }
+        .cls { color: #ffb86c; font-weight: 700; }
+        .fn  { color: #8be9fd; }
+        .str { color: #f1fa8c; }
+        .num { color: #bd93f9; }
+        .cm  { color: #6272a4; font-style: italic; }
+        .op  { color: #b8c5d6; }
+        .tp  { color: #50fa7b; font-weight: 700; }
+
+        /* Type cards */
+        .type-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 20px 0; }
+        .type-card {
+            border-radius: 12px; padding: 18px; text-align: center;
+        }
+        .type-card.int-card    { background: rgba(0,212,255,0.08);  border: 2px solid #00d4ff; }
+        .type-card.float-card  { background: rgba(255,149,0,0.08);  border: 2px solid #ff9500; }
+        .type-card.str-card    { background: rgba(241,250,140,0.08); border: 2px solid #f1fa8c; }
+        .type-card.bool-card   { background: rgba(80,250,123,0.08);  border: 2px solid #50fa7b; }
+        .type-name { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; }
+        .type-card.int-card   .type-name { color: #00d4ff; }
+        .type-card.float-card .type-name { color: #ff9500; }
+        .type-card.str-card   .type-name { color: #f1fa8c; }
+        .type-card.bool-card  .type-name { color: #50fa7b; }
+        .type-example { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: #b8c5d6; margin-bottom: 6px; }
+        .type-desc { font-size: 0.85rem; color: #6272a4; }
+
+        /* Convention badges */
+        .conv-table { width: 100%; border-collapse: collapse; font-size: 1.05rem; }
+        .conv-table th {
+            background: rgba(0,212,255,0.15); color: #00d4ff;
+            padding: 10px 16px; border: 1.5px solid rgba(0,212,255,0.3);
+            font-family: 'Space Mono', monospace; font-size: 0.85rem; text-align: left;
+        }
+        .conv-table td { padding: 12px 16px; border: 1px solid rgba(0,212,255,0.15); color: #b8c5d6; vertical-align: top; }
+        .conv-table tr:nth-child(even) td { background: rgba(0,212,255,0.03); }
+        .conv-name { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+        .conv-name.private  { color: #ff9500; }
+        .conv-name.constant { color: #bd93f9; }
+        .conv-name.public   { color: #50fa7b; }
+
+        /* Clamp diagram */
+        .clamp-track {
+            position: relative; height: 40px;
+            background: rgba(0,212,255,0.06); border: 1.5px solid rgba(0,212,255,0.25);
+            border-radius: 8px; margin: 16px 0; overflow: hidden;
+        }
+        .clamp-valid { position: absolute; left: 0; top: 0; bottom: 0; width: 100%; background: rgba(80,250,123,0.15); }
+        .clamp-label-lo { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font-family: 'Space Mono', monospace; font-size: 0.8rem; color: #50fa7b; }
+        .clamp-label-hi { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-family: 'Space Mono', monospace; font-size: 0.8rem; color: #50fa7b; }
+
+        /* Controls */
+        .controls {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            display: flex; justify-content: center; align-items: center; gap: 20px; z-index: 1000;
+        }
+        button {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            border: none; color: #0a0e27; padding: 15px 30px; font-size: 1rem;
+            font-weight: 700; border-radius: 8px; cursor: pointer;
+            font-family: 'Exo 2', sans-serif; transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,212,255,0.3);
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,212,255,0.5); }
+        button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+        .slide-number {
+            position: fixed; bottom: 30px; left: 30px;
+            font-family: 'Space Mono', monospace; font-size: 1rem;
+            color: #00d4ff; z-index: 1000;
+        }
+        .ref-link { position: fixed; bottom: 30px; right: 30px; z-index: 1000; }
+        .ref-link a {
+            background: rgba(0,212,255,0.12); border: 1px solid #00d4ff;
+            color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.85rem;
+            padding: 8px 14px; border-radius: 6px; text-decoration: none; transition: background 0.2s;
+        }
+        .ref-link a:hover { background: rgba(0,212,255,0.25); }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; } h2 { font-size: 1.8rem; }
+            .slide { padding: 30px 20px 100px; }
+            .grid-2, .grid-3, .type-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="presentation">
+
+<!-- ─────────────────────────────────────────── SLIDE 1: Title -->
+<div class="slide active">
+    <div class="slide-content" style="text-align:center;">
+        <h1>Variables, Types<br>&amp; Conventions</h1>
+        <p class="subtitle">Unit 5 · Programming, Electronics &amp; Sensors · Lesson 5.2</p>
+
+        <div style="margin:40px auto; max-width:580px;">
+            <div class="code-block" style="text-align:left; font-size:1.1rem;">
+<span class="cm"># every name in motor.py makes sense after this lesson</span>
+
+<span class="cls">FULL</span>   <span class="op">=</span> <span class="num">65535</span>        <span class="cm"># ALL_CAPS → constant</span>
+_speed <span class="op">=</span> <span class="cls">FULL</span>          <span class="cm"># _underscore → private</span>
+
+<span class="kw">def</span> <span class="fn">set_speed</span>(pct):    <span class="cm"># plain name → public API</span>
+    <span class="kw">global</span> _speed
+    _speed <span class="op">=</span> <span class="fn">int</span>(pct <span class="op">/</span> <span class="num">100</span> <span class="op">*</span> <span class="num">65535</span>)</div>
+        </div>
+
+        <p style="color:#6272a4; font-size:1rem;">Lesson 5.2 · Week 14</p>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 2: Learning Objectives -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Learning Objectives</h2>
+        <p class="subtitle">By the end of this lesson, you will be able to:</p>
+
+        <div style="display:flex; flex-direction:column; gap:32px; margin-top:40px; max-width:760px;">
+            <div style="display:flex; gap:28px; align-items:baseline;">
+                <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d4ff; flex-shrink:0; width:36px; line-height:1;">1</span>
+                <p style="margin:0; font-size:1.5rem; color:#e0e6f0; line-height:1.4;"><strong style="color:#00d4ff;">Identify</strong> a value's type using <code style="font-size:1.2rem;">type()</code> and convert between <code style="font-size:1.2rem;">int</code> and <code style="font-size:1.2rem;">float</code></p>
+            </div>
+            <div style="display:flex; gap:28px; align-items:baseline;">
+                <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d4ff; flex-shrink:0; width:36px; line-height:1;">2</span>
+                <p style="margin:0; font-size:1.5rem; color:#e0e6f0; line-height:1.4;"><strong style="color:#00d4ff;">Use</strong> <code style="font-size:1.2rem;">max()</code>, <code style="font-size:1.2rem;">min()</code>, and <code style="font-size:1.2rem;">abs()</code> to constrain and inspect values</p>
+            </div>
+            <div style="display:flex; gap:28px; align-items:baseline;">
+                <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d4ff; flex-shrink:0; width:36px; line-height:1;">3</span>
+                <p style="margin:0; font-size:1.5rem; color:#e0e6f0; line-height:1.4;"><strong style="color:#00d4ff;">Explain</strong> what <code style="font-size:1.2rem;">_underscore</code> and <code style="font-size:1.2rem;">ALL_CAPS</code> naming signals to other programmers</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 3: Variables -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Variables</h2>
+
+        <div class="grid-2" style="margin-top:16px;">
+            <div>
+                <p>A <span class="highlight">variable</span> is a name that holds a value. You create one with an assignment statement — the name on the left, the value on the right.</p>
+
+                <div class="code-block" style="font-size:1rem; padding:16px 20px;">
+speed   <span class="op">=</span> <span class="num">100</span>
+message <span class="op">=</span> <span class="str">"go"</span>
+running <span class="op">=</span> <span class="kw">True</span>
+temp    <span class="op">=</span> <span class="num">98.6</span></div>
+
+                <p>You can reassign a variable at any time — the old value is replaced:</p>
+
+                <div class="code-block" style="font-size:1rem; padding:16px 20px;">
+speed <span class="op">=</span> <span class="num">100</span>
+speed <span class="op">=</span> <span class="num">50</span>    <span class="cm"># now 50, not 100</span>
+speed <span class="op">=</span> speed <span class="op">+</span> <span class="num">10</span>  <span class="cm"># now 60</span></div>
+            </div>
+
+            <div>
+                <div class="box-orange">
+                    <h3>Naming rules</h3>
+                    <ul class="bullet-list">
+                        <li>Start with a letter or underscore — never a digit</li>
+                        <li>Letters, digits, and underscores only — no spaces or dashes</li>
+                        <li>Case-sensitive: <code>speed</code> and <code>Speed</code> are different variables</li>
+                        <li>Avoid Python keywords: <code>for</code>, <code>if</code>, <code>True</code>, etc.</li>
+                    </ul>
+                </div>
+
+                <div class="box" style="margin-top:16px;">
+                    <h3>Good names vs bad names</h3>
+                    <div class="code-block" style="font-size:0.95rem; padding:12px 16px;">
+<span class="success">✓</span> drive_time <span class="op">=</span> <span class="num">1.5</span>
+<span class="success">✓</span> turn_count <span class="op">=</span> <span class="num">0</span>
+<span class="warning">✗</span> <span class="num">2</span>nd_motor  <span class="cm"># starts with digit</span>
+<span class="warning">✗</span> drive time <span class="cm"># space not allowed</span>
+<span class="warning">✗</span> x          <span class="cm"># too vague</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 4: Types -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>The Four Basic Types</h2>
+
+        <div class="type-grid" style="margin-top:20px;">
+            <div class="type-card int-card">
+                <div class="type-name">int</div>
+                <div class="type-example">5, -3, 0, 65535</div>
+                <div class="type-desc">Whole numbers.<br>No decimal point.</div>
+            </div>
+            <div class="type-card float-card">
+                <div class="type-name">float</div>
+                <div class="type-example">3.14, 0.5, -2.7</div>
+                <div class="type-desc">Numbers with a<br>decimal point.</div>
+            </div>
+            <div class="type-card str-card">
+                <div class="type-name">str</div>
+                <div class="type-example">"hello", "LED"</div>
+                <div class="type-desc">Text — always<br>inside quotes.</div>
+            </div>
+            <div class="type-card bool-card">
+                <div class="type-name">bool</div>
+                <div class="type-example">True, False</div>
+                <div class="type-desc">Only two values.<br>Used in decisions.</div>
+            </div>
+        </div>
+
+        <div class="grid-2" style="margin-top:20px;">
+            <div>
+                <p>Use <span class="highlight">type()</span> to inspect any value or variable:</p>
+                <div class="code-block" style="font-size:0.95rem; padding:14px 18px;">
+<span class="op">&gt;&gt;&gt; </span><span class="fn">type</span>(<span class="num">5</span>)
+<span class="tp">&lt;class 'int'&gt;</span>
+<span class="op">&gt;&gt;&gt; </span><span class="fn">type</span>(<span class="num">3.14</span>)
+<span class="tp">&lt;class 'float'&gt;</span>
+<span class="op">&gt;&gt;&gt; </span><span class="fn">type</span>(<span class="str">"go"</span>)
+<span class="tp">&lt;class 'str'&gt;</span>
+<span class="op">&gt;&gt;&gt; </span>speed <span class="op">=</span> <span class="num">100</span>
+<span class="op">&gt;&gt;&gt; </span><span class="fn">type</span>(speed)
+<span class="tp">&lt;class 'int'&gt;</span></div>
+            </div>
+
+            <div>
+                <div class="objective-box">
+                    <h3>Why does type matter?</h3>
+                    <p>MicroPython functions are strict about types. <code>duty_u16()</code> expects an <span class="highlight">int</span>. If you pass a float, it raises a <span class="warning">TypeError</span>. Division in Python always returns a float — so <code>50 / 100</code> gives <code>0.5</code>, not <code>0</code>. Knowing the type tells you when a conversion is needed.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 5: Type Conversion -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Type Conversion</h2>
+
+        <div class="grid-2">
+            <div>
+                <p>You convert between types by calling the type name as a function: <code>int()</code>, <code>float()</code>, <code>str()</code>.</p>
+
+                <div class="code-block" style="font-size:1rem; padding:16px 20px;">
+<span class="op">&gt;&gt;&gt; </span><span class="num">50</span> <span class="op">/</span> <span class="num">100</span>
+<span class="tp">0.5</span>                   <span class="cm"># division → float</span>
+
+<span class="op">&gt;&gt;&gt; </span><span class="fn">int</span>(<span class="num">0.5</span>)
+<span class="tp">0</span>                     <span class="cm"># truncates (cuts off)</span>
+
+<span class="op">&gt;&gt;&gt; </span><span class="fn">int</span>(<span class="num">3.9</span>)
+<span class="tp">3</span>                     <span class="cm"># NOT rounded — truncated</span>
+
+<span class="op">&gt;&gt;&gt; </span><span class="fn">float</span>(<span class="num">5</span>)
+<span class="tp">5.0</span>
+
+<span class="op">&gt;&gt;&gt; </span><span class="fn">str</span>(<span class="num">42</span>)
+<span class="tp">'42'</span>                  <span class="cm"># now text, not a number</span></div>
+            </div>
+
+            <div>
+                <div class="box-orange">
+                    <h3>The motor.py problem</h3>
+                    <p>In <code>set_speed()</code>, we calculate:</p>
+                    <div class="code-block" style="font-size:0.95rem; padding:12px 16px;">
+pct <span class="op">/</span> <span class="num">100</span> <span class="op">*</span> <span class="num">65535</span></div>
+                    <p>Even if <code>pct</code> is an int, dividing by <code>100</code> produces a <span class="warning">float</span>. So the whole expression is a float. <code>duty_u16()</code> needs an <span class="highlight">int</span> — that's why we wrap it:</p>
+                    <div class="code-block" style="font-size:0.95rem; padding:12px 16px;">
+<span class="fn">int</span>(pct <span class="op">/</span> <span class="num">100</span> <span class="op">*</span> <span class="num">65535</span>)</div>
+                    <p style="margin-bottom:0;">The <code>int()</code> truncates the decimal. At these scale factors the rounding error is less than 1 — small enough not to matter.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 6: max, min, abs -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Built-in Functions: max(), min(), abs()</h2>
+
+        <p>These three are built into Python — no import needed. They show up constantly in robotics code.</p>
+
+        <div class="grid-3" style="margin-top:16px;">
+            <div class="box">
+                <h3>max()</h3>
+                <p>Returns the largest of its arguments.</p>
+                <div class="code-block" style="font-size:0.95rem; padding:12px 16px;">
+<span class="fn">max</span>(<span class="num">3</span>, <span class="num">7</span>)      <span class="cm"># 7</span>
+<span class="fn">max</span>(<span class="num">0</span>, <span class="op">-</span><span class="num">5</span>)     <span class="cm"># 0</span>
+<span class="fn">max</span>(<span class="num">1</span>,<span class="num">5</span>,<span class="num">3</span>,<span class="num">2</span>)  <span class="cm"># 5</span></div>
+            </div>
+
+            <div class="box">
+                <h3>min()</h3>
+                <p>Returns the smallest of its arguments.</p>
+                <div class="code-block" style="font-size:0.95rem; padding:12px 16px;">
+<span class="fn">min</span>(<span class="num">3</span>, <span class="num">7</span>)      <span class="cm"># 3</span>
+<span class="fn">min</span>(<span class="num">100</span>, <span class="num">150</span>)  <span class="cm"># 100</span>
+<span class="fn">min</span>(<span class="num">1</span>,<span class="num">5</span>,<span class="num">3</span>,<span class="num">2</span>)  <span class="cm"># 1</span></div>
+            </div>
+
+            <div class="box">
+                <h3>abs()</h3>
+                <p>Returns the absolute value (strips the sign).</p>
+                <div class="code-block" style="font-size:0.95rem; padding:12px 16px;">
+<span class="fn">abs</span>(<span class="op">-</span><span class="num">5</span>)    <span class="cm"># 5</span>
+<span class="fn">abs</span>(<span class="num">5</span>)     <span class="cm"># 5</span>
+<span class="fn">abs</span>(<span class="op">-</span><span class="num">0.3</span>)  <span class="cm"># 0.3</span></div>
+            </div>
+        </div>
+
+        <div class="grid-2" style="margin-top:20px;">
+            <div class="box-green">
+                <h3>Combining them — the clamp</h3>
+                <p>You can nest function calls. The inner call runs first, then the outer call uses its result.</p>
+                <div class="code-block" style="font-size:0.95rem; padding:12px 16px;">
+<span class="cm"># clamp value to 0–100:</span>
+<span class="fn">max</span>(<span class="num">0</span>, <span class="fn">min</span>(<span class="num">100</span>, value))
+
+<span class="cm"># step by step:</span>
+<span class="cm"># 1. min(100, value) → caps at 100</span>
+<span class="cm"># 2. max(0,  result) → floors at 0</span></div>
+            </div>
+
+            <div class="box-orange">
+                <h3>Why the clamp matters</h3>
+                <p>In <code>set_speed()</code>, if a student passes <code>150</code>, the raw math gives a duty cycle above 65535 — which crashes MicroPython with a <span class="warning">ValueError</span>. The clamp silently corrects it to 100 before the conversion:</p>
+                <div class="code-block" style="font-size:0.9rem; padding:12px 16px;">
+<span class="fn">int</span>(<span class="fn">max</span>(<span class="num">0</span>, <span class="fn">min</span>(<span class="num">100</span>, pct)) <span class="op">/</span> <span class="num">100</span> <span class="op">*</span> <span class="num">65535</span>)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 7: Naming Conventions -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Naming Conventions</h2>
+
+        <p>Python doesn't enforce access control — you can technically reach any name from anywhere. Instead, programmers use <span class="highlight">naming conventions</span> as a communication system: a way of saying "here's how this is intended to be used."</p>
+
+        <table class="conv-table" style="margin:20px 0;">
+            <thead>
+                <tr><th>Style</th><th>Meaning</th><th>Example from motor.py</th><th>Rule</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="conv-name public">plain_name</span></td>
+                    <td>Public — part of the interface students use</td>
+                    <td><code>forward()</code>, <code>set_speed()</code>, <code>stop()</code></td>
+                    <td>Use freely</td>
+                </tr>
+                <tr>
+                    <td><span class="conv-name private">_underscore</span></td>
+                    <td>Private — internal detail, don't call directly</td>
+                    <td><code>_speed</code>, <code>_drive()</code>, <code>_L_INA</code></td>
+                    <td>Leave alone</td>
+                </tr>
+                <tr>
+                    <td><span class="conv-name constant">ALL_CAPS</span></td>
+                    <td>Constant — value set once, never changed</td>
+                    <td><code>FULL = 65535</code></td>
+                    <td>Read, don't reassign</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="grid-2" style="margin-top:8px;">
+            <div class="objective-box">
+                <h3>Public vs private — a car analogy</h3>
+                <p>The steering wheel, pedals, and gear shift are the <span class="success">public interface</span> — designed for you to use. The steering rack, fuel injectors, and ABS pump are the <span class="warning">private internals</span> — they work behind the scenes. You don't reach through the dashboard to grab the rack directly. Same idea with <code>_drive()</code>: it works, but <code>forward()</code> is the right handle.</p>
+            </div>
+
+            <div class="box">
+                <h3>Python doesn't stop you</h3>
+                <p><code>motor._drive(1,0,1,0)</code> works. Python won't throw an error. But you bypass the speed setting, and you've coupled your code to an internal detail that might change. The convention is a <span class="highlight">promise between programmers</span>, not a lock.</p>
+                <p style="margin-bottom:0;">When you see an underscore, the message is: <span class="warning">"I didn't design this for you to call — use the public API instead."</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 8: Today's Activity -->
+<div class="slide">
+    <div class="slide-content" style="text-align:center;">
+        <h2>Today's Activity</h2>
+        <p style="max-width:680px; margin:0 auto 30px;">Open the Activity Guide and work through each part in the REPL. You don't need the robot for this one — just Thonny and your Pico.</p>
+
+        <div class="grid-3" style="max-width:900px; margin:0 auto 30px; text-align:left;">
+            <div class="box">
+                <h3>Part 1 · ~10 min</h3>
+                <p>Explore types in the REPL — use <code>type()</code> and spot the int/float divide</p>
+            </div>
+            <div class="box">
+                <h3>Part 2 · ~10 min</h3>
+                <p>Practice type conversion and trace the <code>set_speed()</code> calculation step by step</p>
+            </div>
+            <div class="box">
+                <h3>Part 3 · ~15 min</h3>
+                <p>Build clamp expressions with <code>max()</code> and <code>min()</code>; audit <code>motor.py</code> for conventions</p>
+            </div>
+        </div>
+
+        <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-bottom:20px;">
+            <a href="Activity_02_Variables_Types.html" target="_blank"
+               style="background:linear-gradient(135deg,#00d4ff,#0099cc);color:#0a0e27;padding:16px 32px;border-radius:8px;text-decoration:none;font-family:'Exo 2',sans-serif;font-weight:700;font-size:1.1rem;box-shadow:0 4px 15px rgba(0,212,255,0.3);">
+               Open Activity Guide →
+            </a>
+            <a href="../resources/pico2w-reference.html" target="_blank"
+               style="background:rgba(0,212,255,0.1);border:2px solid #00d4ff;color:#00d4ff;padding:16px 32px;border-radius:8px;text-decoration:none;font-family:'Exo 2',sans-serif;font-weight:700;font-size:1.1rem;">
+               Pico 2W Reference ↗
+            </a>
+        </div>
+
+        <p style="color:#6272a4; font-size:1rem;">Challenges and comprehension questions are inside the activity guide.</p>
+    </div>
+</div>
+
+</div><!-- /presentation -->
+
+<div class="slide-number" id="slideNum">1 / 8</div>
+
+<div class="ref-link">
+    <a href="../resources/pico2w-reference.html" target="_blank">Pico 2W Reference ↗</a>
+</div>
+
+<div class="controls">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Previous</button>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</div>
+
+<script>
+    let current = 0;
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    document.getElementById('slideNum').textContent = `1 / ${total}`;
+
+    function changeSlide(dir) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(total - 1, current + dir));
+        slides[current].classList.add('active');
+        slides[current].scrollTop = 0;
+        document.getElementById('slideNum').textContent = `${current + 1} / ${total}`;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === total - 1;
+    }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+</body>
+</html>
