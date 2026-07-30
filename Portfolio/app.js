@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.12.3',
+    VERSION: 'v2.12.4',
 
     // Backend URL — swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -2159,10 +2159,10 @@ function submitWeeklyReflection(e) {
 // ============================================
 function initEvidenceUpload() {
     const uploadZone = document.getElementById('uploadZone');
-    const fileInput = document.getElementById('evidenceFiles');
+    const fileInput  = document.getElementById('evidenceFiles');
+    if (!uploadZone || !fileInput) return;
 
     uploadZone.addEventListener('click', () => fileInput.click());
-
     uploadZone.addEventListener('dragover', (e) => {
         e.preventDefault();
         uploadZone.style.borderColor = 'var(--primary)';
@@ -2175,7 +2175,6 @@ function initEvidenceUpload() {
         uploadZone.style.borderColor = '';
         handleFiles(e.dataTransfer.files);
     });
-
     fileInput.addEventListener('change', () => handleFiles(fileInput.files));
 }
 
