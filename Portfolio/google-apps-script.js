@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.9.53';
+const BACKEND_VERSION = 'v2.10.0';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -31,7 +31,7 @@ const SHEET_NAMES = {
   EVIDENCE: 'Evidence',
   CONFIG: 'Config',
   LOG: 'Activity Log',
-  QUIZ: 'Claw Quiz'
+  QUIZ: 'Quiz'
 };
 
 // ============================================
@@ -41,11 +41,12 @@ const SHEET_NAMES = {
 // To add a new unit: copy the 'unit5_motors' block and fill in the fields.
 // ============================================
 const TUTOR_LESSONS = {
+  // TODO: unit5_motors steps and targetCode need rewriting for Pico 2W / MicroPython
   'unit5_motors': {
     unit: 'Unit 5 — Programming, Electronics & Sensors',
     title: 'Robot Motor Control Library',
-    board: 'Arduino Nano RP2040 Connect',
-    language: 'C++ / Arduino',
+    board: 'Raspberry Pi Pico 2W',
+    language: 'MicroPython',
     objective: 'Build a complete motor control library for the class robot from scratch, one function at a time. By the end you will have a working sketch with forward, backward, stop, pivot, distance sensing, encoder tracking, and closed-loop straight driving.',
     steps: [
       { title: 'Declare pin constants',
@@ -200,11 +201,12 @@ long readDistance() {
 }`
   }
   ,
+  // TODO: battle_royale uses WiFiNINA (Arduino-specific) — needs rewriting for Pico 2W / MicroPython network module
   'battle_royale': {
     unit: 'Unit 5 — Programming, Electronics & Sensors',
     title: 'Battle Royale Tilt Controller',
-    board: 'Arduino Nano RP2040 Connect',
-    language: 'C++ / Arduino',
+    board: 'Raspberry Pi Pico 2W',
+    language: 'MicroPython',
     objective: 'Build a WiFi access point on the robot that serves a phone-based tilt controller. The phone browser reads DeviceOrientation (beta/gamma), sends tilt values to /drive every 100 ms, and the robot maps those values to bidirectional motor speeds with a dead zone and exponential response curve.',
     steps: [
       { title: 'Include WiFiNINA, declare server and globals',
@@ -848,17 +850,18 @@ function saveDeliverable(student, id, deliverable) {
   const sheet = ss.getSheetByName(SHEET_NAMES.DELIVERABLES);
   const data = sheet.getDataRange().getValues();
 
-  // Deliverable titles for Robotics class
   const titles = {
-    1: 'Line Following Practical #1',
-    2: 'Line Following Practical #2',
-    3: 'Ultrasonic Sensor Lab Report',
-    4: 'Scanner Assembly',
-    5: 'Scanning Practical',
-    6: 'Wall Following Robot',
-    7: 'Motor Functions & PWM Values',
-    8: 'Claw Practical',
-    9: 'Final Robot Demonstration'
+    0:  'Career Ready Practices Reflection',
+    11: 'Design Brief',
+    12: 'Robot Deck Design Record',
+    21: 'C1 — Wheel Hub',
+    22: 'C2 — Drive Wheel',
+    23: 'C3 — Motor Sleeve Mount',
+    24: 'C4 — Robot Deck (Final)',
+    25: 'C5 — Omni Wheel Mount',
+    26: 'C6 — IR Sensor Mount',
+    27: 'C7 — Ultrasonic Sensor Mount',
+    51: 'Programming Basics — Check Your Understanding'
   };
 
   // Check if deliverable already exists
@@ -923,15 +926,17 @@ function handleRecordDeliverableUrl(data) {
   if (!studentName) return { error: 'Student not found: ' + data.email };
 
   const titles = {
-    1: 'Line Following Practical #1',
-    2: 'Line Following Practical #2',
-    3: 'Ultrasonic Sensor Lab Report',
-    4: 'Scanner Assembly',
-    5: 'Scanning Practical',
-    6: 'Wall Following Robot',
-    7: 'Motor Functions & PWM Values',
-    8: 'Claw Practical',
-    9: 'Final Robot Demonstration'
+    0:  'Career Ready Practices Reflection',
+    11: 'Design Brief',
+    12: 'Robot Deck Design Record',
+    21: 'C1 — Wheel Hub',
+    22: 'C2 — Drive Wheel',
+    23: 'C3 — Motor Sleeve Mount',
+    24: 'C4 — Robot Deck (Final)',
+    25: 'C5 — Omni Wheel Mount',
+    26: 'C6 — IR Sensor Mount',
+    27: 'C7 — Ultrasonic Sensor Mount',
+    51: 'Programming Basics — Check Your Understanding'
   };
 
   const sheet = ss.getSheetByName(SHEET_NAMES.DELIVERABLES);
@@ -1316,7 +1321,7 @@ function loadTeamData(team, period) {
 
       // Calculate points
       let points = reflectionCount * 20;
-      const pointValues = { 1: 50, 2: 50, 3: 75, 4: 50, 5: 75, 6: 50, 7: 50, 8: 75, 9: 100, 10: 100 };
+      const pointValues = { 0: 20, 11: 50, 12: 50, 21: 50, 22: 50, 23: 50, 24: 75, 25: 50, 26: 50, 27: 50, 51: 80 };
       for (let j = 1; j < deliverablesData.length; j++) {
         if (deliverablesData[j][0] === email && deliverablesData[j][7] === 'completed') {
           const id = deliverablesData[j][2];
@@ -1377,7 +1382,7 @@ function loadAllData() {
   const reflections  = safeGetSheet(SHEET_NAMES.REFLECTIONS);
   const deliverables = safeGetSheet(SHEET_NAMES.DELIVERABLES);
   const evidence     = safeGetSheet(SHEET_NAMES.EVIDENCE);
-  const quiz         = safeGetSheet(SHEET_NAMES.QUIZ);  // legacy 'Claw Quiz' sheet
+  const quiz         = safeGetSheet(SHEET_NAMES.QUIZ);  // legacy quiz sheet (kept for backward-compat)
 
   // Load every quiz sheet registered in QUIZ_REGISTRY, keyed by quizId so the
   // teacher portal can pick the right rows per quiz (e.g. final_exam vs claw).
@@ -1608,7 +1613,7 @@ function generateSummaryReport() {
  */
 function sendRemindersWeb(semesterStart) {
   const data = loadAllData();
-  const startDate = semesterStart ? new Date(semesterStart) : new Date('2026-02-02');
+  const startDate = semesterStart ? new Date(semesterStart) : new Date('2026-08-24');
   const diffTime = new Date() - startDate;
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
   const currentWeek = Math.floor(diffDays / 7) + 1;
@@ -1620,18 +1625,20 @@ function sendRemindersWeb(semesterStart) {
   const skipReflectionWeeks  = cfg.skipReflectionWeeks  || [];
   const skipDeliverableWeeks = cfg.skipDeliverableWeeks || [];
 
-  // Deliverable titles by ID — optional deliverables are excluded from reminders
-  const deliverableTitles = {
-    1: 'Line Following Practical #1',
-    2: 'Line Following Final Practical',
-    3: 'Ultrasonic Sensor Lab Report',
-    4: 'Scanner Assembly',
-    5: 'Scanning Practical',
-    7: 'Motor Functions & PWM Values',
-    8: 'Claw Practical',
-    9: 'Final Robot Demonstration'
-    // 6 (Wall Following Robot) intentionally omitted — optional deliverable
-  };
+  // Deliverable schedule: {id, title, week due}
+  const deliverableSchedule = [
+    { id: 0,  title: 'Career Ready Practices Reflection', week: 1 },
+    { id: 11, title: 'Design Brief', week: 1 },
+    { id: 12, title: 'Robot Deck Design Record', week: 2 },
+    { id: 21, title: 'C1 — Wheel Hub', week: 3 },
+    { id: 22, title: 'C2 — Drive Wheel', week: 4 },
+    { id: 23, title: 'C3 — Motor Sleeve Mount', week: 4 },
+    { id: 25, title: 'C5 — Omni Wheel Mount', week: 6 },
+    { id: 26, title: 'C6 — IR Sensor Mount', week: 7 },
+    { id: 27, title: 'C7 — Ultrasonic Sensor Mount', week: 7 },
+    { id: 24, title: 'C4 — Robot Deck (Final)', week: 8 },
+    { id: 51, title: 'Programming Basics — Check Your Understanding', week: 17 }
+  ];
 
   data.students.forEach(student => {
     const email = student[0];
@@ -1658,19 +1665,19 @@ function sendRemindersWeb(semesterStart) {
     // Check missing deliverables — only past-deadline weeks, skip optional/skipped
     const completedDeliverables = data.deliverables
       .filter(d => d[0] === email && d[7] === 'completed')
-      .map(d => d[2]);
+      .map(d => String(d[2]));
 
     const missingDeliverables = [];
-    for (let id = 1; id <= currentWeek && id <= 9; id++) {
+    deliverableSchedule.forEach(d => {
       const weekStart = new Date(startDate);
-      weekStart.setDate(weekStart.getDate() + (id - 1) * 7);
+      weekStart.setDate(weekStart.getDate() + (d.week - 1) * 7);
       const fridayDeadline = new Date(weekStart);
       fridayDeadline.setDate(fridayDeadline.getDate() + 4);
       fridayDeadline.setHours(15, 0, 0, 0);
-      if (now > fridayDeadline && deliverableTitles[id] && !skipDeliverableWeeks.includes(id) && !completedDeliverables.includes(id)) {
-        missingDeliverables.push(deliverableTitles[id]);
+      if (now > fridayDeadline && !skipDeliverableWeeks.includes(d.week) && !completedDeliverables.includes(String(d.id))) {
+        missingDeliverables.push(d.title);
       }
-    }
+    });
 
     if (missingReflections.length > 0 || missingDeliverables.length > 0) {
       let body = `Hi ${name},\n\nYou have missing portfolio work:\n`;
@@ -1680,7 +1687,7 @@ function sendRemindersWeb(semesterStart) {
       if (missingDeliverables.length > 0) {
         body += `\nMissing Deliverables:\n- ${missingDeliverables.join('\n- ')}`;
       }
-      body += `\n\nPlease submit them as soon as possible.\n\nPortfolio: https://mbombich-robotics.github.io/cte/Unit_05_Programming_Electronics_and_Sensors/Robotics_Portfolio_System/index.html\n\nMr. B`;
+      body += `\n\nPlease submit them as soon as possible.\n\nPortfolio: https://mbombich-robotics.github.io/CTE/Portfolio/\n\nMr. B`;
 
       MailApp.sendEmail({
         to: email,
@@ -1713,7 +1720,7 @@ function sendReminderEmails() {
   if (response !== ui.Button.YES) return;
 
   const data = loadAllData();
-  const currentWeek = Math.ceil((new Date() - new Date('2026-02-02')) / (1000 * 60 * 60 * 24 * 7));
+  const currentWeek = Math.ceil((new Date() - new Date('2026-08-24')) / (1000 * 60 * 60 * 24 * 7));
   let emailsSent = 0;
 
   data.students.forEach(student => {
@@ -1736,7 +1743,7 @@ function sendReminderEmails() {
       MailApp.sendEmail({
         to: email,
         subject: 'Robotics Portfolio Reminder - Missing Reflections',
-        body: `Hi ${name},\n\nYou have missing weekly reflections for weeks: ${missingWeeks.join(', ')}.\n\nPlease submit them as soon as possible.\n\nPortfolio: https://mbombich-robotics.github.io/cte/Unit_05_Programming_Electronics_and_Sensors/Robotics_Portfolio_System/index.html\n\nMr. B`
+        body: `Hi ${name},\n\nYou have missing weekly reflections for weeks: ${missingWeeks.join(', ')}.\n\nPlease submit them as soon as possible.\n\nPortfolio: https://mbombich-robotics.github.io/CTE/Portfolio/\n\nMr. B`
       });
 
       console.log(`Emailed ${email}: Missing weeks ${missingWeeks.join(', ')}`);
@@ -1908,50 +1915,9 @@ function handleGetQuizMeta(e) {
   };
 }
 
-// Legacy constant name kept for any code that still references it directly
-// (actual data lives in quiz-content.js via QUIZ_REGISTRY)
-const QUIZ_QUESTIONS = [
-  { id: 'q1', maxPts: 4, label: 'Q1 – PWM',
-    question: 'In your own words, what is PWM? How does the pulse width physically cause the servo to move to a different position?',
-    rubric: `Award 0–4:
-1 pt – Identifies PWM as Pulse Width Modulation (or describes on/off pulses at fixed frequency).
-1 pt – Explains duty cycle: ratio of on-time to total period.
-1 pt – Connects duty cycle/pulse width to a specific servo angle.
-1 pt – Explanation is in the student's own words showing real understanding, not a copy-paste.` },
-  { id: 'q2', maxPts: 4, label: 'Q2 – Contact Detection',
-    question: 'Describe in plain English how your code knows the claw has touched an object without being able to see it. Why is this better than just closing the claw all the way every time?',
-    rubric: `Award 0–4:
-2 pts – Explains that the potentiometer ADC reading stalls/stops changing when the claw contacts resistance. Code detects contact when the value stops increasing despite the motor still trying to close.
-2 pts – Explains why better than full-close: prevents crushing fragile objects, adapts to different sizes, avoids motor stall damage.` },
-  { id: 'q3', maxPts: 4, label: 'Q3 – Code Reading (abs)',
-    question: 'Given: if (abs(currentFeedback - holdFeedback) > 15) — a) What does abs() do and why is it needed here? b) What real-world event does this line detect?',
-    rubric: `Award 0–4 (2 per part):
-Part a: abs() returns absolute value. Needed because feedback could increase OR decrease depending on slip direction — we need the magnitude regardless of sign.
-Part b: Detects an object slipping in the grip. Object movement shifts the claw ADC value more than 15 units from its hold position.` },
-  { id: 'q4', maxPts: 4, label: 'Q4 – Rate of Closure',
-    question: 'What controls how fast your claw closes? Point to the specific line, value, or variable responsible, and explain what would happen if you changed it.',
-    rubric: `Award 0–4:
-2 pts – Identifies something specific: a delay() value between servo steps, a step-size increment, or a millis() interval. Vague "the loop" answers earn 0–1.
-2 pts – Correctly explains effect of changing it: larger delay/smaller step = slower; smaller delay/larger step = faster.` },
-  { id: 'q5', maxPts: 4, label: 'Q5 – Object Detection Line',
-    question: 'Which specific line(s) in your code read the potentiometer and compare against your contact threshold? Write the line out and explain what each part does.',
-    rubric: `Award 0–4:
-1 pt – Includes analogRead() call.
-1 pt – Stores/uses the returned value correctly.
-1 pt – Includes a comparison against a threshold (>, >=, etc.).
-1 pt – Can explain what each part does (what analogRead returns, what the threshold represents).` },
-  { id: 'q6', maxPts: 6, label: 'Q6 – Blocking Code',
-    question: 'What is blocking code? Using delay() as an example, explain why a blocking approach would have made it impossible to close the claw and check for contact at the same time — and describe how your program avoided this problem.',
-    rubric: `Award 0–6:
-2 pts – Correctly defines blocking code: halts all execution until finished (delay(1000) = CPU does nothing for 1 second).
-2 pts – Explains the specific problem: delay() between servo steps would prevent analogRead() contact checks from running, so contact could be missed entirely.
-2 pts – Describes their non-blocking solution: small servo increments each loop() pass, checking ADC every iteration, using millis() instead of delay(), or similar. Must be specific to their code.` },
-  { id: 'bonus', maxPts: 2, label: 'Bonus – Active-Low LED',
-    question: 'What does "active low" mean for the RGB LED on the RP2040 Connect? Why does it matter when you write code to turn on a specific color?',
-    rubric: `Award 0–2:
-1 pt – Active-low means LED turns ON when pin is driven LOW (0V), not HIGH.
-1 pt – Practical consequence: to turn a color ON you write LOW (0) to that pin — opposite of what most expect. Writing HIGH turns it OFF.` }
-];
+// QUIZ_QUESTIONS: legacy claw-quiz fallback removed. Quiz content lives in quiz-content.js (not tracked in git).
+// Without quiz-content.js, quiz functions fail gracefully with a 'no questions found' error.
+const QUIZ_QUESTIONS = [];
 
 function getOrCreateQuizSheet(quizId) {
   quizId = quizId || 'claw';
@@ -2217,59 +2183,12 @@ function onOpen() {
 function handleGradeDesignBrief(data) {
   if (data.token !== TEACHER_TOKEN) return { error: 'Unauthorized' };
   const deliverableId = Number(data.deliverableId);
-  if (![0, 8, 9].includes(deliverableId)) return { error: 'Only deliverables 0, 8, and 9 support AI grading' };
+  if (deliverableId !== 0) return { error: 'AI grading is currently only supported for D0 (Career Ready Practices)' };
 
-  // D0: content is passed directly (no Google Doc)
-  if (deliverableId === 0) {
-    const content = (data.content || '').trim();
-    if (!content) return { error: 'No reflection content provided' };
-    try {
-      const grades = gradeDesignBriefWithClaude(content, 0);
-      return { success: true, grades };
-    } catch(e) {
-      return { success: false, error: e.message };
-    }
-  }
-
-  const docUrl = (data.docUrl || '').trim();
-  if (!docUrl) return { error: 'Missing docUrl' };
-  const idMatch = docUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
-  if (!idMatch) return { error: 'Could not extract Google Doc ID from URL' };
-  const docId = idMatch[1];
-
-  // Fetch the doc via Drive API using the script owner's OAuth token. The
-  // anonymous /export?format=html URL fails with 401 unless sharing is "Anyone
-  // with the link"; this path uses the executing user's credentials (Mr.
-  // Bombich, since the web app is "Execute as: Me") so any doc shared with
-  // him — including domain-shared "Vicksburg" docs — works.
-  //
-  // The DriveApp.getFileById call does two things: it verifies the executing
-  // user actually has access (gives a clean error if not), AND it tells Apps
-  // Script's static analyzer to include the Drive scope in the OAuth token.
-  let docHtml;
+  const content = (data.content || '').trim();
+  if (!content) return { error: 'No reflection content provided' };
   try {
-    try {
-      DriveApp.getFileById(docId).getName();
-    } catch(driveErr) {
-      return { error: 'Cannot open the document. The student needs to share their Google Doc with mbombich@vicksburgschools.org (or set link sharing to "Anyone at Vicksburg Schools").' };
-    }
-
-    const exportUrl = 'https://www.googleapis.com/drive/v3/files/' + docId + '/export?mimeType=text/html';
-    const resp = UrlFetchApp.fetch(exportUrl, {
-      headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() },
-      muteHttpExceptions: true
-    });
-    const code = resp.getResponseCode();
-    if (code !== 200) {
-      return { error: 'Drive API export failed: HTTP ' + code + ' — ' + resp.getContentText().substring(0, 200) };
-    }
-    docHtml = resp.getContentText();
-  } catch(e) {
-    return { error: 'Failed to fetch document: ' + e.message };
-  }
-
-  try {
-    const grades = gradeDesignBriefWithClaude(docHtml, deliverableId);
+    const grades = gradeWithRubric(content, 'No external hyperlinks (plain text submission).', 0);
     return { success: true, grades };
   } catch(e) {
     return { success: false, error: e.message };
@@ -2348,163 +2267,8 @@ ${docText}`;
   return JSON.parse(text.substring(first, last + 1));
 }
 
-function gradeDesignBriefWithClaude(docHtml, deliverableId) {
-  // D0 content arrives as plain text — skip HTML extraction and stripping
-  if (deliverableId === 0) {
-    const docText = docHtml.substring(0, 50000);
-    const urlNote = 'No external hyperlinks (plain text submission).';
-    // Jump directly to rubric/criteria/prompt block below
-    return gradeWithRubric(docText, urlNote, deliverableId);
-  }
-
-  // Extract external hyperlink URLs before stripping HTML
-  const urls = [];
-  const hrefRe = /href="([^"]+)"/g;
-  let m;
-  while ((m = hrefRe.exec(docHtml)) !== null) {
-    const u = m[1];
-    if (u.startsWith('http') && !u.includes('docs.google.com/document') && !u.includes('accounts.google.com') && !u.includes('drive.google.com')) {
-      urls.push(u);
-    }
-  }
-
-  // Strip HTML to plain text
-  let docText = docHtml
-    .replace(/<script[\s\S]*?<\/script>/gi, '')
-    .replace(/<style[\s\S]*?<\/style>/gi, '')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/[ \t]{2,}/g, ' ')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
-
-  if (docText.length > 50000) docText = docText.substring(0, 50000) + '\n[...document truncated...]';
-
-  const urlNote = urls.length > 0
-    ? 'External hyperlinks found in document: ' + urls.slice(0, 20).join(' | ')
-    : 'No external hyperlinks detected in document.';
-
-  const rubricD8 = `RUBRIC — DELIVERABLE 8 CHECKPOINT (50 pts):
-
-Section 1 — Project Overview:
-s1_purpose (max 3): Clearly states what the project is, what the system does (grip/classify/slip detection), and WHY it is useful. Written in student's own voice (2-4 sentences, NOT AI-sounding). 3=all present, own voice; 2=vague/incomplete; 1=AI-paste, no personal voice; 0=missing.
-s1_goals (max 3): Lists 2-3 SPECIFIC learning goals (e.g. "I will learn how PWM controls servo position" not "I will learn programming"). 3=2-3 specific; 2=generic; 1=one vague; 0=missing.
-
-Section 2 — Bill of Materials:
-s2_completeness (max 4): All major components listed: microcontroller, servo, potentiometer, LED, resistor, claw hardware, power supply. 4=all; 2-3=1-2 missing; 1=fewer than half; 0=absent.
-s2_links (max 4): Hyperlinks to datasheets for servo, potentiometer, and at least one other component. Use the "External hyperlinks" list — if 3+ URLs found, give full credit. 4=3+ URLs; 2-3=2 URLs; 1=1 URL; 0=no URLs.
-
-Section 3 — Hardware Setup:
-s3_pins (max 5): Pin table with all components, pin number/name, wire color, signal type. 5=complete; 3-4=minor errors; 1-2=significant errors; 0=absent.
-s3_diagram (max 3): Wiring diagram or photo. You CANNOT see images — if document text references a diagram, image, or figure, give score=2 and note manual verification needed. Otherwise score=null. NEVER give 0 if the section text mentions any visual.
-
-Section 4 — Key Concepts (highest weight):
-s4_pwm (max 6): Explains in OWN WORDS: what PWM stands for, what duty cycle means, how it controls servo position, includes analogy or example. PENALIZE AI-sounding text with no personal voice. 6=complete, own voice, analogy; 3-5=mostly correct but incomplete or AI-sounding; 1-2=definition only, no servo connection; 0=missing.
-s4_adc (max 6): Explains in OWN WORDS: what ADC does, what 0-1023 means, how potentiometer ADC values detect claw position/contact. 6=full, own voice, project connection; 3-5=mostly correct, missing pot connection or AI-sounding; 1-2=surface definition; 0=missing.
-s4_additional (max 6): At least one additional concept explained accurately (e.g. control loop, threshold logic, serial communication, map(), slip detection algorithm). 6=accurate, own words; 3-5=shallow; 1-2=names without explaining; 0=none.
-
-Section 8 — AI Conversation Log:
-s8_prompts (max 5): At least 3 prompts logged covering DIFFERENT topics, matching real project work. 5=3+ varied real; 3-4=2 or 3 very similar; 1-2=1 or fabricated; 0=none.
-s8_reflection (max 5): For each prompt: what AI got right, what it missed, what student did with output. At least one critical entry. 5=full reflection each entry, at least one critical; 3-4=partial reflection or all positive; 1-2=just lists prompts; 0=none.`;
-
-  const rubricD9 = `RUBRIC — DELIVERABLE 9 FINAL BRIEF SECTIONS (25 pts):
-
-Section 5 — Algorithm:
-s5_flowchart (max 4): Flowchart or pseudocode showing main loop: open→read ADC→check contact→classify→set LED→check slip→repeat. Format may be a diagram OR a numbered/bulleted list. IMPORTANT: if the student's code (visible below) correctly implements the full control flow, a high-level description that covers all major steps in the right order earns 3/4 — do NOT penalize for omitting decision notation that is already proven correct in the code. Reserve 2/4 for descriptions that are vague, out of order, or missing major steps. 4=written algorithm itself contains explicit decision branches; 3=correct sequence of major steps with working code as evidence; 2=vague or incomplete; 1=major gaps; 0=absent.
-s5_clarity (max 2): Another student could follow the algorithm without reading the code. 2=clear enough to follow; 1=understandable with effort but missing specific details; 0=unclear.
-
-Section 6 — Annotated Code:
-s6_annotations (max 5): Functions and key blocks have comments explaining WHAT and WHY in student's own words. NOT AI boilerplate. 5=most code annotated with genuine explanations, not just code restatements; 4=well annotated with a few unexplained calculation lines; 3=most functions annotated, some just restate code; 1-2=sparse; 0=none or no code.
-s6_accuracy (max 3): Code is complete with no unexplained placeholders. 3=appears complete; 2=minor gaps; 1=incomplete; 0=no code or clearly not student's work.
-
-Section 7 — Testing Results:
-s7_table (max 3): Table with object test data including name, estimated size, ADC at contact, classified size, correct?. Real data (not suspiciously round numbers). 3=3+ objects with all required columns and real data; 2=3+ objects but missing 1-2 columns; 1=fewer than 3 objects or data appears fabricated; 0=absent.
-s7_analysis (max 2): Reflects honestly on results and identifies at least one specific issue. 2=identifies a specific observation with either a cause or a proposed improvement (does not require both); 1=notes something went wrong but stays vague; 0=none.
-
-Section 9 — Challenges & Solutions:
-s9_challenges (max 3): At least 2 SPECIFIC challenges (not generic). Good example: "ADC readings fluctuated ±30 at rest, causing false contact triggers." 3=2+ specific; 2=1 specific + 1 vague; 1=generic only; 0=absent.
-s9_solutions (max 3): For each challenge: solution tried and whether it worked. Unresolved challenges noted honestly. 3=tied to each challenge, honest; 2=present but vague/disconnected; 1=missing some; 0=none.`;
-
-  const rubricD0 = `RUBRIC — DELIVERABLE 0: Career Ready Practices (20 pts):
-
-cr_career (max 4): Student identifies a career or trade and explains their interest. Connects to something concrete from class (names a project, concept, or skill). 4=specific interest + direct class connection; 3=specific interest, generic class mention; 2=vague interest, no class connection; 1=names a career only; 0=missing.
-
-cr_education (max 4): Describes the education or training path specific to their career (e.g., apprenticeship, associate degree, bachelor's — not just "go to college"). 4=specific path with program type and rough timeline; 3=correct path type with some detail; 2=generic ("college" or "training"); 1=present but vague or incorrect; 0=missing.
-
-cr_financial (max 4): Shows understanding of gross vs. net pay. References actual numbers from the paycheck activity. 4=mentions take-home vs. gross, cites specific numbers, shows budget awareness; 3=mentions both but numbers are vague; 2=mentions salary only, no take-home analysis; 1=present but shows no understanding of the distinction; 0=missing.
-
-cr_goal (max 4): States a specific financial goal for year 1 of working — must include an amount AND a purpose (e.g., "save $3,000 for a used car" not just "save money"). 4=amount + purpose + rough plan; 3=amount + purpose, no plan; 2=purpose but no amount; 1=vague ("save money", "be smart"); 0=missing.
-
-cr_skills (max 4): Names a Career Ready skill (e.g., communication, collaboration, problem-solving) and gives a specific example of using it in class. 4=skill named + specific class example with context; 3=skill named + brief example; 2=skill named, no example; 1=generic statement; 0=missing.`;
-
-  const rubric = deliverableId === 0 ? rubricD0 : deliverableId === 8 ? rubricD8 : rubricD9;
-  const criteriaKeys = deliverableId === 0
-    ? ['cr_career','cr_education','cr_financial','cr_goal','cr_skills']
-    : deliverableId === 8
-    ? ['s1_purpose','s1_goals','s2_completeness','s2_links','s3_pins','s3_diagram','s4_pwm','s4_adc','s4_additional','s8_prompts','s8_reflection']
-    : ['s5_flowchart','s5_clarity','s6_annotations','s6_accuracy','s7_table','s7_analysis','s9_challenges','s9_solutions'];
-
-  const prompt = `You are grading a high school robotics student's Claw Project Design Brief.
-
-SCORING PHILOSOPHY:
-Award points generously when the student demonstrates genuine effort and understanding of the concept, even if their explanation is brief or imperfectly worded. Reserve scores of 0-1 for sections that are truly absent or fundamentally misunderstood. If a student shows real engagement with a concept — even partially — award at least 60-70% of available points for that criterion. A strong, hardworking student should score in the 85-95% range overall.
-
-FEEDBACK TONE:
-Write feedback in an encouraging but specific voice — you are a supportive teacher, not a critic. Speak directly to the student using "you." Lead with what they did well in that section, then give one specific, actionable suggestion for improvement. Never use empty praise ("Great job!"). Be concrete: instead of "missing detail," say "Add a sentence explaining how duty cycle percentage maps to servo angle in degrees."
-
-${rubric}
-
-${urlNote}
-
-Return ONLY a valid JSON object — no markdown fences, no explanation. Use null for scores requiring manual image verification. Feedback must be 1-2 specific sentences per criterion.
-
-Required keys: ${criteriaKeys.join(', ')}
-
-Example format: {"s1_purpose": {"score": 2, "max": 3, "feedback": "You clearly described what the claw does — add one sentence on why grip detection matters in real robotics applications to complete this section."}, ...}
-
-STUDENT DOCUMENT:
-${docText}`;
-
-  const apiKey = PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY');
-  if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set in Script Properties.');
-
-  const url = 'https://api.anthropic.com/v1/messages';
-  const fetchOpts = {
-    method: 'post',
-    headers: {
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json'
-    },
-    payload: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 8192,
-      messages: [{ role: 'user', content: prompt }]
-    }),
-    muteHttpExceptions: true
-  };
-
-  const response = UrlFetchApp.fetch(url, fetchOpts);
-  const result = JSON.parse(response.getContentText());
-  if (result.type === 'error') throw new Error('Claude: ' + result.error.message);
-  if (result.stop_reason === 'max_tokens') throw new Error('Claude response was cut off (max_tokens reached at 8192). Brief may be too long.');
-
-  const text = result.content[0].text;
-  try {
-    const first = text.indexOf('{');
-    const last = text.lastIndexOf('}');
-    if (first === -1 || last === -1) throw new Error('no JSON object found');
-    return JSON.parse(text.substring(first, last + 1));
-  } catch(e) {
-    throw new Error('Could not parse Claude response: ' + text.substring(0, 300));
-  }
-}
-
+// gradeDesignBriefWithClaude removed — D8/D9 claw project deliverables are no longer in the curriculum.
+// D0 AI grading now calls gradeWithRubric directly from handleGradeDesignBrief.
 // ============================================
 // AI TUTOR FUNCTIONS
 // ============================================
