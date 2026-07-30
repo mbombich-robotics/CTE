@@ -58,10 +58,10 @@
 |----|-------|------|-------|---------|
 | 3 | Sep 14–18 | 5 | | CAD hygiene rules + F360 orientation; **C1: Wheel Hub** — concentric circles, multi-depth extrude, file naming; **C2: Drive Wheel** begin — hex bore, Circular Pattern spokes, student design choice |
 | 4 | Sep 21–25 | 5 | | C2 iterate + print; **C3: Motor Sleeve Mount** — sleeve bore (measure motor model in F360), T-slot nut-capture rail, face screw holes; version naming; **mid-unit CAD checkpoint quiz** |
-| 5 | Sep 28 – Oct 2 | 5 | ⚡ Sep 30 | C3 iterate + print; **C5: Omni Wheel Mount** — multi-plane sketch, axle bore; **C6: IR Sensor Mount** — Mirror, U-channel, ground clearance |
-| 6 | Oct 5–9 | 5 | | C5 + C6 iterate + print; **C7: Ultrasonic Sensor Mount** — HC-SR04 bore fit (measure in F360), L-bracket two-face extrude; all prints test-fit |
-| 7 | Oct 12–16 | 5 | | **C4: Robot Deck** — layout planning using all component hole patterns, M5 through-holes, CNC corner radii, slot; CNC toolpath intro (awareness) |
-| 8 | Oct 19–23 | 5 | | C4 iterate; all components test-fit on deck; **CAD quiz end of week** |
+| 5 | Sep 28 – Oct 2 | 5 | ⚡ Sep 30 | C3 iterate + print; **C4: Robot Deck** — outer profile + motor mount holes only; start assembly file (deck + C3 linked); constrain C3 in assembly |
+| 6 | Oct 5–9 | 5 | | **C5: Omni Wheel Mount** — multi-plane sketch, axle bore; insert C5 into assembly, drag to find position; edit C4 sketch to add C5 holes; save → assembly updates; constrain C5; C5 print |
+| 7 | Oct 12–16 | 5 | | **C6: IR Sensor Mount** + **C7: Ultrasonic Sensor Mount**; same assembly workflow for each — insert → position → edit C4 sketch → constrain; C6 + C7 print |
+| 8 | Oct 19–23 | 5 | | Run Interference Check on full assembly; fix any collisions; finalize C4 deck; **CNC toolpath intro + deck CNC cut**; all-component test-fit; **CAD quiz end of week** |
 
 **Unit 2 deliverables:** D21–D27 — one per component; each requires screenshot + level selection + learning check Q1–Q5. All 7 required before build phase.  
 **Quizzes:** Mid-unit checkpoint (Week 4) + CAD quiz (Week 8).

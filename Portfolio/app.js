@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.11.1',
+    VERSION: 'v2.12.0',
 
     // Backend URL — swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -33,7 +33,7 @@ const CONFIG = {
     // Point values
     POINTS: {
         WEEKLY_REFLECTION: 20,
-        TOTAL_POSSIBLE: 735
+        TOTAL_POSSIBLE: 1110  // placeholder — recalculate when all deliverables are finalized
     },
 
     // Auto-save interval in milliseconds
@@ -52,12 +52,12 @@ const WEEK_TOPICS = {
     1:  { title: 'Engineering Design Process', phase: 'edp', unit: '01', focus: 'Intro, Spaghetti Tower challenge, EDP framework, Paper Glider, Design Brief workshop' },
     2:  { title: 'Cardboard Robot Deck Challenge', phase: 'edp', unit: '01', focus: 'Client interview, concept sketching, build, iterate — EDP quiz end of week. Labor Day Mon Sep 7.' },
     // Unit 2 — CAD: Component-Based (Sep 14 – Oct 23)
-    3:  { title: 'CAD: Motor Mount', phase: 'cad', unit: '02', focus: 'CAD hygiene rules, F360 orientation; motor mount — extrude, holes, bolt pattern' },
-    4:  { title: 'CAD: Motor Mount — Iterate & Print', phase: 'cad', unit: '02', focus: 'Tolerance fit, iterate, 3D print; version naming. Mid-unit checkpoint quiz.' },
-    5:  { title: 'CAD: IR Sensor Mount', phase: 'cad', unit: '02', focus: '15mm ground clearance constraint; print + test. Sep 30 is a 20-min period day.' },
-    6:  { title: 'CAD: Battery Holder + Ultrasonic Mount', phase: 'cad', unit: '02', focus: 'Wire relief features; print + test; forward-facing sensor mount' },
-    7:  { title: 'CAD: Robot Deck', phase: 'cad', unit: '02', focus: 'Hole patterns, wire pass-throughs, component layout; CNC toolpath intro. Records Day Oct 13 — 4-day week.' },
-    8:  { title: 'CAD: Electronics Mount + Quiz', phase: 'cad', unit: '02', focus: 'Standoffs, Arduino + motor controller spacing; CAD quiz end of week' },
+    3:  { title: 'CAD: C1 Wheel Hub + C2 Drive Wheel', phase: 'cad', unit: '02', focus: 'F360 orientation; CAD hygiene rules; C1 Wheel Hub — concentric circles, multi-depth extrude; C2 Drive Wheel begin — hex bore, Circular Pattern spokes' },
+    4:  { title: 'CAD: C2 finish + C3 Motor Sleeve Mount', phase: 'cad', unit: '02', focus: 'C2 iterate + print; C3 Motor Sleeve Mount — sleeve bore, T-slot nut-capture rail, face screw holes; version naming. Mid-unit checkpoint quiz.' },
+    5:  { title: 'CAD: C3 print + C4 Deck begin + Assembly', phase: 'cad', unit: '02', focus: 'C3 iterate + print; C4 Robot Deck — outer profile + motor mount holes only; start assembly file (deck + C3 linked + constrained). Sep 30 is a 20-min period day.' },
+    6:  { title: 'CAD: C5 Omni Wheel Mount + Assembly', phase: 'cad', unit: '02', focus: 'C5 Omni Wheel Mount — multi-plane sketch, axle bore; insert into assembly, drag to position, edit deck sketch to add C5 holes, constrain C5' },
+    7:  { title: 'CAD: C6 IR Mount + C7 Ultrasonic Mount', phase: 'cad', unit: '02', focus: 'C6 IR Sensor Mount + C7 Ultrasonic Mount; same assembly workflow for each — insert → position → edit deck sketch → constrain. Records Day Oct 13 — 4-day week.' },
+    8:  { title: 'CAD: Assembly Final + CNC + Quiz', phase: 'cad', unit: '02', focus: 'Run Interference Check on full assembly; fix collisions; finalize C4 deck; CNC toolpath intro + deck CNC cut; all-component test-fit; CAD quiz end of week' },
     // Unit 3 — Safety & Tool Certification (Oct 26 – Nov 6)
     9:  { title: 'Safety: Foundations + Drill Press', phase: 'safety', unit: '03', focus: 'OSHA, LOTO, PPE, SDS; Matthew Henne + Lac-Mégantic case reviews; drill press cert' },
     10: { title: 'Safety: Tool Certs + Quiz', phase: 'safety', unit: '03', focus: 'Pedestal grinder cert, hand drill cert, CNC awareness (Year 1: observe only); safety quiz' },
@@ -161,6 +161,171 @@ const DELIVERABLES = [
             'One documented iteration: what changed, why you changed it, and what improved'
         ]
     },
+    // ── Unit 2: CAD — Component-Based (D21–D27) ─────────────────────────
+    // Points are placeholder (50 each) — to be finalized once full course is written
+    {
+        id: 21,
+        title: 'C1 — Wheel Hub',
+        unit: '02',
+        week: 3,
+        points: 50,
+        phase: 'cad',
+        hasLevelSelect: true,
+        description: 'Submit your completed Wheel Hub model with screenshots and learning check answers.',
+        requirements: [
+            'Screenshot: isometric view showing the hub cylinder, flange, and all 4 mounting holes',
+            'Screenshot: top view showing the central bore and fully constrained sketch (or a note that sketch was fully constrained before extruding)',
+            'File saved as Lastname_WheelHub_v1-Base (or higher version if you iterated)',
+            'Learning Check Q1–Q5 answered below'
+        ],
+        questions: [
+            'What does "fully constrained" mean in Fusion 360? How can you tell when a sketch is fully constrained?',
+            'The hub uses two different extrude depths — one for the flange, one for the hub cylinder. What does each depth represent, and why are both needed?',
+            'If the central bore is 0.3mm too small, what happens when you try to press the bearing in? What would you do to fix it?',
+            'Why do 3D-printed bores often need to be slightly larger than the nominal size of the part that goes inside? What causes this?',
+            'You added a Fillet to the outer edge of the flange. Would the hub still function without it? Why include it anyway?'
+        ]
+    },
+    {
+        id: 22,
+        title: 'C2 — Drive Wheel',
+        unit: '02',
+        week: 4,
+        points: 50,
+        phase: 'cad',
+        hasLevelSelect: true,
+        description: 'Submit your completed Drive Wheel model with screenshots and learning check answers.',
+        requirements: [
+            'Screenshot: isometric view showing the spoke pattern, hex bore, and outer rim',
+            'Screenshot: front view showing spoke symmetry',
+            'File saved as Lastname_DriveWheel_v1-Base',
+            'Learning Check Q1–Q5 answered below'
+        ],
+        questions: [
+            'What two things do you define when using Circular Pattern? Why is it better than drawing each spoke individually?',
+            'Why does the hub use a hex bore instead of a round bore? What would happen if the bore were round?',
+            'What is Extrude-Cut? Give a specific example of where you used it on the Drive Wheel.',
+            'The outer diameter must create an interference fit with the silicone tire. Explain in your own words what interference fit means and why it holds without glue or fasteners.',
+            'If you modeled the outer diameter exactly equal to the tire\'s inner diameter, would it press on securely or slip off? Why?'
+        ]
+    },
+    {
+        id: 23,
+        title: 'C3 — Motor Sleeve Mount',
+        unit: '02',
+        week: 4,
+        points: 50,
+        phase: 'cad',
+        hasLevelSelect: true,
+        description: 'Submit your completed Motor Sleeve Mount model with screenshots and learning check answers.',
+        requirements: [
+            'Screenshot: isometric view showing the sleeve bore, T-slot rail, and face screw holes',
+            'Screenshot: end face view showing the T-slot cross-section clearly',
+            'File saved as Lastname_SleevMount_v1-Base',
+            'Learning Check Q1–Q5 answered below'
+        ],
+        questions: [
+            'Describe how the T-slot nut-capture channel works. Why must the top slot be narrower than the bottom cavity?',
+            'You sketched the T-slot profile on the end face, then extruded it the full length. Why use this approach instead of drawing the final T-shape directly in the original outer profile?',
+            'If you left out the face screw holes, what would prevent the motor from sliding out of the sleeve during operation?',
+            'A student makes the T-slot bottom cavity exactly the width of the nut with zero clearance. What problem will they run into when trying to install the nut?',
+            'List the assembly steps for installing the motor. Why must the nut be inserted into the T-slot before the mount is bolted to the deck?'
+        ]
+    },
+    {
+        id: 24,
+        title: 'C4 — Robot Deck (Final)',
+        unit: '02',
+        week: 8,
+        points: 75,
+        phase: 'cad',
+        hasLevelSelect: true,
+        description: 'Submit your finalized Robot Deck file and full assembly screenshot after passing Interference Check. This deliverable is due at the end of Week 8 — the deck is modified throughout Weeks 5–7 as each component is added to the assembly.',
+        requirements: [
+            'Screenshot: top view of the finalized deck showing all component hole patterns (C3, C5, C6, C7)',
+            'Screenshot: full assembly isometric view with all 5 components (deck + C3 + C5 + C6 + C7) constrained',
+            'Interference Check: zero collisions confirmed before submitting',
+            'File version trail: v1-Base → v2-C5 → v3-C6 → v4-C7 → v5-Final (or equivalent)',
+            'Learning Check Q1–Q5 answered below'
+        ],
+        questions: [
+            'What is a Fusion 360 assembly file? How is it different from a regular part file?',
+            'Describe the full workflow for adding mounting holes to the deck for a new component. List every step in order.',
+            'You dragged C5 freely in the assembly to find a good position, then edited the deck sketch to add C5 holes and saved. What happens in the assembly automatically after you save the deck file?',
+            'Every interior corner of the deck must be filleted to at least the CNC bit radius. What happens physically during CNC machining if a corner is sharper than the bit?',
+            'The Interference Check shows two components overlapping. Name two possible causes and describe how you would fix each one.'
+        ]
+    },
+    {
+        id: 25,
+        title: 'C5 — Omni Wheel Mount',
+        unit: '02',
+        week: 6,
+        points: 50,
+        phase: 'cad',
+        hasLevelSelect: true,
+        description: 'Submit your completed Omni Wheel Mount and an updated assembly screenshot showing C5 constrained to the deck.',
+        requirements: [
+            'Screenshot: isometric view of the Omni Wheel Mount showing both arms and axle bores',
+            'Screenshot: assembly isometric showing C5 constrained in position on the deck',
+            'File saved as Lastname_OmniMount_v1-Base',
+            'Learning Check Q1–Q5 answered below'
+        ],
+        questions: [
+            'You needed to sketch on a side face of the mount body — a different plane from the original sketch. What F360 method lets you start a sketch on an existing face?',
+            'If the two arms are spaced too far apart, what happens to the axle? What happens if they are too close together?',
+            'What does a joint or constraint do in Fusion 360? What does the assembly look like if you insert a component but never constrain it?',
+            'You positioned C5 freely in the assembly before drilling holes in the deck. Why is this better than calculating the hole location from a drawing or estimating?',
+            'The M3×20 screws pass through the mount arms into the omni wheel hub flanges. Why should the holes in the arms be slightly larger than 3mm?'
+        ]
+    },
+    {
+        id: 26,
+        title: 'C6 — IR Sensor Mount',
+        unit: '02',
+        week: 7,
+        points: 50,
+        phase: 'cad',
+        hasLevelSelect: true,
+        description: 'Submit your completed IR Sensor Mount and an updated assembly screenshot showing C6 constrained to the deck.',
+        requirements: [
+            'Screenshot: isometric view of the IR Sensor Mount showing the U-bracket arms and bottom web',
+            'Screenshot: assembly isometric showing C6 in position (front underside of deck)',
+            'File saved as Lastname_IRSensorMount_v1-Base',
+            'Learning Check Q1–Q5 answered below'
+        ],
+        questions: [
+            'What does the Mirror tool do in Fusion 360? What two things do you need to define to use it?',
+            'You used Mirror instead of drawing both arms separately. What advantage does this give you if you need to change the arm thickness or spacing later?',
+            'The bracket height controls sensor ground clearance. Why does clearance matter for line following performance? What happens if the sensor is mounted too high?',
+            'What is a Slot feature in Fusion 360? Where did you use it on the IR Sensor Mount and why is it a better choice than a rectangle in that location?',
+            'You moved C6 into position in the assembly before editing the deck sketch to add holes. Why is positioning the part in the assembly better than guessing the hole location from a drawing?'
+        ]
+    },
+    {
+        id: 27,
+        title: 'C7 — Ultrasonic Sensor Mount',
+        unit: '02',
+        week: 7,
+        points: 50,
+        phase: 'cad',
+        hasLevelSelect: true,
+        description: 'Submit your completed Ultrasonic Sensor Mount and the final assembly screenshot with all 5 components constrained. This is the last component before the deck is finalized.',
+        requirements: [
+            'Screenshot: front view of the Ultrasonic Mount showing both sensor bores',
+            'Screenshot: isometric view showing the L-bracket geometry',
+            'Screenshot: full assembly showing all 5 components (deck + C3 + C5 + C6 + C7) before final interference check',
+            'File saved as Lastname_UltrasonicMount_v1-Base',
+            'Learning Check Q1–Q5 answered below'
+        ],
+        questions: [
+            'You measured the HC-SR04 sensor bores using Inspect → Measure on the provided model. Name one advantage of measuring the 3D model compared to using a physical caliper.',
+            'What is press-fit tolerance? If you model the bore diameter exactly equal to the sensor housing OD, will the sensor press-fit or be loose after 3D printing? Explain why.',
+            'The mount is an L-bracket shape. Describe how you created it using extrudes on two different faces — which face did each extrude start on?',
+            'What would happen to the robot\'s obstacle detection if the sensor were tilted 20° to one side instead of facing straight ahead?',
+            'After completing C7 and the Interference Check passes with zero collisions, what is the next step? Why is the Interference Check the gate before that step?'
+        ]
+    },
     // ── Unit 5: Programming Basics ───────────────────────────────────────
     {
         id: 51,
@@ -193,160 +358,10 @@ const DELIVERABLES = [
             '5.4 Q5: Identify the two bugs in the debug snippet from Activity 5.4 and write the corrected version of each line.'
         ]
     },
-    // ── Unit 5: Robot Project ────────────────────────────────────────────
-    {
-        id: 1,
-        title: 'Line Following Practical #1',
-        unit: '05',
-        week: 24,
-        points: 50,
-        phase: 'linefollow',
-        description: 'Complete Track #1 with curves in under 1 minute.',
-        timeLimit: 60, // seconds
-        requirements: [
-            'Tune the line following IR sensor for your track',
-            'Follow the line through curves',
-            'Complete Track #1 in under 1 minute'
-        ]
-    },
-    {
-        id: 2,
-        title: 'Line Following Practical #2',
-        unit: '05',
-        week: 24,
-        points: 75,
-        phase: 'linefollow',
-        description: 'Complete Track #2 with sharp curves in under 2 minutes.',
-        timeLimit: 120, // seconds
-        requirements: [
-            'Navigate a longer track with sharp curves',
-            'Complete Track #2 in under 2 minutes',
-            'Best of 3 attempts scored'
-        ]
-    },
-    {
-        id: 3,
-        title: 'Ultrasonic Sensor Lab Report',
-        unit: '05',
-        week: 25,
-        points: 40,
-        phase: 'scanner',
-        description: 'Document your ultrasonic sensor setup and testing.',
-        requirements: [
-            'Wire connections list (Arduino pin → sensor pin)',
-            'Code with comments explaining each section',
-            'Distance accuracy data table (5 distances, 3 readings each)',
-            'Observations about sensor behavior'
-        ]
-    },
-    {
-        id: 4,
-        title: 'Scanner Assembly',
-        unit: '05',
-        week: 26,
-        points: 50,
-        phase: 'scanner',
-        description: 'Build the servo-mounted scanning mechanism.',
-        requirements: [
-            'Screenshot of your customized Ultrasonic Sensor Mount CAD model',
-            'Screenshot of the CAD assembly: Servo Mount + Servo Motor + Sensor Mount',
-            'Sweep code (0° to 180°) with brief explanation'
-        ]
-    },
-    {
-        id: 5,
-        title: 'Obstacle Avoidance Run',
-        unit: '05',
-        week: 28,
-        points: 75,
-        phase: 'scanner',
-        description: 'Run your reactive navigation robot as long as possible without hitting an obstacle. Submit commented code explaining how it works, how you tuned it, and what problems you solved.',
-        requirements: [
-            'Code uploaded and running during your in-class turn',
-            'Serial Monitor open — distances, side checks, and decisions visible',
-            'Best continuous run time recorded by teacher',
-            'Portfolio: paste a key code section (loop() or a motor function) with inline comments explaining how each part works',
-            'Explain which constants you tuned (THRESHOLD, TURN_TIME, etc.) and what values you landed on',
-            'Describe at least one problem you encountered and how you fixed it'
-        ]
-    },
-    {
-        id: 6,
-        title: 'Wall Following Robot (Optional)',
-        unit: '05',
-        week: 28,
-        optional: true,
-        points: 50,
-        phase: 'scanner',
-        description: 'Program your robot to follow a wall using ultrasonic distance sensing.',
-        requirements: [
-            'Robot maintains a consistent distance from a wall while moving forward',
-            'Serial Monitor shows live distance readings and steering decisions',
-            'Paste key code section with inline comments explaining how it works',
-            'Explain the distance threshold and correction values you tuned',
-            'Describe at least one problem you encountered and how you fixed it'
-        ]
-    },
-    {
-        id: 7,
-        title: 'Motor Functions & PWM Values',
-        unit: '05',
-        week: 21,
-        points: 50,
-        phase: 'scanner',
-        description: 'Demonstrate your understanding of functions, arguments, and motor control by documenting your code and tuned PWM values.',
-        requirements: [
-            'Submit exactly 5 lines of code you wrote, each with a // comment explaining what it does',
-            'Complete the PWM values table for all seven movement scenarios',
-            'Describe at least one problem you encountered (e.g. oscillation, veering) and how you solved it'
-        ]
-    },
-    {
-        id: 8,
-        title: 'Claw Project — Week 1 Checkpoint',
-        unit: '05',
-        week: 29,
-        points: 50,
-        phase: 'claw',
-        description: 'Submit your spec sheet draft and demonstrate basic claw control with feedback readings.',
-        requirements: [
-            'Link to your Google Doc spec sheet (must include: Project Overview, BOM, Hardware Setup, and Key Concepts — PWM and Feedback — written in your own words)',
-            'Working code: claw opens on startup, reads feedback potentiometer to Serial Monitor',
-            'Screenshot of Serial Monitor showing feedback values for at least two different objects',
-            'AI Log: at least 3 prompts documented with the AI response and your notes on what you used, changed, or rejected'
-        ]
-    },
-    {
-        id: 9,
-        title: 'Claw Project — Final',
-        unit: '05',
-        week: 32,
-        points: 75,
-        phase: 'claw',
-        description: 'Submit your completed spec sheet and demonstrate the full grip-and-classify challenge.',
-        requirements: [
-            'Updated spec sheet link — all sections complete: Algorithm (flowchart or pseudocode), Annotated Code (every meaningful line commented in your own words), Testing Results table (at least 5 objects), and AI Log (at least 6 prompts total)',
-            'Working demo: claw grips an unknown object, classifies size by LED color (green/blue/red), and detects slip with a yellow flash',
-            'Testing Results table shows consistent correct classification for large, medium, and small objects',
-            'Challenges & Solutions section describes at least two problems encountered and how they were resolved — including at least one case where AI output had to be corrected or verified'
-        ]
-    },
-    {
-        id: 10,
-        hidden: true,
-        title: 'Final Robot Demonstration',
-        unit: '05',
-        week: 36,
-        points: 100,
-        phase: 'final',
-        description: 'Demonstrate all three capabilities and present your work.',
-        requirements: [
-            'Line following demonstration',
-            'Obstacle scanning demonstration',
-            'Object manipulation with claw',
-            'Individual presentation (3-5 min) explaining your work'
-        ]
-    }
+    // ── Unit 5: Robot Project — TBD (new Pico 2W curriculum) ────────────
+    // D51 (Programming Basics Check Your Understanding) is already above.
+    // Practicals for line following, motor control, and final demo will be
+    // added once the Unit 5 lesson/activity sequence is finalized.
 ];
 
 // ============================================
@@ -2278,46 +2293,10 @@ function initDeliverables() {
     });
 }
 
-function parseDeliverable7Content(content) {
-    const scenarios = ['Drive Straight', 'Nudge Left', 'Nudge Right', 'Turn Left', 'Turn Right', 'Pivot Left', 'Pivot Right'];
-    const pwmTable = scenarios.map(s => ({ scenario: s, left: '', right: '' }));
-
-    const codeMatch = content.match(/--- CODE SAMPLES.*?---\n([\s\S]*?)\n\n--- PWM VALUES ---/);
-    const codeLines = codeMatch ? codeMatch[1].trim() : '';
-
-    const pwmMatch = content.match(/--- PWM VALUES ---\n[\s\S]*?---\n([\s\S]*?)\n\n--- PROBLEM/);
-    if (pwmMatch) {
-        pwmMatch[1].trim().split('\n').forEach(line => {
-            const parts = line.split('|');
-            if (parts.length >= 3) {
-                const name = parts[0].trim();
-                const idx = scenarios.indexOf(name);
-                if (idx >= 0) {
-                    pwmTable[idx].left  = parts[1].trim().replace('—', '');
-                    pwmTable[idx].right = parts[2].trim().replace('—', '');
-                }
-            }
-        });
-    }
-
-    const problemMatch = content.match(/--- PROBLEM & SOLUTION ---\n([\s\S]*?)(?:\n\n--- PHOTOS|$)/);
-    const rawContent = problemMatch ? problemMatch[1].trim() : '';
-
-    return { codeLines, pwmTable, rawContent };
-}
-
 function openDeliverableForm(id) {
     const deliverable = DELIVERABLES.find(d => d.id === id);
     const existing = state.deliverables[id] || {};
 
-    // Recover structured fields from formatted content if they're missing
-    // (happens when student submitted before pwmTable was stored separately)
-    if (id === 7 && existing.content && !existing.pwmTable) {
-        const parsed = parseDeliverable7Content(existing.content);
-        existing.pwmTable   = parsed.pwmTable;
-        existing.codeLines  = existing.codeLines  || parsed.codeLines;
-        existing.rawContent = existing.rawContent || parsed.rawContent;
-    }
     const modal = document.getElementById('deliverableModal');
     const content = document.getElementById('deliverableFormContent');
 
@@ -2344,6 +2323,30 @@ function openDeliverableForm(id) {
         ${renderRubricCard(id)}
 
         <form id="deliverableForm" style="margin-top: 20px;">
+
+            ${deliverable.hasLevelSelect ? `
+            <div class="form-group">
+                <label>Completion Level</label>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px;">
+                    ${[['L1','Level 1 — Replicate exactly'],['L2','Level 2 — Modify + document'],['L3','Level 3 — Custom design']].map(([val, label]) => `
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 16px;border:2px solid ${existing.level===val?'var(--primary)':'var(--gray-200)'};border-radius:8px;font-weight:${existing.level===val?'600':'400'};transition:border-color 0.15s;">
+                        <input type="radio" name="cadLevel" value="${val}" ${existing.level===val?'checked':''} style="accent-color:var(--primary);">
+                        ${label}
+                    </label>`).join('')}
+                </div>
+            </div>` : ''}
+
+            ${deliverable.questions?.length ? `
+            <div class="form-group">
+                <label>Learning Check — Q1–Q5</label>
+                <p style="font-size:13px;color:var(--gray-500);margin-bottom:14px;margin-top:4px;">Answer in your own words (2–4 sentences each). Answer from what you built — not from notes.</p>
+                ${deliverable.questions.map((q, i) => `
+                <div style="margin-bottom:16px;">
+                    <label for="cad-q${i+1}" style="font-size:14px;font-weight:500;margin-bottom:6px;display:block;">Q${i+1}: ${q}</label>
+                    <textarea id="cad-q${i+1}" rows="3" placeholder="Your answer…" style="width:100%;padding:8px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;resize:vertical;box-sizing:border-box;">${existing['q'+(i+1)]||''}</textarea>
+                </div>`).join('')}
+            </div>` : ''}
+
             ${deliverable.timeLimit ? `
             <div class="form-group">
                 <label for="completionTime">Completion Time (seconds)</label>
@@ -2359,192 +2362,6 @@ function openDeliverableForm(id) {
             </div>
             ` : ''}
 
-            ${id === 3 ? `
-            <div class="card" style="margin-bottom: 20px; border-left: 3px solid var(--primary);">
-                <h4 style="margin-bottom: 12px;"><i class="fas fa-plug"></i> Wire Connections</h4>
-                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 12px;">List each wire from your Arduino to the HC-SR04 sensor</p>
-                <table style="width: 100%; border-collapse: collapse;">
-                    <thead>
-                        <tr style="border-bottom: 2px solid var(--gray-200);">
-                            <th style="text-align: left; padding: 8px; font-size: 14px;">Arduino Pin</th>
-                            <th style="text-align: center; padding: 8px; font-size: 14px;">→</th>
-                            <th style="text-align: left; padding: 8px; font-size: 14px;">Sensor Pin</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${[0,1,2,3].map(i => {
-                            const w = (existing.wiring && existing.wiring[i]) || {};
-                            return `<tr>
-                                <td style="padding: 6px 8px;"><input type="text" class="wiring-arduino" data-row="${i}" value="${w.arduino || ''}" placeholder="e.g. 5V, GND, Pin 9" style="width: 100%; padding: 6px; border: 1px solid var(--gray-200); border-radius: 4px;"></td>
-                                <td style="text-align: center; color: var(--gray-400);">→</td>
-                                <td style="padding: 6px 8px;"><input type="text" class="wiring-sensor" data-row="${i}" value="${w.sensor || ''}" placeholder="e.g. VCC, GND, TRIG" style="width: 100%; padding: 6px; border: 1px solid var(--gray-200); border-radius: 4px;"></td>
-                            </tr>`;
-                        }).join('')}
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="card" style="margin-bottom: 20px; border-left: 3px solid var(--success);">
-                <h4 style="margin-bottom: 12px;"><i class="fas fa-ruler"></i> Distance Accuracy Test</h4>
-                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 12px;">Place an object at each distance and record 3 sensor readings</p>
-                <table style="width: 100%; border-collapse: collapse; text-align: center;">
-                    <thead>
-                        <tr style="border-bottom: 2px solid var(--gray-200);">
-                            <th style="padding: 8px; font-size: 14px;">Actual (cm)</th>
-                            <th style="padding: 8px; font-size: 14px;">Reading 1</th>
-                            <th style="padding: 8px; font-size: 14px;">Reading 2</th>
-                            <th style="padding: 8px; font-size: 14px;">Reading 3</th>
-                            <th style="padding: 8px; font-size: 14px;">Avg Error</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${[5, 10, 20, 50, 100].map((dist, i) => {
-                            const row = (existing.accuracyData && existing.accuracyData[i]) || {};
-                            return `<tr style="border-bottom: 1px solid var(--gray-100);">
-                                <td style="padding: 6px 8px; font-weight: bold;">${dist}</td>
-                                <td style="padding: 6px 4px;"><input type="number" class="accuracy-reading" data-row="${i}" data-col="r1" value="${row.r1 || ''}" placeholder="cm" style="width: 70px; padding: 4px; text-align: center; border: 1px solid var(--gray-200); border-radius: 4px;"></td>
-                                <td style="padding: 6px 4px;"><input type="number" class="accuracy-reading" data-row="${i}" data-col="r2" value="${row.r2 || ''}" placeholder="cm" style="width: 70px; padding: 4px; text-align: center; border: 1px solid var(--gray-200); border-radius: 4px;"></td>
-                                <td style="padding: 6px 4px;"><input type="number" class="accuracy-reading" data-row="${i}" data-col="r3" value="${row.r3 || ''}" placeholder="cm" style="width: 70px; padding: 4px; text-align: center; border: 1px solid var(--gray-200); border-radius: 4px;"></td>
-                                <td style="padding: 6px 8px;"><span class="avg-error" data-row="${i}" style="font-weight: bold; color: var(--gray-500);">—</span></td>
-                            </tr>`;
-                        }).join('')}
-                    </tbody>
-                </table>
-            </div>
-            ` : ''}
-
-            ${id === 4 ? `
-            <div class="card" style="margin-bottom: 20px; border-left: 3px solid var(--primary);">
-                <h4 style="margin-bottom: 0; cursor: pointer; display: flex; align-items: center; justify-content: space-between;"
-                    onclick="const d=this.nextElementSibling; const a=d.style.display==='none'?'block':'none'; d.style.display=a; this.querySelector('.toggle-icon').textContent=a==='none'?'▸':'▾';">
-                    <span><i class="fas fa-info-circle"></i> Instructions</span>
-                    <span class="toggle-icon" style="font-size: 16px;">▸</span>
-                </h4>
-                <div style="display: none; margin-top: 12px; font-size: 14px; color: var(--gray-600);">
-                    <p style="margin-bottom: 10px;">Each robot will have <strong>one scanning ultrasonic sensor</strong> mounted on a servo. You are responsible for designing the mount that holds the sensor.</p>
-                    <p style="margin-bottom: 10px;">You were given a <strong>base CAD model</strong> of the sensor mount. You must personalize it — add your own design elements that go beyond the base. Examples: a custom face, decorative fins, your initials, a character pose, etc.</p>
-                    <p style="margin-bottom: 6px;"><strong>Screenshot 1 — Customized Sensor Mount:</strong></p>
-                    <ul style="margin-left: 20px; margin-bottom: 10px;">
-                        <li>Show your modified version of the base mount</li>
-                        <li>Your personalization must be clearly visible</li>
-                    </ul>
-                    <p style="margin-bottom: 6px;"><strong>Screenshot 2 — Full CAD Assembly:</strong></p>
-                    <ul style="margin-left: 20px; margin-bottom: 10px;">
-                        <li>Show all three parts together: <strong>Servo Mount</strong> (provided) + <strong>Servo Motor</strong> (provided) + <strong>your Sensor Mount</strong></li>
-                        <li>All components must be visible in the assembly view</li>
-                    </ul>
-                    <p><strong>Upload both screenshots using the photo upload section below.</strong></p>
-                </div>
-            </div>
-            ` : ''}
-
-            ${id === 5 ? `
-            <div class="card" style="margin-bottom: 20px; border-left: 3px solid var(--primary);">
-                <h4 style="margin-bottom: 0; cursor: pointer; display: flex; align-items: center; justify-content: space-between;"
-                    onclick="const d=this.nextElementSibling; const a=d.style.display==='none'?'block':'none'; d.style.display=a; this.querySelector('.toggle-icon').textContent=a==='none'?'▸':'▾';">
-                    <span><i class="fas fa-info-circle"></i> Instructions</span>
-                    <span class="toggle-icon" style="font-size: 16px;">▸</span>
-                </h4>
-                <div style="display: none; margin-top: 12px; font-size: 14px; color: var(--gray-600);">
-                    <p style="margin-bottom: 10px;">This is an <strong>in-class practical</strong>. Your robot must scan the environment, identify the nearest obstacle and clearest path, and print a navigation decision to Serial.</p>
-                    <p style="margin-bottom: 10px;"><strong>Before class:</strong> Your scanning code should be uploaded and running. You will place your robot in scenarios set up by Mr. B and demonstrate the output.</p>
-                    <p style="margin-bottom: 6px;"><strong>What to submit in the portfolio:</strong></p>
-                    <ul style="margin-left: 20px; margin-bottom: 10px;">
-                        <li>Select your navigation <strong>strategy</strong> below</li>
-                        <li>Record your <strong>test results</strong> during the practical (nearest, angle, decision)</li>
-                        <li>Write a brief <strong>reflection</strong> in the text area — what worked, what you'd improve</li>
-                    </ul>
-                    <p><strong>Performance is graded on how your robot compares to the class</strong> — top third earns full 15 pts. Multiple attempts and code iterations earn partial credit. No attempt = 0.</p>
-                </div>
-            </div>
-
-            <div class="card" style="margin-bottom: 20px; border-left: 3px solid var(--success);">
-                <h4 style="margin-bottom: 12px;"><i class="fas fa-robot"></i> Navigation Strategy</h4>
-                <div class="form-group" style="margin-bottom: 12px;">
-                    <label style="font-size: 13px; color: var(--gray-600); margin-bottom: 6px; display: block;">Which strategy did you implement?</label>
-                    <select id="strategySelect" style="width: 100%; padding: 8px; border: 1px solid var(--gray-200); border-radius: 6px; font-size: 14px;">
-                        <option value="">— Select a strategy —</option>
-                        <option value="Stop-and-scan" ${(existing.strategy === 'Stop-and-scan') ? 'selected' : ''}>Stop-and-Scan (full 180° sweep before deciding)</option>
-                        <option value="Reactive" ${(existing.strategy === 'Reactive') ? 'selected' : ''}>Reactive / Threshold (react when obstacle gets close)</option>
-                        <option value="Weighted steering" ${(existing.strategy === 'Weighted steering') ? 'selected' : ''}>Weighted Steering (proportional turn based on clearance)</option>
-                        <option value="Custom" ${(existing.strategy === 'Custom') ? 'selected' : ''}>Custom approach</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="card" style="margin-bottom: 20px; border-left: 3px solid var(--warning, #f59e0b);">
-                <h4 style="margin-bottom: 12px;"><i class="fas fa-table"></i> Test Results</h4>
-                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 12px;">Record your robot's output for each test scenario during the practical</p>
-                <table style="width: 100%; border-collapse: collapse;">
-                    <thead>
-                        <tr style="border-bottom: 2px solid var(--gray-200);">
-                            <th style="text-align: left; padding: 8px; font-size: 13px;">Scenario</th>
-                            <th style="text-align: center; padding: 8px; font-size: 13px;">Nearest (cm)</th>
-                            <th style="text-align: center; padding: 8px; font-size: 13px;">At Angle (°)</th>
-                            <th style="text-align: center; padding: 8px; font-size: 13px;">Decision</th>
-                            <th style="text-align: center; padding: 8px; font-size: 13px;">Correct?</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${[
-                            'Object at Left (0°–60°)',
-                            'Object Ahead (70°–110°)',
-                            'Object at Right (120°–180°)'
-                        ].map((scenario, i) => {
-                            const r = (existing.testResults && existing.testResults[i]) || {};
-                            return `<tr style="border-bottom: 1px solid var(--gray-100);">
-                                <td style="padding: 6px 8px; font-size: 13px; color: var(--gray-700);">${scenario}</td>
-                                <td style="padding: 6px 4px; text-align: center;"><input type="number" class="test-nearest" data-row="${i}" value="${r.nearest || ''}" placeholder="cm" style="width: 70px; padding: 4px; text-align: center; border: 1px solid var(--gray-200); border-radius: 4px;"></td>
-                                <td style="padding: 6px 4px; text-align: center;"><input type="number" class="test-angle" data-row="${i}" value="${r.angle || ''}" placeholder="°" style="width: 60px; padding: 4px; text-align: center; border: 1px solid var(--gray-200); border-radius: 4px;"></td>
-                                <td style="padding: 6px 4px; text-align: center;"><input type="text" class="test-decision" data-row="${i}" value="${r.decision || ''}" placeholder="TURN LEFT..." style="width: 110px; padding: 4px; text-align: center; border: 1px solid var(--gray-200); border-radius: 4px;"></td>
-                                <td style="padding: 6px 4px; text-align: center;">
-                                    <select class="test-correct" data-row="${i}" style="padding: 4px; border: 1px solid var(--gray-200); border-radius: 4px; font-size: 13px;">
-                                        <option value="">—</option>
-                                        <option value="Yes" ${r.correct === 'Yes' ? 'selected' : ''}>Yes</option>
-                                        <option value="No" ${r.correct === 'No' ? 'selected' : ''}>No</option>
-                                        <option value="Partial" ${r.correct === 'Partial' ? 'selected' : ''}>Partial</option>
-                                    </select>
-                                </td>
-                            </tr>`;
-                        }).join('')}
-                    </tbody>
-                </table>
-            </div>
-            ` : id === 7 ? `
-            <div class="card" style="margin-bottom: 20px; border-left: 3px solid var(--primary);">
-                <h4 style="margin-bottom: 12px;"><i class="fas fa-code"></i> Your Code (5 lines with comments)</h4>
-                <p style="font-size: 13px; color: var(--gray-600); margin-bottom: 10px;">
-                    Pick any 5 lines from the code you wrote. Add a <code>//</code> comment after each line explaining what it does.
-                </p>
-                <textarea id="d6CodeLines" rows="7"
-                    placeholder="analogWrite(LEFT_MOTOR_PWM, 40);  // sets left motor speed to 40 out of 255&#10;digitalWrite(LEFT_MOTOR_INA, HIGH);  // sets left motor direction to forward&#10;..."
-                    style="font-family: monospace; font-size: 13px; width: 100%; padding: 10px; border: 1px solid var(--gray-200); border-radius: 6px; resize: vertical; box-sizing: border-box;">${existing.codeLines || ''}</textarea>
-            </div>
-
-            <div class="card" style="margin-bottom: 20px; border-left: 3px solid var(--success);">
-                <h4 style="margin-bottom: 12px;"><i class="fas fa-sliders-h"></i> PWM Values</h4>
-                <p style="font-size: 13px; color: var(--gray-600); margin-bottom: 12px;">Enter the motor speeds (0–255) that worked best for each movement.</p>
-                <table style="width: 100%; border-collapse: collapse;">
-                    <thead>
-                        <tr style="border-bottom: 2px solid var(--gray-200);">
-                            <th style="text-align: left; padding: 8px; font-size: 13px;">Scenario</th>
-                            <th style="text-align: center; padding: 8px; font-size: 13px;">Left Motor PWM</th>
-                            <th style="text-align: center; padding: 8px; font-size: 13px;">Right Motor PWM</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${['Drive Straight', 'Nudge Left', 'Nudge Right', 'Turn Left', 'Turn Right', 'Pivot Left', 'Pivot Right'].map((scenario, i) => {
-                            const r = (existing.pwmTable && existing.pwmTable[i]) || {};
-                            return `<tr style="border-bottom: 1px solid var(--gray-100);">
-                                <td style="padding: 6px 8px; font-size: 13px; color: var(--gray-700);">${scenario}</td>
-                                <td style="padding: 6px 4px; text-align: center;"><input type="number" class="pwm-left" data-row="${i}" min="0" max="255" value="${r.left || ''}" placeholder="0–255" style="width: 80px; padding: 4px; text-align: center; border: 1px solid var(--gray-200); border-radius: 4px;"></td>
-                                <td style="padding: 6px 4px; text-align: center;"><input type="number" class="pwm-right" data-row="${i}" min="0" max="255" value="${r.right || ''}" placeholder="0–255" style="width: 80px; padding: 4px; text-align: center; border: 1px solid var(--gray-200); border-radius: 4px;"></td>
-                            </tr>`;
-                        }).join('')}
-                    </tbody>
-                </table>
-            </div>
-            ` : ''}
 
             ${id === 0 ? `
             <div style="margin-bottom:8px;">
@@ -2711,19 +2528,17 @@ function openDeliverableForm(id) {
             </div>
             ` : ''}
 
-            ${id !== 9 && id !== 0 ? `
+            ${id !== 0 && !deliverable.questions?.length ? `
             <div class="form-group">
-                <label for="deliverableContent">${id === 3 ? 'Code & Observations' : id === 4 ? 'Sweep Code & Explanation' : id === 5 ? 'Commented Code & Reflection' : id === 7 ? 'Problem & Solution' : id === 8 ? 'AI Log Summary' : 'Your Submission'}</label>
-                <textarea id="deliverableContent" rows="8" placeholder="${id === 3 ? 'Paste your code with comments, and describe your observations about sensor behavior...' : id === 4 ? 'Paste your servo sweep code and briefly explain how it works (what does each part do?)...' : id === 5 ? 'Paste a key section of your code (e.g. loop() or a motor function) and add comments explaining:\n- What each part does and why\n- Which constants you tuned (THRESHOLD, TURN_TIME, etc.) and what values you used\n- At least one problem you ran into and how you fixed it' : id === 7 ? 'Describe at least one problem you ran into (e.g. robot oscillating, veering, not stopping) and explain how you solved it or what you tried...' : id === 8 ? 'How many prompts did you use? What did you ask? Describe one thing AI got wrong or that you had to correct.' : 'Describe what you did, paste your code, explain your process...'}">${id === 3 ? (existing.rawContent || existing.content || '') : id === 5 ? (existing.rawContent || existing.content || '') : id === 7 ? (existing.rawContent || existing.content || '') : (existing.content || '')}</textarea>
+                <label for="deliverableContent">Your Submission</label>
+                <textarea id="deliverableContent" rows="8" placeholder="Describe what you did, paste your code, explain your process...">${existing.content || ''}</textarea>
             </div>` : ''}
 
-            ${id !== 9 && id !== 0 ? `
+            ${id !== 0 ? `
             <div class="form-group">
                 <label>
-                    ${id === 8 ? 'Screenshots' : 'Photos'}
-                    <span style="font-weight: normal; color: var(--gray-500); font-size: 13px;">
-                        ${id === 4 ? '— Required: upload both CAD screenshots above' : id === 8 ? '— Required: Serial Monitor showing feedback values for at least two different objects' : '— if applicable'}
-                    </span>
+                    Photos / Screenshots
+                    <span style="font-weight: normal; color: var(--gray-500); font-size: 13px;">— if applicable</span>
                 </label>
                 <div id="deliverablePhotoZone"
                     style="border: 2px dashed var(--gray-300); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; color: var(--gray-500); font-size: 14px;"
@@ -2753,17 +2568,10 @@ function openDeliverableForm(id) {
                 </div>
             </div>` : ''}
 
-            ${id === 8 || id === 9 ? `
-            <div class="form-group">
-                <label for="deliverableDocLink">Google Doc Link</label>
-                <input type="text" id="deliverableDocLink" value="${existing.links || ''}" placeholder="https://docs.google.com/..."
-                       style="width:100%; padding:10px; border:1px solid var(--gray-200); border-radius:6px; font-size:14px; box-sizing:border-box;">
-                <span style="font-size:12px; color:var(--gray-500); display:block; margin-top:4px;">Make sure sharing is set to "Anyone with the link can view"</span>
-            </div>` : `
             <div class="form-group">
                 <label for="deliverableLinks">Supporting Documentation</label>
-                <textarea id="deliverableLinks" rows="3" placeholder="Brief vital code snippets (not full code)">${existing.links || ''}</textarea>
-            </div>`}
+                <textarea id="deliverableLinks" rows="3" placeholder="Links, notes, or brief code snippets">${existing.links || ''}</textarea>
+            </div>
 
             <div class="form-group">
                 <label for="deliverableSelfAssessment">Self-Assessment (1-10)</label>
@@ -2820,53 +2628,12 @@ function openDeliverableForm(id) {
         updateBudgetTotals();
     }
 
-    // Auto-calculate average error for deliverable 3 accuracy table
-    if (id === 3) {
-        const distances = [5, 10, 20, 50, 100];
-        function updateAvgErrors() {
-            distances.forEach((dist, i) => {
-                const r1 = parseFloat(document.querySelector(`.accuracy-reading[data-row="${i}"][data-col="r1"]`)?.value);
-                const r2 = parseFloat(document.querySelector(`.accuracy-reading[data-row="${i}"][data-col="r2"]`)?.value);
-                const r3 = parseFloat(document.querySelector(`.accuracy-reading[data-row="${i}"][data-col="r3"]`)?.value);
-                const span = document.querySelector(`.avg-error[data-row="${i}"]`);
-                const readings = [r1, r2, r3].filter(v => !isNaN(v));
-                if (readings.length > 0) {
-                    const avgError = readings.reduce((sum, r) => sum + Math.abs(r - dist), 0) / readings.length;
-                    span.textContent = avgError.toFixed(1) + ' cm';
-                    span.style.color = avgError <= 2 ? 'var(--success)' : avgError <= 5 ? '#f59e0b' : 'var(--danger)';
-                } else {
-                    span.textContent = '—';
-                    span.style.color = 'var(--gray-500)';
-                }
-            });
-        }
-        content.querySelectorAll('.accuracy-reading').forEach(el => {
-            el.addEventListener('input', updateAvgErrors);
-        });
-        updateAvgErrors(); // Calculate on load if data exists
-    }
-
     document.getElementById('deliverableForm').addEventListener('submit', (e) => {
         e.preventDefault();
         submitDeliverable(id);
     });
 
     modal.classList.add('active');
-}
-
-function collectDeliverable3CustomData() {
-    const wiring = [0,1,2,3].map(i => ({
-        arduino: document.querySelector(`.wiring-arduino[data-row="${i}"]`)?.value || '',
-        sensor: document.querySelector(`.wiring-sensor[data-row="${i}"]`)?.value || ''
-    }));
-    const distances = [5, 10, 20, 50, 100];
-    const accuracyData = distances.map((dist, i) => ({
-        actual: dist,
-        r1: document.querySelector(`.accuracy-reading[data-row="${i}"][data-col="r1"]`)?.value || '',
-        r2: document.querySelector(`.accuracy-reading[data-row="${i}"][data-col="r2"]`)?.value || '',
-        r3: document.querySelector(`.accuracy-reading[data-row="${i}"][data-col="r3"]`)?.value || ''
-    }));
-    return { wiring, accuracyData };
 }
 
 // ============================================
@@ -2921,18 +2688,29 @@ function removeDeliverablePhoto(driveId, deliverableId, element) {
     markDirty();
 }
 
+const CAD_DELIVERABLE_IDS = [21, 22, 23, 24, 25, 26, 27];
+
+function collectCadDeliverableData() {
+    return {
+        level: document.querySelector('input[name="cadLevel"]:checked')?.value || '',
+        q1: document.getElementById('cad-q1')?.value || '',
+        q2: document.getElementById('cad-q2')?.value || '',
+        q3: document.getElementById('cad-q3')?.value || '',
+        q4: document.getElementById('cad-q4')?.value || '',
+        q5: document.getElementById('cad-q5')?.value || '',
+    };
+}
+
 function saveDeliverableDraft(id) {
     const completionTimeEl = document.getElementById('completionTime');
     state.deliverables[id] = {
         ...state.deliverables[id],
         content: document.getElementById('deliverableContent')?.value || '',
-        links: (id === 8 || id === 9) ? (document.getElementById('deliverableDocLink')?.value || '') : (document.getElementById('deliverableLinks')?.value || ''),
+        links: document.getElementById('deliverableLinks')?.value || '',
         selfAssessment: document.getElementById('deliverableSelfAssessment').value,
         completionTime: completionTimeEl ? parseInt(completionTimeEl.value) || null : null,
         ...(id === 0 ? collectDeliverable0CustomData() : {}),
-        ...(id === 3 ? collectDeliverable3CustomData() : {}),
-        ...(id === 5 ? collectDeliverable5CustomData() : {}),
-        ...(id === 7 ? collectDeliverable7CustomData() : {}),
+        ...(CAD_DELIVERABLE_IDS.includes(id) ? collectCadDeliverableData() : {}),
         // photos are written to state live on upload, preserved here via spread
         status: 'in-progress',
         updatedAt: new Date().toISOString()
@@ -2942,78 +2720,16 @@ function saveDeliverableDraft(id) {
     showToast('Draft saved!', 'success');
 }
 
-function formatDeliverable3Content(content, customData) {
-    const { wiring, accuracyData } = customData;
-    let formatted = '--- WIRE CONNECTIONS ---\n';
-    wiring.forEach(w => {
-        if (w.arduino || w.sensor) {
-            formatted += `${w.arduino} → ${w.sensor}\n`;
-        }
+function formatCadDeliverableContent(id, customData) {
+    const deliverable = DELIVERABLES.find(d => d.id === id);
+    const levelLabel = { L1: 'Level 1 — Replicate exactly', L2: 'Level 2 — Modify + document', L3: 'Level 3 — Custom design' };
+    let out = `=== ${deliverable.title} ===\n`;
+    out += `Completion Level: ${levelLabel[customData.level] || customData.level || '(not set)'}\n\n`;
+    (deliverable.questions || []).forEach((q, i) => {
+        out += `Q${i+1}: ${q}\n`;
+        out += `A: ${customData['q'+(i+1)] || '(not answered)'}\n\n`;
     });
-    formatted += '\n--- DISTANCE ACCURACY TEST ---\n';
-    formatted += 'Actual(cm) | Reading1 | Reading2 | Reading3 | Avg Error\n';
-    formatted += '-----------|----------|----------|----------|---------\n';
-    const distances = [5, 10, 20, 50, 100];
-    accuracyData.forEach((row, i) => {
-        const readings = [row.r1, row.r2, row.r3].map(r => parseFloat(r)).filter(r => !isNaN(r));
-        const avgError = readings.length > 0
-            ? (readings.reduce((sum, r) => sum + Math.abs(r - distances[i]), 0) / readings.length).toFixed(1)
-            : '—';
-        formatted += `${String(distances[i]).padEnd(10)} | ${String(row.r1 || '—').padEnd(8)} | ${String(row.r2 || '—').padEnd(8)} | ${String(row.r3 || '—').padEnd(8)} | ${avgError}\n`;
-    });
-    formatted += '\n--- CODE & OBSERVATIONS ---\n' + content;
-    return formatted;
-}
-
-function collectDeliverable5CustomData() {
-    const strategy = document.getElementById('strategySelect')?.value || '';
-    const scenarios = ['Object at Left (0°–60°)', 'Object Ahead (70°–110°)', 'Object at Right (120°–180°)'];
-    const testResults = scenarios.map((scenario, i) => ({
-        scenario,
-        nearest: document.querySelector(`.test-nearest[data-row="${i}"]`)?.value || '',
-        angle: document.querySelector(`.test-angle[data-row="${i}"]`)?.value || '',
-        decision: document.querySelector(`.test-decision[data-row="${i}"]`)?.value || '',
-        correct: document.querySelector(`.test-correct[data-row="${i}"]`)?.value || ''
-    }));
-    return { strategy, testResults };
-}
-
-function formatDeliverable5Content(content, customData) {
-    const { strategy, testResults } = customData;
-    let formatted = `--- STRATEGY ---\n${strategy || '(not specified)'}\n`;
-    formatted += '\n--- TEST RESULTS ---\n';
-    formatted += 'Scenario                  | Nearest(cm) | Angle(°) | Decision      | Correct\n';
-    formatted += '--------------------------|-------------|----------|---------------|--------\n';
-    testResults.forEach(r => {
-        formatted += `${String(r.scenario).padEnd(26)}| ${String(r.nearest || '—').padEnd(12)}| ${String(r.angle || '—').padEnd(9)}| ${String(r.decision || '—').padEnd(14)}| ${r.correct || '—'}\n`;
-    });
-    formatted += '\n--- STRATEGY & REFLECTION ---\n' + content;
-    return formatted;
-}
-
-function collectDeliverable7CustomData() {
-    const codeLines = document.getElementById('d6CodeLines')?.value || '';
-    const scenarios = ['Drive Straight', 'Nudge Left', 'Nudge Right', 'Turn Left', 'Turn Right', 'Pivot Left', 'Pivot Right'];
-    const pwmTable = scenarios.map((scenario, i) => ({
-        scenario,
-        left: document.querySelector(`.pwm-left[data-row="${i}"]`)?.value || '',
-        right: document.querySelector(`.pwm-right[data-row="${i}"]`)?.value || ''
-    }));
-    return { codeLines, pwmTable };
-}
-
-function formatDeliverable7Content(content, customData) {
-    const { codeLines, pwmTable } = customData;
-    let formatted = '--- CODE SAMPLES (5 lines with comments) ---\n';
-    formatted += codeLines || '(none provided)';
-    formatted += '\n\n--- PWM VALUES ---\n';
-    formatted += 'Scenario       | Left PWM | Right PWM\n';
-    formatted += '---------------|----------|----------\n';
-    pwmTable.forEach(r => {
-        formatted += `${String(r.scenario).padEnd(15)}| ${String(r.left || '—').padEnd(9)}| ${r.right || '—'}\n`;
-    });
-    formatted += '\n--- PROBLEM & SOLUTION ---\n' + content;
-    return formatted;
+    return out.trim();
 }
 
 function collectDeliverable0CustomData() {
@@ -3119,24 +2835,18 @@ function submitDeliverable(id) {
         const prompts = [d0.prompt1, d0.prompt2, d0.prompt3, d0.prompt4, d0.prompt5];
         const short = prompts.findIndex(p => !p || p.length < 50);
         if (short >= 0) { showToast(`Prompt ${short + 1} needs more detail (at least 50 characters)`, 'error'); return; }
-    } else if (id === 4) {
+    } else if (CAD_DELIVERABLE_IDS.includes(id)) {
+        const cadData = collectCadDeliverableData();
+        if (!cadData.level) {
+            showToast('Please select your completion level (Level 1, 2, or 3)', 'error');
+            return;
+        }
+        if (!cadData.q1 || cadData.q1.length < 30) {
+            showToast('Q1 needs more detail (at least 30 characters)', 'error');
+            return;
+        }
         if (photos.length === 0) {
-            showToast('Please upload at least one CAD screenshot', 'error');
-            return;
-        }
-        if (!content || content.length < 30) {
-            showToast('Please include your sweep code and a brief explanation', 'error');
-            return;
-        }
-    } else if (id === 5) {
-        if (!content || content.length < 20) {
-            showToast('Please add a brief strategy & reflection', 'error');
-            return;
-        }
-    } else if (id === 9) {
-        const docLink = (document.getElementById('deliverableDocLink')?.value || '').trim();
-        if (!docLink) {
-            showToast('Please paste your Google Doc link', 'error');
+            showToast('Please upload at least one screenshot', 'error');
             return;
         }
     } else {
@@ -3146,8 +2856,8 @@ function submitDeliverable(id) {
         }
     }
 
-    const customData = id === 0 ? collectDeliverable0CustomData() : id === 3 ? collectDeliverable3CustomData() : id === 5 ? collectDeliverable5CustomData() : id === 7 ? collectDeliverable7CustomData() : {};
-    let finalContent = id === 0 ? formatDeliverable0Content(customData) : id === 3 ? formatDeliverable3Content(content, customData) : id === 5 ? formatDeliverable5Content(content, customData) : id === 7 ? formatDeliverable7Content(content, customData) : content;
+    const customData = id === 0 ? collectDeliverable0CustomData() : CAD_DELIVERABLE_IDS.includes(id) ? collectCadDeliverableData() : {};
+    let finalContent = id === 0 ? formatDeliverable0Content(customData) : CAD_DELIVERABLE_IDS.includes(id) ? formatCadDeliverableContent(id, customData) : content;
 
     // Append photo links to content for Sheets storage
     if (photos.length > 0) {
@@ -3156,8 +2866,7 @@ function submitDeliverable(id) {
 
     state.deliverables[id] = {
         content: finalContent,
-        rawContent: (id === 3 || id === 5 || id === 7) ? content : undefined,
-        links: (id === 8 || id === 9) ? (document.getElementById('deliverableDocLink')?.value || '') : (document.getElementById('deliverableLinks')?.value || ''),
+        links: document.getElementById('deliverableLinks')?.value || '',
         selfAssessment: document.getElementById('deliverableSelfAssessment').value,
         completionTime: completionTimeEl ? parseInt(completionTimeEl.value) || null : null,
         ...customData,

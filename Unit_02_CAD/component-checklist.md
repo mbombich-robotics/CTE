@@ -12,7 +12,7 @@
 | C1 | Wheel Hub | 🖨 | Sketch plane · Circle (concentric) · Dimension · Extrude (multi-depth) · Fillet |
 | C2 | Drive Wheel (spoked, hex bore — spoke design = student's artistic choice; inserts into soft silicone tire) | 🖨 | Polygon (hex bore) · Circular Pattern (spokes) · Extrude-Cut |
 | C3 | Motor Sleeve Mount (sleeve bore + face screws + nut-capture rail) | 🖨 | Rectangle · Channel profile extrude · Hole tool (face screws) |
-| C4 | Robot Deck | 🔲 | Base sketch: return and modify frequently · Construction lines · CNC corner radius rule · Slot tool |
+| C4 | Robot Deck *(started after C3; holes added iteratively as C5–C7 are positioned in assembly; CNC cut only after full assembly interference check)* | 🔲 | Assembly environment · Insert Component · Move/Free Joint · Edit-in-context · As-Built Joint · Interference Check · CNC corner radius rule |
 | C5 | Omni Wheel Mount | 🖨 | Multi-plane sketch · Reference geometry |
 | C6 | IR Sensor Mount (U-bracket, front underside — holds IR bar for line following) | 🖨 | Mirror · Slot tool |
 | C7 | Ultrasonic Sensor Mount (two-bore L-bracket, front-facing) | 🖨 | Large-bore circle · L-bracket two-face extrude |
@@ -101,30 +101,41 @@
 
 ---
 
-## C4 — Robot Deck  🔲 *(CNC cut — polycarbonate)*
+## C4 — Robot Deck  🔲 *(CNC cut — polycarbonate — cut AFTER full assembly is validated)*
 **Geometry:** Irregular flat plate — mostly rectangular with notched bottom-right corner; rectangular slot cutout; many holes of varying sizes in a grid-ish layout; rounded exterior corners  
-**Week:** 7  
-**New F360 tools:** Line tool (outer profile with notch) · Rectangular Pattern (hole arrays) · Fillet (exterior corners for CNC — no sharp corners) · Slot tool (for rectangular slot)  
-**Key concepts:** CNC design rule — all interior corners need a fillet ≥ bit radius · Component layout before sketching · Hole grid planning with construction lines  
+**Week:** 5–8 *(file started Wk 5; holes added iteratively Wks 6–7; CNC cut Wk 8 only)*  
+**New F360 tools (part):** Line tool (outer profile) · Rectangular Pattern (hole arrays) · Fillet (CNC corner radius) · Slot tool  
+**New F360 tools (assembly):** Insert Component · Move/Free Joint (drag part before constraining) · Edit Component in context (edit deck sketch from inside the assembly, see changes propagate live) · As-Built Joint / Rigid Joint (constrain each mount to its holes) · Interference Check (verify no overlapping geometry before CNC)  
+**Key concepts:** CNC design rule — all interior corners ≥ bit radius fillet · **F360 assembly environment** — parts are separate files linked into one assembly; moving a part free (no constraints) to find a good position before locking it down; editing a part from inside the assembly and watching the assembly update live · **No CNC until the full assembly passes interference check** — this mirrors real manufacturing workflow  
+
+**Assembly workflow (introduced with C4, continues through C7):**
+
+| Step | Action |
+|------|--------|
+| After C3 | Start deck file: outer profile + motor mount holes. Start assembly: insert deck + insert C3. Constrain C3 to motor holes. |
+| After C5 | Insert C5 into assembly. **Drag it freely** to find a good deck position. Return to deck part → edit base sketch → add C5 holes. Save → assembly updates. Constrain C5 to new holes. |
+| After C6 | Insert C6 → drag to position → edit deck sketch → add C6 holes → save → constrain C6. |
+| After C7 | Insert C7 → drag to position → edit deck sketch → add C7 holes → save → constrain C7. |
+| Wk 8 | Run Interference Check on full assembly. Fix any collisions. Finalize deck file. Send to CNC. |
 
 **Functional requirements (Level 1 must meet):**
 - [ ] Outer dimensions: [TBD — chassis footprint]
 - [ ] Notch location and size: [TBD]
 - [ ] Rectangular slot: [TBD — location, dimensions]
 - [ ] All exterior corners filleted to: [TBD — based on CNC bit diameter]
-- [ ] Motor mount hole pattern: [TBD]
-- [ ] Electronics standoff hole pattern: [TBD]
-- [ ] Sensor mounting holes: [TBD]
+- [ ] All component hole patterns present and correct (C3, C5, C6, C7)
+- [ ] Interference Check: zero collisions before submitting
 
-**Level 2 prompt:** Redesign component layout (move holes for better weight distribution or wire routing) — must keep all required hole patterns, all corners filleted  
-**Level 3 prompt:** Custom deck shape and layout — justify every design decision in the activity guide  
+**Level 2 prompt:** After all components are constrained, optimize component placement for weight distribution or wire routing — all constraints must remain satisfied; document tradeoffs in the activity guide  
+**Level 3 prompt:** Custom deck shape — justify every layout decision; same functional requirements  
 
 **Submission checklist:**
-- [ ] File named `Lastname_Deck_v1-Base`
-- [ ] All interior corners filleted (verify each one)
-- [ ] All hole patterns correct (check against spec)
-- [ ] Rectangular slot present and correct dimensions
-- [ ] Screenshot: top view (full layout visible) + isometric
+- [ ] File named `Lastname_Deck_v1-Base` (initial); version saves: `v2-C5`, `v3-C6`, `v4-C7`, `v5-Final`
+- [ ] Assembly file includes all 5 components (deck + C3 + C5 + C6 + C7)
+- [ ] All interior corners filleted (verify before CNC)
+- [ ] All hole patterns correct
+- [ ] Interference Check: zero collisions
+- [ ] Screenshot: top view (deck only, all holes visible) + assembly isometric (all components constrained)
 
 ---
 
