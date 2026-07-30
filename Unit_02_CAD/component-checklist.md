@@ -205,26 +205,27 @@
 
 ---
 
-## Open Items — Measurements Needed
+## Hardware Specs (confirmed)
 
-Before recording any video, measure these from actual hardware:
+| Component | Deck attachment | Other fasteners |
+|-----------|----------------|-----------------|
+| C1 Wheel Hub | M5 | — |
+| C2 Drive Wheel | M5 | — |
+| C3 Motor Sleeve Mount | M5 via T-slot nut | 10-32 × ½" into motor flange (×4) |
+| C4 Robot Deck | — (the deck itself) | M5 through-holes for all mounts |
+| C5 Omni Wheel Mount | M5 | M3 × 20 into omni wheel hubs (×4) |
+| C6 IR Sensor Mount | M5 | — |
+| C7 Ultrasonic Sensor Mount | M5 | — |
 
-| Component | What to measure |
-|-----------|----------------|
-| C1 Wheel Hub | Motor shaft / axle OD · Flange OD · Hub height · Bolt hole dia + spacing |
-| C2 Drive Wheel | Outer dia · Hex bore size · Wheel thickness |
-| C3 Motor Mount | Motor body OD · Clamp gap · Plate dimensions · Hole spacing |
-| C4 Deck | Outer dims · Notch size/position · Slot dims · All hole positions · CNC bit dia |
-| C5 Axle Mount | Top plate dims · Arm spacing · Hub bore dia |
-| C6 U-Bracket | Confirm purpose · Overall width · U opening · Slot dims |
-| C7 Ultrasonic | HC-SR04 emitter OD · Center spacing · Block dims |
+**Measurements:** Mr. B provides F360 models of the motor and HC-SR04. Students use **Inspect → Measure** in F360 on those provided models to get bore diameters, spacing, and body dimensions. No calipers needed for motor/sensor dims. Deck hole positions derived from the completed C1–C7 models.
 
-## Other Open Items
+## Open Items
 
-- [ ] All component names confirmed ✓ — C1 Wheel Hub, C2 Drive Wheel, C3 Motor Mount, C4 Deck, C5 Omni Wheel Mount, C6 IR Sensor Mount, C7 Ultrasonic Sensor Mount
-- [ ] C2 progression confirmed ✓ — Circular Pattern required; students choose spoke count/style (artistic flair encouraged)
-- [ ] C1 confirmed ✓ — inserts into purchased soft silicone wheel; teacher will simplify Level 1 geometry
-- [ ] Confirm Level 2/3 placement: end-of-video tags, or activity guide only?
-- [ ] Update pacing map: change component list from 6 (2025-26 names) to 7 confirmed components with correct names
-- [ ] Point values per deliverable (tabled — finalize after full course is written)
-- [ ] Hardware measurements still needed (see table above) before recording any videos
+- [x] All component names confirmed — C1–C7 ✓
+- [x] C2 tool progression — Circular Pattern required; student chooses spoke design ✓
+- [x] C1 simplified — inserts into soft silicone wheel ✓
+- [x] Level 2/3 placement — in the activity guide (not end-of-video tags) ✓
+- [x] Hardware specs — M5 deck, M3×20 omni hubs, 10-32×½" motor flange ✓
+- [x] Pacing map updated — 7 components, correct names, D21–D27 ✓
+- [ ] CNC bit diameter — needed to set minimum corner radius for C4 deck interior corners
+- [ ] Point values per deliverable — tabled until full course is written

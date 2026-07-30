@@ -34,33 +34,36 @@
 > **Change from last year:** Drop the generic Fusion "30 Days" tutorial series as the primary spine. Each lesson = one actual robot component. Teach CAD hygiene explicitly before every component: plan the sketch, fully constrain, one sketch → one extrude.
 
 **Components and fabrication method:**
-| # | Component | Method | Key design constraint |
-|---|---|---|---|
-| 1 | Motor mount | 3D print | Shaft alignment, bolt pattern |
-| 2 | IR sensor mount | 3D print | 15mm ground clearance |
-| 3 | Battery holder | 3D print | Wire relief cutouts |
-| 4 | Ultrasonic sensor mount | 3D print | Forward-facing, secure fit |
-| 5 | Robot deck | CNC cut (polycarbonate) | Component layout, wire pass-throughs, hole patterns |
-| 6 | Electronics mount | CNC cut | Standoff spacing, Arduino + motor controller positioning |
+| # | Component | Method | Key design constraint | Hardware |
+|---|---|---|---|---|
+| C1 | Wheel Hub | 3D print | Hub bore + OD — measure from provided motor model in F360 | M5 × deck |
+| C2 | Drive Wheel | 3D print | Hex bore (measure from model); spokes via Circular Pattern — student's artistic choice | M5 × deck |
+| C3 | Motor Sleeve Mount | 3D print | Sleeve bore = motor body OD (measure in F360); T-slot nut-capture rail on top; face screw holes | 10-32 × ½" flange (×4); M5 deck |
+| C4 | Robot Deck | CNC (polycarbonate) | All mounting hole patterns from C1–C7; M5 through-holes; no sharp interior corners (CNC corner radius) | M5 (all components) |
+| C5 | Omni Wheel Mount | 3D print | Axle bore for front omni wheels; multi-plane sketch | M3 × 20 hub screws (×4); M5 deck |
+| C6 | IR Sensor Mount | 3D print | IR bar width + ground clearance; Mirror feature for symmetric arms; U-channel | M5 × deck |
+| C7 | Ultrasonic Sensor Mount | 3D print | HC-SR04 bore dia + spacing — measure from provided sensor model in F360; L-bracket | M5 × deck |
 
-**Level definitions (apply to all 6 components):**
+**Level definitions (apply to all 7 components):**
 - **Level 1:** Follow the instructional video; replicate Mr. B's design exactly → **C**
-- **Level 2:** Modify the design (improve fit, reduce weight, add a functional feature) → toward **B**
-- **Level 3:** Completely unique design meeting the same functional requirements → toward **A**
+- **Level 2:** Modify the design (improve fit, reduce weight, add a functional feature) — challenges in the activity guide → toward **B**
+- **Level 3:** Completely unique design meeting the same functional requirements — challenges in the activity guide → toward **A**
 - **Level 4:** Advanced challenge (e.g., parametric design, design for a different constraint) → still **A**
 
-**2nd-year students:** Run through all components but will finish Level 1 significantly faster. When ahead, move to Level 2/3 on completed components, or pull from the continuous improvement list.
+**Note on measurements:** Mr. B provides Fusion 360 models of the motor and HC-SR04. Students use the F360 measuring tool to extract dimensions rather than calipers. All deck-attachment hardware is M5. Exception: omni wheel hub screws M3 × 20 (×4 per mount); motor flange screws 10-32 × ½" (×4 per motor).
+
+**2nd-year students:** Run through all 7 components but will finish Level 1 significantly faster. When ahead, move to Level 2/3 on completed components, or pull from the continuous improvement list.
 
 | Wk | Dates | Days | Notes | Content |
 |----|-------|------|-------|---------|
-| 3 | Sep 14–18 | 5 | | CAD hygiene rules + F360 orientation; **C1: Motor Mount** — extrude, holes, bolt pattern, constraints |
-| 4 | Sep 21–25 | 5 | | Motor mount: tolerance fit, iterate, 3D print; version naming (v1-Base, v2-FitFix); **mid-unit CAD checkpoint quiz** |
-| 5 | Sep 28 – Oct 2 | 5 | ⚡ Sep 30 | **C2: IR Sensor Mount** — 15mm ground clearance constraint, positioning; print + test |
-| 6 | Oct 5–9 | 5 | | **C3: Battery Holder** — wire relief features; print + test; **C4: Ultrasonic Sensor Mount** — forward-facing, secure fit |
-| 7 | Oct 12–16 | 5 | | **C5: Robot Deck** — hole patterns, wire pass-throughs, component layout; CNC toolpath intro (awareness) |
-| 8 | Oct 19–23 | 5 | | **C6: Electronics Mount** — standoffs, Arduino + motor controller spacing; CNC awareness continued; **CAD quiz end of week** |
+| 3 | Sep 14–18 | 5 | | CAD hygiene rules + F360 orientation; **C1: Wheel Hub** — concentric circles, multi-depth extrude, file naming; **C2: Drive Wheel** begin — hex bore, Circular Pattern spokes, student design choice |
+| 4 | Sep 21–25 | 5 | | C2 iterate + print; **C3: Motor Sleeve Mount** — sleeve bore (measure motor model in F360), T-slot nut-capture rail, face screw holes; version naming; **mid-unit CAD checkpoint quiz** |
+| 5 | Sep 28 – Oct 2 | 5 | ⚡ Sep 30 | C3 iterate + print; **C5: Omni Wheel Mount** — multi-plane sketch, axle bore; **C6: IR Sensor Mount** — Mirror, U-channel, ground clearance |
+| 6 | Oct 5–9 | 5 | | C5 + C6 iterate + print; **C7: Ultrasonic Sensor Mount** — HC-SR04 bore fit (measure in F360), L-bracket two-face extrude; all prints test-fit |
+| 7 | Oct 12–16 | 5 | | **C4: Robot Deck** — layout planning using all component hole patterns, M5 through-holes, CNC corner radii, slot; CNC toolpath intro (awareness) |
+| 8 | Oct 19–23 | 5 | | C4 iterate; all components test-fit on deck; **CAD quiz end of week** |
 
-**Unit 2 deliverable:** All 6 components modeled, fabricated/test-fit, saved with version names.  
+**Unit 2 deliverables:** D21–D27 — one per component; each requires screenshot + level selection + learning check Q1–Q5. All 7 required before build phase.  
 **Quizzes:** Mid-unit checkpoint (Week 4) + CAD quiz (Week 8).
 
 ---
@@ -209,7 +212,7 @@ Students who completed the course in 2025–26 have already seen basic ultrasoni
 
 ## Open Questions to Resolve
 
-1. **Unit 2 component count** — 5 components listed (motor mount, IR mount, battery holder, deck, electronics). Is that the right set for the build? Any missing?
+1. ~~**Unit 2 component count**~~ — resolved: 7 components confirmed (C1 Wheel Hub, C2 Drive Wheel, C3 Motor Sleeve Mount, C4 Robot Deck, C5 Omni Wheel Mount, C6 IR Sensor Mount, C7 Ultrasonic Sensor Mount). Deliverables D21–D27.
 2. **Group size** — reflection suggested pairs instead of 3–4. Confirm before first day so seating/equipment can be planned.
 3. **AI tutor integration** — which programming lessons get tutor support? At minimum Lessons 6–9 (sensors, serial, functions). Needs tutor lesson entries created before Jan.
 4. **Design brief deliverables (D8/D9)** — are these still the claw project brief + spec sheet? Or does the new component-based approach add earlier D-deliverables?
