@@ -286,19 +286,13 @@
 
         .lesson-meta {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: center;
             margin-top: 15px;
             padding-top: 15px;
             border-top: 1px solid rgba(196, 30, 58, 0.2);
             font-size: 0.85rem;
             color: #888;
-        }
-
-        .lesson-duration {
-            display: flex;
-            align-items: center;
-            gap: 5px;
         }
 
         .lesson-status {
@@ -380,53 +374,19 @@
 
         /* Responsive Design */
         @media (max-width: 1024px) {
-            .sidebar {
-                width: 240px;
-            }
-
-            .main-content {
-                padding: 30px 30px;
-            }
-
-            .lessons-grid {
-                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            }
+            .sidebar { width: 240px; }
+            .main-content { padding: 30px 30px; }
+            .lessons-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
         }
 
         @media (max-width: 768px) {
-            .layout-container {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-                border-right: none;
-                border-bottom: 3px solid #c41e3a;
-            }
-
-            .main-content {
-                padding: 20px;
-            }
-
-            .lessons-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .top-bar {
-                height: 70px;
-                padding: 0 20px;
-            }
-
-            .course-title-compact {
-                font-size: 1.4rem;
-            }
-
-            .school-badge {
-                font-size: 0.7rem;
-                padding: 5px 12px;
-            }
+            .layout-container { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 3px solid #c41e3a; }
+            .main-content { padding: 20px; }
+            .lessons-grid { grid-template-columns: 1fr; }
+            .top-bar { height: 70px; padding: 0 20px; }
+            .course-title-compact { font-size: 1.4rem; }
+            .school-badge { font-size: 0.7rem; padding: 5px 12px; }
         }
     </style>
 </head>
@@ -499,118 +459,249 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Unit 1 -->
             <div id="unit1">
                 <div class="unit-header">
                     <h1 class="unit-title">Unit 1: Engineering Design Process</h1>
                     <p class="unit-description">
-                        Learn how professional engineers solve problems! Master the iterative Engineering Design Process through hands-on challenges. From understanding user needs to building and testing prototypes, you'll develop the systematic approach engineers use to create innovative solutions.
+                        Master the Engineering Design Process through a 9-lesson sequence that mirrors how engineers actually work. You'll experience designing without a framework, learn the framework, and then apply it to a full design cycle — building, testing, and iterating a real prototype. PLTW POE 0.1 content integrated throughout.
                     </p>
                 </div>
 
-                <!-- Section 1: Fundamentals & Challenges -->
+                <!-- Week 1 -->
                 <div class="lesson-section">
                     <div class="section-header">
-                        <h2 class="section-title">Fundamentals & Design Challenges</h2>
-                        <span class="section-badge">Lessons 1-5</span>
+                        <h2 class="section-title">Week 1 — Foundation</h2>
+                        <span class="section-badge">Lessons 1.1–1.5</span>
                     </div>
                     <div class="lessons-grid">
-                    <!-- Lesson 1 -->
+
                     <a href="Lesson_01_Intro_to_Engineering_Design.html" class="lesson-card">
                         <div class="lesson-number">Lesson 1.1</div>
-                        <h3 class="lesson-title">Introduction to Engineering Design</h3>
+                        <h3 class="lesson-title">Introduction to Applied Engineering & Robotics</h3>
                         <ul class="lesson-topics">
-                            <li>Course overview & shop safety</li>
-                            <li>The 7 steps of Engineering Design</li>
-                            <li>Ask, Research, Imagine, Plan</li>
-                            <li>Create, Test, Improve</li>
+                            <li>Course overview & shop safety rules</li>
+                            <li>Career connection: Albert Manero & prosthetics</li>
+                            <li>What problems do you notice? (PLTW reflection)</li>
+                            <li>Your robot — preview of the full year build</li>
+                            <li>Next lesson preview</li>
                         </ul>
                         <div class="lesson-meta">
-                            <div class="lesson-duration">
-                                <span>⏱️</span>
-                                <span>50 min</span>
-                            </div>
                             <div class="lesson-status status-ready">Ready</div>
                         </div>
                     </a>
 
-                    <!-- Lesson 2 -->
-                    <a href="Lesson_02_Paper_Airplane_Challenge.html" class="lesson-card">
+                    <a href="Lesson_02_Spaghetti_Tower_Challenge.html" class="lesson-card">
                         <div class="lesson-number">Lesson 1.2</div>
-                        <h3 class="lesson-title">Paper Airplane Challenge <span class="homework-badge">HOMEWORK</span></h3>
+                        <h3 class="lesson-title">Spaghetti Tower Challenge — No Framework</h3>
                         <ul class="lesson-topics">
-                            <li>Apply the Engineering Design Process</li>
-                            <li>Design for distance OR accuracy</li>
-                            <li>Build and test prototypes</li>
-                            <li>Journal entry submission</li>
+                            <li>Build the tallest freestanding tower</li>
+                            <li>20 sticks, 1 yd tape, 1 yd string, 1 marshmallow</li>
+                            <li>No process, no plan — just build</li>
+                            <li>Debrief: what was your process?</li>
                         </ul>
                         <div class="lesson-meta">
-                            <div class="lesson-duration">
-                                <span>⏱️</span>
-                                <span>50 min + homework</span>
-                            </div>
                             <div class="lesson-status status-ready">Ready</div>
                         </div>
                     </a>
 
-                    <!-- Lesson 3 -->
-                    <a href="Lesson_03_Spaghetti_Tower_Challenge.html" class="lesson-card">
+                    <a href="Lesson_03_EDP_Framework.html" class="lesson-card">
                         <div class="lesson-number">Lesson 1.3</div>
-                        <h3 class="lesson-title">Spaghetti Tower Challenge <span class="homework-badge">HOMEWORK</span></h3>
+                        <h3 class="lesson-title">Engineering Design Process</h3>
                         <ul class="lesson-topics">
-                            <li>Build tallest free-standing tower</li>
-                            <li>Materials: spaghetti & marshmallows</li>
-                            <li>Teamwork and iteration</li>
-                            <li>Journal entry submission</li>
+                            <li>PLTW 6-step EDP framework</li>
+                            <li>Five Whys — finding the root problem</li>
+                            <li>Problem statement vs. design statement</li>
+                            <li>Criteria vs. constraints vocabulary</li>
                         </ul>
                         <div class="lesson-meta">
-                            <div class="lesson-duration">
-                                <span>⏱️</span>
-                                <span>50 min + homework</span>
-                            </div>
                             <div class="lesson-status status-ready">Ready</div>
                         </div>
                     </a>
 
-                    <!-- Lesson 4 -->
-                    <a href="Lesson_04_Design_Brief_Workshop.html" class="lesson-card">
+                    <a href="Lesson_04_Paper_Glider_Challenge.html" class="lesson-card">
                         <div class="lesson-number">Lesson 1.4</div>
-                        <h3 class="lesson-title">Design Brief Workshop <span class="homework-badge">HOMEWORK</span></h3>
+                        <h3 class="lesson-title">Paper Glider Challenge — EDP in Action</h3>
                         <ul class="lesson-topics">
-                            <li>4-day cell phone stand project</li>
-                            <li>Problem statement & research</li>
-                            <li>Brainstorming & Pugh Matrix</li>
-                            <li>Daily homework submissions</li>
+                            <li>Apply the 6-step EDP to a design challenge</li>
+                            <li>Write a quick design brief before building</li>
+                            <li>Build and test against written criteria</li>
+                            <li>Compare to the Spaghetti Tower experience</li>
                         </ul>
                         <div class="lesson-meta">
-                            <div class="lesson-duration">
-                                <span>⏱️</span>
-                                <span>4 days + homework</span>
-                            </div>
                             <div class="lesson-status status-ready">Ready</div>
                         </div>
                     </a>
 
-                    <!-- Lesson 5 -->
-                    <a href="Lesson_05_Measurement_Tools_Workshop.html" class="lesson-card">
+                    <a href="Lesson_05_Design_Brief_Workshop.html" class="lesson-card">
                         <div class="lesson-number">Lesson 1.5</div>
-                        <h3 class="lesson-title">Measurement Tools Workshop</h3>
+                        <h3 class="lesson-title">Writing a Design Brief</h3>
                         <ul class="lesson-topics">
-                            <li>Introduction to precision measurement</li>
-                            <li>Calipers, rulers, tapes, scales</li>
-                            <li>Hands-on practice stations</li>
-                            <li>Measurement challenge activity</li>
+                            <li>Criteria vs. constraints in depth (PLTW resource)</li>
+                            <li>PLTW Design Brief Template — hands on</li>
+                            <li>Robot Deck Design Challenge introduced</li>
+                            <li>Teams assigned — write initial problem statement</li>
                         </ul>
                         <div class="lesson-meta">
-                            <div class="lesson-duration">
-                                <span>⏱️</span>
-                                <span>50 min</span>
-                            </div>
                             <div class="lesson-status status-ready">Ready</div>
                         </div>
                     </a>
+
                     </div>
                 </div>
+
+                <!-- Week 2 -->
+                <div class="lesson-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Week 2 — Cardboard Robot Deck Challenge</h2>
+                        <span class="section-badge">Lessons 1.6–1.9</span>
+                    </div>
+                    <div class="lessons-grid">
+
+                    <a href="Lesson_06_Client_Interview.html" class="lesson-card">
+                        <div class="lesson-number">Lesson 1.6</div>
+                        <h3 class="lesson-title">Client Interview & Design Statement</h3>
+                        <ul class="lesson-topics">
+                            <li>Active listening skills (PLTW resource)</li>
+                            <li>Interview Mr. B as the engineer/client</li>
+                            <li>Revise problem statement using Five Whys</li>
+                            <li>Write design statement with specific criteria</li>
+                        </ul>
+                        <div class="lesson-meta">
+                            <div class="lesson-status status-ready">Ready</div>
+                        </div>
+                    </a>
+
+                    <a href="Lesson_07_Concept_Sketching.html" class="lesson-card">
+                        <div class="lesson-number">Lesson 1.7</div>
+                        <h3 class="lesson-title">Concept Sketching & Decision Matrix</h3>
+                        <ul class="lesson-topics">
+                            <li>Brainstorm 3 robot deck layouts</li>
+                            <li>Concept sketches with labeled callouts</li>
+                            <li>Decision matrix — evaluate against criteria</li>
+                            <li>No cardboard until sketch is approved</li>
+                        </ul>
+                        <div class="lesson-meta">
+                            <div class="lesson-status status-ready">Ready</div>
+                        </div>
+                    </a>
+
+                    <a href="Lesson_08_Build_Test.html" class="lesson-card">
+                        <div class="lesson-number">Lesson 1.8</div>
+                        <h3 class="lesson-title">Build, Test & Peer Review</h3>
+                        <ul class="lesson-topics">
+                            <li>Build cardboard prototype from chosen design</li>
+                            <li>Cross-team peer review against written criteria</li>
+                            <li>Drop test — pass/fail against criteria</li>
+                        </ul>
+                        <div class="lesson-meta">
+                            <div class="lesson-status status-ready">Ready</div>
+                        </div>
+                    </a>
+
+                    <a href="Lesson_09_Iterate_Quiz.html" class="lesson-card">
+                        <div class="lesson-number">Lesson 1.9</div>
+                        <h3 class="lesson-title">Iterate, Reflect & EDP Quiz</h3>
+                        <ul class="lesson-topics">
+                            <li>Document one design change based on test results</li>
+                            <li>Rebuild / modify and retest</li>
+                            <li>EDP reflection (adapted from PLTW 0.1.2 conclusion)</li>
+                            <li>EDP Quiz</li>
+                        </ul>
+                        <div class="lesson-meta">
+                            <div class="lesson-status status-ready">Ready</div>
+                        </div>
+                    </a>
+
+                    </div>
+                </div>
+
+                <!-- PLTW Resources -->
+                <div class="lesson-section">
+                    <div class="section-header">
+                        <h2 class="section-title">PLTW POE Resources</h2>
+                        <span class="section-badge">Subscription Content</span>
+                    </div>
+                    <p style="color: #888; font-size: 0.95rem; margin-bottom: 20px;">
+                        Reference materials from PLTW Principles of Engineering Unit 0.1. Used throughout this unit as frameworks and student resources.
+                    </p>
+                    <div class="lessons-grid">
+
+                    <a href="../PLTW Unit 0 Resources/Design Process.html" class="lesson-card" target="_blank">
+                        <div class="lesson-number">PLTW Reference</div>
+                        <h3 class="lesson-title">Design Process</h3>
+                        <ul class="lesson-topics">
+                            <li>6-step EDP framework overview</li>
+                            <li>Used in Lesson 1.3</li>
+                        </ul>
+                    </a>
+
+                    <a href="../PLTW Unit 0 Resources/Writing a Design Brief.html" class="lesson-card" target="_blank">
+                        <div class="lesson-number">PLTW Reference</div>
+                        <h3 class="lesson-title">Writing a Design Brief</h3>
+                        <ul class="lesson-topics">
+                            <li>Problem statement vs. design statement</li>
+                            <li>Criteria and constraints defined</li>
+                            <li>Used in Lessons 1.3 and 1.5</li>
+                        </ul>
+                    </a>
+
+                    <a href="../PLTW Unit 0 Resources/Active Listening and Interpreting.html" class="lesson-card" target="_blank">
+                        <div class="lesson-number">PLTW Reference</div>
+                        <h3 class="lesson-title">Active Listening & Interpreting</h3>
+                        <ul class="lesson-topics">
+                            <li>Interview techniques</li>
+                            <li>Used in Lesson 1.6</li>
+                        </ul>
+                    </a>
+
+                    <a href="../PLTW Unit 0 Resources/Brainstorming Solutions.html" class="lesson-card" target="_blank">
+                        <div class="lesson-number">PLTW Reference</div>
+                        <h3 class="lesson-title">Brainstorming Solutions</h3>
+                        <ul class="lesson-topics">
+                            <li>SCAMPER and other techniques</li>
+                            <li>Used in Lessons 1.5 and 1.7</li>
+                        </ul>
+                    </a>
+
+                    <a href="../PLTW Unit 0 Resources/Concept Sketching.html" class="lesson-card" target="_blank">
+                        <div class="lesson-number">PLTW Reference</div>
+                        <h3 class="lesson-title">Concept Sketching</h3>
+                        <ul class="lesson-topics">
+                            <li>Basic shapes, callout labels, shading</li>
+                            <li>Used in Lesson 1.7</li>
+                        </ul>
+                    </a>
+
+                    <a href="../PLTW Unit 0 Resources/Decision Matrix.html" class="lesson-card" target="_blank">
+                        <div class="lesson-number">PLTW Reference</div>
+                        <h3 class="lesson-title">Decision Matrix</h3>
+                        <ul class="lesson-topics">
+                            <li>Evaluate concepts against criteria</li>
+                            <li>Used in Lesson 1.7</li>
+                        </ul>
+                    </a>
+
+                    <a href="../PLTW Unit 0 Resources/gsr_DesignBrief_Template.docx" class="lesson-card" download>
+                        <div class="lesson-number">PLTW Template</div>
+                        <h3 class="lesson-title">Design Brief Template</h3>
+                        <ul class="lesson-topics">
+                            <li>Student handout — print before Lesson 1.5</li>
+                            <li>.docx format</li>
+                        </ul>
+                    </a>
+
+                    <a href="../PLTW Unit 0 Resources/POE_ConceptSketchRubric.docx" class="lesson-card" download>
+                        <div class="lesson-number">PLTW Rubric</div>
+                        <h3 class="lesson-title">Concept Sketch Rubric</h3>
+                        <ul class="lesson-topics">
+                            <li>Grading criteria for Lesson 1.7 sketches</li>
+                            <li>.docx format</li>
+                        </ul>
+                    </a>
+
+                    </div>
+                </div>
+
             </div>
         </main>
     </div>

@@ -23,10 +23,10 @@
 
 | Wk | Dates | Days | Notes | Content |
 |----|-------|------|-------|---------|
-| 1 | Aug 31 – Sep 4 | 5 | | Intro, syllabus/safety rules, EDP overview; Paper Glider + Spaghetti Tower rapid prototype challenges |
-| 2 | Sep 7–11 | 4 | 🟡 🔴 Labor Day Sep 7 | **Cardboard Robot Deck Challenge** — teams receive component blocks (battery, Arduino, motor controller mock-ups) and design/build a prototype deck from cardboard within a size envelope. Full EDP cycle: design brief → sketches → build → drop test → iterate. **EDP quiz end of week.** |
+| 1 | Aug 31 – Sep 4 | 4 | 🔴 Sep 4 no school | **Lessons 1.1–1.5:** Intro to AE&R (1.1) → Spaghetti Tower, no framework (1.2) → EDP Framework (1.3) → Paper Glider, EDP applied (1.4) → Writing a Design Brief (1.5) · **D: Signed syllabus + safety contract** |
+| 2 | Sep 7–11 | 4 | 🟡 🔴 Labor Day Sep 7 | **Lessons 1.6–1.9 — Cardboard Robot Deck Challenge:** Client Interview & Design Statement (1.6) → Concept Sketching & Decision Matrix (1.7) → Build, Test & Peer Review (1.8) → Iterate, Reflect & EDP Quiz (1.9) |
 
-**Why cardboard deck instead of phone stand:** Directly previews the CNC deck students will design in Fusion (Week 6–7). Teaches component placement, spatial constraints, and iterative design with zero tools. The "customer requirements" are the robot's actual needs.
+**Lesson sequence rationale:** Students attempt Spaghetti Tower *before* learning EDP (experience failure without a framework), then learn the framework, then apply it immediately to Paper Glider — "experience → framework → apply." Cardboard Robot Deck directly previews the CNC deck students will design in Fusion (Week 6–7).
 
 ---
 
@@ -57,7 +57,7 @@
 | 4 | Sep 21–25 | 5 | | Motor mount: tolerance fit, iterate, 3D print; version naming (v1-Base, v2-FitFix); **mid-unit CAD checkpoint quiz** |
 | 5 | Sep 28 – Oct 2 | 5 | ⚡ Sep 30 | **C2: IR Sensor Mount** — 15mm ground clearance constraint, positioning; print + test |
 | 6 | Oct 5–9 | 5 | | **C3: Battery Holder** — wire relief features; print + test; **C4: Ultrasonic Sensor Mount** — forward-facing, secure fit |
-| 7 | Oct 12–16 | 4 | 🟡 🔴 Records Day Oct 13 | **C5: Robot Deck** — hole patterns, wire pass-throughs, component layout; CNC toolpath intro (awareness) |
+| 7 | Oct 12–16 | 5 | | **C5: Robot Deck** — hole patterns, wire pass-throughs, component layout; CNC toolpath intro (awareness) |
 | 8 | Oct 19–23 | 5 | | **C6: Electronics Mount** — standoffs, Arduino + motor controller spacing; CNC awareness continued; **CAD quiz end of week** |
 
 **Unit 2 deliverable:** All 6 components modeled, fabricated/test-fit, saved with version names.  
@@ -70,7 +70,7 @@
 
 | Wk | Dates | Days | Notes | Content |
 |----|-------|------|-------|---------|
-| 9 | Oct 26–30 | 5 | | OSHA/LOTO/PPE/SDS + Matthew Henne + Lac-Mégantic case reviews; drill press cert |
+| 9 | Oct 26–30 | 4 | 🟡 🔴 Records Day Oct 30 | OSHA/LOTO/PPE/SDS; Matthew Henne case study; drill press cert |
 | 10 | Nov 2–6 | 5 | | Pedestal grinder cert; hand drill cert; **CNC awareness** (Year 1: safety, what the machine does, toolpath concepts — not independent operation); safety quiz |
 
 **Unit 3 deliverable:** Signed certification card for each tool. All certs required before build phase.  
@@ -86,53 +86,102 @@
 ---
 
 ### Robot Build — Physical Assembly
-> **Change from last year:** Students arrive with all 5 components already designed and test-fit. Build phase starts from a common baseline — no group is still designing their motor mounts while another group is cutting decks. Pairs instead of 3–4 person groups to reduce hiding spots.
+> **Change from last year:** Decks are cut during Safety week (Week 10) so build starts from a common baseline. Students arrive at Week 11 with all components designed and test-fit, decks already cut. Pairs instead of 3–4 person groups to reduce hiding spots. **Build is one week — programming starts immediately after.**
 
 | Wk | Dates | Days | Notes | Content |
 |----|-------|------|-------|---------|
-| 11 | Nov 9–13 | 5 | ⚡ Nov 11 (20-min day) | Cut decks on CNC (all groups); motor mount final print |
-| 12 | Nov 16–20 | 5 | | Assemble frame: motors, wheels, caster; caliper measurements |
-| 13 | Nov 23–24 | 2 | 🟡 Thanksgiving week | Wire electronics; battery + Arduino mount |
+| 11 | Nov 9–13 | 5 | ⚡ Nov 11 (20-min day) | Assemble frame: motors, wheels, caster; mount electronics board; wire motors and battery; caliper check |
+
+**Build gate:** Robot rolls under manual power with all components mounted before Week 12.
+
+---
+
+### Unit 5 — Programming Basics (MicroPython)
+> **Change from last year:** Programming starts mid-November (Week 12) on the physical robot students just built. Three lessons introduce the language; two more build toward motor control. All basics wrap up before Winter Break.
+
+**Lesson / Activity numbering:**  L5.1 + A5.1 · **L5.2 + A5.2 (Functions — new)** · L5.3 + A5.3 (Digital Input/Buttons) · L5.4 (PWM) · L5.5 (Motor Control)
+
+| Wk | Dates | Days | Notes | Content |
+|----|-------|------|-------|---------|
+| 12 | Nov 16–20 | 5 | | **L5.1** Microcontroller Fundamentals + **A5.1** Blink; **L5.2** Python Functions + **A5.2** SOS with Functions |
+| 13 | Nov 23–24 | 2 | 🟡 Thanksgiving week | **L5.3** Digital Input + begin **A5.3** Switches |
 | — | Nov 25–28 | — | 🌿 Thanksgiving Break | |
-| 14 | Nov 30 – Dec 4 | 5 | | Wiring complete; motor test; troubleshooting |
-| 15 | Dec 7–11 | 5 | | Robot rolling under manual control; begin sensor wiring |
-| 16 | Dec 14–18 | 5 | | Build buffer / holiday 3D print projects (ornaments, etc.) if ahead of schedule |
+| 14 | Nov 30 – Dec 4 | 5 | | Finish **A5.3**; **L5.4** PWM + **A5.4** |
+| 15 | Dec 7–11 | 5 | | **L5.5** Motor Control + **A5.5**; Programming Quiz; **D51** Programming Basics Q&A due |
+| 16 | Dec 14–18 | 5 | | **3D Print Holiday Project** — design and print a small item to take home (ornament, keychain, name plate, etc.); student picks and customizes |
 | — | ~Dec 21 – Jan 3 | — | 🌿 Winter Break | |
+
+---
+
+## End of Semester 1 (after Winter Break)
+
+### Robot Tuning — Encoders & IMU
+> Students return from Winter Break with programming basics complete (L5.1–L5.5). These three weeks put code on the physical robot for the first time.
+
+| Wk | Dates | Days | Notes | Content |
+|----|-------|------|-------|---------|
+| 17 | Jan 4–8 | 5 | | Motor control on physical robot; drive + turn functions; encoder wiring and pulse counting |
+| 18 | Jan 11–15 | 5 | ⚡ Jan 13 (20-min) | Drive-straight with encoder feedback; IMU intro — Qwiic plug-in, read yaw angle |
+| 19 | Jan 18–21 | 3 | 🟡 🔴 MLK Day Jan 18 · Last student day Thu Jan 21 · Records Day Jan 22 (no students) | IMU heading hold; catch-up; **Midterm Exam** (EDP, CAD, Safety, Programming Basics) |
 
 ---
 
 ## SEMESTER 2
 
-### Unit 5 — Programming & Electronics (Arduino)
-> **Change from last year:** Programming starts Semester 2 with a working physical robot in hand. Iterative chunk approach — small deliverables with check-ins, not one large spec. AI tutor active for guided coding steps.
-
+### Ultrasonic & Wall Following
 | Wk | Dates | Days | Notes | Content |
 |----|-------|------|-------|---------|
-| 17 | Jan 4–8 | 5 | | Lessons 1–3: Arduino intro, IDE setup, digital outputs, variables |
-| 18 | Jan 11–15 | 5 | ⚡ Jan 13 (20-min) | Lessons 4–5: Control structures, loops; **Quiz: Lessons 1–5** |
-| 19 | Jan 18–22 | 3 | 🟡 🔴 MLK Day Jan 18 + Records Day Jan 22 — **last week of S1** | Finish Lesson 5; review; last student day = Thu Jan 21 |
-| 20 | Jan 25–29 | 5 | | Lessons 8–9: Serial monitor, functions; robot motor control code |
-| 21 | Feb 1–5 | 5 | | Robot drives: basic motor sketch on physical robot; encoder intro |
+| 20 | Jan 25–29 | 5 | S2 begins Jan 25 | I2C ultrasonic via TCA9548A mux (3 sensors); distance measurement; obstacle detection logic |
+| 21 | Feb 1–5 | 5 | | Wall following — maintain fixed distance from a wall using ultrasonic; proportional correction |
 
 ---
 
 ### Line Following
+> Board has a 5-sensor IR array — weighted-error PID rather than simple threshold comparison.
+
 | Wk | Dates | Days | Notes | Content |
 |----|-------|------|-------|---------|
-| 22 | Feb 8–12 | 5 | | IR sensor wiring + analogRead; threshold calibration |
-| 23 | Feb 15–19 | 4 | 🟡 🔴 Presidents Day Feb 15 | PID control intro; tune on Track 1 |
-| 24 | Feb 22–26 | 5 | | Track 1 practical (complete in under 1 min); begin Track 2 tuning |
+| 22 | Feb 8–12 | 5 | | 5-sensor IR array; per-sensor threshold calibration; binary line following |
+| 23 | Feb 15–19 | 4 | 🟡 🔴 Presidents Day Feb 15 | Weighted-sensor error; PID control; tune + course practical — **wrap-up** |
 
 ---
 
-### Scanner Robot
+### Mechanisms
+> PLTW POE Unit 1 content — students analyze, calculate, and build mechanical systems before applying them to a servo-driven project.
+
 | Wk | Dates | Days | Notes | Content |
 |----|-------|------|-------|---------|
-| 25 | Mar 1–5 | 5 | | Ultrasonic sensor: HC-SR04 wiring, distance measurement |
-| 26 | Mar 8–12 | 5 | ⚡ Mar 10 (20-min) | Servo control; 180° sweep; data arrays |
-| 27 | Mar 15–19 | 5 | | Scanning algorithm; obstacle detection logic |
-| 28 | Mar 22–25 | ~3.5 | 🟡 Pre-spring break | Scanner practical / portfolio submission |
+| 24 | Feb 22–26 | 4 | 🔴 Feb 26 mid-winter break | Simple machines intro; mechanical advantage + efficiency (POE 111/113) |
+| 25 | Mar 1–5 | 5 | | Pulley systems — fixed, movable, compound (POE 114) |
+| 26 | Mar 8–12 | 5 | ⚡ Mar 10 (20-min) | Gear ratios + multi-stage gear trains (POE 115) |
+| 27 | Mar 15–19 | 5 | | Converting motion — cams, cranks, linkages, rotary→linear (POE 122) |
+| 28 | Mar 22–25 | ~3.5 | 🟡 🔴 Mar 25 ½-day Records Day · Mar 26 spring break begins | Mechanism design challenge |
 | — | Mar 26 – Apr 4 | — | 🌿 Spring Break | |
+
+---
+
+### Servo Build Project
+> Students apply mechanism knowledge to design and build a servo-driven mechanism of their choice.
+
+| Wk | Dates | Days | Notes | Content |
+|----|-------|------|-------|---------|
+| 29 | Apr 5–9 | 5 | | Project intro + design brief; servo control review; begin build |
+| 30 | Apr 12–16 | ~2 | 🧪 State testing Tue–Thu | Build (limited time) |
+| 31 | Apr 19–23 | 5 | | Build + test + iterate |
+| 32 | Apr 26–30 | 5 | | Final demo + portfolio submission |
+
+---
+
+### 2nd-Year Track (S2 Differentiation)
+Students who completed the course in 2025–26 have already seen basic ultrasonic and line following. Extension path runs parallel to the 1st-year sequence:
+
+| Weeks | 1st-Year | 2nd-Year Extension |
+|-------|----------|-------------------|
+| 17–19 | Motor control + encoders + IMU intro | Same — new for everyone |
+| 20–21 | Ultrasonic + obstacle avoidance | IMU heading hold + Wi-Fi remote control |
+| 22–24 | Line following (5-sensor, PID) | Remote PID tuning via Wi-Fi; live sensor dashboard in browser |
+| 25–27 | Scanner robot | Autonomous navigation: IMU heading + scanner fusion; map to OLED |
+| 29–32 | Claw project | Claw with Wi-Fi control; telemetry logging |
 
 ---
 
@@ -164,7 +213,7 @@
 2. **Group size** — reflection suggested pairs instead of 3–4. Confirm before first day so seating/equipment can be planned.
 3. **AI tutor integration** — which programming lessons get tutor support? At minimum Lessons 6–9 (sensors, serial, functions). Needs tutor lesson entries created before Jan.
 4. **Design brief deliverables (D8/D9)** — are these still the claw project brief + spec sheet? Or does the new component-based approach add earlier D-deliverables?
-5. **SEMESTER_START in app.js** — currently set to `2026-02-02` (old). Needs to be updated before students log in. Affects week number display and "overdue" flags.
+5. ~~**SEMESTER_START in app.js**~~ — updated to `2026-08-31`. Week topics now span all 38 weeks of the year.
 6. **8th grade pacing** — once this map is solid, the 8th grade version compresses it to ~18 weeks (Semester 1 only). Which units get cut vs. shortened?
 7. **D&B Lab** — separate pacing map needed; doesn't share this unit structure.
 

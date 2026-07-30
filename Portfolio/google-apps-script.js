@@ -1680,7 +1680,7 @@ function sendRemindersWeb(semesterStart) {
       if (missingDeliverables.length > 0) {
         body += `\nMissing Deliverables:\n- ${missingDeliverables.join('\n- ')}`;
       }
-      body += `\n\nPlease submit them as soon as possible.\n\nPortfolio: https://mbombich-robotics.github.io/lessons/Unit_05_Programming_Electronics_and_Sensors/Robotics_Portfolio_System/index.html\n\nMr. B`;
+      body += `\n\nPlease submit them as soon as possible.\n\nPortfolio: https://mbombich-robotics.github.io/cte/Unit_05_Programming_Electronics_and_Sensors/Robotics_Portfolio_System/index.html\n\nMr. B`;
 
       MailApp.sendEmail({
         to: email,
@@ -1736,7 +1736,7 @@ function sendReminderEmails() {
       MailApp.sendEmail({
         to: email,
         subject: 'Robotics Portfolio Reminder - Missing Reflections',
-        body: `Hi ${name},\n\nYou have missing weekly reflections for weeks: ${missingWeeks.join(', ')}.\n\nPlease submit them as soon as possible.\n\nPortfolio: https://mbombich-robotics.github.io/lessons/Unit_05_Programming_Electronics_and_Sensors/Robotics_Portfolio_System/index.html\n\nMr. B`
+        body: `Hi ${name},\n\nYou have missing weekly reflections for weeks: ${missingWeeks.join(', ')}.\n\nPlease submit them as soon as possible.\n\nPortfolio: https://mbombich-robotics.github.io/cte/Unit_05_Programming_Electronics_and_Sensors/Robotics_Portfolio_System/index.html\n\nMr. B`
       });
 
       console.log(`Emailed ${email}: Missing weeks ${missingWeeks.join(', ')}`);

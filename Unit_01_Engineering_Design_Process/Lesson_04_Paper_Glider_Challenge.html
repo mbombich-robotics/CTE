@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Paper Glider Challenge — EDP Applied</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Exo 2', sans-serif; background: linear-gradient(135deg, #000000 0%, #0a0404 40%, #1a0d08 100%); color: #e0e6f0; height: 100vh; }
+        .presentation { width: 100%; height: 100vh; position: relative; }
+        .slide { position: absolute; width: 100%; min-height: 100%; display: none; flex-direction: column; justify-content: flex-start; align-items: center; padding: 55px 60px 120px 60px; opacity: 0; transition: opacity 0.5s ease; overflow-y: auto; overflow-x: hidden; }
+        .slide.active { display: flex; opacity: 1; }
+        .slide-content { max-width: 1200px; width: 100%; }
+        h1 { font-family: 'Orbitron', sans-serif; font-size: 3.5rem; font-weight: 900; color: #ff6b35; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 20px rgba(255,107,53,0.5); animation: glow 2s ease-in-out infinite alternate; }
+        @keyframes glow { from { text-shadow: 0 0 20px rgba(255,107,53,0.5); } to { text-shadow: 0 0 30px rgba(255,107,53,0.8); } }
+        h2 { font-family: 'Orbitron', sans-serif; font-size: 2.5rem; font-weight: 700; color: #ff6b35; margin-bottom: 18px; text-transform: uppercase; }
+        h3 { font-family: 'Exo 2', sans-serif; font-size: 1.5rem; font-weight: 600; color: #ffa500; margin-bottom: 12px; }
+        p { font-size: 1.15rem; line-height: 1.6; margin-bottom: 12px; color: #b8c5d6; }
+        .subtitle { font-size: 1.3rem; color: #ffa500; font-weight: 600; margin-bottom: 30px; }
+        .objective-box { background: linear-gradient(135deg, rgba(255,107,53,0.1) 0%, rgba(255,107,53,0.05) 100%); border: 3px solid #ff6b35; border-radius: 12px; padding: 20px; margin: 20px 0; box-shadow: 0 0 30px rgba(255,107,53,0.2); }
+        .objective-box h3 { color: #ff6b35; }
+        .bullet-list { list-style: none; padding-left: 0; }
+        .bullet-list li { font-size: 1.15rem; margin: 12px 0; padding-left: 35px; position: relative; color: #b8c5d6; line-height: 1.5; }
+        .bullet-list li::before { content: '▸'; position: absolute; left: 0; color: #ffa500; font-size: 1.5rem; line-height: 1; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .box { background: rgba(255,107,53,0.05); border: 2px solid #ff6b35; border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(255,107,53,0.1); }
+        .highlight { color: #ff6b35; font-weight: 700; }
+        .success { color: #50fa7b; font-weight: 700; }
+        .checkmark { color: #50fa7b; font-size: 1.5rem; margin-right: 10px; }
+        .step-box { background: linear-gradient(135deg, rgba(255,165,0,0.15) 0%, rgba(255,165,0,0.05) 100%); border: 2px solid #ffa500; border-radius: 12px; padding: 25px; margin: 20px 0; }
+        .step-box h3 { color: #ffa500; }
+        .controls { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; justify-content: center; align-items: center; gap: 20px; z-index: 1000; }
+        button { background: linear-gradient(135deg, #ff6b35 0%, #cc5429 100%); border: none; color: #1a0f0a; padding: 15px 30px; font-size: 1rem; font-weight: 700; border-radius: 8px; cursor: pointer; font-family: 'Exo 2', sans-serif; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255,107,53,0.3); }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,107,53,0.5); }
+        button:disabled { opacity: 0.3; cursor: not-allowed; }
+        .nav-button { background: linear-gradient(135deg, #ff6b35 0%, #cc5429 100%); border: none; color: #1a0f0a; padding: 15px 30px; font-size: 1rem; font-weight: 700; border-radius: 8px; cursor: pointer; font-family: 'Exo 2', sans-serif; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255,107,53,0.3); text-decoration: none; display: inline-block; }
+        .nav-button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,107,53,0.5); }
+        .slide-number { position: fixed; bottom: 30px; left: 30px; font-family: 'Space Mono', monospace; font-size: 1rem; color: #ff6b35; z-index: 1000; }
+        .pltw-tag { display: inline-block; background: rgba(80,250,123,0.15); color: #50fa7b; border: 1px solid #50fa7b; border-radius: 6px; padding: 3px 10px; font-size: 0.8rem; font-weight: 700; margin-left: 10px; vertical-align: middle; }
+        .edp-badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-family: 'Orbitron', sans-serif; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; vertical-align: middle; margin-left: 10px; }
+        .s1 { background: rgba(255,107,53,0.15); color: #ff6b35; border: 1px solid #ff6b35; }
+        .s2 { background: rgba(255,149,0,0.15); color: #ff9500; border: 1px solid #ff9500; }
+        .s3 { background: rgba(255,215,0,0.12); color: #ffd700; border: 1px solid #ffd700; }
+        .s4 { background: rgba(80,250,123,0.12); color: #50fa7b; border: 1px solid #50fa7b; }
+        .s5 { background: rgba(0,212,255,0.12); color: #00d4ff; border: 1px solid #00d4ff; }
+        .option-card { border-radius: 12px; padding: 22px; cursor: pointer; transition: all 0.2s; }
+        .opt-a { background: rgba(0,212,255,0.06); border: 2px solid rgba(0,212,255,0.4); }
+        .opt-a:hover { border-color: #00d4ff; background: rgba(0,212,255,0.12); }
+        .opt-a h3 { color: #00d4ff; }
+        .opt-b { background: rgba(189,147,249,0.06); border: 2px solid rgba(189,147,249,0.4); }
+        .opt-b:hover { border-color: #bd93f9; background: rgba(189,147,249,0.12); }
+        .opt-b h3 { color: #bd93f9; }
+        .opt-c { background: rgba(80,250,123,0.06); border: 2px solid rgba(80,250,123,0.4); }
+        .opt-c:hover { border-color: #50fa7b; background: rgba(80,250,123,0.12); }
+        .opt-c h3 { color: #50fa7b; }
+        .material-item { display: flex; align-items: center; gap: 20px; padding: 14px 18px; border: 2px solid rgba(255,107,53,0.3); border-radius: 10px; margin: 8px 0; background: rgba(255,107,53,0.04); }
+        .material-qty { font-family: 'Orbitron', sans-serif; font-size: 1.6rem; font-weight: 900; color: #ff6b35; min-width: 55px; text-align: center; }
+        .material-name { font-size: 1.15rem; font-weight: 600; color: #e0e6f0; }
+        @media (max-width: 768px) { h1 { font-size: 2.5rem; } h2 { font-size: 2rem; } .slide { padding: 30px; } .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<div class="presentation">
+
+    <!-- Slide 1: Title -->
+    <div class="slide active">
+        <div class="slide-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; text-align: center;">
+            <h1>Paper Glider Challenge</h1>
+            <p class="subtitle">Lesson 1.4 — EDP Applied</p>
+            <div style="margin-top: 25px; display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;">
+                <span class="edp-badge s1">1 Define</span>
+                <span class="edp-badge s2">2 Generate</span>
+                <span class="edp-badge s3">3 Develop</span>
+                <span class="edp-badge s4">4 Build & Test</span>
+                <span class="edp-badge s5">5 Evaluate</span>
+            </div>
+            <p style="margin-top: 40px; font-size: 1rem; color: #888;">Lesson 1.4</p>
+        </div>
+    </div>
+
+    <!-- Slide 2: Same challenge, different approach -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Same Idea. Different Approach.</h2>
+            <div class="grid-2" style="margin-top: 10px;">
+                <div class="box" style="border-color: #ff5555; background: rgba(255,85,85,0.05);">
+                    <h3 style="color: #ff5555;">Lesson 1.2 — Spaghetti Tower</h3>
+                    <ul class="bullet-list">
+                        <li>No process — just build</li>
+                        <li>Goal was vague until someone measured</li>
+                        <li>Failures were unrecoverable</li>
+                        <li>Hard to know what to improve</li>
+                        <li>Results felt like luck</li>
+                    </ul>
+                </div>
+                <div class="box" style="border-color: #50fa7b; background: rgba(80,250,123,0.05);">
+                    <h3 style="color: #50fa7b;">Today — Glider with EDP</h3>
+                    <ul class="bullet-list">
+                        <li>Define the problem first</li>
+                        <li>Set measurable criteria before building</li>
+                        <li>Sketch multiple options, pick one</li>
+                        <li>Test against the criteria you wrote</li>
+                        <li>Evaluation is actionable — not "it was bad"</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="step-box" style="margin-top: 20px; text-align: center;">
+                <p style="font-size: 1.1rem; margin: 0; color: #ffa500; font-weight: 700;">By the end of class, you'll know if the process changes anything.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 3: Step 1 — Define the Problem -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Step 1 — Define the Problem <span class="edp-badge s1">EDP Step 1</span></h2>
+            <p style="margin-bottom: 5px;">Before touching paper, we need a problem statement — together.</p>
+            <div class="objective-box" style="margin-top: 15px;">
+                <h3>Draft Problem Statement (class activity)</h3>
+                <p style="font-size: 1.2rem; color: #e0e6f0; margin-bottom: 5px;">Template:</p>
+                <p style="font-family: 'Space Mono', monospace; font-size: 1.1rem; color: #ffa500; line-height: 1.8; margin: 0;">
+                    A student needs a way to _____________ using only _____________ so that _____________.
+                </p>
+            </div>
+            <div class="grid-2" style="margin-top: 15px;">
+                <div>
+                    <div class="box">
+                        <h3>Good problem statements...</h3>
+                        <ul class="bullet-list">
+                            <li>Describe the <span class="highlight">need</span>, not the solution</li>
+                            <li>Mention <span class="highlight">who</span> has the problem</li>
+                            <li>Say <span class="highlight">why</span> it matters</li>
+                            <li>Don't mention paper airplanes or folding</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <div class="box" style="border-color: #50fa7b; background: rgba(80,250,123,0.05);">
+                        <h3 style="color: #50fa7b;">Example (write yours on the board)</h3>
+                        <p style="font-style: italic; font-size: 1.05rem; margin: 0; color: #e0e6f0;">"A student needs to launch a lightweight projectile as far as possible using only one sheet of paper so that they can demonstrate aerodynamic design principles."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 4: Design Statement — Criteria & Constraints -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Write Your Design Statement</h2>
+            <p style="margin-bottom: 5px;">Choose your mission. Then set your criteria and constraints.</p>
+            <div class="grid-3" style="margin-top: 15px;">
+                <div class="option-card opt-a">
+                    <h3>Option A</h3>
+                    <p style="font-size: 1.3rem; font-weight: 700; color: #00d4ff; margin: 8px 0;">Distance</p>
+                    <p style="font-size: 1rem; margin: 0; color: #b8c5d6;">Farthest flight from throw line. Measure in cm where it lands.</p>
+                </div>
+                <div class="option-card opt-b">
+                    <h3>Option B</h3>
+                    <p style="font-size: 1.3rem; font-weight: 700; color: #bd93f9; margin: 8px 0;">Accuracy</p>
+                    <p style="font-size: 1rem; margin: 0; color: #b8c5d6;">Land in a target zone on the floor. 3 attempts, score each.</p>
+                </div>
+                <div class="option-card opt-c">
+                    <h3>Option C</h3>
+                    <p style="font-size: 1.3rem; font-weight: 700; color: #50fa7b; margin: 8px 0;">Hang Time</p>
+                    <p style="font-size: 1rem; margin: 0; color: #b8c5d6;">Longest time airborne. Measured in seconds from throw to landing.</p>
+                </div>
+            </div>
+            <div class="grid-2" style="margin-top: 18px;">
+                <div class="box" style="border-color: #50fa7b; background: rgba(80,250,123,0.05);">
+                    <h3 style="color: #50fa7b;">Your Criteria (goals)</h3>
+                    <p style="font-size: 1rem; color: #555; font-style: italic;">Write 2–3. Example:<br>"Must fly at least 5 meters" or "Must land within 1m of target"</p>
+                </div>
+                <div class="box" style="border-color: #ff5555; background: rgba(255,85,85,0.05);">
+                    <h3 style="color: #ff5555;">Your Constraints (limits)</h3>
+                    <ul class="bullet-list" style="margin: 0;">
+                        <li>1 sheet of 8.5×11 paper only</li>
+                        <li>5-minute build time</li>
+                        <li>Folds, no paper wads, full sheet</li>
+                        <li>No scissors, no tape, no paperclips</li>
+                        <li>Must be thrown — not dropped</li>
+                    </ul>
+                </div>
+            </div>
+            <p style="margin-top: 12px; font-size: 0.95rem; color: #888; text-align: center;">Write your design statement in your notebook before the next slide.</p>
+        </div>
+    </div>
+
+    <!-- Slide 5: Step 2 — Generate Concepts -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Step 2 — Generate Concepts <span class="edp-badge s2">EDP Step 2</span></h2>
+            <div class="grid-2">
+                <div>
+                    <div class="objective-box">
+                        <h3>Sketch 3 different designs</h3>
+                        <ul class="bullet-list">
+                            <li>Each should be meaningfully different</li>
+                            <li>Think about wing shape, nose type, body width</li>
+                            <li>Don't fold — just draw and annotate</li>
+                            <li>Label each with your predicted strength</li>
+                        </ul>
+                    </div>
+                    <div class="step-box" style="margin-top: 14px;">
+                        <h3>Brainstorming rule</h3>
+                        <p style="margin: 0;">Quantity first. Don't evaluate while generating. You'll pick one in the next step.</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="box" style="border-color: #888; background: rgba(136,136,136,0.04);">
+                        <h3 style="color: #888;">Design variables to explore</h3>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>Wing span — long vs. short</li>
+                            <li>Nose — pointed vs. blunt</li>
+                            <li>Wing angle — flat vs. angled up</li>
+                            <li>Body width — narrow vs. wide</li>
+                            <li>Folds — simple vs. layered</li>
+                        </ul>
+                    </div>
+                    <div class="box" style="margin-top: 14px; border-color: #ffa500; background: rgba(255,165,0,0.05);">
+                        <p style="font-size: 1rem; color: #ffa500; font-weight: 700; margin: 0; text-align: center;">5 minutes to sketch. Then we pick one and build.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 6: Step 3 — Develop Solution -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Step 3 — Develop Your Solution <span class="edp-badge s3">EDP Step 3</span></h2>
+            <p style="margin-bottom: 5px;">Choose one design. Commit to it. Write down <em>why</em> you chose it.</p>
+            <div class="grid-2" style="margin-top: 15px;">
+                <div>
+                    <div class="objective-box">
+                        <h3>In your notebook</h3>
+                        <ul class="bullet-list">
+                            <li>Circle your chosen design</li>
+                            <li>Write 1–2 sentences: why this one over the others?</li>
+                            <li>Note any changes you'd make from your sketch</li>
+                        </ul>
+                    </div>
+                    <div class="box" style="margin-top: 15px; border-color: #50fa7b; background: rgba(80,250,123,0.05);">
+                        <h3 style="color: #50fa7b;">This is the difference</h3>
+                        <p style="margin: 0; font-size: 1rem;">When the spaghetti tower failed, there was nothing to learn from. When this glider underperforms, you'll know exactly what decision led to it — because you documented it.</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="box" style="border-color: #ffd700; background: rgba(255,215,0,0.05);">
+                        <h3 style="color: #ffd700;">Decision criteria</h3>
+                        <p style="font-size: 1rem; color: #b8c5d6; margin-bottom: 8px;">Which design scores highest against your criteria? Consider:</p>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>Which is most likely to achieve your distance/accuracy/hang-time goal?</li>
+                            <li>Which can you fold accurately in 5 minutes?</li>
+                            <li>Which is most forgiving to small fold errors?</li>
+                        </ul>
+                    </div>
+                    <div class="box" style="margin-top: 15px; text-align: center; border-color: #888; background: rgba(136,136,136,0.04);">
+                        <p style="font-size: 1rem; color: #888; margin: 0; font-style: italic;">A decision matrix would rank these scores numerically — we'll do that in Unit 2. For now, use your judgment and document it.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 7: Materials -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Your Materials</h2>
+            <p style="color: #888; margin-bottom: 10px;">Everything you need. Nothing more.</p>
+            <div class="material-item">
+                <div class="material-qty">1</div>
+                <div class="material-name">sheet of 8.5×11 paper — this is your entire build</div>
+            </div>
+            <div class="step-box" style="margin-top: 20px;">
+                <h3>No scissors. No tape. No paperclips.</h3>
+                <p style="margin: 0;">The constraint is intentional. Fewer variables = clearer test results. If every team has different materials, you can't compare results.</p>
+            </div>
+            <div class="objective-box" style="margin-top: 20px; text-align: center;">
+                <p style="font-size: 1.3rem; color: #ffa500; font-weight: 700; margin: 0;">Get your sheet when you're ready to start building. Timer starts on the next slide.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 8: BUILD — 5-minute countdown timer -->
+    <div class="slide">
+        <div class="slide-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; text-align: center;">
+            <h1 style="font-size: 7rem; letter-spacing: 8px; animation: glow 1s ease-in-out infinite alternate;">BUILD</h1>
+            <p class="subtitle" style="margin-top: 20px;">Fold your chosen design. No deviations.</p>
+            <div id="countdown" onclick="resetTimer()" title="Click to reset" style="font-family: 'Orbitron', sans-serif; font-size: 6rem; font-weight: 900; color: #50fa7b; margin-top: 30px; letter-spacing: 8px; cursor: pointer; transition: color 0.4s, text-shadow 0.4s; text-shadow: 0 0 30px rgba(80,250,123,0.5);">5:00</div>
+            <p style="font-size: 0.85rem; color: #555; margin-top: 12px;">click to reset</p>
+        </div>
+    </div>
+
+    <!-- Slide 9: Step 4 — Test -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Step 4 — Construct &amp; Test <span class="edp-badge s4">EDP Step 4</span></h2>
+            <p style="margin-bottom: 5px;">3 flights. Record data every time — don't estimate from memory.</p>
+            <div class="grid-2">
+                <div>
+                    <div class="objective-box">
+                        <h3>Testing protocol</h3>
+                        <ul class="bullet-list">
+                            <li>Same throw position for all 3 flights</li>
+                            <li>Same throwing style — consistent arm motion</li>
+                            <li>Measure from throw line, not from you</li>
+                            <li>Partner confirms the measurement</li>
+                        </ul>
+                    </div>
+                    <div class="step-box" style="margin-top: 14px;">
+                        <h3>Why consistency matters</h3>
+                        <p style="margin: 0; font-size: 1rem;">If your throw changes between flights, you're testing your arm, not your design. Controlled testing = reliable data.</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="box" style="border-color: #888; background: rgba(136,136,136,0.04);">
+                        <h3 style="color: #888;">Record in your notebook</h3>
+                        <p style="font-family: 'Space Mono', monospace; font-size: 0.95rem; color: #b8c5d6; line-height: 2.2; margin: 0;">
+                            Mission: _______________<br>
+                            Flight 1: _____<br>
+                            Flight 2: _____<br>
+                            Flight 3: _____<br>
+                            Best: _____<br>
+                            Average: _____<br>
+                            Met criteria? Y / N
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 10: Step 5 — Evaluate -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Step 5 — Evaluate <span class="edp-badge s5">EDP Step 5</span></h2>
+            <p style="margin-bottom: 5px;">Compare your results against what you wrote in Step 1. Not against other teams.</p>
+            <div class="grid-2">
+                <div>
+                    <div class="objective-box">
+                        <h3>Evaluation questions</h3>
+                        <ul class="bullet-list">
+                            <li>Did you meet your criteria? Which ones? Which ones fell short?</li>
+                            <li>What flight characteristic was the problem — distance, stability, consistency?</li>
+                            <li>Which design decision do you think caused it?</li>
+                            <li>What would you change on a V2?</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <div class="box" style="border-color: #50fa7b; background: rgba(80,250,123,0.05);">
+                        <h3 style="color: #50fa7b;">Write your evaluation</h3>
+                        <p style="font-size: 1rem; color: #b8c5d6; margin-bottom: 8px;">In your notebook, answer:</p>
+                        <p style="font-family: 'Space Mono', monospace; font-size: 0.9rem; color: #888; line-height: 2; margin: 0;">
+                            1. Did you meet your criteria?<br>
+                            2. What was the biggest failure mode?<br>
+                            3. What is the root cause?<br>
+                            4. What would V2 look like?
+                        </p>
+                    </div>
+                    <div class="box" style="margin-top: 14px; border-color: #ffa500; background: rgba(255,165,0,0.05);">
+                        <p style="font-size: 1rem; color: #ffa500; font-weight: 700; margin: 0;">If we had time for V2: this is where the cycle loops back to Step 1 or Step 2.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 11: Day 2 vs Day 4 comparison -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Lesson 1.2 vs. Lesson 1.4</h2>
+            <div class="grid-2" style="margin-top: 10px;">
+                <div>
+                    <div class="box" style="border-color: #ff5555; background: rgba(255,85,85,0.05);">
+                        <h3 style="color: #ff5555; margin-bottom: 14px;">Spaghetti Tower — No EDP</h3>
+                        <p style="font-size: 1rem; color: #888; margin-bottom: 8px;">After it fell:</p>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>"The tape didn't hold"</li>
+                            <li>"We should've built taller"</li>
+                            <li>"We ran out of time"</li>
+                        </ul>
+                        <p style="font-size: 0.95rem; color: #555; margin-top: 12px; font-style: italic;">None of those lead to a specific fix. They're observations, not decisions.</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="box" style="border-color: #50fa7b; background: rgba(80,250,123,0.05);">
+                        <h3 style="color: #50fa7b; margin-bottom: 14px;">Paper Glider — With EDP</h3>
+                        <p style="font-size: 1rem; color: #888; margin-bottom: 8px;">After evaluation:</p>
+                        <ul class="bullet-list" style="font-size: 1rem;">
+                            <li>"Missed distance criterion by 2m"</li>
+                            <li>"Nose heavy — stalled after 3m"</li>
+                            <li>"V2: wider wings, center fold higher"</li>
+                        </ul>
+                        <p style="font-size: 0.95rem; color: #888; margin-top: 12px; font-style: italic;">These are engineering decisions. You could act on any of them right now.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="step-box" style="margin-top: 20px; text-align: center;">
+                <p style="font-size: 1.1rem; margin: 0; color: #ffa500; font-weight: 700;">The process doesn't make you build faster. It makes your failures useful.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 12: Debrief -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Debrief</h2>
+            <div class="grid-2">
+                <div>
+                    <div class="objective-box">
+                        <h3>Discussion Questions</h3>
+                        <ul class="bullet-list">
+                            <li>Did writing criteria before building change what you built?</li>
+                            <li>Did your evaluation feel different from Day 2's debrief? How?</li>
+                            <li>Did anyone iterate — build a V2? Was it better?</li>
+                            <li>What part of the EDP felt awkward or forced?</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <div class="step-box">
+                        <h3>The honest question</h3>
+                        <p style="margin: 0;">The kindergartener result from Day 2 — that was about prototyping fast. The EDP isn't the opposite of that. It's about knowing <em>what</em> to prototype and <em>why</em> it should be different next time.</p>
+                    </div>
+                    <div class="box" style="margin-top: 14px; border-color: #50fa7b; background: rgba(80,250,123,0.05); text-align: center;">
+                        <p style="font-size: 1rem; color: #50fa7b; font-weight: 700; margin: 0;">Tomorrow: you apply this to a real problem — the robot deck.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 13: Recap + Preview -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Day 4 Recap</h2>
+            <div class="objective-box">
+                <h3>What you did</h3>
+                <ul class="bullet-list">
+                    <li><span class="checkmark">✓</span> Wrote a problem statement before touching materials</li>
+                    <li><span class="checkmark">✓</span> Set your own criteria and worked within fixed constraints</li>
+                    <li><span class="checkmark">✓</span> Generated 3 concepts, selected one with reasoning</li>
+                    <li><span class="checkmark">✓</span> Built to a plan, tested against your written criteria</li>
+                    <li><span class="checkmark">✓</span> Evaluated with specific, actionable conclusions</li>
+                    <li><span class="checkmark">✓</span> Compared structured vs. unstructured approaches firsthand</li>
+                </ul>
+            </div>
+            <div class="step-box" style="margin-top: 20px; text-align: center;">
+                <h3>Next: Lesson 1.5 — Design Brief Workshop</h3>
+                <p style="margin: 0;">You'll write a formal design brief for the robot deck challenge — the thing you're actually going to build over the next 3 weeks. Everything from this unit applies.</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="slide-number">
+    <span id="current-slide">1</span> / <span id="total-slides">13</span>
+</div>
+
+<div class="controls">
+    <button id="prev-btn" onclick="previousSlide()">← Previous</button>
+    <a href="index.html" class="nav-button">↑ Unit 1</a>
+    <a href="../index.html" class="nav-button">⌂ Home</a>
+    <button id="next-btn" onclick="nextSlide()">Next →</button>
+</div>
+
+<script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    document.getElementById('total-slides').textContent = totalSlides;
+
+    const BUILD_SLIDE = 7; // 0-based index of the BUILD slide
+    const TIMER_DURATION = 5 * 60;
+    let timeRemaining = TIMER_DURATION;
+    let timerInterval = null;
+
+    function formatTime(seconds) {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function updateCountdownDisplay() {
+        const el = document.getElementById('countdown');
+        if (!el) return;
+        el.textContent = formatTime(timeRemaining);
+        if (timeRemaining <= 0) {
+            el.textContent = 'TIME\'S UP';
+            el.style.color = '#ff5555';
+            el.style.textShadow = '0 0 40px rgba(255,85,85,0.8)';
+        } else if (timeRemaining <= 60) {
+            el.style.color = '#ff5555';
+            el.style.textShadow = '0 0 40px rgba(255,85,85,0.7)';
+        } else if (timeRemaining <= 120) {
+            el.style.color = '#ffa500';
+            el.style.textShadow = '0 0 30px rgba(255,165,0,0.6)';
+        } else {
+            el.style.color = '#50fa7b';
+            el.style.textShadow = '0 0 30px rgba(80,250,123,0.5)';
+        }
+    }
+
+    function startTimer() {
+        if (timerInterval) return;
+        timerInterval = setInterval(() => {
+            if (timeRemaining > 0) {
+                timeRemaining--;
+                updateCountdownDisplay();
+            } else {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }, 1000);
+    }
+
+    function stopTimer() {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+
+    function resetTimer() {
+        stopTimer();
+        timeRemaining = TIMER_DURATION;
+        updateCountdownDisplay();
+        startTimer();
+    }
+
+    function showSlide(n) {
+        const leaving = currentSlide;
+        slides[currentSlide].classList.remove('active');
+        currentSlide = (n + totalSlides) % totalSlides;
+        slides[currentSlide].classList.add('active');
+        document.getElementById('current-slide').textContent = currentSlide + 1;
+        document.getElementById('prev-btn').disabled = currentSlide === 0;
+        document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+
+        if (leaving === BUILD_SLIDE) stopTimer();
+        if (currentSlide === BUILD_SLIDE) {
+            updateCountdownDisplay();
+            startTimer();
+        }
+    }
+
+    function nextSlide() { if (currentSlide < totalSlides - 1) showSlide(currentSlide + 1); }
+    function previousSlide() { if (currentSlide > 0) showSlide(currentSlide - 1); }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+        else if (e.key === 'ArrowLeft') { e.preventDefault(); previousSlide(); }
+        else if (e.key === 'r' || e.key === 'R') { if (currentSlide === BUILD_SLIDE) resetTimer(); }
+    });
+
+    showSlide(0);
+</script>
+</body>
+</html>

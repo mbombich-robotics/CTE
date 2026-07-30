@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Activity 5.3 — Reading Switches</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: #0a0e27;
+            color: #e0e6f0;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* ── LAYOUT ── */
+        .layout {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            min-height: 100vh;
+        }
+
+        /* ── SIDEBAR NAV ── */
+        .sidebar {
+            position: sticky; top: 0; height: 100vh;
+            background: #0d1117;
+            border-right: 1px solid rgba(0,212,255,0.15);
+            overflow-y: auto; padding: 24px 0;
+            display: flex; flex-direction: column; gap: 0;
+        }
+        .sidebar-title {
+            font-family: 'Orbitron', sans-serif; font-size: 0.7rem;
+            font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+            color: #6272a4; padding: 0 20px 16px; border-bottom: 1px solid rgba(0,212,255,0.1);
+            margin-bottom: 8px;
+        }
+        .nav-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 20px; text-decoration: none;
+            color: #6272a4; font-size: 0.88rem; font-weight: 500;
+            transition: color 0.15s, background 0.15s;
+            border-left: 3px solid transparent;
+        }
+        .nav-item:hover { color: #b8c5d6; background: rgba(0,212,255,0.04); }
+        .nav-item.active { color: #00d4ff; border-left-color: #00d4ff; background: rgba(0,212,255,0.07); }
+        .nav-num {
+            flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+            background: rgba(0,212,255,0.12); border: 1px solid rgba(0,212,255,0.3);
+            color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.72rem;
+            font-weight: 700; display: flex; align-items: center; justify-content: center;
+        }
+        .nav-item.active .nav-num { background: #00d4ff; color: #0a0e27; }
+        .nav-divider { height: 1px; background: rgba(0,212,255,0.08); margin: 8px 20px; }
+        .sidebar-links { margin-top: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; }
+        .sidebar-links a {
+            font-size: 0.8rem; color: #6272a4; text-decoration: none;
+            padding: 6px 10px; border: 1px solid rgba(0,212,255,0.15);
+            border-radius: 6px; text-align: center; transition: color 0.15s, border-color 0.15s;
+        }
+        .sidebar-links a:hover { color: #00d4ff; border-color: rgba(0,212,255,0.4); }
+
+        /* ── MAIN CONTENT ── */
+        main { padding: 40px 48px 80px; max-width: 860px; }
+
+        .activity-header { margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid rgba(0,212,255,0.15); }
+        .activity-header h1 {
+            font-family: 'Orbitron', sans-serif; font-size: 1.6rem; font-weight: 700;
+            color: #00d4ff; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .header-meta { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px; }
+        .meta-tag {
+            font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+            padding: 3px 10px; border-radius: 4px;
+        }
+        .meta-time { background: rgba(0,212,255,0.12); color: #00d4ff; border: 1px solid rgba(0,212,255,0.3); }
+        .meta-level { background: rgba(80,250,123,0.12); color: #50fa7b; border: 1px solid rgba(80,250,123,0.3); }
+
+        /* ── SECTIONS ── */
+        section { margin-bottom: 56px; scroll-margin-top: 24px; }
+
+        .section-header {
+            display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
+            padding-bottom: 12px; border-bottom: 2px solid rgba(0,212,255,0.2);
+        }
+        .section-num {
+            flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #0a0e27; font-family: 'Orbitron', sans-serif; font-weight: 900;
+            font-size: 1rem; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 16px rgba(0,212,255,0.4);
+        }
+        .section-title {
+            font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 700;
+            color: #00d4ff; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .section-time { font-size: 0.8rem; color: #6272a4; margin-left: auto; font-family: 'Space Mono', monospace; }
+
+        p { color: #b8c5d6; margin-bottom: 12px; }
+
+        /* ── STEPS ── */
+        .steps { display: flex; flex-direction: column; gap: 16px; margin: 16px 0; }
+        .step {
+            display: flex; gap: 16px; align-items: flex-start;
+            background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.15);
+            border-radius: 10px; padding: 16px 18px;
+        }
+        .step-n {
+            flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
+            background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.4);
+            color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.82rem;
+            font-weight: 700; display: flex; align-items: center; justify-content: center;
+        }
+        .step-body { flex: 1; }
+        .step-body strong { display: block; color: #e0e6f0; font-size: 1rem; margin-bottom: 5px; }
+        .step-body p { font-size: 0.95rem; margin-bottom: 0; }
+
+        /* ── CODE BLOCKS ── */
+        .code-wrap { position: relative; margin: 14px 0; }
+        .code-label {
+            position: absolute; top: -10px; left: 14px; z-index: 1;
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+            padding: 2px 8px; border-radius: 4px;
+            background: #0a0e27; color: #6272a4; border: 1px solid rgba(0,212,255,0.2);
+        }
+        pre {
+            background: #0d1117; border: 1.5px solid rgba(0,212,255,0.25); border-radius: 10px;
+            padding: 18px 20px; overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; line-height: 1.75;
+            color: #e0e6f0;
+        }
+        .copy-btn {
+            position: absolute; top: 8px; right: 10px;
+            background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.25);
+            color: #6272a4; font-family: 'Space Mono', monospace; font-size: 0.7rem;
+            padding: 3px 8px; border-radius: 4px; cursor: pointer;
+            transition: color 0.15s, background 0.15s;
+        }
+        .copy-btn:hover { color: #00d4ff; background: rgba(0,212,255,0.2); }
+        .copy-btn.copied { color: #50fa7b; border-color: rgba(80,250,123,0.4); }
+
+        .kw  { color: #ff79c6; }
+        .cls { color: #ffb86c; font-weight: 700; }
+        .fn  { color: #8be9fd; }
+        .str { color: #f1fa8c; }
+        .num { color: #bd93f9; }
+        .cm  { color: #6272a4; font-style: italic; }
+        .op  { color: #b8c5d6; }
+
+        /* ── CALLOUT BOXES ── */
+        .callout {
+            border-radius: 10px; padding: 16px 18px; margin: 16px 0;
+            display: flex; gap: 14px; align-items: flex-start;
+        }
+        .callout-icon { font-size: 1.3rem; flex-shrink: 0; line-height: 1.4; }
+        .callout-body p { margin-bottom: 0; font-size: 0.95rem; }
+        .callout-body strong { display: block; margin-bottom: 4px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .callout-warn {
+            background: rgba(255,149,0,0.08); border: 1px solid rgba(255,149,0,0.35);
+        }
+        .callout-warn strong { color: #ff9500; }
+        .callout-info {
+            background: rgba(0,212,255,0.07); border: 1px solid rgba(0,212,255,0.25);
+        }
+        .callout-info strong { color: #00d4ff; }
+        .callout-green {
+            background: rgba(80,250,123,0.07); border: 1px solid rgba(80,250,123,0.3);
+        }
+        .callout-green strong { color: #50fa7b; }
+
+        /* ── CHECKPOINT ── */
+        .checkpoint {
+            background: linear-gradient(135deg, rgba(80,250,123,0.1), rgba(80,250,123,0.04));
+            border: 2px solid #50fa7b; border-radius: 10px; padding: 16px 20px;
+            margin: 24px 0; display: flex; gap: 14px; align-items: center;
+        }
+        .checkpoint-icon { font-size: 1.5rem; flex-shrink: 0; }
+        .checkpoint-body strong { color: #50fa7b; display: block; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 3px; }
+        .checkpoint-body p { color: #b8c5d6; font-size: 0.95rem; margin: 0; }
+
+        /* ── CHALLENGE ── */
+        .challenge-set { display: flex; flex-direction: column; gap: 14px; margin: 16px 0; }
+        .challenge {
+            background: rgba(80,250,123,0.05); border: 1.5px solid rgba(80,250,123,0.3);
+            border-radius: 10px; padding: 16px 18px;
+        }
+        .challenge-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+        .challenge-num {
+            font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700;
+            color: #50fa7b; background: rgba(80,250,123,0.12);
+            padding: 2px 7px; border-radius: 4px;
+        }
+        .challenge-title { font-weight: 700; color: #e0e6f0; font-size: 1rem; }
+        .challenge p { font-size: 0.95rem; margin-bottom: 6px; }
+        .challenge p:last-child { margin-bottom: 0; }
+
+        /* ── QUESTIONS ── */
+        .question-set { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
+        .question {
+            background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.2);
+            border-radius: 10px; padding: 16px 18px;
+        }
+        .question-num {
+            font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700;
+            color: #00d4ff; margin-bottom: 6px; display: block;
+        }
+        .question p { font-size: 0.95rem; margin-bottom: 0; }
+        .q-warn {
+            background: rgba(255,149,0,0.06); border-color: rgba(255,149,0,0.3);
+        }
+        .q-warn .question-num { color: #ff9500; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.88em;
+            color: #00d4ff; background: rgba(0,212,255,0.1);
+            padding: 1px 5px; border-radius: 4px; white-space: nowrap;
+            font-variant-ligatures: none;
+        }
+
+        /* ── VALUE DISPLAY ── */
+        .val-display {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: #0d1117; border: 1.5px solid rgba(0,212,255,0.25);
+            border-radius: 8px; padding: 10px 16px; margin: 8px 0;
+        }
+        .val-label { font-family: 'Space Mono', monospace; font-size: 0.85rem; color: #6272a4; }
+        .val-high { font-family: 'Space Mono', monospace; font-size: 1.3rem; font-weight: 700; color: #50fa7b; }
+        .val-low  { font-family: 'Space Mono', monospace; font-size: 1.3rem; font-weight: 700; color: #6272a4; }
+
+        @media (max-width: 720px) {
+            .layout { grid-template-columns: 1fr; }
+            .sidebar { position: static; height: auto; flex-direction: row; flex-wrap: wrap; padding: 12px; }
+            .sidebar-title { display: none; }
+            .nav-item { padding: 6px 12px; border-left: none; border-bottom: 2px solid transparent; }
+            .nav-item.active { border-bottom-color: #00d4ff; border-left-color: transparent; }
+            .sidebar-links { display: none; }
+            main { padding: 24px 20px 60px; }
+        }
+    </style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ── SIDEBAR ── -->
+<nav class="sidebar">
+    <div class="sidebar-title">Activity 5.3</div>
+    <a href="#switches"   class="nav-item active"><span class="nav-num">1</span> Find the Switches</a>
+    <a href="#led"        class="nav-item"><span class="nav-num">2</span> Switch → LED</a>
+    <a href="#logic"      class="nav-item"><span class="nav-num">3</span> Two-Switch Logic</a>
+    <div class="nav-divider"></div>
+    <a href="#challenges" class="nav-item"><span class="nav-num">★</span> Challenges</a>
+    <a href="#questions"  class="nav-item"><span class="nav-num">?</span> Questions</a>
+    <div class="sidebar-links">
+        <a href="Activity_03_Button.html">↺ This page</a>
+        <a href="../resources/pico2w-reference.html" target="_blank">Pico 2W Ref ↗</a>
+        <a href="Lesson_03_Digital_Input.html">← Lesson 5.3</a>
+    </div>
+</nav>
+
+<!-- ── MAIN ── -->
+<main>
+    <div class="activity-header">
+        <h1>Activity 5.3 — Reading Switches</h1>
+        <p style="color:#6272a4; margin-bottom:0;">No extra wiring needed — the switches are already on the interface board. Work through each part in order and raise your hand at each checkpoint.</p>
+        <div class="header-meta">
+            <span class="meta-tag meta-time">~45 minutes</span>
+            <span class="meta-tag meta-level">Lesson 5.2</span>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════ PART 1: FIND THE SWITCHES -->
+    <section id="switches">
+        <div class="section-header">
+            <div class="section-num">1</div>
+            <div class="section-title">Find the Switches</div>
+            <div class="section-time">~10 min</div>
+        </div>
+
+        <p>Your interface board has two mechanical switches built in. Locate them now — they're labeled <strong style="color:#e0e6f0">SW_2</strong> and <strong style="color:#e0e6f0">SW_3</strong> on the board silkscreen. They look like small rectangular tactile buttons that click when pressed.</p>
+
+        <div class="callout callout-info">
+            <div class="callout-icon">📌</div>
+            <div class="callout-body">
+                <strong>Pin assignments</strong>
+                <p>SW_2 is on <strong style="color:#00d4ff">GP12</strong> (J18 header, pin 16). SW_3 is on <strong style="color:#00d4ff">GP16</strong> (J20 header, pin 1). Both use <code>Pin.PULL_DOWN</code> — pressed gives <code>1</code>, released gives <code>0</code>.</p>
+            </div>
+        </div>
+
+        <p>Type these commands in the Thonny Shell, one at a time. Press Enter after each line.</p>
+
+        <div class="code-wrap">
+            <div class="code-label">Shell — type line by line</div>
+            <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="op">&gt;&gt;&gt; </span><span class="kw">from</span> machine <span class="kw">import</span> <span class="cls">Pin</span>
+<span class="op">&gt;&gt;&gt; </span>sw2 <span class="op">=</span> <span class="cls">Pin</span>(<span class="num">12</span>, <span class="cls">Pin</span>.IN, <span class="cls">Pin</span>.PULL_DOWN)
+<span class="op">&gt;&gt;&gt; </span>sw2.<span class="fn">value</span>()
+<span class="cm">0</span>
+<span class="op">&gt;&gt;&gt; </span><span class="cm"># Now hold SW_2 down and run this again:</span>
+<span class="op">&gt;&gt;&gt; </span>sw2.<span class="fn">value</span>()
+<span class="cm">1</span></pre>
+        </div>
+
+        <p>Repeat for SW_3:</p>
+
+        <div class="code-wrap">
+            <div class="code-label">Shell</div>
+            <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="op">&gt;&gt;&gt; </span>sw3 <span class="op">=</span> <span class="cls">Pin</span>(<span class="num">16</span>, <span class="cls">Pin</span>.IN, <span class="cls">Pin</span>.PULL_DOWN)
+<span class="op">&gt;&gt;&gt; </span>sw3.<span class="fn">value</span>()     <span class="cm"># should be 0</span>
+<span class="op">&gt;&gt;&gt; </span><span class="cm"># Hold SW_3 and run again:</span>
+<span class="op">&gt;&gt;&gt; </span>sw3.<span class="fn">value</span>()     <span class="cm"># should be 1</span></pre>
+        </div>
+
+        <div class="callout callout-info">
+            <div class="callout-icon">💡</div>
+            <div class="callout-body">
+                <strong>What you're seeing</strong>
+                <p>When the switch is open (not pressed), the pull-down resistor holds the pin at GND → <code>value() = 0</code>. When you press it, the switch connects the pin to 3.3V, overriding the pull-down → <code>value() = 1</code>. The REPL reads it the instant you call <code>value()</code> — there's no continuous loop yet.</p>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            <div class="checkpoint-icon">✋</div>
+            <div class="checkpoint-body">
+                <strong>Checkpoint 1</strong>
+                <p>You got <code>0</code> when released and <code>1</code> when pressed for both SW_2 and SW_3. Raise your hand before continuing.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════ PART 2: SWITCH → LED -->
+    <section id="led">
+        <div class="section-header">
+            <div class="section-num">2</div>
+            <div class="section-title">Switch-Controlled LED</div>
+            <div class="section-time">~20 min</div>
+        </div>
+
+        <p>Now you'll write a program that runs in a continuous loop and responds to the switch in real time. The LED should be on while SW_2 is held, and off when it's released.</p>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-n">1</div>
+                <div class="step-body">
+                    <strong>Open a new file in the editor</strong>
+                    <p>Click in the editor panel (top). If there's old code, select all (Ctrl + A) and delete it.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-n">2</div>
+                <div class="step-body">
+                    <strong>Type this program</strong>
+                    <p>Indentation matters — the three lines inside <code>while True:</code> must start with 4 spaces. Inside the <code>if</code> and <code>else</code> blocks, add 4 more spaces (8 total).</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="code-wrap">
+            <div class="code-label">main.py</div>
+            <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="kw">from</span> machine <span class="kw">import</span> <span class="cls">Pin</span>
+
+sw2 <span class="op">=</span> <span class="cls">Pin</span>(<span class="num">12</span>, <span class="cls">Pin</span>.IN, <span class="cls">Pin</span>.PULL_DOWN)
+led <span class="op">=</span> <span class="cls">Pin</span>(<span class="str">"LED"</span>, <span class="cls">Pin</span>.OUT)
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="kw">if</span> sw2.<span class="fn">value</span>() <span class="op">==</span> <span class="num">1</span>:   <span class="cm"># SW_2 pressed</span>
+        led.<span class="fn">value</span>(<span class="num">1</span>)        <span class="cm"># LED on</span>
+    <span class="kw">else</span>:
+        led.<span class="fn">value</span>(<span class="num">0</span>)        <span class="cm"># LED off</span></pre>
+        </div>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-n">3</div>
+                <div class="step-body">
+                    <strong>Save and run</strong>
+                    <p>Press Ctrl + S → save to <code>Raspberry Pi Pico</code> as <code>main.py</code>. Then press F5. Hold SW_2 — the onboard LED should light up. Release — it should go off.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="callout callout-info">
+            <div class="callout-icon">🔍</div>
+            <div class="callout-body">
+                <strong>How the loop works</strong>
+                <p>The <code>while True</code> loop runs hundreds of times per second. Each iteration calls <code>sw2.value()</code>, reads the current pin voltage, and immediately sets the LED. Because it's looping so fast, the response feels instant to your finger.</p>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            <div class="checkpoint-icon">✋</div>
+            <div class="checkpoint-body">
+                <strong>Checkpoint 2</strong>
+                <p>Holding SW_2 turns the LED on; releasing turns it off. Show the teacher before moving to Part 3.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════ PART 3: TWO-SWITCH LOGIC -->
+    <section id="logic">
+        <div class="section-header">
+            <div class="section-num">3</div>
+            <div class="section-title">Two-Switch Logic</div>
+            <div class="section-time">~15 min</div>
+        </div>
+
+        <p>Python's <code>and</code>, <code>or</code>, and <code>not</code> operators let you combine multiple conditions. You'll use both switches to create different LED behaviors.</p>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-n">1</div>
+                <div class="step-body">
+                    <strong>Add SW_3 to your program</strong>
+                    <p>Replace your current <code>main.py</code> with this version, which reads both switches:</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="code-wrap">
+            <div class="code-label">main.py — two switches</div>
+            <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="kw">from</span> machine <span class="kw">import</span> <span class="cls">Pin</span>
+
+sw2 <span class="op">=</span> <span class="cls">Pin</span>(<span class="num">12</span>, <span class="cls">Pin</span>.IN, <span class="cls">Pin</span>.PULL_DOWN)
+sw3 <span class="op">=</span> <span class="cls">Pin</span>(<span class="num">16</span>, <span class="cls">Pin</span>.IN, <span class="cls">Pin</span>.PULL_DOWN)
+led <span class="op">=</span> <span class="cls">Pin</span>(<span class="str">"LED"</span>, <span class="cls">Pin</span>.OUT)
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    a <span class="op">=</span> sw2.<span class="fn">value</span>()   <span class="cm"># 1 if SW_2 pressed</span>
+    b <span class="op">=</span> sw3.<span class="fn">value</span>()   <span class="cm"># 1 if SW_3 pressed</span>
+
+    <span class="kw">if</span> a <span class="op">==</span> <span class="num">1</span> <span class="kw">and</span> b <span class="op">==</span> <span class="num">1</span>:   <span class="cm"># both pressed</span>
+        led.<span class="fn">value</span>(<span class="num">1</span>)
+    <span class="kw">else</span>:
+        led.<span class="fn">value</span>(<span class="num">0</span>)</pre>
+        </div>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-n">2</div>
+                <div class="step-body">
+                    <strong>Test and observe</strong>
+                    <p>Run the program. Try: only SW_2, only SW_3, both at once, neither. Confirm the LED only lights when <em>both</em> are held.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-n">3</div>
+                <div class="step-body">
+                    <strong>Change the condition to <code>or</code></strong>
+                    <p>Replace <code>and</code> with <code>or</code> on the <code>if</code> line. Save and run. Now the LED should light when <em>either</em> switch is pressed. Test all four combinations again.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-n">4</div>
+                <div class="step-body">
+                    <strong>Exclusive OR — light only when exactly one is pressed</strong>
+                    <p>Change the condition to: <code>if (a == 1) != (b == 1):</code><br>
+                    This is true when a and b differ — one pressed but not both. Test it.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="callout callout-info">
+            <div class="callout-icon">💡</div>
+            <div class="callout-body">
+                <strong>Why this matters for robotics</strong>
+                <p>Your robot will combine sensor readings the same way — "if IR sensor 1 sees a line <strong>and</strong> IR sensor 2 does not, turn left." Logic operators are the decision-making backbone of every autonomous behavior.</p>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            <div class="checkpoint-icon">✋</div>
+            <div class="checkpoint-body">
+                <strong>Checkpoint 3 — show the teacher</strong>
+                <p>Demonstrate <code>and</code> logic, then <code>or</code> logic, by pressing combinations of SW_2 and SW_3.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════ CHALLENGES -->
+    <section id="challenges">
+        <div class="section-header">
+            <div class="section-num">★</div>
+            <div class="section-title">Challenges</div>
+            <div class="section-time">finish early?</div>
+        </div>
+
+        <p>Start from your working two-switch program. Each challenge builds a new behavior. Try one at a time.</p>
+
+        <div class="challenge-set">
+            <div class="challenge">
+                <div class="challenge-header">
+                    <span class="challenge-num">C1</span>
+                    <span class="challenge-title">Blink on Press</span>
+                </div>
+                <p>Instead of staying on while held, make the LED blink at 5 Hz (0.1s on / 0.1s off) while SW_2 is pressed, and stay off otherwise. You'll need <code>import time</code> and a <code>time.sleep()</code> inside the <code>if</code> block.</p>
+            </div>
+
+            <div class="challenge">
+                <div class="challenge-header">
+                    <span class="challenge-num">C2</span>
+                    <span class="challenge-title">Count Presses</span>
+                </div>
+                <p>Count how many times SW_2 is pressed and print the count to the Shell. The tricky part: you want to count one press per <em>button down</em>, not every loop iteration the button is held.</p>
+                <p>Hint: save the previous state and only increment when the state changes from 0 to 1. After detecting a press, wait 20ms — mechanical switch contacts bounce briefly on contact, and the sleep lets the signal settle before the next check:</p>
+                <div class="code-wrap" style="margin-top:8px;">
+                    <div class="code-label">edge detection + debounce hint</div>
+<pre><span class="kw">import</span> time
+
+count <span class="op">=</span> <span class="num">0</span>
+prev <span class="op">=</span> <span class="num">0</span>
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    curr <span class="op">=</span> sw2.<span class="fn">value</span>()
+    <span class="kw">if</span> curr <span class="op">==</span> <span class="num">1</span> <span class="kw">and</span> prev <span class="op">==</span> <span class="num">0</span>:       <span class="cm"># rising edge — just pressed</span>
+        count <span class="op">+=</span> <span class="num">1</span>
+        <span class="fn">print</span>(count)
+        time.<span class="fn">sleep_ms</span>(<span class="num">20</span>)            <span class="cm"># debounce: wait out contact bounce</span>
+    prev <span class="op">=</span> curr</pre>
+                </div>
+            </div>
+
+            <div class="challenge">
+                <div class="challenge-header">
+                    <span class="challenge-num">C3</span>
+                    <span class="challenge-title">Toggle</span>
+                </div>
+                <p>Each press of SW_2 should toggle the LED on or off — press once to turn it on, press again to turn it off. Use the edge detection pattern from C2 and a variable to track the LED state.</p>
+            </div>
+
+            <div class="challenge">
+                <div class="challenge-header">
+                    <span class="challenge-num">C4</span>
+                    <span class="challenge-title">Morse-Code Button</span>
+                </div>
+                <p>Use SW_2 as a morse code key: while it's held, the LED is on. When you release, measure how long it was held. If under 0.3s, print <code>"·"</code> to the Shell; if 0.3s or longer, print <code>"—"</code>.</p>
+                <p>You'll need <code>import time</code> and <code>time.ticks_ms()</code> to record when the button was pressed, and <code>time.ticks_diff()</code> to calculate the duration. Look these up in the Pico 2W Reference (Timing section).</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════ CHECK YOUR UNDERSTANDING -->
+    <section id="questions">
+        <div class="section-header">
+            <div class="section-num">?</div>
+            <div class="section-title">Check Your Understanding</div>
+        </div>
+
+        <p>Record your answers in the <strong>Programming Basics — Check Your Understanding</strong> deliverable in your portfolio. Try to answer from memory — you may look up syntax in the Pico 2W Reference, but not back at this activity guide.</p>
+
+        <div class="question-set">
+            <div class="question">
+                <span class="question-num">Q1</span>
+                <p>What does <code>sw2.value()</code> return when SW_2 is not pressed? What does it return when pressed? Why does it return those specific values?</p>
+            </div>
+            <div class="question">
+                <span class="question-num">Q2</span>
+                <p>Why can't you configure a pin as <code>Pin.IN</code> without also setting a pull resistor? What happens if you leave it out?</p>
+            </div>
+            <div class="question">
+                <span class="question-num">Q3</span>
+                <p>SW_2 uses <code>Pin.PULL_DOWN</code>. If you changed it to <code>Pin.PULL_UP</code>, what would you need to change in the <code>if</code> statement to keep the same behavior? Why?</p>
+            </div>
+            <div class="question">
+                <span class="question-num">Q4</span>
+                <p>Your program should light the LED when SW_2 is pressed, but the LED stays on all the time and nothing changes when you press the switch. List the three most likely causes you would check first.</p>
+            </div>
+            <div class="question q-warn">
+                <span class="question-num">Q5 — Debug this</span>
+                <div class="code-wrap" style="margin:8px 0;">
+<pre><span class="kw">from</span> machine <span class="kw">import</span> <span class="cls">Pin</span>
+
+sw2 <span class="op">=</span> <span class="cls">Pin</span>(<span class="num">12</span>, <span class="cls">Pin</span>.OUT, <span class="cls">Pin</span>.PULL_DOWN)
+led <span class="op">=</span> <span class="cls">Pin</span>(<span class="str">"LED"</span>, <span class="cls">Pin</span>.OUT)
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="kw">if</span> sw2.<span class="fn">value</span>() <span class="op">==</span> <span class="num">0</span>:
+        led.<span class="fn">value</span>(<span class="num">1</span>)
+    <span class="kw">else</span>:
+    led.<span class="fn">value</span>(<span class="num">0</span>)</pre>
+                </div>
+                <p>This code has two bugs. Identify each one and write the corrected line. Note: <code>== 0</code> is not a bug — it's valid logic, just inverted from what we built in Part 2.</p>
+            </div>
+        </div>
+    </section>
+
+</main>
+</div><!-- /layout -->
+
+<script>
+    function copyCode(btn) {
+        const pre = btn.closest('.code-wrap').querySelector('pre');
+        const text = pre.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            btn.textContent = 'copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1800);
+        });
+    }
+
+    // Highlight active nav item on scroll
+    const sections = document.querySelectorAll('section[id]');
+    const navItems = document.querySelectorAll('.nav-item[href^="#"]');
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                navItems.forEach(n => n.classList.remove('active'));
+                const active = document.querySelector(`.nav-item[href="#${e.target.id}"]`);
+                if (active) active.classList.add('active');
+            }
+        });
+    }, { threshold: 0.3 });
+    sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

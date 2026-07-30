@@ -4,14 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="../favicon.svg">
-    <title>Microcontroller & Hardware Fundamentals</title>
+    <title>Microcontroller & MicroPython Fundamentals</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Exo 2', sans-serif;
@@ -20,1192 +16,443 @@
             height: 100vh;
         }
 
-        .presentation {
-            width: 100%;
-            height: 100vh;
-            position: relative;
-        }
+        .presentation { width: 100%; height: 100vh; position: relative; }
 
         .slide {
-            position: absolute;
-            width: 100%;
-            min-height: 100%;
-            display: none;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
+            position: absolute; width: 100%; min-height: 100%;
+            display: none; flex-direction: column;
+            justify-content: flex-start; align-items: center;
             padding: 55px 60px 120px 60px;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            overflow-y: auto;
-            overflow-x: hidden;
+            opacity: 0; transition: opacity 0.5s ease;
+            overflow-y: auto; overflow-x: hidden;
         }
-
-        .slide.active {
-            display: flex;
-            opacity: 1;
-        }
-
-        .slide-content {
-            max-width: 1200px;
-            width: 100%;
-        }
+        .slide.active { display: flex; opacity: 1; }
+        .slide-content { max-width: 1200px; width: 100%; }
 
         h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3.5rem;
-            font-weight: 900;
-            color: #00d4ff;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            font-family: 'Orbitron', sans-serif; font-size: 3.5rem; font-weight: 900;
+            color: #00d4ff; margin-bottom: 15px; text-transform: uppercase;
+            letter-spacing: 2px; text-shadow: 0 0 20px rgba(0,212,255,0.5);
             animation: glow 2s ease-in-out infinite alternate;
         }
-
         @keyframes glow {
-            from { text-shadow: 0 0 20px rgba(0, 212, 255, 0.5); }
-            to { text-shadow: 0 0 30px rgba(0, 212, 255, 0.8); }
+            from { text-shadow: 0 0 20px rgba(0,212,255,0.5); }
+            to   { text-shadow: 0 0 35px rgba(0,212,255,0.9); }
         }
-
         h2 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #00d4ff;
-            margin-bottom: 18px;
-            text-transform: uppercase;
+            font-family: 'Orbitron', sans-serif; font-size: 2.4rem; font-weight: 700;
+            color: #00d4ff; margin-bottom: 18px; text-transform: uppercase;
         }
-
-        h3 {
-            font-family: 'Exo 2', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #ff9500;
-            margin-bottom: 12px;
-        }
-
-        p {
-            font-size: 1.15rem;
-            line-height: 1.6;
-            margin-bottom: 12px;
-            color: #b8c5d6;
-        }
-
-        .subtitle {
-            font-size: 1.3rem;
-            color: #ff9500;
-            font-weight: 600;
-            margin-bottom: 30px;
-        }
+        h3 { font-family: 'Exo 2', sans-serif; font-size: 1.5rem; font-weight: 600; color: #ff9500; margin-bottom: 12px; }
+        p { font-size: 1.15rem; line-height: 1.6; margin-bottom: 12px; color: #b8c5d6; }
+        .subtitle { font-size: 1.3rem; color: #ff9500; font-weight: 600; margin-bottom: 30px; }
 
         .objective-box {
-            background: linear-gradient(135deg, rgba(80, 250, 123, 0.1) 0%, rgba(80, 250, 123, 0.05) 100%);
-            border: 3px solid #50fa7b;
-            border-radius: 12px;
-            padding: 20px;
-            margin: 20px 0;
-            box-shadow: 0 0 30px rgba(80, 250, 123, 0.2);
+            background: linear-gradient(135deg, rgba(0,212,255,0.1) 0%, rgba(0,212,255,0.04) 100%);
+            border: 3px solid #00d4ff; border-radius: 12px; padding: 20px; margin: 20px 0;
+            box-shadow: 0 0 30px rgba(0,212,255,0.15);
         }
+        .objective-box h3 { color: #00d4ff; }
 
-        .objective-box h3 {
-            color: #50fa7b;
-            margin-bottom: 12px;
-        }
-
-        .bullet-list {
-            list-style: none;
-            padding-left: 0;
-        }
-
+        .bullet-list { list-style: none; padding-left: 0; }
         .bullet-list li {
-            font-size: 1.15rem;
-            margin: 12px 0;
-            padding-left: 35px;
-            position: relative;
-            color: #b8c5d6;
-            line-height: 1.5;
+            font-size: 1.15rem; margin: 12px 0; padding-left: 35px;
+            position: relative; color: #b8c5d6; line-height: 1.5;
         }
-
         .bullet-list li::before {
-            content: '▸';
-            position: absolute;
-            left: 0;
-            color: #ff9500;
-            font-size: 1.5rem;
-            line-height: 1;
+            content: '▸'; position: absolute; left: 0;
+            color: #ff9500; font-size: 1.5rem; line-height: 1;
         }
 
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            margin-top: 20px;
-        }
-
-        .grid-3 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 20px;
-            margin-top: 20px;
-        }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px; }
 
         .box {
-            background: rgba(0, 212, 255, 0.05);
-            border: 2px solid #00d4ff;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+            background: rgba(0,212,255,0.05); border: 2px solid #00d4ff;
+            border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(0,212,255,0.1);
+        }
+        .box-orange {
+            background: rgba(255,149,0,0.07); border: 2px solid #ff9500;
+            border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(255,149,0,0.1);
+        }
+        .box-green {
+            background: rgba(80,250,123,0.07); border: 2px solid #50fa7b;
+            border-radius: 12px; padding: 20px;
         }
 
-        .highlight {
-            color: #00d4ff;
-            font-weight: 700;
-        }
+        .highlight { color: #00d4ff; font-weight: 700; }
+        .warning   { color: #ff9500; font-weight: 700; }
+        .success   { color: #50fa7b; font-weight: 700; }
 
-        .warning {
-            color: #ff9500;
-            font-weight: 700;
-        }
+        /* Code blocks */
+        code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
+               color: #00d4ff; background: rgba(0,212,255,0.1); padding: 1px 5px; border-radius: 4px;
+               white-space: nowrap; font-variant-ligatures: none; }
 
-        .success {
-            color: #50fa7b;
-            font-weight: 700;
+        .code-block {
+            background: #0d1117; border: 2px solid #00d4ff; border-radius: 10px;
+            padding: 20px 24px; margin: 16px 0; overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; line-height: 1.75;
+            white-space: pre; font-variant-ligatures: none;
         }
+        .kw  { color: #ff79c6; }
+        .cls { color: #ffb86c; font-weight: 700; }
+        .fn  { color: #8be9fd; }
+        .str { color: #f1fa8c; }
+        .num { color: #bd93f9; }
+        .cm  { color: #6272a4; font-style: italic; }
+        .op  { color: #b8c5d6; }
 
-        .checkmark {
-            color: #50fa7b;
-            font-size: 1.5rem;
-            margin-right: 10px;
+        /* Step cards */
+        .step-list { list-style: none; padding: 0; counter-reset: steps; }
+        .step-list li {
+            counter-increment: steps; display: flex; align-items: flex-start;
+            gap: 18px; margin-bottom: 18px;
         }
-
-        .diagram-box {
-            background: #0d1117;
-            border: 2px solid #00d4ff;
-            border-radius: 12px;
-            padding: 30px;
-            margin: 20px 0;
-            text-align: center;
+        .step-num {
+            flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%;
+            background: #00d4ff; color: #0a0e27; font-family: 'Orbitron', sans-serif;
+            font-weight: 900; font-size: 1rem; display: flex; align-items: center;
+            justify-content: center; box-shadow: 0 0 12px rgba(0,212,255,0.5);
         }
+        .step-body { flex: 1; }
+        .step-body strong { color: #00d4ff; font-size: 1.1rem; }
+        .step-body p { font-size: 1.05rem; margin-top: 4px; color: #b8c5d6; }
 
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            font-size: 1.05rem;
+        /* Comparison table */
+        .cmp-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 1.05rem; }
+        .cmp-table th {
+            background: rgba(0,212,255,0.2); color: #00d4ff;
+            padding: 12px 16px; border: 2px solid #00d4ff; font-weight: 700; text-align: left;
         }
+        .cmp-table td { padding: 11px 16px; border: 1px solid rgba(0,212,255,0.25); color: #b8c5d6; }
+        .cmp-table tr:nth-child(even) td { background: rgba(0,212,255,0.03); }
+        .cmp-table .yes { color: #50fa7b; font-weight: 700; }
+        .cmp-table .no  { color: #ff5555; }
 
-        .comparison-table th {
-            background: rgba(0, 212, 255, 0.2);
-            color: #00d4ff;
-            padding: 12px;
-            border: 2px solid #00d4ff;
-            font-weight: 700;
+        /* Spec badge row */
+        .spec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; margin: 20px 0; }
+        .spec-item {
+            background: rgba(0,212,255,0.07); border: 1px solid rgba(0,212,255,0.3);
+            border-radius: 10px; padding: 14px 16px; text-align: center;
         }
+        .spec-val { font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; font-weight: 700; color: #00d4ff; }
+        .spec-label { font-size: 0.85rem; color: #6272a4; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
 
-        .comparison-table td {
-            padding: 12px;
-            border: 1px solid #00d4ff;
-            color: #b8c5d6;
+        /* Challenge box */
+        .challenge-box {
+            background: linear-gradient(135deg, rgba(80,250,123,0.1) 0%, rgba(80,250,123,0.04) 100%);
+            border: 2px solid #50fa7b; border-radius: 12px; padding: 20px; margin: 16px 0;
         }
+        .challenge-box h3 { color: #50fa7b; }
 
+        /* Controls */
         .controls {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            z-index: 1000;
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            display: flex; justify-content: center; align-items: center; gap: 20px; z-index: 1000;
         }
-
         button {
             background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
-            border: none;
-            color: #0a0e27;
-            padding: 15px 30px;
-            font-size: 1rem;
-            font-weight: 700;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: 'Exo 2', sans-serif;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+            border: none; color: #0a0e27; padding: 15px 30px; font-size: 1rem;
+            font-weight: 700; border-radius: 8px; cursor: pointer;
+            font-family: 'Exo 2', sans-serif; transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,212,255,0.3);
         }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
-        }
-
-        button:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-
-        .nav-button {
-            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
-            border: none;
-            color: #0a0e27;
-            padding: 15px 30px;
-            font-size: 1rem;
-            font-weight: 700;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: 'Exo 2', sans-serif;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .nav-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
-        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,212,255,0.5); }
+        button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
 
         .slide-number {
-            position: fixed;
-            bottom: 30px;
-            left: 30px;
-            font-family: 'Space Mono', monospace;
-            font-size: 1rem;
-            color: #00d4ff;
-            z-index: 1000;
+            position: fixed; bottom: 30px; left: 30px;
+            font-family: 'Space Mono', monospace; font-size: 1rem;
+            color: #00d4ff; z-index: 1000;
         }
+        .ref-link {
+            position: fixed; bottom: 30px; right: 30px; z-index: 1000;
+        }
+        .ref-link a {
+            background: rgba(0,212,255,0.12); border: 1px solid #00d4ff;
+            color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.85rem;
+            padding: 8px 14px; border-radius: 6px; text-decoration: none;
+            transition: background 0.2s;
+        }
+        .ref-link a:hover { background: rgba(0,212,255,0.25); }
 
         @media (max-width: 768px) {
-            h1 { font-size: 2.5rem; }
-            h2 { font-size: 2rem; }
-            .slide { padding: 30px; }
+            h1 { font-size: 2.5rem; } h2 { font-size: 1.8rem; }
+            .slide { padding: 30px 20px 100px; }
             .grid-2, .grid-3 { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <div class="presentation">
-        <!-- Slide 1: Title -->
-        <div class="slide active">
-            <div class="slide-content" style="text-align: center;">
-                <h1>Microcontroller & Hardware Fundamentals</h1>
-                <p class="subtitle">Lesson 1: Understanding the Brain of Your Robot</p>
-                <div style="margin: 40px auto; max-width: 600px;">
-                    <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; filter: drop-shadow(0 0 15px rgba(0, 212, 255, 0.5));">
-                        <!-- Microcontroller chip -->
-                        <rect x="100" y="80" width="200" height="140" rx="8" fill="rgba(0, 212, 255, 0.1)" stroke="#00d4ff" stroke-width="3"/>
-                        <text x="200" y="150" font-family="Orbitron" font-size="24" fill="#00d4ff" text-anchor="middle" font-weight="bold">µC</text>
+<div class="presentation">
 
-                        <!-- Pins -->
-                        <line x1="100" y1="100" x2="60" y2="100" stroke="#ff9500" stroke-width="3"/>
-                        <line x1="100" y1="130" x2="60" y2="130" stroke="#ff9500" stroke-width="3"/>
-                        <line x1="100" y1="160" x2="60" y2="160" stroke="#ff9500" stroke-width="3"/>
-                        <line x1="100" y1="190" x2="60" y2="190" stroke="#ff9500" stroke-width="3"/>
+<!-- ─────────────────────────────────────────── SLIDE 1: Title -->
+<div class="slide active">
+    <div class="slide-content" style="text-align:center;">
+        <h1>Microcontroller &amp; MicroPython</h1>
+        <p class="subtitle">Unit 5 · Programming, Electronics &amp; Sensors · Lesson 5.1</p>
 
-                        <line x1="300" y1="100" x2="340" y2="100" stroke="#ff9500" stroke-width="3"/>
-                        <line x1="300" y1="130" x2="340" y2="130" stroke="#ff9500" stroke-width="3"/>
-                        <line x1="300" y1="160" x2="340" y2="160" stroke="#ff9500" stroke-width="3"/>
-                        <line x1="300" y1="190" x2="340" y2="190" stroke="#ff9500" stroke-width="3"/>
-
-                        <!-- Labels -->
-                        <text x="35" y="135" font-family="Exo 2" font-size="14" fill="#ff9500" text-anchor="end">INPUTS</text>
-                        <text x="365" y="135" font-family="Exo 2" font-size="14" fill="#ff9500" text-anchor="start">OUTPUTS</text>
-
-                        <!-- Pulse animation on pins -->
-                        <circle cx="60" cy="100" r="4" fill="#50fa7b">
-                            <animate attributeName="opacity" values="0.3;1;0.3" dur="1s" repeatCount="indefinite"/>
-                        </circle>
-                        <circle cx="340" cy="130" r="4" fill="#50fa7b">
-                            <animate attributeName="opacity" values="0.3;1;0.3" dur="1.2s" repeatCount="indefinite"/>
-                        </circle>
-                    </svg>
-                </div>
-                <p style="font-size: 1rem; margin-top: 25px;">Lesson 1 | 50 minutes</p>
-            </div>
+        <div style="margin: 40px auto; max-width: 560px;">
+            <svg viewBox="0 0 400 260" fill="none" xmlns="http://www.w3.org/2000/svg"
+                 style="width:100%; filter:drop-shadow(0 0 18px rgba(0,212,255,0.45));">
+                <!-- Board outline -->
+                <rect x="60" y="40" width="280" height="180" rx="10"
+                      fill="rgba(0,212,255,0.06)" stroke="#00d4ff" stroke-width="2.5"/>
+                <!-- Chip -->
+                <rect x="145" y="90" width="110" height="80" rx="6"
+                      fill="rgba(0,212,255,0.15)" stroke="#00d4ff" stroke-width="2"/>
+                <text x="200" y="136" font-family="Orbitron" font-size="15" fill="#00d4ff"
+                      text-anchor="middle" font-weight="bold">RP2350</text>
+                <!-- Left pins -->
+                <line x1="60" y1="80"  x2="80" y2="80"  stroke="#ff9500" stroke-width="3"/>
+                <line x1="60" y1="105" x2="80" y2="105" stroke="#ff9500" stroke-width="3"/>
+                <line x1="60" y1="130" x2="80" y2="130" stroke="#ff9500" stroke-width="3"/>
+                <line x1="60" y1="155" x2="80" y2="155" stroke="#ff9500" stroke-width="3"/>
+                <line x1="60" y1="180" x2="80" y2="180" stroke="#ff9500" stroke-width="3"/>
+                <!-- Right pins -->
+                <line x1="320" y1="80"  x2="340" y2="80"  stroke="#ff9500" stroke-width="3"/>
+                <line x1="320" y1="105" x2="340" y2="105" stroke="#ff9500" stroke-width="3"/>
+                <line x1="320" y1="130" x2="340" y2="130" stroke="#ff9500" stroke-width="3"/>
+                <line x1="320" y1="155" x2="340" y2="155" stroke="#ff9500" stroke-width="3"/>
+                <line x1="320" y1="180" x2="340" y2="180" stroke="#ff9500" stroke-width="3"/>
+                <!-- Wi-Fi arc -->
+                <path d="M 175 60 Q 200 45 225 60" stroke="#50fa7b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                <path d="M 163 68 Q 200 38 237 68" stroke="#50fa7b" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+                <!-- USB -->
+                <rect x="182" y="200" width="36" height="18" rx="3"
+                      fill="rgba(255,149,0,0.2)" stroke="#ff9500" stroke-width="1.5"/>
+                <text x="200" y="213" font-family="Space Mono" font-size="8" fill="#ff9500" text-anchor="middle">USB</text>
+                <!-- Label -->
+                <text x="200" y="250" font-family="Orbitron" font-size="11" fill="#6272a4"
+                      text-anchor="middle">RASPBERRY PI PICO 2W</text>
+            </svg>
         </div>
 
-        <!-- Slide 2: Learning Objectives -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Today's Learning Objectives</h2>
-                <div class="objective-box">
-                    <h3>By the end of today, you will understand:</h3>
-                    <ul class="bullet-list" style="font-size: 1.05rem;">
-                        <li>What a microcontroller (µC) is and how it differs from a computer</li>
-                        <li>The key components inside a microcontroller (CPU, memory, I/O)</li>
-                        <li>How the Arduino board uses a microcontroller</li>
-                        <li>What motor drivers do and why we need them</li>
-                        <li>The complete signal path from code to robot motion</li>
+        <p style="color:#6272a4; font-size:1rem;">Lesson 5.1 · Week 13</p>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 2: Learning Objectives -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Learning Objectives</h2>
+        <p class="subtitle">By the end of this lesson, you will be able to:</p>
+
+        <div style="display:flex; flex-direction:column; gap:32px; margin-top:40px; max-width:760px;">
+            <div style="display:flex; gap:28px; align-items:baseline;">
+                <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d4ff; flex-shrink:0; width:36px; line-height:1;">1</span>
+                <p style="margin:0; font-size:1.5rem; color:#e0e6f0; line-height:1.4;"><strong style="color:#00d4ff;">Identify</strong> a microcontroller's CPU, memory, and I/O built into one chip</p>
+            </div>
+            <div style="display:flex; gap:28px; align-items:baseline;">
+                <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d4ff; flex-shrink:0; width:36px; line-height:1;">2</span>
+                <p style="margin:0; font-size:1.5rem; color:#e0e6f0; line-height:1.4;"><strong style="color:#00d4ff;">Read</strong> a Pico 2W pinout and locate GP pins, power, and ground</p>
+            </div>
+            <div style="display:flex; gap:28px; align-items:baseline;">
+                <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d4ff; flex-shrink:0; width:36px; line-height:1;">3</span>
+                <p style="margin:0; font-size:1.5rem; color:#e0e6f0; line-height:1.4;"><strong style="color:#00d4ff;">Upload</strong> a MicroPython program that blinks the onboard LED</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 3: What is a Microcontroller? -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>What Is a Microcontroller?</h2>
+
+        <div class="grid-2" style="margin-top:16px;">
+            <div>
+                <p>A <span class="highlight">microcontroller (uC)</span> is a tiny computer on a single chip. Unlike your laptop, it has no operating system, no hard drive, and no display — just a processor, some memory, and a set of <span class="highlight">input/output pins</span> that connect directly to the physical world.</p>
+
+                <p>Your program runs on a loop — over and over — responding to sensors and controlling motors, LEDs, and other devices in real time.</p>
+
+                <div class="objective-box" style="margin-top:20px;">
+                    <h3>What a uC can do</h3>
+                    <ul class="bullet-list">
+                        <li>Read sensors (distance, light, touch)</li>
+                        <li>Control motors and servos</li>
+                        <li>Make decisions based on sensor data</li>
+                        <li>Communicate over Wi-Fi or Bluetooth</li>
+                        <li>Run for months on a small battery</li>
                     </ul>
                 </div>
-                <p style="text-align: center; font-size: 1.3rem; margin-top: 20px; color: #ff9500;">
-                    Foundation knowledge for everything we'll build!
-                </p>
             </div>
-        </div>
 
-        <!-- Slide 3: What is a Microcontroller? -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>What is a Microcontroller?</h2>
-                <div class="box" style="margin-bottom: 25px; background: rgba(0, 212, 255, 0.1);">
-                    <h3 style="text-align: center; font-size: 1.8rem; color: #00d4ff;">A complete computer on a single chip</h3>
-                </div>
-                <div class="grid-2">
-                    <div class="box">
-                        <h3>Your Computer (PC/Laptop)</h3>
-                        <ul class="bullet-list" style="font-size: 1rem;">
-                            <li>General purpose</li>
-                            <li>Multiple programs at once</li>
-                            <li>Gigabytes of RAM</li>
-                            <li>Complex operating system</li>
-                            <li>Keyboard, mouse, display</li>
-                        </ul>
-                    </div>
-                    <div class="box">
-                        <h3>A Microcontroller</h3>
-                        <ul class="bullet-list" style="font-size: 1rem;">
-                            <li><span class="highlight">Dedicated purpose</span></li>
-                            <li>One program at a time</li>
-                            <li>Kilobytes of RAM</li>
-                            <li>Simple or no operating system</li>
-                            <li>Direct hardware control</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="box" style="margin-top: 25px; background: rgba(80, 250, 123, 0.1); border-color: #50fa7b;">
-                    <p style="font-size: 1.2rem; text-align: center;">
-                        <span class="success">Microcontrollers are EVERYWHERE:</span> Cars, microwaves, thermostats, toys, medical devices, washing machines, your robot!
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 4: Inside a Microcontroller -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Microcontroller Components</h2>
-                <div class="diagram-box">
-                    <svg viewBox="0 0 700 400" style="width: 100%; max-width: 700px;">
-                        <!-- Main chip boundary -->
-                        <rect x="50" y="50" width="600" height="300" rx="15" fill="rgba(0, 212, 255, 0.05)" stroke="#00d4ff" stroke-width="4"/>
-                        <text x="350" y="35" font-family="Orbitron" font-size="18" fill="#00d4ff" text-anchor="middle" font-weight="bold">MICROCONTROLLER CHIP</text>
-
-                        <!-- CPU -->
-                        <rect x="100" y="100" width="150" height="100" rx="8" fill="rgba(255, 149, 0, 0.2)" stroke="#ff9500" stroke-width="3"/>
-                        <text x="175" y="135" font-family="Exo 2" font-size="16" fill="#ff9500" text-anchor="middle" font-weight="bold">CPU</text>
-                        <text x="175" y="160" font-family="Exo 2" font-size="12" fill="#b8c5d6" text-anchor="middle">(Brain)</text>
-                        <text x="175" y="180" font-family="Exo 2" font-size="11" fill="#b8c5d6" text-anchor="middle">Executes</text>
-                        <text x="175" y="195" font-family="Exo 2" font-size="11" fill="#b8c5d6" text-anchor="middle">instructions</text>
-
-                        <!-- Flash Memory -->
-                        <rect x="290" y="100" width="150" height="80" rx="8" fill="rgba(80, 250, 123, 0.2)" stroke="#50fa7b" stroke-width="3"/>
-                        <text x="365" y="130" font-family="Exo 2" font-size="16" fill="#50fa7b" text-anchor="middle" font-weight="bold">FLASH</text>
-                        <text x="365" y="150" font-family="Exo 2" font-size="12" fill="#b8c5d6" text-anchor="middle">Program</text>
-                        <text x="365" y="170" font-family="Exo 2" font-size="12" fill="#b8c5d6" text-anchor="middle">Storage</text>
-
-                        <!-- RAM -->
-                        <rect x="290" y="200" width="150" height="80" rx="8" fill="rgba(189, 147, 249, 0.2)" stroke="#bd93f9" stroke-width="3"/>
-                        <text x="365" y="230" font-family="Exo 2" font-size="16" fill="#bd93f9" text-anchor="middle" font-weight="bold">RAM</text>
-                        <text x="365" y="250" font-family="Exo 2" font-size="12" fill="#b8c5d6" text-anchor="middle">Working</text>
-                        <text x="365" y="270" font-family="Exo 2" font-size="12" fill="#b8c5d6" text-anchor="middle">Memory</text>
-
-                        <!-- I/O Pins -->
-                        <rect x="480" y="100" width="150" height="180" rx="8" fill="rgba(0, 212, 255, 0.2)" stroke="#00d4ff" stroke-width="3"/>
-                        <text x="555" y="125" font-family="Exo 2" font-size="16" fill="#00d4ff" text-anchor="middle" font-weight="bold">I/O PINS</text>
-                        <text x="555" y="145" font-family="Exo 2" font-size="12" fill="#b8c5d6" text-anchor="middle">Digital</text>
-                        <text x="555" y="165" font-family="Exo 2" font-size="12" fill="#b8c5d6" text-anchor="middle">Analog</text>
-                        <text x="555" y="185" font-family="Exo 2" font-size="12" fill="#b8c5d6" text-anchor="middle">PWM</text>
-
-                        <!-- Pin connections -->
-                        <line x1="630" y1="150" x2="680" y2="150" stroke="#00d4ff" stroke-width="3"/>
-                        <line x1="630" y1="190" x2="680" y2="190" stroke="#00d4ff" stroke-width="3"/>
-                        <line x1="630" y1="230" x2="680" y2="230" stroke="#00d4ff" stroke-width="3"/>
-                        <text x="695" y="195" font-family="Exo 2" font-size="14" fill="#ff9500" text-anchor="start">To Real World</text>
-
-                        <!-- Connections between components -->
-                        <path d="M 250 150 L 290 140" stroke="#ff9500" stroke-width="2" marker-end="url(#arrowhead)"/>
-                        <path d="M 250 150 L 290 240" stroke="#ff9500" stroke-width="2" marker-end="url(#arrowhead)"/>
-                        <path d="M 440 140 L 480 150" stroke="#ff9500" stroke-width="2" marker-end="url(#arrowhead)"/>
-                        <path d="M 440 240 L 480 200" stroke="#ff9500" stroke-width="2" marker-end="url(#arrowhead)"/>
-
-                        <defs>
-                            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
-                                <polygon points="0 0, 10 5, 0 10" fill="#ff9500"/>
-                            </marker>
-                        </defs>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 5: Component Details -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Understanding Each Component</h2>
-                <div class="grid-2">
-                    <div class="box">
-                        <h3>CPU (Central Processing Unit)</h3>
-                        <p>The "brain" that executes your code instructions one at a time, very fast (16 MHz = 16 million instructions/second!)</p>
-                    </div>
-                    <div class="box">
-                        <h3>Flash Memory</h3>
-                        <p>Stores your program permanently. Even when powered off, your code stays here. Arduino Uno: 32 KB (internal). Your RP2040: 16 MB (external chip on board)</p>
-                    </div>
-                    <div class="box">
-                        <h3>RAM (Random Access Memory)</h3>
-                        <p>Temporary storage for variables while running. Lost when powered off. Arduino Uno: 2 KB (tiny!)</p>
-                    </div>
-                    <div class="box">
-                        <h3>I/O Pins (Input/Output)</h3>
-                        <p>Connect to the real world: read sensors, control motors, light LEDs. This is how code becomes action!</p>
-                    </div>
-                </div>
-                <div class="box" style="margin-top: 25px; background: rgba(255, 149, 0, 0.1); border-color: #ff9500;">
-                    <p style="text-align: center; font-size: 1.2rem;">
-                        <span class="warning">Key Takeaway:</span> Your code runs on the CPU, uses RAM for variables, and controls I/O pins to interact with hardware
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 6: Arduino Board -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>The Arduino Board</h2>
-                <p>An Arduino is a <span class="highlight">development board</span> that makes microcontrollers easy to use</p>
-                <div class="grid-2" style="margin-top: 25px;">
-                    <div>
-                        <div class="box">
-                            <h3>What Arduino Adds:</h3>
-                            <ul class="bullet-list" style="font-size: 1rem;">
-                                <li>USB connection for programming</li>
-                                <li>Voltage regulator (5V power)</li>
-                                <li>Easy pin headers</li>
-                                <li>Reset button</li>
-                                <li>Built-in LED (pin 13)</li>
-                                <li>Beginner-friendly software</li>
-                            </ul>
-                        </div>
-                        <div class="box" style="margin-top: 20px; background: rgba(80, 250, 123, 0.1); border-color: #50fa7b;">
-                            <p style="font-size: 1rem;">
-                                <span class="success">Your RP2040 Robot:</span> Uses the RP2040 microcontroller (dual-core, 133 MHz, much more powerful than Arduino Uno!)
-                            </p>
-                        </div>
-                    </div>
-                    <div class="diagram-box">
-                        <p style="text-align: center; font-size: 0.9rem; color: #b8c5d6; margin-bottom: 10px;">Generic Arduino Uno Example</p>
-                        <svg viewBox="0 0 300 350" style="width: 100%;">
-                            <!-- Arduino board outline -->
-                            <rect x="40" y="40" width="220" height="270" rx="10" fill="rgba(0, 212, 255, 0.1)" stroke="#00d4ff" stroke-width="3"/>
-
-                            <!-- USB port -->
-                            <rect x="110" y="10" width="80" height="35" rx="4" fill="#b8c5d6" stroke="#00d4ff" stroke-width="2"/>
-                            <text x="150" y="30" font-family="Exo 2" font-size="12" fill="#0a0e27" text-anchor="middle" font-weight="bold">USB</text>
-
-                            <!-- Microcontroller chip -->
-                            <rect x="110" y="110" width="80" height="60" rx="4" fill="#0d1117" stroke="#ff9500" stroke-width="3"/>
-                            <text x="150" y="145" font-family="Exo 2" font-size="14" fill="#ff9500" text-anchor="middle" font-weight="bold">ATmega328</text>
-
-                            <!-- Pin headers -->
-                            <rect x="50" y="60" width="10" height="200" fill="#ff9500"/>
-                            <rect x="240" y="60" width="10" height="200" fill="#ff9500"/>
-
-                            <!-- Labels -->
-                            <text x="30" y="160" font-family="Exo 2" font-size="11" fill="#ff9500" text-anchor="end" writing-mode="tb">DIGITAL PINS</text>
-                            <text x="270" y="160" font-family="Exo 2" font-size="11" fill="#ff9500" text-anchor="start" writing-mode="tb">ANALOG PINS</text>
-
-                            <!-- Power jack -->
-                            <circle cx="60" cy="280" r="15" fill="#1a1f3a" stroke="#00d4ff" stroke-width="2"/>
-                            <circle cx="60" cy="280" r="8" fill="#00d4ff"/>
-
-                            <!-- LEDs -->
-                            <circle cx="200" cy="240" r="6" fill="#50fa7b" opacity="0.8">
-                                <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
-                            </circle>
-                            <circle cx="220" cy="240" r="6" fill="#ff9500" opacity="0.5"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 7: RP2040 Connect Pin Diagram -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Arduino Nano RP2040 Connect Pinout</h2>
-                <p style="text-align: center; margin-bottom: 20px;">Understanding the pins you'll use to control your robot</p>
-                <div class="diagram-box">
-                    <svg viewBox="0 0 900 600" style="width: 100%; max-width: 900px;">
-                        <!-- Board outline -->
-                        <rect x="250" y="50" width="400" height="500" rx="8" fill="rgba(0, 212, 255, 0.05)" stroke="#00d4ff" stroke-width="3"/>
-
-                        <!-- USB connector at top -->
-                        <rect x="410" y="20" width="80" height="35" rx="4" fill="#b8c5d6" stroke="#00d4ff" stroke-width="2"/>
-                        <text x="450" y="42" font-family="Exo 2" font-size="14" fill="#0a0e27" text-anchor="middle" font-weight="bold">USB-C</text>
-
-                        <!-- RP2040 chip in center -->
-                        <rect x="370" y="250" width="160" height="100" rx="8" fill="#0d1117" stroke="#ff9500" stroke-width="3"/>
-                        <text x="450" y="290" font-family="Exo 2" font-size="18" fill="#ff9500" text-anchor="middle" font-weight="bold">RP2040</text>
-                        <text x="450" y="315" font-family="Exo 2" font-size="12" fill="#b8c5d6" text-anchor="middle">Dual Core</text>
-                        <text x="450" y="335" font-family="Exo 2" font-size="12" fill="#b8c5d6" text-anchor="middle">133 MHz</text>
-
-                        <!-- Left side pins -->
-                        <text x="120" y="95" font-family="JetBrains Mono" font-size="11" fill="#e0e6f0" text-anchor="end">D13 / SCK</text>
-                        <line x1="130" y1="90" x2="250" y2="90" stroke="#00d4ff" stroke-width="2"/>
-                        <circle cx="245" cy="90" r="4" fill="#00d4ff"/>
-
-                        <text x="120" y="120" font-family="JetBrains Mono" font-size="11" fill="#e0e6f0" text-anchor="end">+3V3</text>
-                        <line x1="130" y1="115" x2="250" y2="115" stroke="#ff5555" stroke-width="2"/>
-                        <circle cx="245" cy="115" r="4" fill="#ff5555"/>
-
-                        <text x="120" y="145" font-family="JetBrains Mono" font-size="11" fill="#e0e6f0" text-anchor="end">AREF</text>
-                        <line x1="130" y1="140" x2="250" y2="140" stroke="#6272a4" stroke-width="2"/>
-                        <circle cx="245" cy="140" r="4" fill="#6272a4"/>
-
-                        <text x="120" y="170" font-family="JetBrains Mono" font-size="11" fill="#50fa7b" text-anchor="end" font-weight="bold">A0</text>
-                        <line x1="130" y1="165" x2="250" y2="165" stroke="#50fa7b" stroke-width="2"/>
-                        <circle cx="245" cy="165" r="4" fill="#50fa7b"/>
-
-                        <text x="120" y="195" font-family="JetBrains Mono" font-size="11" fill="#50fa7b" text-anchor="end" font-weight="bold">A1</text>
-                        <line x1="130" y1="190" x2="250" y2="190" stroke="#50fa7b" stroke-width="2"/>
-                        <circle cx="245" cy="190" r="4" fill="#50fa7b"/>
-
-                        <text x="120" y="220" font-family="JetBrains Mono" font-size="11" fill="#50fa7b" text-anchor="end" font-weight="bold">A2</text>
-                        <line x1="130" y1="215" x2="250" y2="215" stroke="#50fa7b" stroke-width="2"/>
-                        <circle cx="245" cy="215" r="4" fill="#50fa7b"/>
-
-                        <text x="120" y="245" font-family="JetBrains Mono" font-size="11" fill="#50fa7b" text-anchor="end" font-weight="bold">A3</text>
-                        <line x1="130" y1="240" x2="250" y2="240" stroke="#50fa7b" stroke-width="2"/>
-                        <circle cx="245" cy="240" r="4" fill="#50fa7b"/>
-
-                        <text x="120" y="270" font-family="JetBrains Mono" font-size="11" fill="#e0e6f0" text-anchor="end">A4 / SDA</text>
-                        <line x1="130" y1="265" x2="250" y2="265" stroke="#50fa7b" stroke-width="2"/>
-                        <circle cx="245" cy="265" r="4" fill="#50fa7b"/>
-
-                        <text x="120" y="295" font-family="JetBrains Mono" font-size="11" fill="#e0e6f0" text-anchor="end">A5 / SCL</text>
-                        <line x1="130" y1="290" x2="250" y2="290" stroke="#50fa7b" stroke-width="2"/>
-                        <circle cx="245" cy="290" r="4" fill="#50fa7b"/>
-
-                        <text x="120" y="320" font-family="JetBrains Mono" font-size="11" fill="#e0e6f0" text-anchor="end">A6</text>
-                        <line x1="130" y1="315" x2="250" y2="315" stroke="#50fa7b" stroke-width="2"/>
-                        <circle cx="245" cy="315" r="4" fill="#50fa7b"/>
-
-                        <text x="120" y="345" font-family="JetBrains Mono" font-size="11" fill="#e0e6f0" text-anchor="end">A7</text>
-                        <line x1="130" y1="340" x2="250" y2="340" stroke="#50fa7b" stroke-width="2"/>
-                        <circle cx="245" cy="340" r="4" fill="#50fa7b"/>
-
-                        <text x="120" y="395" font-family="JetBrains Mono" font-size="11" fill="#e0e6f0" text-anchor="end">+5V</text>
-                        <line x1="130" y1="390" x2="250" y2="390" stroke="#ff5555" stroke-width="2"/>
-                        <circle cx="245" cy="390" r="4" fill="#ff5555"/>
-
-                        <text x="120" y="445" font-family="JetBrains Mono" font-size="11" fill="#e0e6f0" text-anchor="end">GND</text>
-                        <line x1="130" y1="440" x2="250" y2="440" stroke="#6272a4" stroke-width="2"/>
-                        <circle cx="245" cy="440" r="4" fill="#6272a4"/>
-
-                        <text x="120" y="495" font-family="JetBrains Mono" font-size="11" fill="#e0e6f0" text-anchor="end">VIN</text>
-                        <line x1="130" y1="490" x2="250" y2="490" stroke="#ff5555" stroke-width="2"/>
-                        <circle cx="245" cy="490" r="4" fill="#ff5555"/>
-
-                        <!-- Right side pins -->
-                        <text x="780" y="95" font-family="JetBrains Mono" font-size="11" fill="#e0e6f0" text-anchor="start">D12 / MISO</text>
-                        <line x1="650" y1="90" x2="770" y2="90" stroke="#00d4ff" stroke-width="2"/>
-                        <circle cx="655" cy="90" r="4" fill="#00d4ff"/>
-
-                        <text x="780" y="120" font-family="JetBrains Mono" font-size="11" fill="#e0e6f0" text-anchor="start">D11 / MOSI</text>
-                        <line x1="650" y1="115" x2="770" y2="115" stroke="#00d4ff" stroke-width="2"/>
-                        <circle cx="655" cy="115" r="4" fill="#00d4ff"/>
-
-                        <text x="780" y="145" font-family="JetBrains Mono" font-size="11" fill="#e0e6f0" text-anchor="start">D10</text>
-                        <line x1="650" y1="140" x2="770" y2="140" stroke="#00d4ff" stroke-width="2"/>
-                        <circle cx="655" cy="140" r="4" fill="#00d4ff"/>
-
-                        <text x="780" y="170" font-family="JetBrains Mono" font-size="11" fill="#e0e6f0" text-anchor="start">D9</text>
-                        <line x1="650" y1="165" x2="770" y2="165" stroke="#00d4ff" stroke-width="2"/>
-                        <circle cx="655" cy="165" r="4" fill="#00d4ff"/>
-
-                        <text x="780" y="195" font-family="JetBrains Mono" font-size="11" fill="#bd93f9" text-anchor="start" font-weight="bold">D8 ~</text>
-                        <line x1="650" y1="190" x2="770" y2="190" stroke="#bd93f9" stroke-width="2"/>
-                        <circle cx="655" cy="190" r="4" fill="#bd93f9"/>
-
-                        <text x="780" y="220" font-family="JetBrains Mono" font-size="11" fill="#bd93f9" text-anchor="start" font-weight="bold">D7 ~</text>
-                        <line x1="650" y1="215" x2="770" y2="215" stroke="#bd93f9" stroke-width="2"/>
-                        <circle cx="655" cy="215" r="4" fill="#bd93f9"/>
-
-                        <text x="780" y="245" font-family="JetBrains Mono" font-size="11" fill="#bd93f9" text-anchor="start" font-weight="bold">D6 ~</text>
-                        <line x1="650" y1="240" x2="770" y2="240" stroke="#bd93f9" stroke-width="2"/>
-                        <circle cx="655" cy="240" r="4" fill="#bd93f9"/>
-
-                        <text x="780" y="270" font-family="JetBrains Mono" font-size="11" fill="#bd93f9" text-anchor="start" font-weight="bold">D5 ~</text>
-                        <line x1="650" y1="265" x2="770" y2="265" stroke="#bd93f9" stroke-width="2"/>
-                        <circle cx="655" cy="265" r="4" fill="#bd93f9"/>
-
-                        <text x="780" y="295" font-family="JetBrains Mono" font-size="11" fill="#bd93f9" text-anchor="start" font-weight="bold">D4 ~</text>
-                        <line x1="650" y1="290" x2="770" y2="290" stroke="#bd93f9" stroke-width="2"/>
-                        <circle cx="655" cy="290" r="4" fill="#bd93f9"/>
-
-                        <text x="780" y="320" font-family="JetBrains Mono" font-size="11" fill="#bd93f9" text-anchor="start" font-weight="bold">D3 ~</text>
-                        <line x1="650" y1="315" x2="770" y2="315" stroke="#bd93f9" stroke-width="2"/>
-                        <circle cx="655" cy="315" r="4" fill="#bd93f9"/>
-
-                        <text x="780" y="345" font-family="JetBrains Mono" font-size="11" fill="#e0e6f0" text-anchor="start">D2</text>
-                        <line x1="650" y1="340" x2="770" y2="340" stroke="#00d4ff" stroke-width="2"/>
-                        <circle cx="655" cy="340" r="4" fill="#00d4ff"/>
-
-                        <text x="780" y="370" font-family="JetBrains Mono" font-size="11" fill="#e0e6f0" text-anchor="start">GND</text>
-                        <line x1="650" y1="365" x2="770" y2="365" stroke="#6272a4" stroke-width="2"/>
-                        <circle cx="655" cy="365" r="4" fill="#6272a4"/>
-
-                        <text x="780" y="395" font-family="JetBrains Mono" font-size="11" fill="#e0e6f0" text-anchor="start">RESET</text>
-                        <line x1="650" y1="390" x2="770" y2="390" stroke="#ff9500" stroke-width="2"/>
-                        <circle cx="655" cy="390" r="4" fill="#ff9500"/>
-
-                        <text x="780" y="420" font-family="JetBrains Mono" font-size="11" fill="#e0e6f0" text-anchor="start">RX / D0</text>
-                        <line x1="650" y1="415" x2="770" y2="415" stroke="#00d4ff" stroke-width="2"/>
-                        <circle cx="655" cy="415" r="4" fill="#00d4ff"/>
-
-                        <text x="780" y="445" font-family="JetBrains Mono" font-size="11" fill="#e0e6f0" text-anchor="start">TX / D1</text>
-                        <line x1="650" y1="440" x2="770" y2="440" stroke="#00d4ff" stroke-width="2"/>
-                        <circle cx="655" cy="440" r="4" fill="#00d4ff"/>
-                    </svg>
-                </div>
-                <div class="grid-3" style="margin-top: 25px;">
-                    <div class="box" style="border-color: #50fa7b;">
-                        <h3 style="color: #50fa7b;">Analog Pins (A0-A7)</h3>
-                        <p style="font-size: 0.95rem;">Read sensors (0-1023 values)</p>
-                        <p style="font-size: 0.95rem; margin-top: 8px;"><span class="highlight">IR sensors</span> use these</p>
-                    </div>
-                    <div class="box" style="border-color: #bd93f9;">
-                        <h3 style="color: #bd93f9;">Digital Pins (D3-D8)</h3>
-                        <p style="font-size: 0.95rem;">Control motors (HIGH/LOW)</p>
-                        <p style="font-size: 0.95rem; margin-top: 8px;"><span class="highlight">Motor controllers</span> use these</p>
-                    </div>
-                    <div class="box" style="border-color: #ff9500;">
-                        <h3 style="color: #ff9500;">Power Pins</h3>
-                        <p style="font-size: 0.95rem;">+5V, +3.3V, GND, VIN</p>
-                        <p style="font-size: 0.95rem; margin-top: 8px;">Power your circuits</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 8: Motor Controllers Introduction -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Why Do We Need Motor Controllers?</h2>
-                <div class="box" style="margin-bottom: 25px; background: rgba(255, 85, 85, 0.1); border-color: #ff5555;">
-                    <h3 style="color: #ff5555;">Problem: Microcontrollers are WEAK!</h3>
-                    <p style="font-size: 1.2rem;">An Arduino pin can only provide about 40 mA (0.04 amps) at 5V</p>
-                    <p style="font-size: 1.2rem; margin-top: 10px;">A DC motor needs 1-5 amps at 12V to spin!</p>
-                </div>
-                <div class="comparison-table">
-                    <table style="width: 100%;">
-                        <tr>
-                            <th></th>
-                            <th>Arduino Pin</th>
-                            <th>DC Motor</th>
-                        </tr>
-                        <tr>
-                            <td><strong>Voltage</strong></td>
-                            <td>5V</td>
-                            <td>6-12V</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Current</strong></td>
-                            <td>40 mA (0.04 A)</td>
-                            <td>1-5 A</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Power</strong></td>
-                            <td>0.2 Watts</td>
-                            <td>10-60 Watts</td>
-                        </tr>
+            <div>
+                <div class="box" style="margin-bottom:16px;">
+                    <h3>uC vs. Computer</h3>
+                    <table class="cmp-table" style="margin-top:8px;">
+                        <thead>
+                            <tr><th></th><th>Laptop</th><th>Pico 2W</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>OS</td><td>Windows / macOS</td><td class="yes">None</td></tr>
+                            <tr><td>CPU Speed</td><td>3+ GHz</td><td>150 MHz</td></tr>
+                            <tr><td>RAM</td><td>8–32 GB</td><td>520 KB</td></tr>
+                            <tr><td>GPIO Pins</td><td class="no">0</td><td class="yes">26</td></tr>
+                            <tr><td>Power</td><td>30–65 W (30,000–65,000 mW)</td><td class="yes">~25 mW</td></tr>
+                            <tr><td>Cost</td><td>$500+</td><td class="yes">$8</td></tr>
+                        </tbody>
                     </table>
                 </div>
-                <div class="box" style="background: rgba(80, 250, 123, 0.1); border-color: #50fa7b;">
-                    <h3 style="color: #50fa7b;">Solution: Motor Driver Chip</h3>
-                    <p style="font-size: 1.2rem;">Acts as a "power amplifier" - small signal from Arduino controls large power to motor</p>
-                    <p style="font-size: 0.95rem; margin-top: 15px; color: #6B7280;"><strong>Note:</strong> We call this a "motor driver" - it's the chip that switches power. Complete products like SPARK MAX or Talon contain a motor driver plus extra features like current sensing and controllers.</p>
-                </div>
+                <p style="font-size:1rem; color:#6272a4;">A uC is the right tool when you need to interact with hardware in real time at low cost and low power.</p>
             </div>
         </div>
+    </div>
+</div>
 
-        <!-- Slide 8: Motor Controller Operation -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>How Motor Controllers Work</h2>
-                <div class="diagram-box">
-                    <svg viewBox="0 0 800 300" style="width: 100%; max-width: 800px;">
-                        <!-- Arduino -->
-                        <rect x="20" y="100" width="120" height="100" rx="8" fill="rgba(0, 212, 255, 0.2)" stroke="#00d4ff" stroke-width="3"/>
-                        <text x="80" y="140" font-family="Exo 2" font-size="16" fill="#00d4ff" text-anchor="middle" font-weight="bold">Arduino</text>
-                        <text x="80" y="165" font-family="Exo 2" font-size="12" fill="#b8c5d6" text-anchor="middle">5V logic</text>
-                        <text x="80" y="185" font-family="Exo 2" font-size="12" fill="#b8c5d6" text-anchor="middle">40 mA max</text>
+<!-- ─────────────────────────────────────────── SLIDE 4: Meet the Pico 2W -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Your Microcontroller: Pico 2W</h2>
+        <p>The <span class="highlight">Raspberry Pi Pico 2W</span> is built around the RP2350 chip — a dual-core processor that can run MicroPython. Your robot's custom interface board plugs directly onto the Pico 2W.</p>
 
-                        <!-- Control signals -->
-                        <line x1="140" y1="130" x2="240" y2="130" stroke="#ff9500" stroke-width="3" marker-end="url(#arrow)"/>
-                        <text x="190" y="120" font-family="Exo 2" font-size="12" fill="#ff9500" text-anchor="middle">Direction</text>
-
-                        <line x1="140" y1="170" x2="240" y2="170" stroke="#ff9500" stroke-width="3" marker-end="url(#arrow)"/>
-                        <text x="190" y="195" font-family="Exo 2" font-size="12" fill="#ff9500" text-anchor="middle">Speed (PWM)</text>
-
-                        <!-- Motor Controller -->
-                        <rect x="240" y="80" width="180" height="140" rx="8" fill="rgba(255, 149, 0, 0.2)" stroke="#ff9500" stroke-width="3"/>
-                        <text x="330" y="110" font-family="Exo 2" font-size="16" fill="#ff9500" text-anchor="middle" font-weight="bold">MOTOR</text>
-                        <text x="330" y="130" font-family="Exo 2" font-size="16" fill="#ff9500" text-anchor="middle" font-weight="bold">CONTROLLER</text>
-                        <text x="330" y="155" font-family="Exo 2" font-size="12" fill="#b8c5d6" text-anchor="middle">(VNH5019)</text>
-                        <text x="330" y="180" font-family="Exo 2" font-size="11" fill="#b8c5d6" text-anchor="middle">• Switches power</text>
-                        <text x="330" y="200" font-family="Exo 2" font-size="11" fill="#b8c5d6" text-anchor="middle">• Controls direction</text>
-
-                        <!-- Battery power -->
-                        <rect x="280" y="240" width="100" height="40" rx="4" fill="rgba(80, 250, 123, 0.2)" stroke="#50fa7b" stroke-width="3"/>
-                        <text x="330" y="265" font-family="Exo 2" font-size="14" fill="#50fa7b" text-anchor="middle" font-weight="bold">12V Battery</text>
-                        <line x1="330" y1="240" x2="330" y2="220" stroke="#50fa7b" stroke-width="3" marker-end="url(#arrow-green)"/>
-
-                        <!-- High power to motor -->
-                        <line x1="420" y1="150" x2="520" y2="150" stroke="#50fa7b" stroke-width="5" marker-end="url(#arrow-green)"/>
-                        <text x="470" y="140" font-family="Exo 2" font-size="14" fill="#50fa7b" text-anchor="middle" font-weight="bold">HIGH POWER</text>
-                        <text x="470" y="175" font-family="Exo 2" font-size="12" fill="#50fa7b" text-anchor="middle">12V, 2-5A</text>
-
-                        <!-- Motor -->
-                        <ellipse cx="630" cy="150" rx="80" ry="80" fill="rgba(189, 147, 249, 0.2)" stroke="#bd93f9" stroke-width="3"/>
-                        <circle cx="630" cy="150" r="40" fill="none" stroke="#bd93f9" stroke-width="3"/>
-                        <line x1="630" y1="150" x2="660" y2="120" stroke="#bd93f9" stroke-width="3"/>
-                        <line x1="630" y1="150" x2="660" y2="180" stroke="#bd93f9" stroke-width="3"/>
-                        <text x="630" y="240" font-family="Exo 2" font-size="14" fill="#bd93f9" text-anchor="middle" font-weight="bold">DC MOTOR</text>
-
-                        <defs>
-                            <marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
-                                <polygon points="0 0, 10 5, 0 10" fill="#ff9500"/>
-                            </marker>
-                            <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
-                                <polygon points="0 0, 10 5, 0 10" fill="#50fa7b"/>
-                            </marker>
-                        </defs>
-                    </svg>
-                </div>
-                <div class="grid-2" style="margin-top: 25px;">
-                    <div class="box">
-                        <h3>3 Control Signals</h3>
-                        <ul class="bullet-list" style="font-size: 1rem;">
-                            <li><span class="highlight">INA</span> - Direction bit A</li>
-                            <li><span class="highlight">INB</span> - Direction bit B</li>
-                            <li><span class="highlight">PWM</span> - Speed control (0-100%)</li>
-                        </ul>
-                    </div>
-                    <div class="box">
-                        <h3>VNH5019 Features</h3>
-                        <ul class="bullet-list" style="font-size: 1rem;">
-                            <li>Handles up to 12A continuous</li>
-                            <li>Built-in current sensing</li>
-                            <li>Thermal shutdown protection</li>
-                            <li>Forward, reverse, brake modes</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+        <div class="spec-grid">
+            <div class="spec-item"><div class="spec-val">RP2350</div><div class="spec-label">Processor Chip</div></div>
+            <div class="spec-item"><div class="spec-val">150 MHz</div><div class="spec-label">Clock Speed</div></div>
+            <div class="spec-item"><div class="spec-val">520 KB</div><div class="spec-label">RAM</div></div>
+            <div class="spec-item"><div class="spec-val">4 MB</div><div class="spec-label">Flash Storage</div></div>
+            <div class="spec-item"><div class="spec-val">26</div><div class="spec-label">GPIO Pins</div></div>
+            <div class="spec-item"><div class="spec-val">Wi-Fi + BT</div><div class="spec-label">Wireless</div></div>
+            <div class="spec-item"><div class="spec-val">3.3 V</div><div class="spec-label">Logic Level</div></div>
+            <div class="spec-item"><div class="spec-val">$8</div><div class="spec-label">Cost</div></div>
         </div>
 
-        <!-- Slide 9: Direction Control Truth Table -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Motor Direction Control</h2>
-                <p>Two digital pins (INA and INB) control motor direction:</p>
-                <div class="comparison-table">
-                    <table style="width: 100%;">
-                        <tr>
-                            <th>INA</th>
-                            <th>INB</th>
-                            <th>Motor Action</th>
-                            <th>Description</th>
-                        </tr>
-                        <tr>
-                            <td style="text-align: center;"><span class="highlight">LOW</span></td>
-                            <td style="text-align: center;"><span class="highlight">HIGH</span></td>
-                            <td style="text-align: center;"><span class="success">FORWARD</span></td>
-                            <td>Motor spins forward</td>
-                        </tr>
-                        <tr>
-                            <td style="text-align: center;"><span class="highlight">HIGH</span></td>
-                            <td style="text-align: center;"><span class="highlight">LOW</span></td>
-                            <td style="text-align: center;"><span class="warning">REVERSE</span></td>
-                            <td>Motor spins backward</td>
-                        </tr>
-                        <tr>
-                            <td style="text-align: center;"><span class="highlight">LOW</span></td>
-                            <td style="text-align: center;"><span class="highlight">LOW</span></td>
-                            <td style="text-align: center;">BRAKE</td>
-                            <td>Motor stops actively</td>
-                        </tr>
-                        <tr>
-                            <td style="text-align: center;"><span class="highlight">HIGH</span></td>
-                            <td style="text-align: center;"><span class="highlight">HIGH</span></td>
-                            <td style="text-align: center;">BRAKE</td>
-                            <td>Motor stops actively</td>
-                        </tr>
+        <div class="grid-2" style="margin-top:8px;">
+            <div class="box-orange">
+                <h3>On the interface board</h3>
+                <ul class="bullet-list">
+                    <li>Dual H-bridge motor driver (VNH5019)</li>
+                    <li>I²C multiplexer for 3 ultrasonic sensors</li>
+                    <li>5 IR sensor inputs</li>
+                    <li>2 servo headers</li>
+                    <li>3 mechanical switches</li>
+                    <li>3 ADC inputs</li>
+                    <li>Onboard indicator LEDs for every GPIO</li>
+                </ul>
+            </div>
+            <div class="box">
+                <h3>One important rule</h3>
+                <p>GPIO pins are <span class="warning">3.3 V logic</span> and can only source <span class="warning">~4 mA</span> each (50 mA total). This is enough for LEDs and sensor signals — <span class="warning">never enough for motors</span>. The motor driver on the board handles motor current. You just tell it which direction and how fast.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 5: Why MicroPython? -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Why MicroPython?</h2>
+
+        <div class="grid-2">
+            <div>
+                <p><span class="highlight">MicroPython</span> is a lean version of Python 3 designed to run on microcontrollers. It has the same syntax as the Python used in data science, web development, and AI — so learning it here transfers directly.</p>
+
+                <div class="objective-box">
+                    <h3>Python is everywhere</h3>
+                    <ul class="bullet-list">
+                        <li>Most popular language for data science &amp; AI</li>
+                        <li>Used at Google, NASA, SpaceX, and nearly every tech company</li>
+                        <li>Top language for beginners and professionals alike</li>
+                        <li>Free, open source, huge community</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div>
+                <div class="box" style="margin-bottom:16px;">
+                    <h3>MicroPython vs. Arduino (C++)</h3>
+                    <table class="cmp-table" style="margin-top:8px;">
+                        <thead>
+                            <tr><th></th><th>Arduino C++</th><th>MicroPython</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Readability</td><td>Harder</td><td class="yes">Easier</td></tr>
+                            <tr><td>Compile step</td><td class="no">Required</td><td class="yes">None (REPL!)</td></tr>
+                            <tr><td>Error messages</td><td class="no">Cryptic</td><td class="yes">Readable</td></tr>
+                            <tr><td>Industry use</td><td>Embedded only</td><td class="yes">Everywhere</td></tr>
+                            <tr><td>Speed</td><td class="yes">Faster</td><td>Fast enough</td></tr>
+                        </tbody>
                     </table>
                 </div>
-                <div class="box" style="margin-top: 25px;">
-                    <h3>Example Code Preview (Tomorrow!)</h3>
-                    <div style="background: #0d1117; padding: 20px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; margin-top: 15px;">
-                        <span style="color: #6272a4;">// Drive motor forward</span><br>
-                        <span style="color: #50fa7b;">digitalWrite</span>(<span style="color: #bd93f9;">INA</span>, <span style="color: #ff79c6;">LOW</span>);<br>
-                        <span style="color: #50fa7b;">digitalWrite</span>(<span style="color: #bd93f9;">INB</span>, <span style="color: #ff79c6;">HIGH</span>);<br>
-                        <span style="color: #50fa7b;">analogWrite</span>(<span style="color: #bd93f9;">PWM</span>, <span style="color: #bd93f9;">150</span>); <span style="color: #6272a4;">// ~60% speed</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 10: Complete Signal Path -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>From Code to Robot Motion</h2>
-                <p style="text-align: center; font-size: 1.3rem; margin-bottom: 30px;">The complete signal path:</p>
-                <div class="diagram-box">
-                    <svg viewBox="0 0 900 400" style="width: 100%;">
-                        <!-- Step 1: Code -->
-                        <rect x="20" y="150" width="140" height="100" rx="8" fill="rgba(80, 250, 123, 0.2)" stroke="#50fa7b" stroke-width="3"/>
-                        <text x="90" y="185" font-family="Exo 2" font-size="14" fill="#50fa7b" text-anchor="middle" font-weight="bold">1. YOUR CODE</text>
-                        <text x="90" y="210" font-family="JetBrains Mono" font-size="11" fill="#b8c5d6" text-anchor="middle">digitalWrite()</text>
-                        <text x="90" y="230" font-family="JetBrains Mono" font-size="11" fill="#b8c5d6" text-anchor="middle">analogWrite()</text>
-
-                        <path d="M 160 200 L 200 200" stroke="#ff9500" stroke-width="4" marker-end="url(#arrow2)"/>
-
-                        <!-- Step 2: Microcontroller -->
-                        <rect x="200" y="150" width="140" height="100" rx="8" fill="rgba(0, 212, 255, 0.2)" stroke="#00d4ff" stroke-width="3"/>
-                        <text x="270" y="185" font-family="Exo 2" font-size="14" fill="#00d4ff" text-anchor="middle" font-weight="bold">2. CPU</text>
-                        <text x="270" y="210" font-family="Exo 2" font-size="11" fill="#b8c5d6" text-anchor="middle">Executes</text>
-                        <text x="270" y="230" font-family="Exo 2" font-size="11" fill="#b8c5d6" text-anchor="middle">Instructions</text>
-
-                        <path d="M 340 200 L 380 200" stroke="#ff9500" stroke-width="4" marker-end="url(#arrow2)"/>
-
-                        <!-- Step 3: I/O Pins -->
-                        <rect x="380" y="150" width="140" height="100" rx="8" fill="rgba(255, 149, 0, 0.2)" stroke="#ff9500" stroke-width="3"/>
-                        <text x="450" y="185" font-family="Exo 2" font-size="14" fill="#ff9500" text-anchor="middle" font-weight="bold">3. I/O PINS</text>
-                        <text x="450" y="210" font-family="Exo 2" font-size="11" fill="#b8c5d6" text-anchor="middle">Send signals:</text>
-                        <text x="450" y="230" font-family="Exo 2" font-size="11" fill="#b8c5d6" text-anchor="middle">HIGH/LOW/PWM</text>
-
-                        <path d="M 520 200 L 560 200" stroke="#ff9500" stroke-width="4" marker-end="url(#arrow2)"/>
-
-                        <!-- Step 4: Motor Controller -->
-                        <rect x="560" y="120" width="140" height="160" rx="8" fill="rgba(189, 147, 249, 0.2)" stroke="#bd93f9" stroke-width="3"/>
-                        <text x="630" y="155" font-family="Exo 2" font-size="14" fill="#bd93f9" text-anchor="middle" font-weight="bold">4. MOTOR</text>
-                        <text x="630" y="175" font-family="Exo 2" font-size="14" fill="#bd93f9" text-anchor="middle" font-weight="bold">CONTROLLER</text>
-                        <text x="630" y="205" font-family="Exo 2" font-size="11" fill="#b8c5d6" text-anchor="middle">Amplifies</text>
-                        <text x="630" y="225" font-family="Exo 2" font-size="11" fill="#b8c5d6" text-anchor="middle">to high power</text>
-
-                        <!-- Battery input -->
-                        <rect x="590" y="240" width="80" height="30" rx="4" fill="rgba(80, 250, 123, 0.3)" stroke="#50fa7b" stroke-width="2"/>
-                        <text x="630" y="260" font-family="Exo 2" font-size="11" fill="#50fa7b" text-anchor="middle">12V Battery</text>
-
-                        <path d="M 700 200 L 740 200" stroke="#50fa7b" stroke-width="6" marker-end="url(#arrow2)"/>
-                        <text x="720" y="185" font-family="Exo 2" font-size="12" fill="#50fa7b" text-anchor="middle" font-weight="bold">HIGH POWER</text>
-
-                        <!-- Step 5: Motor -->
-                        <ellipse cx="810" cy="200" rx="70" ry="70" fill="rgba(0, 212, 255, 0.2)" stroke="#00d4ff" stroke-width="3"/>
-                        <text x="810" y="195" font-family="Exo 2" font-size="14" fill="#00d4ff" text-anchor="middle" font-weight="bold">5. MOTOR</text>
-                        <text x="810" y="215" font-family="Exo 2" font-size="11" fill="#b8c5d6" text-anchor="middle">SPINS!</text>
-
-                        <!-- Movement indication -->
-                        <path d="M 810 280 L 810 320" stroke="#00d4ff" stroke-width="3" marker-end="url(#arrow2)"/>
-                        <text x="810" y="345" font-family="Exo 2" font-size="16" fill="#00d4ff" text-anchor="middle" font-weight="bold">ROBOT MOVES</text>
-
-                        <!-- Sensor Feedback Path -->
-                        <!-- Sensors box -->
-                        <rect x="740" y="300" width="140" height="60" rx="8" fill="rgba(255, 215, 0, 0.2)" stroke="#FFD700" stroke-width="3"/>
-                        <text x="810" y="325" font-family="Exo 2" font-size="14" fill="#FFD700" text-anchor="middle" font-weight="bold">SENSORS</text>
-                        <text x="810" y="345" font-family="Exo 2" font-size="11" fill="#b8c5d6" text-anchor="middle">IR, Current</text>
-
-                        <!-- Feedback arrow from sensors back to CPU -->
-                        <path d="M 740 330 Q 450 370 270 250" stroke="#FFD700" stroke-width="3" stroke-dasharray="5,5" marker-end="url(#arrow-feedback)"/>
-                        <text x="500" y="385" font-family="Exo 2" font-size="11" fill="#FFD700" text-anchor="middle" font-weight="bold">SENSOR FEEDBACK</text>
-
-                        <defs>
-                            <marker id="arrow2" markerWidth="12" markerHeight="12" refX="6" refY="6" orient="auto">
-                                <polygon points="0 0, 12 6, 0 12" fill="#ff9500"/>
-                            </marker>
-                            <marker id="arrow-feedback" markerWidth="12" markerHeight="12" refX="6" refY="6" orient="auto">
-                                <polygon points="0 0, 12 6, 0 12" fill="#FFD700"/>
-                            </marker>
-                        </defs>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 11: Your Robot's Hardware -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Your Robot's Components</h2>
-                <div class="grid-2">
-                    <div class="box">
-                        <h3>Arduino Nano RP2040 Connect</h3>
-                        <ul class="bullet-list" style="font-size: 1rem;">
-                            <li><span class="highlight">Dual-core</span> RP2040 microcontroller</li>
-                            <li>133 MHz (much faster than Uno!)</li>
-                            <li>264 KB RAM</li>
-                            <li>WiFi & Bluetooth built-in</li>
-                            <li>21 digital I/O pins</li>
-                            <li>8 analog input pins</li>
-                        </ul>
-                    </div>
-                    <div class="box">
-                        <h3>VNH5019 Motor Controllers</h3>
-                        <ul class="bullet-list" style="font-size: 1rem;">
-                            <li><span class="highlight">Two controllers</span> (one per motor)</li>
-                            <li>Control direction + speed</li>
-                            <li>Handle 12A continuous per motor</li>
-                            <li>Built-in current sensing</li>
-                            <li>Protection circuitry</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="box" style="margin-top: 25px;">
-                    <h3>Additional Robot Hardware</h3>
-                    <div class="grid-3" style="margin-top: 15px;">
-                        <div>
-                            <p><span class="highlight">Motors:</span> Two DC gearmotor with wheels (tank drive)</p>
-                        </div>
-                        <div>
-                            <p><span class="highlight">Sensors:</span> 5x IR sensors for line following</p>
-                        </div>
-                        <div>
-                            <p><span class="highlight">Power:</span> 12V battery pack</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 12: What's Next -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>What's Next?</h2>
-                <div class="objective-box">
-                    <h3>Lesson 2: Hands-On Arduino Programming</h3>
-                    <ul class="bullet-list">
-                        <li>Install Arduino IDE software</li>
-                        <li>Connect to your robot's microcontroller</li>
-                        <li>Upload your first program (Blink LED)</li>
-                        <li>Understand setup() and loop() structure</li>
-                    </ul>
-                </div>
-                <div class="box" style="margin-top: 25px; background: rgba(255, 149, 0, 0.1); border-color: #ff9500;">
-                    <h3>Coming Up in Future Lessons:</h3>
-                    <ul class="bullet-list" style="font-size: 1rem;">
-                        <li>Control motor speed and direction</li>
-                        <li>Read IR line sensors</li>
-                        <li>Make your robot drive!</li>
-                    </ul>
-                </div>
-                <p style="text-align: center; font-size: 1.5rem; margin-top: 30px; color: #00d4ff;">
-                    Now you understand <span class="highlight">HOW</span> it all works!
-                </p>
-            </div>
-        </div>
-
-        <!-- Slide 13: Arduino IDE Setup -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Hands-On: Arduino IDE Setup</h2>
-                <p style="font-size: 1.3rem; margin-bottom: 25px; color: #b8c5d6;">
-                    Let's get familiar with the tool you'll use to program your robot!
-                </p>
-
-                <div class="objective-box">
-                    <h3>Step 1: Open Arduino IDE</h3>
-                    <ul class="bullet-list">
-                        <li>Launch the Arduino application on your computer</li>
-                        <li>You should see a blank sketch with <code>setup()</code> and <code>loop()</code></li>
-                    </ul>
-                </div>
-
-                <div class="objective-box" style="border-color: #bd93f9; box-shadow: 0 0 30px rgba(189, 147, 249, 0.2);">
-                    <h3 style="color: #bd93f9;">Step 2: Select Your Board</h3>
-                    <ul class="bullet-list">
-                        <li>Go to <strong>Tools → Board → Arduino AVR Boards</strong></li>
-                        <li>Select <strong>"Arduino Uno"</strong></li>
-                        <li>This tells the IDE what microcontroller you're using</li>
-                    </ul>
-                </div>
-
-                <div class="objective-box" style="border-color: #ff9500; box-shadow: 0 0 30px rgba(255, 149, 0, 0.2);">
-                    <h3 style="color: #ff9500;">Step 3: Connect Your Arduino</h3>
-                    <ul class="bullet-list">
-                        <li>Connect your Arduino Uno via USB cable</li>
-                        <li>Go to <strong>Tools → Port</strong> and select the port showing Arduino Uno</li>
-                        <li>The board should power on (LED lights up)</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 14: Your First Code - Blink -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Your First Code: Blink</h2>
-                <p style="font-size: 1.3rem; margin-bottom: 25px; color: #b8c5d6;">
-                    Let's load a simple program that makes the onboard LED blink on and off!
-                </p>
-
-                <div class="objective-box">
-                    <h3>Loading the Blink Example</h3>
-                    <ul class="bullet-list" style="font-size: 1rem;">
-                        <li>In Arduino IDE, go to <strong>File → Examples → 01.Basics → Blink</strong></li>
-                        <li>A new window opens with the Blink code</li>
-                        <li>This is a pre-written example that comes with Arduino IDE</li>
-                    </ul>
-                </div>
-
-                <div style="background: #1a1f3a; border: 2px solid #00d4ff; border-radius: 12px; padding: 25px; margin: 20px 0;">
-                    <pre style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: #e0e6f0; overflow-x: auto;"><code>void setup() {
-  pinMode(LED_BUILTIN, OUTPUT);
-}
-
-void loop() {
-  digitalWrite(LED_BUILTIN, HIGH);
-  delay(1000);
-  digitalWrite(LED_BUILTIN, LOW);
-  delay(1000);
-}</code></pre>
-                </div>
-
-                <div class="grid-2" style="margin-top: 25px;">
-                    <div class="box" style="background: rgba(80, 250, 123, 0.1); border-color: #50fa7b;">
-                        <h4 style="color: #50fa7b; margin-bottom: 10px; font-size: 1.2rem;">setup() - Runs Once</h4>
-                        <p style="font-size: 1rem;">Runs one time when Arduino starts. Configures pin 13 as an output.</p>
-                    </div>
-                    <div class="box" style="background: rgba(189, 147, 249, 0.1); border-color: #bd93f9;">
-                        <h4 style="color: #bd93f9; margin-bottom: 10px; font-size: 1.2rem;">loop() - Runs Forever</h4>
-                        <p style="font-size: 1rem;">Repeats continuously: LED on, wait, LED off, wait.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 15: Upload & Verify It Works -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Upload & Verify It Works</h2>
-                <p style="font-size: 1.3rem; margin-bottom: 25px; color: #b8c5d6;">
-                    Now let's send this program to your Arduino and watch it work!
-                </p>
-
-                <div class="objective-box">
-                    <h3>Uploading Your Code</h3>
-                    <ul class="bullet-list" style="font-size: 1.05rem;">
-                        <li>Click the <strong>checkmark ✓</strong> button (Verify) to check for errors</li>
-                        <li>If it says "Done compiling" - you're ready!</li>
-                        <li>Click the <strong>right arrow →</strong> button (Upload) to send code to Arduino</li>
-                        <li>Wait for "Done uploading" message at the bottom</li>
-                    </ul>
-                </div>
-
-                <div class="grid-2" style="margin-top: 30px;">
-                    <div class="box" style="background: rgba(80, 250, 123, 0.15); border: 3px solid #50fa7b; padding: 25px; text-align: center;">
-                        <h3 style="color: #50fa7b; font-size: 1.8rem; margin-bottom: 15px;">✓ Success!</h3>
-                        <p style="font-size: 1.1rem;">You should see a small LED on your Arduino board blinking on and off every second!</p>
-                        <p style="color: #50fa7b; margin-top: 15px; font-weight: 600;">You just programmed your first microcontroller!</p>
-                    </div>
-                    <div class="box" style="background: rgba(255, 149, 0, 0.15); border: 3px solid #ff9500; padding: 25px;">
-                        <h4 style="color: #ff9500; font-size: 1.3rem; margin-bottom: 15px;">Troubleshooting</h4>
-                        <ul class="bullet-list" style="text-align: left; font-size: 0.95rem;">
-                            <li>Error uploading? Check you selected the correct port</li>
-                            <li>Try unplugging and replugging the USB cable</li>
-                            <li>Make sure board type is "Arduino Uno"</li>
-                            <li>Some USB cables are power-only - try a different cable</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <p style="text-align: center; font-size: 1.2rem; margin-top: 25px; color: #00d4ff;">
-                    <strong>Congratulations!</strong> You've completed the full workflow: setup → load → upload → verify!
-                </p>
-            </div>
-        </div>
-
-        <!-- Slide 16: Recap -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Lesson 1 Recap</h2>
-                <div class="objective-box">
-                    <h3>Today you learned:</h3>
-                    <ul class="bullet-list" style="font-size: 1.05rem;">
-                        <li><span class="checkmark">✓</span> Microcontrollers are complete computers on a chip (CPU + memory + I/O)</li>
-                        <li><span class="checkmark">✓</span> Arduino makes microcontrollers easy to program</li>
-                        <li><span class="checkmark">✓</span> Motor controllers amplify weak microcontroller signals to high power</li>
-                        <li><span class="checkmark">✓</span> Direction control uses two digital pins (INA/INB)</li>
-                        <li><span class="checkmark">✓</span> Speed control uses PWM on one pin</li>
-                        <li><span class="checkmark">✓</span> Complete path: Code → CPU → I/O Pins → Motor Controller → Motor → Motion!</li>
-                        <li><span class="checkmark">✓</span> How to setup Arduino IDE and select a board</li>
-                        <li><span class="checkmark">✓</span> The structure of Arduino code: setup() and loop()</li>
-                        <li><span class="checkmark">✓</span> How to upload code and verify it works on real hardware</li>
-                    </ul>
-                </div>
-                <div style="text-align: center; margin-top: 30px;">
-                    <h3 style="font-size: 1.8rem; color: #50fa7b;">Foundation Complete!</h3>
-                    <p style="font-size: 1.2rem; margin-top: 15px;">Tomorrow: Writing your own Arduino code from scratch</p>
-                </div>
+                <p style="font-size:1rem; color:#6272a4;">For a robot that drives around a room, MicroPython is more than fast enough — and the time you save on syntax is time spent actually building things.</p>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="slide-number">
-        <span id="current-slide">1</span> / <span id="total-slides">16</span>
+<!-- ─────────────────────────────────────────── SLIDE 6: Today's Activity -->
+<div class="slide">
+    <div class="slide-content" style="text-align:center;">
+        <h2>Today's Activity</h2>
+        <p style="max-width:680px;margin:0 auto 30px;">Open the Activity Guide and work through each part at your own pace. Keep the Pico 2W Reference open in another tab — you'll use it the whole unit.</p>
+
+        <div class="grid-3" style="max-width:860px;margin:0 auto 30px;text-align:left;">
+            <div class="box">
+                <h3>Part 1 · ~10 min</h3>
+                <p>Set up Thonny and connect your Pico 2W</p>
+            </div>
+            <div class="box">
+                <h3>Part 2 · ~10 min</h3>
+                <p>Explore the REPL — run live commands on the board</p>
+            </div>
+            <div class="box">
+                <h3>Part 3 · ~15 min</h3>
+                <p>Write, save, and run your first blink program</p>
+            </div>
+        </div>
+
+        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;">
+            <a href="Activity_01_Blink.html" target="_blank"
+               style="background:linear-gradient(135deg,#00d4ff,#0099cc);color:#0a0e27;padding:16px 32px;border-radius:8px;text-decoration:none;font-family:'Exo 2',sans-serif;font-weight:700;font-size:1.1rem;box-shadow:0 4px 15px rgba(0,212,255,0.3);">
+               Open Activity Guide →
+            </a>
+            <a href="../resources/pico2w-reference.html" target="_blank"
+               style="background:rgba(0,212,255,0.1);border:2px solid #00d4ff;color:#00d4ff;padding:16px 32px;border-radius:8px;text-decoration:none;font-family:'Exo 2',sans-serif;font-weight:700;font-size:1.1rem;">
+               Pico 2W Reference ↗
+            </a>
+        </div>
+
+        <p style="color:#6272a4;font-size:1rem;">Challenges and comprehension questions are inside the activity guide. Finish all three parts first.</p>
     </div>
+</div>
 
-    <div class="controls">
-        <button id="prev-btn" onclick="previousSlide()">← Previous</button>
-        <a href="index.html" class="nav-button">⌂ BACK TO UNIT 5</a>
-        <a href="Arduino_Toolbox.html" class="nav-button" target="_blank" style="background: linear-gradient(135deg, #ff9500, #cc7700);">🧰 TOOLBOX</a>
-        <button id="next-btn" onclick="nextSlide()">Next →</button>
-    </div>
 
-    <script>
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.slide');
-        const totalSlides = slides.length;
 
-        document.getElementById('total-slides').textContent = totalSlides;
+</div><!-- /presentation -->
 
-        function showSlide(n) {
-            slides[currentSlide].classList.remove('active');
-            currentSlide = (n + totalSlides) % totalSlides;
-            slides[currentSlide].classList.add('active');
+<div class="slide-number" id="slideNum">1 / 5</div>
 
-            document.getElementById('current-slide').textContent = currentSlide + 1;
+<div class="ref-link">
+    <a href="../resources/pico2w-reference.html" target="_blank">Pico 2W Reference ↗</a>
+</div>
 
-            document.getElementById('prev-btn').disabled = currentSlide === 0;
-            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
-        }
+<div class="controls">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Previous</button>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</div>
 
-        function nextSlide() {
-            if (currentSlide < totalSlides - 1) {
-                showSlide(currentSlide + 1);
-            }
-        }
+<script>
+    let current = 0;
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    document.getElementById('slideNum').textContent = `1 / ${total}`;
 
-        function previousSlide() {
-            if (currentSlide > 0) {
-                showSlide(currentSlide - 1);
-            }
-        }
+    function changeSlide(dir) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(total - 1, current + dir));
+        slides[current].classList.add('active');
+        slides[current].scrollTop = 0;
+        document.getElementById('slideNum').textContent = `${current + 1} / ${total}`;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === total - 1;
+    }
 
-        // Keyboard navigation
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' || e.key === ' ') {
-                e.preventDefault();
-                nextSlide();
-            } else if (e.key === 'ArrowLeft') {
-                e.preventDefault();
-                previousSlide();
-            }
-        });
-
-        // Initialize
-        showSlide(0);
-    </script>
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
 </body>
 </html>

@@ -6,9 +6,13 @@
 // Placeholder image (data URI - won't be blocked by firewalls)
 const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iI2UwZTBlMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5QaG90bzwvdGV4dD48L3N2Zz4=';
 
+// Track param from URL — set by class hub pages (?track=hsaer / aer8th / dbl)
+// Overrides stored course for returning students in multiple classes.
+const URL_TRACK = new URLSearchParams(window.location.search).get('track') || null;
+
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.65',
+    VERSION: 'v2.10.3',
 
     // Backend URL — swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -23,8 +27,8 @@ const CONFIG = {
     // Google OAuth Client ID
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
 
-    // Semester start date (adjust for your semester)
-    SEMESTER_START: new Date('2026-02-02'),
+    // First day of school — update each year
+    SEMESTER_START: new Date('2026-08-31'),
 
     // Point values
     POINTS: {
@@ -44,26 +48,62 @@ function setBackendForCourse(course) {
 // WEEK TOPICS
 // ============================================
 const WEEK_TOPICS = {
-    1: { title: 'Line Following Refinement', phase: 'linefollow', focus: 'PID control, calibration, track testing' },
-    2: { title: 'Line Following Mastery', phase: 'linefollow', focus: 'Final practical, optimization' },
-    3: { title: 'Ultrasonic Sensor Basics', phase: 'scanner', focus: 'HC-SR04 wiring, distance measurement' },
-    4: { title: 'Servo & Scanner Build', phase: 'scanner', focus: 'Servo control, mounting, CAD design' },
-    5: { title: 'Scanning Algorithm', phase: 'scanner', focus: 'Data arrays, obstacle detection' },
-    6: { title: 'Wall Following Robot', phase: 'scanner', focus: 'Reactive navigation, distance-based wall tracking' },
-    7: { title: 'Motor Functions & PWM Values', phase: 'scanner', focus: 'Function parameters, PWM control, motor direction' },
-    8: { title: 'Claw Programming', phase: 'claw', focus: 'Servo control, grip functions' },
-    9: { title: 'Integrated Systems', phase: 'claw', focus: 'Scanner + claw + drive integration' },
-    10: { title: 'Claw Project — Week 1 Checkpoint', phase: 'claw', focus: 'Spec sheet draft, servo control, feedback readings' },
-    11: { title: 'Claw Project — Final', phase: 'claw', focus: 'Full grip-and-classify demo, annotated code, testing results' },
-    12: { title: 'Unit 9 Reflection 1', phase: 'final', focus: 'Reflect on your growth and accomplishments this year' },
-    13: { title: 'Unit 9 Reflection 2', phase: 'final', focus: 'Reflect on your growth and accomplishments this year' },
-    14: { title: 'Unit 9 Reflection 3', phase: 'final', focus: 'Reflect on your growth and accomplishments this year' }
+    // Unit 1 — Engineering Design Process (Aug 31 – Sep 11)
+    1:  { title: 'Engineering Design Process', phase: 'edp', unit: '01', focus: 'Intro, Spaghetti Tower challenge, EDP framework, Paper Glider, Design Brief workshop' },
+    2:  { title: 'Cardboard Robot Deck Challenge', phase: 'edp', unit: '01', focus: 'Client interview, concept sketching, build, iterate — EDP quiz end of week. Labor Day Mon Sep 7.' },
+    // Unit 2 — CAD: Component-Based (Sep 14 – Oct 23)
+    3:  { title: 'CAD: Motor Mount', phase: 'cad', unit: '02', focus: 'CAD hygiene rules, F360 orientation; motor mount — extrude, holes, bolt pattern' },
+    4:  { title: 'CAD: Motor Mount — Iterate & Print', phase: 'cad', unit: '02', focus: 'Tolerance fit, iterate, 3D print; version naming. Mid-unit checkpoint quiz.' },
+    5:  { title: 'CAD: IR Sensor Mount', phase: 'cad', unit: '02', focus: '15mm ground clearance constraint; print + test. Sep 30 is a 20-min period day.' },
+    6:  { title: 'CAD: Battery Holder + Ultrasonic Mount', phase: 'cad', unit: '02', focus: 'Wire relief features; print + test; forward-facing sensor mount' },
+    7:  { title: 'CAD: Robot Deck', phase: 'cad', unit: '02', focus: 'Hole patterns, wire pass-throughs, component layout; CNC toolpath intro. Records Day Oct 13 — 4-day week.' },
+    8:  { title: 'CAD: Electronics Mount + Quiz', phase: 'cad', unit: '02', focus: 'Standoffs, Arduino + motor controller spacing; CAD quiz end of week' },
+    // Unit 3 — Safety & Tool Certification (Oct 26 – Nov 6)
+    9:  { title: 'Safety: Foundations + Drill Press', phase: 'safety', unit: '03', focus: 'OSHA, LOTO, PPE, SDS; Matthew Henne + Lac-Mégantic case reviews; drill press cert' },
+    10: { title: 'Safety: Tool Certs + Quiz', phase: 'safety', unit: '03', focus: 'Pedestal grinder cert, hand drill cert, CNC awareness (Year 1: observe only); safety quiz' },
+    // Robot Build — Physical Assembly (Nov 9 – Dec 18)
+    11: { title: 'Build: CNC Deck Cut + Motor Mount', phase: 'build', unit: 'build', focus: 'Cut decks on CNC (all groups); motor mount final print. Nov 11 is a 20-min period day.' },
+    12: { title: 'Build: Frame Assembly', phase: 'build', unit: 'build', focus: 'Assemble frame: motors, wheels, caster; caliper measurements' },
+    13: { title: 'Build: Wiring Electronics', phase: 'build', unit: 'build', focus: 'Wire battery + Arduino mount. Short week — Thanksgiving break Thu–Fri.' },
+    14: { title: 'Build: Wiring Complete + Motor Test', phase: 'build', unit: 'build', focus: 'Finish wiring; motor test code; troubleshooting' },
+    15: { title: 'Build: Robot Rolling + Sensor Wiring', phase: 'build', unit: 'build', focus: 'Robot under manual control; begin sensor wiring' },
+    16: { title: 'Build: Buffer Week', phase: 'build', unit: 'build', focus: 'Build buffer / holiday 3D print projects if ahead of schedule. Winter Break starts ~Dec 21.' },
+    // Unit 5 — Programming & Electronics (Jan 4 – Feb 5)
+    17: { title: 'Programming: Arduino Intro', phase: 'linefollow', unit: '05', focus: 'Lessons 1–3: Arduino IDE setup, digital outputs, variables, serial monitor' },
+    18: { title: 'Programming: Control Structures + Quiz', phase: 'linefollow', unit: '05', focus: 'Lessons 4–5: loops, control structures. Quiz: Lessons 1–5. Jan 13 = 20-min period day.' },
+    19: { title: 'Programming: Finish Lesson 5', phase: 'linefollow', unit: '05', focus: 'Finish Lesson 5; review. Last week of Semester 1 — last student day Thu Jan 21. MLK Day Jan 18.' },
+    20: { title: 'Programming: Functions + Motor Control', phase: 'linefollow', unit: '05', focus: 'Lessons 8–9: serial monitor, functions; robot motor control code' },
+    21: { title: 'Programming: Robot Drives', phase: 'linefollow', unit: '05', focus: 'Basic motor sketch on physical robot; encoder intro' },
+    // Line Following (Feb 8 – Feb 26)
+    22: { title: 'Line Following: Sensor Setup', phase: 'linefollow', unit: '05', focus: 'IR sensor wiring + analogRead; threshold calibration' },
+    23: { title: 'Line Following: PID Control', phase: 'linefollow', unit: '05', focus: 'PID control intro; tune on Track 1. Presidents Day Feb 15 — 4-day week.' },
+    24: { title: 'Line Following: Track 1 Practical', phase: 'linefollow', unit: '05', focus: 'Track 1 practical (complete in under 1 min); begin Track 2 tuning' },
+    // Scanner Robot (Mar 1 – Mar 25)
+    25: { title: 'Scanner: Ultrasonic Sensor', phase: 'scanner', unit: '05', focus: 'HC-SR04 wiring, distance measurement, data collection' },
+    26: { title: 'Scanner: Servo Control + Sweep', phase: 'scanner', unit: '05', focus: 'Servo control; 180° sweep; data arrays. Mar 10 = 20-min period day.' },
+    27: { title: 'Scanner: Obstacle Detection Algorithm', phase: 'scanner', unit: '05', focus: 'Scanning algorithm; obstacle detection logic' },
+    28: { title: 'Scanner: Practical + Portfolio', phase: 'scanner', unit: '05', focus: 'Scanner practical; portfolio submission. Short week before Spring Break (Mar 26–Apr 4).' },
+    // Claw Project (Apr 5 – Apr 30)
+    29: { title: 'Claw: Intro + Design Brief', phase: 'claw', unit: '05', focus: 'Claw intro: servos + gripper mechanics; design brief D8' },
+    30: { title: 'Claw: Build + State Testing', phase: 'claw', unit: '05', focus: 'Work time; state testing Tue–Thu (independent coding). Short real-instruction week.' },
+    31: { title: 'Claw: Wiring + Potentiometer', phase: 'claw', unit: '05', focus: 'Claw build + wiring; potentiometer feedback control' },
+    32: { title: 'Claw: Practical + Final Submission', phase: 'claw', unit: '05', focus: 'Claw practical; design brief D9 due' },
+    // Capstone, Portfolio & Review (May 3 – Jun 11)
+    33: { title: 'Capstone: Open Challenge', phase: 'final', unit: '05', focus: 'Open-ended improvement project. May 5 = 20-min period day.' },
+    34: { title: 'Portfolio Completion Push', phase: 'final', unit: '05', focus: 'All deliverables finalized; portfolio review' },
+    35: { title: 'Review: Full Year', phase: 'final', unit: '05', focus: 'EDP, CAD, safety, programming review. Last day for seniors May 20.' },
+    36: { title: 'Final Exam', phase: 'final', unit: '05', focus: 'Final exam week' },
+    37: { title: 'Wrap-Up', phase: 'final', unit: '05', focus: 'Return exams; wrap-up projects; demos. Memorial Day May 31.' },
+    38: { title: 'End of Year', phase: 'final', unit: '05', focus: 'End-of-year reflection; equipment return. Half day Jun 11.' }
 };
 
 const WEEK_LABELS = {
-    12: 'Unit 9 · Reflection 1',
-    13: 'Unit 9 · Reflection 2',
-    14: 'Unit 9 · Reflection 3'
+    33: 'Capstone · Week 33',
+    34: 'Portfolio Push · Week 34',
+    35: 'Review · Week 35',
+    36: 'Final Exam · Week 36',
+    37: 'Wrap-Up · Week 37',
+    38: 'End of Year · Week 38'
 };
 
 function weekLabel(w) {
@@ -91,10 +131,74 @@ const DELIVERABLES = [
             'Connect at least one prompt specifically to work or skills from this class'
         ]
     },
+    // ── Unit 1: Engineering Design Process ──────────────────────────────
+    {
+        id: 11,
+        title: 'Design Brief',
+        unit: '01',
+        week: 1,
+        points: 50,
+        phase: 'edp',
+        description: 'Submit your completed design brief for the Robot Deck challenge.',
+        requirements: [
+            'Problem statement (1–2 sentences: who needs what and why)',
+            'At least 3 criteria — specific and measurable',
+            'All constraints listed',
+            'Design statement (one sentence combining criteria and constraints)'
+        ]
+    },
+    {
+        id: 12,
+        title: 'Robot Deck Design Record',
+        unit: '01',
+        week: 2,
+        points: 50,
+        phase: 'edp',
+        description: 'Document your design process from concept to prototype.',
+        requirements: [
+            'Photo of your concept sketch with decision matrix annotations',
+            'Photo of your completed cardboard prototype',
+            'One documented iteration: what changed, why you changed it, and what improved'
+        ]
+    },
+    // ── Unit 5: Programming Basics ───────────────────────────────────────
+    {
+        id: 51,
+        title: 'Programming Basics — Check Your Understanding',
+        unit: '05',
+        alwaysOpen: true,
+        points: 80,
+        phase: 'programming',
+        description: 'Answer Q1–Q5 from Activities 5.1, 5.2, 5.3, and 5.4. Answer from memory — you may look up syntax in the Pico 2W Reference, but not back at the activity guides.',
+        requirements: [
+            '5.1 Q1: What does while True: do, and why does every robot program need one?',
+            '5.1 Q2: Why do we write Pin("LED", Pin.OUT) instead of Pin(25, Pin.OUT) on the Pico 2W?',
+            '5.1 Q3: What is the REPL? Name one situation where you\'d use it instead of writing a full program in the editor.',
+            '5.1 Q4: You want the LED to blink every 200 ms. What value do you pass to time.sleep()? What function could you use instead to avoid the conversion?',
+            '5.1 Q5: Identify and write the corrected lines for the two bugs in the debug snippet from Activity 5.1.',
+            '5.2 Q1: What Python keyword starts every function definition?',
+            '5.2 Q2: In def blink(duration_ms):, what is duration_ms? When you write blink(400), what value does duration_ms hold while the function runs?',
+            '5.2 Q3: What does DRY stand for? Describe one specific example from Activity 5.2 where using a function let you follow the DRY principle.',
+            '5.2 Q4: Can a function call another function? Trace the chain of calls that happens when your code executes sos() — list every function that runs and in what order.',
+            '5.2 Q5: Identify and write the corrected lines for the two bugs in the debug snippet from Activity 5.2.',
+            '5.3 Q1: What does sw2.value() return when SW_2 is not pressed? When pressed? Why those specific values?',
+            '5.3 Q2: Why can\'t you configure a pin as Pin.IN without also setting a pull resistor? What happens if you leave it out?',
+            '5.3 Q3: SW_2 uses Pin.PULL_DOWN. If you changed it to Pin.PULL_UP, what would you need to change in the if statement to keep the same behavior? Why?',
+            '5.3 Q4: The LED stays on all the time and nothing changes when you press the switch. List the three most likely causes you would check first.',
+            '5.3 Q5: Identify and write the corrected lines for the two bugs in the debug snippet from Activity 5.3.',
+            '5.4 Q1: What does PWM stand for? Explain how rapid on/off switching simulates lower power without changing voltage.',
+            '5.4 Q2: duty_u16() accepts values 0–65535. What value gives 75% duty cycle? Show your calculation.',
+            '5.4 Q3: What does freq() control in a PWM signal? Would you notice a difference between freq(10) and freq(1000) on an LED? Explain.',
+            '5.4 Q4: Write the line inside set_brightness(percent) that calculates the duty value. Why is int() required?',
+            '5.4 Q5: Identify the two bugs in the debug snippet from Activity 5.4 and write the corrected version of each line.'
+        ]
+    },
+    // ── Unit 5: Robot Project ────────────────────────────────────────────
     {
         id: 1,
         title: 'Line Following Practical #1',
-        week: 1,
+        unit: '05',
+        week: 24,
         points: 50,
         phase: 'linefollow',
         description: 'Complete Track #1 with curves in under 1 minute.',
@@ -108,7 +212,8 @@ const DELIVERABLES = [
     {
         id: 2,
         title: 'Line Following Practical #2',
-        week: 2,
+        unit: '05',
+        week: 24,
         points: 75,
         phase: 'linefollow',
         description: 'Complete Track #2 with sharp curves in under 2 minutes.',
@@ -122,7 +227,8 @@ const DELIVERABLES = [
     {
         id: 3,
         title: 'Ultrasonic Sensor Lab Report',
-        week: 3,
+        unit: '05',
+        week: 25,
         points: 40,
         phase: 'scanner',
         description: 'Document your ultrasonic sensor setup and testing.',
@@ -136,7 +242,8 @@ const DELIVERABLES = [
     {
         id: 4,
         title: 'Scanner Assembly',
-        week: 4,
+        unit: '05',
+        week: 26,
         points: 50,
         phase: 'scanner',
         description: 'Build the servo-mounted scanning mechanism.',
@@ -149,7 +256,8 @@ const DELIVERABLES = [
     {
         id: 5,
         title: 'Obstacle Avoidance Run',
-        week: 5,
+        unit: '05',
+        week: 28,
         points: 75,
         phase: 'scanner',
         description: 'Run your reactive navigation robot as long as possible without hitting an obstacle. Submit commented code explaining how it works, how you tuned it, and what problems you solved.',
@@ -165,7 +273,8 @@ const DELIVERABLES = [
     {
         id: 6,
         title: 'Wall Following Robot (Optional)',
-        week: 6,
+        unit: '05',
+        week: 28,
         optional: true,
         points: 50,
         phase: 'scanner',
@@ -181,7 +290,8 @@ const DELIVERABLES = [
     {
         id: 7,
         title: 'Motor Functions & PWM Values',
-        week: 7,
+        unit: '05',
+        week: 21,
         points: 50,
         phase: 'scanner',
         description: 'Demonstrate your understanding of functions, arguments, and motor control by documenting your code and tuned PWM values.',
@@ -194,7 +304,8 @@ const DELIVERABLES = [
     {
         id: 8,
         title: 'Claw Project — Week 1 Checkpoint',
-        week: 10,
+        unit: '05',
+        week: 29,
         points: 50,
         phase: 'claw',
         description: 'Submit your spec sheet draft and demonstrate basic claw control with feedback readings.',
@@ -208,7 +319,8 @@ const DELIVERABLES = [
     {
         id: 9,
         title: 'Claw Project — Final',
-        week: 11,
+        unit: '05',
+        week: 32,
         points: 75,
         phase: 'claw',
         description: 'Submit your completed spec sheet and demonstrate the full grip-and-classify challenge.',
@@ -223,7 +335,8 @@ const DELIVERABLES = [
         id: 10,
         hidden: true,
         title: 'Final Robot Demonstration',
-        week: 10,
+        unit: '05',
+        week: 36,
         points: 100,
         phase: 'final',
         description: 'Demonstrate all three capabilities and present your work.',
@@ -806,8 +919,9 @@ async function handleTokenResponse(tokenResponse) {
             // config is not persisted in cloud state — restore default so it's never undefined
             state.config = { skipReflectionWeeks: [8], skipDeliverableWeeks: [], expectedVersion: null, quizEnabled: false, quizKey: 'claw', reflectionDueDates: {}, deliverableDueDates: {} };
             state.quiz = { loaded: false, submitted: false, grades: null, aiTotal: null };
-            // Students without a saved course (registered before multi-track) default to HS AE&R
-            setBackendForCourse(state.student.course || 'hsaer');
+            // URL_TRACK overrides stored course — lets a student in two classes
+            // open each class hub and land in the correct portfolio for that session.
+            setBackendForCourse(URL_TRACK || state.student.course || 'hsaer');
             restoreEvidenceLocal();
             calculateCurrentWeek();
             hideAllModals();
@@ -1172,9 +1286,19 @@ function initProfileForm() {
     const fresh = form.cloneNode(true);
     form.parentNode.replaceChild(fresh, form);
 
+    // Pre-fill course from URL param; lock dropdown so student can't pick wrong track
+    if (URL_TRACK) {
+        const courseSelect = fresh.querySelector('#setupCourse');
+        if (courseSelect) {
+            courseSelect.value = URL_TRACK;
+            courseSelect.disabled = true;
+        }
+    }
+
     fresh.addEventListener('submit', (e) => {
         e.preventDefault();
-        const course = document.getElementById('setupCourse').value;
+        const courseSelect = document.getElementById('setupCourse');
+        const course = URL_TRACK || courseSelect.value;
         state.student = {
             name: state.student.name,
             email: state.student.email,
@@ -1416,9 +1540,11 @@ function markFeedbackViewed(key) {
 }
 
 function getCurrentPhase() {
-    if (state.currentWeek <= 2) return { name: 'Line Following', key: 'linefollow' };
-    if (state.currentWeek <= 6) return { name: 'Ultrasonic Scanner', key: 'scanner' };
-    if (state.currentWeek <= 9) return { name: 'Servo Claw', key: 'claw' };
+    if (state.currentWeek <= 3)  return { name: 'Engineering Design', key: 'edp' };
+    if (state.currentWeek <= 11) return { name: 'CAD & Manufacturing', key: 'cad' };
+    if (state.currentWeek <= 13) return { name: 'Line Following', key: 'linefollow' };
+    if (state.currentWeek <= 18) return { name: 'Ultrasonic Scanner', key: 'scanner' };
+    if (state.currentWeek <= 22) return { name: 'Servo Claw', key: 'claw' };
     return { name: 'Final Demo', key: 'final' };
 }
 
@@ -1458,7 +1584,7 @@ function calculateCurrentWeek() {
     const diffTime = now - CONFIG.SEMESTER_START;
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     const diffWeeks = Math.floor(diffDays / 7) + 1;
-    state.currentWeek = Math.min(Math.max(1, diffWeeks), 14);
+    state.currentWeek = Math.min(Math.max(1, diffWeeks), 38);
 }
 
 function updatePhaseIndicators() {
@@ -1504,6 +1630,7 @@ function updateUpcoming() {
         const overdueDeliverable = DELIVERABLES.find(d => !d.hidden && d.week === week);
         if (overdueDeliverable && !overdueDeliverable.optional
                 && !state.config.skipDeliverableWeeks.includes(week)
+                && !!state.config.deliverableDueDates[overdueDeliverable.week]
                 && state.deliverables[overdueDeliverable.id]?.status !== 'completed') {
             upcoming.unshift({ title: overdueDeliverable.title, due: 'OVERDUE', points: overdueDeliverable.points, overdue: true });
         }
@@ -1546,6 +1673,26 @@ function updateWeekTopic() {
     }
 }
 
+function renderDeliverableCard(d) {
+    const status = state.deliverables[d.id]?.status || 'pending';
+    const isCurrent = d.week === state.currentWeek;
+    const isAssigned = d.alwaysOpen || status === 'completed' || !!state.config.deliverableDueDates[d.week];
+    return `
+        <div class="deliverable-card ${status} ${isCurrent ? 'current' : ''} ${!isAssigned ? 'not-assigned' : ''}" data-id="${d.id}">
+            <div class="deliverable-number">${status === 'completed' ? '<i class="fas fa-check"></i>' : d.id}</div>
+            <div class="deliverable-info">
+                <div class="deliverable-title">${d.title}</div>
+                <div class="deliverable-meta">
+                    <span>Unit ${d.unit || '?'}</span>
+                    <span>${formatPhase(d.phase)}</span>
+                    <span class="deliverable-points">${d.points} pts</span>
+                </div>
+            </div>
+            <div class="deliverable-status status-${status}">${formatStatus(status)}</div>
+        </div>
+    `;
+}
+
 function updateDeliverablesList() {
     const list = document.getElementById('deliverablesList');
     const activePhase = document.querySelector('.phase-tab.active')?.dataset.phase || 'all';
@@ -1553,25 +1700,28 @@ function updateDeliverablesList() {
     const filtered = (activePhase === 'all' ? DELIVERABLES : DELIVERABLES.filter(d => d.phase === activePhase))
         .filter(d => !d.hidden && !state.config.skipDeliverableWeeks.includes(d.week));
 
-    list.innerHTML = filtered.map(d => {
-        const status = state.deliverables[d.id]?.status || 'pending';
-        const isCurrent = d.week === state.currentWeek;
-        const isAssigned = d.alwaysOpen || status === 'completed' || !!state.config.deliverableDueDates[d.week];
-        return `
-            <div class="deliverable-card ${status} ${isCurrent ? 'current' : ''} ${!isAssigned ? 'not-assigned' : ''}" data-id="${d.id}">
-                <div class="deliverable-number">${status === 'completed' ? '<i class="fas fa-check"></i>' : d.id}</div>
-                <div class="deliverable-info">
-                    <div class="deliverable-title">${d.title}</div>
-                    <div class="deliverable-meta">
-                        <span>${d.unit ? 'Unit ' + d.unit : 'Week ' + d.week}</span>
-                        <span>${formatPhase(d.phase)}</span>
-                        <span class="deliverable-points">${d.points} pts</span>
-                    </div>
+    if (activePhase === 'all') {
+        const unitGroups = [
+            { key: '00', label: 'Unit 0 — Career Ready Practices' },
+            { key: '01', label: 'Unit 1 — Engineering Design Process' },
+            { key: '02', label: 'Unit 2 — Fundamentals of CAD' },
+            { key: '03', label: 'Unit 3 — Rapid Prototyping & Manufacturing' },
+            { key: '04', label: 'Unit 4 — Shop Safety' },
+            { key: '05', label: 'Unit 5 — Programming, Electronics & Sensors' },
+        ];
+        list.innerHTML = unitGroups.map(u => {
+            const unitDeliverables = filtered.filter(d => d.unit === u.key);
+            if (!unitDeliverables.length) return '';
+            return `
+                <div class="unit-group">
+                    <h4 class="unit-group-label">${u.label}</h4>
+                    ${unitDeliverables.map(d => renderDeliverableCard(d)).join('')}
                 </div>
-                <div class="deliverable-status status-${status}">${formatStatus(status)}</div>
-            </div>
-        `;
-    }).join('');
+            `;
+        }).join('');
+    } else {
+        list.innerHTML = filtered.map(d => renderDeliverableCard(d)).join('');
+    }
 
     list.querySelectorAll('.deliverable-card').forEach(card => {
         card.addEventListener('click', () => openDeliverableForm(parseInt(card.dataset.id)));
@@ -3144,7 +3294,12 @@ function getInitials(name) {
 }
 
 function formatPhase(phase) {
-    const names = { linefollow: 'Line Following', scanner: 'Ultrasonic Scanner', claw: 'Servo Claw', final: 'Final Demo' };
+    const names = {
+        edp: 'Engineering Design', foundations: 'Foundations',
+        cad: 'CAD', mfg: 'Manufacturing', safety: 'Shop Safety',
+        linefollow: 'Line Following', scanner: 'Ultrasonic Scanner',
+        claw: 'Servo Claw', final: 'Final Demo'
+    };
     return names[phase] || phase;
 }
 

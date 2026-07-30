@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Activity 5.1 — Thonny Setup & First Blink</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: #0a0e27;
+            color: #e0e6f0;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* ── LAYOUT ── */
+        .layout {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            min-height: 100vh;
+        }
+
+        /* ── SIDEBAR NAV ── */
+        .sidebar {
+            position: sticky; top: 0; height: 100vh;
+            background: #0d1117;
+            border-right: 1px solid rgba(0,212,255,0.15);
+            overflow-y: auto; padding: 24px 0;
+            display: flex; flex-direction: column; gap: 0;
+        }
+        .sidebar-title {
+            font-family: 'Orbitron', sans-serif; font-size: 0.7rem;
+            font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+            color: #6272a4; padding: 0 20px 16px; border-bottom: 1px solid rgba(0,212,255,0.1);
+            margin-bottom: 8px;
+        }
+        .nav-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 20px; text-decoration: none;
+            color: #6272a4; font-size: 0.88rem; font-weight: 500;
+            transition: color 0.15s, background 0.15s;
+            border-left: 3px solid transparent;
+        }
+        .nav-item:hover { color: #b8c5d6; background: rgba(0,212,255,0.04); }
+        .nav-item.active { color: #00d4ff; border-left-color: #00d4ff; background: rgba(0,212,255,0.07); }
+        .nav-num {
+            flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+            background: rgba(0,212,255,0.12); border: 1px solid rgba(0,212,255,0.3);
+            color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.72rem;
+            font-weight: 700; display: flex; align-items: center; justify-content: center;
+        }
+        .nav-item.active .nav-num { background: #00d4ff; color: #0a0e27; }
+        .nav-divider { height: 1px; background: rgba(0,212,255,0.08); margin: 8px 20px; }
+        .sidebar-links { margin-top: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; }
+        .sidebar-links a {
+            font-size: 0.8rem; color: #6272a4; text-decoration: none;
+            padding: 6px 10px; border: 1px solid rgba(0,212,255,0.15);
+            border-radius: 6px; text-align: center; transition: color 0.15s, border-color 0.15s;
+        }
+        .sidebar-links a:hover { color: #00d4ff; border-color: rgba(0,212,255,0.4); }
+
+        /* ── MAIN CONTENT ── */
+        main { padding: 40px 48px 80px; max-width: 860px; }
+
+        .activity-header { margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid rgba(0,212,255,0.15); }
+        .activity-header h1 {
+            font-family: 'Orbitron', sans-serif; font-size: 1.6rem; font-weight: 700;
+            color: #00d4ff; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .header-meta { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px; }
+        .meta-tag {
+            font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+            padding: 3px 10px; border-radius: 4px;
+        }
+        .meta-time { background: rgba(0,212,255,0.12); color: #00d4ff; border: 1px solid rgba(0,212,255,0.3); }
+        .meta-level { background: rgba(80,250,123,0.12); color: #50fa7b; border: 1px solid rgba(80,250,123,0.3); }
+
+        /* ── SECTIONS ── */
+        section { margin-bottom: 56px; scroll-margin-top: 24px; }
+
+        .section-header {
+            display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
+            padding-bottom: 12px; border-bottom: 2px solid rgba(0,212,255,0.2);
+        }
+        .section-num {
+            flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #0a0e27; font-family: 'Orbitron', sans-serif; font-weight: 900;
+            font-size: 1rem; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 16px rgba(0,212,255,0.4);
+        }
+        .section-title {
+            font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 700;
+            color: #00d4ff; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .section-time { font-size: 0.8rem; color: #6272a4; margin-left: auto; font-family: 'Space Mono', monospace; }
+
+        p { color: #b8c5d6; margin-bottom: 12px; }
+
+        /* ── STEPS ── */
+        .steps { display: flex; flex-direction: column; gap: 16px; margin: 16px 0; }
+        .step {
+            display: flex; gap: 16px; align-items: flex-start;
+            background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.15);
+            border-radius: 10px; padding: 16px 18px;
+        }
+        .step-n {
+            flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
+            background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.4);
+            color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.82rem;
+            font-weight: 700; display: flex; align-items: center; justify-content: center;
+        }
+        .step-body { flex: 1; }
+        .step-body strong { display: block; color: #e0e6f0; font-size: 1rem; margin-bottom: 5px; }
+        .step-body p { font-size: 0.95rem; margin-bottom: 0; }
+
+        /* ── CODE BLOCKS ── */
+        .code-wrap { position: relative; margin: 14px 0; }
+        .code-label {
+            position: absolute; top: -10px; left: 14px; z-index: 1;
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+            padding: 2px 8px; border-radius: 4px;
+            background: #0a0e27; color: #6272a4; border: 1px solid rgba(0,212,255,0.2);
+        }
+        pre {
+            background: #0d1117; border: 1.5px solid rgba(0,212,255,0.25); border-radius: 10px;
+            padding: 18px 20px; overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; line-height: 1.75;
+            color: #e0e6f0;
+        }
+        .copy-btn {
+            position: absolute; top: 8px; right: 10px;
+            background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.25);
+            color: #6272a4; font-family: 'Space Mono', monospace; font-size: 0.7rem;
+            padding: 3px 8px; border-radius: 4px; cursor: pointer;
+            transition: color 0.15s, background 0.15s;
+        }
+        .copy-btn:hover { color: #00d4ff; background: rgba(0,212,255,0.2); }
+        .copy-btn.copied { color: #50fa7b; border-color: rgba(80,250,123,0.4); }
+
+        .kw  { color: #ff79c6; }
+        .cls { color: #ffb86c; font-weight: 700; }
+        .fn  { color: #8be9fd; }
+        .str { color: #f1fa8c; }
+        .num { color: #bd93f9; }
+        .cm  { color: #6272a4; font-style: italic; }
+        .op  { color: #b8c5d6; }
+
+        /* ── CALLOUT BOXES ── */
+        .callout {
+            border-radius: 10px; padding: 16px 18px; margin: 16px 0;
+            display: flex; gap: 14px; align-items: flex-start;
+        }
+        .callout-icon { font-size: 1.3rem; flex-shrink: 0; line-height: 1.4; }
+        .callout-body p { margin-bottom: 0; font-size: 0.95rem; }
+        .callout-body strong { display: block; margin-bottom: 4px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .callout-warn {
+            background: rgba(255,149,0,0.08); border: 1px solid rgba(255,149,0,0.35);
+        }
+        .callout-warn strong { color: #ff9500; }
+        .callout-info {
+            background: rgba(0,212,255,0.07); border: 1px solid rgba(0,212,255,0.25);
+        }
+        .callout-info strong { color: #00d4ff; }
+
+        /* ── CHECKPOINT ── */
+        .checkpoint {
+            background: linear-gradient(135deg, rgba(80,250,123,0.1), rgba(80,250,123,0.04));
+            border: 2px solid #50fa7b; border-radius: 10px; padding: 16px 20px;
+            margin: 24px 0; display: flex; gap: 14px; align-items: center;
+        }
+        .checkpoint-icon { font-size: 1.5rem; flex-shrink: 0; }
+        .checkpoint-body strong { color: #50fa7b; display: block; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 3px; }
+        .checkpoint-body p { color: #b8c5d6; font-size: 0.95rem; margin: 0; }
+
+        /* ── CHALLENGE ── */
+        .challenge-set { display: flex; flex-direction: column; gap: 14px; margin: 16px 0; }
+        .challenge {
+            background: rgba(80,250,123,0.05); border: 1.5px solid rgba(80,250,123,0.3);
+            border-radius: 10px; padding: 16px 18px;
+        }
+        .challenge-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+        .challenge-num {
+            font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700;
+            color: #50fa7b; background: rgba(80,250,123,0.12);
+            padding: 2px 7px; border-radius: 4px;
+        }
+        .challenge-title { font-weight: 700; color: #e0e6f0; font-size: 1rem; }
+        .challenge p { font-size: 0.95rem; margin-bottom: 6px; }
+        .challenge p:last-child { margin-bottom: 0; }
+
+        /* ── QUESTIONS ── */
+        .question-set { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
+        .question {
+            background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.2);
+            border-radius: 10px; padding: 16px 18px;
+        }
+        .question-num {
+            font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700;
+            color: #00d4ff; margin-bottom: 6px; display: block;
+        }
+        .question p { font-size: 0.95rem; margin-bottom: 0; }
+        .q-warn {
+            background: rgba(255,149,0,0.06); border-color: rgba(255,149,0,0.3);
+        }
+        .q-warn .question-num { color: #ff9500; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.88em;
+            color: #00d4ff; background: rgba(0,212,255,0.1);
+            padding: 1px 5px; border-radius: 4px; white-space: nowrap;
+            font-variant-ligatures: none;
+        }
+
+        @media (max-width: 720px) {
+            .layout { grid-template-columns: 1fr; }
+            .sidebar { position: static; height: auto; flex-direction: row; flex-wrap: wrap; padding: 12px; }
+            .sidebar-title { display: none; }
+            .nav-item { padding: 6px 12px; border-left: none; border-bottom: 2px solid transparent; }
+            .nav-item.active { border-bottom-color: #00d4ff; border-left-color: transparent; }
+            .sidebar-links { display: none; }
+            main { padding: 24px 20px 60px; }
+        }
+    </style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ── SIDEBAR ── -->
+<nav class="sidebar">
+    <div class="sidebar-title">Activity 5.1</div>
+    <a href="#setup"     class="nav-item active"><span class="nav-num">1</span> Thonny Setup</a>
+    <a href="#repl"      class="nav-item"><span class="nav-num">2</span> Explore REPL</a>
+    <a href="#blink"     class="nav-item"><span class="nav-num">3</span> Blink Program</a>
+    <div class="nav-divider"></div>
+    <a href="#challenges" class="nav-item"><span class="nav-num">★</span> Challenges</a>
+    <a href="#questions"  class="nav-item"><span class="nav-num">?</span> Questions</a>
+    <div class="sidebar-links">
+        <a href="Activity_01_Blink.html">↺ This page</a>
+        <a href="../resources/pico2w-reference.html" target="_blank">Pico 2W Ref ↗</a>
+        <a href="Lesson_01_Microcontroller_Fundamentals.html">← Lesson 5.1</a>
+    </div>
+</nav>
+
+<!-- ── MAIN ── -->
+<main>
+    <div class="activity-header">
+        <h1>Activity 5.1 — Thonny Setup &amp; First Blink</h1>
+        <p style="color:#6272a4; margin-bottom:0;">Work through each part in order. Raise your hand at each checkpoint before moving on.</p>
+        <div class="header-meta">
+            <span class="meta-tag meta-time">~35 minutes</span>
+            <span class="meta-tag meta-level">Lesson 5.1</span>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════ PART 1: THONNY SETUP -->
+    <section id="setup">
+        <div class="section-header">
+            <div class="section-num">1</div>
+            <div class="section-title">Thonny Setup</div>
+            <div class="section-time">~10 min</div>
+        </div>
+
+        <p>Thonny is the app you use to write and run MicroPython on the Pico 2W. Follow these steps the first time you use a new computer.</p>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-n">1</div>
+                <div class="step-body">
+                    <strong>Download &amp; install Thonny</strong>
+                    <p>Go to <code>thonny.org</code> and download the Windows installer. Run it and accept all defaults.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-n">2</div>
+                <div class="step-body">
+                    <strong>Open Thonny → Tools → Options → Interpreter tab</strong>
+                    <p>From the dropdown at the top of that dialog, select <code>MicroPython (Raspberry Pi Pico)</code>.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-n">3</div>
+                <div class="step-body">
+                    <strong>Install firmware (first time only)</strong>
+                    <p>Unplug the Pico. Hold the <strong style="color:#ff9500">BOOTSEL button</strong> on the Pico while you plug the USB cable back in — hold it until the board mounts as a USB drive, then release. Back in Thonny's interpreter dialog, click <code>Install or update MicroPython</code>. Three dropdowns appear:</p>
+                    <ol style="margin:8px 0 0 18px; color:#b8c5d6; font-size:0.95rem; line-height:2;">
+                        <li>Set <strong style="color:#e0e6f0">Target device</strong> to your Pico (shows as a drive letter)</li>
+                        <li>Set <strong style="color:#e0e6f0">MicroPython family</strong> to <code>RP2</code></li>
+                        <li>Set <strong style="color:#e0e6f0">Variant</strong> to <code>Raspberry Pi Pico 2W</code></li>
+                    </ol>
+                    <p style="margin-top:8px;">Click Install. Wait for it to finish, then click Close.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-n">4</div>
+                <div class="step-body">
+                    <strong>Click OK — check the status bar</strong>
+                    <p>The bottom-right corner of Thonny should now show <code>MicroPython (Raspberry Pi Pico)</code> and a COM port number. If it shows "Python 3" instead, repeat step 2.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-n">5</div>
+                <div class="step-body">
+                    <strong>Verify code completions are on</strong>
+                    <p>Go to <code>Tools → Options → Editor</code> tab. Confirm both of these are checked:</p>
+                    <ul style="margin:8px 0 0 18px; color:#b8c5d6; font-size:0.95rem; line-height:2;">
+                        <li><strong style="color:#e0e6f0">Automatically propose completions while typing</strong></li>
+                        <li><strong style="color:#e0e6f0">Automatically show documentation for completions</strong></li>
+                    </ul>
+                    <p style="margin-top:8px;">These are on by default. If they're unchecked, check them now. With completions on, Thonny will suggest method names as you type — e.g. type <code>led.</code> and a list will appear. Note that some MicroPython methods (like <code>toggle()</code>) won't appear in the list even though they work — use the Pico 2W Reference for those.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="callout callout-warn">
+            <div class="callout-icon">⚠</div>
+            <div class="callout-body">
+                <strong>BOOTSEL common mistake</strong>
+                <p>You must hold BOOTSEL <em>before</em> plugging in USB, and keep holding it until the board shows up as a drive. Plugging in first and then pressing BOOTSEL does not work.</p>
+            </div>
+        </div>
+
+        <div class="callout callout-warn">
+            <div class="callout-icon">⚠</div>
+            <div class="callout-body">
+                <strong>"Access is denied" / COM port error after firmware install</strong>
+                <p>Windows sometimes locks the COM port after the firmware install process. <strong style="color:#ff9500">Restart the computer</strong> — this clears it every time. After rebooting, plug the Pico back in (no BOOTSEL) and reopen Thonny. If you'd rather not reboot: open Device Manager → Ports (COM &amp; LPT) → right-click the Pico port → Disable, then Enable. Windows will likely prompt for a restart anyway.</p>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            <div class="checkpoint-icon">✋</div>
+            <div class="checkpoint-body">
+                <strong>Checkpoint 1</strong>
+                <p>Thonny's status bar shows <code>MicroPython (Raspberry Pi Pico)</code> and a COM port. Raise your hand — show the teacher before continuing.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════ PART 2: REPL -->
+    <section id="repl">
+        <div class="section-header">
+            <div class="section-num">2</div>
+            <div class="section-title">Explore the REPL</div>
+            <div class="section-time">~10 min</div>
+        </div>
+
+        <p>The <strong style="color:#00d4ff">Shell panel</strong> at the bottom of Thonny is the REPL — type a line, press Enter, and it runs immediately on the Pico. You'll see <code>&gt;&gt;&gt;</code> when it's ready.</p>
+
+        <p>Type each line below into the Shell and press Enter. Don't copy the <code>&gt;&gt;&gt;</code> — that's the prompt, not part of your code. Observe what happens before moving to the next line.</p>
+
+        <div class="code-wrap">
+            <div class="code-label">Shell — type line by line</div>
+            <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="op">&gt;&gt;&gt; </span><span class="num">1</span> <span class="op">+</span> <span class="num">1</span>
+<span class="cm">2</span>
+
+<span class="op">&gt;&gt;&gt; </span><span class="str">"go"</span> <span class="op">*</span> <span class="num">3</span>
+<span class="cm">'gogogo'</span>
+
+<span class="op">&gt;&gt;&gt; </span><span class="kw">import</span> machine
+<span class="op">&gt;&gt;&gt; </span>machine.<span class="fn">freq</span>()
+<span class="cm">150000000</span>
+
+<span class="op">&gt;&gt;&gt; </span><span class="kw">from</span> machine <span class="kw">import</span> <span class="cls">Pin</span>
+<span class="op">&gt;&gt;&gt; </span>led <span class="op">=</span> <span class="cls">Pin</span>(<span class="str">"LED"</span>, <span class="cls">Pin</span>.OUT)
+<span class="op">&gt;&gt;&gt; </span>led.<span class="fn">value</span>(<span class="num">1</span>)
+<span class="op">&gt;&gt;&gt; </span>led.<span class="fn">value</span>(<span class="num">0</span>)</pre>
+        </div>
+
+        <div class="callout callout-info">
+            <div class="callout-icon">💡</div>
+            <div class="callout-body">
+                <strong>Why "LED" and not 25?</strong>
+                <p>On the original Pico, the onboard LED was wired directly to <strong style="color:#00d4ff">GPIO pin 25</strong> (a physical pin number on the chip), so code used <code>Pin(25, Pin.OUT)</code>. On the Pico 2W, the LED is routed through the Wi-Fi chip instead, so GPIO 25 no longer reaches it. Raspberry Pi solved this by giving it the special name <code>"LED"</code>. Using the number <code>25</code> silently does nothing — no error, no light. This trips up everyone the first time.</p>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            <div class="checkpoint-icon">✋</div>
+            <div class="checkpoint-body">
+                <strong>Checkpoint 2</strong>
+                <p>You turned the onboard LED on and off from the REPL Shell. Raise your hand to confirm with the teacher.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════ PART 3: BLINK PROGRAM -->
+    <section id="blink">
+        <div class="section-header">
+            <div class="section-num">3</div>
+            <div class="section-title">Write Your First Program</div>
+            <div class="section-time">~15 min</div>
+        </div>
+
+        <p>Now you'll write a real program in the editor (the top panel in Thonny). Unlike the REPL, programs run from start to finish — and with <code>while True</code>, they loop forever until you press Stop.</p>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-n">1</div>
+                <div class="step-body">
+                    <strong>Click in the editor (top panel)</strong>
+                    <p>If the editor shows any old code, select all (Ctrl + A) and delete it.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-n">2</div>
+                <div class="step-body">
+                    <strong>Type this program exactly</strong>
+                    <p>Indentation matters — the four lines inside <code>while True:</code> must each start with 4 spaces (or one Tab). Use the copy button if you want, but typing it yourself is better practice.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="code-wrap">
+            <div class="code-label">main.py</div>
+            <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="kw">from</span> machine <span class="kw">import</span> <span class="cls">Pin</span>
+<span class="kw">import</span> time
+
+led <span class="op">=</span> <span class="cls">Pin</span>(<span class="str">"LED"</span>, <span class="cls">Pin</span>.OUT)  <span class="cm"># onboard LED — use "LED", not 25</span>
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    led.<span class="fn">value</span>(<span class="num">1</span>)       <span class="cm"># turn LED on</span>
+    time.<span class="fn">sleep</span>(<span class="num">0.5</span>)   <span class="cm"># wait 0.5 seconds</span>
+    led.<span class="fn">value</span>(<span class="num">0</span>)       <span class="cm"># turn LED off</span>
+    time.<span class="fn">sleep</span>(<span class="num">0.5</span>)   <span class="cm"># wait 0.5 seconds</span></pre>
+        </div>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-n">3</div>
+                <div class="step-body">
+                    <strong>Save to the Pico as main.py</strong>
+                    <p>Press Ctrl + S. A dialog will ask where to save. Click <code>Raspberry Pi Pico</code>. Name the file <code>main.py</code> and click OK. Saving as <code>main.py</code> means it runs automatically every time the Pico powers on.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-n">4</div>
+                <div class="step-body">
+                    <strong>Press F5 (Run)</strong>
+                    <p>The LED should blink on and off every 0.5 seconds. Press the red Stop button to halt it.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="callout callout-info">
+            <div class="callout-icon">🔍</div>
+            <div class="callout-body">
+                <strong>What each line does</strong>
+                <p><code>from machine import Pin</code> — loads the Pin class so you can control GPIO pins.<br>
+                <code>import time</code> — loads timing functions like <code>sleep()</code>.<br>
+                <code>Pin("LED", Pin.OUT)</code> — creates an output for the onboard LED.<br>
+                <code>while True:</code> — loops forever (every robot program has this).<br>
+                <code>time.sleep(0.5)</code> — pauses for 0.5 seconds. Use <code>sleep_ms(500)</code> for the same thing in milliseconds.</p>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            <div class="checkpoint-icon">✋</div>
+            <div class="checkpoint-body">
+                <strong>Checkpoint 3 — show the teacher</strong>
+                <p>Your LED is blinking. Show the teacher before moving to challenges.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════ CHALLENGES -->
+    <section id="challenges">
+        <div class="section-header">
+            <div class="section-num">★</div>
+            <div class="section-title">Challenges</div>
+            <div class="section-time">finish early?</div>
+        </div>
+
+        <p>Start from your working blink program. Change one thing at a time — run it, observe, then move to the next. Each change should take 2–5 minutes.</p>
+
+        <div class="challenge-set">
+            <div class="challenge">
+                <div class="challenge-header">
+                    <span class="challenge-num">C1</span>
+                    <span class="challenge-title">Speed</span>
+                </div>
+                <p>Change both <code>0.5</code> values to <code>0.1</code>. What happens? Try <code>2.0</code>. What is the relationship between the sleep value and the blink rate?</p>
+            </div>
+
+            <div class="challenge">
+                <div class="challenge-header">
+                    <span class="challenge-num">C2</span>
+                    <span class="challenge-title">Unequal On/Off</span>
+                </div>
+                <p>Make the LED stay on for 2 seconds but off for only 0.1 seconds. The two <code>time.sleep()</code> calls can have different values.</p>
+            </div>
+
+            <div class="challenge">
+                <div class="challenge-header">
+                    <span class="challenge-num">C3</span>
+                    <span class="challenge-title">Use toggle()</span>
+                </div>
+                <p>Replace <em>both</em> <code>led.value(1)</code> and <code>led.value(0)</code> with a single <code>led.toggle()</code>, and keep only one <code>time.sleep(0.5)</code>. Does it work the same way?</p>
+            </div>
+
+            <div class="challenge">
+                <div class="challenge-header">
+                    <span class="challenge-num">C4</span>
+                    <span class="challenge-title">SOS Pattern</span>
+                </div>
+                <p>Morse code: <strong>S</strong> = · · · &nbsp; <strong>O</strong> = — — —<br>
+                Short blink: 0.1s on / 0.1s off &nbsp;|&nbsp; Long blink: 0.4s on / 0.1s off &nbsp;|&nbsp; Letter gap: 0.3s off<br>
+                Hint: use a <code>for</code> loop to repeat short and long blinks without copy-pasting.</p>
+
+                <div class="code-wrap" style="margin-top:10px;">
+                    <div class="code-label">for loop hint</div>
+<pre><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">3</span>):       <span class="cm"># repeat 3 times (S)</span>
+    led.<span class="fn">value</span>(<span class="num">1</span>)
+    time.<span class="fn">sleep</span>(<span class="num">0.1</span>)
+    led.<span class="fn">value</span>(<span class="num">0</span>)
+    time.<span class="fn">sleep</span>(<span class="num">0.1</span>)
+time.<span class="fn">sleep</span>(<span class="num">0.3</span>)           <span class="cm"># letter gap</span></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════ CHECK YOUR UNDERSTANDING -->
+    <section id="questions">
+        <div class="section-header">
+            <div class="section-num">?</div>
+            <div class="section-title">Check Your Understanding</div>
+        </div>
+
+        <p>Record your answers in the <strong>Programming Basics — Check Your Understanding</strong> deliverable in your portfolio. Try to answer from memory — you may look up syntax in the Pico 2W Reference, but not back at this activity guide.</p>
+
+        <div class="question-set">
+            <div class="question">
+                <span class="question-num">Q1</span>
+                <p>What does <code>while True:</code> do, and why does every robot program need one?</p>
+            </div>
+            <div class="question">
+                <span class="question-num">Q2</span>
+                <p>Why do we write <code>Pin("LED", Pin.OUT)</code> instead of <code>Pin(25, Pin.OUT)</code> on the Pico 2W?</p>
+            </div>
+            <div class="question">
+                <span class="question-num">Q3</span>
+                <p>What is the REPL? Name one situation where you'd use it instead of writing a full program in the editor.</p>
+            </div>
+            <div class="question">
+                <span class="question-num">Q4</span>
+                <p>You want the LED to blink every 200 milliseconds. What value do you pass to <code>time.sleep()</code>? What function could you use instead to avoid the conversion?</p>
+            </div>
+            <div class="question q-warn">
+                <span class="question-num">Q5 — Debug this</span>
+                <div class="code-wrap" style="margin:8px 0;">
+<pre><span class="kw">from</span> machine <span class="kw">import</span> <span class="cls">Pin</span>
+<span class="kw">import</span> time
+
+led <span class="op">=</span> <span class="cls">Pin</span>(<span class="num">25</span>, <span class="cls">Pin</span>.OUT)
+
+<span class="kw">while</span> <span class="kw">True</span>:
+led.<span class="fn">value</span>(<span class="num">1</span>)
+time.<span class="fn">sleep</span>(<span class="num">1</span>)</pre>
+                </div>
+                <p>This code has two bugs. Write down both bugs and the corrected code.</p>
+                <p style="margin-top:8px; color:#6272a4; font-size:0.88rem;">Note: MicroPython reports indentation errors as <code>SyntaxError: invalid syntax</code> rather than the more descriptive <code>IndentationError</code> that full Python 3 gives. If you see a SyntaxError on a line that looks syntactically correct, check the indentation of that line and the one above it.</p>
+            </div>
+        </div>
+    </section>
+
+</main>
+</div><!-- /layout -->
+
+<script>
+    function copyCode(btn) {
+        const pre = btn.closest('.code-wrap').querySelector('pre');
+        const text = pre.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            btn.textContent = 'copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1800);
+        });
+    }
+
+    // Highlight active nav item on scroll
+    const sections = document.querySelectorAll('section[id]');
+    const navItems = document.querySelectorAll('.nav-item[href^="#"]');
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                navItems.forEach(n => n.classList.remove('active'));
+                const active = document.querySelector(`.nav-item[href="#${e.target.id}"]`);
+                if (active) active.classList.add('active');
+            }
+        });
+    }, { threshold: 0.3 });
+    sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

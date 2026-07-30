@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Python Functions</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            height: 100vh;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute; width: 100%; min-height: 100%;
+            display: none; flex-direction: column;
+            justify-content: flex-start; align-items: center;
+            padding: 55px 60px 120px 60px;
+            opacity: 0; transition: opacity 0.5s ease;
+            overflow-y: auto; overflow-x: hidden;
+        }
+        .slide.active { display: flex; opacity: 1; }
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif; font-size: 3.5rem; font-weight: 900;
+            color: #00d4ff; margin-bottom: 15px; text-transform: uppercase;
+            letter-spacing: 2px; text-shadow: 0 0 20px rgba(0,212,255,0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(0,212,255,0.5); }
+            to   { text-shadow: 0 0 35px rgba(0,212,255,0.9); }
+        }
+        h2 {
+            font-family: 'Orbitron', sans-serif; font-size: 2.4rem; font-weight: 700;
+            color: #00d4ff; margin-bottom: 18px; text-transform: uppercase;
+        }
+        h3 { font-family: 'Exo 2', sans-serif; font-size: 1.5rem; font-weight: 600; color: #ff9500; margin-bottom: 12px; }
+        p { font-size: 1.15rem; line-height: 1.6; margin-bottom: 12px; color: #b8c5d6; }
+        .subtitle { font-size: 1.3rem; color: #ff9500; font-weight: 600; margin-bottom: 30px; }
+
+        .objective-box {
+            background: linear-gradient(135deg, rgba(0,212,255,0.1) 0%, rgba(0,212,255,0.04) 100%);
+            border: 3px solid #00d4ff; border-radius: 12px; padding: 20px; margin: 20px 0;
+            box-shadow: 0 0 30px rgba(0,212,255,0.15);
+        }
+        .objective-box h3 { color: #00d4ff; }
+
+        .bullet-list { list-style: none; padding-left: 0; }
+        .bullet-list li {
+            font-size: 1.15rem; margin: 12px 0; padding-left: 35px;
+            position: relative; color: #b8c5d6; line-height: 1.5;
+        }
+        .bullet-list li::before {
+            content: '▸'; position: absolute; left: 0;
+            color: #ff9500; font-size: 1.5rem; line-height: 1;
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px; }
+
+        .box {
+            background: rgba(0,212,255,0.05); border: 2px solid #00d4ff;
+            border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(0,212,255,0.1);
+        }
+        .box-orange {
+            background: rgba(255,149,0,0.07); border: 2px solid #ff9500;
+            border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(255,149,0,0.1);
+        }
+        .box-green {
+            background: rgba(80,250,123,0.07); border: 2px solid #50fa7b;
+            border-radius: 12px; padding: 20px;
+        }
+        .box-red {
+            background: rgba(255,85,85,0.07); border: 2px solid #ff5555;
+            border-radius: 12px; padding: 20px;
+        }
+
+        .highlight { color: #00d4ff; font-weight: 700; }
+        .warning   { color: #ff9500; font-weight: 700; }
+        .success   { color: #50fa7b; font-weight: 700; }
+
+        code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
+               color: #00d4ff; background: rgba(0,212,255,0.1); padding: 1px 5px; border-radius: 4px;
+               white-space: nowrap; font-variant-ligatures: none; }
+
+        .code-block {
+            background: #0d1117; border: 2px solid #00d4ff; border-radius: 10px;
+            padding: 20px 24px; margin: 16px 0; overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; line-height: 1.75;
+            white-space: pre; font-variant-ligatures: none;
+        }
+        .code-block-orange {
+            background: #0d1117; border: 2px solid #ff9500; border-radius: 10px;
+            padding: 20px 24px; margin: 16px 0; overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; line-height: 1.75;
+            white-space: pre; font-variant-ligatures: none;
+        }
+        .kw  { color: #ff79c6; }
+        .cls { color: #ffb86c; font-weight: 700; }
+        .fn  { color: #8be9fd; }
+        .str { color: #f1fa8c; }
+        .num { color: #bd93f9; }
+        .cm  { color: #6272a4; font-style: italic; }
+        .op  { color: #b8c5d6; }
+
+        .annotation {
+            font-family: 'Space Mono', monospace; font-size: 0.85rem;
+            color: #ff9500; background: rgba(255,149,0,0.1);
+            border: 1px solid rgba(255,149,0,0.3); border-radius: 4px;
+            padding: 2px 8px; display: inline-block; margin-left: 8px;
+        }
+
+        .controls {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            display: flex; justify-content: center; align-items: center; gap: 20px; z-index: 1000;
+        }
+        button {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            border: none; color: #0a0e27; padding: 15px 30px; font-size: 1rem;
+            font-weight: 700; border-radius: 8px; cursor: pointer;
+            font-family: 'Exo 2', sans-serif; transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,212,255,0.3);
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,212,255,0.5); }
+        button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+        .slide-number {
+            position: fixed; bottom: 30px; left: 30px;
+            font-family: 'Space Mono', monospace; font-size: 1rem;
+            color: #00d4ff; z-index: 1000;
+        }
+        .ref-link {
+            position: fixed; bottom: 30px; right: 30px; z-index: 1000;
+        }
+        .ref-link a {
+            background: rgba(0,212,255,0.12); border: 1px solid #00d4ff;
+            color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.85rem;
+            padding: 8px 14px; border-radius: 6px; text-decoration: none;
+            transition: background 0.2s;
+        }
+        .ref-link a:hover { background: rgba(0,212,255,0.25); }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; } h2 { font-size: 1.8rem; }
+            .slide { padding: 30px 20px 100px; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="presentation">
+
+<!-- ─────────────────────────────────────────── SLIDE 1: Title -->
+<div class="slide active">
+    <div class="slide-content" style="text-align:center;">
+        <h1>Python Functions</h1>
+        <p class="subtitle">Unit 5 · Programming, Electronics &amp; Sensors · Lesson 5.2</p>
+
+        <div style="margin: 30px auto; max-width: 480px;">
+            <img src="Function%20Meme.png" alt="Function meme"
+                 style="width:100%; border-radius:12px; border:2px solid rgba(0,212,255,0.3);
+                        box-shadow:0 0 24px rgba(0,212,255,0.2);">
+        </div>
+
+        <p style="color:#6272a4; font-size:1rem;">Lesson 5.2 · Week 12</p>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 2: Learning Objectives -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Learning Objectives</h2>
+        <p class="subtitle">By the end of this lesson, you will be able to:</p>
+
+        <div style="display:flex; flex-direction:column; gap:32px; margin-top:40px; max-width:760px;">
+            <div style="display:flex; gap:28px; align-items:baseline;">
+                <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d4ff; flex-shrink:0; width:36px; line-height:1;">1</span>
+                <p style="margin:0; font-size:1.5rem; color:#e0e6f0; line-height:1.4;"><strong style="color:#00d4ff;">Write</strong> a function using <code>def</code>, a parameter, and an indented body</p>
+            </div>
+            <div style="display:flex; gap:28px; align-items:baseline;">
+                <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d4ff; flex-shrink:0; width:36px; line-height:1;">2</span>
+                <p style="margin:0; font-size:1.5rem; color:#e0e6f0; line-height:1.4;"><strong style="color:#00d4ff;">Call</strong> a function and explain what value the parameter receives</p>
+            </div>
+            <div style="display:flex; gap:28px; align-items:baseline;">
+                <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d4ff; flex-shrink:0; width:36px; line-height:1;">3</span>
+                <p style="margin:0; font-size:1.5rem; color:#e0e6f0; line-height:1.4;"><strong style="color:#00d4ff;">Replace</strong> repeated code with one reusable function (DRY)</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 3: The Problem -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>The Problem: Copy-Paste Code</h2>
+
+        <div class="grid-2" style="margin-top:12px;">
+            <div>
+                <p>You built SOS in Activity 5.1. Here's what the S alone looks like written the "long way":</p>
+
+                <div class="code-block-orange"><span class="cm"># S — three short blinks</span>
+<span class="fn">led</span>.<span class="fn">value</span>(<span class="num">1</span>); time.<span class="fn">sleep</span>(<span class="num">0.1</span>)
+<span class="fn">led</span>.<span class="fn">value</span>(<span class="num">0</span>); time.<span class="fn">sleep</span>(<span class="num">0.1</span>)
+
+<span class="fn">led</span>.<span class="fn">value</span>(<span class="num">1</span>); time.<span class="fn">sleep</span>(<span class="num">0.1</span>)
+<span class="fn">led</span>.<span class="fn">value</span>(<span class="num">0</span>); time.<span class="fn">sleep</span>(<span class="num">0.1</span>)
+
+<span class="fn">led</span>.<span class="fn">value</span>(<span class="num">1</span>); time.<span class="fn">sleep</span>(<span class="num">0.1</span>)
+<span class="fn">led</span>.<span class="fn">value</span>(<span class="num">0</span>); time.<span class="fn">sleep</span>(<span class="num">0.1</span>)
+time.<span class="fn">sleep</span>(<span class="num">0.3</span>)  <span class="cm"># letter gap</span></div>
+
+                <p style="margin-top:8px;">Full SOS = S + O + S = <span class="warning">nine letters' worth</span> of this. That's 40+ lines for 3 letters.</p>
+            </div>
+
+            <div>
+                <div class="box-red" style="margin-bottom:16px;">
+                    <h3 style="color:#ff5555;">Why this breaks</h3>
+                    <ul class="bullet-list">
+                        <li>Want to change 0.1 to 0.15? Update it in <span class="warning">every single line</span></li>
+                        <li>Miss one → silent bug: your dots are mixed timing</li>
+                        <li>Hard to read — no labels, just numbers</li>
+                        <li>Adding "SOS" for a second robot? Copy 40 lines again</li>
+                    </ul>
+                </div>
+
+                <div class="objective-box">
+                    <h3>The rule: DRY</h3>
+                    <p style="font-size:1.1rem;"><span class="highlight">Don't Repeat Yourself.</span></p>
+                    <p>If you find yourself writing the same code more than once, that code belongs in a <span class="highlight">function</span> — a named block you write once and call as many times as you need.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 3: Anatomy of a Function -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Anatomy of a Function</h2>
+
+        <p>Every function starts with the same structure. Learn to read and write this pattern — you'll use it constantly.</p>
+
+        <div class="code-block" style="font-size:1.15rem;"><span class="kw">def</span> <span class="fn">blink</span>(<span class="op">duration_ms</span>):
+    led.<span class="fn">value</span>(<span class="num">1</span>)
+    time.<span class="fn">sleep_ms</span>(<span class="op">duration_ms</span>)
+    led.<span class="fn">value</span>(<span class="num">0</span>)
+    time.<span class="fn">sleep_ms</span>(<span class="num">100</span>)</div>
+
+        <div class="grid-2" style="margin-top:20px;">
+            <div class="box">
+                <h3>What each part means</h3>
+                <ul class="bullet-list">
+                    <li><code>def</code> — keyword that starts every function; short for "define"</li>
+                    <li><code>blink</code> — the name you invent; use something descriptive</li>
+                    <li><code>duration_ms</code> — a <span class="highlight">parameter</span>: a placeholder variable, filled in each time you call the function</li>
+                    <li>Colon <code>:</code> — required after the closing parenthesis</li>
+                    <li>Indented body — every line inside the function must be indented 4 spaces or 1 Tab</li>
+                </ul>
+            </div>
+
+            <div class="box-orange">
+                <h3>Common mistakes</h3>
+                <ul class="bullet-list">
+                    <li>Forgetting the colon → <code>SyntaxError</code> immediately</li>
+                    <li>Forgetting to indent the body → <code>SyntaxError</code> on the first body line</li>
+                    <li>Misspelling the name when calling it → <code>NameError: name 'blnk' is not defined</code></li>
+                    <li>Calling the function before defining it → <code>NameError</code></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 4: Calling a Function -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Calling a Function</h2>
+
+        <p>Defining a function does nothing by itself — the body only runs when you <span class="highlight">call</span> it. To call, write the name followed by parentheses and pass in the argument.</p>
+
+        <div class="grid-2" style="margin-top:12px; align-items:start;">
+            <div>
+                <h3>Same function, different behavior</h3>
+                <p>The value you pass in becomes <code>duration_ms</code> inside the function. Change the argument, change the result — same four lines of code every time.</p>
+
+                <div class="code-block"><span class="fn">blink</span>(<span class="num">100</span>)   <span class="cm"># short — 100 ms on</span>
+<span class="fn">blink</span>(<span class="num">400</span>)   <span class="cm"># long  — 400 ms on</span>
+<span class="fn">blink</span>(<span class="num">50</span>)    <span class="cm"># very short blink</span></div>
+
+                <p style="margin-top:12px;">Want to change the off-gap between blinks? Edit the <code>100</code> inside the function definition once — every call automatically uses the new value.</p>
+            </div>
+
+            <div>
+                <div class="box-green">
+                    <h3 style="color:#50fa7b;">Three rules for calling</h3>
+                    <ul class="bullet-list">
+                        <li>Always define the function <em>before</em> calling it — MicroPython reads top to bottom</li>
+                        <li>Always include the parentheses, even with no arguments: <code>dot()</code> not <code>dot</code></li>
+                        <li><code>def</code> is just a definition — the body runs only when called</li>
+                    </ul>
+                </div>
+
+                <div class="box" style="margin-top:16px;">
+                    <h3>Argument vs. parameter</h3>
+                    <p><span class="highlight">Parameter</span> — the name in the definition: <code>duration_ms</code><br>
+                    <span class="warning">Argument</span> — the value you pass when calling: <code>100</code></p>
+                    <p style="margin-top:8px; font-size:1rem; color:#6272a4;">Same concept, different moment. Parameter = placeholder. Argument = actual value.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 5: Functions Calling Functions -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Functions Calling Functions</h2>
+        <p>Once you have <code>blink()</code>, you can build more specific functions on top of it — no raw numbers anywhere.</p>
+
+        <div class="grid-2" style="margin-top:8px; align-items:start;">
+            <div>
+                <h3>Build up in layers</h3>
+                <div class="code-block"><span class="kw">def</span> <span class="fn">blink</span>(<span class="op">duration_ms</span>):
+    led.<span class="fn">value</span>(<span class="num">1</span>)
+    time.<span class="fn">sleep_ms</span>(<span class="op">duration_ms</span>)
+    led.<span class="fn">value</span>(<span class="num">0</span>)
+    time.<span class="fn">sleep_ms</span>(<span class="num">100</span>)
+
+<span class="kw">def</span> <span class="fn">dot</span>():
+    <span class="fn">blink</span>(<span class="num">100</span>)      <span class="cm"># short blink</span>
+
+<span class="kw">def</span> <span class="fn">dash</span>():
+    <span class="fn">blink</span>(<span class="num">400</span>)      <span class="cm"># long blink</span>
+
+<span class="kw">def</span> <span class="fn">sos</span>():
+    <span class="fn">dot</span>(); <span class="fn">dot</span>(); <span class="fn">dot</span>()        <span class="cm"># S</span>
+    time.<span class="fn">sleep_ms</span>(<span class="num">300</span>)
+    <span class="fn">dash</span>(); <span class="fn">dash</span>(); <span class="fn">dash</span>()      <span class="cm"># O</span>
+    time.<span class="fn">sleep_ms</span>(<span class="num">300</span>)
+    <span class="fn">dot</span>(); <span class="fn">dot</span>(); <span class="fn">dot</span>()        <span class="cm"># S</span>
+    time.<span class="fn">sleep_ms</span>(<span class="num">1000</span>)
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="fn">sos</span>()</div>
+            </div>
+
+            <div>
+                <div class="box" style="margin-bottom:16px;">
+                    <h3>Compare: before vs. after</h3>
+                    <p>Without functions: 40+ lines, every timing value written out, nothing labeled.</p>
+                    <p>With functions: <code>sos()</code> reads like English. Change timing in one place. Add a new Morse letter by writing one function.</p>
+                </div>
+
+                <div class="box-orange">
+                    <h3>Call order matters</h3>
+                    <p>MicroPython reads your file top to bottom. <code>blink()</code> must be defined <em>before</em> <code>dot()</code> calls it. <code>dot()</code> must be defined before <code>sos()</code> calls it.</p>
+                    <p style="margin-top:8px; font-size:1rem; color:#6272a4;">Convention: put <code>while True:</code> at the very bottom — all your functions go above it.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 6: Today's Activity -->
+<div class="slide">
+    <div class="slide-content" style="text-align:center;">
+        <h2>Today's Activity</h2>
+        <p style="max-width:680px;margin:0 auto 30px;">You'll build from the ground up — starting with a single function that blinks the LED, then layering dot/dash on top, finishing with a complete SOS loop.</p>
+
+        <div class="grid-3" style="max-width:860px;margin:0 auto 30px;text-align:left;">
+            <div class="box">
+                <h3>Part 1 · ~10 min</h3>
+                <p>Write <code>blink(duration_ms)</code> — your first parameterized function. Call it with different values and observe.</p>
+            </div>
+            <div class="box">
+                <h3>Part 2 · ~10 min</h3>
+                <p>Write <code>dot()</code> and <code>dash()</code> that call <code>blink()</code>. No raw numbers in your main loop.</p>
+            </div>
+            <div class="box">
+                <h3>Part 3 · ~10 min</h3>
+                <p>Write <code>sos()</code> that calls <code>dot()</code> and <code>dash()</code>. Run it in a <code>while True</code> loop.</p>
+            </div>
+        </div>
+
+        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;">
+            <a href="Activity_03_Functions.html" target="_blank"
+               style="background:linear-gradient(135deg,#00d4ff,#0099cc);color:#0a0e27;padding:16px 32px;border-radius:8px;text-decoration:none;font-family:'Exo 2',sans-serif;font-weight:700;font-size:1.1rem;box-shadow:0 4px 15px rgba(0,212,255,0.3);">
+               Open Activity Guide →
+            </a>
+            <a href="../resources/pico2w-reference.html" target="_blank"
+               style="background:rgba(0,212,255,0.1);border:2px solid #00d4ff;color:#00d4ff;padding:16px 32px;border-radius:8px;text-decoration:none;font-family:'Exo 2',sans-serif;font-weight:700;font-size:1.1rem;">
+               Pico 2W Reference ↗
+            </a>
+        </div>
+
+        <p style="color:#6272a4;font-size:1rem;">Challenges and comprehension questions are inside the activity guide. Finish all three parts first.</p>
+    </div>
+</div>
+
+</div><!-- /presentation -->
+
+<div class="slide-number" id="slideNum">1 / 5</div>
+
+<div class="ref-link">
+    <a href="../resources/pico2w-reference.html" target="_blank">Pico 2W Reference ↗</a>
+</div>
+
+<div class="controls">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Previous</button>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</div>
+
+<script>
+    let current = 0;
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    document.getElementById('slideNum').textContent = `1 / ${total}`;
+
+    function changeSlide(dir) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(total - 1, current + dir));
+        slides[current].classList.add('active');
+        slides[current].scrollTop = 0;
+        document.getElementById('slideNum').textContent = `${current + 1} / ${total}`;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === total - 1;
+    }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+</body>
+</html>
