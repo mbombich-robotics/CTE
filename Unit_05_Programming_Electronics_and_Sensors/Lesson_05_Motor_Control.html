@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Motor Control — Driving Your L.E.O. Robot</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6f0;
+            height: 100vh;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute; width: 100%; min-height: 100%;
+            display: none; flex-direction: column;
+            justify-content: flex-start; align-items: center;
+            padding: 55px 60px 120px 60px;
+            opacity: 0; transition: opacity 0.5s ease;
+            overflow-y: auto; overflow-x: hidden;
+        }
+        .slide.active { display: flex; opacity: 1; }
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif; font-size: 3.5rem; font-weight: 900;
+            color: #00d4ff; margin-bottom: 15px; text-transform: uppercase;
+            letter-spacing: 2px; text-shadow: 0 0 20px rgba(0,212,255,0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(0,212,255,0.5); }
+            to   { text-shadow: 0 0 35px rgba(0,212,255,0.9); }
+        }
+        h2 {
+            font-family: 'Orbitron', sans-serif; font-size: 2.4rem; font-weight: 700;
+            color: #00d4ff; margin-bottom: 18px; text-transform: uppercase;
+        }
+        h3 { font-family: 'Exo 2', sans-serif; font-size: 1.5rem; font-weight: 600; color: #ff9500; margin-bottom: 12px; }
+        p { font-size: 1.15rem; line-height: 1.6; margin-bottom: 12px; color: #b8c5d6; }
+        .subtitle { font-size: 1.3rem; color: #ff9500; font-weight: 600; margin-bottom: 30px; }
+
+        .objective-box {
+            background: linear-gradient(135deg, rgba(0,212,255,0.1) 0%, rgba(0,212,255,0.04) 100%);
+            border: 3px solid #00d4ff; border-radius: 12px; padding: 20px; margin: 20px 0;
+            box-shadow: 0 0 30px rgba(0,212,255,0.15);
+        }
+        .objective-box h3 { color: #00d4ff; }
+
+        .bullet-list { list-style: none; padding-left: 0; }
+        .bullet-list li {
+            font-size: 1.15rem; margin: 12px 0; padding-left: 35px;
+            position: relative; color: #b8c5d6; line-height: 1.5;
+        }
+        .bullet-list li::before {
+            content: '▸'; position: absolute; left: 0;
+            color: #ff9500; font-size: 1.5rem; line-height: 1;
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px; }
+
+        .box {
+            background: rgba(0,212,255,0.05); border: 2px solid #00d4ff;
+            border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(0,212,255,0.1);
+        }
+        .box-orange {
+            background: rgba(255,149,0,0.07); border: 2px solid #ff9500;
+            border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(255,149,0,0.1);
+        }
+        .box-green {
+            background: rgba(80,250,123,0.07); border: 2px solid #50fa7b;
+            border-radius: 12px; padding: 20px;
+        }
+
+        .highlight { color: #00d4ff; font-weight: 700; }
+        .warning   { color: #ff9500; font-weight: 700; }
+        .success   { color: #50fa7b; font-weight: 700; }
+
+        code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
+               color: #00d4ff; background: rgba(0,212,255,0.1); padding: 1px 5px; border-radius: 4px;
+               white-space: nowrap; font-variant-ligatures: none; }
+
+        .code-block {
+            background: #0d1117; border: 2px solid #00d4ff; border-radius: 10px;
+            padding: 20px 24px; margin: 16px 0; overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; line-height: 1.75;
+            white-space: pre; font-variant-ligatures: none;
+        }
+        .kw  { color: #ff79c6; }
+        .cls { color: #ffb86c; font-weight: 700; }
+        .fn  { color: #8be9fd; }
+        .str { color: #f1fa8c; }
+        .num { color: #bd93f9; }
+        .cm  { color: #6272a4; font-style: italic; }
+        .op  { color: #b8c5d6; }
+
+        /* H-bridge diagram */
+        .hbridge-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px; margin-top: 16px;
+        }
+        .hb-state {
+            background: rgba(0,0,0,0.3); border: 1.5px solid rgba(0,212,255,0.3);
+            border-radius: 10px; padding: 14px 16px; text-align: center;
+        }
+        .hb-state.active-state { border-color: #50fa7b; background: rgba(80,250,123,0.06); }
+        .hb-label { font-family: 'Space Mono', monospace; font-size: 0.8rem; color: #6272a4; margin-bottom: 6px; text-transform: uppercase; }
+        .hb-pins { font-family: 'JetBrains Mono', monospace; font-size: 1rem; margin-bottom: 8px; }
+        .hb-result { font-size: 1rem; font-weight: 700; }
+
+        /* Truth table */
+        .truth-table { width: 100%; border-collapse: collapse; font-size: 1rem; }
+        .truth-table th {
+            background: rgba(0,212,255,0.15); color: #00d4ff;
+            padding: 10px 14px; border: 1.5px solid rgba(0,212,255,0.3);
+            font-family: 'Space Mono', monospace; font-size: 0.85rem; text-align: center;
+        }
+        .truth-table td { padding: 9px 14px; border: 1px solid rgba(0,212,255,0.15); text-align: center; color: #b8c5d6; }
+        .truth-table tr:nth-child(even) td { background: rgba(0,212,255,0.03); }
+        .truth-table .hi { color: #50fa7b; font-weight: 700; font-family: 'Space Mono', monospace; }
+        .truth-table .lo { color: #6272a4; font-family: 'Space Mono', monospace; }
+        .truth-table .result { font-weight: 700; }
+
+        /* PWM bar */
+        .pwm-bar-wrap { margin: 16px 0; }
+        .pwm-row { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
+        .pwm-label { font-family: 'Space Mono', monospace; font-size: 0.9rem; color: #b8c5d6; width: 110px; flex-shrink: 0; }
+        .pwm-track { flex: 1; height: 20px; background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.25); border-radius: 4px; overflow: hidden; }
+        .pwm-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
+        .pwm-val { font-family: 'Space Mono', monospace; font-size: 0.85rem; color: #6272a4; width: 80px; text-align: right; flex-shrink: 0; }
+
+        /* Motor action cards */
+        .action-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 16px 0; }
+        .action-card {
+            background: rgba(0,0,0,0.3); border: 1.5px solid rgba(0,212,255,0.25);
+            border-radius: 10px; padding: 14px; text-align: center;
+        }
+        .action-fn { font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; color: #8be9fd; font-weight: 700; margin-bottom: 6px; }
+        .action-desc { font-size: 0.9rem; color: #6272a4; }
+        .action-motors { font-size: 0.85rem; color: #ff9500; margin-top: 6px; font-family: 'Space Mono', monospace; }
+
+        /* Controls */
+        .controls {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            display: flex; justify-content: center; align-items: center; gap: 20px; z-index: 1000;
+        }
+        button {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            border: none; color: #0a0e27; padding: 15px 30px; font-size: 1rem;
+            font-weight: 700; border-radius: 8px; cursor: pointer;
+            font-family: 'Exo 2', sans-serif; transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,212,255,0.3);
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,212,255,0.5); }
+        button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+        .slide-number {
+            position: fixed; bottom: 30px; left: 30px;
+            font-family: 'Space Mono', monospace; font-size: 1rem;
+            color: #00d4ff; z-index: 1000;
+        }
+        .ref-link {
+            position: fixed; bottom: 30px; right: 30px; z-index: 1000;
+        }
+        .ref-link a {
+            background: rgba(0,212,255,0.12); border: 1px solid #00d4ff;
+            color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.85rem;
+            padding: 8px 14px; border-radius: 6px; text-decoration: none;
+            transition: background 0.2s;
+        }
+        .ref-link a:hover { background: rgba(0,212,255,0.25); }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; } h2 { font-size: 1.8rem; }
+            .slide { padding: 30px 20px 100px; }
+            .grid-2, .grid-3, .hbridge-grid, .action-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="presentation">
+
+<!-- ─────────────────────────────────────────── SLIDE 1: Title -->
+<div class="slide active">
+    <div class="slide-content" style="text-align:center;">
+        <h1>Motor Control</h1>
+        <p class="subtitle">Unit 5 · Programming, Electronics &amp; Sensors · Lesson 5.5</p>
+
+        <div style="margin: 40px auto; max-width: 500px;">
+            <svg viewBox="0 0 420 200" fill="none" xmlns="http://www.w3.org/2000/svg"
+                 style="width:100%; filter:drop-shadow(0 0 16px rgba(0,212,255,0.4));">
+                <!-- Robot body -->
+                <rect x="110" y="60" width="200" height="80" rx="12"
+                      fill="rgba(0,212,255,0.08)" stroke="#00d4ff" stroke-width="2"/>
+                <!-- Left wheel -->
+                <rect x="70" y="70" width="40" height="60" rx="8"
+                      fill="rgba(255,149,0,0.15)" stroke="#ff9500" stroke-width="2"/>
+                <line x1="90" y1="70" x2="90" y2="130" stroke="#ff9500" stroke-width="1" stroke-dasharray="4 4"/>
+                <!-- Right wheel -->
+                <rect x="310" y="70" width="40" height="60" rx="8"
+                      fill="rgba(255,149,0,0.15)" stroke="#ff9500" stroke-width="2"/>
+                <line x1="330" y1="70" x2="330" y2="130" stroke="#ff9500" stroke-width="1" stroke-dasharray="4 4"/>
+                <!-- Motor driver chip -->
+                <rect x="160" y="80" width="100" height="40" rx="6"
+                      fill="rgba(0,212,255,0.12)" stroke="#00d4ff" stroke-width="1.5"/>
+                <text x="210" y="105" font-family="Orbitron" font-size="10" fill="#00d4ff"
+                      text-anchor="middle" font-weight="bold">VNH5019</text>
+                <!-- Wires left -->
+                <line x1="110" y1="92" x2="160" y2="92" stroke="#00d4ff" stroke-width="1.5"/>
+                <line x1="110" y1="108" x2="160" y2="108" stroke="#00d4ff" stroke-width="1.5"/>
+                <!-- Wires right -->
+                <line x1="260" y1="92" x2="310" y2="92" stroke="#00d4ff" stroke-width="1.5"/>
+                <line x1="260" y1="108" x2="310" y2="108" stroke="#00d4ff" stroke-width="1.5"/>
+                <!-- Motor wire to wheel -->
+                <line x1="70" y1="100" x2="110" y2="100" stroke="#ff9500" stroke-width="2"/>
+                <line x1="310" y1="100" x2="350" y2="100" stroke="#ff9500" stroke-width="2"/>
+                <!-- Arrow forward -->
+                <path d="M 190 50 L 230 50" stroke="#50fa7b" stroke-width="2.5" marker-end="url(#arr)"/>
+                <defs>
+                    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L8,3 z" fill="#50fa7b"/>
+                    </marker>
+                </defs>
+                <text x="210" y="42" font-family="Exo 2" font-size="12" fill="#50fa7b" text-anchor="middle">FORWARD</text>
+                <!-- Pico label -->
+                <text x="210" y="155" font-family="Orbitron" font-size="9" fill="#6272a4" text-anchor="middle">PICO 2W → DRIVER → MOTORS</text>
+            </svg>
+        </div>
+
+        <p style="color:#6272a4; font-size:1rem;">Lesson 5.5 · Weeks 11–12 (HS) / Week 11 (8AER)</p>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 2: Learning Objectives -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Learning Objectives</h2>
+        <p class="subtitle">By the end of this lesson, you will be able to:</p>
+
+        <div style="display:flex; flex-direction:column; gap:32px; margin-top:40px; max-width:760px;">
+            <div style="display:flex; gap:28px; align-items:baseline;">
+                <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d4ff; flex-shrink:0; width:36px; line-height:1;">1</span>
+                <p style="margin:0; font-size:1.5rem; color:#e0e6f0; line-height:1.4;"><strong style="color:#00d4ff;">Explain</strong> how an H-bridge controls motor direction using two logic pins</p>
+            </div>
+            <div style="display:flex; gap:28px; align-items:baseline;">
+                <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d4ff; flex-shrink:0; width:36px; line-height:1;">2</span>
+                <p style="margin:0; font-size:1.5rem; color:#e0e6f0; line-height:1.4;"><strong style="color:#00d4ff;">Call</strong> <code style="font-size:1.2rem;">motor.py</code> functions to drive the robot forward, backward, left, and right</p>
+            </div>
+            <div style="display:flex; gap:28px; align-items:baseline;">
+                <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d4ff; flex-shrink:0; width:36px; line-height:1;">3</span>
+                <p style="margin:0; font-size:1.5rem; color:#e0e6f0; line-height:1.4;"><strong style="color:#00d4ff;">Write</strong> a timed program that drives the robot through a complete square path</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 3: H-Bridge -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>H-Bridge: Direction Control</h2>
+
+        <div class="grid-2" style="margin-top:16px;">
+            <div>
+                <p>A <span class="highlight">DC motor</span> spins in the direction current flows through it — reverse the current and it spins the other way. The Pico's GPIO pins can't do this on their own (only 4 mA, wrong voltage). That's what the <span class="highlight">H-bridge</span> is for.</p>
+
+                <p>The VNH5019 driver on your interface board is an H-bridge. You give it two logic signals — <span class="warning">INA</span> and <span class="warning">INB</span> — and it uses those to switch higher-current, higher-voltage power to the motor in the right direction.</p>
+
+                <div class="objective-box" style="margin-top:16px;">
+                    <h3>The rule</h3>
+                    <p style="margin:0;">Two pins per motor. Their combination decides direction:</p>
+                    <ul class="bullet-list" style="margin-top:10px;">
+                        <li><span class="success">INA=1, INB=0</span> → motor spins forward</li>
+                        <li><span class="warning">INA=0, INB=1</span> → motor spins backward</li>
+                        <li>INA=0, INB=0 → motor coasts (off)</li>
+                        <li>INA=1, INB=1 → motor brakes hard</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div>
+                <table class="truth-table">
+                    <thead>
+                        <tr><th>INA</th><th>INB</th><th>Motor Result</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="hi">1</td><td class="lo">0</td>
+                            <td class="result" style="color:#50fa7b;">Forward ▶</td>
+                        </tr>
+                        <tr>
+                            <td class="lo">0</td><td class="hi">1</td>
+                            <td class="result" style="color:#ff9500;">Reverse ◀</td>
+                        </tr>
+                        <tr>
+                            <td class="lo">0</td><td class="lo">0</td>
+                            <td class="result" style="color:#6272a4;">Coast (off)</td>
+                        </tr>
+                        <tr>
+                            <td class="hi">1</td><td class="hi">1</td>
+                            <td class="result" style="color:#ff5555;">Brake ■</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="box" style="margin-top:16px;">
+                    <h3>Your robot has two motors</h3>
+                    <p>Left motor (Motor A) and right motor (Motor B) each have their own INA/INB pair. To turn, you run them in <span class="highlight">opposite directions</span>. To go straight, run them in the <span class="highlight">same direction</span>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 4: PWM Speed Control -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>PWM: Speed Control</h2>
+
+        <div class="grid-2">
+            <div>
+                <p>Direction tells the motor which way to spin. <span class="highlight">PWM (Pulse-Width Modulation)</span> controls how <em>fast</em>. Instead of a steady voltage, PWM switches the motor on and off thousands of times per second. The percentage of time it's on is the <span class="highlight">duty cycle</span>.</p>
+
+                <p>In MicroPython, <code>duty_u16()</code> sets the duty cycle as a number from <code>0</code> (fully off) to <code>65535</code> (fully on). The interface board runs motors at 20 kHz — above human hearing so you won't hear a whine.</p>
+
+                <div class="box-orange" style="margin-top:16px;">
+                    <h3>Useful constants</h3>
+                    <div class="code-block" style="font-size:0.95rem; padding:14px 18px;">
+<span class="cls">FULL</span>  <span class="op">=</span> <span class="num">65535</span>   <span class="cm"># 100% speed</span>
+<span class="cls">HALF</span>  <span class="op">=</span> <span class="num">32767</span>   <span class="cm"># 50% speed</span>
+<span class="cls">SLOW</span>  <span class="op">=</span> <span class="num">20000</span>   <span class="cm"># ~30% — barely moving</span>
+<span class="cls">STOP</span>  <span class="op">=</span> <span class="num">0</span>       <span class="cm"># motor off</span></div>
+                </div>
+            </div>
+
+            <div>
+                <p style="margin-bottom:14px; font-size:1rem; color:#6272a4;">Duty cycle → effective speed</p>
+                <div class="pwm-bar-wrap">
+                    <div class="pwm-row">
+                        <div class="pwm-label">100%</div>
+                        <div class="pwm-track"><div class="pwm-fill" style="width:100%; background:#50fa7b;"></div></div>
+                        <div class="pwm-val">65535</div>
+                    </div>
+                    <div class="pwm-row">
+                        <div class="pwm-label">75%</div>
+                        <div class="pwm-track"><div class="pwm-fill" style="width:75%; background:#8be9fd;"></div></div>
+                        <div class="pwm-val">49151</div>
+                    </div>
+                    <div class="pwm-row">
+                        <div class="pwm-label">50%</div>
+                        <div class="pwm-track"><div class="pwm-fill" style="width:50%; background:#ff9500;"></div></div>
+                        <div class="pwm-val">32767</div>
+                    </div>
+                    <div class="pwm-row">
+                        <div class="pwm-label">25%</div>
+                        <div class="pwm-track"><div class="pwm-fill" style="width:25%; background:#ff9500; opacity:0.6;"></div></div>
+                        <div class="pwm-val">16383</div>
+                    </div>
+                    <div class="pwm-row">
+                        <div class="pwm-label">0%</div>
+                        <div class="pwm-track"><div class="pwm-fill" style="width:0%; background:#ff5555;"></div></div>
+                        <div class="pwm-val">0</div>
+                    </div>
+                </div>
+
+                <div class="box" style="margin-top:16px;">
+                    <h3>Why does this matter?</h3>
+                    <p>You can run motors at full speed for straight lines and then slow down for tight turns — all in the same program. Speed is just a number.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 5: motor.py module -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Your motor.py Module</h2>
+
+        <p>Instead of typing raw pin numbers every time, you'll save a helper file called <code>motor.py</code> on the Pico. Then any program can <code>import motor</code> and call clean functions.</p>
+
+        <div class="grid-2" style="margin-top:12px;">
+            <div>
+                <div class="code-block" style="font-size:0.88rem; padding:14px 18px;">
+<span class="kw">from</span> machine <span class="kw">import</span> <span class="cls">Pin</span>, <span class="cls">PWM</span>
+
+<span class="cm"># Left motor — Motor A</span>
+_L_INA <span class="op">=</span> <span class="cls">Pin</span>(<span class="num">2</span>, <span class="cls">Pin</span>.OUT)
+_L_INB <span class="op">=</span> <span class="cls">Pin</span>(<span class="num">3</span>, <span class="cls">Pin</span>.OUT)
+_L_PWM <span class="op">=</span> <span class="cls">PWM</span>(<span class="cls">Pin</span>(<span class="num">4</span>))
+_L_PWM.<span class="fn">freq</span>(<span class="num">20000</span>)
+
+<span class="cm"># Right motor — Motor B</span>
+_R_INA <span class="op">=</span> <span class="cls">Pin</span>(<span class="num">5</span>, <span class="cls">Pin</span>.OUT)
+_R_INB <span class="op">=</span> <span class="cls">Pin</span>(<span class="num">6</span>, <span class="cls">Pin</span>.OUT)
+_R_PWM <span class="op">=</span> <span class="cls">PWM</span>(<span class="cls">Pin</span>(<span class="num">7</span>))
+_R_PWM.<span class="fn">freq</span>(<span class="num">20000</span>)
+
+<span class="cls">FULL</span> <span class="op">=</span> <span class="num">65535</span>
+
+<span class="kw">def</span> <span class="fn">_drive</span>(la, lb, ra, rb, spd<span class="op">=</span><span class="cls">FULL</span>):
+    _L_PWM.<span class="fn">duty_u16</span>(spd); _R_PWM.<span class="fn">duty_u16</span>(spd)
+    _L_INA.<span class="fn">value</span>(la); _L_INB.<span class="fn">value</span>(lb)
+    _R_INA.<span class="fn">value</span>(ra); _R_INB.<span class="fn">value</span>(rb)
+
+<span class="kw">def</span> <span class="fn">forward</span>(spd<span class="op">=</span><span class="cls">FULL</span>):  <span class="fn">_drive</span>(<span class="num">1</span>,<span class="num">0</span>,<span class="num">1</span>,<span class="num">0</span>, spd)
+<span class="kw">def</span> <span class="fn">backward</span>(spd<span class="op">=</span><span class="cls">FULL</span>): <span class="fn">_drive</span>(<span class="num">0</span>,<span class="num">1</span>,<span class="num">0</span>,<span class="num">1</span>, spd)
+<span class="kw">def</span> <span class="fn">left</span>(spd<span class="op">=</span><span class="cls">FULL</span>):     <span class="fn">_drive</span>(<span class="num">0</span>,<span class="num">1</span>,<span class="num">1</span>,<span class="num">0</span>, spd)
+<span class="kw">def</span> <span class="fn">right</span>(spd<span class="op">=</span><span class="cls">FULL</span>):    <span class="fn">_drive</span>(<span class="num">1</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">1</span>, spd)
+<span class="kw">def</span> <span class="fn">stop</span>():              <span class="fn">_drive</span>(<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>, <span class="num">0</span>)</div>
+            </div>
+
+            <div>
+                <p>Once <code>motor.py</code> is saved to the Pico, any program can use it:</p>
+                <div class="code-block" style="font-size:0.95rem; padding:14px 18px;">
+<span class="kw">import</span> motor
+<span class="kw">import</span> time
+
+motor.<span class="fn">forward</span>()       <span class="cm"># full speed</span>
+time.<span class="fn">sleep</span>(<span class="num">1</span>)
+motor.<span class="fn">right</span>(<span class="num">30000</span>)    <span class="cm"># half speed turn</span>
+time.<span class="fn">sleep</span>(<span class="num">0.5</span>)
+motor.<span class="fn">stop</span>()</div>
+
+                <div class="action-grid" style="margin-top:14px;">
+                    <div class="action-card">
+                        <div class="action-fn">forward()</div>
+                        <div class="action-desc">Both motors forward</div>
+                        <div class="action-motors">L→ R→</div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-fn">backward()</div>
+                        <div class="action-desc">Both motors reverse</div>
+                        <div class="action-motors">L← R←</div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-fn">left()</div>
+                        <div class="action-desc">Pivot left in place</div>
+                        <div class="action-motors">L← R→</div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-fn">right()</div>
+                        <div class="action-desc">Pivot right in place</div>
+                        <div class="action-motors">L→ R←</div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-fn">stop()</div>
+                        <div class="action-desc">Cut power — coast</div>
+                        <div class="action-motors">L· R·</div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-fn">speed param</div>
+                        <div class="action-desc">Optional — 0 to 65535</div>
+                        <div class="action-motors">default = FULL</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────────── SLIDE 6: Today's Activity -->
+<div class="slide">
+    <div class="slide-content" style="text-align:center;">
+        <h2>Today's Activity</h2>
+        <p style="max-width:680px; margin:0 auto 30px;">Open the Activity Guide and work through each part. Your goal: get the robot driving a square by the end of class.</p>
+
+        <div class="grid-3" style="max-width:900px; margin:0 auto 30px; text-align:left;">
+            <div class="box">
+                <h3>Part 1 · ~10 min</h3>
+                <p>Save <code>motor.py</code> to the Pico and test each function from the REPL</p>
+            </div>
+            <div class="box">
+                <h3>Part 2 · ~10 min</h3>
+                <p>Write a timed drive sequence — forward, turn, repeat 4×</p>
+            </div>
+            <div class="box">
+                <h3>Part 3 · ~15 min</h3>
+                <p>Tune your timing so the robot actually drives a square, not a blob</p>
+            </div>
+        </div>
+
+        <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-bottom:20px;">
+            <a href="Activity_05_Motor_Control.html" target="_blank"
+               style="background:linear-gradient(135deg,#00d4ff,#0099cc);color:#0a0e27;padding:16px 32px;border-radius:8px;text-decoration:none;font-family:'Exo 2',sans-serif;font-weight:700;font-size:1.1rem;box-shadow:0 4px 15px rgba(0,212,255,0.3);">
+               Open Activity Guide →
+            </a>
+            <a href="../resources/pico2w-reference.html" target="_blank"
+               style="background:rgba(0,212,255,0.1);border:2px solid #00d4ff;color:#00d4ff;padding:16px 32px;border-radius:8px;text-decoration:none;font-family:'Exo 2',sans-serif;font-weight:700;font-size:1.1rem;">
+               Pico 2W Reference ↗
+            </a>
+        </div>
+
+        <p style="color:#6272a4; font-size:1rem;">Challenges and comprehension questions are inside the activity guide. Finish Part 3 before moving to challenges.</p>
+    </div>
+</div>
+
+
+</div><!-- /presentation -->
+
+<div class="slide-number" id="slideNum">1 / 6</div>
+
+<div class="ref-link">
+    <a href="../resources/pico2w-reference.html" target="_blank">Pico 2W Reference ↗</a>
+</div>
+
+<div class="controls">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Previous</button>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</div>
+
+<script>
+    let current = 0;
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    document.getElementById('slideNum').textContent = `1 / ${total}`;
+
+    function changeSlide(dir) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(total - 1, current + dir));
+        slides[current].classList.add('active');
+        slides[current].scrollTop = 0;
+        document.getElementById('slideNum').textContent = `${current + 1} / ${total}`;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === total - 1;
+    }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+</body>
+</html>

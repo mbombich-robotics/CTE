@@ -903,6 +903,10 @@ async function handleTokenResponse(tokenResponse) {
         // Dismiss sign-in modal
         document.getElementById('signinModal').classList.remove('active');
 
+        // If a track param is present, point to the right backend before loading —
+        // otherwise a returning DBL/8AER student would hit the default HS AER sheet.
+        if (URL_TRACK) setBackendForCourse(URL_TRACK);
+
         // Attempt cloud load
         const cloudData = await loadStudentFromCloud(email);
         if (cloudData && cloudData.student) {

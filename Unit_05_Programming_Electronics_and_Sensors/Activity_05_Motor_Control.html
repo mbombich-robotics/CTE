@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Activity 5.5 — Drive Your L.E.O. Robot</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: #0a0e27;
+            color: #e0e6f0;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: sticky; top: 0; height: 100vh;
+            background: #0d1117;
+            border-right: 1px solid rgba(0,212,255,0.15);
+            overflow-y: auto; padding: 24px 0;
+            display: flex; flex-direction: column; gap: 0;
+        }
+        .sidebar-title {
+            font-family: 'Orbitron', sans-serif; font-size: 0.7rem;
+            font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+            color: #6272a4; padding: 0 20px 16px; border-bottom: 1px solid rgba(0,212,255,0.1);
+            margin-bottom: 8px;
+        }
+        .nav-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 20px; text-decoration: none;
+            color: #6272a4; font-size: 0.88rem; font-weight: 500;
+            transition: color 0.15s, background 0.15s;
+            border-left: 3px solid transparent;
+        }
+        .nav-item:hover { color: #b8c5d6; background: rgba(0,212,255,0.04); }
+        .nav-item.active { color: #00d4ff; border-left-color: #00d4ff; background: rgba(0,212,255,0.07); }
+        .nav-num {
+            flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+            background: rgba(0,212,255,0.12); border: 1px solid rgba(0,212,255,0.3);
+            color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.72rem;
+            font-weight: 700; display: flex; align-items: center; justify-content: center;
+        }
+        .nav-item.active .nav-num { background: #00d4ff; color: #0a0e27; }
+        .nav-divider { height: 1px; background: rgba(0,212,255,0.08); margin: 8px 20px; }
+        .sidebar-links { margin-top: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; }
+        .sidebar-links a {
+            font-size: 0.8rem; color: #6272a4; text-decoration: none;
+            padding: 6px 10px; border: 1px solid rgba(0,212,255,0.15);
+            border-radius: 6px; text-align: center; transition: color 0.15s, border-color 0.15s;
+        }
+        .sidebar-links a:hover { color: #00d4ff; border-color: rgba(0,212,255,0.4); }
+
+        main { padding: 40px 48px 80px; max-width: 860px; }
+
+        .activity-header { margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid rgba(0,212,255,0.15); }
+        .activity-header h1 {
+            font-family: 'Orbitron', sans-serif; font-size: 1.6rem; font-weight: 700;
+            color: #00d4ff; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .header-meta { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px; }
+        .meta-tag {
+            font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+            padding: 3px 10px; border-radius: 4px;
+        }
+        .meta-time { background: rgba(0,212,255,0.12); color: #00d4ff; border: 1px solid rgba(0,212,255,0.3); }
+        .meta-level { background: rgba(80,250,123,0.12); color: #50fa7b; border: 1px solid rgba(80,250,123,0.3); }
+
+        section { margin-bottom: 56px; scroll-margin-top: 24px; }
+
+        .section-header {
+            display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
+            padding-bottom: 12px; border-bottom: 2px solid rgba(0,212,255,0.2);
+        }
+        .section-num {
+            flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #0a0e27; font-family: 'Orbitron', sans-serif; font-weight: 900;
+            font-size: 1rem; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 16px rgba(0,212,255,0.4);
+        }
+        .section-title {
+            font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 700;
+            color: #00d4ff; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .section-time { font-size: 0.8rem; color: #6272a4; margin-left: auto; font-family: 'Space Mono', monospace; }
+
+        p { color: #b8c5d6; margin-bottom: 12px; }
+
+        .steps { display: flex; flex-direction: column; gap: 16px; margin: 16px 0; }
+        .step {
+            display: flex; gap: 16px; align-items: flex-start;
+            background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.15);
+            border-radius: 10px; padding: 16px 18px;
+        }
+        .step-n {
+            flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
+            background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.4);
+            color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.82rem;
+            font-weight: 700; display: flex; align-items: center; justify-content: center;
+        }
+        .step-body { flex: 1; }
+        .step-body strong { display: block; color: #e0e6f0; font-size: 1rem; margin-bottom: 5px; }
+        .step-body p { font-size: 0.95rem; margin-bottom: 0; }
+
+        .code-wrap { position: relative; margin: 14px 0; }
+        .code-label {
+            position: absolute; top: -10px; left: 14px; z-index: 1;
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+            padding: 2px 8px; border-radius: 4px;
+            background: #0a0e27; color: #6272a4; border: 1px solid rgba(0,212,255,0.2);
+        }
+        pre {
+            background: #0d1117; border: 1.5px solid rgba(0,212,255,0.25); border-radius: 10px;
+            padding: 18px 20px; overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; line-height: 1.75;
+            color: #e0e6f0;
+        }
+        .copy-btn {
+            position: absolute; top: 8px; right: 10px;
+            background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.25);
+            color: #6272a4; font-family: 'Space Mono', monospace; font-size: 0.7rem;
+            padding: 3px 8px; border-radius: 4px; cursor: pointer;
+            transition: color 0.15s, background 0.15s;
+        }
+        .copy-btn:hover { color: #00d4ff; background: rgba(0,212,255,0.2); }
+        .copy-btn.copied { color: #50fa7b; border-color: rgba(80,250,123,0.4); }
+
+        .kw  { color: #ff79c6; }
+        .cls { color: #ffb86c; font-weight: 700; }
+        .fn  { color: #8be9fd; }
+        .str { color: #f1fa8c; }
+        .num { color: #bd93f9; }
+        .cm  { color: #6272a4; font-style: italic; }
+        .op  { color: #b8c5d6; }
+
+        .callout {
+            border-radius: 10px; padding: 16px 18px; margin: 16px 0;
+            display: flex; gap: 14px; align-items: flex-start;
+        }
+        .callout-icon { font-size: 1.3rem; flex-shrink: 0; line-height: 1.4; }
+        .callout-body p { margin-bottom: 0; font-size: 0.95rem; }
+        .callout-body strong { display: block; margin-bottom: 4px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .callout-warn {
+            background: rgba(255,149,0,0.08); border: 1px solid rgba(255,149,0,0.35);
+        }
+        .callout-warn strong { color: #ff9500; }
+        .callout-info {
+            background: rgba(0,212,255,0.07); border: 1px solid rgba(0,212,255,0.25);
+        }
+        .callout-info strong { color: #00d4ff; }
+
+        .checkpoint {
+            background: linear-gradient(135deg, rgba(80,250,123,0.1), rgba(80,250,123,0.04));
+            border: 2px solid #50fa7b; border-radius: 10px; padding: 16px 20px;
+            margin: 24px 0; display: flex; gap: 14px; align-items: center;
+        }
+        .checkpoint-icon { font-size: 1.5rem; flex-shrink: 0; }
+        .checkpoint-body strong { color: #50fa7b; display: block; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 3px; }
+        .checkpoint-body p { color: #b8c5d6; font-size: 0.95rem; margin: 0; }
+
+        .challenge-set { display: flex; flex-direction: column; gap: 14px; margin: 16px 0; }
+        .challenge {
+            background: rgba(80,250,123,0.05); border: 1.5px solid rgba(80,250,123,0.3);
+            border-radius: 10px; padding: 16px 18px;
+        }
+        .challenge-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+        .challenge-num {
+            font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700;
+            color: #50fa7b; background: rgba(80,250,123,0.12);
+            padding: 2px 7px; border-radius: 4px;
+        }
+        .challenge-title { font-weight: 700; color: #e0e6f0; font-size: 1rem; }
+        .challenge p { font-size: 0.95rem; margin-bottom: 6px; }
+        .challenge p:last-child { margin-bottom: 0; }
+
+        .question-set { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
+        .question {
+            background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.2);
+            border-radius: 10px; padding: 16px 18px;
+        }
+        .question-num {
+            font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700;
+            color: #00d4ff; margin-bottom: 6px; display: block;
+        }
+        .question p { font-size: 0.95rem; margin-bottom: 0; }
+        .q-warn {
+            background: rgba(255,149,0,0.06); border-color: rgba(255,149,0,0.3);
+        }
+        .q-warn .question-num { color: #ff9500; }
+
+        /* Tuning table */
+        .tune-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; margin: 14px 0; }
+        .tune-table th {
+            background: rgba(0,212,255,0.12); color: #00d4ff;
+            padding: 8px 12px; border: 1.5px solid rgba(0,212,255,0.3);
+            font-family: 'Space Mono', monospace; font-size: 0.78rem; text-align: left;
+        }
+        .tune-table td { padding: 8px 12px; border: 1px solid rgba(0,212,255,0.12); color: #b8c5d6; }
+        .tune-table tr:nth-child(even) td { background: rgba(0,212,255,0.03); }
+        .tune-input {
+            background: transparent; border: 1px solid rgba(0,212,255,0.2);
+            color: #e0e6f0; font-family: 'Space Mono', monospace; font-size: 0.85rem;
+            padding: 4px 8px; border-radius: 4px; width: 80px;
+            outline: none;
+        }
+        .tune-input:focus { border-color: #00d4ff; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.88em;
+            color: #00d4ff; background: rgba(0,212,255,0.1);
+            padding: 1px 5px; border-radius: 4px; white-space: nowrap;
+            font-variant-ligatures: none;
+        }
+
+        @media (max-width: 720px) {
+            .layout { grid-template-columns: 1fr; }
+            .sidebar { position: static; height: auto; flex-direction: row; flex-wrap: wrap; padding: 12px; }
+            .sidebar-title { display: none; }
+            .nav-item { padding: 6px 12px; border-left: none; border-bottom: 2px solid transparent; }
+            .nav-item.active { border-bottom-color: #00d4ff; border-left-color: transparent; }
+            .sidebar-links { display: none; }
+            main { padding: 24px 20px 60px; }
+        }
+    </style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ── SIDEBAR ── -->
+<nav class="sidebar">
+    <div class="sidebar-title">Activity 5.5</div>
+    <a href="#motorpy"   class="nav-item active"><span class="nav-num">1</span> Save motor.py</a>
+    <a href="#test"      class="nav-item"><span class="nav-num">2</span> Test Moves</a>
+    <a href="#square"    class="nav-item"><span class="nav-num">3</span> Drive a Square</a>
+    <div class="nav-divider"></div>
+    <a href="#challenges" class="nav-item"><span class="nav-num">★</span> Challenges</a>
+    <a href="#questions"  class="nav-item"><span class="nav-num">?</span> Questions</a>
+    <div class="sidebar-links">
+        <a href="Activity_05_Motor_Control.html">↺ This page</a>
+        <a href="../resources/pico2w-reference.html" target="_blank">Pico 2W Ref ↗</a>
+        <a href="Lesson_05_Motor_Control.html">← Lesson 5.5</a>
+    </div>
+</nav>
+
+<!-- ── MAIN ── -->
+<main>
+    <div class="activity-header">
+        <h1>Activity 5.5 — Drive Your L.E.O. Robot</h1>
+        <p style="color:#6272a4; margin-bottom:0;">Work through each part in order. Raise your hand at each checkpoint before moving on.</p>
+        <div class="header-meta">
+            <span class="meta-tag meta-time">~35 minutes</span>
+            <span class="meta-tag meta-level">Lesson 5.5</span>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════ PART 1: SAVE MOTOR.PY -->
+    <section id="motorpy">
+        <div class="section-header">
+            <div class="section-num">1</div>
+            <div class="section-title">Save motor.py to the Pico</div>
+            <div class="section-time">~10 min</div>
+        </div>
+
+        <p>The <code>motor.py</code> file is a helper module — it sets up the motor pins once so every program you write can <code>import motor</code> and call clean functions. It lives on the Pico itself, not on your computer.</p>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-n">1</div>
+                <div class="step-body">
+                    <strong>Open Thonny and connect your Pico</strong>
+                    <p>Confirm the status bar shows <code>MicroPython (Raspberry Pi Pico)</code> and a COM port.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-n">2</div>
+                <div class="step-body">
+                    <strong>Open a new file (Ctrl + N) and paste the code below</strong>
+                    <p>Use the copy button — do not retype this one. Pin numbers must match the interface board exactly.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="code-wrap">
+            <div class="code-label">motor.py — paste exactly</div>
+            <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="kw">from</span> machine <span class="kw">import</span> <span class="cls">Pin</span>, <span class="cls">PWM</span>
+
+<span class="cm"># ── Left motor (Motor A) ──────────────────────────────</span>
+_L_INA <span class="op">=</span> <span class="cls">Pin</span>(<span class="num">2</span>, <span class="cls">Pin</span>.OUT)
+_L_INB <span class="op">=</span> <span class="cls">Pin</span>(<span class="num">3</span>, <span class="cls">Pin</span>.OUT)
+_L_PWM <span class="op">=</span> <span class="cls">PWM</span>(<span class="cls">Pin</span>(<span class="num">4</span>)); _L_PWM.<span class="fn">freq</span>(<span class="num">20000</span>)
+
+<span class="cm"># ── Right motor (Motor B) ─────────────────────────────</span>
+_R_INA <span class="op">=</span> <span class="cls">Pin</span>(<span class="num">5</span>, <span class="cls">Pin</span>.OUT)
+_R_INB <span class="op">=</span> <span class="cls">Pin</span>(<span class="num">6</span>, <span class="cls">Pin</span>.OUT)
+_R_PWM <span class="op">=</span> <span class="cls">PWM</span>(<span class="cls">Pin</span>(<span class="num">7</span>)); _R_PWM.<span class="fn">freq</span>(<span class="num">20000</span>)
+
+<span class="cls">FULL</span> <span class="op">=</span> <span class="num">65535</span>
+
+<span class="kw">def</span> <span class="fn">_drive</span>(la, lb, ra, rb, spd<span class="op">=</span><span class="cls">FULL</span>):
+    _L_PWM.<span class="fn">duty_u16</span>(spd); _R_PWM.<span class="fn">duty_u16</span>(spd)
+    _L_INA.<span class="fn">value</span>(la);    _L_INB.<span class="fn">value</span>(lb)
+    _R_INA.<span class="fn">value</span>(ra);    _R_INB.<span class="fn">value</span>(rb)
+
+<span class="kw">def</span> <span class="fn">forward</span>(spd<span class="op">=</span><span class="cls">FULL</span>):  <span class="fn">_drive</span>(<span class="num">1</span>, <span class="num">0</span>, <span class="num">1</span>, <span class="num">0</span>, spd)
+<span class="kw">def</span> <span class="fn">backward</span>(spd<span class="op">=</span><span class="cls">FULL</span>): <span class="fn">_drive</span>(<span class="num">0</span>, <span class="num">1</span>, <span class="num">0</span>, <span class="num">1</span>, spd)
+<span class="kw">def</span> <span class="fn">left</span>(spd<span class="op">=</span><span class="cls">FULL</span>):     <span class="fn">_drive</span>(<span class="num">0</span>, <span class="num">1</span>, <span class="num">1</span>, <span class="num">0</span>, spd)
+<span class="kw">def</span> <span class="fn">right</span>(spd<span class="op">=</span><span class="cls">FULL</span>):    <span class="fn">_drive</span>(<span class="num">1</span>, <span class="num">0</span>, <span class="num">0</span>, <span class="num">1</span>, spd)
+<span class="kw">def</span> <span class="fn">stop</span>():              <span class="fn">_drive</span>(<span class="num">0</span>, <span class="num">0</span>, <span class="num">0</span>, <span class="num">0</span>, <span class="num">0</span>)</pre>
+        </div>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-n">3</div>
+                <div class="step-body">
+                    <strong>Save to the Pico as motor.py</strong>
+                    <p>Press Ctrl + S. When the dialog asks where to save, click <strong style="color:#ff9500">Raspberry Pi Pico</strong>. Name the file exactly <code>motor.py</code> (lowercase, no spaces). Click OK.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="callout callout-info">
+            <div class="callout-icon">💡</div>
+            <div class="callout-body">
+                <strong>Why does motor.py live on the Pico?</strong>
+                <p>The Pico has its own flash storage. When you <code>import motor</code> in a program, MicroPython looks for <code>motor.py</code> on the Pico's file system — not on your computer. Saving it there once means every future program can use it without repeating all the pin setup code.</p>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            <div class="checkpoint-icon">✋</div>
+            <div class="checkpoint-body">
+                <strong>Checkpoint 1</strong>
+                <p><code>motor.py</code> appears in Thonny's file browser under "Raspberry Pi Pico." Raise your hand — show the teacher before continuing.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════ PART 2: TEST MOVES -->
+    <section id="test">
+        <div class="section-header">
+            <div class="section-num">2</div>
+            <div class="section-title">Test Individual Moves</div>
+            <div class="section-time">~10 min</div>
+        </div>
+
+        <p>Before writing a full program, test each function from the REPL Shell. Place the robot on the floor with some space around it — it will actually move.</p>
+
+        <div class="callout callout-warn">
+            <div class="callout-icon">⚠</div>
+            <div class="callout-body">
+                <strong>Place the robot on the floor first</strong>
+                <p>Running motors while the robot is on a desk is a trip hazard. Set it down, then run the commands. Keep the USB cable slack so it doesn't pull the robot.</p>
+            </div>
+        </div>
+
+        <p>Type each command in the Shell one at a time. Press Enter after each line. Watch what the robot does before typing the next command.</p>
+
+        <div class="code-wrap">
+            <div class="code-label">Shell — type line by line</div>
+            <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="op">&gt;&gt;&gt; </span><span class="kw">import</span> motor
+<span class="op">&gt;&gt;&gt; </span><span class="kw">import</span> time
+
+<span class="op">&gt;&gt;&gt; </span>motor.<span class="fn">forward</span>()
+<span class="op">&gt;&gt;&gt; </span>time.<span class="fn">sleep</span>(<span class="num">1</span>)
+<span class="op">&gt;&gt;&gt; </span>motor.<span class="fn">stop</span>()
+
+<span class="op">&gt;&gt;&gt; </span>motor.<span class="fn">backward</span>()
+<span class="op">&gt;&gt;&gt; </span>time.<span class="fn">sleep</span>(<span class="num">1</span>)
+<span class="op">&gt;&gt;&gt; </span>motor.<span class="fn">stop</span>()
+
+<span class="op">&gt;&gt;&gt; </span>motor.<span class="fn">left</span>()
+<span class="op">&gt;&gt;&gt; </span>time.<span class="fn">sleep</span>(<span class="num">0.5</span>)
+<span class="op">&gt;&gt;&gt; </span>motor.<span class="fn">stop</span>()
+
+<span class="op">&gt;&gt;&gt; </span>motor.<span class="fn">right</span>()
+<span class="op">&gt;&gt;&gt; </span>time.<span class="fn">sleep</span>(<span class="num">0.5</span>)
+<span class="op">&gt;&gt;&gt; </span>motor.<span class="fn">stop</span>()</pre>
+        </div>
+
+        <div class="callout callout-info">
+            <div class="callout-icon">🔍</div>
+            <div class="callout-body">
+                <strong>Motor going the wrong direction?</strong>
+                <p>If <code>forward()</code> makes the robot go backward, or <code>left()</code> turns right, one of your motors is wired in reverse. Tell the teacher — this is a wiring fix, not a code fix. The interface board has a connector orientation that determines which direction is "forward." Don't try to fix it by swapping the INA/INB logic in motor.py unless the teacher instructs you to.</p>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            <div class="checkpoint-icon">✋</div>
+            <div class="checkpoint-body">
+                <strong>Checkpoint 2</strong>
+                <p>All four moves work correctly — forward goes forward, left turns left. Raise your hand to confirm with the teacher.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════ PART 3: DRIVE A SQUARE -->
+    <section id="square">
+        <div class="section-header">
+            <div class="section-num">3</div>
+            <div class="section-title">Drive a Square</div>
+            <div class="section-time">~15 min</div>
+        </div>
+
+        <p>Now write a program that drives the robot through a square path: forward → turn right → forward → turn right → … four times. The robot uses time to decide when to stop — so your turn time determines how close to 90° each corner is. You'll need to tune it.</p>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-n">1</div>
+                <div class="step-body">
+                    <strong>Open a new file (Ctrl + N) in Thonny's editor</strong>
+                    <p>You'll save this as <code>square.py</code> — separate from motor.py.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-n">2</div>
+                <div class="step-body">
+                    <strong>Type this starting program</strong>
+                    <p>The constants at the top are where you'll tune. Change only those two numbers — not the rest of the program.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="code-wrap">
+            <div class="code-label">square.py — starting point</div>
+            <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="kw">import</span> motor
+<span class="kw">import</span> time
+
+<span class="cls">DRIVE_TIME</span> <span class="op">=</span> <span class="num">1.5</span>    <span class="cm"># seconds driving straight</span>
+<span class="cls">TURN_TIME</span>  <span class="op">=</span> <span class="num">0.5</span>    <span class="cm"># seconds turning — adjust until corner = 90°</span>
+
+<span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="num">4</span>):
+    motor.<span class="fn">forward</span>()
+    time.<span class="fn">sleep</span>(<span class="cls">DRIVE_TIME</span>)
+    motor.<span class="fn">stop</span>()
+    time.<span class="fn">sleep</span>(<span class="num">0.1</span>)    <span class="cm"># brief pause at corner</span>
+    motor.<span class="fn">right</span>()
+    time.<span class="fn">sleep</span>(<span class="cls">TURN_TIME</span>)
+    motor.<span class="fn">stop</span>()
+    time.<span class="fn">sleep</span>(<span class="num">0.1</span>)</pre>
+        </div>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-n">3</div>
+                <div class="step-body">
+                    <strong>Save to the Pico as square.py</strong>
+                    <p>Ctrl + S → Raspberry Pi Pico → name it <code>square.py</code>.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-n">4</div>
+                <div class="step-body">
+                    <strong>Run it (F5) and observe</strong>
+                    <p>Does the robot turn more or less than 90°? Use the table below to record your attempts. Adjust only <code>TURN_TIME</code> — save and run again each time.</p>
+                </div>
+            </div>
+        </div>
+
+        <p style="margin-top:8px; margin-bottom:4px; font-size:0.9rem; color:#6272a4;">Track your tuning attempts:</p>
+        <table class="tune-table">
+            <thead>
+                <tr><th>Attempt</th><th>TURN_TIME (s)</th><th>Result</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td><input class="tune-input" type="number" step="0.05" placeholder="0.50"></td><td><input class="tune-input" style="width:200px" placeholder="e.g. too far, turned 110°"></td></tr>
+                <tr><td>2</td><td><input class="tune-input" type="number" step="0.05" placeholder=""></td><td><input class="tune-input" style="width:200px" placeholder=""></td></tr>
+                <tr><td>3</td><td><input class="tune-input" type="number" step="0.05" placeholder=""></td><td><input class="tune-input" style="width:200px" placeholder=""></td></tr>
+                <tr><td>4</td><td><input class="tune-input" type="number" step="0.05" placeholder=""></td><td><input class="tune-input" style="width:200px" placeholder=""></td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-info">
+            <div class="callout-icon">💡</div>
+            <div class="callout-body">
+                <strong>Robot drifts on straight sections?</strong>
+                <p>Most real robots drift because one motor is slightly faster than the other. That's normal — precision driving without sensors requires tuning. You can compensate by passing a slightly lower speed to the faster motor: <code>motor._drive(1,0,1,0, 65535, 60000)</code> if you modify <code>_drive()</code> to accept separate left/right speeds. For now, just note the drift and move on.</p>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            <div class="checkpoint-icon">✋</div>
+            <div class="checkpoint-body">
+                <strong>Checkpoint 3 — show the teacher</strong>
+                <p>Your robot drives a recognizable square — four sides, four right-angle turns, ends near where it started. Show the teacher your tuning table and the robot running the program.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════ CHALLENGES -->
+    <section id="challenges">
+        <div class="section-header">
+            <div class="section-num">★</div>
+            <div class="section-title">Challenges</div>
+            <div class="section-time">finish early?</div>
+        </div>
+
+        <p>Start from your working square.py. Each challenge takes 5–10 minutes.</p>
+
+        <div class="challenge-set">
+            <div class="challenge">
+                <div class="challenge-header">
+                    <span class="challenge-num">C1</span>
+                    <span class="challenge-title">Figure-8</span>
+                </div>
+                <p>Drive a figure-8: square using <code>right()</code> turns, then square using <code>left()</code> turns. The second square runs counterclockwise. Hint: the turn time is the same — only the direction changes.</p>
+            </div>
+
+            <div class="challenge">
+                <div class="challenge-header">
+                    <span class="challenge-num">C2</span>
+                    <span class="challenge-title">Slow-Motion Square</span>
+                </div>
+                <p>Drive the same square at half speed. Pass <code>32767</code> as the speed argument: <code>motor.forward(32767)</code>. Does the turn time change at half speed? Why or why not?</p>
+            </div>
+
+            <div class="challenge">
+                <div class="challenge-header">
+                    <span class="challenge-num">C3</span>
+                    <span class="challenge-title">Pentagon</span>
+                </div>
+                <p>Change the loop from 4 to 5 sides and find the turn time for a 72° corner (360° ÷ 5 = 72°). How does this compare to the 90° turn time? Does the ratio make sense?</p>
+            </div>
+
+            <div class="challenge">
+                <div class="challenge-header">
+                    <span class="challenge-num">C4</span>
+                    <span class="challenge-title">Spiral (hard)</span>
+                </div>
+                <p>Drive a spiral by increasing <code>DRIVE_TIME</code> by 0.3 seconds each loop iteration. Hint: instead of a fixed <code>DRIVE_TIME</code>, use a variable that grows inside the loop.</p>
+                <div class="code-wrap" style="margin-top:10px;">
+                    <div class="code-label">loop hint</div>
+<pre>drive_t <span class="op">=</span> <span class="num">0.5</span>
+<span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="num">8</span>):
+    motor.<span class="fn">forward</span>()
+    time.<span class="fn">sleep</span>(drive_t)
+    motor.<span class="fn">stop</span>()
+    motor.<span class="fn">right</span>()
+    time.<span class="fn">sleep</span>(<span class="cls">TURN_TIME</span>)
+    motor.<span class="fn">stop</span>()
+    drive_t <span class="op">+=</span> <span class="num">0.3</span>      <span class="cm"># each side is longer</span></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════ CHECK YOUR UNDERSTANDING -->
+    <section id="questions">
+        <div class="section-header">
+            <div class="section-num">?</div>
+            <div class="section-title">Check Your Understanding</div>
+        </div>
+
+        <p>Record your answers in the <strong>Motor Control — Check Your Understanding</strong> deliverable in your portfolio. Try to answer from memory before checking the lesson or your notes.</p>
+
+        <div class="question-set">
+            <div class="question">
+                <span class="question-num">Q1</span>
+                <p>What two things do INA and INB control on the H-bridge? What happens when both are set to 1?</p>
+            </div>
+            <div class="question">
+                <span class="question-num">Q2</span>
+                <p>Why can't the Pico's GPIO pins drive a motor directly? What component on the interface board handles the motor current?</p>
+            </div>
+            <div class="question">
+                <span class="question-num">Q3</span>
+                <p>What does <code>duty_u16(32767)</code> mean? How does that differ from <code>duty_u16(65535)</code>?</p>
+            </div>
+            <div class="question">
+                <span class="question-num">Q4</span>
+                <p>Your robot turns 120° instead of 90°. Which constant do you change — <code>DRIVE_TIME</code> or <code>TURN_TIME</code>? Do you increase or decrease it?</p>
+            </div>
+            <div class="question q-warn">
+                <span class="question-num">Q5 — Debug this</span>
+                <div class="code-wrap" style="margin:8px 0;">
+<pre><span class="kw">import</span> motor
+<span class="kw">import</span> time
+
+<span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="num">4</span>):
+    motor.<span class="fn">forward</span>()
+    time.<span class="fn">sleep_ms</span>(<span class="num">1500</span>)
+    motor.<span class="fn">turn_right</span>()
+    time.<span class="fn">sleep_ms</span>(<span class="num">500</span>)
+motor.<span class="fn">stop</span>()</pre>
+                </div>
+                <p>This code has two bugs. Identify both and write the corrected version.</p>
+            </div>
+        </div>
+    </section>
+
+</main>
+</div><!-- /layout -->
+
+<script>
+    function copyCode(btn) {
+        const pre = btn.closest('.code-wrap').querySelector('pre');
+        const text = pre.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            btn.textContent = 'copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1800);
+        });
+    }
+
+    const sections = document.querySelectorAll('section[id]');
+    const navItems = document.querySelectorAll('.nav-item[href^="#"]');
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                navItems.forEach(n => n.classList.remove('active'));
+                const active = document.querySelector(`.nav-item[href="#${e.target.id}"]`);
+                if (active) active.classList.add('active');
+            }
+        });
+    }, { threshold: 0.3 });
+    sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
