@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 6.2 – Ethics in AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0212 0%, #100520 50%, #1a083a 100%);
+            color: #e0e6f0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ref-link {
+            position: fixed;
+            top: 18px;
+            right: 24px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #c084fc;
+            text-decoration: none;
+            background: rgba(168,85,247,0.15);
+            border: 1px solid rgba(168,85,247,0.35);
+            padding: 5px 12px;
+            border-radius: 20px;
+            z-index: 100;
+            transition: background 0.2s;
+        }
+        .ref-link:hover { background: rgba(168,85,247,0.3); }
+
+        .slide-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 40px 120px;
+        }
+
+        .slide {
+            display: none;
+            opacity: 0;
+            max-width: 900px;
+            width: 100%;
+            transition: opacity 0.35s ease;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .slide.active { display: flex; opacity: 1; }
+
+        .slide-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: #a855f7;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .slide-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.4rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-transform: uppercase;
+            line-height: 1.2;
+            text-shadow: 0 0 25px rgba(168,85,247,0.5);
+        }
+
+        .slide-title.small { font-size: 1.8rem; }
+
+        .slide-body {
+            font-size: 1.1rem;
+            color: #b8c5d6;
+            line-height: 1.85;
+        }
+
+        .slide-body strong { color: #e2c5ff; font-weight: 700; }
+
+        .accent-card {
+            background: rgba(168,85,247,0.08);
+            border: 2px solid rgba(168,85,247,0.35);
+            border-radius: 12px;
+            padding: 22px 26px;
+        }
+
+        .accent-card p { font-size: 1.05rem; color: #c8d5e0; line-height: 1.8; }
+        .accent-card strong { color: #e2c5ff; font-weight: 700; }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .case-card {
+            background: rgba(239,68,68,0.07);
+            border: 2px solid rgba(239,68,68,0.3);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .case-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.72rem;
+            color: #f87171;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .case-card h3 { font-size: 1.05rem; font-weight: 700; color: #fca5a5; margin-bottom: 8px; }
+        .case-card p { font-size: 0.9rem; color: #9aabb8; line-height: 1.65; }
+
+        .canon-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .canon-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: rgba(168,85,247,0.06);
+            border-left: 4px solid #a855f7;
+            border-radius: 8px;
+            padding: 14px 18px;
+        }
+
+        .canon-num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: #a855f7;
+            font-weight: 700;
+            white-space: nowrap;
+            padding-top: 2px;
+        }
+
+        .canon-text { font-size: 1rem; color: #c8d5e0; line-height: 1.65; }
+        .canon-text strong { color: #e2c5ff; }
+        .canon-text em { color: #c084fc; font-style: normal; font-weight: 600; }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(168,85,247,0.12), rgba(192,132,252,0.08));
+            border: 2px solid rgba(168,85,247,0.45);
+            border-radius: 12px;
+            padding: 22px 28px;
+            font-size: 1.1rem;
+            color: #e2c5ff;
+            line-height: 1.8;
+        }
+
+        .highlight-box strong { color: #f0e0ff; font-weight: 800; }
+
+        .warning-box {
+            background: rgba(251,191,36,0.08);
+            border: 2px solid rgba(251,191,36,0.35);
+            border-radius: 12px;
+            padding: 20px 24px;
+            font-size: 1.05rem;
+            color: #fde68a;
+            line-height: 1.8;
+        }
+
+        .warning-box strong { color: #fbbf24; font-weight: 700; }
+
+        .trolley-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .trolley-card {
+            background: rgba(168,85,247,0.05);
+            border: 2px solid rgba(168,85,247,0.25);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .trolley-card h3 { font-size: 1.05rem; font-weight: 700; color: #c084fc; margin-bottom: 10px; }
+        .trolley-card p { font-size: 0.95rem; color: #9aabb8; line-height: 1.65; }
+
+        .step-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .step-icon {
+            flex-shrink: 0;
+            font-size: 1.4rem;
+            padding-top: 2px;
+        }
+
+        .step-text { font-size: 1.05rem; color: #b8c5d6; line-height: 1.7; }
+        .step-text strong { color: #e2c5ff; }
+
+        .resp-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+
+        .resp-card {
+            background: rgba(168,85,247,0.06);
+            border: 1px solid rgba(168,85,247,0.25);
+            border-radius: 10px;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .resp-role {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            color: #a855f7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .resp-icon { font-size: 2rem; margin-bottom: 8px; }
+        .resp-desc { font-size: 0.88rem; color: #9aabb8; line-height: 1.6; }
+
+        .controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10,2,18,0.92);
+            border-top: 2px solid rgba(168,85,247,0.3);
+            padding: 16px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(10px);
+            z-index: 50;
+        }
+
+        .nav-btn {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #a855f7;
+            background: rgba(168,85,247,0.12);
+            border: 2px solid rgba(168,85,247,0.4);
+            padding: 10px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 1px;
+        }
+
+        .nav-btn:hover { background: rgba(168,85,247,0.25); border-color: #a855f7; }
+        .nav-btn:disabled { opacity: 0.25; cursor: default; }
+
+        .slide-counter {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            color: #6b7280;
+            letter-spacing: 2px;
+        }
+
+        .hub-btn {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #c084fc;
+            background: rgba(168,85,247,0.08);
+            border: 2px solid rgba(168,85,247,0.3);
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s;
+            letter-spacing: 1px;
+        }
+
+        .hub-btn:hover { background: rgba(168,85,247,0.2); }
+
+        @media (max-width: 768px) {
+            .grid-2, .trolley-grid, .resp-grid { grid-template-columns: 1fr; }
+            .slide-title { font-size: 1.8rem; }
+            .slide-container { padding: 60px 24px 120px; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="ref-link">Unit 6 Hub ↗</a>
+
+    <div class="slide-container">
+
+        <!-- Slide 1: Title -->
+        <div class="slide active" id="slide-1">
+            <div class="slide-label">Lesson 6.2 — Day 2</div>
+            <div class="slide-title">Ethics in<br>Artificial Intelligence</div>
+            <div class="slide-body">
+                Building something that works is step one. Building something that <em>should</em> exist — or that behaves fairly in the real world — is a different challenge. Today we look at where AI goes wrong and what engineers are obligated to do about it.
+            </div>
+            <div class="accent-card">
+                <p><strong>By the end of this lesson</strong> you will be able to identify at least two real cases where AI bias caused harm; apply the engineering canons to an AI scenario; explain how shared accountability works; and describe what responsible AI practice looks like.</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Why AI Is Different -->
+        <div class="slide" id="slide-2">
+            <div class="slide-label">Slide 2 of 8</div>
+            <div class="slide-title small">Why AI Raises Unique Issues</div>
+            <div class="grid-2">
+                <div class="case-card" style="border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.05);">
+                    <div class="case-label" style="color: #c084fc;">Scale</div>
+                    <h3 style="color: #e2c5ff;">One Model, Millions of Decisions</h3>
+                    <p>A biased human judge affects one case at a time. A biased algorithm deployed in a courtroom, hospital, or bank affects every case simultaneously — at machine speed.</p>
+                </div>
+                <div class="case-card" style="border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.05);">
+                    <div class="case-label" style="color: #c084fc;">Opacity</div>
+                    <h3 style="color: #e2c5ff;">The Black Box Problem</h3>
+                    <p>Large models make decisions through millions of learned weights. Even the engineers who built them can't fully explain <em>why</em> the model chose a particular output.</p>
+                </div>
+            </div>
+            <div class="warning-box">
+                <strong>The hard question:</strong> If you can't fully explain a decision, and that decision affects someone's freedom, health, or livelihood — should you deploy it?
+            </div>
+        </div>
+
+        <!-- Slide 3: Real Cases -->
+        <div class="slide" id="slide-3">
+            <div class="slide-label">Slide 3 of 8</div>
+            <div class="slide-title small">Real Cases of Biased AI</div>
+            <div class="case-card" style="margin-bottom: 4px;">
+                <div class="case-label">Case 1 — Criminal Justice</div>
+                <h3>COMPAS Recidivism Tool</h3>
+                <p>Used in US courts to predict whether someone would commit another crime. A ProPublica investigation found it flagged Black defendants as high risk at twice the rate of white defendants — even when both groups had similar actual reoffense rates.</p>
+            </div>
+            <div class="case-card" style="margin-bottom: 4px;">
+                <div class="case-label">Case 2 — Hiring</div>
+                <h3>Amazon's Résumé Algorithm (2018)</h3>
+                <p>Amazon trained a hiring tool on a decade of résumés — which reflected a historically male-dominated workforce. It learned to downgrade résumés that included the word "women's" and penalized graduates of all-women's colleges. Amazon scrapped the project.</p>
+            </div>
+            <div class="case-card">
+                <div class="case-label">Case 3 — Facial Recognition</div>
+                <h3>Higher Error Rates for Darker Skin</h3>
+                <p>MIT Media Lab found that three major commercial face-recognition systems had error rates up to 34% higher for dark-skinned women compared to light-skinned men. The gap traced directly to unbalanced training datasets.</p>
+            </div>
+        </div>
+
+        <!-- Slide 4: Engineering Canons -->
+        <div class="slide" id="slide-4">
+            <div class="slide-label">Slide 4 of 8</div>
+            <div class="slide-title small">Engineering Canons Applied to AI</div>
+            <div class="slide-body" style="margin-bottom: 4px;">The National Society of Professional Engineers sets fundamental canons. Each one applies directly to AI systems.</div>
+            <div class="canon-list">
+                <div class="canon-item">
+                    <div class="canon-num">Canon 1</div>
+                    <div class="canon-text"><strong>Hold public safety paramount.</strong> <em>AI in health, criminal justice, or transportation must pass a safety bar before deployment — not after.</em></div>
+                </div>
+                <div class="canon-item">
+                    <div class="canon-num">Canon 2</div>
+                    <div class="canon-text"><strong>Act within areas of competence.</strong> <em>Deploying a model you don't understand — and can't explain — likely exceeds your competence.</em></div>
+                </div>
+                <div class="canon-item">
+                    <div class="canon-num">Canon 3</div>
+                    <div class="canon-text"><strong>Be honest and objective.</strong> <em>If testing reveals bias or failure modes, report them — even if it delays the project or reduces revenue.</em></div>
+                </div>
+                <div class="canon-item">
+                    <div class="canon-num">Canon 4</div>
+                    <div class="canon-text"><strong>Avoid deceptive acts.</strong> <em>Do not present accuracy metrics in misleading ways (e.g., high overall accuracy that masks failure on specific groups).</em></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: The Trolley Problem in AI -->
+        <div class="slide" id="slide-5">
+            <div class="slide-label">Slide 5 of 8</div>
+            <div class="slide-title small">The Trolley Problem — Now in Code</div>
+            <div class="slide-body">
+                In philosophy, the trolley problem asks: is it acceptable to take an action that harms one person in order to save five? Self-driving cars face this — <em>at 60 mph, with no time to ask a human</em>.
+            </div>
+            <div class="trolley-grid">
+                <div class="trolley-card">
+                    <h3>The Classic Dilemma</h3>
+                    <p>An unavoidable crash: the car can hit five pedestrians, or swerve and hit one. The algorithm must choose. Whatever it does, engineers programmed that choice in advance.</p>
+                </div>
+                <div class="trolley-card">
+                    <h3>Why This Is Harder Now</h3>
+                    <p>A human driver reacts instinctively and is judged morally. An autonomous vehicle's behavior is a <em>policy decision</em> made by engineers before the crash ever happens — affecting every car on the road.</p>
+                </div>
+            </div>
+            <div class="highlight-box">
+                The engineering decision doesn't just affect one car. It's written once, deployed in millions. That's why the ethics of autonomous systems are <strong>engineering decisions, not just philosophical puzzles</strong>.
+            </div>
+        </div>
+
+        <!-- Slide 6: Accountability -->
+        <div class="slide" id="slide-6">
+            <div class="slide-label">Slide 6 of 8</div>
+            <div class="slide-title small">Who Is Responsible When AI Causes Harm?</div>
+            <div class="resp-grid">
+                <div class="resp-card">
+                    <div class="resp-icon">🔬</div>
+                    <div class="resp-role">Designers</div>
+                    <div class="resp-desc">Chose the training data, the model architecture, and what to optimize for. Responsible for documented bias and known failure modes.</div>
+                </div>
+                <div class="resp-card">
+                    <div class="resp-icon">🏢</div>
+                    <div class="resp-role">Deployers</div>
+                    <div class="resp-desc">Decided to put the system into production in a high-stakes context. Responsible for whether testing was adequate and for ongoing monitoring.</div>
+                </div>
+                <div class="resp-card">
+                    <div class="resp-icon">👤</div>
+                    <div class="resp-role">Users</div>
+                    <div class="resp-desc">Acted on AI output without critical evaluation. Responsible for treating AI recommendations as gospel rather than as one input among many.</div>
+                </div>
+            </div>
+            <div class="warning-box">
+                <strong>No one gets to say "the algorithm decided."</strong> Accountability is shared across the chain — which means engineers are not off the hook once the model ships.
+            </div>
+        </div>
+
+        <!-- Slide 7: Responsible Practice -->
+        <div class="slide" id="slide-7">
+            <div class="slide-label">Slide 7 of 8</div>
+            <div class="slide-title small">What Responsible Engineers Actually Do</div>
+            <div class="step-list">
+                <div class="step-item">
+                    <div class="step-icon">🧪</div>
+                    <div class="step-text"><strong>Test for disparate impact.</strong> Break accuracy down by demographic group, not just overall. A 95% accurate system may be 70% accurate for one group.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-icon">📝</div>
+                    <div class="step-text"><strong>Document limitations.</strong> Write down what the model is not good at, what data it was trained on, and what it should not be used for.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-icon">🚦</div>
+                    <div class="step-text"><strong>Set deployment gates.</strong> Define the conditions under which the system will NOT be released — and enforce them.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-icon">🔄</div>
+                    <div class="step-text"><strong>Monitor in production.</strong> Real-world performance often differs from test performance. Build feedback loops and watch for drift.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-icon">🗣️</div>
+                    <div class="step-text"><strong>Speak up.</strong> If you're on the team and you see a problem, you have an obligation under the engineering canons to flag it — even if you're not the decision maker.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Recap -->
+        <div class="slide" id="slide-8">
+            <div class="slide-label">Slide 8 of 8 — Recap</div>
+            <div class="slide-title small">What We Covered</div>
+            <div class="step-list">
+                <div class="step-item">
+                    <div class="step-icon">✓</div>
+                    <div class="step-text">AI raises unique ethical issues because of <strong>scale and opacity</strong> — one model, millions of decisions, limited explainability.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-icon">✓</div>
+                    <div class="step-text">Real systems (COMPAS, Amazon hiring, facial recognition) have caused measurable harm through <strong>biased training data</strong>.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-icon">✓</div>
+                    <div class="step-text">The <strong>engineering canons</strong> apply directly: safety paramount, honesty in reporting, acting within competence.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-icon">✓</div>
+                    <div class="step-text"><strong>Accountability is shared</strong> among designers, deployers, and users. "The algorithm did it" is not an excuse.</div>
+                </div>
+            </div>
+            <div class="accent-card">
+                <p><strong>Next: Activity 6.3 – Teachable Machine.</strong> On Days 3–4 you'll train your own image classifier, then deliberately design a bad one to see bias in action firsthand.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="controls">
+        <a href="index.html" class="hub-btn">Unit 6 Hub</a>
+        <div class="slide-counter" id="counter">1 / 8</div>
+        <div style="display: flex; gap: 12px;">
+            <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>◀ PREV</button>
+            <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">NEXT ▶</button>
+        </div>
+    </div>
+
+    <script>
+        let current = 1;
+        const total = 8;
+
+        function changeSlide(dir) {
+            const old = document.getElementById('slide-' + current);
+            old.style.opacity = '0';
+            setTimeout(() => { old.style.display = 'none'; old.classList.remove('active'); }, 300);
+
+            current = Math.max(1, Math.min(total, current + dir));
+
+            const next = document.getElementById('slide-' + current);
+            next.style.display = 'flex';
+            next.style.opacity = '0';
+            setTimeout(() => { next.style.opacity = '1'; next.classList.add('active'); }, 20);
+
+            document.getElementById('counter').textContent = current + ' / ' + total;
+            document.getElementById('prevBtn').disabled = current === 1;
+            document.getElementById('nextBtn').disabled = current === total;
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+            if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+        });
+    </script>
+
+</body>
+</html>

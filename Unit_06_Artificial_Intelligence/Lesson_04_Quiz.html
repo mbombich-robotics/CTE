@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Unit 6 Quiz – Artificial Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0212 0%, #100520 50%, #1a083a 100%);
+            color: #e0e6f0;
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+
+        .ref-link {
+            position: fixed;
+            top: 18px;
+            right: 24px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #c084fc;
+            text-decoration: none;
+            background: rgba(168,85,247,0.15);
+            border: 1px solid rgba(168,85,247,0.35);
+            padding: 5px 12px;
+            border-radius: 20px;
+            z-index: 100;
+            transition: background 0.2s;
+        }
+        .ref-link:hover { background: rgba(168,85,247,0.3); }
+
+        .header {
+            background: linear-gradient(135deg, #581c87 0%, #a855f7 50%, #581c87 100%);
+            padding: 30px 40px;
+            border-bottom: 3px solid #c084fc;
+            text-align: center;
+        }
+
+        .header-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: #f3e8ff;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .header-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(168,85,247,0.6);
+        }
+
+        .header-sub {
+            font-size: 1rem;
+            color: #e9d5ff;
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
+        .main {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+
+        .instructions {
+            background: rgba(168,85,247,0.08);
+            border: 2px solid rgba(168,85,247,0.35);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 36px;
+            font-size: 1rem;
+            color: #c8d5e0;
+            line-height: 1.75;
+        }
+
+        .instructions strong { color: #e2c5ff; }
+
+        .question-block {
+            background: rgba(168,85,247,0.05);
+            border: 1px solid rgba(168,85,247,0.2);
+            border-radius: 12px;
+            padding: 24px 26px;
+            margin-bottom: 20px;
+            transition: border-color 0.2s;
+        }
+
+        .question-block:hover { border-color: rgba(168,85,247,0.4); }
+
+        .question-block.correct { border-color: rgba(74,222,128,0.5); background: rgba(74,222,128,0.05); }
+        .question-block.wrong   { border-color: rgba(239,68,68,0.5);  background: rgba(239,68,68,0.05); }
+
+        .question-text {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #e2d9f0;
+            line-height: 1.65;
+            margin-bottom: 16px;
+        }
+
+        .question-num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.78rem;
+            color: #a855f7;
+            letter-spacing: 2px;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .options { display: flex; flex-direction: column; gap: 10px; }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+            padding: 11px 14px;
+            border: 1px solid rgba(168,85,247,0.2);
+            border-radius: 8px;
+            background: rgba(168,85,247,0.04);
+            transition: all 0.15s;
+            line-height: 1.5;
+        }
+
+        .option-label:hover { background: rgba(168,85,247,0.12); border-color: rgba(168,85,247,0.45); }
+
+        .option-label input[type="radio"] { display: none; }
+
+        .option-letter {
+            flex-shrink: 0;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #a855f7;
+            background: rgba(168,85,247,0.15);
+            border: 1px solid rgba(168,85,247,0.35);
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .option-label input:checked + .option-letter {
+            background: #a855f7;
+            color: #fff;
+            border-color: #a855f7;
+        }
+
+        .option-text { font-size: 0.97rem; color: #b8c5d6; padding-top: 3px; }
+
+        .feedback {
+            display: none;
+            margin-top: 12px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.92rem;
+            font-weight: 600;
+        }
+
+        .feedback.correct-fb {
+            background: rgba(74,222,128,0.12);
+            border: 1px solid rgba(74,222,128,0.35);
+            color: #86efac;
+        }
+
+        .feedback.wrong-fb {
+            background: rgba(239,68,68,0.10);
+            border: 1px solid rgba(239,68,68,0.3);
+            color: #fca5a5;
+        }
+
+        .submit-area {
+            text-align: center;
+            margin-top: 36px;
+        }
+
+        .submit-btn {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            background: linear-gradient(135deg, #7e22ce, #a855f7);
+            border: none;
+            padding: 16px 48px;
+            border-radius: 10px;
+            cursor: pointer;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            box-shadow: 0 4px 20px rgba(168,85,247,0.3);
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #6b21a8, #9333ea);
+            box-shadow: 0 6px 28px rgba(168,85,247,0.45);
+            transform: translateY(-2px);
+        }
+
+        .result-banner {
+            display: none;
+            margin-top: 28px;
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .result-banner.pass {
+            background: rgba(74,222,128,0.1);
+            border: 2px solid rgba(74,222,128,0.4);
+        }
+
+        .result-banner.fail {
+            background: rgba(239,68,68,0.08);
+            border: 2px solid rgba(239,68,68,0.3);
+        }
+
+        .result-score {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 900;
+            color: #ffffff;
+            line-height: 1;
+        }
+
+        .result-label {
+            font-size: 1rem;
+            color: #c8d5e0;
+            margin-top: 10px;
+        }
+
+        .result-grade {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-top: 14px;
+        }
+
+        .result-banner.pass .result-grade { color: #4ade80; }
+        .result-banner.fail .result-grade { color: #f87171; }
+
+        .hub-link {
+            display: inline-block;
+            margin-top: 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #c084fc;
+            text-decoration: none;
+            background: rgba(168,85,247,0.1);
+            border: 2px solid rgba(168,85,247,0.3);
+            padding: 10px 24px;
+            border-radius: 8px;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+
+        .hub-link:hover { background: rgba(168,85,247,0.22); }
+
+        @media (max-width: 640px) {
+            .main { padding: 24px 16px; }
+            .header-title { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="ref-link">Unit 6 Hub ↗</a>
+
+    <div class="header">
+        <div class="header-label">Unit 6 — Assessment</div>
+        <div class="header-title">Artificial Intelligence Quiz</div>
+        <div class="header-sub">16 Questions · Multiple Choice</div>
+    </div>
+
+    <div class="main">
+
+        <div class="instructions">
+            <strong>Instructions:</strong> Select the best answer for each question. When you're finished, click <strong>"Grade My Quiz"</strong> at the bottom. Each question is worth 1 point. You will see which answers were correct or incorrect after grading.
+        </div>
+
+        <form id="quizForm">
+
+            <!-- Q1 -->
+            <div class="question-block" id="qblock-1">
+                <span class="question-num">Question 1 of 16</span>
+                <div class="question-text">What best describes machine learning?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q1" value="a"><span class="option-letter">A</span><span class="option-text">Writing detailed rules that tell a computer exactly what to do in every situation</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="b"><span class="option-letter">B</span><span class="option-text">Training a system to recognize patterns in data and improve over time</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="c"><span class="option-letter">C</span><span class="option-text">Building faster hardware to run traditional programs more efficiently</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="d"><span class="option-letter">D</span><span class="option-text">Programming a robot to follow a fixed set of sensor-based instructions</span></label>
+                </div>
+                <div class="feedback" id="fb-1"></div>
+            </div>
+
+            <!-- Q2 -->
+            <div class="question-block" id="qblock-2">
+                <span class="question-num">Question 2 of 16</span>
+                <div class="question-text">Which type of machine learning uses labeled training data — examples that already have correct answers attached?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q2" value="a"><span class="option-letter">A</span><span class="option-text">Reinforcement learning, which works by trial and error with a reward signal</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="b"><span class="option-letter">B</span><span class="option-text">Unsupervised learning, which groups data without any labels provided</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="c"><span class="option-letter">C</span><span class="option-text">Supervised learning, which matches inputs to known correct outputs</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="d"><span class="option-letter">D</span><span class="option-text">Generative learning, which creates new data samples from patterns</span></label>
+                </div>
+                <div class="feedback" id="fb-2"></div>
+            </div>
+
+            <!-- Q3 -->
+            <div class="question-block" id="qblock-3">
+                <span class="question-num">Question 3 of 16</span>
+                <div class="question-text">In machine learning, what is "inference"?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q3" value="a"><span class="option-letter">A</span><span class="option-text">The process of adjusting model weights during training</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="b"><span class="option-letter">B</span><span class="option-text">The technique of collecting and labeling training data before use</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="c"><span class="option-letter">C</span><span class="option-text">The method of checking whether training data is balanced across groups</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="d"><span class="option-letter">D</span><span class="option-text">Using a trained model to make predictions on new data</span></label>
+                </div>
+                <div class="feedback" id="fb-3"></div>
+            </div>
+
+            <!-- Q4 -->
+            <div class="question-block" id="qblock-4">
+                <span class="question-num">Question 4 of 16</span>
+                <div class="question-text">What is the primary purpose of training data in a supervised learning system?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q4" value="a"><span class="option-letter">A</span><span class="option-text">To teach the model what patterns to recognize</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="b"><span class="option-letter">B</span><span class="option-text">To test whether the finished model performs correctly in production</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="c"><span class="option-letter">C</span><span class="option-text">To store the neural network's final weights after the training run</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="d"><span class="option-letter">D</span><span class="option-text">To provide documentation for engineers who review the model later</span></label>
+                </div>
+                <div class="feedback" id="fb-4"></div>
+            </div>
+
+            <!-- Q5 -->
+            <div class="question-block" id="qblock-5">
+                <span class="question-num">Question 5 of 16</span>
+                <div class="question-text">What makes supervised learning "supervised"?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q5" value="a"><span class="option-letter">A</span><span class="option-text">A human must watch the training process to monitor for errors</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="b"><span class="option-letter">B</span><span class="option-text">Each training example is labeled with the correct answer</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="c"><span class="option-letter">C</span><span class="option-text">The algorithm is checked by a separate verification system</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="d"><span class="option-letter">D</span><span class="option-text">A teacher model guides the student model through each training step</span></label>
+                </div>
+                <div class="feedback" id="fb-5"></div>
+            </div>
+
+            <!-- Q6 -->
+            <div class="question-block" id="qblock-6">
+                <span class="question-num">Question 6 of 16</span>
+                <div class="question-text">Which type of machine learning learns by receiving rewards for good actions and penalties for bad ones?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q6" value="a"><span class="option-letter">A</span><span class="option-text">Supervised learning — it uses labeled examples and adjusts until predictions match all labels</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="b"><span class="option-letter">B</span><span class="option-text">Unsupervised learning — it identifies hidden structure in unlabeled datasets</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="c"><span class="option-letter">C</span><span class="option-text">Reinforcement learning — it uses rewards and penalties to guide behavior</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="d"><span class="option-letter">D</span><span class="option-text">Transfer learning — it applies knowledge from one domain to a related task</span></label>
+                </div>
+                <div class="feedback" id="fb-6"></div>
+            </div>
+
+            <!-- Q7 -->
+            <div class="question-block" id="qblock-7">
+                <span class="question-num">Question 7 of 16</span>
+                <div class="question-text">In machine learning, what is a "model"?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q7" value="a"><span class="option-letter">A</span><span class="option-text">A simplified drawing of a neural network architecture for documentation</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="b"><span class="option-letter">B</span><span class="option-text">The labeled dataset used to teach the algorithm during the training phase</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="c"><span class="option-letter">C</span><span class="option-text">A physical object that the AI system is designed to recognize or manipulate</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="d"><span class="option-letter">D</span><span class="option-text">The mathematical structure that maps inputs to outputs after training</span></label>
+                </div>
+                <div class="feedback" id="fb-7"></div>
+            </div>
+
+            <!-- Q8 -->
+            <div class="question-block" id="qblock-8">
+                <span class="question-num">Question 8 of 16</span>
+                <div class="question-text">What is the most common source of bias in an AI system?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q8" value="a"><span class="option-letter">A</span><span class="option-text">Training data that doesn't represent all real-world cases fairly</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="b"><span class="option-letter">B</span><span class="option-text">Errors in the neural network's activation functions during training</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="c"><span class="option-letter">C</span><span class="option-text">Using too many hidden layers in the model's architecture</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="d"><span class="option-letter">D</span><span class="option-text">Insufficient computing power to run the model accurately at scale</span></label>
+                </div>
+                <div class="feedback" id="fb-8"></div>
+            </div>
+
+            <!-- Q9 -->
+            <div class="question-block" id="qblock-9">
+                <span class="question-num">Question 9 of 16</span>
+                <div class="question-text">Which description best fits a neural network?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q9" value="a"><span class="option-letter">A</span><span class="option-text">A set of hand-written rules that map each possible input to a single output</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="b"><span class="option-letter">B</span><span class="option-text">Layers of interconnected nodes that transform inputs into a prediction</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="c"><span class="option-letter">C</span><span class="option-text">A database that stores all training examples for quick lookup at inference time</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="d"><span class="option-letter">D</span><span class="option-text">A single mathematical function with one input and one adjustable parameter</span></label>
+                </div>
+                <div class="feedback" id="fb-9"></div>
+            </div>
+
+            <!-- Q10 -->
+            <div class="question-block" id="qblock-10">
+                <span class="question-num">Question 10 of 16</span>
+                <div class="question-text">Which engineering canon most directly applies when an engineer discovers their AI system has serious bias before deployment?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q10" value="a"><span class="option-letter">A</span><span class="option-text">Engineers must design systems that handle maximum load without failing under stress</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="b"><span class="option-letter">B</span><span class="option-text">Engineers must document all design choices so future engineers can maintain the system</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="c"><span class="option-letter">C</span><span class="option-text">Engineers must flag and address safety risks before deploying any system</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="d"><span class="option-letter">D</span><span class="option-text">Engineers must always use the most current software tools and hardware platforms available</span></label>
+                </div>
+                <div class="feedback" id="fb-10"></div>
+            </div>
+
+            <!-- Q11 -->
+            <div class="question-block" id="qblock-11">
+                <span class="question-num">Question 11 of 16</span>
+                <div class="question-text">A model performs extremely well on its training data but makes frequent errors on new data it has never seen. This is called:</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q11" value="a"><span class="option-letter">A</span><span class="option-text">Underfitting — the model has too few parameters to learn the training patterns</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="b"><span class="option-letter">B</span><span class="option-text">Inference failure — the model cannot convert its weights into usable predictions</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="c"><span class="option-letter">C</span><span class="option-text">Data leakage — some training examples were accidentally mixed into the test set</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="d"><span class="option-letter">D</span><span class="option-text">Overfitting — the model memorized training data instead of generalizing</span></label>
+                </div>
+                <div class="feedback" id="fb-11"></div>
+            </div>
+
+            <!-- Q12 -->
+            <div class="question-block" id="qblock-12">
+                <span class="question-num">Question 12 of 16</span>
+                <div class="question-text">In Teachable Machine, what is a "class"?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q12" value="a"><span class="option-letter">A</span><span class="option-text">A category the model is trained to recognize</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="b"><span class="option-letter">B</span><span class="option-text">The total number of training samples collected across all categories combined</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="c"><span class="option-letter">C</span><span class="option-text">One complete training session from data collection through to model export</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="d"><span class="option-letter">D</span><span class="option-text">A layer inside the neural network that processes a specific type of feature</span></label>
+                </div>
+                <div class="feedback" id="fb-12"></div>
+            </div>
+
+            <!-- Q13 -->
+            <div class="question-block" id="qblock-13">
+                <span class="question-num">Question 13 of 16</span>
+                <div class="question-text">Why does it matter to collect training examples from many different angles, lighting conditions, and positions?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q13" value="a"><span class="option-letter">A</span><span class="option-text">It increases the total file size of the model, which improves its storage performance</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="b"><span class="option-letter">B</span><span class="option-text">The model only learns patterns from its training data — variety reduces blind spots</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="c"><span class="option-letter">C</span><span class="option-text">It allows the model to run faster because it has more data to optimize against</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="d"><span class="option-letter">D</span><span class="option-text">It satisfies the minimum sample-count requirements set by the Teachable Machine platform</span></label>
+                </div>
+                <div class="feedback" id="fb-13"></div>
+            </div>
+
+            <!-- Q14 -->
+            <div class="question-block" id="qblock-14">
+                <span class="question-num">Question 14 of 16</span>
+                <div class="question-text">When an AI system causes harm due to biased training data, who bears ethical responsibility?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q14" value="a"><span class="option-letter">A</span><span class="option-text">Only the data scientists who collected and labeled the original training dataset</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="b"><span class="option-letter">B</span><span class="option-text">Only the executives who decided to deploy the AI system in production</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="c"><span class="option-letter">C</span><span class="option-text">Designers, deployers, and users all share accountability based on their role</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="d"><span class="option-letter">D</span><span class="option-text">No one, because the algorithm made the decision autonomously without human input</span></label>
+                </div>
+                <div class="feedback" id="fb-14"></div>
+            </div>
+
+            <!-- Q15 -->
+            <div class="question-block" id="qblock-15">
+                <span class="question-num">Question 15 of 16</span>
+                <div class="question-text">What does a model's accuracy score measure?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q15" value="a"><span class="option-letter">A</span><span class="option-text">The number of training examples the model processed before the training run ended</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="b"><span class="option-letter">B</span><span class="option-text">How quickly the model runs inference on a new input after training is complete</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="c"><span class="option-letter">C</span><span class="option-text">The total number of weights inside the neural network after the final training pass</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="d"><span class="option-letter">D</span><span class="option-text">The percentage of predictions the model gets correct on a given dataset</span></label>
+                </div>
+                <div class="feedback" id="fb-15"></div>
+            </div>
+
+            <!-- Q16 -->
+            <div class="question-block" id="qblock-16">
+                <span class="question-num">Question 16 of 16</span>
+                <div class="question-text">What does exporting a trained Teachable Machine model allow you to do?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q16" value="a"><span class="option-letter">A</span><span class="option-text">Use the trained model in your own website or application</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="b"><span class="option-letter">B</span><span class="option-text">Share the raw training data with other Teachable Machine users for reuse</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="c"><span class="option-letter">C</span><span class="option-text">Automatically retrain the model whenever new camera data is collected</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="d"><span class="option-letter">D</span><span class="option-text">Submit the model to Google's servers for professional quality validation</span></label>
+                </div>
+                <div class="feedback" id="fb-16"></div>
+            </div>
+
+            <div class="submit-area">
+                <button type="button" class="submit-btn" onclick="gradeQuiz()">Grade My Quiz</button>
+                <div class="result-banner" id="resultBanner">
+                    <div class="result-score" id="resultScore"></div>
+                    <div class="result-label" id="resultLabel"></div>
+                    <div class="result-grade" id="resultGrade"></div>
+                    <a href="index.html" class="hub-link">← Return to Unit 6 Hub</a>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+
+    <script>
+        const answers = {
+            q1: 'b', q2: 'c', q3: 'd', q4: 'a',
+            q5: 'b', q6: 'c', q7: 'd', q8: 'a',
+            q9: 'b', q10: 'c', q11: 'd', q12: 'a',
+            q13: 'b', q14: 'c', q15: 'd', q16: 'a'
+        };
+
+        const totalQuestions = 16;
+
+        function gradeQuiz() {
+            let score = 0;
+            const letterMap = { a: 'A', b: 'B', c: 'C', d: 'D' };
+
+            for (let i = 1; i <= totalQuestions; i++) {
+                const name = 'q' + i;
+                const selected = document.querySelector(`input[name="${name}"]:checked`);
+                const block = document.getElementById('qblock-' + i);
+                const fb = document.getElementById('fb-' + i);
+                const correct = answers[name];
+
+                block.classList.remove('correct', 'wrong');
+                fb.style.display = 'none';
+                fb.className = 'feedback';
+
+                if (!selected) {
+                    block.classList.add('wrong');
+                    fb.classList.add('wrong-fb');
+                    fb.textContent = `No answer selected. Correct answer: ${letterMap[correct]}`;
+                    fb.style.display = 'block';
+                } else if (selected.value === correct) {
+                    score++;
+                    block.classList.add('correct');
+                    fb.classList.add('correct-fb');
+                    fb.textContent = `Correct!`;
+                    fb.style.display = 'block';
+                } else {
+                    block.classList.add('wrong');
+                    fb.classList.add('wrong-fb');
+                    fb.textContent = `Incorrect. Correct answer: ${letterMap[correct]}`;
+                    fb.style.display = 'block';
+                }
+            }
+
+            const pct = Math.round((score / totalQuestions) * 100);
+            let grade = '';
+            if (pct >= 90)      grade = 'A';
+            else if (pct >= 80) grade = 'B';
+            else if (pct >= 70) grade = 'C';
+            else if (pct >= 60) grade = 'D';
+            else                grade = 'F';
+
+            const banner = document.getElementById('resultBanner');
+            document.getElementById('resultScore').textContent = score + ' / ' + totalQuestions;
+            document.getElementById('resultLabel').textContent = pct + '% — ' + (pct >= 70 ? 'Passing' : 'Below Passing');
+            document.getElementById('resultGrade').textContent = 'Grade: ' + grade;
+            banner.className = 'result-banner ' + (pct >= 70 ? 'pass' : 'fail');
+            banner.style.display = 'block';
+            banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    </script>
+
+</body>
+</html>

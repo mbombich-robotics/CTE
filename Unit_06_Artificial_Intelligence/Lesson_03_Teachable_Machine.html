@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Activity 6.3 – Teachable Machine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0212 0%, #100520 50%, #1a083a 100%);
+            color: #e0e6f0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ref-link {
+            position: fixed;
+            top: 18px;
+            right: 24px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #c084fc;
+            text-decoration: none;
+            background: rgba(168,85,247,0.15);
+            border: 1px solid rgba(168,85,247,0.35);
+            padding: 5px 12px;
+            border-radius: 20px;
+            z-index: 100;
+            transition: background 0.2s;
+        }
+        .ref-link:hover { background: rgba(168,85,247,0.3); }
+
+        .slide-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 40px 120px;
+            overflow-y: auto;
+        }
+
+        .slide {
+            display: none;
+            opacity: 0;
+            max-width: 900px;
+            width: 100%;
+            transition: opacity 0.35s ease;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .slide.active { display: flex; opacity: 1; }
+
+        .slide-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: #a855f7;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .slide-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.4rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-transform: uppercase;
+            line-height: 1.2;
+            text-shadow: 0 0 25px rgba(168,85,247,0.5);
+        }
+
+        .slide-title.small { font-size: 1.8rem; }
+
+        .slide-body {
+            font-size: 1.1rem;
+            color: #b8c5d6;
+            line-height: 1.85;
+        }
+
+        .slide-body strong { color: #e2c5ff; font-weight: 700; }
+
+        .accent-card {
+            background: rgba(168,85,247,0.08);
+            border: 2px solid rgba(168,85,247,0.35);
+            border-radius: 12px;
+            padding: 22px 26px;
+        }
+
+        .accent-card p { font-size: 1.05rem; color: #c8d5e0; line-height: 1.8; }
+        .accent-card strong { color: #e2c5ff; font-weight: 700; }
+
+        .step-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .step-num {
+            flex-shrink: 0;
+            min-width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #7e22ce, #a855f7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .step-text { font-size: 1.05rem; color: #b8c5d6; line-height: 1.7; padding-top: 6px; }
+        .step-text strong { color: #e2c5ff; }
+        .step-text code {
+            background: rgba(168,85,247,0.15);
+            border: 1px solid rgba(168,85,247,0.3);
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            color: #c084fc;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(168,85,247,0.12), rgba(192,132,252,0.08));
+            border: 2px solid rgba(168,85,247,0.45);
+            border-radius: 12px;
+            padding: 20px 26px;
+            font-size: 1.08rem;
+            color: #e2c5ff;
+            line-height: 1.8;
+        }
+
+        .highlight-box strong { color: #f0e0ff; font-weight: 800; }
+
+        .warning-box {
+            background: rgba(251,191,36,0.08);
+            border: 2px solid rgba(251,191,36,0.35);
+            border-radius: 12px;
+            padding: 18px 24px;
+            font-size: 1.02rem;
+            color: #fde68a;
+            line-height: 1.8;
+        }
+
+        .warning-box strong { color: #fbbf24; font-weight: 700; }
+
+        .tip-box {
+            background: rgba(74,222,128,0.07);
+            border: 2px solid rgba(74,222,128,0.3);
+            border-radius: 12px;
+            padding: 18px 24px;
+            font-size: 1.02rem;
+            color: #bbf7d0;
+            line-height: 1.8;
+        }
+
+        .tip-box strong { color: #4ade80; font-weight: 700; }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .info-card {
+            background: rgba(168,85,247,0.06);
+            border: 2px solid rgba(168,85,247,0.25);
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .info-card h3 { font-size: 1rem; font-weight: 700; color: #c084fc; margin-bottom: 8px; }
+        .info-card p { font-size: 0.9rem; color: #9aabb8; line-height: 1.65; }
+
+        .reflect-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .reflect-item {
+            background: rgba(168,85,247,0.06);
+            border-left: 4px solid #a855f7;
+            border-radius: 8px;
+            padding: 16px 20px;
+            font-size: 1.05rem;
+            color: #c8d5e0;
+            line-height: 1.7;
+        }
+
+        .reflect-item strong { color: #e2c5ff; }
+
+        .class-example {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .class-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: rgba(168,85,247,0.06);
+            border-radius: 8px;
+            padding: 12px 16px;
+        }
+
+        .class-chip {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        .chip-a { background: rgba(168,85,247,0.2); color: #c084fc; border: 1px solid rgba(168,85,247,0.4); }
+        .chip-b { background: rgba(56,189,248,0.15); color: #7dd3fc; border: 1px solid rgba(56,189,248,0.35); }
+        .chip-c { background: rgba(74,222,128,0.12); color: #86efac; border: 1px solid rgba(74,222,128,0.3); }
+
+        .class-desc { font-size: 0.95rem; color: #9aabb8; }
+
+        .controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10,2,18,0.92);
+            border-top: 2px solid rgba(168,85,247,0.3);
+            padding: 16px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(10px);
+            z-index: 50;
+        }
+
+        .nav-btn {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #a855f7;
+            background: rgba(168,85,247,0.12);
+            border: 2px solid rgba(168,85,247,0.4);
+            padding: 10px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 1px;
+        }
+
+        .nav-btn:hover { background: rgba(168,85,247,0.25); border-color: #a855f7; }
+        .nav-btn:disabled { opacity: 0.25; cursor: default; }
+
+        .slide-counter {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            color: #6b7280;
+            letter-spacing: 2px;
+        }
+
+        .hub-btn {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #c084fc;
+            background: rgba(168,85,247,0.08);
+            border: 2px solid rgba(168,85,247,0.3);
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s;
+            letter-spacing: 1px;
+        }
+
+        .hub-btn:hover { background: rgba(168,85,247,0.2); }
+
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .slide-title { font-size: 1.8rem; }
+            .slide-container { padding: 60px 24px 120px; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="ref-link">Unit 6 Hub ↗</a>
+
+    <div class="slide-container">
+
+        <!-- Slide 1: Title -->
+        <div class="slide active" id="slide-1">
+            <div class="slide-label">Activity 6.3 — Days 3 & 4</div>
+            <div class="slide-title">Teachable Machine</div>
+            <div class="slide-body">
+                You're going to train your own AI image classifier — right in the browser, no installation required, no code. You'll see exactly how supervised learning works by doing it yourself: collecting examples, training a model, and then deliberately breaking it.
+            </div>
+            <div class="accent-card">
+                <p><strong>What you'll do:</strong> Open Teachable Machine → Create an image project → Define 3 classes → Collect webcam examples → Train → Test → Explore failure modes → Reflect.</p>
+            </div>
+            <div class="tip-box">
+                <strong>URL:</strong> teachablemachine.withgoogle.com — open it in Chrome or Edge. A webcam is required. Sit somewhere with consistent lighting.
+            </div>
+        </div>
+
+        <!-- Slide 2: What Is Teachable Machine? -->
+        <div class="slide" id="slide-2">
+            <div class="slide-label">Slide 2 of 10</div>
+            <div class="slide-title small">What Is Teachable Machine?</div>
+            <div class="slide-body">
+                Google's Teachable Machine is a web-based tool that lets you train a real machine learning model by showing it examples through your webcam. No coding required. Behind the scenes it runs a neural network that uses supervised learning — the same type of ML that powers image classification at Google Photos, facial recognition, and medical imaging tools.
+            </div>
+            <div class="grid-2">
+                <div class="info-card">
+                    <h3>What It Can Do</h3>
+                    <p>Image classification (camera or uploaded files), sound classification, and body pose detection. Today we're using image classification.</p>
+                </div>
+                <div class="info-card">
+                    <h3>What Happens When You Train</h3>
+                    <p>It runs a neural network in your browser, adjusting weights until the model's class predictions match your labeled examples. Training takes seconds because of browser GPU acceleration.</p>
+                </div>
+            </div>
+            <div class="highlight-box">
+                Everything you collected in Lesson 6.1 about supervised learning — labeled examples, training, inference — you are about to <strong>experience directly</strong>.
+            </div>
+        </div>
+
+        <!-- Slide 3: Step 1 - Start -->
+        <div class="slide" id="slide-3">
+            <div class="slide-label">Step 1 — Open & Set Up</div>
+            <div class="slide-title small">Getting Started</div>
+            <div class="step-list">
+                <div class="step-item">
+                    <div class="step-num">1</div>
+                    <div class="step-text">Go to <strong>teachablemachine.withgoogle.com</strong></div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">2</div>
+                    <div class="step-text">Click <strong>"Get Started"</strong></div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">3</div>
+                    <div class="step-text">Choose <strong>"Image Project"</strong> → then <strong>"Standard image model"</strong></div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">4</div>
+                    <div class="step-text">You'll see a project with two default classes: <code>Class 1</code> and <code>Class 2</code>. You'll rename these and add a third.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">5</div>
+                    <div class="step-text">Allow camera access when the browser asks.</div>
+                </div>
+            </div>
+            <div class="warning-box">
+                <strong>Don't sign in yet</strong> — you don't need a Google account to train a model. You'll just export it locally.
+            </div>
+        </div>
+
+        <!-- Slide 4: Step 2 - Define Classes -->
+        <div class="slide" id="slide-4">
+            <div class="slide-label">Step 2 — Define Your Classes</div>
+            <div class="slide-title small">Choose What to Classify</div>
+            <div class="slide-body">
+                Your model needs at least 3 classes. Choose something you can photograph at your desk with clear visual differences. The goal is something simple and testable — here are some ideas:
+            </div>
+            <div class="class-example">
+                <div class="class-row">
+                    <span class="class-chip chip-a">Option A</span>
+                    <span class="class-desc"><strong>Thumbs up / Thumbs down / Flat hand</strong> — classic and fast to collect</span>
+                </div>
+                <div class="class-row">
+                    <span class="class-chip chip-b">Option B</span>
+                    <span class="class-desc"><strong>Pen / Marker / Pencil</strong> — simple objects at your desk</span>
+                </div>
+                <div class="class-row">
+                    <span class="class-chip chip-c">Option C</span>
+                    <span class="class-desc"><strong>Your own idea</strong> — 3 visually distinct things you can hold up</span>
+                </div>
+            </div>
+            <div class="step-list" style="margin-top: 4px;">
+                <div class="step-item">
+                    <div class="step-num">1</div>
+                    <div class="step-text">Click the pencil icon next to <code>Class 1</code> and rename it to your first category.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">2</div>
+                    <div class="step-text">Do the same for <code>Class 2</code>. Then click <strong>"Add a class"</strong> and name the third.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Step 3 - Collect Samples -->
+        <div class="slide" id="slide-5">
+            <div class="slide-label">Step 3 — Collect Training Samples</div>
+            <div class="slide-title small">Feed the Model Examples</div>
+            <div class="slide-body">
+                For each class, you'll hold down the <strong>"Hold to Record"</strong> webcam button while showing that class to the camera. The goal is variety — the model needs to handle your subject from different angles and backgrounds.
+            </div>
+            <div class="step-list">
+                <div class="step-item">
+                    <div class="step-num">1</div>
+                    <div class="step-text">For <strong>each class</strong>, click <strong>"Webcam"</strong> then hold down <strong>"Hold to Record."</strong></div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">2</div>
+                    <div class="step-text">Collect at least <strong>60–80 frames per class</strong>. Move around slightly while recording — slight angle changes, different distances.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">3</div>
+                    <div class="step-text">Try to keep <strong>the same lighting</strong> for all three classes — shadows are a major source of false patterns.</div>
+                </div>
+            </div>
+            <div class="tip-box">
+                <strong>Tip:</strong> If you collected samples while sitting — also collect a few while leaning slightly forward or backward. Real users won't hold things at exactly the angle you trained on.
+            </div>
+        </div>
+
+        <!-- Slide 6: Step 4 - Train -->
+        <div class="slide" id="slide-6">
+            <div class="slide-label">Step 4 — Train Your Model</div>
+            <div class="slide-title small">Let the Algorithm Work</div>
+            <div class="step-list">
+                <div class="step-item">
+                    <div class="step-num">1</div>
+                    <div class="step-text">Click the blue <strong>"Train Model"</strong> button. A progress bar will run — typically 10–30 seconds.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">2</div>
+                    <div class="step-text">When training finishes, the <strong>Preview panel</strong> opens on the right. Your webcam feed appears with live class predictions and confidence percentages.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">3</div>
+                    <div class="step-text">Test each of your three classes. Watch the confidence bars — high confidence on the right class is a sign of good training.</div>
+                </div>
+            </div>
+            <div class="highlight-box">
+                What just happened: the browser ran a neural network through thousands of iterations, adjusting weights until predictions matched your labels. <strong>You just trained an AI model.</strong>
+            </div>
+        </div>
+
+        <!-- Slide 7: Step 5 - Test & Observe -->
+        <div class="slide" id="slide-7">
+            <div class="slide-label">Step 5 — Test and Explore</div>
+            <div class="slide-title small">What Does Your Model Actually Know?</div>
+            <div class="slide-body">
+                A model that performs well on training data can still fail in unexpected ways on new data. This is called <strong>overfitting</strong>. Your job now is to find the edges of what your model knows.
+            </div>
+            <div class="step-list">
+                <div class="step-item">
+                    <div class="step-num">→</div>
+                    <div class="step-text">What happens if you show your class from a very different angle than you trained on?</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">→</div>
+                    <div class="step-text">What if you hold it against a different background?</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">→</div>
+                    <div class="step-text">What if the lighting changes dramatically?</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">→</div>
+                    <div class="step-text">What if you show it something from a completely different category — does it still claim high confidence?</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">→</div>
+                    <div class="step-text">What if you show it nothing (point the camera at the ceiling)?</div>
+                </div>
+            </div>
+            <div class="warning-box">
+                <strong>Note any surprising failures.</strong> You'll use these observations in your reflection questions.
+            </div>
+        </div>
+
+        <!-- Slide 8: Step 6 - Break It -->
+        <div class="slide" id="slide-8">
+            <div class="slide-label">Step 6 — Deliberately Break It</div>
+            <div class="slide-title small">Design a Bad Training Set</div>
+            <div class="slide-body">
+                Now you're going to create a second model intentionally trained with biased data — so you can see firsthand how training data shapes what a model believes.
+            </div>
+            <div class="step-list">
+                <div class="step-item">
+                    <div class="step-num">1</div>
+                    <div class="step-text"><strong>Create a new project.</strong> Click the Teachable Machine logo to start fresh.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">2</div>
+                    <div class="step-text">Use the same 3 classes, but <strong>train one class with only 10 samples</strong> and the other two with 80+ samples.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">3</div>
+                    <div class="step-text">Train the model. Test all three classes. <strong>Which one fails first?</strong></div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">4</div>
+                    <div class="step-text">Now also try: collect all samples for one class holding the object at a single fixed position. Notice what happens when you move it.</div>
+                </div>
+            </div>
+            <div class="highlight-box">
+                This is exactly how real-world AI bias works. The model isn't "wrong" — it learned exactly what you showed it. <strong>The bias was in the data, not the algorithm.</strong>
+            </div>
+        </div>
+
+        <!-- Slide 9: Reflection Questions -->
+        <div class="slide" id="slide-9">
+            <div class="slide-label">Reflection — Answer These</div>
+            <div class="slide-title small">Think and Discuss</div>
+            <div class="reflect-list">
+                <div class="reflect-item">
+                    <strong>1.</strong> When your model failed during the "test and explore" step, what caused the failure? Was it the algorithm, the training data, or both?
+                </div>
+                <div class="reflect-item">
+                    <strong>2.</strong> When you intentionally trained with imbalanced data, which class suffered? Why does sample count affect model performance?
+                </div>
+                <div class="reflect-item">
+                    <strong>3.</strong> Imagine this model was being used to sort products on a factory assembly line and your "bad" version was deployed. Describe one real consequence.
+                </div>
+                <div class="reflect-item">
+                    <strong>4.</strong> Based on Lesson 6.2 — who would be responsible for harm caused by a model trained on poor data? The data collector? The engineer who deployed it? The company?
+                </div>
+                <div class="reflect-item">
+                    <strong>5.</strong> What would you do differently in a production model compared to what you did here in a 5-minute classroom activity?
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Extension -->
+        <div class="slide" id="slide-10">
+            <div class="slide-label">Slide 10 of 10 — Extension</div>
+            <div class="slide-title small">Export Your Model</div>
+            <div class="slide-body">
+                Want to use your trained model in a real web page? Teachable Machine can export it.
+            </div>
+            <div class="step-list">
+                <div class="step-item">
+                    <div class="step-num">1</div>
+                    <div class="step-text">Click <strong>"Export Model"</strong> in the top bar.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">2</div>
+                    <div class="step-text">Choose <strong>"Tensorflow.js"</strong> → <strong>"Upload (shareable link)."</strong></div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">3</div>
+                    <div class="step-text">Teachable Machine will give you a snippet of JavaScript code that loads your model and runs it in any web page.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">4</div>
+                    <div class="step-text">Paste that code into a basic HTML file — open it in Chrome — and your classifier runs live in the browser, using your trained model.</div>
+                </div>
+            </div>
+            <div class="accent-card">
+                <p>This is how real web apps use ML models. The same export pipeline is used by professional developers integrating image classification into production websites and apps. <strong>Next up: Unit 6 Quiz on Day 5 — see your instructor for access.</strong></p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="controls">
+        <a href="index.html" class="hub-btn">Unit 6 Hub</a>
+        <div class="slide-counter" id="counter">1 / 10</div>
+        <div style="display: flex; gap: 12px;">
+            <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>◀ PREV</button>
+            <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">NEXT ▶</button>
+        </div>
+    </div>
+
+    <script>
+        let current = 1;
+        const total = 10;
+
+        function changeSlide(dir) {
+            const old = document.getElementById('slide-' + current);
+            old.style.opacity = '0';
+            setTimeout(() => { old.style.display = 'none'; old.classList.remove('active'); }, 300);
+
+            current = Math.max(1, Math.min(total, current + dir));
+
+            const next = document.getElementById('slide-' + current);
+            next.style.display = 'flex';
+            next.style.opacity = '0';
+            setTimeout(() => { next.style.opacity = '1'; next.classList.add('active'); }, 20);
+
+            document.getElementById('counter').textContent = current + ' / ' + total;
+            document.getElementById('prevBtn').disabled = current === 1;
+            document.getElementById('nextBtn').disabled = current === total;
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+            if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+        });
+    </script>
+
+</body>
+</html>
