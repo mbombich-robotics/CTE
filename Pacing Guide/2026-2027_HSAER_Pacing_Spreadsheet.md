@@ -47,10 +47,10 @@
 | 21 | Feb 1–5 | 5 | Wall Following | | Maintain fixed distance from a wall using ultrasonic sensors; proportional correction | |
 | 22 | Feb 8–12 | 5 | Line Following | | 5-sensor IR array; per-sensor threshold calibration; binary line following | |
 | 23 | Feb 15–19 | 4 | Line Following | 🔴 Presidents Day Feb 15 | Weighted-sensor error; PID control; tune + course practical | D: Line Following |
-| 24 | Feb 22–26 | 4 | Mechanisms | 🔴 Feb 26 mid-winter break | Simple machines intro; mechanical advantage + efficiency (POE 111/113) | |
-| 25 | Mar 1–5 | 5 | Mechanisms | | Pulley systems — fixed, movable, compound (POE 114) | |
-| 26 | Mar 8–12 | 5 | Mechanisms | ⚡ Mar 10 (20-min period) | Gear ratios + multi-stage gear trains (POE 115) | |
-| 27 | Mar 15–19 | 5 | Mechanisms | | Converting motion — cams, cranks, linkages, rotary→linear (POE 122) | |
+| 24 | Feb 22–26 | 4 | 6 — AI & ML | 🔴 Feb 26 mid-winter break | L6.1 What Is AI (Day 1); L6.2 Ethics in AI (Day 2); Activity 6.3 Teachable Machine (Days 3–4) — quiz held Day 1 of Week 25 | AI Quiz |
+| 25 | Mar 1–5 | 5 | Mechanisms | | **AI Quiz (Day 1)**; Simple machines intro; mechanical advantage + efficiency (POE 111/113) | |
+| 26 | Mar 8–12 | 5 | Mechanisms | ⚡ Mar 10 (20-min period) | Pulley systems — fixed, movable, compound (POE 114); intro to gear ratios (POE 115) | |
+| 27 | Mar 15–19 | 5 | Mechanisms | | Gear ratios + multi-stage gear trains (POE 115 complete); converting motion — cams, cranks, linkages, rotary→linear (POE 122) | |
 | 28 | Mar 22–25 | ~3.5 | Mechanisms | 🟡 🔴 Mar 25 ½-day Records Day · Mar 26 spring break begins | Mechanism design challenge | |
 | — | Mar 26–Apr 4 | — | — | 🌿 Spring Break | | |
 | 29 | Apr 5–9 | 5 | Servo Build | | Project intro + design brief; servo control review; begin build | |
@@ -74,6 +74,7 @@ Students who completed the course in 2025–26 have already seen basic ultrasoni
 |-------|-----------------|-------------------|
 | 17–19 | Motor control + encoders + IMU intro | Same — encoders and IMU are new for everyone |
 | 20–21 | Ultrasonic + obstacle avoidance | IMU heading hold integrated with obstacle avoidance; Wi-Fi remote control |
-| 22–24 | Line following (5-sensor array, PID) | Remote PID tuning via Wi-Fi; stream live sensor data to browser dashboard |
+| 22–23 | Line following (5-sensor array, PID) | Remote PID tuning via Wi-Fi; stream live sensor data to browser dashboard |
+| 24 | AI & Machine Learning | Same as 1st year — Teachable Machine is standalone, no LEO integration |
 | 25–27 | Scanner robot | Autonomous navigation using IMU heading + scanner; map obstacles to OLED |
 | 29–32 | Claw project | Claw with Wi-Fi control interface; telemetry logging |

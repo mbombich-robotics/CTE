@@ -149,15 +149,23 @@
 
 ---
 
-### Mechanisms
-> PLTW POE Unit 1 content — students analyze, calculate, and build mechanical systems before applying them to a servo-driven project.
+### Unit 6 — AI & Machine Learning
+> One-week standalone unit. Teachable Machine runs in-browser — no hardware integration, no deliverable. Quiz held Day 1 of the following week (after mid-winter break) to leverage the break for retention.
 
 | Wk | Dates | Days | Notes | Content |
 |----|-------|------|-------|---------|
-| 24 | Feb 22–26 | 4 | 🔴 Feb 26 mid-winter break | Simple machines intro; mechanical advantage + efficiency (POE 111/113) |
-| 25 | Mar 1–5 | 5 | | Pulley systems — fixed, movable, compound (POE 114) |
-| 26 | Mar 8–12 | 5 | ⚡ Mar 10 (20-min) | Gear ratios + multi-stage gear trains (POE 115) |
-| 27 | Mar 15–19 | 5 | | Converting motion — cams, cranks, linkages, rotary→linear (POE 122) |
+| 24 | Feb 22–26 | 4 | 🔴 Feb 26 mid-winter break | **Day 1:** L6.1 What Is AI (AI/ML/DL spectrum, 3 types of ML, training, bias) · **Day 2:** L6.2 Ethics in AI (COMPAS, Amazon hiring, engineering canons, accountability) · **Days 3–4:** Activity 6.3 Teachable Machine (train, test, deliberately break) · **Quiz:** Day 1 of Week 25 |
+
+---
+
+### Mechanisms
+> PLTW POE Unit 1 content — students analyze, calculate, and build mechanical systems before applying them to a servo-driven project. Compressed from 5 weeks to 4 weeks + quiz day to accommodate Unit 6.
+
+| Wk | Dates | Days | Notes | Content |
+|----|-------|------|-------|---------|
+| 25 | Mar 1–5 | 5 | | **Day 1: AI Quiz** (Unit 6); Days 2–5: Simple machines intro; mechanical advantage + efficiency (POE 111/113) |
+| 26 | Mar 8–12 | 5 | ⚡ Mar 10 (20-min) | Pulley systems — fixed, movable, compound (POE 114); intro to gear ratios (POE 115) |
+| 27 | Mar 15–19 | 5 | | Gear ratios + multi-stage gear trains (POE 115 complete); converting motion — cams, cranks, linkages, rotary→linear (POE 122) |
 | 28 | Mar 22–25 | ~3.5 | 🟡 🔴 Mar 25 ½-day Records Day · Mar 26 spring break begins | Mechanism design challenge |
 | — | Mar 26 – Apr 4 | — | 🌿 Spring Break | |
 
@@ -182,7 +190,8 @@ Students who completed the course in 2025–26 have already seen basic ultrasoni
 |-------|----------|-------------------|
 | 17–19 | Motor control + encoders + IMU intro | Same — new for everyone |
 | 20–21 | Ultrasonic + obstacle avoidance | IMU heading hold + Wi-Fi remote control |
-| 22–24 | Line following (5-sensor, PID) | Remote PID tuning via Wi-Fi; live sensor dashboard in browser |
+| 22–23 | Line following (5-sensor, PID) | Remote PID tuning via Wi-Fi; live sensor dashboard in browser |
+| 24 | AI & Machine Learning | Same as 1st year — Teachable Machine is standalone, no LEO integration |
 | 25–27 | Scanner robot | Autonomous navigation: IMU heading + scanner fusion; map to OLED |
 | 29–32 | Claw project | Claw with Wi-Fi control; telemetry logging |
 
