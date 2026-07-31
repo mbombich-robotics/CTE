@@ -200,10 +200,10 @@ Students who completed the course in 2025–26 have already seen basic ultrasoni
 ### Claw Project & Design Brief
 | Wk | Dates | Days | Notes | Content |
 |----|-------|------|-------|---------|
-| 29 | Apr 5–9 | 5 | | Claw intro: servos + gripper mechanics; design brief D8 |
+| 29 | Apr 5–9 | 5 | | Claw intro: servos + gripper mechanics; design brief *(D#TBD — unit-prefixed, assign when DELIVERABLES array is overhauled)* |
 | 30 | Apr 12–16 | ~2 real | 🧪 State testing Tue–Thu | Work time; state testing days = independent coding |
 | 31 | Apr 19–23 | 5 | | Claw build + wiring; potentiometer control |
-| 32 | Apr 26–30 | 5 | | Claw practical; design brief D9 due |
+| 32 | Apr 26–30 | 5 | | Claw practical; design brief *(D#TBD)* due |
 
 ---
 
