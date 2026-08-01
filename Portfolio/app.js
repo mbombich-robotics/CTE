@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.12.7',
+    VERSION: 'v2.12.8',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -1495,7 +1495,7 @@ function updateDashboardDeliverables() {
 
     list.innerHTML = unitGroups.map(u => {
         const unitDeliverables = DELIVERABLES.filter(d =>
-            d.unit === u.key && !d.hidden && !skipWeeks.includes(d.week)
+            d.unit === u.key && !d.hidden && !skipWeeks.includes(d.id)
         );
         if (!unitDeliverables.length) return '';
         return `
@@ -1513,7 +1513,7 @@ function updateDashboardDeliverables() {
 
 function renderDashboardRow(d) {
     const status = state.deliverables[d.id]?.status || 'pending';
-    const isAssigned = d.alwaysOpen || status === 'completed' || !!((state.config.deliverableDueDates || {})[d.week]);
+    const isAssigned = d.alwaysOpen || status === 'completed' || !!((state.config.deliverableDueDates || {})[d.id]);
     const isCompleted = status === 'completed';
     const isClickable = !isCompleted && isAssigned;
 
@@ -1690,7 +1690,7 @@ function updateUpcoming() {
 
     const currentDeliverable = DELIVERABLES.find(d => !d.hidden && d.week === state.currentWeek);
     if (currentDeliverable && !currentDeliverable.optional
-            && !state.config.skipDeliverableWeeks.includes(state.currentWeek)
+            && !state.config.skipDeliverableWeeks.includes(currentDeliverable.id)
             && state.deliverables[currentDeliverable.id]?.status !== 'completed') {
         upcoming.push({ title: currentDeliverable.title, due: `End of Week ${state.currentWeek}`, points: currentDeliverable.points, overdue: false });
     }
@@ -1702,8 +1702,8 @@ function updateUpcoming() {
         // Check for overdue deliverables from previous weeks (skip optional and skipped weeks)
         const overdueDeliverable = DELIVERABLES.find(d => !d.hidden && d.week === week);
         if (overdueDeliverable && !overdueDeliverable.optional
-                && !state.config.skipDeliverableWeeks.includes(week)
-                && !!state.config.deliverableDueDates[overdueDeliverable.week]
+                && !state.config.skipDeliverableWeeks.includes(overdueDeliverable.id)
+                && !!state.config.deliverableDueDates[overdueDeliverable.id]
                 && state.deliverables[overdueDeliverable.id]?.status !== 'completed') {
             upcoming.unshift({ title: overdueDeliverable.title, due: 'OVERDUE', points: overdueDeliverable.points, overdue: true });
         }
@@ -1749,7 +1749,7 @@ function updateWeekTopic() {
 function renderDeliverableCard(d) {
     const status = state.deliverables[d.id]?.status || 'pending';
     const isCurrent = d.week === state.currentWeek;
-    const isAssigned = d.alwaysOpen || status === 'completed' || !!state.config.deliverableDueDates[d.week];
+    const isAssigned = d.alwaysOpen || status === 'completed' || !!state.config.deliverableDueDates[d.id];
     return `
         <div class="deliverable-card ${status} ${isCurrent ? 'current' : ''} ${!isAssigned ? 'not-assigned' : ''}" data-id="${d.id}">
             <div class="deliverable-number">${status === 'completed' ? '<i class="fas fa-check"></i>' : d.id}</div>
@@ -1771,7 +1771,7 @@ function updateDeliverablesList() {
     const activePhase = document.querySelector('.phase-tab.active')?.dataset.phase || 'all';
 
     const filtered = (activePhase === 'all' ? DELIVERABLES : DELIVERABLES.filter(d => d.phase === activePhase))
-        .filter(d => !d.hidden && !state.config.skipDeliverableWeeks.includes(d.week));
+        .filter(d => !d.hidden && !state.config.skipDeliverableWeeks.includes(d.id));
 
     if (activePhase === 'all') {
         const unitGroups = [
@@ -2829,7 +2829,7 @@ function formatDeliverable0Content(d) {
 
 function submitDeliverable(id) {
     const deliverable = DELIVERABLES.find(d => d.id === id);
-    if (!deliverable?.alwaysOpen && state.deliverables[id]?.status !== 'completed' && !state.config.deliverableDueDates[deliverable?.week]) {
+    if (!deliverable?.alwaysOpen && state.deliverables[id]?.status !== 'completed' && !state.config.deliverableDueDates[deliverable?.id]) {
         showToast('This deliverable hasn\'t been assigned yet.', 'error');
         return;
     }

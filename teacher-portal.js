@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.33',
+    VERSION: 'v2.9.34',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -68,6 +68,30 @@ const CONFIG = {
 
     // Shared secret for writing config to the backend (must match TEACHER_TOKEN in both Apps Scripts)
     TEACHER_TOKEN: 'rp-portal-teach-2026'
+};
+
+// ============================================
+// TRACK DELIVERABLES
+// ============================================
+const TRACK_DELIVERABLES = {
+    robotics: [
+        { id: 0,  label: 'D0 — Career Ready Practices',         week: null },
+        { id: 11, label: 'D11 — Design Brief',                   week: 1   },
+        { id: 12, label: 'D12 — Robot Deck Design Record',       week: 2   },
+        { id: 21, label: 'D21 — C1: Wheel Hub',                  week: 3   },
+        { id: 22, label: 'D22 — C2: Drive Wheel',                week: 4   },
+        { id: 23, label: 'D23 — C3: Motor Sleeve Mount',         week: 4   },
+        { id: 24, label: 'D24 — C4: Robot Deck (Final)',          week: 8   },
+        { id: 25, label: 'D25 — C5: Omni Wheel Mount',           week: 6   },
+        { id: 26, label: 'D26 — C6: IR Sensor Mount',            week: 7   },
+        { id: 27, label: 'D27 — C7: Ultrasonic Sensor Mount',    week: 7   },
+        { id: 31, label: 'D31 — Tool Safety Certifications',     week: 10  },
+        { id: 51, label: 'D51 — Programming Basics',             week: null },
+        { id: 52, label: 'D52 — Line Following Practical',       week: 23  },
+        { id: 53, label: 'D53 — Servo Mechanism Project',        week: 32  },
+    ],
+    aer8: [],
+    dbl:  [],
 };
 
 // ============================================
@@ -217,21 +241,13 @@ function isReflectionRequired(courseId, week) {
     return !(weekSettings[courseId]?.skipReflections || []).includes(week);
 }
 
-function isDeliverableRequired(courseId, week) {
-    return !(weekSettings[courseId]?.skipDeliverables || []).includes(week);
+function isDeliverableRequired(courseId, deliverableId) {
+    return !(weekSettings[courseId]?.skipDeliverables || []).includes(deliverableId);
 }
 
-// Returns the week a given deliverable id is due for a course
-function deliverableWeek(course, id) {
-    return course.deliverableWeeks?.[id] ?? id;
-}
-
-// Returns the deliverable id due in a given week for a course (or null)
-function deliverableForWeek(course, week) {
-    for (let id = 1; id <= course.totalDeliverables; id++) {
-        if (deliverableWeek(course, id) === week) return id;
-    }
-    return null;
+// Returns the deliverable record due in a given week for a course (or null)
+function deliverableForWeek(courseId, week) {
+    return (TRACK_DELIVERABLES[courseId] || []).find(d => d.week === week) ?? null;
 }
 
 // ============================================
@@ -625,7 +641,8 @@ function processStudentData() {
             if (new Date() > fridayDeadline) {
                 if (isReflectionRequired(state.activeCourse, week)) expectedReflections++;
                 // Check if a deliverable is due this week
-                if (deliverableForWeek(course, week) !== null && isDeliverableRequired(state.activeCourse, week)) {
+                const dueDeliverable = deliverableForWeek(state.activeCourse, week);
+                if (dueDeliverable !== null && isDeliverableRequired(state.activeCourse, dueDeliverable.id)) {
                     expectedDeliverables++;
                 }
             }
@@ -1074,7 +1091,7 @@ function openStudentDetail(email) {
             `;
         } else {
             // No submission, no draft — placeholder for teacher to record an email submission URL
-            const skipped = !isDeliverableRequired(state.activeCourse, deliverableWeek(course, id));
+            const skipped = !isDeliverableRequired(state.activeCourse, id);
             if (!skipped) {
                 const urlInputId = `email-url-${email.replace(/[^a-zA-Z0-9]/g,'-')}-${id}`;
                 deliverablesPanel.innerHTML += `
@@ -2240,11 +2257,11 @@ function buildClassData(name, rawData, courseConfig, periodFilter, icon, courseI
             totalSubmittedItems += (studentCount - reflectionPending);
         }
 
-        const dueDeliverableId = deliverableForWeek(courseConfig, week);
-        if (dueDeliverableId !== null && isDeliverableRequired(courseId, week)) {
+        const dueDeliverable = deliverableForWeek(courseId, week);
+        if (dueDeliverable !== null && isDeliverableRequired(courseId, dueDeliverable.id)) {
             let deliverablePending = 0;
             studentEmails.forEach(email => {
-                if (!completedDeliverables.has(email + '-' + dueDeliverableId)) deliverablePending++;
+                if (!completedDeliverables.has(email + '-' + dueDeliverable.id)) deliverablePending++;
             });
             weekItems.push({ type: 'Deliverable', pending: deliverablePending });
             totalDueItems += studentCount;
@@ -2434,34 +2451,49 @@ async function openWeekSettings() {
     const overrideSelect = document.getElementById('weekOverrideSelect');
     overrideSelect.value = weekSettings.currentWeekOverride !== null ? weekSettings.currentWeekOverride : '';
 
-    // Populate checkboxes, quiz toggles, and version fields for all three tracks
+    // Populate reflections, deliverables, quiz toggles, and version fields for all three tracks
     for (const courseId of ['robotics', 'aer8', 'dbl']) {
+        // Reflections table
         const maxWeeks = CONFIG.COURSES[courseId].totalReflections;
-        const tbody = document.getElementById(courseId + 'WeekSettingsBody');
-        tbody.innerHTML = '';
+        const refTbody = document.getElementById(courseId + 'ReflectionSettingsBody');
+        refTbody.innerHTML = '';
         for (let w = 1; w <= maxWeeks; w++) {
-            const skipRef  = (weekSettings[courseId].skipReflections  || []).includes(w);
-            const skipDel  = (weekSettings[courseId].skipDeliverables || []).includes(w);
-            const refDate  = (weekSettings[courseId].reflectionDueDates  || {})[w] || '';
-            const delDate  = (weekSettings[courseId].deliverableDueDates || {})[w] || '';
-            const label    = 'Week ' + w;
-            tbody.innerHTML += `<tr>
-                <td style="padding: 8px 10px; font-weight: 600; white-space: nowrap;">${label}</td>
+            const skipRef = (weekSettings[courseId].skipReflections  || []).includes(w);
+            const refDate  = (weekSettings[courseId].reflectionDueDates || {})[w] || '';
+            refTbody.innerHTML += `<tr>
+                <td style="padding: 8px 10px; font-weight: 600; white-space: nowrap;">Week ${w}</td>
                 <td style="padding: 8px 10px; text-align: center;">
                     <input type="checkbox" id="skipRef_${courseId}_${w}" ${skipRef ? 'checked' : ''}>
-                </td>
-                <td style="padding: 8px 10px; text-align: center;">
-                    <input type="checkbox" id="skipDel_${courseId}_${w}" ${skipDel ? 'checked' : ''}>
                 </td>
                 <td style="padding: 4px 8px;">
                     <input type="date" id="refDate_${courseId}_${w}" value="${refDate}"
                            style="font-size:12px;padding:3px 5px;border:1px solid var(--gray-300);border-radius:4px;width:130px;">
                 </td>
-                <td style="padding: 4px 8px;">
-                    <input type="date" id="delDate_${courseId}_${w}" value="${delDate}"
-                           style="font-size:12px;padding:3px 5px;border:1px solid var(--gray-300);border-radius:4px;width:130px;">
-                </td>
             </tr>`;
+        }
+
+        // Deliverables table (keyed by deliverable ID)
+        const deliverables = TRACK_DELIVERABLES[courseId] || [];
+        const delTbody = document.getElementById(courseId + 'DeliverableSettingsBody');
+        delTbody.innerHTML = '';
+        if (deliverables.length === 0) {
+            delTbody.innerHTML = `<tr><td colspan="3" style="padding: 10px; color: var(--gray-400); font-style: italic; font-size: 13px; text-align: center;">Not yet configured</td></tr>`;
+        } else {
+            for (const d of deliverables) {
+                const skipDel = (weekSettings[courseId].skipDeliverables || []).includes(d.id);
+                const delDate  = (weekSettings[courseId].deliverableDueDates || {})[d.id] || '';
+                const weekTag  = d.week ? ` <span style="color:var(--gray-400);font-size:11px;">(Wk ${d.week})</span>` : '';
+                delTbody.innerHTML += `<tr>
+                    <td style="padding: 8px 10px; font-weight: 600; white-space: nowrap;">${d.label}${weekTag}</td>
+                    <td style="padding: 8px 10px; text-align: center;">
+                        <input type="checkbox" id="skipDel_${courseId}_${d.id}" ${skipDel ? 'checked' : ''}>
+                    </td>
+                    <td style="padding: 4px 8px;">
+                        <input type="date" id="delDate_${courseId}_${d.id}" value="${delDate}"
+                               style="font-size:12px;padding:3px 5px;border:1px solid var(--gray-300);border-radius:4px;width:130px;">
+                    </td>
+                </tr>`;
+            }
         }
 
         // Quiz toggle + key selector (HS AE&R and 8AER only)
@@ -2519,19 +2551,25 @@ async function applyWeekSettings() {
 
     // Read DOM values for all three tracks (modal renders all simultaneously)
     for (const courseId of ['robotics', 'aer8', 'dbl']) {
+        // Reflections (week-keyed)
         const maxWeeks = CONFIG.COURSES[courseId].totalReflections;
         weekSettings[courseId].skipReflections  = [];
-        weekSettings[courseId].skipDeliverables = [];
         weekSettings[courseId].reflectionDueDates  = {};
-        weekSettings[courseId].deliverableDueDates = {};
         for (let w = 1; w <= maxWeeks; w++) {
-            if (document.getElementById(`skipRef_${courseId}_${w}`)?.checked)  weekSettings[courseId].skipReflections.push(w);
-            if (document.getElementById(`skipDel_${courseId}_${w}`)?.checked)  weekSettings[courseId].skipDeliverables.push(w);
+            if (document.getElementById(`skipRef_${courseId}_${w}`)?.checked) weekSettings[courseId].skipReflections.push(w);
             const refDate = document.getElementById(`refDate_${courseId}_${w}`)?.value || '';
-            const delDate = document.getElementById(`delDate_${courseId}_${w}`)?.value || '';
-            if (refDate) weekSettings[courseId].reflectionDueDates[w]  = refDate;
-            if (delDate) weekSettings[courseId].deliverableDueDates[w] = delDate;
+            if (refDate) weekSettings[courseId].reflectionDueDates[w] = refDate;
         }
+
+        // Deliverables (keyed by deliverable ID)
+        weekSettings[courseId].skipDeliverables = [];
+        weekSettings[courseId].deliverableDueDates = {};
+        for (const d of (TRACK_DELIVERABLES[courseId] || [])) {
+            if (document.getElementById(`skipDel_${courseId}_${d.id}`)?.checked) weekSettings[courseId].skipDeliverables.push(d.id);
+            const delDate = document.getElementById(`delDate_${courseId}_${d.id}`)?.value || '';
+            if (delDate) weekSettings[courseId].deliverableDueDates[d.id] = delDate;
+        }
+
         weekSettings[courseId].expectedVersion = document.getElementById(`expectedVersion_${courseId}`)?.value.trim() || '';
 
         if (courseId === 'robotics' || courseId === 'aer8') {
