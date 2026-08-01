@@ -1,4 +1,4 @@
-# Unit 5: Introduction to Programming
+# Unit 4: Introduction to Programming
 
 This unit covers the fundamentals of Arduino programming and microcontroller concepts. Students will learn the basics of coding, hardware control, and debugging.
 
@@ -96,7 +96,7 @@ This unit covers the fundamentals of Arduino programming and microcontroller con
 
 ## Learning Objectives
 
-By the end of Unit 5, students will be able to:
+By the end of Unit 4, students will be able to:
 - Explain what a microcontroller is and how it works
 - Write basic Arduino programs using setup() and loop()
 - Use variables to store and manipulate data
@@ -110,7 +110,7 @@ By the end of Unit 5, students will be able to:
 
 ## Next Steps
 
-After completing Unit 5, students will be ready to:
+After completing Unit 4, students will be ready to:
 - Apply programming concepts to robot control
 - Implement tank drive motor control
 - Add sensors for autonomous navigation

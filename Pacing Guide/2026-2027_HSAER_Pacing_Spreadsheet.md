@@ -16,14 +16,14 @@
 | 6 | Oct 5–9 | 5 | 2 — CAD | | **C4: Deck** + CAD assemblies intro | D: C4 — key dimensions + iteration log |
 | 7 | Oct 12–16 | 5 | 2 — CAD | | **C5: Front Wheel Mount; C6: IR Sensor Mount; C7: Ultrasonic Sensor Mount** | D: C5, C6, C7 — key dimensions + iteration logs |
 | 8 | Oct 19–23 | 5 | 2 — CAD | 2nd yr: **C8: Electronics Board Mount** w/ strain relief | Final robot CAD assembly | CAD Quiz; D: Robot Assembly |
-| 9 | Oct 26–30 | 4 | 4 — Safety | 🟡 🔴 Records Day Oct 30 | OSHA/LOTO/PPE/SDS; Matthew Henne case study; drill press, pedestal grinder, hand drill certs; CNC awareness; manufacturing processes | Safety Quiz; Tool Cert Cards |
-| 10 | Nov 2–6 | 5 | 4 — Safety | | CNC toolpaths; cut decks | D: Toolpaths to cut deck |
+| 9 | Oct 26–30 | 4 | 3 — Safety | 🟡 🔴 Records Day Oct 30 | OSHA/LOTO/PPE/SDS; Matthew Henne case study; drill press, pedestal grinder, hand drill certs; CNC awareness; manufacturing processes | Safety Quiz; Tool Cert Cards |
+| 10 | Nov 2–6 | 5 | 3 — Safety | | CNC toolpaths; cut decks | D: Toolpaths to cut deck |
 | 11 | Nov 9–13 | 5 | Build | ⚡ Nov 11 (20-min period) | Robot physical assembly | |
-| **12** | **Nov 16–20** | **5** | **5 — Programming** | | **L5.1 (Microcontroller Fundamentals) + A5.1 (Blink); L5.2 (Functions) + A5.2 (SOS with Functions)** | |
-| **13** | **Nov 23–24** | **2** | **5 — Programming** | **🟡 Mon–Tue only** | **L5.3 (Digital Input) + begin A5.3 (Switches)** | |
+| **12** | **Nov 16–20** | **5** | **4 — Programming** | | **L4.1 (Microcontroller Fundamentals) + A4.1 (Blink); L4.2 (Functions) + A4.2 (SOS with Functions)** | |
+| **13** | **Nov 23–24** | **2** | **4 — Programming** | **🟡 Mon–Tue only** | **L4.3 (Digital Input) + begin A4.3 (Switches)** | |
 | — | Nov 25–28 | — | — | 🌿 Thanksgiving Break | | |
-| **14** | **Nov 30–Dec 4** | **5** | **5 — Programming** | | **Finish A5.3; L5.4 (PWM) + A5.4** | |
-| **15** | **Dec 7–11** | **5** | **5 — Programming** | | **L5.5 (Motor Control) + A5.5; Programming Quiz** | **D51: Programming Basics Q&A; Programming Quiz** |
+| **14** | **Nov 30–Dec 4** | **5** | **4 — Programming** | | **Finish A4.3; L4.4 (PWM) + A4.4** | |
+| **15** | **Dec 7–11** | **5** | **4 — Programming** | | **L4.5 (Motor Control) + A4.5; Programming Quiz** | **D51: Programming Basics Q&A; Programming Quiz** |
 | 16 | Dec 14–18 | 5 | 3D Print Holiday Project | | Students design and print a small item to take home — ornament, keychain, name plate, or similar; student chooses and customizes | |
 | — | Dec 21–Jan 3 | — | — | 🌿 Winter Break | | |
 
@@ -47,7 +47,7 @@
 | 21 | Feb 1–5 | 5 | Wall Following | | Maintain fixed distance from a wall using ultrasonic sensors; proportional correction | |
 | 22 | Feb 8–12 | 5 | Line Following | | 5-sensor IR array; per-sensor threshold calibration; binary line following | |
 | 23 | Feb 15–19 | 4 | Line Following | 🔴 Presidents Day Feb 15 | Weighted-sensor error; PID control; tune + course practical | D: Line Following |
-| 24 | Feb 22–26 | 4 | 6 — AI & ML | 🔴 Feb 26 mid-winter break | L6.1 What Is AI (Day 1); L6.2 Ethics in AI (Day 2); Activity 6.3 Teachable Machine (Days 3–4) — quiz held Day 1 of Week 25 | AI Quiz |
+| 24 | Feb 22–26 | 4 | 5 — AI & ML | 🔴 Feb 26 mid-winter break | L5.1 What Is AI (Day 1); L5.2 Ethics in AI (Day 2); Activity 5.3 Teachable Machine (Days 3–4) — quiz held Day 1 of Week 25 | AI Quiz |
 | 25 | Mar 1–5 | 5 | Mechanisms | | **AI Quiz (Day 1)**; Simple machines intro; mechanical advantage + efficiency (POE 111/113) | |
 | 26 | Mar 8–12 | 5 | Mechanisms | ⚡ Mar 10 (20-min period) | Pulley systems — fixed, movable, compound (POE 114); intro to gear ratios (POE 115) | |
 | 27 | Mar 15–19 | 5 | Mechanisms | | Gear ratios + multi-stage gear trains (POE 115 complete); converting motion — cams, cranks, linkages, rotary→linear (POE 122) | |

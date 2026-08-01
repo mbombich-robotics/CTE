@@ -1,6 +1,6 @@
 # Homework Submission System - Setup Instructions
 
-This guide will help you set up the homework submission system for Unit 5 Programming lessons. Students will be able to submit their Arduino code through web forms that automatically store submissions in Google Sheets.
+This guide will help you set up the homework submission system for Unit 4 Programming lessons. Students will be able to submit their Arduino code through web forms that automatically store submissions in Google Sheets.
 
 ---
 
@@ -324,4 +324,4 @@ You will:
 
 ---
 
-**Applied Engineering & Robotics** | Unit 5 Programming
+**Applied Engineering & Robotics** | Unit 4 Programming

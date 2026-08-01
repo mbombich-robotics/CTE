@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.10.0';
+const BACKEND_VERSION = 'v2.10.1';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -43,7 +43,7 @@ const SHEET_NAMES = {
 const TUTOR_LESSONS = {
   // TODO: unit5_motors steps and targetCode need rewriting for Pico 2W / MicroPython
   'unit5_motors': {
-    unit: 'Unit 5 — Programming, Electronics & Sensors',
+    unit: 'Unit 4 — Programming, Electronics & Sensors',
     title: 'Robot Motor Control Library',
     board: 'Raspberry Pi Pico 2W',
     language: 'MicroPython',
@@ -203,7 +203,7 @@ long readDistance() {
   ,
   // TODO: battle_royale uses WiFiNINA (Arduino-specific) — needs rewriting for Pico 2W / MicroPython network module
   'battle_royale': {
-    unit: 'Unit 5 — Programming, Electronics & Sensors',
+    unit: 'Unit 4 — Programming, Electronics & Sensors',
     title: 'Battle Royale Tilt Controller',
     board: 'Raspberry Pi Pico 2W',
     language: 'MicroPython',

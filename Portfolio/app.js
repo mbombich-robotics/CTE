@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.12.6',
+    VERSION: 'v2.12.7',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -33,7 +33,7 @@ const CONFIG = {
     // Point values
     POINTS: {
         WEEKLY_REFLECTION: 20,
-        TOTAL_POSSIBLE: 1110
+        TOTAL_POSSIBLE: 1285
     },
 
     // Auto-save interval in milliseconds
@@ -62,40 +62,40 @@ const WEEK_TOPICS = {
     10: { title: 'Safety: Tool Certs + Quiz', phase: 'safety', unit: '03', focus: 'Pedestal grinder cert, hand drill cert, CNC awareness (Year 1: observe only); safety quiz' },
     // Robot Build — Physical Assembly (Nov 9–13)
     11: { title: 'Build: Robot Assembly', phase: 'build', unit: 'build', focus: 'Assemble frame: motors, wheels, caster; mount electronics board; wire motors and battery; caliper check. Nov 11 = 20-min period day.' },
-    // Unit 5 — Programming Basics (Nov 16 – Dec 18)
-    12: { title: 'L5.1 Microcontroller Fundamentals + L5.2 Functions', phase: 'programming', unit: '05', focus: 'L5.1 Microcontroller Fundamentals + A5.1 Blink; L5.2 Python Functions + A5.2 SOS with Functions' },
-    13: { title: 'L5.3 Digital Input', phase: 'programming', unit: '05', focus: 'L5.3 Digital Input + begin A5.3 Switches. Short week — Thanksgiving Mon–Wed only.' },
-    14: { title: 'L5.4 PWM', phase: 'programming', unit: '05', focus: 'Finish A5.3 Switches; L5.4 PWM + A5.4' },
-    15: { title: 'L5.5 Motor Control + D51', phase: 'programming', unit: '05', focus: 'L5.5 Motor Control + A5.5; Programming Quiz; D51 Programming Basics due end of week' },
-    16: { title: '3D Print Holiday Project', phase: 'programming', unit: '05', focus: 'Design and 3D print a small item to take home — ornament, keychain, name plate. Winter Break ~Dec 21.' },
+    // Unit 4 — Programming Basics (Nov 16 – Dec 18)
+    12: { title: 'L4.1 Microcontroller Fundamentals + L4.2 Functions', phase: 'programming', unit: '04', focus: 'L4.1 Microcontroller Fundamentals + A4.1 Blink; L4.2 Python Functions + A4.2 SOS with Functions' },
+    13: { title: 'L4.3 Digital Input', phase: 'programming', unit: '04', focus: 'L4.3 Digital Input + begin A4.3 Switches. Short week — Thanksgiving Mon–Wed only.' },
+    14: { title: 'L4.4 PWM', phase: 'programming', unit: '04', focus: 'Finish A4.3 Switches; L4.4 PWM + A4.4' },
+    15: { title: 'L4.5 Motor Control + D51', phase: 'programming', unit: '04', focus: 'L4.5 Motor Control + A4.5; Programming Quiz; D51 Programming Basics due end of week' },
+    16: { title: '3D Print Holiday Project', phase: 'programming', unit: '04', focus: 'Design and 3D print a small item to take home — ornament, keychain, name plate. Winter Break ~Dec 21.' },
     // Robot Tuning — Encoders & IMU (Jan 4–21)
-    17: { title: 'Robot Tuning: Motor Control + Encoders', phase: 'tuning', unit: '05', focus: 'Motor control on physical robot; drive + turn functions; encoder wiring and pulse counting' },
-    18: { title: 'Robot Tuning: Encoder Feedback + IMU', phase: 'tuning', unit: '05', focus: 'Drive-straight with encoder feedback; IMU intro — Qwiic plug-in, read yaw angle. Jan 13 = 20-min period day.' },
-    19: { title: 'Robot Tuning: IMU Heading + Midterm', phase: 'tuning', unit: '05', focus: 'IMU heading hold; catch-up; Midterm Exam (EDP, CAD, Safety, Programming Basics). MLK Day Jan 18 — last student day Thu Jan 21.' },
+    17: { title: 'Robot Tuning: Motor Control + Encoders', phase: 'tuning', unit: '04', focus: 'Motor control on physical robot; drive + turn functions; encoder wiring and pulse counting' },
+    18: { title: 'Robot Tuning: Encoder Feedback + IMU', phase: 'tuning', unit: '04', focus: 'Drive-straight with encoder feedback; IMU intro — Qwiic plug-in, read yaw angle. Jan 13 = 20-min period day.' },
+    19: { title: 'Robot Tuning: IMU Heading + Midterm', phase: 'tuning', unit: '04', focus: 'IMU heading hold; catch-up; Midterm Exam (EDP, CAD, Safety, Programming Basics). MLK Day Jan 18 — last student day Thu Jan 21.' },
     // Ultrasonic & Wall Following (Jan 25 – Feb 5)
-    20: { title: 'Ultrasonic: Distance + Obstacle Detection', phase: 'ultrasonic', unit: '05', focus: 'I2C ultrasonic via TCA9548A mux (3 sensors); distance measurement; obstacle detection logic. S2 begins Jan 25.' },
-    21: { title: 'Wall Following', phase: 'ultrasonic', unit: '05', focus: 'Maintain fixed distance from a wall using ultrasonic; proportional correction' },
+    20: { title: 'Ultrasonic: Distance + Obstacle Detection', phase: 'ultrasonic', unit: '04', focus: 'I2C ultrasonic via TCA9548A mux (3 sensors); distance measurement; obstacle detection logic. S2 begins Jan 25.' },
+    21: { title: 'Wall Following', phase: 'ultrasonic', unit: '04', focus: 'Maintain fixed distance from a wall using ultrasonic; proportional correction' },
     // Line Following (Feb 8–19)
-    22: { title: 'Line Following: IR Array + Calibration', phase: 'linefollow', unit: '05', focus: '5-sensor IR array; per-sensor threshold calibration; binary line following' },
-    23: { title: 'Line Following: PID + Practical', phase: 'linefollow', unit: '05', focus: 'Weighted-sensor error; PID control; tune + course practical. Presidents Day Feb 15 — 4-day week.' },
+    22: { title: 'Line Following: IR Array + Calibration', phase: 'linefollow', unit: '04', focus: '5-sensor IR array; per-sensor threshold calibration; binary line following' },
+    23: { title: 'Line Following: PID + Practical', phase: 'linefollow', unit: '04', focus: 'Weighted-sensor error; PID control; tune + course practical. Presidents Day Feb 15 — 4-day week.' },
     // Mechanisms (Feb 22 – Mar 25)
-    24: { title: 'Mechanisms: Simple Machines + MA', phase: 'mechanisms', unit: '05', focus: 'Simple machines intro; mechanical advantage + efficiency (POE 111/113). Feb 26 mid-winter break.' },
-    25: { title: 'Mechanisms: Pulley Systems', phase: 'mechanisms', unit: '05', focus: 'Pulley systems — fixed, movable, compound (POE 114)' },
-    26: { title: 'Mechanisms: Gear Ratios', phase: 'mechanisms', unit: '05', focus: 'Gear ratios + multi-stage gear trains (POE 115). Mar 10 = 20-min period day.' },
-    27: { title: 'Mechanisms: Converting Motion', phase: 'mechanisms', unit: '05', focus: 'Cams, cranks, linkages, rotary→linear motion (POE 122)' },
-    28: { title: 'Mechanisms: Design Challenge', phase: 'mechanisms', unit: '05', focus: 'Mechanism design challenge. Short week before Spring Break (Mar 26–Apr 4).' },
+    24: { title: 'AI & Machine Learning', phase: 'ai', unit: '05', focus: 'L5.1 What Is AI (Day 1); L5.2 Ethics in AI (Day 2); Activity 5.3 Teachable Machine (Days 3–4). AI Quiz Day 1 of Week 25. Feb 26 mid-winter break.' },
+    25: { title: 'AI Quiz + Mechanisms: Simple Machines', phase: 'mechanisms', unit: '04', focus: 'AI Quiz (Day 1); simple machines intro; mechanical advantage + efficiency (POE 111/113)' },
+    26: { title: 'Mechanisms: Pulley Systems + Gear Ratios Intro', phase: 'mechanisms', unit: '04', focus: 'Pulley systems — fixed, movable, compound (POE 114); intro to gear ratios (POE 115). Mar 10 = 20-min period day.' },
+    27: { title: 'Mechanisms: Gear Trains + Converting Motion', phase: 'mechanisms', unit: '04', focus: 'Gear ratios + multi-stage gear trains (POE 115 complete); cams, cranks, linkages, rotary→linear motion (POE 122)' },
+    28: { title: 'Mechanisms: Design Challenge', phase: 'mechanisms', unit: '04', focus: 'Mechanism design challenge. Short week before Spring Break (Mar 26–Apr 4).' },
     // Servo Build Project (Apr 5–30)
-    29: { title: 'Servo Project: Intro + Design Brief', phase: 'servo', unit: '05', focus: 'Project intro + design brief; servo control review; begin build' },
-    30: { title: 'Servo Project: Build', phase: 'servo', unit: '05', focus: 'Build (limited time — state testing Tue–Thu)' },
-    31: { title: 'Servo Project: Build + Test + Iterate', phase: 'servo', unit: '05', focus: 'Build + test + iterate' },
-    32: { title: 'Servo Project: Final Demo', phase: 'servo', unit: '05', focus: 'Final demo + portfolio submission' },
+    29: { title: 'Servo Project: Intro + Design Brief', phase: 'servo', unit: '04', focus: 'Project intro + design brief; servo control review; begin build' },
+    30: { title: 'Servo Project: Build', phase: 'servo', unit: '04', focus: 'Build (limited time — state testing Tue–Thu)' },
+    31: { title: 'Servo Project: Build + Test + Iterate', phase: 'servo', unit: '04', focus: 'Build + test + iterate' },
+    32: { title: 'Servo Project: Final Demo', phase: 'servo', unit: '04', focus: 'Final demo + portfolio submission' },
     // Capstone, Portfolio & Review (May 3 – Jun 11)
-    33: { title: 'Capstone: Open Challenge', phase: 'final', unit: '05', focus: 'Open-ended improvement project. May 5 = 20-min period day.' },
-    34: { title: 'Portfolio Completion Push', phase: 'final', unit: '05', focus: 'All deliverables finalized; portfolio review' },
-    35: { title: 'Review: Full Year', phase: 'final', unit: '05', focus: 'EDP, CAD, safety, programming review. Last day for seniors May 20.' },
-    36: { title: 'Final Exam', phase: 'final', unit: '05', focus: 'Final exam week' },
-    37: { title: 'Wrap-Up', phase: 'final', unit: '05', focus: 'Return exams; wrap-up projects; demos. Memorial Day May 31.' },
-    38: { title: 'End of Year', phase: 'final', unit: '05', focus: 'End-of-year reflection; equipment return. Half day Jun 11.' }
+    33: { title: 'Capstone: Open Challenge', phase: 'final', unit: '04', focus: 'Open-ended improvement project. May 5 = 20-min period day.' },
+    34: { title: 'Portfolio Completion Push', phase: 'final', unit: '04', focus: 'All deliverables finalized; portfolio review' },
+    35: { title: 'Review: Full Year', phase: 'final', unit: '04', focus: 'EDP, CAD, safety, programming review. Last day for seniors May 20.' },
+    36: { title: 'Final Exam', phase: 'final', unit: '04', focus: 'Final exam week' },
+    37: { title: 'Wrap-Up', phase: 'final', unit: '04', focus: 'Return exams; wrap-up projects; demos. Memorial Day May 31.' },
+    38: { title: 'End of Year', phase: 'final', unit: '04', focus: 'End-of-year reflection; equipment return. Half day Jun 11.' }
 };
 
 const WEEK_LABELS = {
@@ -120,7 +120,7 @@ const DELIVERABLES = [
     {
         id: 0,
         title: 'Career Ready Practices Reflection',
-        unit: '00',
+        unit: '06',
         points: 20,
         phase: 'foundations',
         alwaysOpen: true,
@@ -344,47 +344,77 @@ const DELIVERABLES = [
             'Signed certification card on file before Week 11 build phase begins'
         ]
     },
-    // ── Unit 5: Programming Basics ───────────────────────────────────────
+    // ── Unit 4: Programming Basics ───────────────────────────────────────
     {
         id: 51,
         title: 'Programming Basics — Check Your Understanding',
-        unit: '05',
+        unit: '04',
         alwaysOpen: true,
         points: 80,
         phase: 'programming',
-        description: 'Answer Q1–Q5 from Activities 5.1, 5.2, 5.3, and 5.4. Answer from memory — you may look up syntax in the Pico 2W Reference, but not back at the activity guides.',
+        description: 'Answer Q1–Q5 from Activities 4.1, 4.2, 4.3, 4.4, and 4.5. Answer from memory — you may look up syntax in the Pico 2W Reference, but not back at the activity guides.',
         requirements: [
-            '5.1 Q1: What does while True: do, and why does every robot program need one?',
-            '5.1 Q2: Why do we write Pin("LED", Pin.OUT) instead of Pin(25, Pin.OUT) on the Pico 2W?',
-            '5.1 Q3: What is the REPL? Name one situation where you\'d use it instead of writing a full program in the editor.',
-            '5.1 Q4: You want the LED to blink every 200 ms. What value do you pass to time.sleep()? What function could you use instead to avoid the conversion?',
-            '5.1 Q5: Identify and write the corrected lines for the two bugs in the debug snippet from Activity 5.1.',
-            '5.2 Q1: What Python keyword starts every function definition?',
-            '5.2 Q2: In def blink(duration_ms):, what is duration_ms? When you write blink(400), what value does duration_ms hold while the function runs?',
-            '5.2 Q3: What does DRY stand for? Describe one specific example from Activity 5.2 where using a function let you follow the DRY principle.',
-            '5.2 Q4: Can a function call another function? Trace the chain of calls that happens when your code executes sos() — list every function that runs and in what order.',
-            '5.2 Q5: Identify and write the corrected lines for the two bugs in the debug snippet from Activity 5.2.',
-            '5.3 Q1: What does sw2.value() return when SW_2 is not pressed? When pressed? Why those specific values?',
-            '5.3 Q2: Why can\'t you configure a pin as Pin.IN without also setting a pull resistor? What happens if you leave it out?',
-            '5.3 Q3: SW_2 uses Pin.PULL_DOWN. If you changed it to Pin.PULL_UP, what would you need to change in the if statement to keep the same behavior? Why?',
-            '5.3 Q4: The LED stays on all the time and nothing changes when you press the switch. List the three most likely causes you would check first.',
-            '5.3 Q5: Identify and write the corrected lines for the two bugs in the debug snippet from Activity 5.3.',
-            '5.4 Q1: What does PWM stand for? Explain how rapid on/off switching simulates lower power without changing voltage.',
-            '5.4 Q2: duty_u16() accepts values 0–65535. What value gives 75% duty cycle? Show your calculation.',
-            '5.4 Q3: What does freq() control in a PWM signal? Would you notice a difference between freq(10) and freq(1000) on an LED? Explain.',
-            '5.4 Q4: Write the line inside set_brightness(percent) that calculates the duty value. Why is int() required?',
-            '5.4 Q5: Identify the two bugs in the debug snippet from Activity 5.4 and write the corrected version of each line.',
-            '5.5 Q1: What does duty_u16() accept and what values map to stopped, half-speed, and full speed? Show the calculation for half-speed.',
-            '5.5 Q2: In set_speed(pct), the line pct = max(0, min(100, pct)) clamps the input. Trace what happens when you call set_speed(150) — what value does pct hold after that line, and why?',
-            '5.5 Q3: After calling set_speed(75), you call get_speed(). What does it return? Explain what happened to _speed during both calls.',
-            '5.5 Q4: You call set_speed(50) but the motor does not spin. List three distinct things you would check first, in order.',
-            '5.5 Q5: Identify and write the corrected lines for the two bugs in the debug snippet from Activity 5.5.'
+            '4.1 Q1: What does while True: do, and why does every robot program need one?',
+            '4.1 Q2: Why do we write Pin("LED", Pin.OUT) instead of Pin(25, Pin.OUT) on the Pico 2W?',
+            '4.1 Q3: What is the REPL? Name one situation where you\'d use it instead of writing a full program in the editor.',
+            '4.1 Q4: You want the LED to blink every 200 ms. What value do you pass to time.sleep()? What function could you use instead to avoid the conversion?',
+            '4.1 Q5: Identify and write the corrected lines for the two bugs in the debug snippet from Activity 4.1.',
+            '4.2 Q1: What Python keyword starts every function definition?',
+            '4.2 Q2: In def blink(duration_ms):, what is duration_ms? When you write blink(400), what value does duration_ms hold while the function runs?',
+            '4.2 Q3: What does DRY stand for? Describe one specific example from Activity 4.2 where using a function let you follow the DRY principle.',
+            '4.2 Q4: Can a function call another function? Trace the chain of calls that happens when your code executes sos() — list every function that runs and in what order.',
+            '4.2 Q5: Identify and write the corrected lines for the two bugs in the debug snippet from Activity 4.2.',
+            '4.3 Q1: What does sw2.value() return when SW_2 is not pressed? When pressed? Why those specific values?',
+            '4.3 Q2: Why can\'t you configure a pin as Pin.IN without also setting a pull resistor? What happens if you leave it out?',
+            '4.3 Q3: SW_2 uses Pin.PULL_DOWN. If you changed it to Pin.PULL_UP, what would you need to change in the if statement to keep the same behavior? Why?',
+            '4.3 Q4: The LED stays on all the time and nothing changes when you press the switch. List the three most likely causes you would check first.',
+            '4.3 Q5: Identify and write the corrected lines for the two bugs in the debug snippet from Activity 4.3.',
+            '4.4 Q1: What does PWM stand for? Explain how rapid on/off switching simulates lower power without changing voltage.',
+            '4.4 Q2: duty_u16() accepts values 0–65535. What value gives 75% duty cycle? Show your calculation.',
+            '4.4 Q3: What does freq() control in a PWM signal? Would you notice a difference between freq(10) and freq(1000) on an LED? Explain.',
+            '4.4 Q4: Write the line inside set_brightness(percent) that calculates the duty value. Why is int() required?',
+            '4.4 Q5: Identify the two bugs in the debug snippet from Activity 4.4 and write the corrected version of each line.',
+            '4.5 Q1: What does duty_u16() accept and what values map to stopped, half-speed, and full speed? Show the calculation for half-speed.',
+            '4.5 Q2: In set_speed(pct), the line pct = max(0, min(100, pct)) clamps the input. Trace what happens when you call set_speed(150) — what value does pct hold after that line, and why?',
+            '4.5 Q3: After calling set_speed(75), you call get_speed(). What does it return? Explain what happened to _speed during both calls.',
+            '4.5 Q4: You call set_speed(50) but the motor does not spin. List three distinct things you would check first, in order.',
+            '4.5 Q5: Identify and write the corrected lines for the two bugs in the debug snippet from Activity 4.5.'
         ]
     },
-    // ── Unit 5: Robot Project — TBD (new Pico 2W curriculum) ────────────
-    // D51 (Programming Basics Check Your Understanding) is already above.
-    // Practicals for line following, motor control, and final demo will be
-    // added once the Unit 5 lesson/activity sequence is finalized.
+    // ── Unit 4: Line Following Practical ────────────────────────────────
+    {
+        id: 52,
+        title: 'Line Following Practical',
+        unit: '04',
+        week: 23,
+        points: 75,
+        phase: 'linefollow',
+        description: 'Demonstrate PID-tuned line following on the course, then answer the reflection questions. Practical demonstration to Mr. Bombich must be completed before the end of Week 23.',
+        requirements: [
+            'Robot completes the course lap without losing the line (practical demonstration signed off by Mr. Bombich)',
+            'Explain how you determined your Kp value — what happened when it was too low? Too high?',
+            'Describe the role of the derivative term (Kd): what does it prevent, and how did adding it change your robot\'s behavior?',
+            'What is per-sensor threshold calibration and why must it be done before running PID line following?',
+            'Describe one specific iteration you made to your code or hardware during tuning and what improved'
+        ]
+    },
+    // ── Unit 4: Servo Build Project ──────────────────────────────────────
+    {
+        id: 53,
+        title: 'Servo Mechanism Project',
+        unit: '04',
+        week: 32,
+        points: 100,
+        phase: 'servo',
+        description: 'Design, build, and program a mechanism driven by one or more servo motors. Final demo and submission due end of Week 32.',
+        requirements: [
+            'Design brief: problem statement, at least 3 measurable criteria, at least 2 constraints',
+            'Photo or short video of your completed mechanism in operation',
+            'MicroPython code submitted — servo sweeps through the required range, organized with functions, no dead code',
+            'Explain your design rationale: how did you choose your servo horn position, linkage geometry, or range of motion?',
+            'Document at least one iteration: what didn\'t work, what you changed, and what improved'
+        ]
+    },
 ];
 
 // ============================================
@@ -1453,9 +1483,12 @@ function updateDashboardDeliverables() {
     if (!list) return;
 
     const unitGroups = [
-        { key: '00', label: 'Unit 0 — Career Ready Practices' },
         { key: '01', label: 'Unit 1 — Engineering Design Process' },
-        { key: '05', label: 'Unit 5 — Programming, Electronics & Sensors' },
+        { key: '02', label: 'Unit 2 — Fundamentals of CAD' },
+        { key: '03', label: 'Unit 3 — Shop Safety' },
+        { key: '04', label: 'Unit 4 — Programming, Electronics & Sensors' },
+        { key: '05', label: 'Unit 5 — AI & Machine Learning' },
+        { key: '06', label: 'Unit 6 — Career Readiness' },
     ];
 
     const skipWeeks = state.config.skipDeliverableWeeks || [];
@@ -1742,12 +1775,12 @@ function updateDeliverablesList() {
 
     if (activePhase === 'all') {
         const unitGroups = [
-            { key: '00', label: 'Unit 0 — Career Ready Practices' },
             { key: '01', label: 'Unit 1 — Engineering Design Process' },
             { key: '02', label: 'Unit 2 — Fundamentals of CAD' },
-            { key: '03', label: 'Unit 3 — Rapid Prototyping & Manufacturing' },
-            { key: '04', label: 'Unit 4 — Shop Safety' },
-            { key: '05', label: 'Unit 5 — Programming, Electronics & Sensors' },
+            { key: '03', label: 'Unit 3 — Shop Safety' },
+            { key: '04', label: 'Unit 4 — Programming, Electronics & Sensors' },
+            { key: '05', label: 'Unit 5 — AI & Machine Learning' },
+            { key: '06', label: 'Unit 6 — Career Readiness' },
         ];
         list.innerHTML = unitGroups.map(u => {
             const unitDeliverables = filtered.filter(d => d.unit === u.key);

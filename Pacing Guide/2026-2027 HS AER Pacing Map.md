@@ -99,7 +99,7 @@
 
 ---
 
-### Unit 5 — Programming Basics (MicroPython)
+### Unit 4 — Programming Basics (MicroPython)
 > **Change from last year:** Programming starts mid-November (Week 12) on the physical robot students just built. Three lessons introduce the language; two more build toward motor control. All basics wrap up before Winter Break.
 
 **Lesson / Activity numbering:**  L5.1 + A5.1 · **L5.2 + A5.2 (Functions — new)** · L5.3 + A5.3 (Digital Input/Buttons) · L5.4 (PWM) · L5.5 (Motor Control)
@@ -149,7 +149,7 @@
 
 ---
 
-### Unit 6 — AI & Machine Learning
+### Unit 5 — AI & Machine Learning
 > One-week standalone unit. Teachable Machine runs in-browser — no hardware integration, no deliverable. Quiz held Day 1 of the following week (after mid-winter break) to leverage the break for retention.
 
 | Wk | Dates | Days | Notes | Content |
@@ -159,11 +159,11 @@
 ---
 
 ### Mechanisms
-> PLTW POE Unit 1 content — students analyze, calculate, and build mechanical systems before applying them to a servo-driven project. Compressed from 5 weeks to 4 weeks + quiz day to accommodate Unit 6.
+> PLTW POE Unit 1 content — students analyze, calculate, and build mechanical systems before applying them to a servo-driven project. Compressed from 5 weeks to 4 weeks + quiz day to accommodate Unit 5.
 
 | Wk | Dates | Days | Notes | Content |
 |----|-------|------|-------|---------|
-| 25 | Mar 1–5 | 5 | | **Day 1: AI Quiz** (Unit 6); Days 2–5: Simple machines intro; mechanical advantage + efficiency (POE 111/113) |
+| 25 | Mar 1–5 | 5 | | **Day 1: AI Quiz** (Unit 5); Days 2–5: Simple machines intro; mechanical advantage + efficiency (POE 111/113) |
 | 26 | Mar 8–12 | 5 | ⚡ Mar 10 (20-min) | Pulley systems — fixed, movable, compound (POE 114); intro to gear ratios (POE 115) |
 | 27 | Mar 15–19 | 5 | | Gear ratios + multi-stage gear trains (POE 115 complete); converting motion — cams, cranks, linkages, rotary→linear (POE 122) |
 | 28 | Mar 22–25 | ~3.5 | 🟡 🔴 Mar 25 ½-day Records Day · Mar 26 spring break begins | Mechanism design challenge |
