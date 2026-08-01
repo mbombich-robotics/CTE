@@ -853,7 +853,7 @@
                 <div class="stat-icon submitted"><i class="fas fa-check-circle"></i></div>
                 <div>
                     <div class="stat-value" id="submittedThisWeek">-</div>
-                    <div class="stat-label">Submitted This Week</div>
+                    <div class="stat-label">On Track</div>
                 </div>
             </div>
             <div class="stat-card" style="flex-wrap: wrap;">
@@ -920,7 +920,7 @@
                 <i class="fas fa-trophy"></i> Leaderboard
             </button>
 
-            <button class="btn btn-secondary btn-small" onclick="openWeekSettings()" title="Configure which weeks require reflections and deliverables">
+            <button class="btn btn-secondary btn-small" onclick="openWeekSettings()" title="Configure deliverable due dates and skip settings">
                 <i class="fas fa-cog"></i> Week Settings
             </button>
         </div>
@@ -933,7 +933,6 @@
                         <th>Student</th>
                         <th>Period</th>
                         <th id="teamHeader" style="display: none;">Team</th>
-                        <th>Reflections</th>
                         <th>Deliverables</th>
                         <th>Points</th>
                         <th>Progress</th>
@@ -968,10 +967,6 @@
                     </div>
                     <div class="student-stats">
                         <div>
-                            <div class="student-stat-value" id="modalReflections">0</div>
-                            <div class="student-stat-label">Reflections</div>
-                        </div>
-                        <div>
                             <div class="student-stat-value" id="modalDeliverables">0</div>
                             <div class="student-stat-label">Deliverables</div>
                         </div>
@@ -983,17 +978,12 @@
                 </div>
 
                 <div class="detail-tabs">
-                    <button class="detail-tab active" data-panel="reflections">Weekly Reflections</button>
-                    <button class="detail-tab" data-panel="deliverables">Deliverables</button>
+                    <button class="detail-tab active" data-panel="deliverables">Deliverables</button>
                     <button class="detail-tab" data-panel="evidence">Evidence Photos</button>
                     <button class="detail-tab" data-panel="quiz" id="quizDetailTab" style="display:none;">Claw Quiz</button>
                 </div>
 
-                <div class="detail-panel active" id="reflectionsPanel">
-                    <!-- Populated by JS -->
-                </div>
-
-                <div class="detail-panel" id="deliverablesPanel">
+                <div class="detail-panel active" id="deliverablesPanel">
                     <!-- Populated by JS -->
                 </div>
 
@@ -1027,7 +1017,6 @@
                     <div>
                         <label style="display: block; font-size: 13px; color: var(--gray-600); margin-bottom: 4px;">Assignment Type:</label>
                         <select id="assignmentType" style="padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 8px; min-width: 180px;">
-                            <option value="reflection">Weekly Reflections</option>
                             <option value="deliverable">Deliverables</option>
                         </select>
                     </div>
@@ -1105,7 +1094,6 @@
                     </select>
                     <label>Show:</label>
                     <select id="reportTypeFilter" onchange="updateGradeReport()">
-                        <option value="reflections">Weekly Reflections</option>
                         <option value="deliverables">Deliverables</option>
                         <option value="quiz">Quizzes</option>
                         <option value="all">All Grades</option>
@@ -1158,7 +1146,7 @@
             </div>
             <div class="modal-body">
                 <p style="color: var(--gray-500); font-size: 14px; margin-bottom: 20px;">
-                    Skip reflection weeks or deliverables to exclude them from "missing work" counts. Set due dates to assign deliverables to students. Settings are saved in your browser.
+                    Skip deliverables to exclude them from "missing work" counts. Set due dates to assign deliverables to students. Settings are saved in your browser.
                 </p>
 
                 <!-- Current Week Override -->
@@ -1226,18 +1214,6 @@
                         </div>
                         <!-- hidden field carries the value to applyWeekSettings -->
                         <input type="hidden" id="expectedVersion_robotics">
-                        <p style="font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 4px;">Reflections</p>
-                        <table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 14px;">
-                            <thead>
-                                <tr style="background: var(--gray-50);">
-                                    <th style="padding: 8px 10px; text-align: left; border: 1px solid var(--gray-200);">Week</th>
-                                    <th style="padding: 8px 10px; text-align: center; border: 1px solid var(--gray-200);">Skip</th>
-                                    <th style="padding: 8px 10px; text-align: left; border: 1px solid var(--gray-200);">Due Date</th>
-                                </tr>
-                            </thead>
-                            <tbody id="roboticsReflectionSettingsBody"></tbody>
-                        </table>
-
                         <p style="font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 4px;">Deliverables</p>
                         <table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 14px;">
                             <thead>
@@ -1284,18 +1260,6 @@
                             <div style="margin-top:4px; color:var(--gray-500);">Current code: <strong id="codeVersion_aer8" style="font-family:monospace; color:var(--primary);"></strong></div>
                         </div>
                         <input type="hidden" id="expectedVersion_aer8">
-                        <p style="font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 4px;">Reflections</p>
-                        <table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 14px;">
-                            <thead>
-                                <tr style="background: var(--gray-50);">
-                                    <th style="padding: 8px 10px; text-align: left; border: 1px solid var(--gray-200);">Week</th>
-                                    <th style="padding: 8px 10px; text-align: center; border: 1px solid var(--gray-200);">Skip</th>
-                                    <th style="padding: 8px 10px; text-align: left; border: 1px solid var(--gray-200);">Due Date</th>
-                                </tr>
-                            </thead>
-                            <tbody id="aer8ReflectionSettingsBody"></tbody>
-                        </table>
-
                         <p style="font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 4px;">Deliverables</p>
                         <table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 14px;">
                             <thead>
@@ -1341,18 +1305,6 @@
                             <div style="margin-top:4px; color:var(--gray-500);">Current code: <strong id="codeVersion_dbl" style="font-family:monospace; color:var(--primary);"></strong></div>
                         </div>
                         <input type="hidden" id="expectedVersion_dbl">
-                        <p style="font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 4px;">Reflections</p>
-                        <table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 14px;">
-                            <thead>
-                                <tr style="background: var(--gray-50);">
-                                    <th style="padding: 8px 10px; text-align: left; border: 1px solid var(--gray-200);">Week</th>
-                                    <th style="padding: 8px 10px; text-align: center; border: 1px solid var(--gray-200);">Skip</th>
-                                    <th style="padding: 8px 10px; text-align: left; border: 1px solid var(--gray-200);">Due Date</th>
-                                </tr>
-                            </thead>
-                            <tbody id="dblReflectionSettingsBody"></tbody>
-                        </table>
-
                         <p style="font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 4px;">Deliverables</p>
                         <table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 14px;">
                             <thead>

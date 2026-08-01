@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.34',
+    VERSION: 'v2.9.35',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -25,7 +25,6 @@ const CONFIG = {
             currentAppVersion: 'v2.12.7',
             hasTeams: false,
             totalDeliverables: 10,
-            totalReflections: 14,
             totalPoints: 755,
             deliverablePoints: { 0: 20, 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75 },
             deliverableWeeks: { 8: 10, 9: 11 },
@@ -40,7 +39,6 @@ const CONFIG = {
             currentAppVersion: 'v2.12.7',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
-            totalReflections: 9,     // ~1 semester
             totalPoints: 755,        // TODO: update when pacing is finalized
             deliverablePoints: { 0: 20, 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75 },
             deliverableWeeks: { 8: 10, 9: 11 },
@@ -55,7 +53,6 @@ const CONFIG = {
             currentAppVersion: 'v2.12.7',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
-            totalReflections: 14,
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
             deliverablePoints: {},
             deliverableWeeks: {},
@@ -214,9 +211,9 @@ function tallyRubric(uid, deliverableId, email) {
 // WEEK SETTINGS (localStorage)
 // ============================================
 let weekSettings = {
-    robotics: { skipReflections: [], skipDeliverables: [], quizEnabled: false, quizKey: 'claw', reflectionDueDates: {}, deliverableDueDates: {} },
-    aer8:     { skipReflections: [], skipDeliverables: [], quizEnabled: false, quizKey: 'claw', reflectionDueDates: {}, deliverableDueDates: {} },
-    dbl:      { skipReflections: [], skipDeliverables: [], reflectionDueDates: {}, deliverableDueDates: {} },
+    robotics: { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {} },
+    aer8:     { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {} },
+    dbl:      { skipDeliverables: [], deliverableDueDates: {} },
     currentWeekOverride: null
 };
 
@@ -226,19 +223,15 @@ function loadWeekSettings() {
         if (saved) {
             const parsed = JSON.parse(saved);
             weekSettings = { ...weekSettings, ...parsed };
-            weekSettings.robotics = { skipReflections: [], skipDeliverables: [], quizEnabled: false, quizKey: 'claw', reflectionDueDates: {}, deliverableDueDates: {}, ...parsed.robotics };
-            weekSettings.aer8     = { skipReflections: [], skipDeliverables: [], quizEnabled: false, quizKey: 'claw', reflectionDueDates: {}, deliverableDueDates: {}, ...parsed.aer8 };
-            weekSettings.dbl      = { skipReflections: [], skipDeliverables: [], reflectionDueDates: {}, deliverableDueDates: {}, ...parsed.dbl };
+            weekSettings.robotics = { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {}, ...parsed.robotics };
+            weekSettings.aer8     = { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {}, ...parsed.aer8 };
+            weekSettings.dbl      = { skipDeliverables: [], deliverableDueDates: {}, ...parsed.dbl };
         }
     } catch(e) {}
 }
 
 function saveWeekSettings() {
     localStorage.setItem('teacherPortalWeekSettings', JSON.stringify(weekSettings));
-}
-
-function isReflectionRequired(courseId, week) {
-    return !(weekSettings[courseId]?.skipReflections || []).includes(week);
 }
 
 function isDeliverableRequired(courseId, deliverableId) {
@@ -538,34 +531,6 @@ function processStudentData() {
             fullState.evidence = studentEvidence;
         }
 
-        // Count reflections (from Weekly Reflections sheet + drafts from JSON)
-        let submittedReflections = 0;
-        let draftReflections = 0;
-        let ungradedReflections = 0;
-
-        // Count from sheet data (deduplicate by week to handle concurrent-sync duplicates)
-        if (state.rawData.reflections) {
-            const studentReflections = state.rawData.reflections.filter(r => r[0] === email);
-            const seenWeeks = {};
-            studentReflections.forEach(r => {
-                const week = r[2];
-                if (!seenWeeks[week] || (r[11] !== '' && r[11] !== null && r[11] !== undefined)) seenWeeks[week] = r;
-            });
-            const dedupedReflections = Object.values(seenWeeks);
-            submittedReflections = dedupedReflections.length;
-            // Count ungraded (column L = index 11 is Grade)
-            ungradedReflections = dedupedReflections.filter(r => !r[11] && r[11] !== 0).length;
-        }
-
-        // Count drafts from JSON
-        if (fullState && fullState.weeklyReflections) {
-            Object.values(fullState.weeklyReflections).forEach(r => {
-                if (!r.submitted && (r.contributions?.length > 0 || r.challenges || r.solutions)) {
-                    draftReflections++;
-                }
-            });
-        }
-
         // Count deliverables
         let completedDeliverables = 0;
         let draftDeliverables = 0;
@@ -606,15 +571,6 @@ function processStudentData() {
 
         // Calculate points using actual grades when available
         let points = 0;
-        if (state.rawData.reflections) {
-            state.rawData.reflections
-                .filter(r => r[0] === email)
-                .forEach(r => {
-                    // Use teacher grade (column L = index 11) if available, otherwise default 20
-                    const grade = r[11];
-                    points += (grade !== '' && grade !== undefined && grade !== null) ? Number(grade) : 20;
-                });
-        }
         if (state.rawData.deliverables) {
             state.rawData.deliverables
                 .filter(d => d[0] === email && d[7] === 'completed')
@@ -627,29 +583,24 @@ function processStudentData() {
                 });
         }
 
-        // Determine status - count reflections and deliverables as expected if past their Friday 3pm deadline
-        let expectedReflections = 0;
+        // Determine status - count deliverables expected past their Friday 3pm deadline
         let expectedDeliverables = 0;
-        for (let week = 1; week <= Math.min(state.currentWeek, course.totalReflections); week++) {
-            // Calculate Friday 3pm deadline for this week
+        for (let week = 1; week <= state.currentWeek; week++) {
             const weekStart = new Date(CONFIG.SEMESTER_START);
             weekStart.setDate(weekStart.getDate() + (week - 1) * 7);
             const fridayDeadline = new Date(weekStart);
-            fridayDeadline.setDate(fridayDeadline.getDate() + 4); // Friday (Mon=0, Tue=1, ..., Fri=4)
-            fridayDeadline.setHours(15, 0, 0, 0); // 3pm
+            fridayDeadline.setDate(fridayDeadline.getDate() + 4);
+            fridayDeadline.setHours(15, 0, 0, 0);
 
             if (new Date() > fridayDeadline) {
-                if (isReflectionRequired(state.activeCourse, week)) expectedReflections++;
-                // Check if a deliverable is due this week
                 const dueDeliverable = deliverableForWeek(state.activeCourse, week);
                 if (dueDeliverable !== null && isDeliverableRequired(state.activeCourse, dueDeliverable.id)) {
                     expectedDeliverables++;
                 }
             }
         }
-        const reflectionsBehind = expectedReflections - submittedReflections;
         const deliverablesBehind = expectedDeliverables - completedDeliverables;
-        const totalBehind = reflectionsBehind + deliverablesBehind;
+        const totalBehind = deliverablesBehind;
 
         let status = 'on-track';
         if (totalBehind >= 4) status = 'very-behind';
@@ -662,14 +613,10 @@ function processStudentData() {
             name,
             team,
             period,
-            submittedReflections,
-            draftReflections,
-            ungradedReflections,
-            totalReflections: submittedReflections + draftReflections,
             completedDeliverables,
             draftDeliverables,
             ungradedDeliverables,
-            ungradedTotal: ungradedReflections + ungradedDeliverables,
+            ungradedTotal: ungradedDeliverables,
             points,
             progress,
             status,
@@ -726,10 +673,6 @@ function renderStudentTable(students) {
             <td>${formatPeriod(s.period)}</td>
             ${course.hasTeams ? `<td>${formatTeam(s.team)}</td>` : ''}
             <td>
-                ${s.submittedReflections}/${course.totalReflections}
-                ${s.draftReflections > 0 ? `<span style="color: var(--warning); font-size: 12px;"> (+${s.draftReflections} draft)</span>` : ''}
-            </td>
-            <td>
                 ${s.completedDeliverables}/${course.totalDeliverables}
                 ${s.draftDeliverables > 0 ? `<span style="color: var(--warning); font-size: 12px;"> (+${s.draftDeliverables} draft)</span>` : ''}
             </td>
@@ -744,7 +687,7 @@ function renderStudentTable(students) {
             </td>
             <td>
                 <span class="status-badge status-${s.status}">${formatStatus(s.status)}</span>
-                ${s.ungradedTotal > 0 ? `<span class="status-badge" style="background: #fef3c7; color: #92400e; margin-left: 4px;" title="${s.ungradedReflections > 0 ? s.ungradedReflections + ' reflection(s)' : ''}${s.ungradedReflections > 0 && s.ungradedDeliverables > 0 ? ', ' : ''}${s.ungradedDeliverables > 0 ? s.ungradedDeliverables + ' deliverable(s)' : ''} need grading"><i class="fas fa-pen"></i> ${s.ungradedTotal}</span>` : ''}
+                ${s.ungradedTotal > 0 ? `<span class="status-badge" style="background: #fef3c7; color: #92400e; margin-left: 4px;" title="${s.ungradedDeliverables} deliverable(s) need grading"><i class="fas fa-pen"></i> ${s.ungradedTotal}</span>` : ''}
                 <button class="repair-btn" data-email="${s.email}" title="Repair student data (use if student's work isn't loading)" style="margin-left:6px;padding:2px 6px;border:1px solid #d1d5db;border-radius:4px;background:#fff;color:#6b7280;font-size:11px;cursor:pointer;vertical-align:middle;"><i class="fas fa-wrench"></i></button>
             </td>
         </tr>
@@ -775,11 +718,9 @@ function updateStats(students) {
 
     document.getElementById('totalStudents').textContent = students.length;
 
-    // Submitted this week
-    const submittedThisWeek = students.filter(s =>
-        s.submittedReflections >= state.currentWeek
-    ).length;
-    document.getElementById('submittedThisWeek').textContent = submittedThisWeek;
+    // Students on track (no missing deliverables)
+    const onTrack = students.filter(s => s.status === 'on-track').length;
+    document.getElementById('submittedThisWeek').textContent = onTrack;
 
     // Students behind
     const behind = students.filter(s => s.status !== 'on-track').length;
@@ -836,7 +777,7 @@ async function repairStudentData(email) {
 
         if (data.success) {
             const r = data.recovered || {};
-            showToast(`Repaired ${name}: recovered ${r.reflections ?? '?'} reflection(s), ${r.deliverables ?? '?'} deliverable(s), ${r.evidence ?? '?'} photo(s). Ask them to refresh.`, 'success', 7000);
+            showToast(`Repaired ${name}: recovered ${r.deliverables ?? '?'} deliverable(s), ${r.evidence ?? '?'} photo(s). Ask them to refresh.`, 'success', 7000);
         } else {
             showToast(`Repair failed for ${name}: ${data.error || 'unknown error'}`, 'error', 6000);
         }
@@ -909,95 +850,8 @@ function openStudentDetail(email) {
     if (course.hasTeams) info += ` | Team: ${formatTeam(student.team)}`;
     document.getElementById('modalStudentInfo').textContent = info;
 
-    document.getElementById('modalReflections').textContent = student.submittedReflections;
     document.getElementById('modalDeliverables').textContent = student.completedDeliverables;
     document.getElementById('modalPoints').textContent = student.points;
-
-    // Reflections panel
-    const reflectionsPanel = document.getElementById('reflectionsPanel');
-    reflectionsPanel.innerHTML = '';
-
-    for (let week = 1; week <= course.totalReflections; week++) {
-        // Check submitted reflections
-        const submitted = state.rawData.reflections?.find(r => r[0] === email && r[2] == week);
-
-        // Check draft from JSON
-        const draft = student.fullState?.weeklyReflections?.[week];
-        const hasDraft = draft && !draft.submitted && (draft.contributions?.length > 0 || draft.challenges);
-
-        if (submitted) {
-            const selfAssessment = submitted[10]; // Column K - Self Assessment (rubric total /16)
-            const existingGrade = draft?.teacherGrade ?? submitted[11] ?? '';
-            const existingFeedback = draft?.teacherFeedback ?? submitted[12] ?? '';
-            const gradedAt = submitted[13] || '';
-            const submittedAt = submitted[8] || '';
-            const isUngraded = existingGrade === '' || existingGrade === null || existingGrade === undefined;
-            const isResubmitted = !isUngraded && gradedAt && submittedAt && new Date(submittedAt) > new Date(gradedAt);
-            const contentId = `reflection-content-${week}`;
-            const fullContent = `<strong>Contributions:</strong><br>${(submitted[3] || '').replace(/\n/g, '<br>')}${submitted[4] ? `<br><br><strong>Evidence Links:</strong> ${submitted[4]}` : ''}${submitted[5] ? `<br><br><strong>Challenges:</strong> ${submitted[5]}` : ''}${submitted[6] ? `<br><strong>Solutions:</strong> ${submitted[6]}` : ''}${submitted[7] ? `<br><br><strong>Goals for Next Week:</strong><br>${submitted[7].replace(/\n/g, '<br>')}` : ''}`;
-            const needsExpand = fullContent.length > 400;
-            const statusLabel = isResubmitted ? 'Resubmitted' : (isUngraded ? 'Needs Grading' : 'Graded');
-            const statusClass = isResubmitted ? 'status-behind' : (isUngraded ? 'status-behind' : 'status-on-track');
-            const borderStyle = isResubmitted ? 'border-left: 4px solid #e53935;' : (isUngraded ? 'border-left: 4px solid var(--warning);' : '');
-            reflectionsPanel.innerHTML += `
-                <div class="item-card" style="${borderStyle}">
-                    <div class="item-header">
-                        <span class="item-title">Week ${week}</span>
-                        <span class="item-status status-badge ${statusClass}">${statusLabel}</span>
-                        ${selfAssessment ? `<span style="margin-left: auto; font-size: 12px; color: var(--gray-600);">Self: ${selfAssessment}/16</span>` : ''}
-                    </div>
-                    <div class="item-content" id="${contentId}" style="${needsExpand ? 'max-height: 150px; overflow: hidden; position: relative;' : ''}">
-                        ${fullContent}
-                    </div>
-                    ${needsExpand ? `<button onclick="toggleContent('${contentId}')" style="margin-top: 8px; padding: 4px 12px; background: var(--gray-100); border: 1px solid var(--gray-300); border-radius: 4px; cursor: pointer; font-size: 12px; color: var(--primary);">Show More</button>` : ''}
-                    <div class="grade-section" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gray-200);">
-                        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 8px;">
-                            <label style="font-size: 13px; font-weight: 500;">Grade:</label>
-                            <input type="number" class="grade-input" data-type="reflection" data-id="${week}" data-email="${email}"
-                                   value="${existingGrade}" min="0" max="20" step="1"
-                                   style="width: 60px; padding: 4px 8px; border: 1px solid var(--gray-300); border-radius: 4px;">
-                            <span style="color: var(--gray-500); font-size: 12px;">/ 20 pts</span>
-                        </div>
-                        <textarea class="feedback-input" data-type="reflection" data-id="${week}" data-email="${email}"
-                                  placeholder="Feedback for student..."
-                                  style="width: 100%; padding: 8px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 13px; resize: vertical; min-height: 60px;">${existingFeedback}</textarea>
-                    </div>
-                </div>
-            `;
-        } else if (hasDraft) {
-            const contributions = (draft.contributions || [])
-                .map(c => `${c.date}: ${c.task}`)
-                .join('<br>');
-            reflectionsPanel.innerHTML += `
-                <div class="item-card" style="border-left: 3px solid var(--warning);">
-                    <div class="item-header">
-                        <span class="item-title">Week ${week}</span>
-                        <span class="item-status status-badge status-behind">Draft</span>
-                    </div>
-                    <div class="item-content">
-                        <strong>Contributions:</strong><br>
-                        ${contributions || '<em>None yet</em>'}
-                        ${draft.challenges ? `<br><br><strong>Challenges:</strong> ${draft.challenges}` : ''}
-                        ${draft.solutions ? `<br><strong>Solutions:</strong> ${draft.solutions}` : ''}
-                    </div>
-                </div>
-            `;
-        } else if (week <= state.currentWeek) {
-            reflectionsPanel.innerHTML += `
-                <div class="item-card" style="opacity: 0.5;">
-                    <div class="item-header">
-                        <span class="item-title">Week ${week}</span>
-                        <span class="item-status status-badge status-very-behind">Missing</span>
-                    </div>
-                    <div class="item-content"><em>No submission</em></div>
-                </div>
-            `;
-        }
-    }
-
-    if (reflectionsPanel.innerHTML === '') {
-        reflectionsPanel.innerHTML = '<p class="empty-state">No reflections yet.</p>';
-    }
 
     // Deliverables panel
     const deliverablesPanel = document.getElementById('deliverablesPanel');
@@ -1256,7 +1110,7 @@ function openStudentDetail(email) {
     document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.detail-panel').forEach(p => p.classList.remove('active'));
     document.querySelector('.detail-tab').classList.add('active');
-    document.getElementById('reflectionsPanel').classList.add('active');
+    document.getElementById('deliverablesPanel').classList.add('active');
 }
 
 async function regradeQuiz(email, btn) {
@@ -1626,12 +1480,6 @@ function updateGradeReport() {
 
     // Build headers based on type filter
     let headers = ['Name', 'Period'];
-    if (typeFilter === 'reflections' || typeFilter === 'all') {
-        for (let w = 1; w <= course.totalReflections; w++) {
-            const wLabel = w === 12 ? 'U9R1' : w === 13 ? 'U9R2' : w === 14 ? 'U9R3' : `W${w}`;
-            headers.push(wLabel);
-        }
-    }
     if (typeFilter === 'deliverables' || typeFilter === 'all') {
         for (let d = 1; d <= course.totalDeliverables; d++) {
             headers.push(`D${d}`);
@@ -1653,24 +1501,7 @@ function updateGradeReport() {
         let total = 0;
         let maxTotal = 0;
 
-        // Reflection grades
-        if (typeFilter === 'reflections' || typeFilter === 'all') {
-            for (let w = 1; w <= course.totalReflections; w++) {
-                const reflection = student.fullState?.weeklyReflections?.[w];
-                const submitted = state.rawData.reflections?.find(r => r[0] === email && r[2] == w);
-                const grade = reflection?.teacherGrade ?? submitted?.[11] ?? '';
-
-                if (grade !== '' && grade !== undefined) {
-                    total += parseFloat(grade) || 0;
-                }
-                if (submitted) {
-                    maxTotal += 20; // 20 pts per reflection
-                }
-
-                const cellStyle = grade !== '' ? '' : (submitted ? 'color: var(--warning);' : 'color: var(--gray-300);');
-                row.push(`<td style="padding: 6px 8px; text-align: center; ${cellStyle}">${grade !== '' && grade !== undefined ? grade : (submitted ? '-' : '')}</td>`);
-            }
-        }
+        // (reflections removed)
 
         // Deliverable grades
         if (typeFilter === 'deliverables' || typeFilter === 'all') {
@@ -1746,13 +1577,12 @@ function exportCSV() {
     const course = CONFIG.COURSES[state.activeCourse];
     const headers = ['Name', 'Email', 'Period'];
     if (course.hasTeams) headers.push('Team');
-    headers.push('Reflections', 'Deliverables', 'Points', 'Progress', 'Status');
+    headers.push('Deliverables', 'Points', 'Progress', 'Status');
 
     const rows = state.students.map(s => {
         const row = [s.name, s.email, formatPeriod(s.period)];
         if (course.hasTeams) row.push(formatTeam(s.team));
         row.push(
-            `${s.submittedReflections}/${course.totalReflections}`,
             `${s.completedDeliverables}/${course.totalDeliverables}`,
             s.points,
             s.progress + '%',
@@ -1786,7 +1616,7 @@ async function sendReminderEmails() {
         return;
     }
 
-    if (!confirm(`Send reminder emails to students with missing reflections?\n\nThis will email all students who haven't submitted their weekly reflections.`)) {
+    if (!confirm(`Send reminder emails to students who are behind on deliverables?\n\nThis will email all students with missing or overdue deliverables.`)) {
         return;
     }
 
@@ -1930,15 +1760,7 @@ function updateAssignmentSelect() {
 
     select.innerHTML = '';
 
-    if (type === 'reflection') {
-        for (let week = 1; week <= course.totalReflections; week++) {
-            const option = document.createElement('option');
-            option.value = week;
-            const weekName = week === 12 ? 'Unit 9 · Reflection 1' : week === 13 ? 'Unit 9 · Reflection 2' : week === 14 ? 'Unit 9 · Reflection 3' : `Week ${week}`;
-            option.textContent = `${weekName} Reflection (20 pts)`;
-            select.appendChild(option);
-        }
-    } else {
+    if (type === 'deliverable') {
         // Deliverables
         const deliverableNames = state.activeCourse === 'robotics'
             ? {
@@ -1985,9 +1807,8 @@ function loadGradeTable() {
     const tbody = document.getElementById('gradeTableBody');
 
     // Update header info
-    const maxPoints = type === 'reflection' ? 20 : course.deliverablePoints[assignmentId];
-    document.getElementById('gradeAssignmentTitle').textContent =
-        type === 'reflection' ? `Week ${assignmentId} Reflection` : document.getElementById('assignmentSelect').selectedOptions[0].text.split(' (')[0];
+    const maxPoints = course.deliverablePoints[assignmentId];
+    document.getElementById('gradeAssignmentTitle').textContent = `Deliverable ${assignmentId}`;
     document.getElementById('gradeAssignmentPoints').textContent = `Max: ${maxPoints} pts`;
 
     // Filter and sort students alphabetically
@@ -2008,29 +1829,7 @@ function loadGradeTable() {
         let existingGrade = '';
         let existingFeedback = '';
 
-        if (type === 'reflection') {
-            const submitted = state.rawData.reflections?.find(r => r[0] === student.email && r[2] == assignmentId);
-            const draft = student.fullState?.weeklyReflections?.[assignmentId];
-
-            if (submitted) {
-                status = '<span class="status-badge status-on-track">Submitted</span>';
-                // Try to get rubric score from submitted data or fullState
-                if (draft?.rubric?.total) {
-                    selfScore = `${draft.rubric.total}/16`;
-                }
-                // Get existing grade/feedback - Column L (index 11) = Grade, Column M (index 12) = Feedback
-                existingGrade = submitted[11] || '';
-                existingFeedback = submitted[12] || '';
-            } else if (draft && !draft.submitted && (draft.contributions?.length > 0 || draft.challenges)) {
-                status = '<span class="status-badge status-behind">Draft</span>';
-                if (draft.rubric?.total) {
-                    selfScore = `${draft.rubric.total}/16`;
-                }
-            } else {
-                status = '<span class="status-badge status-very-behind">Missing</span>';
-            }
-        } else {
-            const submitted = state.rawData.deliverables?.find(d => d[0] === student.email && d[2] == assignmentId);
+        const submitted = state.rawData.deliverables?.find(d => d[0] === student.email && d[2] == assignmentId);
             const draft = student.fullState?.deliverables?.[assignmentId];
 
             if (submitted && submitted[7] === 'completed') {
@@ -2042,7 +1841,6 @@ function loadGradeTable() {
             } else {
                 status = '<span class="status-badge status-very-behind">Not Started</span>';
             }
-        }
 
         return `
             <tr data-email="${student.email}">
@@ -2213,7 +2011,7 @@ function buildClassData(name, rawData, courseConfig, periodFilter, icon, courseI
 
     // Determine which weeks have passed their Friday 3pm deadline
     const pastDeadlineWeeks = [];
-    for (let week = 1; week <= Math.min(state.currentWeek, courseConfig.totalReflections); week++) {
+    for (let week = 1; week <= state.currentWeek; week++) {
         const weekStart = new Date(CONFIG.SEMESTER_START);
         weekStart.setDate(weekStart.getDate() + (week - 1) * 7);
         const fridayDeadline = new Date(weekStart);
@@ -2225,13 +2023,6 @@ function buildClassData(name, rawData, courseConfig, periodFilter, icon, courseI
     }
 
     // Build lookup sets for submitted work
-    const submittedReflections = new Set();
-    (rawData.reflections || []).forEach(r => {
-        if (studentEmails.has(r[0])) {
-            submittedReflections.add(r[0] + '-' + r[2]);
-        }
-    });
-
     const completedDeliverables = new Set();
     (rawData.deliverables || []).forEach(d => {
         if (studentEmails.has(d[0]) && d[7] === 'completed') {
@@ -2246,16 +2037,6 @@ function buildClassData(name, rawData, courseConfig, periodFilter, icon, courseI
 
     pastDeadlineWeeks.forEach(week => {
         const weekItems = [];
-
-        if (isReflectionRequired(courseId, week)) {
-            let reflectionPending = 0;
-            studentEmails.forEach(email => {
-                if (!submittedReflections.has(email + '-' + week)) reflectionPending++;
-            });
-            weekItems.push({ type: 'Reflection', pending: reflectionPending });
-            totalDueItems += studentCount;
-            totalSubmittedItems += (studentCount - reflectionPending);
-        }
 
         const dueDeliverable = deliverableForWeek(courseId, week);
         if (dueDeliverable !== null && isDeliverableRequired(courseId, dueDeliverable.id)) {
@@ -2385,24 +2166,6 @@ function renderLeaderboard(classes) {
     allWeeks.forEach(week => {
         html += `<tr class="week-header"><td colspan="${orderedClasses.length + 1}">Week ${week}</td></tr>`;
 
-        // Reflection row
-        const refCounts = orderedClasses.map(cls => {
-            const weekData = cls.pendingByWeek.find(w => w.week === week);
-            const item = weekData ? weekData.items.find(i => i.type === 'Reflection') : null;
-            return item ? item.pending : 0;
-        });
-        const minRef = Math.min(...refCounts);
-
-        html += `<tr>
-            <td><i class="fas fa-pen-fancy" style="color: var(--gray-400); margin-right: 6px;"></i>Reflection</td>
-            ${refCounts.map(count => {
-                const isBest = count === minRef && refCounts.filter(c => c === minRef).length < refCounts.length;
-                return `<td${isBest ? ' class="best-in-row"' : ''}>
-                    <span class="pending-pill ${getPendingClass(count)}">${count}</span>
-                </td>`;
-            }).join('')}
-        </tr>`;
-
         // Deliverable row
         const delCounts = orderedClasses.map(cls => {
             const weekData = cls.pendingByWeek.find(w => w.week === week);
@@ -2451,27 +2214,8 @@ async function openWeekSettings() {
     const overrideSelect = document.getElementById('weekOverrideSelect');
     overrideSelect.value = weekSettings.currentWeekOverride !== null ? weekSettings.currentWeekOverride : '';
 
-    // Populate reflections, deliverables, quiz toggles, and version fields for all three tracks
+    // Populate deliverables, quiz toggles, and version fields for all three tracks
     for (const courseId of ['robotics', 'aer8', 'dbl']) {
-        // Reflections table
-        const maxWeeks = CONFIG.COURSES[courseId].totalReflections;
-        const refTbody = document.getElementById(courseId + 'ReflectionSettingsBody');
-        refTbody.innerHTML = '';
-        for (let w = 1; w <= maxWeeks; w++) {
-            const skipRef = (weekSettings[courseId].skipReflections  || []).includes(w);
-            const refDate  = (weekSettings[courseId].reflectionDueDates || {})[w] || '';
-            refTbody.innerHTML += `<tr>
-                <td style="padding: 8px 10px; font-weight: 600; white-space: nowrap;">Week ${w}</td>
-                <td style="padding: 8px 10px; text-align: center;">
-                    <input type="checkbox" id="skipRef_${courseId}_${w}" ${skipRef ? 'checked' : ''}>
-                </td>
-                <td style="padding: 4px 8px;">
-                    <input type="date" id="refDate_${courseId}_${w}" value="${refDate}"
-                           style="font-size:12px;padding:3px 5px;border:1px solid var(--gray-300);border-radius:4px;width:130px;">
-                </td>
-            </tr>`;
-        }
-
         // Deliverables table (keyed by deliverable ID)
         const deliverables = TRACK_DELIVERABLES[courseId] || [];
         const delTbody = document.getElementById(courseId + 'DeliverableSettingsBody');
@@ -2551,16 +2295,6 @@ async function applyWeekSettings() {
 
     // Read DOM values for all three tracks (modal renders all simultaneously)
     for (const courseId of ['robotics', 'aer8', 'dbl']) {
-        // Reflections (week-keyed)
-        const maxWeeks = CONFIG.COURSES[courseId].totalReflections;
-        weekSettings[courseId].skipReflections  = [];
-        weekSettings[courseId].reflectionDueDates  = {};
-        for (let w = 1; w <= maxWeeks; w++) {
-            if (document.getElementById(`skipRef_${courseId}_${w}`)?.checked) weekSettings[courseId].skipReflections.push(w);
-            const refDate = document.getElementById(`refDate_${courseId}_${w}`)?.value || '';
-            if (refDate) weekSettings[courseId].reflectionDueDates[w] = refDate;
-        }
-
         // Deliverables (keyed by deliverable ID)
         weekSettings[courseId].skipDeliverables = [];
         weekSettings[courseId].deliverableDueDates = {};
@@ -2593,10 +2327,8 @@ async function applyWeekSettings() {
             const body = {
                 action: 'setConfig',
                 token: CONFIG.TEACHER_TOKEN,
-                skipReflectionWeeks:  weekSettings[courseId].skipReflections,
                 skipDeliverableWeeks: weekSettings[courseId].skipDeliverables,
                 expectedVersion:      weekSettings[courseId].expectedVersion,
-                reflectionDueDates:   weekSettings[courseId].reflectionDueDates  || {},
                 deliverableDueDates:  weekSettings[courseId].deliverableDueDates || {}
             };
             if (courseId === 'robotics' || courseId === 'aer8') {
