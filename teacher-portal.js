@@ -2226,9 +2226,8 @@ async function openWeekSettings() {
             for (const d of deliverables) {
                 const skipDel = (weekSettings[courseId].skipDeliverables || []).includes(d.id);
                 const delDate  = (weekSettings[courseId].deliverableDueDates || {})[d.id] || '';
-                const weekTag  = d.week ? ` <span style="color:var(--gray-400);font-size:11px;">(Wk ${d.week})</span>` : '';
                 delTbody.innerHTML += `<tr>
-                    <td style="padding: 8px 10px; font-weight: 600; white-space: nowrap;">${d.label}${weekTag}</td>
+                    <td style="padding: 8px 10px; font-weight: 600; white-space: nowrap;">${d.label}</td>
                     <td style="padding: 8px 10px; text-align: center;">
                         <input type="checkbox" id="skipDel_${courseId}_${d.id}" ${skipDel ? 'checked' : ''}>
                     </td>
