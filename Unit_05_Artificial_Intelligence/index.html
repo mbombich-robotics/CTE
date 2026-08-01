@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Unit 5: Artificial Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0212 0%, #100520 50%, #1a083a 100%);
+            color: #e0e6f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-bar {
+            background: linear-gradient(135deg, #581c87 0%, #a855f7 50%, #581c87 100%);
+            padding: 20px 40px;
+            border-bottom: 3px solid #c084fc;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .unit-badge {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #f3e8ff;
+            background: rgba(0,0,0,0.3);
+            padding: 6px 16px;
+            border-radius: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .top-bar-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+            flex: 1;
+        }
+
+        .back-link {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #f3e8ff;
+            text-decoration: none;
+            background: rgba(0,0,0,0.25);
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .back-link:hover { background: rgba(0,0,0,0.4); }
+
+        .main { flex: 1; padding: 60px 40px; overflow-y: auto; min-width: 0; }
+
+        .hero { margin-bottom: 60px; }
+
+        .unit-number-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: #a855f7;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .hero-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            line-height: 1.15;
+            text-shadow: 0 0 30px rgba(168, 85, 247, 0.6);
+            margin-bottom: 20px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: #c084fc;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hero-desc {
+            font-size: 1.1rem;
+            color: #b8c5d6;
+            line-height: 1.8;
+            max-width: 750px;
+        }
+
+        .section-divider {
+            border: none;
+            border-top: 2px solid rgba(168, 85, 247, 0.25);
+            margin: 50px 0 40px;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem;
+            color: #a855f7;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .card {
+            background: rgba(168, 85, 247, 0.06);
+            border: 2px solid rgba(168, 85, 247, 0.35);
+            border-radius: 14px;
+            padding: 28px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .card:hover {
+            background: rgba(168, 85, 247, 0.14);
+            border-color: #a855f7;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(168, 85, 247, 0.25);
+        }
+
+        .card-eyebrow {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.78rem;
+            color: #a855f7;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.3;
+        }
+
+        .card-desc {
+            font-size: 0.95rem;
+            color: #9aabb8;
+            line-height: 1.6;
+            flex: 1;
+        }
+
+        .card-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+
+        .tag {
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .tag-slides  { background: rgba(168,85,247,0.15); color: #c084fc; border: 1px solid rgba(168,85,247,0.3); }
+        .tag-activity{ background: rgba(251,191,36,0.12); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+        .tag-quiz    { background: rgba(80,250,123,0.12); color: #50fa7b; border: 1px solid rgba(80,250,123,0.3); }
+        .tag-week    { background: rgba(148,163,184,0.1); color: #94a3b8; border: 1px solid rgba(148,163,184,0.25); }
+
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 14px;
+            margin-bottom: 60px;
+        }
+
+        .topic-item {
+            background: rgba(168, 85, 247, 0.05);
+            border-left: 4px solid #a855f7;
+            padding: 14px 18px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #c8d5e0;
+            line-height: 1.5;
+        }
+
+        .topic-item::before { content: '▸ '; color: #a855f7; font-weight: 700; }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            border-top: 2px solid rgba(168, 85, 247, 0.2);
+            color: #555;
+            font-size: 0.88rem;
+        }
+
+        /* ── Left nav sidebar ── */
+        .layout-container { display: flex; flex: 1; }
+
+        .sidebar {
+            width: 280px;
+            background: #0d0d0d;
+            border-right: 3px solid #c41e3a;
+            padding: 30px 0;
+            overflow-y: auto;
+            position: sticky;
+            top: 0;
+            height: calc(100vh - 80px);
+        }
+
+        .sidebar-section { margin-bottom: 10px; }
+
+        .sidebar-header {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 15px 25px 10px;
+            font-weight: 700;
+        }
+
+        .unit-link {
+            display: block;
+            padding: 12px 25px;
+            color: #b0b0b0;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .unit-link:hover {
+            background: rgba(196, 30, 58, 0.1);
+            color: #ffffff;
+            border-left-color: #c41e3a;
+        }
+
+        .unit-link.active {
+            background: rgba(196, 30, 58, 0.15);
+            color: #ffffff;
+            border-left-color: #c41e3a;
+        }
+
+        .unit-number {
+            font-family: 'Rajdhani', sans-serif;
+            color: #c41e3a;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .layout-container { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 3px solid #c41e3a; }
+            .main { padding: 40px 20px; }
+            .hero-title { font-size: 2.2rem; }
+            .top-bar { flex-wrap: wrap; padding: 16px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="unit-badge">Unit 5</div>
+        <div class="top-bar-title">Artificial Intelligence</div>
+        <a href="../HSAER/index.html" class="back-link">← Course Hub</a>
+    </div>
+
+    <div class="layout-container">
+
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-header">Navigation</div>
+                <a href="../HSAER/index.html" class="unit-link">
+                    <span class="unit-number">⌂</span> Course Overview
+                </a>
+                <a href="../Portfolio/index.html?track=hsaer" class="unit-link" style="background: rgba(99,102,241,0.08); border-left: 3px solid #6366f1;">
+                    <span class="unit-number">📋</span> Student Portfolio
+                </a>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-header">Course Units</div>
+                <a href="../Unit_01_Engineering_Design_Process/index.html" class="unit-link">
+                    <span class="unit-number">Unit 1</span> Engineering Design Process
+                </a>
+                <a href="../Unit_02_CAD/index.html" class="unit-link">
+                    <span class="unit-number">Unit 2</span> CAD: Component Design
+                </a>
+                <a href="../Unit_03_Shop_Safety_and_Standard_Practices/index.html" class="unit-link">
+                    <span class="unit-number">Unit 3</span> Shop Safety
+                </a>
+                <a href="../Unit_04_Programming_Electronics_and_Sensors/index.html" class="unit-link">
+                    <span class="unit-number">Unit 4</span> Programming, Electronics &amp; Sensors
+                </a>
+                <a href="index.html" class="unit-link active">
+                    <span class="unit-number">Unit 5</span> AI &amp; Machine Learning
+                </a>
+                <a href="../Unit_06_Career_Ready_Practices/index.html" class="unit-link">
+                    <span class="unit-number">Unit 6</span> Career Readiness
+                </a>
+            </div>
+        </aside>
+
+        <div class="main">
+
+        <div class="hero">
+            <div class="unit-number-label">Unit 5 — Week 24</div>
+            <h1 class="hero-title">Artificial<br>Intelligence</h1>
+            <p class="hero-subtitle">How machines learn — and why it matters</p>
+            <p class="hero-desc">
+                You've programmed L.E.O. to sense and respond. Now take one step further: what if the robot learned those responses from examples instead of rules you wrote? This unit covers how machine learning works, what it means to train a model, and the ethical responsibilities that come with putting AI into the world.
+            </p>
+        </div>
+
+        <hr class="section-divider">
+
+        <h2 class="section-title">Lessons & Activities</h2>
+        <div class="card-grid">
+
+            <a href="Lesson_01_What_Is_AI.html" class="card">
+                <div class="card-eyebrow">Lesson 6.1</div>
+                <div class="card-title">What Is AI?</div>
+                <div class="card-desc">Artificial intelligence vs. machine learning vs. deep learning. Three types of ML, how a model learns from data, neural networks, and bias in training data.</div>
+                <div class="card-meta">
+                    <span class="tag tag-slides">10 Slides</span>
+                    <span class="tag tag-week">Day 1</span>
+                </div>
+            </a>
+
+            <a href="Lesson_02_Ethics_in_AI.html" class="card">
+                <div class="card-eyebrow">Lesson 6.2</div>
+                <div class="card-title">Ethics in AI</div>
+                <div class="card-desc">Real cases of biased AI. The engineering canons applied to autonomous decisions. Who is responsible when AI causes harm — and what responsible engineers actually do.</div>
+                <div class="card-meta">
+                    <span class="tag tag-slides">8 Slides</span>
+                    <span class="tag tag-week">Day 2</span>
+                </div>
+            </a>
+
+            <a href="Lesson_03_Teachable_Machine.html" class="card">
+                <div class="card-eyebrow">Activity 6.3</div>
+                <div class="card-title">Teachable Machine</div>
+                <div class="card-desc">Train your own image classifier in the browser using Google's Teachable Machine. No code required — just examples. Then deliberately break it to see how training data shapes what a model knows.</div>
+                <div class="card-meta">
+                    <span class="tag tag-activity">Hands-On</span>
+                    <span class="tag tag-week">Days 3–4</span>
+                </div>
+            </a>
+
+            <a href="Lesson_04_Quiz.html" class="card">
+                <div class="card-eyebrow">Assessment</div>
+                <div class="card-title">Unit 5 Quiz</div>
+                <div class="card-desc">16 questions covering AI concepts, the three types of ML, training data, bias, ethics, and Teachable Machine. Auto-graded through the portfolio system.</div>
+                <div class="card-meta">
+                    <span class="tag tag-quiz">16 Questions</span>
+                    <span class="tag tag-week">Day 5</span>
+                </div>
+            </a>
+
+        </div>
+
+        <hr class="section-divider">
+
+        <h2 class="section-title">Key Concepts</h2>
+        <div class="topic-grid">
+            <div class="topic-item">Artificial intelligence vs. machine learning</div>
+            <div class="topic-item">Supervised, unsupervised, and reinforcement learning</div>
+            <div class="topic-item">Training data, datasets, and labeled examples</div>
+            <div class="topic-item">Neural networks and how weights are adjusted</div>
+            <div class="topic-item">Inference — applying a trained model to new data</div>
+            <div class="topic-item">Accuracy, overfitting, and model evaluation</div>
+            <div class="topic-item">Bias in AI and its real-world consequences</div>
+            <div class="topic-item">Engineering canons applied to autonomous systems</div>
+            <div class="topic-item">Accountability when AI causes harm</div>
+            <div class="topic-item">Image classification and the Teachable Machine workflow</div>
+        </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>Vicksburg High School — Applied Engineering & Robotics | Unit 5: Artificial Intelligence</p>
+        <p>Mr. Bombich | mbombich@vicksburgschools.org</p>
+    </footer>
+
+</body>
+</html>

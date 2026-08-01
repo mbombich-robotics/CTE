@@ -2378,7 +2378,7 @@ function openDeliverableForm(id) {
               <!-- top bar -->
               <div style="background:var(--gray-50);border-radius:8px;padding:10px 16px;margin-bottom:20px;border:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
                 <span style="font-size:13px;color:var(--gray-600);">Work through all three days — your draft saves automatically.</span>
-                <a href="../../Unit_00_Career_Ready_Practices/CRP_Student_Activity.html" target="_blank"
+                <a href="../../Unit_06_Career_Ready_Practices/CRP_Student_Activity.html" target="_blank"
                    style="font-size:13px;color:var(--primary);font-weight:600;white-space:nowrap;">Printable Version ↗</a>
               </div>
 
