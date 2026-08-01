@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.32',
+    VERSION: 'v2.9.33',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -22,7 +22,7 @@ const CONFIG = {
         robotics: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-            currentAppVersion: 'v2.9.64',
+            currentAppVersion: 'v2.12.7',
             hasTeams: false,
             totalDeliverables: 10,
             totalReflections: 14,
@@ -37,7 +37,7 @@ const CONFIG = {
         aer8: {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
-            currentAppVersion: 'v2.9.64',
+            currentAppVersion: 'v2.12.7',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalReflections: 9,     // ~1 semester
@@ -52,7 +52,7 @@ const CONFIG = {
         dbl: {
             name: 'Design & Build Lab',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
-            currentAppVersion: 'v2.9.64',
+            currentAppVersion: 'v2.12.7',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalReflections: 14,
@@ -2424,14 +2424,6 @@ async function openWeekSettings() {
     const modal = document.getElementById('weekSettingsModal');
     if (!modal) return;
 
-    const activeCourse = state.activeCourse;
-
-    // Show only the active course's column; hide the other.
-    ['robotics', 'frc'].forEach(courseId => {
-        const col = document.getElementById('weekSettingsCol_' + courseId);
-        if (col) col.style.display = (courseId === activeCourse) ? '' : 'none';
-    });
-
     // Show auto-calculated week
     const now = new Date();
     const diffWeeks = Math.floor(Math.floor((now - CONFIG.SEMESTER_START) / (1000 * 60 * 60 * 24)) / 7) + 1;
@@ -2442,72 +2434,70 @@ async function openWeekSettings() {
     const overrideSelect = document.getElementById('weekOverrideSelect');
     overrideSelect.value = weekSettings.currentWeekOverride !== null ? weekSettings.currentWeekOverride : '';
 
-    // Populate checkboxes for the active course only
-    const courseId = activeCourse;
-    const maxWeeks = CONFIG.COURSES[courseId].totalReflections;
-    const tbody = document.getElementById(courseId + 'WeekSettingsBody');
-    tbody.innerHTML = '';
-    for (let w = 1; w <= maxWeeks; w++) {
-        const skipRef  = (weekSettings[courseId].skipReflections  || []).includes(w);
-        const skipDel  = (weekSettings[courseId].skipDeliverables || []).includes(w);
-        const refDate  = (weekSettings[courseId].reflectionDueDates  || {})[w] || '';
-        const delDate  = (weekSettings[courseId].deliverableDueDates || {})[w] || '';
-        // FRC students do Unit 9 work via the Robotics portfolio, so the
-        // Unit 9 labels only apply to the Robotics column.
-        const label    = (courseId === 'robotics' && w === 12) ? 'Unit 9 · R1'
-                       : (courseId === 'robotics' && w === 13) ? 'Unit 9 · R2'
-                       : (courseId === 'robotics' && w === 14) ? 'Unit 9 · R3'
-                       : 'Week ' + w;
-        tbody.innerHTML += `<tr>
-            <td style="padding: 8px 10px; font-weight: 600; white-space: nowrap;">${label}</td>
-            <td style="padding: 8px 10px; text-align: center;">
-                <input type="checkbox" id="skipRef_${courseId}_${w}" ${skipRef ? 'checked' : ''}>
-            </td>
-            <td style="padding: 8px 10px; text-align: center;">
-                <input type="checkbox" id="skipDel_${courseId}_${w}" ${skipDel ? 'checked' : ''}>
-            </td>
-            <td style="padding: 4px 8px;">
-                <input type="date" id="refDate_${courseId}_${w}" value="${refDate}"
-                       style="font-size:12px;padding:3px 5px;border:1px solid var(--gray-300);border-radius:4px;width:130px;">
-            </td>
-            <td style="padding: 4px 8px;">
-                <input type="date" id="delDate_${courseId}_${w}" value="${delDate}"
-                       style="font-size:12px;padding:3px 5px;border:1px solid var(--gray-300);border-radius:4px;width:130px;">
-            </td>
-        </tr>`;
-    }
+    // Populate checkboxes, quiz toggles, and version fields for all three tracks
+    for (const courseId of ['robotics', 'aer8', 'dbl']) {
+        const maxWeeks = CONFIG.COURSES[courseId].totalReflections;
+        const tbody = document.getElementById(courseId + 'WeekSettingsBody');
+        tbody.innerHTML = '';
+        for (let w = 1; w <= maxWeeks; w++) {
+            const skipRef  = (weekSettings[courseId].skipReflections  || []).includes(w);
+            const skipDel  = (weekSettings[courseId].skipDeliverables || []).includes(w);
+            const refDate  = (weekSettings[courseId].reflectionDueDates  || {})[w] || '';
+            const delDate  = (weekSettings[courseId].deliverableDueDates || {})[w] || '';
+            const label    = 'Week ' + w;
+            tbody.innerHTML += `<tr>
+                <td style="padding: 8px 10px; font-weight: 600; white-space: nowrap;">${label}</td>
+                <td style="padding: 8px 10px; text-align: center;">
+                    <input type="checkbox" id="skipRef_${courseId}_${w}" ${skipRef ? 'checked' : ''}>
+                </td>
+                <td style="padding: 8px 10px; text-align: center;">
+                    <input type="checkbox" id="skipDel_${courseId}_${w}" ${skipDel ? 'checked' : ''}>
+                </td>
+                <td style="padding: 4px 8px;">
+                    <input type="date" id="refDate_${courseId}_${w}" value="${refDate}"
+                           style="font-size:12px;padding:3px 5px;border:1px solid var(--gray-300);border-radius:4px;width:130px;">
+                </td>
+                <td style="padding: 4px 8px;">
+                    <input type="date" id="delDate_${courseId}_${w}" value="${delDate}"
+                           style="font-size:12px;padding:3px 5px;border:1px solid var(--gray-300);border-radius:4px;width:130px;">
+                </td>
+            </tr>`;
+        }
 
-    // Set quiz toggle + key selector (AE&R courses only)
-    if (courseId === 'robotics' || courseId === 'aer8') {
-        const suffix = courseId === 'aer8' ? '_aer8' : '';
-        const quizToggle = document.getElementById('quizEnabledToggle' + suffix);
-        if (quizToggle) quizToggle.checked = weekSettings[courseId].quizEnabled || false;
-        const quizKeySelect = document.getElementById('quizKeySelect' + suffix);
-        if (quizKeySelect) quizKeySelect.value = weekSettings[courseId].quizKey || 'claw';
+        // Quiz toggle + key selector (HS AE&R and 8AER only)
+        if (courseId === 'robotics' || courseId === 'aer8') {
+            const suffix = courseId === 'aer8' ? '_aer8' : '';
+            const quizToggle = document.getElementById('quizEnabledToggle' + suffix);
+            if (quizToggle) quizToggle.checked = weekSettings[courseId].quizEnabled || false;
+            const quizKeySelect = document.getElementById('quizKeySelect' + suffix);
+            if (quizKeySelect) quizKeySelect.value = weekSettings[courseId].quizKey || 'claw';
+        }
+
+        // Version display fields
+        const codeVersionEl = document.getElementById('codeVersion_' + courseId);
+        if (codeVersionEl) codeVersionEl.textContent = CONFIG.COURSES[courseId].currentAppVersion || '—';
+        const hiddenEl = document.getElementById('expectedVersion_' + courseId);
+        if (hiddenEl) hiddenEl.value = weekSettings[courseId]?.expectedVersion || '';
     }
 
     modal.classList.add('active');
 
-    // Populate version display fields and initialize hidden input from local weekSettings
-    const codeVersionEl = document.getElementById('codeVersion_' + courseId);
-    if (codeVersionEl) codeVersionEl.textContent = CONFIG.COURSES[courseId].currentAppVersion || '—';
-    const hiddenEl = document.getElementById('expectedVersion_' + courseId);
-    if (hiddenEl) hiddenEl.value = weekSettings[courseId]?.expectedVersion || '';
-
-    // Fetch active course's backend config to display "Students expect: …"
-    try {
-        const cfg = await fetch(CONFIG.COURSES[courseId].apiUrl + '?action=getConfig&_t=' + Date.now()).then(r => r.json());
-        const backendEl = document.getElementById('backendVersion_' + courseId);
-        const current   = CONFIG.COURSES[courseId].currentAppVersion;
-        const stored    = cfg.expectedVersion || '(not set)';
-        if (backendEl) {
-            backendEl.textContent = stored;
-            backendEl.style.color = (cfg.expectedVersion && cfg.expectedVersion === current) ? 'var(--success)' : 'var(--danger)';
+    // Fetch backend versions for all three tracks in parallel
+    await Promise.all(['robotics', 'aer8', 'dbl'].map(async courseId => {
+        try {
+            const cfg = await fetch(CONFIG.COURSES[courseId].apiUrl + '?action=getConfig&_t=' + Date.now()).then(r => r.json());
+            const backendEl = document.getElementById('backendVersion_' + courseId);
+            const current   = CONFIG.COURSES[courseId].currentAppVersion;
+            const stored    = cfg.expectedVersion || '(not set)';
+            if (backendEl) {
+                backendEl.textContent = stored;
+                backendEl.style.color = (cfg.expectedVersion && cfg.expectedVersion === current) ? 'var(--success)' : 'var(--danger)';
+            }
+        } catch(e) {
+            const el = document.getElementById('backendVersion_' + courseId);
+            if (el) { el.textContent = 'fetch failed'; el.style.color = 'var(--danger)'; }
         }
-    } catch(e) {
-        const el = document.getElementById('backendVersion_' + courseId);
-        if (el) { el.textContent = 'fetch failed'; el.style.color = 'var(--danger)'; }
-    }
+    }));
 }
 
 function setExpectedVersion(courseId) {
@@ -2527,55 +2517,56 @@ async function applyWeekSettings() {
     const overrideVal = document.getElementById('weekOverrideSelect').value;
     weekSettings.currentWeekOverride = overrideVal ? parseInt(overrideVal) : null;
 
-    // Only mutate / save the active course — the modal only renders one course
-    // at a time, so reading the inactive course's checkboxes would clear it.
-    const courseId = state.activeCourse;
-    const maxWeeks = CONFIG.COURSES[courseId].totalReflections;
-    weekSettings[courseId].skipReflections  = [];
-    weekSettings[courseId].skipDeliverables = [];
-    weekSettings[courseId].reflectionDueDates  = {};
-    weekSettings[courseId].deliverableDueDates = {};
-    for (let w = 1; w <= maxWeeks; w++) {
-        if (document.getElementById(`skipRef_${courseId}_${w}`)?.checked)  weekSettings[courseId].skipReflections.push(w);
-        if (document.getElementById(`skipDel_${courseId}_${w}`)?.checked)  weekSettings[courseId].skipDeliverables.push(w);
-        const refDate = document.getElementById(`refDate_${courseId}_${w}`)?.value || '';
-        const delDate = document.getElementById(`delDate_${courseId}_${w}`)?.value || '';
-        if (refDate) weekSettings[courseId].reflectionDueDates[w]  = refDate;
-        if (delDate) weekSettings[courseId].deliverableDueDates[w] = delDate;
-    }
-    weekSettings[courseId].expectedVersion = document.getElementById(`expectedVersion_${courseId}`)?.value.trim() || '';
+    // Read DOM values for all three tracks (modal renders all simultaneously)
+    for (const courseId of ['robotics', 'aer8', 'dbl']) {
+        const maxWeeks = CONFIG.COURSES[courseId].totalReflections;
+        weekSettings[courseId].skipReflections  = [];
+        weekSettings[courseId].skipDeliverables = [];
+        weekSettings[courseId].reflectionDueDates  = {};
+        weekSettings[courseId].deliverableDueDates = {};
+        for (let w = 1; w <= maxWeeks; w++) {
+            if (document.getElementById(`skipRef_${courseId}_${w}`)?.checked)  weekSettings[courseId].skipReflections.push(w);
+            if (document.getElementById(`skipDel_${courseId}_${w}`)?.checked)  weekSettings[courseId].skipDeliverables.push(w);
+            const refDate = document.getElementById(`refDate_${courseId}_${w}`)?.value || '';
+            const delDate = document.getElementById(`delDate_${courseId}_${w}`)?.value || '';
+            if (refDate) weekSettings[courseId].reflectionDueDates[w]  = refDate;
+            if (delDate) weekSettings[courseId].deliverableDueDates[w] = delDate;
+        }
+        weekSettings[courseId].expectedVersion = document.getElementById(`expectedVersion_${courseId}`)?.value.trim() || '';
 
-    // Quiz toggle + key selector for AE&R courses
-    if (courseId === 'robotics' || courseId === 'aer8') {
-        const suffix = courseId === 'aer8' ? '_aer8' : '';
-        weekSettings[courseId].quizEnabled = document.getElementById('quizEnabledToggle' + suffix)?.checked || false;
-        weekSettings[courseId].quizKey     = document.getElementById('quizKeySelect' + suffix)?.value || 'claw';
+        if (courseId === 'robotics' || courseId === 'aer8') {
+            const suffix = courseId === 'aer8' ? '_aer8' : '';
+            weekSettings[courseId].quizEnabled = document.getElementById('quizEnabledToggle' + suffix)?.checked || false;
+            weekSettings[courseId].quizKey     = document.getElementById('quizKeySelect' + suffix)?.value || 'claw';
+        }
     }
 
     saveWeekSettings();
     calculateCurrentWeek();
 
-    // Save to the active course's backend
+    // Save all three tracks to their respective backends in parallel
     const saveBtn = document.querySelector('#weekSettingsModal .btn-primary');
     const originalHTML = saveBtn.innerHTML;
     saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
     saveBtn.disabled = true;
 
     try {
-        const body = {
-            action: 'setConfig',
-            token: CONFIG.TEACHER_TOKEN,
-            skipReflectionWeeks:  weekSettings[courseId].skipReflections,
-            skipDeliverableWeeks: weekSettings[courseId].skipDeliverables,
-            expectedVersion:      weekSettings[courseId].expectedVersion,
-            reflectionDueDates:   weekSettings[courseId].reflectionDueDates  || {},
-            deliverableDueDates:  weekSettings[courseId].deliverableDueDates || {}
-        };
-        if (courseId === 'robotics' || courseId === 'aer8') {
-            body.quizEnabled = weekSettings[courseId].quizEnabled;
-            body.quizKey     = weekSettings[courseId].quizKey || 'claw';
-        }
-        await fetch(CONFIG.COURSES[courseId].apiUrl, { method: 'POST', body: JSON.stringify(body) });
+        await Promise.all(['robotics', 'aer8', 'dbl'].map(courseId => {
+            const body = {
+                action: 'setConfig',
+                token: CONFIG.TEACHER_TOKEN,
+                skipReflectionWeeks:  weekSettings[courseId].skipReflections,
+                skipDeliverableWeeks: weekSettings[courseId].skipDeliverables,
+                expectedVersion:      weekSettings[courseId].expectedVersion,
+                reflectionDueDates:   weekSettings[courseId].reflectionDueDates  || {},
+                deliverableDueDates:  weekSettings[courseId].deliverableDueDates || {}
+            };
+            if (courseId === 'robotics' || courseId === 'aer8') {
+                body.quizEnabled = weekSettings[courseId].quizEnabled;
+                body.quizKey     = weekSettings[courseId].quizKey || 'claw';
+            }
+            return fetch(CONFIG.COURSES[courseId].apiUrl, { method: 'POST', body: JSON.stringify(body) });
+        }));
         saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
         setTimeout(() => {
             saveBtn.innerHTML = originalHTML;
