@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.12.9',
+    VERSION: 'v2.13.0',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -123,7 +123,6 @@ const DELIVERABLES = [
         unit: '06',
         points: 20,
         phase: 'foundations',
-        alwaysOpen: true,
         description: 'Research an engineering or trades career, analyze real take-home pay and a monthly budget, then write a personal reflection connecting the work to your future.',
         requirements: [
             'Research at least 3 careers or trades using bls.gov/ooh and record salary, education, and job growth data',
@@ -413,6 +412,23 @@ const DELIVERABLES = [
             'MicroPython code submitted — servo sweeps through the required range, organized with functions, no dead code',
             'Explain your design rationale: how did you choose your servo horn position, linkage geometry, or range of motion?',
             'Document at least one iteration: what didn\'t work, what you changed, and what improved'
+        ]
+    },
+    // ── Unit 5: AI & Machine Learning ───────────────────────────────────
+    {
+        id: 54,
+        title: 'Teachable Machine Project',
+        unit: '05',
+        week: null,
+        points: 50,
+        phase: 'ai',
+        description: 'Train a 3-class image classifier using Google Teachable Machine, deliberately build a biased model to observe its failure modes, then answer the reflection questions.',
+        requirements: [
+            'Name your 3 image classes and explain why each produces visually distinct training samples',
+            'Describe what happened when you tested with an unexpected or ambiguous input — was the failure in the algorithm, the training data, or both?',
+            'Describe the biased model you built in Step 6 — which class suffered most, and why does training sample count affect accuracy?',
+            'Identify who bears responsibility when a biased model causes real harm: the data collector, the engineer who deployed it, or the company?',
+            'What would you do differently in a production model compared to this 5-minute classroom activity?'
         ]
     },
 ];
@@ -3069,7 +3085,7 @@ function formatPhase(phase) {
         edp: 'Engineering Design', foundations: 'Foundations',
         cad: 'CAD', mfg: 'Manufacturing', safety: 'Shop Safety',
         linefollow: 'Line Following', scanner: 'Ultrasonic Scanner',
-        claw: 'Servo Claw', final: 'Final Demo'
+        claw: 'Servo Claw', final: 'Final Demo', ai: 'AI & Machine Learning'
     };
     return names[phase] || phase;
 }
