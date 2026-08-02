@@ -717,8 +717,9 @@
     const total = slides.length;
 
     function changeSlide(dir) {
-        slides[current].style.opacity = '0';
-        setTimeout(() => { slides[current].style.display = 'none'; }, 500);
+        const prev = current;
+        slides[prev].style.opacity = '0';
+        setTimeout(() => { slides[prev].style.display = 'none'; }, 500);
         current = Math.max(0, Math.min(total - 1, current + dir));
         slides[current].style.display = 'flex';
         setTimeout(() => { slides[current].style.opacity = '1'; }, 10);
