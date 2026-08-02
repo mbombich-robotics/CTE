@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.12.8',
+    VERSION: 'v2.12.9',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -1752,7 +1752,7 @@ function renderDeliverableCard(d) {
     const isAssigned = d.alwaysOpen || status === 'completed' || !!state.config.deliverableDueDates[d.id];
     return `
         <div class="deliverable-card ${status} ${isCurrent ? 'current' : ''} ${!isAssigned ? 'not-assigned' : ''}" data-id="${d.id}">
-            <div class="deliverable-number">${status === 'completed' ? '<i class="fas fa-check"></i>' : d.id}</div>
+            <div class="deliverable-number">${status === 'completed' ? '<i class="fas fa-check"></i>' : formatDeliverableLabel(d.id)}</div>
             <div class="deliverable-info">
                 <div class="deliverable-title">${d.title}</div>
                 <div class="deliverable-meta">
@@ -3077,6 +3077,11 @@ function formatPhase(phase) {
 function formatStatus(status) {
     const labels = { pending: 'Not Started', 'in-progress': 'In Progress', completed: 'Completed' };
     return labels[status] || status;
+}
+
+function formatDeliverableLabel(id) {
+    if (id === 0) return '0';
+    return `${Math.floor(id / 10)}.${id % 10}`;
 }
 
 function formatCategory(cat) {

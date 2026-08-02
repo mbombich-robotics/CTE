@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.35',
+    VERSION: 'v2.9.36',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -22,7 +22,7 @@ const CONFIG = {
         robotics: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-            currentAppVersion: 'v2.12.8',
+            currentAppVersion: 'v2.12.9',
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
@@ -36,7 +36,7 @@ const CONFIG = {
         aer8: {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
-            currentAppVersion: 'v2.12.8',
+            currentAppVersion: 'v2.12.9',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
@@ -50,7 +50,7 @@ const CONFIG = {
         dbl: {
             name: 'Design & Build Lab',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
-            currentAppVersion: 'v2.12.8',
+            currentAppVersion: 'v2.12.9',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
@@ -73,19 +73,19 @@ const CONFIG = {
 const TRACK_DELIVERABLES = {
     robotics: [
         { id: 0,  label: 'D0 — Career Ready Practices',         week: null },
-        { id: 11, label: 'D11 — Design Brief',                   week: 1   },
-        { id: 12, label: 'D12 — Robot Deck Design Record',       week: 2   },
-        { id: 21, label: 'D21 — C1: Wheel Hub',                  week: 3   },
-        { id: 22, label: 'D22 — C2: Drive Wheel',                week: 4   },
-        { id: 23, label: 'D23 — C3: Motor Sleeve Mount',         week: 4   },
-        { id: 24, label: 'D24 — C4: Robot Deck (Final)',          week: 8   },
-        { id: 25, label: 'D25 — C5: Omni Wheel Mount',           week: 6   },
-        { id: 26, label: 'D26 — C6: IR Sensor Mount',            week: 7   },
-        { id: 27, label: 'D27 — C7: Ultrasonic Sensor Mount',    week: 7   },
-        { id: 31, label: 'D31 — Tool Safety Certifications',     week: 10  },
-        { id: 51, label: 'D51 — Programming Basics',             week: null },
-        { id: 52, label: 'D52 — Line Following Practical',       week: 23  },
-        { id: 53, label: 'D53 — Servo Mechanism Project',        week: 32  },
+        { id: 11, label: 'D1.1 — Design Brief',                  week: 1   },
+        { id: 12, label: 'D1.2 — Robot Deck Design Record',      week: 2   },
+        { id: 21, label: 'D2.1 — C1: Wheel Hub',                 week: 3   },
+        { id: 22, label: 'D2.2 — C2: Drive Wheel',               week: 4   },
+        { id: 23, label: 'D2.3 — C3: Motor Sleeve Mount',        week: 4   },
+        { id: 24, label: 'D2.4 — C4: Robot Deck (Final)',         week: 8   },
+        { id: 25, label: 'D2.5 — C5: Omni Wheel Mount',          week: 6   },
+        { id: 26, label: 'D2.6 — C6: IR Sensor Mount',           week: 7   },
+        { id: 27, label: 'D2.7 — C7: Ultrasonic Sensor Mount',   week: 7   },
+        { id: 31, label: 'D3.1 — Tool Safety Certifications',    week: 10  },
+        { id: 51, label: 'D5.1 — Programming Basics',            week: null },
+        { id: 52, label: 'D5.2 — Line Following Practical',      week: 23  },
+        { id: 53, label: 'D5.3 — Servo Mechanism Project',        week: 32  },
     ],
     aer8: [],
     dbl:  [],
@@ -903,7 +903,7 @@ function openStudentDetail(email) {
             deliverablesPanel.innerHTML += `
                 <div class="item-card" style="${dBorderStyle}">
                     <div class="item-header">
-                        <span class="item-title">${submitted[3] || `Deliverable ${id}`}</span>
+                        <span class="item-title">${submitted[3] || formatDeliverableLabel(id)}</span>
                         <span class="item-status status-badge ${dStatusClass}">${dStatusLabel}</span>
                     </div>
                     <div class="item-content" id="${contentId}" data-expanded="false">
@@ -920,7 +920,7 @@ function openStudentDetail(email) {
             deliverablesPanel.innerHTML += `
                 <div class="item-card" style="border-left: 4px solid var(--warning);">
                     <div class="item-header">
-                        <span class="item-title">Deliverable ${id}</span>
+                        <span class="item-title">${formatDeliverableLabel(id)}</span>
                         <span class="item-status status-badge status-behind">Needs Grading</span>
                     </div>
                     <div class="item-content">
@@ -935,7 +935,7 @@ function openStudentDetail(email) {
             deliverablesPanel.innerHTML += `
                 <div class="item-card" style="border-left: 3px solid var(--warning);">
                     <div class="item-header">
-                        <span class="item-title">Deliverable ${id}</span>
+                        <span class="item-title">${formatDeliverableLabel(id)}</span>
                         <span class="item-status status-badge status-behind">In Progress</span>
                     </div>
                     <div class="item-content">
@@ -951,7 +951,7 @@ function openStudentDetail(email) {
                 deliverablesPanel.innerHTML += `
                     <div class="item-card" style="opacity: 0.85; border-left: 3px dashed var(--gray-400);">
                         <div class="item-header">
-                            <span class="item-title">Deliverable ${id}</span>
+                            <span class="item-title">${formatDeliverableLabel(id)}</span>
                             <span class="item-status status-badge status-very-behind">Not Submitted</span>
                         </div>
                         <div class="item-content"><em>Student has not submitted via the portfolio.</em></div>
@@ -1717,6 +1717,13 @@ function formatStatus(status) {
     return labels[status] || status;
 }
 
+function formatDeliverableLabel(id) {
+    if (id === 0) return 'D0';
+    const unit = Math.floor(id / 10);
+    const num = id % 10;
+    return `D${unit}.${num}`;
+}
+
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -1808,7 +1815,7 @@ function loadGradeTable() {
 
     // Update header info
     const maxPoints = course.deliverablePoints[assignmentId];
-    document.getElementById('gradeAssignmentTitle').textContent = `Deliverable ${assignmentId}`;
+    document.getElementById('gradeAssignmentTitle').textContent = formatDeliverableLabel(assignmentId);
     document.getElementById('gradeAssignmentPoints').textContent = `Max: ${maxPoints} pts`;
 
     // Filter and sort students alphabetically
