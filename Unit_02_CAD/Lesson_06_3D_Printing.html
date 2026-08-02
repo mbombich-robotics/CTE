@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 2.6 — 3D Printing: Model to Part</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #050f0a 0%, #0d1f17 100%);
+            color: #e0e6f0;
+            height: 100vh;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute; width: 100%; min-height: 100%;
+            display: none; flex-direction: column;
+            justify-content: flex-start; align-items: center;
+            padding: 55px 60px 120px 60px;
+            opacity: 0; transition: opacity 0.5s ease;
+            overflow-y: auto; overflow-x: hidden;
+        }
+        .slide.active { display: flex; opacity: 1; }
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif; font-size: 3.5rem; font-weight: 900;
+            color: #00d084; margin-bottom: 15px; text-transform: uppercase;
+            letter-spacing: 2px; text-shadow: 0 0 20px rgba(0,208,132,0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(0,208,132,0.5); }
+            to   { text-shadow: 0 0 35px rgba(0,208,132,0.9); }
+        }
+        h2 {
+            font-family: 'Orbitron', sans-serif; font-size: 2.4rem; font-weight: 700;
+            color: #00d084; margin-bottom: 18px; text-transform: uppercase;
+        }
+        h3 { font-family: 'Exo 2', sans-serif; font-size: 1.5rem; font-weight: 600; color: #ffd166; margin-bottom: 12px; }
+        p { font-size: 1.15rem; line-height: 1.6; margin-bottom: 12px; color: #b8c5d6; }
+        .subtitle { font-size: 1.3rem; color: #ffd166; font-weight: 600; margin-bottom: 30px; }
+
+        .bullet-list { list-style: none; padding-left: 0; }
+        .bullet-list li {
+            font-size: 1.15rem; margin: 12px 0; padding-left: 35px;
+            position: relative; color: #b8c5d6; line-height: 1.5;
+        }
+        .bullet-list li::before {
+            content: '▸'; position: absolute; left: 0;
+            color: #ffd166; font-size: 1.5rem; line-height: 1;
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px; }
+
+        .box {
+            background: rgba(0,208,132,0.05); border: 2px solid #00d084;
+            border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(0,208,132,0.1);
+        }
+        .box-amber {
+            background: rgba(255,209,102,0.07); border: 2px solid #ffd166;
+            border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(255,209,102,0.1);
+        }
+        .box-red {
+            background: rgba(196,30,58,0.07); border: 2px solid #c41e3a;
+            border-radius: 12px; padding: 20px;
+        }
+
+        .highlight { color: #00d084; font-weight: 700; }
+        .warning   { color: #ffd166; font-weight: 700; }
+        .danger    { color: #ff6b7a; font-weight: 700; }
+
+        .step-row {
+            display: flex; align-items: flex-start; gap: 20px;
+            padding: 16px 0; border-bottom: 1px solid rgba(0,208,132,0.12);
+        }
+        .step-row:last-child { border-bottom: none; }
+        .step-num {
+            font-family: 'Orbitron', sans-serif; font-size: 1.6rem; font-weight: 900;
+            color: #00d084; min-width: 44px; line-height: 1;
+        }
+        .step-body h3 { margin-bottom: 4px; }
+        .step-body p  { margin-bottom: 0; }
+
+        .pipeline {
+            display: flex; align-items: center; gap: 0; margin: 30px 0; flex-wrap: wrap;
+        }
+        .pipeline-step {
+            flex: 1; min-width: 120px; text-align: center;
+            background: rgba(0,208,132,0.07); border: 2px solid rgba(0,208,132,0.3);
+            border-radius: 10px; padding: 16px 10px;
+        }
+        .pipeline-step .p-icon { font-size: 2rem; margin-bottom: 6px; }
+        .pipeline-step .p-label { font-family: 'Rajdhani', sans-serif; font-size: 0.85rem; font-weight: 700; color: #00d084; text-transform: uppercase; letter-spacing: 1px; }
+        .pipeline-step .p-name { font-size: 0.95rem; color: #b8c5d6; margin-top: 4px; }
+        .pipeline-arrow { font-size: 1.8rem; color: #ffd166; padding: 0 8px; }
+
+        .spec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin: 20px 0; }
+        .spec-item {
+            background: rgba(0,208,132,0.07); border: 1px solid rgba(0,208,132,0.3);
+            border-radius: 10px; padding: 14px 16px; text-align: center;
+        }
+        .spec-val { font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; font-weight: 700; color: #00d084; }
+        .spec-label { font-size: 0.85rem; color: #6a8070; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .note-box {
+            background: rgba(255,209,102,0.07); border: 2px solid #ffd166;
+            border-radius: 12px; padding: 18px 20px; margin: 16px 0;
+        }
+        .note-box h3 { color: #ffd166; }
+        .note-box p, .note-box li { color: #d4c190; }
+
+        .printer-row {
+            display: flex; gap: 16px; margin: 20px 0; flex-wrap: wrap;
+        }
+        .printer-card {
+            flex: 1; min-width: 160px;
+            background: rgba(0,208,132,0.05); border: 2px solid rgba(0,208,132,0.3);
+            border-radius: 10px; padding: 16px; text-align: center;
+        }
+        .printer-card .p-count {
+            font-family: 'Orbitron', sans-serif; font-size: 2.2rem; font-weight: 900;
+            color: #00d084; line-height: 1;
+        }
+        .printer-card .p-model { font-weight: 700; color: #e0e6f0; margin: 6px 0 4px; }
+        .printer-card .p-note  { font-size: 0.85rem; color: #6a8070; }
+        .printer-card.special  { border-color: #ffd166; }
+        .printer-card.special .p-count { color: #ffd166; }
+        .printer-card.ender    { border-color: #6a8070; }
+        .printer-card.ender    .p-count { color: #b8c5d6; }
+
+        /* Controls */
+        .controls {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            display: flex; justify-content: center; align-items: center; gap: 20px; z-index: 1000;
+        }
+        button {
+            background: linear-gradient(135deg, #00d084 0%, #009960 100%);
+            border: none; color: #050f0a; padding: 15px 30px; font-size: 1rem;
+            font-weight: 700; border-radius: 8px; cursor: pointer;
+            font-family: 'Exo 2', sans-serif; transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,208,132,0.3);
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,208,132,0.5); }
+        button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+        .slide-number {
+            position: fixed; bottom: 30px; left: 30px;
+            font-family: 'Space Mono', monospace; font-size: 1rem;
+            color: #00d084; z-index: 1000;
+        }
+        .ref-link {
+            position: fixed; top: 20px; right: 24px; z-index: 1000;
+        }
+        .ref-link a {
+            background: rgba(0,208,132,0.12); border: 1px solid #00d084;
+            color: #00d084; font-family: 'Space Mono', monospace; font-size: 0.85rem;
+            padding: 8px 14px; border-radius: 6px; text-decoration: none;
+            transition: background 0.2s;
+        }
+        .ref-link a:hover { background: rgba(0,208,132,0.25); }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; } h2 { font-size: 1.8rem; }
+            .slide { padding: 30px 20px 100px; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .pipeline { flex-direction: column; }
+            .pipeline-arrow { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+<div class="presentation">
+
+<!-- SLIDE 1: Title -->
+<div class="slide active">
+    <div class="slide-content" style="text-align:center; padding-top: 40px;">
+        <h1>3D Printing</h1>
+        <p class="subtitle">Unit 2 · CAD Component-Based Design · Lesson 2.6</p>
+        <p style="color:#b8c5d6; font-size:1.2rem; max-width:700px; margin: 0 auto 40px;">
+            Your part exists as geometry in Fusion 360. This lesson gets it out of the computer and into your hands — a real, physical object you designed.
+        </p>
+
+        <div class="printer-row" style="justify-content:center; max-width:900px; margin: 0 auto;">
+            <div class="printer-card">
+                <div class="p-count">5</div>
+                <div class="p-model">Bambu P1S</div>
+                <div class="p-note">Enclosed FDM</div>
+            </div>
+            <div class="printer-card">
+                <div class="p-count">5</div>
+                <div class="p-model">Bambu P2S</div>
+                <div class="p-note">Enclosed FDM</div>
+            </div>
+            <div class="printer-card special">
+                <div class="p-count">1</div>
+                <div class="p-model">Bambu H1</div>
+                <div class="p-note">Special purposes</div>
+            </div>
+            <div class="printer-card ender">
+                <div class="p-count">10</div>
+                <div class="p-model">Ender 3 V3 KE</div>
+                <div class="p-note">Open-frame FDM</div>
+            </div>
+        </div>
+
+        <p style="margin-top:32px; color:#6a8070; font-size:1rem;">
+            Slicer: <span class="highlight">BambuStudio</span> for Bambu printers &nbsp;·&nbsp; <span style="color:#b8c5d6;">Creality Print</span> for Enders
+        </p>
+    </div>
+</div>
+
+<!-- SLIDE 2: The Pipeline -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>The Pipeline</h2>
+        <p>Every print follows the same five steps — no matter which printer or which part.</p>
+
+        <div class="pipeline">
+            <div class="pipeline-step">
+                <div class="p-icon">🧊</div>
+                <div class="p-label">Step 1</div>
+                <div class="p-name">Design in Fusion 360</div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="p-icon">📦</div>
+                <div class="p-label">Step 2</div>
+                <div class="p-name">Export as 3MF</div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="p-icon">🖥️</div>
+                <div class="p-label">Step 3</div>
+                <div class="p-name">Slice in BambuStudio</div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="p-icon">📡</div>
+                <div class="p-label">Step 4</div>
+                <div class="p-name">Send to Printer</div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="p-icon">⚙️</div>
+                <div class="p-label">Step 5</div>
+                <div class="p-name">Post-Process</div>
+            </div>
+        </div>
+
+        <p style="margin-top:12px;">The slicer sits between your model and the printer. It converts geometry into the printer's language — a sequence of moves, temperatures, and flow rates called <span class="highlight">G-code</span>.</p>
+
+        <div class="note-box" style="margin-top:20px;">
+            <h3>⚠️ The slicer is where most print failures are decided</h3>
+            <p>A good model sliced badly will fail. A great slicer setup with a bad model will also fail. Both sides matter — this lesson covers both.</p>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 3: Export from Fusion -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Export from Fusion 360</h2>
+        <p>Fusion stores your part as a parametric model. You need to export it as a static mesh the slicer can read.</p>
+
+        <div style="margin-top: 24px;">
+            <div class="step-row">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>Choose 3MF, not STL</h3>
+                    <p>In Fusion: <span class="highlight">File → Export</span>. Set the file type to <span class="highlight">.3mf</span>. 3MF preserves units, scale, and orientation more reliably than STL. BambuStudio handles it natively.</p>
+                </div>
+            </div>
+            <div class="step-row">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>Name your file correctly</h3>
+                    <p>Format: <span class="highlight" style="font-family:'JetBrains Mono',monospace; font-size:1rem;">Lastname_ComponentName_v1.3mf</span><br>
+                    Example: <span style="font-family:'JetBrains Mono',monospace; font-size:0.95rem; color:#b8c5d6;">Smith_WheelHub_v1.3mf</span></p>
+                </div>
+            </div>
+            <div class="step-row">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <h3>Save location</h3>
+                    <p>Save to your <span class="warning">Desktop or a local folder</span>, not OneDrive or a network share. Slicers sometimes have trouble reading files from cloud-synced folders.</p>
+                </div>
+            </div>
+            <div class="step-row">
+                <div class="step-num">4</div>
+                <div class="step-body">
+                    <h3>Check the scale</h3>
+                    <p>When you open the file in BambuStudio, verify it appears at the correct size. A 25mm bore should read as ~25mm on-screen, not 0.025mm or 25,000mm.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 4: Installing BambuStudio -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>BambuStudio</h2>
+        <p>BambuStudio is the slicer software for all Bambu Lab printers. It handles everything from orienting your part to sending the print job over the network.</p>
+
+        <div class="grid-2" style="margin-top: 20px;">
+            <div class="box">
+                <h3>Install</h3>
+                <ul class="bullet-list">
+                    <li>Download from <span class="highlight">bambulab.com/software</span></li>
+                    <li>Install like any other program — Next → Next → Finish</li>
+                    <li>On first launch it will ask you to sign in or create a Bambu account — use the class credentials your teacher provides</li>
+                    <li>Select your printer model during setup: <span class="highlight">P1S</span> or <span class="highlight">P2S</span></li>
+                </ul>
+            </div>
+            <div class="box">
+                <h3>The Interface</h3>
+                <ul class="bullet-list">
+                    <li><span class="highlight">Build plate</span> — the gray grid in the center. Parts go here.</li>
+                    <li><span class="highlight">Left panel</span> — your imported objects</li>
+                    <li><span class="highlight">Right panel</span> — print settings (profile, infill, supports)</li>
+                    <li><span class="highlight">Top toolbar</span> — orient, arrange, cut, and slice tools</li>
+                    <li><span class="highlight">Slice now</span> button — generates G-code when you're ready</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="note-box" style="margin-top: 24px;">
+            <h3>Ender 3 Users — Use Creality Print Instead</h3>
+            <p>BambuStudio does not support Ender 3 printers. Download <span style="color:#ffd166; font-weight:700;">Creality Print</span> from creality.com. The workflow on the next slides is identical — same concepts, different interface.</p>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 5: Orient Your Part -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Orient Your Part</h2>
+        <p>How you place the part on the build plate determines print time, strength, and whether you need supports. This decision matters more than most slicer settings.</p>
+
+        <div class="grid-2" style="margin-top: 20px;">
+            <div class="box">
+                <h3>Rules of Thumb</h3>
+                <ul class="bullet-list">
+                    <li><span class="highlight">Flattest face down.</span> Maximizes contact with the bed, minimizes overhangs.</li>
+                    <li><span class="highlight">Critical bores vertical.</span> A circular bore printed horizontally prints as an oval due to layer stacking. Printed vertically, it's actually round.</li>
+                    <li><span class="highlight">Strength follows layer lines.</span> The part is strongest parallel to the layers and weakest between them. Orient so expected forces run parallel.</li>
+                    <li><span class="highlight">Avoid unsupported overhangs &gt; 45°</span> unless you're willing to add supports and clean them up afterward.</li>
+                </ul>
+            </div>
+            <div class="box-amber">
+                <h3>Tools in BambuStudio</h3>
+                <ul class="bullet-list">
+                    <li><span class="warning">Auto Orient</span> — click this first. Good starting point, not always optimal.</li>
+                    <li><span class="warning">Place on Face</span> — click a face; that face snaps to the build plate.</li>
+                    <li><span class="warning">Rotate</span> — drag the arc handles. Hold Shift for 45° snaps.</li>
+                    <li><span class="warning">Mirror</span> — flip the part if your design is handed (left/right).</li>
+                </ul>
+                <p style="margin-top:12px;">After orienting, look at the part from all angles. Hover slowly — BambuStudio will highlight overhangs in red.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 6: Slicer Settings -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Key Slicer Settings</h2>
+        <p>You don't need to touch everything — most defaults are fine. These are the settings that actually change your print's strength, time, and quality.</p>
+
+        <div class="spec-grid">
+            <div class="spec-item">
+                <div class="spec-val">0.20 mm</div>
+                <div class="spec-label">Layer Height (standard)</div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-val">0.12 mm</div>
+                <div class="spec-label">Layer Height (fine detail)</div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-val">15 %</div>
+                <div class="spec-label">Infill (non-structural)</div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-val">40 %</div>
+                <div class="spec-label">Infill (mechanical parts)</div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-val">3–4</div>
+                <div class="spec-label">Wall Loops</div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-val">PLA</div>
+                <div class="spec-label">Filament Type</div>
+            </div>
+        </div>
+
+        <div class="grid-2" style="margin-top: 20px;">
+            <div class="box">
+                <h3>Print Profile</h3>
+                <p>Select from the dropdown at the top of the right panel. For most robot parts: <span class="highlight">0.20mm Standard</span>. This sets layer height, speed, and temperature automatically.</p>
+                <p>Don't start by tweaking individual settings. Start with the right profile and adjust only if you have a specific reason.</p>
+            </div>
+            <div class="box-amber">
+                <h3>Infill Pattern</h3>
+                <p><span class="warning">Gyroid</span> or <span class="warning">Grid</span> for robot parts. Gyroid is isotropic — equally strong in all directions — at the cost of slightly longer print time.</p>
+                <p>Infill only affects the inside. More infill = heavier, stronger, slower. For brackets and mounts, 40% grid is the default unless your teacher specifies otherwise.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 7: Supports -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Supports</h2>
+        <p>FDM printers deposit material layer by layer. A layer has to rest on something — either the previous layer or a support structure. Overhangs beyond ~45° need support.</p>
+
+        <div class="grid-2" style="margin-top: 20px;">
+            <div class="box">
+                <h3>When You Need Supports</h3>
+                <ul class="bullet-list">
+                    <li>Any overhang angle steeper than 45° from vertical</li>
+                    <li>Horizontal holes on the side of a part (the top half of the bore needs support)</li>
+                    <li>Bridging spans longer than ~60mm</li>
+                </ul>
+                <p style="margin-top: 12px;"><span class="highlight">Best solution: re-orient the part</span> so the overhang faces down. Supports you don't add can't cause problems.</p>
+            </div>
+            <div class="box-amber">
+                <h3>Support Types in BambuStudio</h3>
+                <ul class="bullet-list">
+                    <li><span class="warning">Normal</span> — grid structure, fast to generate, harder to remove. OK for simple overhangs.</li>
+                    <li><span class="warning">Tree</span> — organic branching structure, touches the part at fewer points, much easier to snap off. Better for most robot parts.</li>
+                    <li><span class="warning">None</span> — for well-oriented parts. Always aim for this first.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="note-box" style="margin-top: 20px;">
+            <h3>Removing Supports</h3>
+            <p>Use needle-nose pliers, flush cutters, or your fingers for tree supports. Always de-risk removal by clamping the part — don't pull toward your hand. After removal, clean up the surface with a deburring tool or sandpaper if a smooth face is needed.</p>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 8: Slice & Preview -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Slice and Preview</h2>
+        <p>Slicing converts your 3D model into a stack of 2D cross-sections with exact move instructions for the printer. The preview is your last chance to catch problems before plastic is wasted.</p>
+
+        <div style="margin-top: 20px;">
+            <div class="step-row">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>Click "Slice Now"</h3>
+                    <p>BambuStudio processes the geometry. This takes a few seconds to a minute depending on part complexity. A progress bar appears at the bottom.</p>
+                </div>
+            </div>
+            <div class="step-row">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>Check the preview</h3>
+                    <p>Use the layer slider on the right to scrub through the print layer by layer. Look for: <span class="highlight">supports where expected</span>, no floating islands, consistent infill, and a solid base layer.</p>
+                </div>
+            </div>
+            <div class="step-row">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <h3>Check the estimate</h3>
+                    <p>BambuStudio shows print time and filament usage. If a simple bracket estimates 4 hours, something is wrong — check your infill, layer height, or whether you accidentally scaled the part up.</p>
+                </div>
+            </div>
+            <div class="step-row">
+                <div class="step-num">4</div>
+                <div class="step-body">
+                    <h3>If something looks wrong, go back</h3>
+                    <p>Click <span class="highlight">Edit Plate</span> to return to the 3D view. Re-orient, adjust settings, and re-slice. Slicing is fast — iterate freely before committing to a print.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 9: Send to Printer -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Send to Printer</h2>
+        <p>Once you're satisfied with the preview, you send the sliced job to the printer. Bambu Lab printers support three methods:</p>
+
+        <div class="grid-3" style="margin-top: 24px;">
+            <div class="box" style="text-align:center;">
+                <p style="font-size:2.2rem; margin-bottom:8px;">☁️</p>
+                <h3>Cloud (Recommended)</h3>
+                <p>Click <span class="highlight">Print → Send</span>. Select the printer from the dropdown. The job uploads and the printer starts after you confirm on its touchscreen. Both you and your teacher can see the queue.</p>
+            </div>
+            <div class="box-amber" style="text-align:center;">
+                <p style="font-size:2.2rem; margin-bottom:8px;">🔌</p>
+                <h3>LAN (Direct)</h3>
+                <p>If cloud is unavailable, BambuStudio can send directly to the printer over the school network. Requires the printer to be on the same WiFi. Same process — click Print, select LAN mode.</p>
+            </div>
+            <div class="box" style="text-align:center; border-color: rgba(0,208,132,0.25);">
+                <p style="font-size:2.2rem; margin-bottom:8px;">💾</p>
+                <h3>SD Card</h3>
+                <p>Export the sliced file as a <span class="highlight">.gcode.3mf</span> to an SD card. Insert into the printer and select the file from the touchscreen. No network needed.</p>
+            </div>
+        </div>
+
+        <div class="note-box" style="margin-top: 24px;">
+            <h3>Print Queue — Be Considerate</h3>
+            <p>Ten people sharing ten printers means planning ahead. Send your job, note which printer accepted it, and check back on the estimated finish time. Don't queue multiple jobs before your first one finishes.</p>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 10: Prep the Physical Printer -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Prep the Physical Printer</h2>
+        <p>The slicer handles the software side. Before your job starts, verify the physical printer is ready.</p>
+
+        <div style="margin-top: 16px;">
+            <div class="step-row">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>Bed check</h3>
+                    <p>The build plate should be clean and flat. Wipe the cool plate or PEI plate with isopropyl alcohol (IPA) before each print. Skin oils prevent adhesion. If the previous print left residue, clean it off — don't print on top of it.</p>
+                </div>
+            </div>
+            <div class="step-row">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>Filament loaded and primed</h3>
+                    <p>Check that PLA filament is loaded and feeding cleanly through the AMS (Bambu) or the extruder (Ender). If the filament looks brittle, discolored, or wet-sounding during extrusion, notify your teacher — hygroscopic filament needs to be dried.</p>
+                </div>
+            </div>
+            <div class="step-row">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <h3>Nozzle clear</h3>
+                    <p>If there's a blob of old plastic hanging off the nozzle, remove it with tweezers (careful — it's hot) before starting. The Bambu P1S and P2S run an automatic purge before printing; watch it and make sure it clears cleanly.</p>
+                </div>
+            </div>
+            <div class="step-row">
+                <div class="step-num">4</div>
+                <div class="step-body">
+                    <h3>Confirm on the touchscreen</h3>
+                    <p>After sending the job, the printer's screen prompts you to confirm. Walk to the printer, verify the job name is yours, and tap <span class="highlight">Print</span>. Never confirm a job that isn't yours.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 11: During the Print -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>During the Print</h2>
+
+        <div class="grid-2" style="margin-top: 16px;">
+            <div class="box">
+                <h3>Watch the First Layer</h3>
+                <p>The first layer is the most critical. It should be slightly squished into the bed — not sitting on top as a round filament strand. If it looks like a series of round noodles sitting on the surface, the nozzle is too far from the bed.</p>
+                <p style="margin-top: 10px;">Signs of a good first layer:</p>
+                <ul class="bullet-list">
+                    <li>Slight sheen — filament is pressed flat</li>
+                    <li>Lines touching each other, no gaps</li>
+                    <li>Part not lifting at the corners</li>
+                </ul>
+            </div>
+            <div class="box-amber">
+                <h3>Do's and Don'ts</h3>
+                <ul class="bullet-list">
+                    <li><span class="highlight">DO</span> check back at the 15-minute mark</li>
+                    <li><span class="highlight">DO</span> report failed prints to your teacher immediately — don't let it run into a pile of spaghetti</li>
+                    <li><span class="warning">DON'T</span> open the door on the P1S or P2S mid-print — the enclosure holds temperature and humidity stable</li>
+                    <li><span class="warning">DON'T</span> cancel someone else's print</li>
+                    <li><span class="warning">DON'T</span> pull a finished print off without cooling — the part is soft and will warp</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="note-box" style="margin-top: 24px;">
+            <h3>Bambu AI Detection</h3>
+            <p>The P1S and P2S have a camera and AI spaghetti detection. If the print detaches from the bed and starts producing a tangle, the printer will pause and notify you. Check BambuStudio's device panel or the Bambu Handy app to see live camera feed and status.</p>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 12: Post-Processing -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Post-Processing</h2>
+        <p>The printer is done — but your part isn't. This step gets it ready to use.</p>
+
+        <div style="margin-top: 20px;">
+            <div class="step-row">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>Let it cool</h3>
+                    <p>Wait at least 5 minutes after the print finishes before removing the part. PLA is soft while warm — removing it too soon can warp the base. The build plate on Bambu printers will cool automatically and the part will release on its own.</p>
+                </div>
+            </div>
+            <div class="step-row">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>Remove supports</h3>
+                    <p>Use needle-nose pliers for tree supports — they snap off cleanly. For normal support structures, use flush cutters to clear the grid, then pliers to peel away the remaining contact points. Always point the part away from you.</p>
+                </div>
+            </div>
+            <div class="step-row">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <h3>Test fit immediately</h3>
+                    <p>For robot components, test-fit the part as soon as you remove it. Check bore clearances, hole alignment, and snap-fit features now — while you still have time to reprint if needed. Don't wait until assembly day.</p>
+                </div>
+            </div>
+            <div class="step-row">
+                <div class="step-num">4</div>
+                <div class="step-body">
+                    <h3>Iterate if needed</h3>
+                    <p>A bore that's 0.3mm too tight is a reprint, not a failure. Go back to Fusion, update the dimension, export, and queue again. Iteration is part of the process.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 13: Common Failures -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>When Things Go Wrong</h2>
+        <p>Most print failures come from a small set of causes. Learn to recognize them so you can fix the issue rather than just restarting and hoping.</p>
+
+        <div class="grid-2" style="margin-top: 16px;">
+            <div class="box-red">
+                <h3 style="color:#ff6b7a;">Warping (Corners Lifting)</h3>
+                <p><span class="danger">Cause:</span> Bed temp too low, or the first layer didn't adhere well.</p>
+                <p><span class="highlight">Fix:</span> Clean the plate with IPA, check that bed temp is set correctly (60°C for PLA), and make sure the first layer height is calibrated (Z offset).</p>
+            </div>
+            <div class="box-red">
+                <h3 style="color:#ff6b7a;">Stringing (Hairs Between Walls)</h3>
+                <p><span class="danger">Cause:</span> Nozzle temperature too high, or retraction settings too low.</p>
+                <p><span class="highlight">Fix:</span> Lower print temperature by 5°C, or increase retraction distance slightly. The P1S has a pre-tuned profile that minimizes this — make sure you're using it.</p>
+            </div>
+            <div class="box-red">
+                <h3 style="color:#ff6b7a;">Layer Separation (Splitting)</h3>
+                <p><span class="danger">Cause:</span> Layers not fusing — temp too low, print speed too high, or wet filament.</p>
+                <p><span class="highlight">Fix:</span> Increase temperature by 5°C. If the filament is making crackling sounds during extrusion, it's wet — report it so it can be dried.</p>
+            </div>
+            <div class="box-red">
+                <h3 style="color:#ff6b7a;">"Spaghetti" (Print Detached)</h3>
+                <p><span class="danger">Cause:</span> Part detached from the bed mid-print and the nozzle kept extruding into thin air.</p>
+                <p><span class="highlight">Fix:</span> Stop the print immediately. Remove the tangle carefully. Clean the bed and start over. Identify why it detached (dirty bed, bad first layer) before reprinting.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 14: Ender 3 / Creality Print -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Ender 3 V3 KE — Creality Print</h2>
+        <p>The Ender 3 V3 KE printers use the same workflow, but with <span class="highlight">Creality Print</span> as the slicer instead of BambuStudio.</p>
+
+        <div class="grid-2" style="margin-top: 20px;">
+            <div class="box">
+                <h3>Install Creality Print</h3>
+                <ul class="bullet-list">
+                    <li>Download from <span class="highlight">creality.com</span> → Software → Creality Print</li>
+                    <li>On first launch, select printer: <span class="highlight">Ender-3 V3 KE</span></li>
+                    <li>All profiles are pre-configured — use <span class="highlight">0.20mm Standard</span> as your default</li>
+                </ul>
+                <p style="margin-top: 12px;">The Ender 3 V3 KE uses Klipper firmware and supports direct WiFi printing. You can send jobs wirelessly the same way you would with BambuStudio.</p>
+            </div>
+            <div class="box-amber">
+                <h3>Key Differences</h3>
+                <ul class="bullet-list">
+                    <li>The Ender 3 is <span class="warning">open-frame</span> — no enclosure. Don't print materials that need high ambient temperature (ABS, ASA). PLA is fine.</li>
+                    <li>No AI detection. Watch the first layer manually.</li>
+                    <li>The flexible spring-steel bed on the V3 KE makes part removal easy — flex the plate gently and the part pops off.</li>
+                    <li>Bed leveling is automatic (CR Touch probe) but may need occasional re-calibration.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="note-box" style="margin-top: 20px;">
+            <h3>Same Core Skills</h3>
+            <p>Orientation, infill, supports, preview, first layer monitoring — everything you learned in this lesson applies directly to Creality Print. The software looks different; the decisions are identical.</p>
+        </div>
+    </div>
+</div>
+
+</div><!-- /presentation -->
+
+<div class="ref-link">
+    <a href="index.html">← Unit 2 Hub</a>
+</div>
+
+<div class="slide-number" id="slideNum">1 / 14</div>
+
+<div class="controls">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>◀ PREV</button>
+    <button id="nextBtn" onclick="changeSlide(1)">NEXT ▶</button>
+</div>
+
+<script>
+    let current = 0;
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+
+    function changeSlide(dir) {
+        slides[current].style.opacity = '0';
+        setTimeout(() => { slides[current].style.display = 'none'; }, 500);
+        current = Math.max(0, Math.min(total - 1, current + dir));
+        slides[current].style.display = 'flex';
+        setTimeout(() => { slides[current].style.opacity = '1'; }, 10);
+        document.getElementById('slideNum').textContent = `${current + 1} / ${total}`;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === total - 1;
+        window.scrollTo(0, 0);
+    }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+</body>
+</html>
