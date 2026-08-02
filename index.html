@@ -90,7 +90,7 @@
             background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%);
             border: 2px solid rgba(196,30,58,0.4);
             border-radius: 16px;
-            padding: 40px 30px;
+            padding: 30px 30px 40px;
             text-decoration: none;
             color: inherit;
             display: flex;
@@ -105,17 +105,34 @@
             transform: translateY(-6px);
         }
 
-        .course-icon {
-            font-size: 2.8rem;
-            line-height: 1;
+        .course-header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(196,30,58,0.3);
         }
 
-        .course-label {
-            font-size: 0.7rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+        .course-abbr {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.8rem;
+            font-weight: 900;
             color: #c41e3a;
+            line-height: 1;
+            letter-spacing: 4px;
+            text-shadow: 0 0 20px rgba(196,30,58,0.4);
+        }
+
+        .course-card:hover .course-abbr {
+            text-shadow: 0 0 24px rgba(0,212,255,0.5);
+            color: #00d4ff;
+        }
+
+        .course-grade {
+            margin-top: 10px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: #888;
         }
 
         .course-name {
@@ -181,24 +198,29 @@
 
         <div class="course-grid">
             <a href="HSAER/index.html" class="course-card">
-                <div class="course-icon">🤖</div>
-                <div class="course-label">High School</div>
+                <div class="course-header">
+                    <div class="course-abbr">HS</div>
+                    <div class="course-grade">High School</div>
+                </div>
                 <div class="course-name">Applied Engineering & Robotics</div>
                 <div class="course-desc">Design, build, and program the L.E.O. robot platform. Master CAD, fabrication, and MicroPython programming.</div>
                 <div class="enter-btn">Enter Course</div>
             </a>
 
             <a href="8AER/index.html" class="course-card">
-                <div class="course-icon">⚙️</div>
-                <div class="course-label">8th Grade</div>
+                <div class="course-header">
+                    <div class="course-abbr">MS</div>
+                    <div class="course-grade">8th Grade</div>
+                </div>
                 <div class="course-name">Applied Engineering & Robotics</div>
                 <div class="course-desc">Learn the Engineering Design Process, CAD fundamentals, and hands-on fabrication in the school's maker space.</div>
                 <div class="enter-btn">Enter Course</div>
             </a>
 
             <a href="DBL/index.html" class="course-card">
-                <div class="course-icon">🔧</div>
-                <div class="course-label">Elective</div>
+                <div class="course-header">
+                    <div class="course-abbr">DBL</div>
+                </div>
                 <div class="course-name">Design & Build Lab</div>
                 <div class="course-desc">A hands-on shop elective focused on design thinking, prototyping, and fabrication using real tools and equipment.</div>
                 <div class="enter-btn">Enter Course</div>
