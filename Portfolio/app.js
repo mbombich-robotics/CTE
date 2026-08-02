@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.13.0',
+    VERSION: 'v2.13.1',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -123,6 +123,7 @@ const DELIVERABLES = [
         unit: '06',
         points: 20,
         phase: 'foundations',
+        alwaysOpen: true,
         description: 'Research an engineering or trades career, analyze real take-home pay and a monthly budget, then write a personal reflection connecting the work to your future.',
         requirements: [
             'Research at least 3 careers or trades using bls.gov/ooh and record salary, education, and job growth data',
@@ -348,7 +349,6 @@ const DELIVERABLES = [
         id: 51,
         title: 'Programming Basics — Check Your Understanding',
         unit: '04',
-        alwaysOpen: true,
         points: 80,
         phase: 'programming',
         description: 'Answer Q1–Q5 from Activities 4.1, 4.2, 4.3, 4.4, and 4.5. Answer from memory — you may look up syntax in the Pico 2W Reference, but not back at the activity guides.',
