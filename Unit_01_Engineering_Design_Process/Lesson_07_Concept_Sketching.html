@@ -132,7 +132,7 @@
         <div class="grid-2" style="margin-top: 16px;">
             <div class="box">
                 <h3>Three concepts, not variations</h3>
-                <p style="font-size: 1rem; margin: 0;">Your three sketches must be meaningfully different from each other — different geometry, different approach. Three versions of the same hub shape with slightly different wall thickness does not count.</p>
+                <p style="font-size: 1rem; margin: 0;">Your three sketches must be meaningfully different from each other — different geometry, different approach. Three versions of the same design with slightly different wall thickness does not count.</p>
             </div>
             <div class="box-amber">
                 <h3>What the decision matrix does</h3>
@@ -187,7 +187,49 @@
     </div>
 </div>
 
-<!-- ─────────────────────────────────────── SLIDE 4: What to Sketch -->
+<!-- ─────────────────────────────────────── SLIDE 4: Sketch Example -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>What a Good Sketch Looks Like</h2>
+        <p class="subtitle">Bearing housing — same concept as the wheel hub you're designing</p>
+
+        <div style="display: grid; grid-template-columns: auto 1fr; gap: 36px; align-items: start; margin-top: 16px;">
+            <!-- The sketch image -->
+            <div style="text-align: center;">
+                <div style="border: 2px solid rgba(255,107,53,0.4); border-radius: 10px; padding: 12px; background: rgba(255,255,255,0.96); display: inline-block;">
+                    <img src="https://ocw.mit.edu/courses/2-007-design-and-manufacturing-i-spring-2009/9193ab715c36b49338af1c27a87a5e80_fig_13.jpg"
+                         alt="Freehand sketch of a pillow-block bearing housing — MIT OCW 2.007"
+                         style="display: block; width: 280px; height: auto;">
+                </div>
+                <p style="font-size: 0.75rem; color: #555; margin-top: 8px; font-style: italic;">Source: MIT OCW 2.007 — freehand sketch, pillow-block bearing housing</p>
+            </div>
+
+            <!-- Annotations -->
+            <div>
+                <div class="rule-card" style="margin-bottom: 12px;">
+                    <div class="rule-num" style="font-size: 1.2rem;">✓</div>
+                    <h3>Multiple views shown</h3>
+                    <p>The sketch shows the part from two angles simultaneously — front face and isometric. One view is never enough to understand a 3D part.</p>
+                </div>
+                <div class="rule-card" style="margin-bottom: 12px;">
+                    <div class="rule-num" style="font-size: 1.2rem;">✓</div>
+                    <h3>Features are identifiable</h3>
+                    <p>You can see the bearing bore, the mounting base, the housing walls. Each has a defined shape — nothing is ambiguous or "I'll figure it out later."</p>
+                </div>
+                <div class="rule-card" style="margin-bottom: 12px;">
+                    <div class="rule-num" style="font-size: 1.2rem;">✓</div>
+                    <h3>Hand-drawn construction lines visible</h3>
+                    <p>The light guide lines show the sketcher was thinking in 3D. You don't erase them — they show your process.</p>
+                </div>
+                <div class="note-box" style="margin-top: 4px;">
+                    <p><strong>AER note:</strong> Your <em>first</em> required sketch is a cross-section (looking straight down the bolt axis, both halves visible), not an isometric view. Isometric views come with your outer profile concepts.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────── SLIDE 5: What to Sketch -->
 <div class="slide">
     <div class="slide-content">
         <h2>What to Sketch — Your Component</h2>
@@ -313,7 +355,75 @@
     </div>
 </div>
 
-<!-- ─────────────────────────────────────── SLIDE 6: Complete the Matrix -->
+<!-- ─────────────────────────────────────── SLIDE 7: Completed Matrix Example -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Example: Completed Matrix</h2>
+        <p class="subtitle">Wheel hub — three spoke concepts evaluated</p>
+
+        <table class="dm-table">
+            <thead>
+                <tr>
+                    <th class="criteria-col" style="width:38%">Criterion</th>
+                    <th>Weight<br><small style="font-weight:400; color:#888;">(1–3)</small></th>
+                    <th>A: 4-spoke flat<br><small style="font-weight:400; color:#888;">score → weighted</small></th>
+                    <th>B: 3-spoke chamfer<br><small style="font-weight:400; color:#888;">score → weighted</small></th>
+                    <th>C: Solid disc<br><small style="font-weight:400; color:#888;">score → weighted</small></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="criteria-col">Meets dimensional requirements</td>
+                    <td>3</td>
+                    <td>5 → <strong>15</strong></td>
+                    <td>5 → <strong>15</strong></td>
+                    <td>5 → <strong>15</strong></td>
+                </tr>
+                <tr>
+                    <td class="criteria-col">Printable without supports</td>
+                    <td>3</td>
+                    <td>3 → <strong>9</strong></td>
+                    <td>5 → <strong>15</strong></td>
+                    <td>4 → <strong>12</strong></td>
+                </tr>
+                <tr>
+                    <td class="criteria-col">Structural integrity</td>
+                    <td>2</td>
+                    <td>4 → <strong>8</strong></td>
+                    <td>4 → <strong>8</strong></td>
+                    <td>5 → <strong>10</strong></td>
+                </tr>
+                <tr>
+                    <td class="criteria-col">Modeling complexity (can I model this?)</td>
+                    <td>2</td>
+                    <td>4 → <strong>8</strong></td>
+                    <td>3 → <strong>6</strong></td>
+                    <td>2 → <strong>4</strong></td>
+                </tr>
+                <tr>
+                    <td class="criteria-col">Aesthetic / personal preference</td>
+                    <td>1</td>
+                    <td>3 → <strong>3</strong></td>
+                    <td>4 → <strong>4</strong></td>
+                    <td>2 → <strong>2</strong></td>
+                </tr>
+                <tr class="total">
+                    <td class="criteria-col">Weighted Total</td>
+                    <td>—</td>
+                    <td><span style="font-size: 1.2rem;">43</span></td>
+                    <td><span style="font-size: 1.3rem; color: #50fa7b;">48 ✓</span></td>
+                    <td><span style="font-size: 1.2rem;">43</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="note-box" style="margin-top: 14px;">
+            <p><strong>Concept B wins.</strong> A and C tie at 43, but B's advantage on "Printable without supports" (weight 3) overcomes its lower modeling complexity score (weight 2). The highest-weight criteria drive the result — that's the point of weighting.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────── SLIDE 8: Complete the Matrix -->
 <div class="slide">
     <div class="slide-content">
         <h2>How to Complete the Matrix</h2>
