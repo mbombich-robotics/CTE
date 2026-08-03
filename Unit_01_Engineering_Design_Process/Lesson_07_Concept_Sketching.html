@@ -193,48 +193,68 @@
         <h2>What to Sketch — Your Component</h2>
         <p class="subtitle">Three concepts that all satisfy your design brief criteria</p>
 
-        <div class="grid-2" style="margin-bottom: 20px;">
-            <div class="comp-aer">
-                <h3>HS AER &amp; 8th Grade AER — C1 Wheel Hub</h3>
-                <ul class="bullet-list" style="font-size: 0.95rem; margin-top: 10px;">
-                    <li>Bearing pocket: 12 mm OD × 3.5 mm deep (MR128 bearing, retained by hub shoulder)</li>
-                    <li>Hub shoulders on both faces contain the bearing axially — no separate retainer</li>
-                    <li>Vary: spoke count, spoke shape, flange thickness, outer wall style</li>
-                    <li>Remember: two versions (left / right) — yours may differ slightly from your partner's</li>
-                </ul>
+        <!-- AER: Cross-section first, then outer profile concepts -->
+        <div class="comp-aer" style="margin-bottom: 20px;">
+            <h3>HS AER &amp; 8th Grade AER — C1 Wheel Hub</h3>
+            <p style="font-size: 0.9rem; color: #7ab8d4; margin: 6px 0 12px;">The hub geometry is fixed by the hardware. Sketch the cross-section <em>first</em> to resolve it on paper before touching Fusion 360.</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div>
+                    <p style="font-size: 0.85rem; font-weight: 700; color: #00b4ff; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 1px;">Step 1 — Cross-Section Sketch (required)</p>
+                    <ul class="bullet-list" style="font-size: 0.9rem;">
+                        <li>Draw both halves in cross-section with all key dimensions labeled</li>
+                        <li>Show: MR128 pocket (12 mm OD × 3.5 mm), hub shoulders, M8 bore, M3 screw path</li>
+                        <li>Show: countersink on entry face; screw tip stopping short of far face</li>
+                        <li>Calculate and label: hub total width (mount channel − 1 mm); M3 screw length</li>
+                        <li><strong>Teacher approves cross-section before you sketch outer concepts</strong></li>
+                    </ul>
+                </div>
+                <div>
+                    <p style="font-size: 0.85rem; font-weight: 700; color: #00b4ff; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 1px;">Step 2 — Outer Profile Concepts (sketch 2–3)</p>
+                    <ul class="bullet-list" style="font-size: 0.9rem;">
+                        <li>Once cross-section is approved, sketch the external shape</li>
+                        <li>Vary: spoke count, spoke shape, wall thickness, lightening holes</li>
+                        <li>All concepts must honor the cross-section geometry — nothing changes the internal dimensions</li>
+                        <li>Both hub halves — note where they differ (one has countersunk face)</li>
+                    </ul>
+                </div>
             </div>
-            <div class="comp-dbl">
-                <h3>D&amp;B Lab — Fidget Spinner Body</h3>
-                <ul class="bullet-list" style="font-size: 0.95rem; margin-top: 10px;">
-                    <li>Center pocket: 22 mm diameter × 7 mm deep (608 bearing press-fit)</li>
-                    <li>Must be symmetric — balance is everything</li>
-                    <li>Vary: number of arms (2, 3, 4), arm shape, outer weight pockets</li>
-                    <li>Example concepts: tri-spinner, bi-wing, circular disc with cutouts</li>
-                </ul>
-            </div>
+        </div>
+
+        <!-- DBL: three spinner concepts -->
+        <div class="comp-dbl" style="margin-bottom: 20px;">
+            <h3>D&amp;B Lab — Fidget Spinner Body</h3>
+            <ul class="bullet-list" style="font-size: 0.95rem; margin-top: 10px;">
+                <li>Center pocket: 22 mm diameter × 7 mm deep (608 bearing press-fit)</li>
+                <li>Must be symmetric — balance is everything</li>
+                <li>Vary: number of arms (2, 3, 4), arm shape, outer weight pockets</li>
+                <li>Sketch all three concepts before picking one — use the decision matrix to choose</li>
+            </ul>
         </div>
 
         <div class="grid-3">
             <div class="sketch-box">
                 <svg width="120" height="100" viewBox="0 0 120 100">
                     <rect x="10" y="10" width="100" height="80" rx="4" fill="none" stroke="rgba(255,107,53,0.3)" stroke-width="1.5" stroke-dasharray="5 4"/>
-                    <text x="60" y="52" font-family="Space Mono" font-size="9" fill="#555" text-anchor="middle">CONCEPT A</text>
+                    <text x="60" y="45" font-family="Space Mono" font-size="8" fill="#555" text-anchor="middle">AER: cross-section</text>
+                    <text x="60" y="58" font-family="Space Mono" font-size="8" fill="#555" text-anchor="middle">DBL: concept A</text>
                 </svg>
-                <div class="sketch-label">Concept A</div>
+                <div class="sketch-label">Sketch 1</div>
             </div>
             <div class="sketch-box">
                 <svg width="120" height="100" viewBox="0 0 120 100">
                     <rect x="10" y="10" width="100" height="80" rx="4" fill="none" stroke="rgba(255,107,53,0.3)" stroke-width="1.5" stroke-dasharray="5 4"/>
-                    <text x="60" y="52" font-family="Space Mono" font-size="9" fill="#555" text-anchor="middle">CONCEPT B</text>
+                    <text x="60" y="45" font-family="Space Mono" font-size="8" fill="#555" text-anchor="middle">AER: profile A</text>
+                    <text x="60" y="58" font-family="Space Mono" font-size="8" fill="#555" text-anchor="middle">DBL: concept B</text>
                 </svg>
-                <div class="sketch-label">Concept B</div>
+                <div class="sketch-label">Sketch 2</div>
             </div>
             <div class="sketch-box">
                 <svg width="120" height="100" viewBox="0 0 120 100">
                     <rect x="10" y="10" width="100" height="80" rx="4" fill="none" stroke="rgba(255,107,53,0.3)" stroke-width="1.5" stroke-dasharray="5 4"/>
-                    <text x="60" y="52" font-family="Space Mono" font-size="9" fill="#555" text-anchor="middle">CONCEPT C</text>
+                    <text x="60" y="45" font-family="Space Mono" font-size="8" fill="#555" text-anchor="middle">AER: profile B</text>
+                    <text x="60" y="58" font-family="Space Mono" font-size="8" fill="#555" text-anchor="middle">DBL: concept C</text>
                 </svg>
-                <div class="sketch-label">Concept C</div>
+                <div class="sketch-label">Sketch 3</div>
             </div>
         </div>
     </div>
