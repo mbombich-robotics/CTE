@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Career Connections | Applied Engineering & Robotics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: #1a1a1a;
+            color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: linear-gradient(135deg, #8B0000 0%, #c41e3a 50%, #8B0000 100%);
+            height: 80px;
+            border-bottom: 3px solid #ffffff;
+            box-shadow: 0 4px 20px rgba(196,30,58,0.5);
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            gap: 20px;
+            flex-shrink: 0;
+        }
+
+        .school-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border: 2px solid rgba(255,255,255,0.4);
+            text-transform: uppercase;
+        }
+
+        .top-bar-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .back-link {
+            margin-left: auto;
+            color: rgba(255,255,255,0.75);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: #fff; }
+
+        .page-hero {
+            background: linear-gradient(135deg, #0a0a0a 0%, #111827 100%);
+            border-bottom: 2px solid rgba(14,165,233,0.3);
+            padding: 50px 60px 45px;
+        }
+
+        .hero-eyebrow {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #0ea5e9;
+            margin-bottom: 12px;
+        }
+
+        .hero-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 900;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px rgba(14,165,233,0.4);
+            margin-bottom: 16px;
+        }
+
+        .hero-desc {
+            font-size: 1.05rem;
+            color: #94a3b8;
+            line-height: 1.7;
+            max-width: 750px;
+        }
+
+        .hero-desc strong { color: #e2e8f0; }
+
+        .hero-count {
+            display: inline-block;
+            margin-top: 20px;
+            background: rgba(14,165,233,0.1);
+            border: 1px solid rgba(14,165,233,0.35);
+            color: #0ea5e9;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .gallery-section {
+            flex: 1;
+            padding: 50px 60px 70px;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .person-card {
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(160deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid rgba(14,165,233,0.18);
+            border-radius: 14px;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+            cursor: pointer;
+        }
+
+        .person-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(14,165,233,0.6);
+            box-shadow: 0 12px 40px rgba(14,165,233,0.18);
+        }
+
+        .card-photo-band {
+            position: relative;
+            height: 90px;
+            background: linear-gradient(135deg, #0c1c2e 0%, #0f2540 100%);
+            border-bottom: 1px solid rgba(14,165,233,0.12);
+            flex-shrink: 0;
+        }
+
+        .photo-circle {
+            position: absolute;
+            bottom: -36px;
+            left: 24px;
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            border: 3px solid #1e293b;
+            overflow: hidden;
+            background: #1e293b;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+        }
+
+        .photo-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+        }
+
+        .initials-avatar {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .card-body {
+            padding: 44px 24px 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .person-name {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            line-height: 1.2;
+            margin-bottom: 4px;
+        }
+
+        .person-title {
+            font-size: 0.82rem;
+            color: #0ea5e9;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            margin-bottom: 2px;
+        }
+
+        .person-org {
+            font-size: 0.78rem;
+            color: #64748b;
+            margin-bottom: 14px;
+        }
+
+        .person-quote {
+            font-size: 0.82rem;
+            color: #94a3b8;
+            line-height: 1.55;
+            font-style: italic;
+            border-left: 2px solid rgba(14,165,233,0.35);
+            padding-left: 10px;
+            flex: 1;
+        }
+
+        .card-cta {
+            padding: 12px 24px;
+            border-top: 1px solid rgba(14,165,233,0.12);
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #0ea5e9;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.2s;
+        }
+
+        .person-card:hover .card-cta {
+            background: rgba(14,165,233,0.06);
+        }
+
+        .card-cta-arrow {
+            transition: transform 0.2s;
+        }
+
+        .person-card:hover .card-cta-arrow {
+            transform: translateX(4px);
+        }
+
+        footer {
+            text-align: center;
+            padding: 28px;
+            background: #0d0d0d;
+            border-top: 3px solid #c41e3a;
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        footer p { margin: 4px 0; }
+        footer .credit { color: #444; font-size: 0.75rem; margin-top: 8px; }
+
+        @media (max-width: 768px) {
+            .page-hero { padding: 36px 24px 32px; }
+            .hero-title { font-size: 2rem; }
+            .gallery-section { padding: 36px 20px 50px; }
+            .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <div class="school-badge">VHS Bulldogs</div>
+    <div class="top-bar-title">Career Readiness</div>
+    <a href="index.html" class="back-link">← Unit 6 Overview</a>
+</div>
+
+<div class="page-hero">
+    <div class="hero-eyebrow">PLTW · Unit 6</div>
+    <h1 class="hero-title">Career Connections</h1>
+    <p class="hero-desc">
+        Meet real engineers and scientists who started exactly where you are. Every career below began
+        with curiosity, a class that clicked, or a problem that wouldn't let go.
+        <strong>Click any profile to read their full story.</strong>
+    </p>
+    <span class="hero-count">17 Profiles</span>
+</div>
+
+<div class="gallery-section">
+    <div class="gallery-grid" id="grid"></div>
+</div>
+
+<footer>
+    <p>Vicksburg High School — Applied Engineering & Robotics | Unit 6: Career Readiness</p>
+    <p class="credit">Career profile content © Project Lead The Way, Inc.</p>
+</footer>
+
+<script>
+    const BASE = '../PLTW%20Unit%202%20Resources/Career%20Training/Careers%20in%20Engineering_files/';
+
+    const PEOPLE = [
+        { name: 'Serena Auñón-Chancellor', title: 'Astronaut & Physician',        org: 'NASA',                           photo: 'SERENA_1.jpg',                       pdf: 'FS_CareerProfile_SerenaChancellor.pdf', quote: 'Do what you love…the rest will follow!' },
+        { name: 'Jeremy James',             title: 'Airplane Pilot',               org: 'Republic Airways',               photo: 'jeremy_rise.jpg',                   pdf: 'FS_CareerProfile_JeremyJames.pdf',      quote: 'I feel my work has contributed to making the world a better place.' },
+        { name: 'Ashley Godin',             title: 'Senior Application Engineer',  org: 'National Instruments',           photo: 'ag_rise.jpg',                       pdf: 'Ashley_Godin_CP.pdf',                   quote: 'Be unapologetically yourself.' },
+        { name: 'Brian Skupien',            title: 'Structural Engineer',          org: 'raSmith',                        photo: 'brian_rise.jpg',                    pdf: 'Brian_Skupien_CP.pdf',                  quote: 'Follow your passions. There is no shame in switching.' },
+        { name: 'Grace Milton',             title: 'Packaging Engineer',           org: 'Boston Scientific',              photo: 'gm_rise.jpg',                       pdf: 'Grace_Milton_CP.pdf',                   quote: 'I get to be the one driving sustainability initiatives.' },
+        { name: 'Ally Togliatti',           title: 'Research Assistant',           org: 'Shirley Ryan AbilityLab',        photo: 'allyt_rise.jpg',                    pdf: 'Ally_Togliatti_CP.pdf',                 quote: 'It sounds cliché, but persevere. Everything always has a way of working out.' },
+        { name: 'Joanna Rohlf',             title: 'Floodplain Mapping Specialist',org: 'Kansas Dept. of Agriculture',    photo: 'joanna_rise.jpg',                   pdf: 'Joanna_Rohlf_CP.pdf',                   quote: 'Clear communication is a very useful skill — everyone has to work at it and develop it.' },
+        { name: 'Meg Studer',               title: 'Infographic Designer & Architect', org: 'Siteations Studio',          photo: 'ms_rise.jpg',                       pdf: 'Meg_Studer_CP.pdf',                     quote: 'It’s healthy to cultivate random hobbies and obscure skills that bring you joy.' },
+        { name: 'Dominic Martinez',         title: 'Mechanical Engineer, R&D',     org: 'CONMED',                         photo: 'Dominic Martinez Rise (1).jpg',      pdf: 'Dominic_Martinez_CP.pdf',               quote: '“Fail early, fail often.” With each failure is opportunity for growth and learning.' },
+        { name: 'Rainy Cadenhead',          title: 'Software Engineer',            org: 'SS&C/DST Systems',               photo: 'Career Connections-2 (15).jpg',      pdf: 'RainyCadenhead_CP.pdf',                 quote: 'Take a chance on learning computer science — you may find a new love and an undiscovered giftedness.' },
+        { name: 'Aidan Mayer',              title: 'Grand Challenges Scholar',     org: 'Worcester Polytechnic Institute', photo: 'Career Connections-2 (16).jpg',     pdf: 'Aidan_Mayer_CP.pdf',                    quote: 'Knowledge is cool. Doing well in school is cool. The only thing I’d ask is to never give up.' },
+        { name: 'Maggie Vaccaro',           title: 'Grand Challenges Scholar',     org: 'Worcester Polytechnic Institute', photo: 'Career Connections-2 (17).jpg',     pdf: 'Maggie_Vaccaro_CP.pdf',                 quote: 'There will always be opportunities to embrace or combine other passions throughout your career.' },
+        { name: 'Leila Farhang',            title: 'Asset Integrity Engineer',     org: 'Chevron',                        photo: 'Career Connections-2 (18).jpg',      pdf: 'Leila_Farhang_CP.pdf',                  quote: 'Learn as much as you can when you can. Use every opportunity to expand your knowledge.' },
+        { name: 'Allison Baumgart',         title: 'Quality Engineer',             org: 'CONMED',                         photo: 'Career Connections-2 (19).jpg',      pdf: 'Allison_Baumgart_CP.pdf',               quote: 'I love my job because I know that I am making a difference in the world.' },
+        { name: 'Dan Waldorf',              title: 'Professor',                    org: 'Cal Poly',                       photo: 'Career Connections-2 (20).jpg',      pdf: 'Dan_Waldorf_CP.pdf',                    quote: 'The best part of being an engineer is that you get to do something different every day.' },
+        { name: 'May Casterline',           title: 'Senior Solutions Architect',   org: 'NVIDIA',                         photo: 'Casterline.png',                     pdf: 'May_Casterline_CP.pdf',                 quote: 'Always say what you think — have the courage to help effect change or growth.' },
+        { name: 'Stephanie Amrite',         title: 'Principal Field Marketer',     org: 'National Instruments',           photo: 'Amrite.png',                         pdf: 'Stephanie_Amrite_CP.pdf',               quote: 'Have the flexibility to discover what interests you and design your career around your interests.' },
+    ];
+
+    const AVATAR_COLORS = ['#0891b2','#7c3aed','#db2777','#059669','#d97706','#dc2626','#2563eb','#0d9488'];
+
+    function avatarColor(name) {
+        let h = 0;
+        for (const c of name) h = (h * 31 + c.charCodeAt(0)) & 0xffff;
+        return AVATAR_COLORS[h % AVATAR_COLORS.length];
+    }
+
+    function initials(name) {
+        return name.split(' ').map(p => p[0]).slice(0, 2).join('');
+    }
+
+    function buildCard(p) {
+        const pdfUrl  = BASE + encodeURIComponent(p.pdf);
+        const photoEl = p.photo
+            ? `<img src="${BASE + encodeURIComponent(p.photo)}" alt="${p.name}" loading="lazy">`
+            : `<div class="initials-avatar" style="background:${avatarColor(p.name)}">${initials(p.name)}</div>`;
+
+        return `
+        <a class="person-card" href="${pdfUrl}" target="_blank" rel="noopener">
+            <div class="card-photo-band">
+                <div class="photo-circle">${photoEl}</div>
+            </div>
+            <div class="card-body">
+                <div class="person-name">${p.name}</div>
+                <div class="person-title">${p.title}</div>
+                <div class="person-org">${p.org}</div>
+                <p class="person-quote">“${p.quote}”</p>
+            </div>
+            <div class="card-cta">
+                <span>View Profile</span>
+                <span class="card-cta-arrow">→</span>
+            </div>
+        </a>`;
+    }
+
+    document.getElementById('grid').innerHTML = PEOPLE.map(buildCard).join('');
+</script>
+</body>
+</html>
