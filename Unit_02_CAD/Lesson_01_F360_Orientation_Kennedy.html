@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 2.1 — F360 Orientation</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #050f0a 0%, #0d1f17 100%);
+            color: #e0e6f0;
+            height: 100vh;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute; width: 100%; min-height: 100%;
+            display: none; flex-direction: column;
+            justify-content: flex-start; align-items: center;
+            padding: 55px 60px 120px 60px;
+            opacity: 0; transition: opacity 0.5s ease;
+            overflow-y: auto; overflow-x: hidden;
+        }
+        .slide.active { display: flex; opacity: 1; }
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif; font-size: 3.5rem; font-weight: 900;
+            color: #00d084; margin-bottom: 15px; text-transform: uppercase;
+            letter-spacing: 2px; text-shadow: 0 0 20px rgba(0,208,132,0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(0,208,132,0.5); }
+            to   { text-shadow: 0 0 35px rgba(0,208,132,0.9); }
+        }
+        h2 {
+            font-family: 'Orbitron', sans-serif; font-size: 2.4rem; font-weight: 700;
+            color: #00d084; margin-bottom: 18px; text-transform: uppercase;
+        }
+        h3 { font-family: 'Exo 2', sans-serif; font-size: 1.5rem; font-weight: 600; color: #ffd166; margin-bottom: 12px; }
+        p { font-size: 1.15rem; line-height: 1.6; margin-bottom: 12px; color: #b8c5d6; }
+        .subtitle { font-size: 1.3rem; color: #ffd166; font-weight: 600; margin-bottom: 30px; }
+
+        .objective-box {
+            background: linear-gradient(135deg, rgba(0,208,132,0.1) 0%, rgba(0,208,132,0.04) 100%);
+            border: 3px solid #00d084; border-radius: 12px; padding: 20px; margin: 20px 0;
+            box-shadow: 0 0 30px rgba(0,208,132,0.15);
+        }
+        .objective-box h3 { color: #00d084; }
+
+        .bullet-list { list-style: none; padding-left: 0; }
+        .bullet-list li {
+            font-size: 1.15rem; margin: 12px 0; padding-left: 35px;
+            position: relative; color: #b8c5d6; line-height: 1.5;
+        }
+        .bullet-list li::before {
+            content: '▸'; position: absolute; left: 0;
+            color: #ffd166; font-size: 1.5rem; line-height: 1;
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px; }
+
+        .box {
+            background: rgba(0,208,132,0.05); border: 2px solid #00d084;
+            border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(0,208,132,0.1);
+        }
+        .box-orange {
+            background: rgba(255,209,102,0.07); border: 2px solid #ffd166;
+            border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(255,209,102,0.1);
+        }
+        .note-box {
+            background: rgba(255,209,102,0.07); border: 2px solid #ffd166;
+            border-radius: 12px; padding: 18px 20px; margin: 16px 0;
+            box-shadow: 0 0 16px rgba(255,209,102,0.1);
+        }
+        .note-box h3 { color: #ffd166; }
+        .note-box p, .note-box li { color: #d4c190; }
+
+        .highlight { color: #00d084; font-weight: 700; }
+        .warning   { color: #ffd166; font-weight: 700; }
+
+        /* Video link card */
+        .video-card {
+            border: 3px solid #00d084; border-radius: 16px;
+            background: rgba(0,208,132,0.05);
+            padding: 40px 40px 32px; text-align: center; margin: 24px 0;
+        }
+        .video-card .vid-icon { font-size: 5rem; line-height: 1; margin-bottom: 16px; }
+        .video-card h3 { color: #00d084; font-size: 1.4rem; margin-bottom: 8px; }
+        .video-card p { max-width: 680px; margin: 0 auto 16px; }
+        .video-btn {
+            display: inline-block; background: #00d084; color: #050f0a;
+            font-family: 'Exo 2', sans-serif; font-size: 1.1rem; font-weight: 700;
+            padding: 14px 32px; border-radius: 8px; text-decoration: none;
+            transition: all 0.25s; box-shadow: 0 4px 20px rgba(0,208,132,0.4);
+        }
+        .video-btn:hover { background: #00b873; transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,208,132,0.55); }
+
+        /* UI term tags */
+        .term-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; margin: 20px 0; }
+        .term-item {
+            background: rgba(0,208,132,0.07); border: 1px solid rgba(0,208,132,0.35);
+            border-radius: 10px; padding: 14px 16px;
+        }
+        .term-name { font-family: 'JetBrains Mono', monospace; font-size: 1rem; font-weight: 700; color: #00d084; margin-bottom: 4px; }
+        .term-def { font-size: 0.9rem; color: #7a9080; line-height: 1.4; }
+
+        /* Watch step boxes */
+        .step-num {
+            font-family: 'Orbitron', sans-serif; font-size: 4rem; font-weight: 900;
+            color: rgba(0,208,132,0.2); position: absolute; top: 10px; right: 18px; line-height: 1;
+        }
+        .step-box {
+            position: relative; background: rgba(0,208,132,0.05); border: 2px solid #00d084;
+            border-radius: 12px; padding: 24px 24px 20px; overflow: hidden;
+        }
+        .step-box h3 { color: #00d084; font-size: 1.3rem; }
+
+        /* Timestamp list */
+        .ts-list { list-style: none; padding: 0; }
+        .ts-list li {
+            display: flex; gap: 16px; align-items: flex-start;
+            padding: 10px 0; border-bottom: 1px solid rgba(0,208,132,0.1);
+            font-size: 1.05rem; color: #b8c5d6;
+        }
+        .ts-list li:last-child { border-bottom: none; }
+        .ts { font-family: 'JetBrains Mono', monospace; color: #ffd166; font-weight: 700; min-width: 70px; }
+
+        /* Check item */
+        .check-list { list-style: none; padding: 0; }
+        .check-list li {
+            font-size: 1.1rem; padding: 10px 0 10px 40px; position: relative;
+            color: #b8c5d6; border-bottom: 1px solid rgba(0,208,132,0.1);
+        }
+        .check-list li:last-child { border-bottom: none; }
+        .check-list li::before {
+            content: '☐'; position: absolute; left: 0;
+            color: #00d084; font-size: 1.3rem; line-height: 1.2;
+        }
+
+        /* Controls */
+        .controls {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            display: flex; justify-content: center; align-items: center; gap: 20px; z-index: 1000;
+        }
+        button {
+            background: linear-gradient(135deg, #00d084 0%, #009960 100%);
+            border: none; color: #050f0a; padding: 15px 30px; font-size: 1rem;
+            font-weight: 700; border-radius: 8px; cursor: pointer;
+            font-family: 'Exo 2', sans-serif; transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,208,132,0.3);
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,208,132,0.5); }
+        button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+        .nav-button {
+            background: linear-gradient(135deg, #00d084 0%, #009960 100%);
+            border: none; color: #050f0a; padding: 15px 30px; font-size: 1rem;
+            font-weight: 700; border-radius: 8px; cursor: pointer;
+            font-family: 'Exo 2', sans-serif; text-decoration: none; display: inline-block;
+            box-shadow: 0 4px 15px rgba(0,208,132,0.3); transition: all 0.3s ease;
+        }
+        .nav-button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,208,132,0.5); }
+
+        .slide-number {
+            position: fixed; bottom: 30px; left: 30px;
+            font-family: 'Space Mono', monospace; font-size: 1rem;
+            color: #00d084; z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; } h2 { font-size: 1.8rem; }
+            .slide { padding: 30px 20px 100px; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="presentation">
+
+<!-- ─────────────────────────────────────── SLIDE 1: Title -->
+<div class="slide active">
+    <div class="slide-content" style="text-align:center; padding-top: 60px;">
+        <h1>F360 Orientation</h1>
+        <p class="subtitle">Unit 2 · CAD Component-Based Design · Lesson 2.1</p>
+
+        <!-- Simple monitor SVG -->
+        <div style="margin: 40px auto; max-width: 420px;">
+            <svg viewBox="0 0 400 280" fill="none" xmlns="http://www.w3.org/2000/svg"
+                 style="width:100%; filter:drop-shadow(0 0 18px rgba(0,208,132,0.4));">
+                <!-- Monitor frame -->
+                <rect x="30" y="20" width="340" height="200" rx="12"
+                      fill="rgba(0,208,132,0.07)" stroke="#00d084" stroke-width="2.5"/>
+                <!-- Screen -->
+                <rect x="46" y="34" width="308" height="168" rx="6"
+                      fill="rgba(0,208,132,0.03)" stroke="rgba(0,208,132,0.3)" stroke-width="1.5"/>
+                <!-- F360 toolbar mockup -->
+                <rect x="46" y="34" width="308" height="24" rx="4"
+                      fill="rgba(0,208,132,0.12)" stroke="none"/>
+                <rect x="54" y="40" width="40" height="12" rx="3" fill="rgba(0,208,132,0.25)" stroke="none"/>
+                <rect x="100" y="40" width="40" height="12" rx="3" fill="rgba(0,208,132,0.18)" stroke="none"/>
+                <rect x="146" y="40" width="40" height="12" rx="3" fill="rgba(0,208,132,0.18)" stroke="none"/>
+                <!-- 3D part suggestion -->
+                <ellipse cx="200" cy="145" rx="60" ry="22"
+                         fill="none" stroke="rgba(0,208,132,0.5)" stroke-width="1.5" stroke-dasharray="6 4"/>
+                <rect x="145" y="105" width="110" height="42" rx="6"
+                      fill="rgba(0,208,132,0.1)" stroke="#00d084" stroke-width="1.5"/>
+                <text x="200" y="132" font-family="Space Mono" font-size="10" fill="#00d084"
+                      text-anchor="middle">DESIGN WORKSPACE</text>
+                <!-- Timeline bar at bottom of screen -->
+                <rect x="46" y="190" width="308" height="12" rx="0"
+                      fill="rgba(0,208,132,0.08)" stroke="none"/>
+                <rect x="46" y="190" width="120" height="12" rx="0"
+                      fill="rgba(0,208,132,0.25)" stroke="none"/>
+                <!-- Stand -->
+                <rect x="185" y="220" width="30" height="30" rx="2"
+                      fill="rgba(0,208,132,0.12)" stroke="#00d084" stroke-width="2"/>
+                <rect x="155" y="248" width="90" height="8" rx="4"
+                      fill="rgba(0,208,132,0.15)" stroke="#00d084" stroke-width="2"/>
+                <!-- Label -->
+                <text x="200" y="273" font-family="Orbitron" font-size="11" fill="#6a8070"
+                      text-anchor="middle">FUSION 360</text>
+            </svg>
+        </div>
+
+        <p style="color:#6a8070; font-size:1rem;">Lesson 2.1 · Week 2</p>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────── SLIDE 2: Objectives -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Today's Objectives</h2>
+        <p class="subtitle">One job: get comfortable in the workspace</p>
+
+        <div class="objective-box">
+            <h3>By the end of this lesson, you will be able to:</h3>
+            <ul class="bullet-list" style="margin-top: 10px;">
+                <li>Name the major areas of the Fusion 360 workspace</li>
+                <li>Navigate the 3D viewport (orbit, pan, zoom) without getting lost</li>
+                <li>Identify the Toolbar, Browser, Timeline, and ViewCube</li>
+                <li>Explain the difference between a Body, Component, and Sketch</li>
+            </ul>
+        </div>
+
+        <div class="note-box" style="margin-top: 24px;">
+            <h3>Important: No modeling today</h3>
+            <p style="margin: 0;">Today is orientation only. You are watching an expert walk through the software. Tomorrow you will model your first component. Focus all your attention on learning the <span style="color:#ffd166; font-weight:700;">names and locations</span> of things — not on remembering every step.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────── SLIDE 3: The Video -->
+<div class="slide">
+    <div class="slide-content" style="text-align: center;">
+        <h2>Kevin Kennedy — F360 for Beginners</h2>
+        <p style="max-width: 700px; margin: 0 auto 24px;">Kevin Kennedy is one of the best Fusion 360 instructors on YouTube. This video has been used by thousands of engineering students to get oriented to the workspace.</p>
+
+        <div class="video-card">
+            <div class="vid-icon">▶</div>
+            <h3>Fusion 360 Tutorial for Beginners — Complete Walkthrough</h3>
+            <p>~42 minutes · Kevin Kennedy · Product Design Online</p>
+            <a href="https://www.youtube.com/watch?v=4G2E_DqQteM" target="_blank" class="video-btn">
+                Open Video →
+            </a>
+        </div>
+
+        <div class="note-box" style="max-width: 700px; margin: 16px auto 0; text-align: left;">
+            <h3>Before you press play</h3>
+            <p style="margin: 0;">Open Fusion 360 on your computer. Keep it side-by-side with the video if you have a second monitor, or alt-tab between them. You will need F360 open to try things during Watch #2.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────── SLIDE 4: Watch #1 -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Watch #1 — Big Picture</h2>
+        <p class="subtitle">Watch the whole video at normal speed. Don't stop, don't try to follow along.</p>
+
+        <div class="step-box" style="margin-bottom: 20px;">
+            <div class="step-num">1</div>
+            <h3>Your only job this watch:</h3>
+            <p style="margin: 8px 0 0; font-size: 1.1rem; color: #b8c5d6;">Get a sense of how the workspace is organized and what kinds of tools exist. You don't need to remember how to use any of them yet.</p>
+        </div>
+
+        <h3 style="margin-top: 24px; margin-bottom: 12px;">Things to notice (not memorize)</h3>
+        <ul class="ts-list">
+            <li><span class="ts">0:00</span> Workspace overview — where everything lives</li>
+            <li><span class="ts">~5:00</span> Creating a new sketch</li>
+            <li><span class="ts">~12:00</span> Sketch constraints — why they matter</li>
+            <li><span class="ts">~20:00</span> Extruding from a sketch to make a 3D body</li>
+            <li><span class="ts">~28:00</span> Revolve, Fillet — shaping the part</li>
+            <li><span class="ts">~35:00</span> Finishing up and reviewing the timeline</li>
+        </ul>
+
+        <div class="note-box" style="margin-top: 20px;">
+            <p style="margin: 0;">Timestamps are approximate — the video may vary slightly. Don't worry if you miss a section. You will watch again.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────── SLIDE 5: Watch #2 -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Watch #2 — Try It Yourself</h2>
+        <p class="subtitle">This time, pause and try each move in Fusion 360 before moving on.</p>
+
+        <div class="step-box" style="margin-bottom: 20px;">
+            <div class="step-num">2</div>
+            <h3>How to watch this time:</h3>
+            <ul class="bullet-list" style="margin-top: 10px;">
+                <li>Pause after each major step and try it yourself in F360</li>
+                <li>It's okay if your result looks slightly different</li>
+                <li>If you get stuck, skip ahead and re-watch that part later</li>
+                <li>Ask a neighbor before asking the teacher — they just watched it too</li>
+            </ul>
+        </div>
+
+        <div class="grid-2" style="margin-top: 20px;">
+            <div class="box">
+                <h3>Must-try moves</h3>
+                <ul class="bullet-list" style="font-size: 1rem;">
+                    <li>Orbit the viewport (middle mouse or trackpad)</li>
+                    <li>Create a new sketch on the top plane</li>
+                    <li>Draw a circle and dimension it</li>
+                    <li>Extrude the circle into a cylinder</li>
+                    <li>Scrub the timeline back and forward</li>
+                </ul>
+            </div>
+            <div class="box-orange">
+                <h3>If you finish early</h3>
+                <ul class="bullet-list" style="font-size: 1rem;">
+                    <li>Practice orbiting without losing your orientation</li>
+                    <li>Try creating a rectangle and extruding it</li>
+                    <li>Experiment with Fillet on an edge</li>
+                    <li>Save your file to your Google Drive folder</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────── SLIDE 6: Key Vocabulary -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Know These Terms</h2>
+        <p class="subtitle">You should be able to point to each of these in the F360 interface</p>
+
+        <div class="term-grid">
+            <div class="term-item">
+                <div class="term-name">Toolbar</div>
+                <div class="term-def">Top strip with all the modeling commands (Sketch, Create, Modify…)</div>
+            </div>
+            <div class="term-item">
+                <div class="term-name">Browser</div>
+                <div class="term-def">Left panel — lists all Bodies, Components, Sketches in your design tree</div>
+            </div>
+            <div class="term-item">
+                <div class="term-name">Timeline</div>
+                <div class="term-def">Bottom strip — every action you take is a step you can go back and edit</div>
+            </div>
+            <div class="term-item">
+                <div class="term-name">ViewCube</div>
+                <div class="term-def">Top-right corner — click any face to snap to that view angle</div>
+            </div>
+            <div class="term-item">
+                <div class="term-name">Sketch</div>
+                <div class="term-def">2D drawing on a plane — the foundation of every 3D feature</div>
+            </div>
+            <div class="term-item">
+                <div class="term-name">Body</div>
+                <div class="term-def">A solid 3D shape — result of extruding, revolving, or other 3D operations</div>
+            </div>
+            <div class="term-item">
+                <div class="term-name">Extrude</div>
+                <div class="term-def">Push a 2D sketch shape into the third dimension to create a body</div>
+            </div>
+            <div class="term-item">
+                <div class="term-name">Constraint</div>
+                <div class="term-def">A rule that locks sketch geometry — makes dimensions predictable and stable</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────── SLIDE 7: Orientation Check -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Orientation Check</h2>
+        <p class="subtitle">Before tomorrow's modeling session, confirm you can do each of these</p>
+
+        <ul class="check-list">
+            <li>Open Fusion 360 and create a new design file</li>
+            <li>Start a new sketch on the XY (Top) plane</li>
+            <li>Draw a circle, set its diameter with a dimension, and exit the sketch</li>
+            <li>Extrude the circle 10 mm to create a cylinder</li>
+            <li>Orbit the viewport so you can see the cylinder from different angles</li>
+            <li>Find the Timeline at the bottom and click back one step</li>
+            <li>Save the file to your Google Drive design folder</li>
+        </ul>
+
+        <div class="note-box" style="margin-top: 24px;">
+            <h3>Stuck on any of these?</h3>
+            <p style="margin: 0;">Rewind to that part of the video. If you are still stuck after re-watching, mark it as a question for the start of tomorrow's class — Mr. B will do a quick group review of anything that came up.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────────── SLIDE 8: What's Next -->
+<div class="slide">
+    <div class="slide-content" style="text-align: center; padding-top: 30px;">
+        <h2>Tomorrow: Your First Component</h2>
+
+        <div class="objective-box" style="max-width: 700px; margin: 30px auto; text-align: left;">
+            <h3>L2.2 — Component 1</h3>
+            <ul class="bullet-list" style="margin-top: 10px;">
+                <li>You will follow a video walkthrough to model your assigned component from scratch</li>
+                <li>The component is small but precise — dimensions matter</li>
+                <li>When you finish modeling, you will queue it for 3D printing</li>
+                <li>That printed part becomes your first real EDP test artifact</li>
+            </ul>
+        </div>
+
+        <div class="grid-2" style="max-width: 700px; margin: 20px auto;">
+            <div class="box" style="text-align: left;">
+                <h3>HS AER / 8th AER</h3>
+                <p style="font-size: 1rem; margin: 0; color: #b8c5d6;">C1: Wheel Hub — connects the motor shaft to the drive wheel. Precision bore required.</p>
+            </div>
+            <div class="box" style="text-align: left;">
+                <h3>D&amp;B Lab</h3>
+                <p style="font-size: 1rem; margin: 0; color: #b8c5d6;">Fidget Spinner Body — accepts a standard 608 bearing. Must be balanced and symmetric.</p>
+            </div>
+        </div>
+
+        <p style="margin-top: 30px; color: #6a8070; font-size: 1rem;">Make sure Fusion 360 is open and your design file is saved before you leave today.</p>
+    </div>
+</div>
+
+</div><!-- /presentation -->
+
+<div class="slide-number">
+    <span id="current-slide">1</span> / <span id="total-slides">8</span>
+</div>
+
+<div class="controls">
+    <button id="prev-btn" onclick="previousSlide()">← Previous</button>
+    <a href="index.html" class="nav-button">↑ Unit 2</a>
+    <a href="../index.html" class="nav-button">⌂ Home</a>
+    <button id="next-btn" onclick="nextSlide()">Next →</button>
+</div>
+
+<script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    document.getElementById('total-slides').textContent = totalSlides;
+
+    function showSlide(n) {
+        slides[currentSlide].classList.remove('active');
+        currentSlide = (n + totalSlides) % totalSlides;
+        slides[currentSlide].classList.add('active');
+        document.getElementById('current-slide').textContent = currentSlide + 1;
+        document.getElementById('prev-btn').disabled = currentSlide === 0;
+        document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+    }
+
+    function nextSlide() { if (currentSlide < totalSlides - 1) showSlide(currentSlide + 1); }
+    function previousSlide() { if (currentSlide > 0) showSlide(currentSlide - 1); }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+        else if (e.key === 'ArrowLeft') { e.preventDefault(); previousSlide(); }
+    });
+
+    showSlide(0);
+</script>
+</body>
+</html>

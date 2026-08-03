@@ -9,12 +9,12 @@
 | Week | Dates | Days | Unit | Notes | Content | Deliverable / Quiz |
 |------|-------|------|------|-------|---------|--------------------|
 | 1 | Aug 31–Sep 4 | 4 | 1 — EDP | 🔴 Sep 4 no school | Lessons 1.1–1.5: Intro to AE&R → Spaghetti Tower (no framework) → EDP Framework → Paper Glider (EDP applied) → Writing a Design Brief | Signed syllabus + safety contract |
-| 2 | Sep 7–11 | 4 | 1 — EDP | 🔴 Labor Day Sep 7 | Lessons 1.6–1.9 — Cardboard Robot Deck Challenge: Client Interview & Design Statement → Concept Sketching & Decision Matrix → Build, Test & Peer Review → Iterate, Reflect | EDP Quiz |
-| 3 | Sep 14–18 | 5 | 2 — CAD | | **L2.1** F360 orientation + CAD hygiene; **C1: Wheel Hub** (practice sketches → print); **L2.2** Measurement Tools Workshop — calipers, reading tolerances, measure printed C1; **L2.3** 3D Printing — export from F360, slice in BambuStudio | D: C1 — key dimensions + iteration log |
-| 4 | Sep 21–25 | 5 | 2 — CAD | | **L2.4: C2 Drive Wheel** — hex bore, Circular Pattern spokes, student design choice; print + iterate; intro to **L2.5: C3 Motor Mount** | D: C2 — key dimensions + iteration log |
-| 5 | Sep 28–Oct 2 | 5 | 2 — CAD | ⚡ Sep 30 (20-min period) | **C3: Motor Mount** (complete) | D: C3 — key dimensions + iteration log |
-| 6 | Oct 5–9 | 5 | 2 — CAD | | **C4: Deck** + CAD assemblies intro | D: C4 — key dimensions + iteration log |
-| 7 | Oct 12–16 | 5 | 2 — CAD | | **C5: Front Wheel Mount; C6: IR Sensor Mount; C7: Ultrasonic Sensor Mount** | D: C5, C6, C7 — key dimensions + iteration logs |
+| 2 | Sep 7–11 | 4 | 1 → 2 | 🔴 Labor Day Sep 7 | **L1.6** Client Interview + Design Statement; **L1.7** Concept Sketching + Decision Matrix (get approval before Fri); **L2.1** Kevin Kennedy F360 orientation video (Fri — watch twice, orientation check) | Design Brief (signed); Concept Sketches (approved) |
+| 3 | Sep 14–18 | 5 | 2 — CAD | | **L2.2** C1 modeling video — sketch, extrude, bore; export + queue print; **L2.3** Measurement Tools Workshop — calipers, measure printed C1 against design brief; **L2.4** 3D Printing — slicer settings, orient, iterate C1 v2; **EDP Quiz** after C1 iteration | D: C1 — key dimensions + iteration log; EDP Quiz |
+| 4 | Sep 21–25 | 5 | 2 — CAD | | **L2.5: C2 Drive Wheel** — hex bore, Circular Pattern spokes, student design choice; print + iterate; intro to **L2.6: C3 Motor Mount** | D: C2 — key dimensions + iteration log |
+| 5 | Sep 28–Oct 2 | 5 | 2 — CAD | ⚡ Sep 30 (20-min period) | **L2.6: C3 Motor Mount** (complete) | D: C3 — key dimensions + iteration log |
+| 6 | Oct 5–9 | 5 | 2 — CAD | | **L2.7: C4 Deck** + CAD assemblies intro | D: C4 — key dimensions + iteration log |
+| 7 | Oct 12–16 | 5 | 2 — CAD | | **L2.8: C5** Front Wheel Mount; **C6** IR Sensor Mount; **C7** Ultrasonic Sensor Mount | D: C5, C6, C7 — key dimensions + iteration logs |
 | 8 | Oct 19–23 | 5 | 2 — CAD | 2nd yr: **C8: Electronics Board Mount** w/ strain relief | Final robot CAD assembly | CAD Quiz; D: Robot Assembly |
 | 9 | Oct 26–30 | 4 | 3 — Safety | 🟡 🔴 Records Day Oct 30 | OSHA/LOTO/PPE/SDS; Matthew Henne case study; drill press, pedestal grinder, hand drill certs; CNC awareness; manufacturing processes | Safety Quiz; Tool Cert Cards |
 | 10 | Nov 2–6 | 5 | 3 — Safety | | CNC toolpaths; cut decks | D: Toolpaths to cut deck |

@@ -24,9 +24,9 @@
 | Wk | Dates | Days | Notes | Content |
 |----|-------|------|-------|---------|
 | 1 | Aug 31 – Sep 4 | 4 | 🔴 Sep 4 no school | **Lessons 1.1–1.5:** Intro to AE&R (1.1) → Spaghetti Tower, no framework (1.2) → EDP Framework (1.3) → Paper Glider, EDP applied (1.4) → Writing a Design Brief (1.5) · **D: Signed syllabus + safety contract** |
-| 2 | Sep 7–11 | 4 | 🟡 🔴 Labor Day Sep 7 | **Lessons 1.6–1.9 — Cardboard Robot Deck Challenge:** Client Interview & Design Statement (1.6) → Concept Sketching & Decision Matrix (1.7) → Build, Test & Peer Review (1.8) → Iterate, Reflect & EDP Quiz (1.9) |
+| 2 | Sep 7–11 | 4 | 🟡 🔴 Labor Day Sep 7 | **L1.6** Client Interview + Design Statement — interview teacher as client, extract C1 component requirements, write problem statement + design statement → **L1.7** Concept Sketching + Decision Matrix — 3 hand-drawn concept sketches (labeled + dimensioned), decision matrix, instructor approval → **L2.1** Kevin Kennedy F360 orientation video (Fri — watch twice) |
 
-**Lesson sequence rationale:** Students attempt Spaghetti Tower *before* learning EDP (experience failure without a framework), then learn the framework, then apply it immediately to Paper Glider — "experience → framework → apply." Cardboard Robot Deck directly previews the CNC deck students will design in Fusion (Week 6–7).
+**Lesson sequence rationale:** Students attempt Spaghetti Tower *before* learning EDP (experience failure without a framework), then learn the framework, then apply it immediately to Paper Glider — "experience → framework → apply." Unit 1 ends with the planning phase (brief + sketches). The build-test-iterate cycle runs in Unit 2 using a real 3D-printed part (C1), so the EDP quiz happens after students have actually tested and iterated a physical artifact rather than a cardboard mock-up.
 
 ---
 
@@ -56,11 +56,11 @@
 
 | Wk | Dates | Days | Notes | Content |
 |----|-------|------|-------|---------|
-| 3 | Sep 14–18 | 5 | | **L2.1:** CAD hygiene rules + F360 orientation; **C1: Wheel Hub** — concentric circles, multi-depth extrude, file naming; print C1. **L2.2:** Measurement Workshop — calipers, reading tolerances, measure printed C1 and log. **L2.3:** 3D Printing — export from F360, slice in BambuStudio, print + post-process |
-| 4 | Sep 21–25 | 5 | | **L2.4: C2 Drive Wheel** — hex bore, Circular Pattern spokes, student design choice; print + iterate; **mid-unit CAD checkpoint quiz** |
-| 5 | Sep 28 – Oct 2 | 5 | ⚡ Sep 30 | **L2.5: C3 Motor Sleeve Mount** — sleeve bore (measure motor model in F360), T-slot nut-capture rail, face screw holes; print + iterate |
-| 6 | Oct 5–9 | 5 | | **L2.6: C4 Robot Deck** — outer profile + motor mount holes; start assembly file (deck + C3 linked); constrain C3 in assembly |
-| 7 | Oct 12–16 | 5 | | **L2.7: C5 Omni Wheel Mount + C6 IR Sensor Mount + C7 Ultrasonic Sensor Mount** — multi-plane sketches; insert each into assembly → position → edit C4 sketch → constrain; print C5/C6/C7 |
+| 3 | Sep 14–18 | 5 | | **L2.2:** C1 modeling video — concentric circles, multi-depth extrude, bore, export + print. **L2.3:** Measurement Workshop — calipers, reading tolerances, measure printed C1 and log. **L2.4:** 3D Printing — slicer settings, orient, iterate C1 v2; **EDP Quiz** after C1 iteration |
+| 4 | Sep 21–25 | 5 | | **L2.5: C2 Drive Wheel** — hex bore, Circular Pattern spokes, student design choice; print + iterate; **mid-unit CAD checkpoint quiz** |
+| 5 | Sep 28 – Oct 2 | 5 | ⚡ Sep 30 | **L2.6: C3 Motor Sleeve Mount** — sleeve bore (measure motor model in F360), T-slot nut-capture rail, face screw holes; print + iterate |
+| 6 | Oct 5–9 | 5 | | **L2.7: C4 Robot Deck** — outer profile + motor mount holes; start assembly file (deck + C3 linked); constrain C3 in assembly |
+| 7 | Oct 12–16 | 5 | | **L2.8: C5 Omni Wheel Mount + C6 IR Sensor Mount + C7 Ultrasonic Sensor Mount** — multi-plane sketches; insert each into assembly → position → edit C4 sketch → constrain; print C5/C6/C7 |
 | 8 | Oct 19–23 | 5 | | Run Interference Check on full assembly; fix any collisions; finalize C4 deck; **CNC toolpath intro + deck CNC cut**; all-component test-fit; **CAD quiz end of week** |
 
 **Unit 2 deliverables:** D21–D27 — one per component; each requires screenshot + level selection + learning check Q1–Q5. All 7 required before build phase.  
@@ -249,7 +249,7 @@ Every assignment has up to 4 levels. Students choose their level — grade refle
 
 ## Quiz Schedule (all quizzes built into portfolio system)
 More quizzes than 2025-26. Every unit gets at least one; long units get a mid-unit checkpoint.
-- **EDP quiz** — end of Week 2
+- **EDP quiz** — Week 3, after C1 iteration (students test a real printed part before taking the quiz)
 - **CAD checkpoint quiz** — ~Week 5 (mid-unit)
 - **CAD quiz** — end of Week 8
 - **Safety quiz** — end of Week 10
