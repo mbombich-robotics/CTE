@@ -11,15 +11,15 @@
 |------|-------|------|------|-------|---------|--------------------|
 | 1 | Aug 31–Sep 4 | 4 | 1 — EDP | 🔴 Sep 4 no school | Lessons 1.1–1.5: Intro to AE&R → Spaghetti Tower (no framework) → EDP Framework → Paper Glider (EDP applied) → Writing a Design Brief | Signed syllabus + safety contract |
 | 2 | Sep 7–11 | 4 | 1 — EDP | 🔴 Labor Day Sep 7 | Lessons 1.6–1.9 — Cardboard Robot Deck Challenge: Client Interview & Design Statement → Concept Sketching & Decision Matrix → Build, Test & Peer Review → Iterate, Reflect | EDP Quiz |
-| 3 | Sep 14–18 | 5 | 2 — CAD | | F360 orientation + CAD hygiene; measurement fundamentals; 3D printing / rapid prototyping intro; **C1: Front Wheel Hub** (practice sketches → print) | D: C1 — key dimensions + iteration log |
-| 4 | Sep 21–25 | 5 | 2 — CAD | | **C2: Rear Wheel Hub** (builds on C1, adds new features) | D: C2 — key dimensions + iteration log |
+| 3 | Sep 14–18 | 5 | 2 — CAD | | **L2.1** F360 orientation + CAD hygiene; **C1: Wheel Hub** (practice sketches → print); **L2.2** Measurement Tools Workshop — calipers, measure printed C1; **L2.3** 3D Printing — export from F360, slice in BambuStudio | D: C1 — key dimensions + iteration log |
+| 4 | Sep 21–25 | 5 | 2 — CAD | | **L2.4: C2 Drive Wheel** — hex bore, Circular Pattern spokes, student design choice; print + iterate | D: C2 — key dimensions + iteration log |
 | 5 | Sep 28–Oct 2 | 5 | 2 — CAD | ⚡ Sep 30 (20-min period) | **C3: Robot Deck**  — front wheel hub + all sensor and electronic mounts provided; full robot CAD assembly due end of week | CAD Quiz; D: Robot Assembly |
 | 6 | Oct 5–9 | 5 | 3 — Safety | | Hand drill cert; CNC awareness (safety rules, what the machine does, toolpath concepts); safety quiz | Safety Quiz; Tool Cert Card |
 | 7 | Oct 12–16 | 5 | Build | | Manufacturing: manage 3D print queue (motor mount, sensor mounts, battery holder); teacher cuts decks on CNC during class; students responsible for cleanup | |
 | 8 | Oct 19–23 | 5 | Build | | Assemble frame: motors, wheels, caster; mount electronics board; wire motors and battery; caliper check — **build gate: robot rolls under manual power** | |
-| 9 | Oct 26–30 | 4 | 4 — Programming | 🟡 🔴 Records Day Oct 30 | L5.1 Microcontroller Fundamentals: what is a microcontroller, IDE setup, MicroPython REPL; A5.1 Blink — onboard LED, `utime.sleep()`, basic program loop | D: A5.1 working blink |
-| 10 | Nov 2–6 | 5 | 4 — Programming | | L5.2 Functions: define, call, parameters; A5.2 — SOS pattern using named functions; refactor blink from wk 9 | D: A5.2 SOS |
-| 11 | Nov 9–13 | 5 | 4 — Programming | ⚡ Nov 11 (20-min period) | L5.5 Motor Control: H-bridge, direction/speed; write `drive_forward()`, `turn_left()`, `stop()` functions; test on physical robot | D: robot drives a square |
+| 9 | Oct 26–30 | 4 | 4 — Programming | 🟡 🔴 Records Day Oct 30 | L4.1 Microcontroller Fundamentals: what is a microcontroller, IDE setup, MicroPython REPL; A4.1 Blink — onboard LED, `utime.sleep()`, basic program loop | D: A4.1 working blink |
+| 10 | Nov 2–6 | 5 | 4 — Programming | | L4.3 Functions: define, call, parameters; A4.3 — SOS pattern using named functions; refactor blink from wk 9 | D: A4.3 SOS |
+| 11 | Nov 9–13 | 5 | 4 — Programming | ⚡ Nov 11 (20-min period) | L4.6 Motor Control: H-bridge, direction/speed; write `drive_forward()`, `turn_left()`, `stop()` functions; test on physical robot | D: robot drives a square |
 | 12 | Nov 16–20 | 5 | 4 — Programming | | Robot Driving Challenge: timed obstacle course; iterate and refine drive functions; intro to `utime.sleep_ms()` for precision timing | Programming Quiz; D: challenge score |
 | 13 | Nov 23–24 | 2 | 4 — Programming | 🟡 Thanksgiving week | Buffer / make-up; finish robot driving challenge submissions | |
 | — | Nov 25–28 | — | — | 🌿 Thanksgiving Break | | |
