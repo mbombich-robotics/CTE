@@ -56,11 +56,11 @@
 
 | Wk | Dates | Days | Notes | Content |
 |----|-------|------|-------|---------|
-| 3 | Sep 14–18 | 5 | | CAD hygiene rules + F360 orientation; **C1: Wheel Hub** — concentric circles, multi-depth extrude, file naming; **C2: Drive Wheel** begin — hex bore, Circular Pattern spokes, student design choice |
-| 4 | Sep 21–25 | 5 | | C2 iterate + print; **C3: Motor Sleeve Mount** — sleeve bore (measure motor model in F360), T-slot nut-capture rail, face screw holes; version naming; **mid-unit CAD checkpoint quiz** |
-| 5 | Sep 28 – Oct 2 | 5 | ⚡ Sep 30 | C3 iterate + print; **C4: Robot Deck** — outer profile + motor mount holes only; start assembly file (deck + C3 linked); constrain C3 in assembly |
-| 6 | Oct 5–9 | 5 | | **C5: Omni Wheel Mount** — multi-plane sketch, axle bore; insert C5 into assembly, drag to find position; edit C4 sketch to add C5 holes; save → assembly updates; constrain C5; C5 print |
-| 7 | Oct 12–16 | 5 | | **C6: IR Sensor Mount** + **C7: Ultrasonic Sensor Mount**; same assembly workflow for each — insert → position → edit C4 sketch → constrain; C6 + C7 print |
+| 3 | Sep 14–18 | 5 | | **L2.1:** CAD hygiene rules + F360 orientation; **C1: Wheel Hub** — concentric circles, multi-depth extrude, file naming; print C1. **L2.2:** Measurement Workshop — calipers, reading tolerances, measure printed C1 and log. **L2.3:** 3D Printing — export from F360, slice in BambuStudio, print + post-process |
+| 4 | Sep 21–25 | 5 | | **L2.4: C2 Drive Wheel** — hex bore, Circular Pattern spokes, student design choice; print + iterate; **mid-unit CAD checkpoint quiz** |
+| 5 | Sep 28 – Oct 2 | 5 | ⚡ Sep 30 | **L2.5: C3 Motor Sleeve Mount** — sleeve bore (measure motor model in F360), T-slot nut-capture rail, face screw holes; print + iterate |
+| 6 | Oct 5–9 | 5 | | **L2.6: C4 Robot Deck** — outer profile + motor mount holes; start assembly file (deck + C3 linked); constrain C3 in assembly |
+| 7 | Oct 12–16 | 5 | | **L2.7: C5 Omni Wheel Mount + C6 IR Sensor Mount + C7 Ultrasonic Sensor Mount** — multi-plane sketches; insert each into assembly → position → edit C4 sketch → constrain; print C5/C6/C7 |
 | 8 | Oct 19–23 | 5 | | Run Interference Check on full assembly; fix any collisions; finalize C4 deck; **CNC toolpath intro + deck CNC cut**; all-component test-fit; **CAD quiz end of week** |
 
 **Unit 2 deliverables:** D21–D27 — one per component; each requires screenshot + level selection + learning check Q1–Q5. All 7 required before build phase.  
@@ -102,15 +102,15 @@
 ### Unit 4 — Programming Basics (MicroPython)
 > **Change from last year:** Programming starts mid-November (Week 12) on the physical robot students just built. Three lessons introduce the language; two more build toward motor control. All basics wrap up before Winter Break.
 
-**Lesson / Activity numbering:**  L5.1 + A5.1 · **L5.2 + A5.2 (Functions — new)** · L5.3 + A5.3 (Digital Input/Buttons) · L5.4 (PWM) · L5.5 (Motor Control)
+**Lesson / Activity numbering:**  L4.1 + A4.1 · L4.2 + A4.2 · **L4.3 + A4.3 (Functions)** · L4.4 + A4.4 (Digital Input) · L4.5 + A4.5 (PWM) · L4.6 (Motor Control)
 
 | Wk | Dates | Days | Notes | Content |
 |----|-------|------|-------|---------|
-| 12 | Nov 16–20 | 5 | | **L5.1** Microcontroller Fundamentals + **A5.1** Blink; **L5.2** Python Functions + **A5.2** SOS with Functions |
-| 13 | Nov 23–24 | 2 | 🟡 Thanksgiving week | **L5.3** Digital Input + begin **A5.3** Switches |
+| 12 | Nov 16–20 | 5 | | **L4.1** Microcontroller Fundamentals + **A4.1** Blink; **L4.2** Variables & Types + **A4.2** |
+| 13 | Nov 23–24 | 2 | 🟡 Thanksgiving week | **L4.3** Functions + **A4.3** SOS with Functions; begin **L4.4** Digital Input |
 | — | Nov 25–28 | — | 🌿 Thanksgiving Break | |
-| 14 | Nov 30 – Dec 4 | 5 | | Finish **A5.3**; **L5.4** PWM + **A5.4** |
-| 15 | Dec 7–11 | 5 | | **L5.5** Motor Control + **A5.5**; Programming Quiz; **D51** Programming Basics Q&A due |
+| 14 | Nov 30 – Dec 4 | 5 | | Finish **L4.4** Digital Input + **A4.4** Switches; **L4.5** PWM + **A4.5** |
+| 15 | Dec 7–11 | 5 | | **L4.6** Motor Control + **A4.6**; Programming Quiz; **D41** Programming Basics Q&A due |
 | 16 | Dec 14–18 | 5 | | **3D Print Holiday Project** — design and print a small item to take home (ornament, keychain, name plate, etc.); student picks and customizes |
 | — | ~Dec 21 – Jan 3 | — | 🌿 Winter Break | |
 
@@ -154,7 +154,7 @@
 
 | Wk | Dates | Days | Notes | Content |
 |----|-------|------|-------|---------|
-| 24 | Feb 22–26 | 4 | 🔴 Feb 26 mid-winter break | **Day 1:** L6.1 What Is AI (AI/ML/DL spectrum, 3 types of ML, training, bias) · **Day 2:** L6.2 Ethics in AI (COMPAS, Amazon hiring, engineering canons, accountability) · **Days 3–4:** Activity 6.3 Teachable Machine (train, test, deliberately break) · **Quiz:** Day 1 of Week 25 |
+| 24 | Feb 22–26 | 4 | 🔴 Feb 26 mid-winter break | **Day 1:** L5.1 What Is AI (AI/ML/DL spectrum, 3 types of ML, training, bias) · **Day 2:** L5.2 Ethics in AI (COMPAS, Amazon hiring, engineering canons, accountability) · **Days 3–4:** Activity 5.3 Teachable Machine (train, test, deliberately break) · **Quiz:** Day 1 of Week 25 |
 
 ---
 
