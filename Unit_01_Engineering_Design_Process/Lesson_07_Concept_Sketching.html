@@ -252,12 +252,12 @@
                     </ul>
                 </div>
                 <div>
-                    <p style="font-size: 0.85rem; font-weight: 700; color: #00b4ff; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 1px;">Step 2 — Outer Profile Concepts (sketch 2–3)</p>
+                    <p style="font-size: 0.85rem; font-weight: 700; color: #00b4ff; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 1px;">Step 2 — Three Bearing Retention Concepts</p>
+                    <p style="font-size: 0.85rem; color: #7ab8d4; margin: 0 0 8px;">Each concept is a cross-section variation — same external shape, different strategy for holding the bearing:</p>
                     <ul class="bullet-list" style="font-size: 0.9rem;">
-                        <li>Once cross-section is approved, sketch the external shape</li>
-                        <li>Vary: spoke count, spoke shape, wall thickness, lightening holes</li>
-                        <li>All concepts must honor the cross-section geometry — nothing changes the internal dimensions</li>
-                        <li>Both hub halves — note where they differ (one has counterbored face)</li>
+                        <li><strong>A — Press-fit:</strong> bore ~11.9 mm (0.1 mm undersize); bearing forced in and held by friction alone</li>
+                        <li><strong>B — Slip-fit + adhesive:</strong> bore 12.1 mm; bearing drops in, CA glue applied to outer race on assembly</li>
+                        <li><strong>C — Shoulder-captured:</strong> bore 12.05 mm; shoulder depths on each half calculated to sum to exactly 3.5 mm — two halves trap the bearing geometrically, no glue or press-fit needed</li>
                     </ul>
                 </div>
             </div>
@@ -286,7 +286,7 @@
             <div class="sketch-box">
                 <svg width="120" height="100" viewBox="0 0 120 100">
                     <rect x="10" y="10" width="100" height="80" rx="4" fill="none" stroke="rgba(255,107,53,0.3)" stroke-width="1.5" stroke-dasharray="5 4"/>
-                    <text x="60" y="45" font-family="Space Mono" font-size="8" fill="#555" text-anchor="middle">AER: profile A</text>
+                    <text x="60" y="45" font-family="Space Mono" font-size="8" fill="#555" text-anchor="middle">AER: retention A</text>
                     <text x="60" y="58" font-family="Space Mono" font-size="8" fill="#555" text-anchor="middle">DBL: concept B</text>
                 </svg>
                 <div class="sketch-label">Sketch 2</div>
@@ -294,7 +294,7 @@
             <div class="sketch-box">
                 <svg width="120" height="100" viewBox="0 0 120 100">
                     <rect x="10" y="10" width="100" height="80" rx="4" fill="none" stroke="rgba(255,107,53,0.3)" stroke-width="1.5" stroke-dasharray="5 4"/>
-                    <text x="60" y="45" font-family="Space Mono" font-size="8" fill="#555" text-anchor="middle">AER: profile B</text>
+                    <text x="60" y="45" font-family="Space Mono" font-size="8" fill="#555" text-anchor="middle">AER: retention B</text>
                     <text x="60" y="58" font-family="Space Mono" font-size="8" fill="#555" text-anchor="middle">DBL: concept C</text>
                 </svg>
                 <div class="sketch-label">Sketch 3</div>
@@ -323,23 +323,23 @@
             </thead>
             <tbody>
                 <tr>
-                    <td class="criteria-col">Meets dimensional requirements</td>
+                    <td class="criteria-col">Bearing retention reliability (will it stay under load?)</td>
                     <td>3</td><td>—</td><td>—</td><td>—</td>
                 </tr>
                 <tr>
-                    <td class="criteria-col">Printable without supports</td>
+                    <td class="criteria-col">Print tolerance forgiveness (will first print work?)</td>
                     <td>3</td><td>—</td><td>—</td><td>—</td>
                 </tr>
                 <tr>
-                    <td class="criteria-col">Structural integrity (won't crack at layer lines)</td>
+                    <td class="criteria-col">Serviceability (can you remove the bearing if it fails?)</td>
                     <td>2</td><td>—</td><td>—</td><td>—</td>
                 </tr>
                 <tr>
-                    <td class="criteria-col">Modeling complexity (can I actually model this?)</td>
+                    <td class="criteria-col">Assembly ease (how hard to put together in class?)</td>
                     <td>2</td><td>—</td><td>—</td><td>—</td>
                 </tr>
                 <tr>
-                    <td class="criteria-col">Aesthetic / personal preference</td>
+                    <td class="criteria-col">Modeling complexity (can I design this in F360?)</td>
                     <td>1</td><td>—</td><td>—</td><td>—</td>
                 </tr>
                 <tr class="total">
@@ -359,66 +359,66 @@
 <div class="slide">
     <div class="slide-content">
         <h2>Example: Completed Matrix</h2>
-        <p class="subtitle">Wheel hub — three spoke concepts evaluated</p>
+        <p class="subtitle">Wheel hub — three bearing retention strategies compared</p>
 
         <table class="dm-table">
             <thead>
                 <tr>
                     <th class="criteria-col" style="width:38%">Criterion</th>
                     <th>Weight<br><small style="font-weight:400; color:#888;">(1–3)</small></th>
-                    <th>A: 4-spoke flat<br><small style="font-weight:400; color:#888;">score → weighted</small></th>
-                    <th>B: 3-spoke chamfer<br><small style="font-weight:400; color:#888;">score → weighted</small></th>
-                    <th>C: Solid disc<br><small style="font-weight:400; color:#888;">score → weighted</small></th>
+                    <th>A: Press-fit<br><small style="font-weight:400; color:#888;">score → weighted</small></th>
+                    <th>B: Slip-fit + glue<br><small style="font-weight:400; color:#888;">score → weighted</small></th>
+                    <th>C: Shoulder-captured<br><small style="font-weight:400; color:#888;">score → weighted</small></th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td class="criteria-col">Meets dimensional requirements</td>
+                    <td class="criteria-col">Bearing retention reliability</td>
                     <td>3</td>
-                    <td>5 → <strong>15</strong></td>
-                    <td>5 → <strong>15</strong></td>
-                    <td>5 → <strong>15</strong></td>
-                </tr>
-                <tr>
-                    <td class="criteria-col">Printable without supports</td>
-                    <td>3</td>
+                    <td>4 → <strong>12</strong></td>
                     <td>3 → <strong>9</strong></td>
                     <td>5 → <strong>15</strong></td>
-                    <td>4 → <strong>12</strong></td>
                 </tr>
                 <tr>
-                    <td class="criteria-col">Structural integrity</td>
+                    <td class="criteria-col">Print tolerance forgiveness</td>
+                    <td>3</td>
+                    <td>2 → <strong>6</strong></td>
+                    <td>4 → <strong>12</strong></td>
+                    <td>3 → <strong>9</strong></td>
+                </tr>
+                <tr>
+                    <td class="criteria-col">Serviceability</td>
                     <td>2</td>
-                    <td>4 → <strong>8</strong></td>
-                    <td>4 → <strong>8</strong></td>
+                    <td>2 → <strong>4</strong></td>
+                    <td>1 → <strong>2</strong></td>
                     <td>5 → <strong>10</strong></td>
                 </tr>
                 <tr>
-                    <td class="criteria-col">Modeling complexity (can I model this?)</td>
+                    <td class="criteria-col">Assembly ease</td>
                     <td>2</td>
-                    <td>4 → <strong>8</strong></td>
                     <td>3 → <strong>6</strong></td>
-                    <td>2 → <strong>4</strong></td>
+                    <td>3 → <strong>6</strong></td>
+                    <td>4 → <strong>8</strong></td>
                 </tr>
                 <tr>
-                    <td class="criteria-col">Aesthetic / personal preference</td>
+                    <td class="criteria-col">Modeling complexity</td>
                     <td>1</td>
-                    <td>3 → <strong>3</strong></td>
                     <td>4 → <strong>4</strong></td>
-                    <td>2 → <strong>2</strong></td>
+                    <td>5 → <strong>5</strong></td>
+                    <td>3 → <strong>3</strong></td>
                 </tr>
                 <tr class="total">
                     <td class="criteria-col">Weighted Total</td>
                     <td>—</td>
-                    <td><span style="font-size: 1.2rem;">43</span></td>
-                    <td><span style="font-size: 1.3rem; color: #50fa7b;">48 ✓</span></td>
-                    <td><span style="font-size: 1.2rem;">43</span></td>
+                    <td><span style="font-size: 1.2rem;">32</span></td>
+                    <td><span style="font-size: 1.2rem;">34</span></td>
+                    <td><span style="font-size: 1.3rem; color: #50fa7b;">45 ✓</span></td>
                 </tr>
             </tbody>
         </table>
 
         <div class="note-box" style="margin-top: 14px;">
-            <p><strong>Concept B wins.</strong> A and C tie at 43, but B's advantage on "Printable without supports" (weight 3) overcomes its lower modeling complexity score (weight 2). The highest-weight criteria drive the result — that's the point of weighting.</p>
+            <p><strong>Concept C wins at 45.</strong> Its perfect serviceability score (5 × weight 2) and top reliability score (5 × weight 3) overcome a weaker tolerance-forgiveness score. Glued edges out press-fit because a forgiving bore matters more than easier modeling. Notice: the easiest option to model (glued, score 5) does <em>not</em> win — because modeling ease has the lowest weight.</p>
         </div>
     </div>
 </div>
