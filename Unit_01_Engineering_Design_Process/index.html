@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -675,9 +675,9 @@
     <script>
     (function () {
         var TRACKS = {
-            hsaer: { label: 'Applied Engineering & Robotics', home: '../HSAER/index.html' },
-            '8aer': { label: '8th Grade AE&R',               home: '../8AER/index.html'  },
-            dbl:   { label: 'Design & Build Lab',            home: '../DBL/index.html'   }
+            hsaer: { label: 'Applied Engineering & Robotics', home: '../HSAER/index.html', portfolioTrack: 'hsaer'  },
+            '8aer': { label: '8th Grade AE&R',               home: '../8AER/index.html',  portfolioTrack: 'aer8th' },
+            dbl:   { label: 'Design & Build Lab',            home: '../DBL/index.html',   portfolioTrack: 'dbl'    }
         };
         var params = new URLSearchParams(window.location.search);
         var track  = params.get('track') || localStorage.getItem('cteTrack');
@@ -703,6 +703,10 @@
             }
             // Propagate track param to ../Unit_* index links
             var rel = a.getAttribute('href') || '';
+            if (rel.indexOf('../Portfolio/') === 0) {
+                try { var url = new URL(a.href); url.searchParams.set('track', cfg.portfolioTrack); a.href = url.toString(); } catch (e) {}
+                return;
+            }
             if (rel.indexOf('../Unit_') === 0) {
                 try {
                     var url = new URL(a.href);
