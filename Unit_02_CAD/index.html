@@ -670,5 +670,41 @@
         <p>Vicksburg High School | Applied Engineering & Robotics</p>
         <p>Mr. Bombich | Room 70 | mbombich@vicksburgschools.org</p>
     </footer>
+    <script>
+    (function () {
+        var TRACKS = {
+            hsaer: { label: 'Applied Engineering & Robotics', home: '../HSAER/index.html' },
+            '8aer': { label: '8th Grade AE&R',               home: '../8AER/index.html'  },
+            dbl:   { label: 'Design & Build Lab',            home: '../DBL/index.html'   }
+        };
+        var params = new URLSearchParams(window.location.search);
+        var track  = params.get('track') || localStorage.getItem('cteTrack');
+        if (!track || !TRACKS[track]) return;
+        localStorage.setItem('cteTrack', track);
+        var cfg = TRACKS[track];
+
+        var el = document.querySelector('.course-title-compact');
+        if (el) el.textContent = cfg.label;
+
+        var unitPart = document.title.split('|')[0].trim();
+        document.title = unitPart + ' | ' + cfg.label;
+
+        document.querySelectorAll('a').forEach(function (a) {
+            var txt = a.textContent.trim();
+            if (txt.includes('Course Overview') || txt.includes('Course Hub')) {
+                a.href = cfg.home;
+                return;
+            }
+            var rel = a.getAttribute('href') || '';
+            if (rel.indexOf('../Unit_') === 0) {
+                try {
+                    var url = new URL(a.href);
+                    url.searchParams.set('track', track);
+                    a.href = url.toString();
+                } catch (e) {}
+            }
+        });
+    }());
+    </script>
 </body>
 </html>
