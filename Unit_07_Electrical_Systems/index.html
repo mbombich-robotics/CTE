@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>(function(){var t=(new URLSearchParams(location.search).get('track'))||localStorage.getItem('cteTrack');if(t)document.documentElement.setAttribute('data-track',t);}());</script>
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Unit 7: Electrical Systems | Applied Engineering &amp; Robotics</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: #1a1a1a;
+            color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: linear-gradient(135deg, #1a1a2e 0%, #f59e0b 50%, #1a1a2e 100%);
+            height: 80px;
+            border-bottom: 3px solid #ffffff;
+            box-shadow: 0 4px 20px rgba(245,158,11,0.5);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            z-index: 100;
+        }
+
+        .circuit-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0.15;
+            background-image:
+                linear-gradient(90deg, transparent 0%, transparent calc(50% - 1px), rgba(255,255,255,0.6) calc(50% - 1px), rgba(255,255,255,0.6) calc(50% + 1px), transparent calc(50% + 1px)),
+                linear-gradient(0deg, transparent 0%, transparent calc(30% - 1px), rgba(255,255,255,0.4) calc(30% - 1px), rgba(255,255,255,0.4) calc(30% + 1px), transparent calc(30% + 1px));
+        }
+
+        .top-bar-content { position: relative; z-index: 1; display: flex; align-items: center; gap: 20px; }
+
+        .school-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border: 2px solid rgba(255,255,255,0.4);
+            text-transform: uppercase;
+        }
+
+        .course-title-compact {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+
+        .layout-container { display: flex; flex: 1; }
+
+        .sidebar {
+            width: 280px;
+            background: #0d0d0d;
+            border-right: 3px solid #f59e0b;
+            padding: 30px 0;
+            overflow-y: auto;
+            position: sticky;
+            top: 0;
+            height: calc(100vh - 80px);
+        }
+
+        .sidebar-section { margin-bottom: 10px; }
+
+        .sidebar-header {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 15px 25px 10px;
+            font-weight: 700;
+        }
+
+        .unit-link {
+            display: block;
+            padding: 12px 25px;
+            color: #b0b0b0;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .unit-link:hover { background: rgba(245,158,11,0.1); color: #ffffff; border-left-color: #f59e0b; }
+        .unit-link.active { background: rgba(245,158,11,0.15); color: #f59e0b; border-left-color: #f59e0b; }
+        .unit-link.back-link { color: #888; font-size: 0.85rem; border-bottom: 1px solid #222; margin-bottom: 4px; }
+        .unit-link.back-link:hover { color: #ccc; background: rgba(255,255,255,0.04); border-left-color: #555; }
+        .unit-link.coming-soon { opacity: 0.5; cursor: not-allowed; }
+
+        .unit-number { font-family: 'Rajdhani', sans-serif; color: #f59e0b; font-weight: 700; margin-right: 8px; }
+
+        .coming-soon-badge {
+            float: right;
+            font-size: 0.7rem;
+            background: rgba(136,136,136,0.2);
+            color: #888;
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid #444;
+        }
+
+        .main-content { flex: 1; padding: 60px 80px; }
+
+        .unit-header {
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid rgba(245,158,11,0.3);
+        }
+
+        .unit-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: #f59e0b;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px rgba(245,158,11,0.4);
+        }
+
+        .unit-description {
+            font-size: 1.15rem;
+            color: #b0b0b0;
+            line-height: 1.8;
+            max-width: 850px;
+            margin-bottom: 24px;
+        }
+
+        .unit-meta { display: flex; gap: 14px; flex-wrap: wrap; }
+
+        .meta-badge {
+            background: rgba(245,158,11,0.12);
+            border: 1px solid rgba(245,158,11,0.4);
+            color: #f59e0b;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            font-family: 'Rajdhani', sans-serif;
+            text-transform: uppercase;
+        }
+
+        /* Coming soon panel */
+        .coming-soon-panel {
+            max-width: 700px;
+            background: rgba(245,158,11,0.05);
+            border: 2px dashed rgba(245,158,11,0.25);
+            border-radius: 16px;
+            padding: 60px 50px;
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .cs-icon { font-size: 3.5rem; margin-bottom: 20px; }
+
+        .cs-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: #f59e0b;
+            margin-bottom: 16px;
+        }
+
+        .cs-text { font-size: 1.1rem; color: #888; line-height: 1.7; max-width: 500px; margin: 0 auto; }
+
+        footer { text-align: center; padding: 30px; background: #0d0d0d; border-top: 3px solid #f59e0b; color: #888; font-size: 0.9rem; }
+        footer .mascot { color: #fff; margin: 8px 0; }
+
+        @media (max-width: 768px) {
+            .layout-container { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; }
+            .main-content { padding: 30px 20px; }
+            .unit-title { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="circuit-overlay"></div>
+        <div class="top-bar-content">
+            <div class="school-badge">VHS Bulldogs</div>
+            <div class="course-title-compact" id="course-title">Applied Engineering &amp; Robotics</div>
+        </div>
+    </div>
+
+    <div class="layout-container">
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <a href="../HSAER/index.html" class="unit-link back-link" id="course-home-link">← Course Overview</a>
+                <div class="sidebar-header">Navigation</div>
+                <a href="../Portfolio/index.html?track=hsaer" class="unit-link" id="portfolio-link" style="background:rgba(99,102,241,0.08); border-left:3px solid #6366f1;">
+                    <span class="unit-number" style="color:#6366f1;">📋</span> Student Portfolio
+                </a>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-header">Course Units</div>
+                <a href="../Unit_01_Engineering_Design_Process/index.html" class="unit-link" data-unit="Unit_01">
+                    <span class="unit-number">Unit 1</span> Engineering Design Process
+                </a>
+                <a href="../Unit_02_CAD/index.html" class="unit-link" data-unit="Unit_02">
+                    <span class="unit-number">Unit 2</span> CAD: Component Design
+                </a>
+                <a href="../Unit_03_Shop_Safety_and_Standard_Practices/index.html" class="unit-link" data-unit="Unit_03">
+                    <span class="unit-number">Unit 3</span> Shop Safety
+                </a>
+                <a href="../Unit_04_Programming_Electronics_and_Sensors/index.html" class="unit-link" data-unit="Unit_04">
+                    <span class="unit-number">Unit 4</span> Programming &amp; Electronics
+                </a>
+                <a href="../Unit_05_Artificial_Intelligence/index.html" class="unit-link" data-unit="Unit_05">
+                    <span class="unit-number">Unit 5</span> AI &amp; Machine Learning
+                </a>
+                <a href="../Unit_06_Career_Ready_Practices/index.html" class="unit-link" data-unit="Unit_06">
+                    <span class="unit-number">Unit 6</span> Career Readiness
+                </a>
+                <a href="index.html" class="unit-link active">
+                    <span class="unit-number">Unit 7</span> Electrical Systems
+                </a>
+                <a href="../Unit_08_Mechanisms/index.html" class="unit-link coming-soon" data-unit="Unit_08">
+                    <span class="unit-number">Unit 8</span> Mechanisms
+                    <span class="coming-soon-badge">Soon</span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="unit-header">
+                <h1 class="unit-title">Unit 7 — Electrical Systems</h1>
+                <p class="unit-description" id="unit-desc">
+                    Explore how electricity, components, and circuits work together in real engineering systems. You'll move from basic circuit theory to building and troubleshooting circuits that power the devices you've already built.
+                </p>
+                <div class="unit-meta">
+                    <span class="meta-badge" id="meta-weeks">Coming Soon</span>
+                    <span class="meta-badge">Hands-On</span>
+                </div>
+            </div>
+
+            <div class="coming-soon-panel">
+                <div class="cs-icon">⚡</div>
+                <h2 class="cs-title">Lessons In Development</h2>
+                <p class="cs-text">
+                    Unit 7 content is being built now. Check back soon — lessons will appear here as they're completed. In the meantime, continue working on your current unit or project.
+                </p>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <div class="mascot">GO BULLDOGS!</div>
+        <p>Vicksburg High School | Applied Engineering &amp; Robotics</p>
+        <p>Mr. Bombich | Room 70 | mbombich@vicksburgschools.org</p>
+    </footer>
+
+    <script>
+    (function () {
+        var TRACKS = {
+            hsaer: { label: 'Applied Engineering & Robotics', home: '../HSAER/index.html', portfolioTrack: 'hsaer' },
+            '8aer': { label: '8th Grade AE&R',               home: '../8AER/index.html',  portfolioTrack: 'aer8th' },
+            dbl:   { label: 'Design & Build Lab',            home: '../DBL/index.html',   portfolioTrack: 'dbl' }
+        };
+        var params = new URLSearchParams(window.location.search);
+        var track  = params.get('track') || localStorage.getItem('cteTrack');
+        if (!track || !TRACKS[track]) return;
+        localStorage.setItem('cteTrack', track);
+        var cfg = TRACKS[track];
+
+        var ct = document.getElementById('course-title');
+        if (ct) ct.textContent = cfg.label;
+
+        var hl = document.getElementById('course-home-link');
+        if (hl) { hl.href = cfg.home; hl.textContent = '← Course Overview'; }
+
+        var pl = document.getElementById('portfolio-link');
+        if (pl) { var pu = new URL(pl.href); pu.searchParams.set('track', cfg.portfolioTrack); pl.href = pu.toString(); }
+
+        document.querySelectorAll('a[data-unit]').forEach(function(a) {
+            try { var u = new URL(a.href); u.searchParams.set('track', track); a.href = u.toString(); } catch(e) {}
+        });
+
+        if (track === 'dbl') {
+            var desc = document.getElementById('unit-desc');
+            if (desc) desc.textContent = 'Learn the fundamentals of electricity and electronic components — voltage, current, resistance, and how they combine in circuits. This unit supports the electronics-based projects you\'ll build in Design & Build Lab.';
+            var mw = document.getElementById('meta-weeks');
+            if (mw) mw.textContent = 'Coming Soon';
+        }
+
+        var titleParts = document.title.split('|');
+        if (titleParts.length > 1) document.title = titleParts[0].trim() + ' | ' + cfg.label;
+    }());
+    </script>
+</body>
+</html>
