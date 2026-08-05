@@ -433,9 +433,9 @@
                     </span>
                 </li>
                 <li>
-                    <span class="icon">🔩</span>
-                    <span class="label"><strong>Center bolt bore</strong> — ⌀8mm through-hole
-                        <span class="note">This is the ID of the MR128. The center bolt passes through and acts as the axle.</span>
+                    <span class="icon">🤌</span>
+                    <span class="label"><strong>Center pocket is the handle</strong> — pinch the inner race to hold the spinner
+                        <span class="note">The center bearing's outer race is pressed into C2. You hold the inner race still. The spinner body rotates around it. No bolt needed.</span>
                     </span>
                 </li>
                 <li>
@@ -502,7 +502,7 @@
                 </div>
             </div>
             <p style="text-align:center; font-size:1.1em; color:#64748b; margin-top:4px;">
-                Whatever arm shape you choose, the <strong style="color:#93c5fd;">pocket circles and center bore never change</strong> — those are set by the bearing and bolt dimensions.
+                Whatever arm shape you choose, the <strong style="color:#93c5fd;">pocket circles never change</strong> — they're sized to the bearing OD.
             </p>
         </div>
     </div>
@@ -528,7 +528,6 @@
                         <li>Place the first arm pocket circle on the Y-axis (straight up from origin).</li>
                         <li>Draw your arm profile connecting center to arm pocket.</li>
                         <li>Circular Pattern the arm + arm pocket × 3 at 360°.</li>
-                        <li>Add the center bolt bore (⌀8mm) last.</li>
                     </ul>
                 </div>
             </div>
@@ -548,7 +547,7 @@
                 <p>Instructor video coming soon — follow the steps on the next two slides.</p>
             </div>
             <ul class="bullet-list" style="margin-top:8px;">
-                <li>Two slides of steps: <strong>Part 1</strong> builds the sketch and extrudes the body; <strong>Part 2</strong> cuts the center bore and saves.</li>
+                <li>Two slides of steps: <strong>Part 1</strong> builds the sketch and extrudes the body; <strong>Part 2</strong> cleans up and saves.</li>
                 <li>Expect to spend <strong>15–20 min on the sketch</strong>, then 10 min on extrude and cuts.</li>
                 <li>If your sketch won't close into a solid profile, check for <strong>gaps between lines</strong> — zoom in on every endpoint.</li>
             </ul>
@@ -562,7 +561,7 @@
             <ol class="step-list">
                 <li>New Component → name it <code>C2_Spinner_Body</code>. Make sure it's <strong>active</strong> (bold in the Browser).</li>
                 <li><strong>Create Sketch → XY plane.</strong></li>
-                <li>Draw a circle at the origin: your target pocket diameter (e.g. <code>⌀12.1mm</code>). This is the center bearing pocket.</li>
+                <li>Draw a circle at the origin: your target pocket diameter (e.g. <code>⌀22.1mm</code>). This is the center bearing pocket.</li>
                 <li>Draw a <strong>construction line</strong> from the origin straight up (along Y-axis). Dimension it to your arm length (e.g. <code>30mm</code>).</li>
                 <li>At the top of that construction line, draw another circle — same pocket diameter. This is the first arm bearing pocket.</li>
                 <li>Draw your arm profile shape connecting the edge of the center pocket to the edge of the arm pocket. Ensure the profile is <strong>fully closed</strong> — no gaps.</li>
@@ -580,9 +579,7 @@
                 <li><strong>Finish Sketch.</strong> The sketch should show the body profile with the pocket circles as holes in it.</li>
                 <li>Select the <strong>solid regions</strong> of the body (the arm and center frame — everything except the pocket circles). Do not select the pocket interiors.</li>
                 <li><strong>Extrude → 3.5mm</strong> (positive Z direction). The pocket holes go all the way through automatically.</li>
-                <li>Inspect your body: you should see a flat 3.5mm spinner with four through-holes — one at center, one per arm.</li>
-                <li><strong>New Sketch on the top face.</strong> Draw a circle at the origin: <code>⌀8mm</code>. This is the center bolt bore.</li>
-                <li><strong>Finish Sketch → Extrude-Cut → All the way through.</strong> This removes the center of the center pocket so a bolt can pass through.</li>
+                <li>Inspect your body: you should see a flat 3.5mm spinner with four through-holes — one at center, one per arm. The center bearing's 8mm inner race is naturally exposed through the center pocket.</li>
                 <li>Apply an <strong>Appearance</strong> if desired (Plastic — Matte works well for a printed part).</li>
                 <li><strong>Save</strong> as <code>C2_Spinner_Body</code>. Take a screenshot of the isometric view for your records.</li>
             </ol>
@@ -629,7 +626,7 @@
                     <h4>Design checks</h4>
                     <ul>
                         <li><strong>Are all three arms identical?</strong> Inspect the circular pattern — it should show 3 equal instances.</li>
-                        <li><strong>Is the center bore through the whole body?</strong> The 8mm cut should go all the way through, not just partway.</li>
+                        <li><strong>Is the center pocket a clean through-hole?</strong> The center bearing's inner race (8mm) should be visible and accessible when the bearing is seated.</li>
                         <li><strong>Is your body exactly 3.5mm?</strong> Check the extrude distance in the Timeline. This must match your bearing width.</li>
                         <li><strong>No supports needed?</strong> Flat bodies print support-free. If BambuStudio adds supports, your orientation is wrong.</li>
                     </ul>
@@ -647,7 +644,7 @@
                 <ul>
                     <li>C2 model saved in Fusion 360 — fully constrained sketch</li>
                     <li>Four through-holes: one center, one per arm — all same diameter</li>
-                    <li>Center bore: ⌀8mm cut through the body</li>
+                    <li>Center pocket through-hole clear — bearing inner race visible and grippable</li>
                     <li>Body thickness exactly 3.5mm</li>
                     <li>Screenshot of isometric view saved</li>
                     <li>Queued for printing (or printing in progress)</li>
