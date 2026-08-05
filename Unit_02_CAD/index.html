@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>(function(){var t=(new URLSearchParams(location.search).get('track'))||localStorage.getItem('cteTrack');if(t==='dbl')document.documentElement.className+=' track-dbl-active';}());</script>
     <link rel="icon" type="image/svg+xml" href="../favicon.svg">
     <title>Unit 2: CAD Component-Based Design | Applied Engineering & Robotics</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
@@ -384,6 +385,11 @@
             .lessons-grid { grid-template-columns: 1fr; }
             .component-summary { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
         }
+
+        /* Track-conditional content — no flash because class is set in <head> */
+        .track-dbl { display: none; }
+        .track-dbl-active .track-aer { display: none; }
+        .track-dbl-active .track-dbl { display: block; }
     </style>
 </head>
 <body>
@@ -438,249 +444,324 @@
         </aside>
 
         <main class="main-content">
-            <div class="unit-header">
-                <h1 class="unit-title">Unit 2 — CAD: Component-Based Design</h1>
-                <p class="unit-description">
-                    Design and iterate each mechanical component of the L.E.O. robot in Fusion 360. You'll orient to the workspace, model and 3D print your first component, measure it against your design brief, and iterate — the full engineering loop before C2 and beyond. All components converge into a single assembly that passes an interference check before anything goes to CNC.
-                </p>
-                <div class="unit-meta">
-                    <span class="meta-badge">Weeks 2–8</span>
-                    <span class="meta-badge">7 Components</span>
-                    <span class="meta-badge">Fusion 360</span>
-                    <span class="meta-badge">CNC Polycarbonate</span>
-                    <span class="meta-badge">FDM Printing</span>
-                </div>
-            </div>
 
-            <!-- Component Overview -->
-            <div class="lesson-section">
-                <div class="section-header">
-                    <h2 class="section-title">Components You'll Build</h2>
-                    <span class="section-badge">C1 – C7</span>
-                </div>
-                <div class="component-summary">
-                    <div class="component-badge">
-                        <div class="c-num">C1</div>
-                        <div class="c-name">Wheel Hub</div>
-                    </div>
-                    <div class="component-badge">
-                        <div class="c-num">C2</div>
-                        <div class="c-name">Drive Wheel Hub</div>
-                    </div>
-                    <div class="component-badge">
-                        <div class="c-num">C3</div>
-                        <div class="c-name">Motor Sleeve Mount</div>
-                    </div>
-                    <div class="component-badge">
-                        <div class="c-num">C4</div>
-                        <div class="c-name">Robot Deck (CNC)</div>
-                    </div>
-                    <div class="component-badge">
-                        <div class="c-num">C5</div>
-                        <div class="c-name">Omni Wheel Mount</div>
-                    </div>
-                    <div class="component-badge">
-                        <div class="c-num">C6</div>
-                        <div class="c-name">IR Sensor Mount</div>
-                    </div>
-                    <div class="component-badge">
-                        <div class="c-num">C7</div>
-                        <div class="c-name">Ultrasonic Mount</div>
+            <!-- ═══════════════════════════════════════════
+                 AER CONTENT (HSAER + 8AER) — default visible
+                 ═══════════════════════════════════════════ -->
+            <div class="track-aer">
+
+                <div class="unit-header">
+                    <h1 class="unit-title">Unit 2 — CAD: Component-Based Design</h1>
+                    <p class="unit-description">
+                        Design and iterate each mechanical component of the L.E.O. robot in Fusion 360. You'll orient to the workspace, model and 3D print your first component, measure it against your design brief, and iterate — the full engineering loop before C2 and beyond. All components converge into a single assembly that passes an interference check before anything goes to CNC.
+                    </p>
+                    <div class="unit-meta">
+                        <span class="meta-badge">Weeks 2–8</span>
+                        <span class="meta-badge">7 Components</span>
+                        <span class="meta-badge">Fusion 360</span>
+                        <span class="meta-badge">CNC Polycarbonate</span>
+                        <span class="meta-badge">FDM Printing</span>
                     </div>
                 </div>
-            </div>
 
-            <!-- Lessons -->
-            <div class="lesson-section">
-                <div class="section-header">
-                    <h2 class="section-title">Lessons</h2>
-                    <span class="section-badge">10 Lessons</span>
+                <div class="lesson-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Components You'll Build</h2>
+                        <span class="section-badge">C1 – C7</span>
+                    </div>
+                    <div class="component-summary">
+                        <div class="component-badge"><div class="c-num">C1</div><div class="c-name">Wheel Hub</div></div>
+                        <div class="component-badge"><div class="c-num">C2</div><div class="c-name">Drive Wheel Hub</div></div>
+                        <div class="component-badge"><div class="c-num">C3</div><div class="c-name">Motor Sleeve Mount</div></div>
+                        <div class="component-badge"><div class="c-num">C4</div><div class="c-name">Robot Deck (CNC)</div></div>
+                        <div class="component-badge"><div class="c-num">C5</div><div class="c-name">Omni Wheel Mount</div></div>
+                        <div class="component-badge"><div class="c-num">C6</div><div class="c-name">IR Sensor Mount</div></div>
+                        <div class="component-badge"><div class="c-num">C7</div><div class="c-name">Ultrasonic Mount</div></div>
+                    </div>
                 </div>
 
-                <div class="lessons-grid">
+                <div class="lesson-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Lessons</h2>
+                        <span class="section-badge">10 Lessons</span>
+                    </div>
+                    <div class="lessons-grid">
 
-                    <a href="Lesson_01_F360_Orientation_Kennedy.html" class="lesson-card">
-                        <div class="lesson-number">
-                            Lesson 2.1
-                            <span class="lesson-week">Week 2</span>
-                        </div>
-                        <div class="lesson-title">F360 Orientation — Kevin Kennedy Video</div>
-                        <ul class="lesson-topics">
-                            <li>Kevin Kennedy F360 for Beginners (~42 min)</li>
-                            <li>Watch #1: big-picture overview at normal speed</li>
-                            <li>Watch #2: pause and try each move in F360</li>
-                            <li>Key UI terms: Toolbar, Browser, Timeline, ViewCube</li>
-                            <li>Orientation check: sketch → extrude → save</li>
-                        </ul>
-                        <div class="lesson-meta">
-                            <span class="status-ready">Live</span>
-                        </div>
-                    </a>
+                        <a href="Lesson_01_F360_Orientation_Kennedy.html" class="lesson-card">
+                            <div class="lesson-number">Lesson 2.1 <span class="lesson-week">Week 2</span></div>
+                            <div class="lesson-title">F360 Orientation — Kevin Kennedy Video</div>
+                            <ul class="lesson-topics">
+                                <li>Kevin Kennedy F360 for Beginners (~42 min)</li>
+                                <li>Watch #1: big-picture overview at normal speed</li>
+                                <li>Watch #2: pause and try each move in F360</li>
+                                <li>Key UI terms: Toolbar, Browser, Timeline, ViewCube</li>
+                                <li>Orientation check: sketch → extrude → save</li>
+                            </ul>
+                            <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                        </a>
 
-                    <a href="Lesson_02_C1_Wheel_Hub.html" class="lesson-card">
-                        <div class="lesson-number">
-                            Lesson 2.2
-                            <span class="lesson-week">Week 3</span>
-                        </div>
-                        <div class="lesson-title">C1 — Component Modeling (Video)</div>
-                        <ul class="lesson-topics">
-                            <li>Model your first component following the instructor video</li>
-                            <li>Sketch constraints — fully constrain before extruding</li>
-                            <li>Multi-depth extrude: flange + hub / spinner body</li>
-                            <li>Fillet, Hole tool, bore dimensioning</li>
-                            <li>Export and queue for 3D printing</li>
-                        </ul>
-                        <div class="lesson-meta">
-                            <span class="status-video">Video Placeholder</span>
-                        </div>
-                    </a>
+                        <a href="Lesson_02_C1_Wheel_Hub.html" class="lesson-card">
+                            <div class="lesson-number">Lesson 2.2 <span class="lesson-week">Week 3</span></div>
+                            <div class="lesson-title">C1 — Component Modeling (Video)</div>
+                            <ul class="lesson-topics">
+                                <li>Model your first component following the instructor video</li>
+                                <li>Sketch constraints — fully constrain before extruding</li>
+                                <li>Multi-depth extrude: flange + hub</li>
+                                <li>Fillet, Hole tool, bore dimensioning</li>
+                                <li>Export and queue for 3D printing</li>
+                            </ul>
+                            <div class="lesson-meta"><span class="status-video">Video Placeholder</span></div>
+                        </a>
 
-                    <a href="Lesson_03_Measurement_Tools_Workshop.html" class="lesson-card">
-                        <div class="lesson-number">
-                            Lesson 2.3
-                            <span class="lesson-week">Week 3</span>
-                        </div>
-                        <div class="lesson-title">Measurement Tools Workshop</div>
-                        <ul class="lesson-topics">
-                            <li>Measurement categories: length, angle, depth</li>
-                            <li>Calipers, micrometers, dial indicators</li>
-                            <li>Reading and recording precise measurements</li>
-                            <li>Measure your printed C1 against design brief criteria</li>
-                        </ul>
-                        <div class="lesson-meta">
-                            <span class="status-ready">Live</span>
-                        </div>
-                    </a>
+                        <a href="Lesson_03_Measurement_Tools_Workshop.html" class="lesson-card">
+                            <div class="lesson-number">Lesson 2.3 <span class="lesson-week">Week 3</span></div>
+                            <div class="lesson-title">Measurement Tools Workshop</div>
+                            <ul class="lesson-topics">
+                                <li>Measurement categories: length, angle, depth</li>
+                                <li>Calipers, micrometers, dial indicators</li>
+                                <li>Reading and recording precise measurements</li>
+                                <li>Measure your printed C1 against design brief criteria</li>
+                            </ul>
+                            <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                        </a>
 
-                    <a href="Lesson_04_3D_Printing.html" class="lesson-card">
-                        <div class="lesson-number">
-                            Lesson 2.4
-                            <span class="lesson-week">Week 3</span>
-                        </div>
-                        <div class="lesson-title">3D Printing — Model to Part</div>
-                        <ul class="lesson-topics">
-                            <li>Export from Fusion 360 as 3MF</li>
-                            <li>Orient, infill, supports in BambuStudio</li>
-                            <li>Slicing, preview, and sending to printer</li>
-                            <li>Prepping the printer, first layer, post-processing</li>
-                            <li>Common failures and how to fix them</li>
-                        </ul>
-                        <div class="lesson-meta">
-                            <span class="status-ready">Live</span>
-                        </div>
-                    </a>
+                        <a href="Lesson_04_3D_Printing.html" class="lesson-card">
+                            <div class="lesson-number">Lesson 2.4 <span class="lesson-week">Week 3</span></div>
+                            <div class="lesson-title">3D Printing — Model to Part</div>
+                            <ul class="lesson-topics">
+                                <li>Export from Fusion 360 as 3MF</li>
+                                <li>Orient, infill, supports in BambuStudio</li>
+                                <li>Slicing, preview, and sending to printer</li>
+                                <li>Prepping the printer, first layer, post-processing</li>
+                                <li>Common failures and how to fix them</li>
+                            </ul>
+                            <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                        </a>
 
-                    <a href="Lesson_05_C2_Drive_Wheel.html" class="lesson-card">
-                        <div class="lesson-number">
-                            Lesson 2.5
-                            <span class="lesson-week">Week 4</span>
-                        </div>
-                        <div class="lesson-title">C2 — Drive Wheel Hub</div>
-                        <ul class="lesson-topics">
-                            <li>Polygon tool — hex bore for motor shaft</li>
-                            <li>Circular Pattern — symmetric spoke design</li>
-                            <li>Extrude-Cut for spoke voids</li>
-                            <li>Creative latitude: choose spoke count & style</li>
-                        </ul>
-                        <div class="lesson-meta">
-                            <span class="status-video">Video Placeholder</span>
-                        </div>
-                    </a>
+                        <a href="Lesson_05_C2_Drive_Wheel.html" class="lesson-card">
+                            <div class="lesson-number">Lesson 2.5 <span class="lesson-week">Week 4</span></div>
+                            <div class="lesson-title">C2 — Drive Wheel Hub</div>
+                            <ul class="lesson-topics">
+                                <li>Polygon tool — hex bore for motor shaft</li>
+                                <li>Circular Pattern — symmetric spoke design</li>
+                                <li>Extrude-Cut for spoke voids</li>
+                                <li>Creative latitude: choose spoke count & style</li>
+                            </ul>
+                            <div class="lesson-meta"><span class="status-video">Video Placeholder</span></div>
+                        </a>
 
-                    <a href="Lesson_06_C3_Motor_Mount.html" class="lesson-card">
-                        <div class="lesson-number">
-                            Lesson 2.6
-                            <span class="lesson-week">Week 5</span>
-                        </div>
-                        <div class="lesson-title">C3 — Motor Sleeve Mount</div>
-                        <ul class="lesson-topics">
-                            <li>Sleeve bore sized from motor model (Inspect → Measure)</li>
-                            <li>T-slot nut-capture rail — cross-section profile</li>
-                            <li>Face screw holes matching motor flange pattern</li>
-                            <li>Sketching on non-XZ planes</li>
-                        </ul>
-                        <div class="lesson-meta">
-                            <span class="status-video">Video Placeholder</span>
-                        </div>
-                    </a>
+                        <a href="Lesson_06_C3_Motor_Mount.html" class="lesson-card">
+                            <div class="lesson-number">Lesson 2.6 <span class="lesson-week">Week 5</span></div>
+                            <div class="lesson-title">C3 — Motor Sleeve Mount</div>
+                            <ul class="lesson-topics">
+                                <li>Sleeve bore sized from motor model (Inspect → Measure)</li>
+                                <li>T-slot nut-capture rail — cross-section profile</li>
+                                <li>Face screw holes matching motor flange pattern</li>
+                                <li>Sketching on non-XZ planes</li>
+                            </ul>
+                            <div class="lesson-meta"><span class="status-video">Video Placeholder</span></div>
+                        </a>
 
-                    <a href="Lesson_07_C4_Deck_Assembly.html" class="lesson-card">
-                        <div class="lesson-number">
-                            Lesson 2.7
-                            <span class="lesson-week">Week 6</span>
-                        </div>
-                        <div class="lesson-title">C4 — Deck & Assembly Intro</div>
-                        <ul class="lesson-topics">
-                            <li>Fusion 360 assembly environment</li>
-                            <li>Insert linked component, Move/Free Joint</li>
-                            <li>Edit component in-context</li>
-                            <li>As-Built Joint / Rigid Joint constraint</li>
-                            <li>Interference Check workflow</li>
-                        </ul>
-                        <div class="lesson-meta">
-                            <span class="status-video">Video Placeholder</span>
-                        </div>
-                    </a>
+                        <a href="Lesson_07_C4_Deck_Assembly.html" class="lesson-card">
+                            <div class="lesson-number">Lesson 2.7 <span class="lesson-week">Week 6</span></div>
+                            <div class="lesson-title">C4 — Deck & Assembly Intro</div>
+                            <ul class="lesson-topics">
+                                <li>Fusion 360 assembly environment</li>
+                                <li>Insert linked component, Move/Free Joint</li>
+                                <li>Edit component in-context</li>
+                                <li>As-Built Joint / Rigid Joint constraint</li>
+                                <li>Interference Check workflow</li>
+                            </ul>
+                            <div class="lesson-meta"><span class="status-video">Video Placeholder</span></div>
+                        </a>
 
-                    <a href="Lesson_08_C5_C6_C7_Assembly.html" class="lesson-card">
-                        <div class="lesson-number">
-                            Lesson 2.8
-                            <span class="lesson-week">Week 7</span>
-                        </div>
-                        <div class="lesson-title">C5 · C6 · C7 — Mounts & Final Assembly</div>
-                        <ul class="lesson-topics">
-                            <li>C5 Omni Wheel Mount — multi-plane sketch, reference geometry</li>
-                            <li>C6 IR Sensor Mount — Mirror tool, Slot tool</li>
-                            <li>C7 Ultrasonic Mount — large-bore circle, L-bracket</li>
-                            <li>Full assembly integration + Interference Check: zero collisions</li>
-                        </ul>
-                        <div class="lesson-meta">
-                            <span class="status-video">Video Placeholder</span>
-                        </div>
-                    </a>
+                        <a href="Lesson_08_C5_C6_C7_Assembly.html" class="lesson-card">
+                            <div class="lesson-number">Lesson 2.8 <span class="lesson-week">Week 7</span></div>
+                            <div class="lesson-title">C5 · C6 · C7 — Mounts & Final Assembly</div>
+                            <ul class="lesson-topics">
+                                <li>C5 Omni Wheel Mount — multi-plane sketch, reference geometry</li>
+                                <li>C6 IR Sensor Mount — Mirror tool, Slot tool</li>
+                                <li>C7 Ultrasonic Mount — large-bore circle, L-bracket</li>
+                                <li>Full assembly + Interference Check: zero collisions</li>
+                            </ul>
+                            <div class="lesson-meta"><span class="status-video">Video Placeholder</span></div>
+                        </a>
 
-                    <a href="Lesson_09_F360_Manufacturing_Setup.html" class="lesson-card">
-                        <div class="lesson-number">
-                            Lesson 2.9
-                            <span class="lesson-week">Week 8</span>
-                        </div>
-                        <div class="lesson-title">F360 Manufacturing Setup</div>
-                        <ul class="lesson-topics">
-                            <li>Design workspace vs. Manufacturing workspace</li>
-                            <li>Machine libraries — OMIO X8 and Crossfire Pro definitions</li>
-                            <li>Post-processors: what they do and how to install them</li>
-                            <li>Tool libraries — creating and managing tool definitions</li>
-                            <li>Lab: verify your setup before generating toolpaths</li>
-                        </ul>
-                        <div class="lesson-meta">
-                            <span class="status-ready">Live</span>
-                        </div>
-                    </a>
+                        <a href="Lesson_09_F360_Manufacturing_Setup.html" class="lesson-card">
+                            <div class="lesson-number">Lesson 2.9 <span class="lesson-week">Week 8</span></div>
+                            <div class="lesson-title">F360 Manufacturing Setup</div>
+                            <ul class="lesson-topics">
+                                <li>Design workspace vs. Manufacturing workspace</li>
+                                <li>Machine libraries — OMIO X8 and Crossfire Pro definitions</li>
+                                <li>Post-processors: what they do and how to install them</li>
+                                <li>Tool libraries — creating and managing tool definitions</li>
+                                <li>Lab: verify your setup before generating toolpaths</li>
+                            </ul>
+                            <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                        </a>
 
-                    <a href="Lesson_10_CAM_Toolpaths.html" class="lesson-card">
-                        <div class="lesson-number">
-                            Lesson 2.10
-                            <span class="lesson-week">Week 8</span>
-                        </div>
-                        <div class="lesson-title">CAM & Toolpath Generation</div>
-                        <ul class="lesson-topics">
-                            <li>CAM workflow: Setup → Toolpath → Simulate → Post</li>
-                            <li>Work Coordinate System (WCS) and stock definition</li>
-                            <li>2D Contour and 2D Pocket toolpaths</li>
-                            <li>Feeds, speeds, depth of cut — and why they matter</li>
-                            <li>Simulating toolpaths; adding tabs to keep parts secure</li>
-                            <li>Generating G-code for the OMIO CNC router</li>
-                            <li>Lab: generate toolpaths for the C4 Robot Deck</li>
-                        </ul>
-                        <div class="lesson-meta">
-                            <span class="status-ready">Live</span>
-                        </div>
-                    </a>
+                        <a href="Lesson_10_CAM_Toolpaths.html" class="lesson-card">
+                            <div class="lesson-number">Lesson 2.10 <span class="lesson-week">Week 8</span></div>
+                            <div class="lesson-title">CAM & Toolpath Generation</div>
+                            <ul class="lesson-topics">
+                                <li>CAM workflow: Setup → Toolpath → Simulate → Post</li>
+                                <li>Work Coordinate System (WCS) and stock definition</li>
+                                <li>2D Contour and 2D Pocket toolpaths</li>
+                                <li>Feeds, speeds, depth of cut — and why they matter</li>
+                                <li>Simulating toolpaths; adding tabs to keep parts secure</li>
+                                <li>Generating G-code for the OMIO CNC router</li>
+                                <li>Lab: generate toolpaths for the C4 Robot Deck</li>
+                            </ul>
+                            <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                        </a>
 
+                    </div>
                 </div>
-            </div>
 
-            <!-- Multilevel Notes -->
+            </div><!-- /.track-aer -->
+
+            <!-- ═══════════════════════════════════════════
+                 DBL CONTENT — hidden by default, shown via JS
+                 ═══════════════════════════════════════════ -->
+            <div class="track-dbl">
+
+                <div class="unit-header">
+                    <h1 class="unit-title">Unit 2 — CAD & Prototyping</h1>
+                    <p class="unit-description">
+                        Design and iterate the core parts of your first project in Fusion 360. You'll orient to the workspace, model the fidget spinner's bearing seat and body, build an assembly, and iterate based on your print results — the full engineering loop before moving on to CNC work.
+                    </p>
+                    <div class="unit-meta">
+                        <span class="meta-badge">P1 · Weeks 1–3</span>
+                        <span class="meta-badge">Fidget Spinner</span>
+                        <span class="meta-badge">Fusion 360</span>
+                        <span class="meta-badge">FDM Printing</span>
+                    </div>
+                </div>
+
+                <div class="lesson-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Parts You'll Model</h2>
+                        <span class="section-badge">P1 Components</span>
+                    </div>
+                    <div class="component-summary">
+                        <div class="component-badge"><div class="c-num">C1</div><div class="c-name">Bearing Seat</div></div>
+                        <div class="component-badge"><div class="c-num">C2</div><div class="c-name">Spinner Body</div></div>
+                        <div class="component-badge"><div class="c-num">C3</div><div class="c-name">Assembly</div></div>
+                    </div>
+                </div>
+
+                <div class="lesson-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Lessons</h2>
+                        <span class="section-badge">8 Lessons</span>
+                    </div>
+                    <div class="lessons-grid">
+
+                        <a href="Lesson_01_F360_Orientation_Kennedy.html" class="lesson-card">
+                            <div class="lesson-number">Lesson 2.1 <span class="lesson-week">Week 1</span></div>
+                            <div class="lesson-title">F360 Orientation — Kevin Kennedy Video</div>
+                            <ul class="lesson-topics">
+                                <li>Kevin Kennedy F360 for Beginners (~42 min)</li>
+                                <li>Watch #1: big-picture overview at normal speed</li>
+                                <li>Watch #2: pause and try each move in F360</li>
+                                <li>Key UI terms: Toolbar, Browser, Timeline, ViewCube</li>
+                                <li>Orientation check: sketch → extrude → save</li>
+                            </ul>
+                            <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                        </a>
+
+                        <a href="Lesson_02_Bearing_Seat_DBL.html" class="lesson-card">
+                            <div class="lesson-number">Lesson 2.2 <span class="lesson-week">Week 1</span></div>
+                            <div class="lesson-title">C1 — Bearing Seat (Video)</div>
+                            <ul class="lesson-topics">
+                                <li>Model the MR128 bearing seat (12mm OD × 3.5mm bore)</li>
+                                <li>Sketch constraints — fully constrain before extruding</li>
+                                <li>Hole tool: press-fit vs. slip-fit bore tolerancing</li>
+                                <li>Export and queue for 3D printing</li>
+                            </ul>
+                            <div class="lesson-meta"><span class="status-video">Video Placeholder</span></div>
+                        </a>
+
+                        <a href="Lesson_03_Measurement_Tools_Workshop.html" class="lesson-card">
+                            <div class="lesson-number">Lesson 2.3 <span class="lesson-week">Week 1</span></div>
+                            <div class="lesson-title">Measurement Tools Workshop</div>
+                            <ul class="lesson-topics">
+                                <li>Measurement categories: length, angle, depth</li>
+                                <li>Calipers, micrometers, dial indicators</li>
+                                <li>Reading and recording precise measurements</li>
+                                <li>Measure your printed C1 against design brief criteria</li>
+                            </ul>
+                            <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                        </a>
+
+                        <a href="Lesson_04_3D_Printing.html" class="lesson-card">
+                            <div class="lesson-number">Lesson 2.4 <span class="lesson-week">Week 1</span></div>
+                            <div class="lesson-title">3D Printing — Model to Part</div>
+                            <ul class="lesson-topics">
+                                <li>Export from Fusion 360 as 3MF</li>
+                                <li>Orient, infill, supports in BambuStudio</li>
+                                <li>Slicing, preview, and sending to printer</li>
+                                <li>Common failures and how to fix them</li>
+                            </ul>
+                            <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                        </a>
+
+                        <a href="Lesson_05_Spinner_Body_DBL.html" class="lesson-card">
+                            <div class="lesson-number">Lesson 2.5 <span class="lesson-week">Week 2</span></div>
+                            <div class="lesson-title">C2 — Spinner Body Design (Video)</div>
+                            <ul class="lesson-topics">
+                                <li>Three-lobe layout — circular pattern from center</li>
+                                <li>Bearing bores: three pockets sized to your C1 OD</li>
+                                <li>Weight distribution and balance considerations</li>
+                                <li>Export and queue for 3D printing</li>
+                            </ul>
+                            <div class="lesson-meta"><span class="status-video">Video Placeholder</span></div>
+                        </a>
+
+                        <a href="Lesson_06_Assembly_Iteration_DBL.html" class="lesson-card">
+                            <div class="lesson-number">Lesson 2.6 <span class="lesson-week">Week 2</span></div>
+                            <div class="lesson-title">Assembly & Iteration</div>
+                            <ul class="lesson-topics">
+                                <li>Fusion 360 assembly: seat bearing into spinner body pockets</li>
+                                <li>Print, assemble, and spin-test</li>
+                                <li>Measure fit: tight, loose, or right?</li>
+                                <li>Edit model → re-print → document changes (iteration log)</li>
+                            </ul>
+                            <div class="lesson-meta"><span class="status-video">Video Placeholder</span></div>
+                        </a>
+
+                        <a href="Lesson_09_F360_Manufacturing_Setup.html" class="lesson-card">
+                            <div class="lesson-number">Lesson 2.9 <span class="lesson-week">Week 3+</span></div>
+                            <div class="lesson-title">F360 Manufacturing Setup</div>
+                            <ul class="lesson-topics">
+                                <li>Design workspace vs. Manufacturing workspace</li>
+                                <li>Machine libraries — OMIO X8 and Crossfire Pro</li>
+                                <li>Post-processors: what they do and how to install them</li>
+                                <li>Tool libraries — creating and managing definitions</li>
+                            </ul>
+                            <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                        </a>
+
+                        <a href="Lesson_10_CAM_Toolpaths.html" class="lesson-card">
+                            <div class="lesson-number">Lesson 2.10 <span class="lesson-week">Week 3+</span></div>
+                            <div class="lesson-title">CAM & Toolpath Generation</div>
+                            <ul class="lesson-topics">
+                                <li>CAM workflow: Setup → Toolpath → Simulate → Post</li>
+                                <li>Work Coordinate System (WCS) and stock definition</li>
+                                <li>2D Contour and 2D Pocket toolpaths</li>
+                                <li>Generating G-code for the OMIO CNC router</li>
+                            </ul>
+                            <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                        </a>
+
+                    </div>
+                </div>
+
+            </div><!-- /.track-dbl -->
+
+            <!-- ═══════════════════════════════════════════
+                 SHARED: Grading Levels (both tracks)
+                 ═══════════════════════════════════════════ -->
             <div class="lesson-section">
                 <div class="section-header">
                     <h2 class="section-title">Grading Levels</h2>
@@ -688,18 +769,19 @@
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
                     <div style="background: rgba(0,208,132,0.07); border: 1px solid rgba(0,208,132,0.25); border-radius: 8px; padding: 20px;">
                         <div style="font-family:'Rajdhani',sans-serif; color:#00d084; font-weight:700; font-size:1.1rem; margin-bottom:10px;">Level 1 — C Grade</div>
-                        <p style="font-size:0.9rem; color:#b0b0b0; line-height:1.6;">Replicate the component exactly as specified in the lesson. All dimensions match, sketch fully constrained, assembly passes interference check.</p>
+                        <p style="font-size:0.9rem; color:#b0b0b0; line-height:1.6;">Replicate the part exactly as specified. All dimensions match, sketch fully constrained, print passes fit check.</p>
                     </div>
                     <div style="background: rgba(255,209,102,0.07); border: 1px solid rgba(255,209,102,0.25); border-radius: 8px; padding: 20px;">
                         <div style="font-family:'Rajdhani',sans-serif; color:#ffd166; font-weight:700; font-size:1.1rem; margin-bottom:10px;">Level 2 — B Grade</div>
-                        <p style="font-size:0.9rem; color:#b0b0b0; line-height:1.6;">Complete Level 1, then apply the modifications described in the component's Activity Guide — altered geometry that still meets functional requirements.</p>
+                        <p style="font-size:0.9rem; color:#b0b0b0; line-height:1.6;">Complete Level 1, then apply modifications from the Activity Guide — altered geometry that still meets functional requirements.</p>
                     </div>
                     <div style="background: rgba(196,30,58,0.07); border: 1px solid rgba(196,30,58,0.25); border-radius: 8px; padding: 20px;">
                         <div style="font-family:'Rajdhani',sans-serif; color:#ff6b7a; font-weight:700; font-size:1.1rem; margin-bottom:10px;">Level 3 — A Grade</div>
-                        <p style="font-size:0.9rem; color:#b0b0b0; line-height:1.6;">Complete Level 2, then redesign one component using the same functional requirements but a different design approach. Justify your choices in the iteration log.</p>
+                        <p style="font-size:0.9rem; color:#b0b0b0; line-height:1.6;">Complete Level 2, then redesign using the same functional requirements but a different design approach. Justify your choices in the iteration log.</p>
                     </div>
                 </div>
             </div>
+
         </main>
     </div>
 
@@ -720,6 +802,12 @@
         if (!track || !TRACKS[track]) return;
         localStorage.setItem('cteTrack', track);
         var cfg = TRACKS[track];
+
+        // Show/hide track-conditional content (CSS default hides .track-dbl)
+        if (track === 'dbl') {
+            document.querySelectorAll('.track-aer').forEach(function(el) { el.style.display = 'none'; });
+            document.querySelectorAll('.track-dbl').forEach(function(el) { el.style.display = 'block'; });
+        }
 
         var el = document.querySelector('.course-title-compact');
         if (el) el.textContent = cfg.label;
