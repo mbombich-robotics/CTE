@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 2.6: Assembly &amp; Iteration | Unit 2 — CAD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #050a14 0%, #0a1628 40%, #0d1f3c 100%);
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.2em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #60a5fa;
+            text-shadow: 0 0 30px rgba(96,165,250,0.4);
+            line-height: 1.15;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 28px;
+            color: #93c5fd;
+            text-align: center;
+        }
+
+        .lesson-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #60a5fa;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            text-align: center;
+            color: #94a3b8;
+            font-weight: 300;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        /* Bullet lists */
+        .bullet-list { list-style: none; padding: 0; margin: 20px 0; }
+
+        .bullet-list li {
+            font-size: 1.4em;
+            padding: 10px 0 10px 46px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .bullet-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #60a5fa;
+            font-size: 1.1em;
+        }
+
+        .bullet-list li strong { color: #e2e8f0; }
+
+        /* Callout */
+        .callout {
+            background: rgba(96,165,250,0.08);
+            border-left: 5px solid #60a5fa;
+            border-radius: 0 10px 10px 0;
+            padding: 22px 28px;
+            margin: 20px 0;
+            font-size: 1.35em;
+            font-style: italic;
+            color: #93c5fd;
+            line-height: 1.5;
+        }
+
+        .callout strong { color: #e2e8f0; font-style: normal; }
+
+        /* Step list */
+        .step-list { list-style: none; padding: 0; margin: 18px 0; counter-reset: step-counter; }
+
+        .step-list li {
+            font-size: 1.2em;
+            padding: 12px 14px 12px 62px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            background: rgba(96,165,250,0.04);
+            border-radius: 8px;
+        }
+
+        .step-list li::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: rgba(96,165,250,0.18);
+            border: 2px solid #60a5fa;
+            border-radius: 50%;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #60a5fa;
+            text-align: center;
+            line-height: 28px;
+        }
+
+        .step-list li strong { color: #93c5fd; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(96,165,250,0.12);
+            color: #93c5fd;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Two-column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin: 20px 0;
+        }
+
+        .col-box {
+            background: rgba(96,165,250,0.06);
+            border: 1px solid rgba(96,165,250,0.2);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .col-box h4 {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #60a5fa;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .col-box ul { list-style: none; padding: 0; }
+
+        .col-box ul li {
+            font-size: 1.05em;
+            color: #94a3b8;
+            padding: 7px 0 7px 26px;
+            position: relative;
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(96,165,250,0.07);
+        }
+
+        .col-box ul li:last-child { border-bottom: none; }
+        .col-box ul li::before { content: "▸"; position: absolute; left: 0; color: #60a5fa; }
+        .col-box ul li strong { color: #e2e8f0; }
+        .col-box p { font-size: 1.05em; color: #94a3b8; line-height: 1.6; }
+
+        /* Phase cards for slide 2 */
+        .phase-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin: 24px 0;
+        }
+
+        .phase-card {
+            border-radius: 14px;
+            padding: 28px;
+            text-align: center;
+        }
+
+        .phase-cad { background: rgba(96,165,250,0.08); border: 2px solid #60a5fa; }
+        .phase-build { background: rgba(16,185,129,0.08); border: 2px solid #10b981; }
+
+        .phase-num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85em;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .phase-cad .phase-num { color: #60a5fa; }
+        .phase-build .phase-num { color: #10b981; }
+
+        .phase-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5em;
+            font-weight: 900;
+            margin-bottom: 14px;
+        }
+
+        .phase-cad .phase-title { color: #93c5fd; }
+        .phase-build .phase-title { color: #6ee7b7; }
+
+        .phase-card p { font-size: 1.05em; color: #94a3b8; line-height: 1.6; }
+
+        /* Iteration loop diagram */
+        .loop-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 28px 0;
+            flex-wrap: nowrap;
+        }
+
+        .loop-step {
+            background: rgba(96,165,250,0.08);
+            border: 2px solid rgba(96,165,250,0.3);
+            border-radius: 10px;
+            padding: 16px 14px;
+            text-align: center;
+            min-width: 120px;
+            flex: 1;
+        }
+
+        .loop-step .l-icon { font-size: 1.6em; margin-bottom: 6px; }
+
+        .loop-step .l-label {
+            font-size: 0.9em;
+            font-weight: 700;
+            color: #93c5fd;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .loop-step .l-sub {
+            font-size: 0.75em;
+            color: #64748b;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        .loop-arrow {
+            font-size: 1.8em;
+            color: #475569;
+            flex-shrink: 0;
+        }
+
+        /* Fit diagnosis table */
+        .diag-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+
+        .diag-table th {
+            background: rgba(96,165,250,0.12);
+            color: #93c5fd;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 2px solid rgba(96,165,250,0.25);
+        }
+
+        .diag-table td {
+            padding: 12px 16px;
+            font-size: 1em;
+            border-bottom: 1px solid rgba(96,165,250,0.08);
+            color: #cbd5e1;
+            vertical-align: top;
+            line-height: 1.5;
+        }
+
+        .diag-table td:first-child { font-weight: 700; color: #e2e8f0; }
+        .diag-table td:last-child { color: #60a5fa; font-family: 'JetBrains Mono', monospace; font-size: 0.9em; }
+
+        /* Iteration log box */
+        .log-box {
+            background: rgba(96,165,250,0.05);
+            border: 1px solid rgba(96,165,250,0.2);
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin: 16px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #94a3b8;
+            line-height: 1.8;
+        }
+
+        .log-box .log-field { color: #60a5fa; font-weight: 700; }
+        .log-box .log-blank {
+            display: inline-block;
+            min-width: 120px;
+            border-bottom: 1px solid #475569;
+            margin-left: 6px;
+        }
+
+        /* Deliverable cards */
+        .deliverable-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+            margin: 24px 0;
+        }
+
+        .deliverable-card {
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .d-pb { background: rgba(96,165,250,0.08); border: 2px solid rgba(96,165,250,0.4); }
+        .d-pc { background: rgba(16,185,129,0.07); border: 2px solid rgba(16,185,129,0.4); }
+
+        .deliverable-card h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1em;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .d-pb h4 { color: #60a5fa; }
+        .d-pc h4 { color: #10b981; }
+
+        .deliverable-card ul { list-style: none; padding: 0; }
+
+        .deliverable-card ul li {
+            font-size: 1em;
+            color: #cbd5e1;
+            padding: 7px 0 7px 28px;
+            position: relative;
+            line-height: 1.4;
+        }
+
+        .d-pb ul li::before { content: "✓"; position: absolute; left: 0; color: #60a5fa; font-weight: 700; }
+        .d-pc ul li::before { content: "✓"; position: absolute; left: 0; color: #10b981; font-weight: 700; }
+
+        .due-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .d-pb .due-badge { background: rgba(96,165,250,0.15); color: #93c5fd; }
+        .d-pc .due-badge { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+
+        /* Video placeholder */
+        .video-placeholder {
+            background: rgba(96,165,250,0.05);
+            border: 2px dashed rgba(96,165,250,0.3);
+            border-radius: 12px;
+            padding: 28px;
+            text-align: center;
+            margin: 16px 0;
+        }
+
+        .video-placeholder .vid-icon { font-size: 2.5em; margin-bottom: 10px; }
+        .video-placeholder p { font-size: 1.1em; color: #64748b; }
+        .video-placeholder .vid-title { color: #93c5fd; font-size: 1.25em; font-weight: 700; margin-bottom: 8px; }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(5,10,20,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(96,165,250,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
+        }
+
+        .nav button {
+            background: rgba(96,165,250,0.15);
+            color: #93c5fd;
+            border: 1px solid rgba(96,165,250,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover { background: rgba(96,165,250,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 24px;
+            font-size: 0.9em;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #60a5fa; }
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Unit 2</a>
+
+<div class="presentation">
+
+    <!-- ── SLIDE 1: Title ── -->
+    <div class="slide active">
+        <div class="slide-content" style="text-align:center;">
+            <div class="lesson-tag">Unit 2 · Lesson 2.6 · Design &amp; Build Lab</div>
+            <h1>Assembly &amp; Iteration</h1>
+            <p class="subtitle">
+                Build it in Fusion 360.<br>
+                Build it in real life.<br>
+                Fix what doesn't work.
+            </p>
+            <div style="margin-top:40px; display:flex; justify-content:center; gap:30px; flex-wrap:wrap;">
+                <div style="background:rgba(96,165,250,0.1); border:1px solid rgba(96,165,250,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#60a5fa;">Fusion 360</div>
+                <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#6ee7b7;">Shop Build</div>
+                <div style="background:rgba(96,165,250,0.1); border:1px solid rgba(96,165,250,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#60a5fa;">Week 2–3</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 2: Two phases ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Two Phases, One Lesson</h2>
+            <div class="phase-grid">
+                <div class="phase-card phase-cad">
+                    <div class="phase-num">PHASE 1</div>
+                    <div class="phase-title">CAD Assembly</div>
+                    <p>Seat the MR128 bearings into C2 inside Fusion 360. This is your digital proof-of-concept — you're verifying that the parts fit together before anyone has touched a printer.</p>
+                </div>
+                <div class="phase-card phase-build">
+                    <div class="phase-num">PHASE 2</div>
+                    <div class="phase-title">Physical Build</div>
+                    <p>Press the real bearings into the printed C2. Spin-test it. Measure the actual fit and compare to what you expected. If something's off, iterate — adjust C2, reprint, retest.</p>
+                </div>
+            </div>
+            <div class="callout">
+                Both phases produce <strong>deliverable evidence</strong> — screenshots from Phase 1, a photo of the assembled spinner from Phase 2.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 3: Why assemble in F360? ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Why Assemble in Fusion 360?</h2>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>What the assembly shows you</h4>
+                    <ul>
+                        <li>Whether the bearing <strong>sits flush</strong> in the pocket (not proud, not recessed)</li>
+                        <li>Whether the center bearing's inner race is accessible for gripping</li>
+                        <li>Whether the three arm bearings are evenly spaced — balance check without printing</li>
+                        <li>A clean isometric view for your <strong>D_P1B screenshot</strong></li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>What it can't tell you</h4>
+                    <ul>
+                        <li>Whether the <strong>fit is tight enough</strong> — your printer's tolerance determines that, not the model</li>
+                        <li>Whether the spinner will <strong>wobble</strong> — only a real spin test reveals that</li>
+                        <li>How the part <strong>feels in hand</strong> — weight, balance, grip</li>
+                    </ul>
+                    <p style="margin-top:12px; font-size:0.95em; color:#64748b;">The CAD assembly is a visual and dimensional check, not a functional test. You still have to build it.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 4: F360 assembly steps ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Phase 1 — F360 Assembly Steps</h2>
+            <ol class="step-list">
+                <li><strong>Open your C2_Spinner_Body</strong> design. In the Browser, confirm the C2 component is present and active.</li>
+                <li>Go to <strong>Insert → Insert into Current Design</strong>. Browse to your saved <code>C1_MR128_Bearing</code> file. Click Open.</li>
+                <li>A bearing body appears in the viewport. Use <strong>Move/Copy</strong> to position it over the center pocket. Align the bearing center to the pocket center on the Z-axis.</li>
+                <li>Right-click the bearing in the Browser → <strong>Ground</strong> it in place. (Grounding fixes the component so it doesn't drift.)</li>
+                <li>Insert the C1 component <strong>three more times</strong> — once for each arm pocket. Position each one at its arm pocket center.</li>
+                <li>Orbit around the assembly. Confirm each bearing sits flush with the C2 face — <strong>no overhang, no gap</strong>.</li>
+                <li><strong>Take two screenshots</strong>: one isometric view (ViewCube corner), one top-down view. Save them for D_P1B.</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 5: Video placeholder ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Instructor Walkthrough</h2>
+            <div class="video-placeholder">
+                <div class="vid-icon">🎬</div>
+                <p class="vid-title">Assembly &amp; Iteration Walkthrough</p>
+                <p>Instructor video coming soon — follow the steps on slides 4 and 6.</p>
+            </div>
+            <ul class="bullet-list" style="margin-top:12px;">
+                <li>The F360 assembly and physical build <strong>happen in parallel</strong> — do F360 while the part is printing.</li>
+                <li>You don't need the physical part to complete Phase 1 — screenshots can be taken from the model alone.</li>
+                <li>Phase 2 starts as soon as the print comes off the bed.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 6: Physical assembly ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Phase 2 — Physical Assembly</h2>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>Pressing bearings in</h4>
+                    <ul>
+                        <li>Lay C2 flat on the table (smooth side up)</li>
+                        <li>Position a bearing over a pocket — <strong>outer race down</strong>, centered</li>
+                        <li>Press straight down with your thumb, or use a flat block to distribute the force evenly</li>
+                        <li>Listen for a soft click — that's the bearing seating fully flush</li>
+                        <li>Repeat for all four pockets: three arm pockets + center</li>
+                        <li>Check flush from the side — no bearing should sit proud of the surface</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>If it doesn't press in cleanly</h4>
+                    <ul>
+                        <li><strong>Too tight (won't start):</strong> use a clamp with flat pads, or gently sand the pocket opening with 220-grit. Don't force it or the body may crack.</li>
+                        <li><strong>Too loose (falls out):</strong> a single drop of CA glue in the pocket before pressing. Hold 30 sec. Don't glue the inner race — only the outer.</li>
+                        <li><strong>Tilted entry:</strong> keep pressure dead-center. A tilted press can crack thin walls.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 7: Spin test ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>The Spin Test</h2>
+            <div class="callout">
+                Pinch the <strong>inner race</strong> of the center bearing between thumb and index finger. Flick one of the arms. Watch what happens.
+            </div>
+            <table class="diag-table">
+                <thead>
+                    <tr>
+                        <th>What you observe</th>
+                        <th>What it means</th>
+                        <th>Fix</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Spins freely, stays level</td>
+                        <td>Good fit, balanced mass</td>
+                        <td>none — take your photo</td>
+                    </tr>
+                    <tr>
+                        <td>Wobbles or tilts</td>
+                        <td>One or more bearings not fully seated, or arm mass is unequal</td>
+                        <td>press bearings fully flush; check arm symmetry in F360</td>
+                    </tr>
+                    <tr>
+                        <td>Stops quickly</td>
+                        <td>Bearing rubbing against pocket wall, or dirty bearing</td>
+                        <td>check pocket size; clean bearing with isopropyl alcohol</td>
+                    </tr>
+                    <tr>
+                        <td>Arm bearing falls out during spin</td>
+                        <td>Pocket too loose</td>
+                        <td>CA glue — or redesign pocket diameter</td>
+                    </tr>
+                    <tr>
+                        <td>Body cracked at pocket</td>
+                        <td>Wall too thin or bearing forced in at an angle</td>
+                        <td>increase wall thickness in F360; reprint</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 8: Iteration loop ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>The Iteration Loop</h2>
+            <div class="loop-row">
+                <div class="loop-step">
+                    <div class="l-icon">🔍</div>
+                    <div class="l-label">Measure</div>
+                    <div class="l-sub">Calipers on the real part. Compare to your model.</div>
+                </div>
+                <div class="loop-arrow">→</div>
+                <div class="loop-step">
+                    <div class="l-icon">✏️</div>
+                    <div class="l-label">Adjust</div>
+                    <div class="l-sub">Change one dimension in F360. Only one at a time.</div>
+                </div>
+                <div class="loop-arrow">→</div>
+                <div class="loop-step">
+                    <div class="l-icon">🖨️</div>
+                    <div class="l-label">Reprint</div>
+                    <div class="l-sub">Print the full C2 or a single-arm test piece.</div>
+                </div>
+                <div class="loop-arrow">→</div>
+                <div class="loop-step">
+                    <div class="l-icon">🔄</div>
+                    <div class="l-label">Test</div>
+                    <div class="l-sub">Press in bearings. Spin. Did it improve?</div>
+                </div>
+                <div class="loop-arrow">→</div>
+                <div class="loop-step" style="border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.08);">
+                    <div class="l-icon">✅</div>
+                    <div class="l-label" style="color:#6ee7b7;">Done</div>
+                    <div class="l-sub">Spins freely, bearings seated. Document and deliver.</div>
+                </div>
+            </div>
+            <div class="callout" style="margin-top:8px;">
+                <strong>Change one thing at a time.</strong> If you adjust the pocket size AND the arm width in the same print, you won't know which change fixed (or caused) the problem.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 9: Documenting the iteration ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Documenting Your Iteration</h2>
+            <p style="font-size:1.2em; color:#94a3b8; text-align:center; margin-bottom:20px;">For each iteration, fill in one log entry. This is your evidence of engineering thinking — not just "I changed it," but <em>why</em> and <em>what happened</em>.</p>
+            <div class="log-box">
+                <span class="log-field">Version:</span><span class="log-blank"></span>&nbsp;&nbsp;
+                <span class="log-field">Date:</span><span class="log-blank"></span><br>
+                <span class="log-field">What I observed:</span><span class="log-blank" style="min-width:300px;"></span><br>
+                <span class="log-field">What I changed:</span><span class="log-blank" style="min-width:300px;"></span><br>
+                <span class="log-field">Why I changed it:</span><span class="log-blank" style="min-width:300px;"></span><br>
+                <span class="log-field">Result after reprint:</span><span class="log-blank" style="min-width:280px;"></span>
+            </div>
+            <ul class="bullet-list" style="margin-top:8px;">
+                <li>Minimum <strong>one iteration</strong> required for D_P1C — even if your first print worked, document what you tested and confirmed.</li>
+                <li>More iterations = more evidence of the engineering process. Each one counts.</li>
+                <li>The iteration log goes in your portfolio submission alongside the D_P1C photo.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 10: Deliverables ── -->
+    <div class="slide">
+        <div class="slide-content" style="text-align:center;">
+            <h2>P1 Deliverables</h2>
+            <div class="deliverable-grid" style="max-width:900px; margin:0 auto;">
+                <div class="deliverable-card d-pb">
+                    <span class="due-badge">End of Week 2</span>
+                    <h4>D_P1B — CAD Package</h4>
+                    <ul>
+                        <li>Screenshot: C1 MR128 bearing model (isometric)</li>
+                        <li>Screenshot: C2 spinner body model (isometric)</li>
+                        <li>Screenshot: F360 assembly — bearings seated in C2</li>
+                        <li>Screenshot: F360 assembly — top-down view</li>
+                    </ul>
+                </div>
+                <div class="deliverable-card d-pc">
+                    <span class="due-badge">End of Week 3</span>
+                    <h4>D_P1C — Finished Product</h4>
+                    <ul>
+                        <li>Photo: assembled spinner held in hand</li>
+                        <li>Photo: top-down view on a flat surface</li>
+                        <li>Iteration log: at least one entry with observed issue, change made, and result</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="margin-top:24px;">
+                <a href="index.html"
+                   style="background:rgba(96,165,250,0.15); border:1px solid rgba(96,165,250,0.4); color:#93c5fd; text-decoration:none; padding:12px 28px; border-radius:8px; font-weight:700; font-size:1.1em;">
+                    ← Back to Unit 2
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div><!-- /.presentation -->
+
+<!-- Navigation -->
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 10</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
+
+<script>
+    var slides = document.querySelectorAll('.slide');
+    var current = 0;
+
+    function showSlide(n) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(n, slides.length - 1));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    }
+
+    function changeSlide(dir) { showSlide(current + dir); }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+
+</body>
+</html>
