@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 2.2: C1 — MR128 Bearing Model | Unit 2 — CAD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #050a14 0%, #0a1628 40%, #0d1f3c 100%);
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        /* Typography */
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.2em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #60a5fa;
+            text-shadow: 0 0 30px rgba(96,165,250,0.4);
+            line-height: 1.15;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #93c5fd;
+            text-align: center;
+        }
+
+        h3 {
+            font-size: 1.6em;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #60a5fa;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            text-align: center;
+            color: #94a3b8;
+            font-weight: 300;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        .lesson-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #60a5fa;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Bullet lists */
+        .bullet-list { list-style: none; padding: 0; margin: 24px 0; }
+
+        .bullet-list li {
+            font-size: 1.45em;
+            padding: 12px 0 12px 48px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .bullet-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #60a5fa;
+            font-size: 1.1em;
+        }
+
+        .bullet-list li strong { color: #e2e8f0; }
+
+        /* Callout boxes */
+        .callout {
+            background: rgba(96,165,250,0.08);
+            border-left: 5px solid #60a5fa;
+            border-radius: 0 10px 10px 0;
+            padding: 24px 30px;
+            margin: 24px 0;
+            font-size: 1.5em;
+            font-style: italic;
+            color: #93c5fd;
+            line-height: 1.5;
+        }
+
+        .callout strong { color: #e2e8f0; font-style: normal; }
+
+        /* Spec grid */
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin: 32px 0;
+        }
+
+        .spec-card {
+            background: rgba(96,165,250,0.07);
+            border: 2px solid rgba(96,165,250,0.3);
+            border-radius: 12px;
+            padding: 28px 20px;
+            text-align: center;
+        }
+
+        .spec-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.4em;
+            font-weight: 900;
+            color: #60a5fa;
+            margin-bottom: 8px;
+        }
+
+        .spec-label {
+            font-size: 1em;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        .spec-sub {
+            font-size: 0.85em;
+            color: #64748b;
+            margin-top: 6px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Step list */
+        .step-list { list-style: none; padding: 0; margin: 24px 0; counter-reset: step-counter; }
+
+        .step-list li {
+            font-size: 1.35em;
+            padding: 14px 14px 14px 64px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+            margin-bottom: 10px;
+            background: rgba(96,165,250,0.04);
+            border-radius: 8px;
+        }
+
+        .step-list li::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: rgba(96,165,250,0.2);
+            border: 2px solid #60a5fa;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #60a5fa;
+            text-align: center;
+            line-height: 28px;
+        }
+
+        .step-list li strong { color: #93c5fd; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(96,165,250,0.12);
+            color: #93c5fd;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Two-column layout */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 24px 0;
+        }
+
+        .col-box {
+            background: rgba(96,165,250,0.06);
+            border: 1px solid rgba(96,165,250,0.2);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .col-box h4 {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #60a5fa;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .col-box p, .col-box li {
+            font-size: 1.1em;
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        .col-box ul { list-style: none; padding: 0; }
+
+        .col-box ul li { padding: 6px 0 6px 28px; position: relative; }
+        .col-box ul li::before { content: "▸"; position: absolute; left: 0; color: #60a5fa; }
+
+        /* Constraint check */
+        .check-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 24px 0;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            background: rgba(96,165,250,0.06);
+            border-radius: 10px;
+            padding: 18px 20px;
+        }
+
+        .check-icon {
+            font-size: 1.8em;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .check-text h4 {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #93c5fd;
+            margin-bottom: 6px;
+        }
+
+        .check-text p { font-size: 1em; color: #94a3b8; line-height: 1.5; }
+
+        /* Connection diagram */
+        .connection {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .conn-box {
+            background: rgba(96,165,250,0.1);
+            border: 2px solid #60a5fa;
+            border-radius: 12px;
+            padding: 20px 30px;
+            text-align: center;
+            min-width: 180px;
+        }
+
+        .conn-box .c-id {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8em;
+            font-weight: 900;
+            color: #60a5fa;
+        }
+
+        .conn-box .c-name {
+            font-size: 1em;
+            color: #94a3b8;
+            margin-top: 6px;
+        }
+
+        .conn-box .c-dim {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1em;
+            color: #e2e8f0;
+            margin-top: 8px;
+            font-weight: 700;
+        }
+
+        .conn-arrow {
+            font-size: 2.5em;
+            color: #60a5fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .conn-arrow span {
+            font-size: 0.4em;
+            color: #94a3b8;
+            font-family: 'JetBrains Mono', monospace;
+            white-space: nowrap;
+        }
+
+        /* Measure table */
+        .measure-table { width: 100%; border-collapse: collapse; margin: 24px 0; }
+
+        .measure-table th {
+            background: rgba(96,165,250,0.15);
+            color: #93c5fd;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1em;
+            padding: 14px 20px;
+            text-align: left;
+            border-bottom: 2px solid rgba(96,165,250,0.3);
+        }
+
+        .measure-table td {
+            padding: 14px 20px;
+            font-size: 1.1em;
+            border-bottom: 1px solid rgba(96,165,250,0.1);
+            color: #cbd5e1;
+        }
+
+        .measure-table td:last-child {
+            font-family: 'JetBrains Mono', monospace;
+            color: #60a5fa;
+        }
+
+        .blank { display: inline-block; width: 80px; border-bottom: 2px solid #60a5fa; }
+
+        /* Done slide */
+        .done-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .done-card {
+            background: rgba(96,165,250,0.08);
+            border: 1px solid rgba(96,165,250,0.25);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .done-card .icon { font-size: 2em; margin-bottom: 10px; }
+        .done-card p { font-size: 1em; color: #94a3b8; line-height: 1.5; }
+        .done-card strong { color: #93c5fd; display: block; margin-bottom: 6px; font-size: 1.1em; }
+
+        /* Video placeholder */
+        .video-placeholder {
+            background: rgba(96,165,250,0.05);
+            border: 2px dashed rgba(96,165,250,0.3);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .video-placeholder p {
+            font-size: 1.2em;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .video-placeholder .vid-icon { font-size: 2.5em; margin-bottom: 12px; }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(5,10,20,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(96,165,250,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
+        }
+
+        .nav button {
+            background: rgba(96,165,250,0.15);
+            color: #93c5fd;
+            border: 1px solid rgba(96,165,250,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover { background: rgba(96,165,250,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 24px;
+            font-size: 0.9em;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #60a5fa; }
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Unit 2</a>
+
+<div class="presentation">
+
+    <!-- ── SLIDE 1: Title ── -->
+    <div class="slide active">
+        <div class="slide-content" style="text-align:center;">
+            <div class="lesson-tag">Unit 2 · Lesson 2.2 · Design &amp; Build Lab</div>
+            <h1>C1 — Modeling the<br>MR128 Bearing</h1>
+            <p class="subtitle">
+                Before you can design a pocket,<br>
+                you need to know exactly what goes inside it.
+            </p>
+            <div style="margin-top:40px; display:flex; justify-content:center; gap:30px; flex-wrap:wrap;">
+                <div style="background:rgba(96,165,250,0.1); border:1px solid rgba(96,165,250,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#60a5fa;">Fusion 360</div>
+                <div style="background:rgba(96,165,250,0.1); border:1px solid rgba(96,165,250,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#60a5fa;">~30 min</div>
+                <div style="background:rgba(96,165,250,0.1); border:1px solid rgba(96,165,250,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#60a5fa;">Week 1</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 2: Why model a purchased part? ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Why Model Something You're Buying?</h2>
+            <div class="callout">
+                The MR128 bearing is a <strong>purchased part</strong> — you won't 3D print it.<br>
+                So why model it in Fusion 360?
+            </div>
+            <ul class="bullet-list">
+                <li>Your <strong>C2 spinner body</strong> needs bearing pockets that fit the bearing <em>exactly</em> — model it first so you design around the real dimensions.</li>
+                <li>It's <strong>low-stakes practice</strong> — two concentric circles and one extrude. Simple geometry, precise dimensions.</li>
+                <li>You end up with a <strong>reference body</strong> you can place into your assembly to check fit before printing anything.</li>
+                <li>In industry, engineers model <em>every</em> purchased component — fasteners, bearings, motors — so assemblies can be checked digitally.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 3: MR128 Specs ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>The MR128 Bearing — What You're Working With</h2>
+            <div class="spec-grid">
+                <div class="spec-card">
+                    <div class="spec-value">12 mm</div>
+                    <div class="spec-label">Outer Diameter</div>
+                    <div class="spec-sub">presses into C2 pocket</div>
+                </div>
+                <div class="spec-card">
+                    <div class="spec-value">8 mm</div>
+                    <div class="spec-label">Inner Diameter</div>
+                    <div class="spec-sub">center bolt / shaft passes through</div>
+                </div>
+                <div class="spec-card">
+                    <div class="spec-value">3.5 mm</div>
+                    <div class="spec-label">Width</div>
+                    <div class="spec-sub">depth of your C2 pocket</div>
+                </div>
+            </div>
+            <div class="callout" style="margin-top:10px;">
+                <strong>The OD is the most critical number.</strong> Your C2 pockets are sized to this 12mm OD — a pocket that's too tight won't accept the bearing; too loose and it falls out.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 4: Video placeholder + step overview ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Instructor Walkthrough</h2>
+            <div class="video-placeholder">
+                <div class="vid-icon">🎬</div>
+                <p style="color:#93c5fd; font-size:1.3em; font-weight:700;">Modeling the MR128 Bearing in Fusion 360</p>
+                <p>Instructor video coming soon — follow the steps on the next slide.</p>
+            </div>
+            <ul class="bullet-list" style="margin-top:10px;">
+                <li>Open Fusion 360 and start a <strong>new design</strong></li>
+                <li>You'll create one component, one sketch, one extrude</li>
+                <li>Total model time: about <strong>10–15 minutes</strong></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 5: Step by step ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Model It — Step by Step</h2>
+            <ol class="step-list">
+                <li>In the Browser panel, right-click <strong>Components</strong> → <strong>New Component</strong>. Name it <code>MR128_Bearing</code>. Activate it.</li>
+                <li>Select <strong>Sketch → Create Sketch</strong>. Click the <strong>XY plane</strong> (top face).</li>
+                <li>Draw a circle centered on the origin: diameter <strong>8 mm</strong> (this is the ID — the hole through the center).</li>
+                <li>Draw a <strong>second concentric circle</strong> from the same origin: diameter <strong>12 mm</strong> (the OD).</li>
+                <li>Add dimensions to both circles. Confirm the sketch is <strong>fully constrained</strong> (no blue lines).</li>
+                <li>Click <strong>Finish Sketch</strong>. Select the ring profile (the area between the two circles).</li>
+                <li><strong>Extrude</strong> the ring profile <strong>3.5 mm</strong> in the positive Z direction.</li>
+                <li>Apply an <strong>Appearance</strong>: search <em>Steel – Satin</em>. Drag onto the body.</li>
+                <li><strong>Save</strong> the file as <code>MR128_Bearing_C1</code>.</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 6: Constraint check ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>The Fully-Constrained Check</h2>
+            <p style="font-size:1.3em; color:#94a3b8; text-align:center; margin-bottom:24px;">Before finishing the sketch, confirm all four conditions below.</p>
+            <div class="check-grid">
+                <div class="check-item">
+                    <div class="check-icon">⚫</div>
+                    <div class="check-text">
+                        <h4>All lines are black</h4>
+                        <p>Blue geometry = still free to move. Black = locked in place. You want no blue.</p>
+                    </div>
+                </div>
+                <div class="check-item">
+                    <div class="check-icon">🎯</div>
+                    <div class="check-text">
+                        <h4>Center fixed to origin</h4>
+                        <p>Both circles must be centered on the origin point. Use a Coincident constraint if needed.</p>
+                    </div>
+                </div>
+                <div class="check-item">
+                    <div class="check-icon">📐</div>
+                    <div class="check-text">
+                        <h4>Both diameters dimensioned</h4>
+                        <p>⌀8 mm and ⌀12 mm both shown. No driven dimensions (no grey numbers).</p>
+                    </div>
+                </div>
+                <div class="check-item">
+                    <div class="check-icon">✅</div>
+                    <div class="check-text">
+                        <h4>Status bar says "Fully Constrained"</h4>
+                        <p>Bottom-left of the sketch workspace shows the constraint count and status.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 7: C1 → C2 connection ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>The Critical Link: C1 drives C2</h2>
+            <div class="connection">
+                <div class="conn-box">
+                    <div class="c-id">C1</div>
+                    <div class="c-name">MR128 Bearing</div>
+                    <div class="c-dim">OD = 12.0 mm</div>
+                </div>
+                <div class="conn-arrow">
+                    →
+                    <span>OD sets<br>pocket size</span>
+                </div>
+                <div class="conn-box">
+                    <div class="c-id">C2</div>
+                    <div class="c-name">Spinner Body</div>
+                    <div class="c-dim">pocket ≈ 12.0–12.2 mm</div>
+                </div>
+            </div>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>Press-fit pocket</h4>
+                    <ul>
+                        <li>Pocket diameter = <strong>12.0 mm</strong> (exact match)</li>
+                        <li>Bearing must be pressed in — won't come out by hand</li>
+                        <li>Relies on your printer's tolerance being tight</li>
+                        <li>Good for permanent installation</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Slip-fit pocket</h4>
+                    <ul>
+                        <li>Pocket diameter = <strong>12.1–12.2 mm</strong></li>
+                        <li>Bearing drops in and can be removed</li>
+                        <li>More forgiving of printer variation</li>
+                        <li>May need a drop of adhesive to hold</li>
+                    </ul>
+                </div>
+            </div>
+            <p style="font-size:1.1em; color:#64748b; text-align:center; margin-top:8px;">You'll decide which fit to use in Lesson 2.5. For now, model the bearing at exactly 12 mm OD.</p>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 8: Measure the real thing ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Lab: Measure Before You Trust</h2>
+            <p style="font-size:1.3em; color:#94a3b8; text-align:center; margin-bottom:24px;">
+                Get a real MR128 bearing from the supply bin. Measure it with calipers. Record your results.
+            </p>
+            <table class="measure-table">
+                <thead>
+                    <tr>
+                        <th>Dimension</th>
+                        <th>Nominal (spec)</th>
+                        <th>My measurement</th>
+                        <th>Match?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Outer Diameter (OD)</td>
+                        <td>12.0 mm</td>
+                        <td><span class="blank"></span></td>
+                        <td><span class="blank"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Inner Diameter (ID)</td>
+                        <td>8.0 mm</td>
+                        <td><span class="blank"></span></td>
+                        <td><span class="blank"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Width</td>
+                        <td>3.5 mm</td>
+                        <td><span class="blank"></span></td>
+                        <td><span class="blank"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="callout">
+                If your measured OD differs from 12.0 mm — use <strong>your measured value</strong> as the reference dimension for C2 pocket sizing, not the nominal spec.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 9: Done ── -->
+    <div class="slide">
+        <div class="slide-content" style="text-align:center;">
+            <h2>C1 Complete ✓</h2>
+            <div class="done-grid">
+                <div class="done-card">
+                    <div class="icon">📐</div>
+                    <strong>Modeled</strong>
+                    <p>MR128 bearing in Fusion 360 — fully constrained sketch, correct dimensions, metal appearance.</p>
+                </div>
+                <div class="done-card">
+                    <div class="icon">📏</div>
+                    <strong>Measured</strong>
+                    <p>Confirmed the real bearing's OD, ID, and width with calipers. Logged your readings.</p>
+                </div>
+                <div class="done-card">
+                    <div class="icon">🔗</div>
+                    <strong>Connected</strong>
+                    <p>You know how C1's OD will drive the C2 pocket size — and which fit type you'll target.</p>
+                </div>
+            </div>
+            <div style="margin-top:30px; display:flex; justify-content:center; gap:24px; flex-wrap:wrap;">
+                <a href="Lesson_03_Measurement_Tools_Workshop.html"
+                   style="background:rgba(96,165,250,0.15); border:1px solid rgba(96,165,250,0.4); color:#93c5fd; text-decoration:none; padding:12px 28px; border-radius:8px; font-weight:700; font-size:1.1em; transition:all 0.2s;">
+                    Next → Lesson 2.3: Measurement Tools
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div><!-- /.presentation -->
+
+<!-- Navigation -->
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 9</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
+
+<script>
+    var slides = document.querySelectorAll('.slide');
+    var current = 0;
+
+    function showSlide(n) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(n, slides.length - 1));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    }
+
+    function changeSlide(dir) { showSlide(current + dir); }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+
+</body>
+</html>
