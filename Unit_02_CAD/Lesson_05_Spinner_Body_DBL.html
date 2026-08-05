@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 2.5: C2 — Spinner Body Design | Unit 2 — CAD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #050a14 0%, #0a1628 40%, #0d1f3c 100%);
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.2em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #60a5fa;
+            text-shadow: 0 0 30px rgba(96,165,250,0.4);
+            line-height: 1.15;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #93c5fd;
+            text-align: center;
+        }
+
+        .lesson-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #60a5fa;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            text-align: center;
+            color: #94a3b8;
+            font-weight: 300;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        /* Bullet lists */
+        .bullet-list { list-style: none; padding: 0; margin: 20px 0; }
+
+        .bullet-list li {
+            font-size: 1.4em;
+            padding: 10px 0 10px 46px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .bullet-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #60a5fa;
+            font-size: 1.1em;
+        }
+
+        .bullet-list li strong { color: #e2e8f0; }
+        .bullet-list li em { color: #93c5fd; font-style: normal; font-weight: 600; }
+
+        /* Callout */
+        .callout {
+            background: rgba(96,165,250,0.08);
+            border-left: 5px solid #60a5fa;
+            border-radius: 0 10px 10px 0;
+            padding: 22px 28px;
+            margin: 20px 0;
+            font-size: 1.4em;
+            font-style: italic;
+            color: #93c5fd;
+            line-height: 1.5;
+        }
+
+        .callout strong { color: #e2e8f0; font-style: normal; }
+
+        /* Step list */
+        .step-list { list-style: none; padding: 0; margin: 20px 0; counter-reset: step-counter; }
+
+        .step-list li {
+            font-size: 1.25em;
+            padding: 13px 14px 13px 62px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            background: rgba(96,165,250,0.04);
+            border-radius: 8px;
+        }
+
+        .step-list li::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: rgba(96,165,250,0.18);
+            border: 2px solid #60a5fa;
+            border-radius: 50%;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #60a5fa;
+            text-align: center;
+            line-height: 28px;
+        }
+
+        .step-list li strong { color: #93c5fd; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(96,165,250,0.12);
+            color: #93c5fd;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Two-column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin: 20px 0;
+        }
+
+        .col-box {
+            background: rgba(96,165,250,0.06);
+            border: 1px solid rgba(96,165,250,0.2);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .col-box h4 {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #60a5fa;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .col-box ul { list-style: none; padding: 0; }
+
+        .col-box ul li {
+            font-size: 1.05em;
+            color: #94a3b8;
+            padding: 6px 0 6px 26px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .col-box ul li::before { content: "▸"; position: absolute; left: 0; color: #60a5fa; }
+
+        .col-box p { font-size: 1.05em; color: #94a3b8; line-height: 1.6; }
+
+        /* Checklist (with colored icons) */
+        .checklist { list-style: none; padding: 0; margin: 20px 0; }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            font-size: 1.35em;
+            padding: 10px 0;
+            color: #cbd5e1;
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(96,165,250,0.08);
+        }
+
+        .checklist li:last-child { border-bottom: none; }
+
+        .checklist li .icon { flex-shrink: 0; font-size: 1.1em; margin-top: 1px; }
+        .checklist li .label { flex: 1; }
+        .checklist li .label strong { color: #60a5fa; }
+        .checklist li .note { font-size: 0.75em; color: #64748b; display: block; margin-top: 2px; }
+
+        /* Creative grid — arm shape options */
+        .shape-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .shape-card {
+            background: rgba(96,165,250,0.06);
+            border: 2px solid rgba(96,165,250,0.2);
+            border-radius: 10px;
+            padding: 20px 12px;
+            text-align: center;
+            transition: border-color 0.2s;
+        }
+
+        .shape-card:hover { border-color: #60a5fa; }
+
+        .shape-card svg { display: block; margin: 0 auto 10px; }
+
+        .shape-card .shape-name {
+            font-size: 0.95em;
+            color: #93c5fd;
+            font-weight: 700;
+        }
+
+        .shape-card .shape-tip {
+            font-size: 0.75em;
+            color: #64748b;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        /* Sizing comparison */
+        .fit-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin: 24px 0;
+        }
+
+        .fit-box {
+            border-radius: 12px;
+            padding: 22px;
+            text-align: center;
+        }
+
+        .fit-press { background: rgba(96,165,250,0.08); border: 2px solid #60a5fa; }
+        .fit-slip  { background: rgba(148,163,184,0.06); border: 2px solid #64748b; }
+
+        .fit-box .fit-dim {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2em;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+
+        .fit-press .fit-dim { color: #60a5fa; }
+        .fit-slip  .fit-dim { color: #94a3b8; }
+
+        .fit-box .fit-label {
+            font-size: 1em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .fit-press .fit-label { color: #93c5fd; }
+        .fit-slip  .fit-label { color: #94a3b8; }
+
+        .fit-box p { font-size: 0.9em; color: #64748b; line-height: 1.5; }
+
+        /* Deliverable box */
+        .deliverable-box {
+            background: rgba(96,165,250,0.08);
+            border: 2px solid rgba(96,165,250,0.4);
+            border-radius: 14px;
+            padding: 28px 32px;
+            margin: 24px 0;
+        }
+
+        .deliverable-box h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+            color: #60a5fa;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .deliverable-box ul { list-style: none; padding: 0; }
+
+        .deliverable-box ul li {
+            font-size: 1.25em;
+            color: #cbd5e1;
+            padding: 8px 0 8px 36px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .deliverable-box ul li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #60a5fa;
+            font-weight: 700;
+        }
+
+        /* Video placeholder */
+        .video-placeholder {
+            background: rgba(96,165,250,0.05);
+            border: 2px dashed rgba(96,165,250,0.3);
+            border-radius: 12px;
+            padding: 28px;
+            text-align: center;
+            margin: 16px 0;
+        }
+
+        .video-placeholder .vid-icon { font-size: 2.5em; margin-bottom: 10px; }
+        .video-placeholder p { font-size: 1.1em; color: #64748b; }
+        .video-placeholder .vid-title { color: #93c5fd; font-size: 1.3em; font-weight: 700; margin-bottom: 8px; }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(5,10,20,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(96,165,250,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
+        }
+
+        .nav button {
+            background: rgba(96,165,250,0.15);
+            color: #93c5fd;
+            border: 1px solid rgba(96,165,250,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover { background: rgba(96,165,250,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 24px;
+            font-size: 0.9em;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #60a5fa; }
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Unit 2</a>
+
+<div class="presentation">
+
+    <!-- ── SLIDE 1: Title ── -->
+    <div class="slide active">
+        <div class="slide-content" style="text-align:center;">
+            <div class="lesson-tag">Unit 2 · Lesson 2.5 · Design &amp; Build Lab</div>
+            <h1>C2 — Spinner Body<br>Design</h1>
+            <p class="subtitle">
+                The shape is yours to design.<br>
+                The pockets are not.
+            </p>
+            <div style="margin-top:40px; display:flex; justify-content:center; gap:30px; flex-wrap:wrap;">
+                <div style="background:rgba(96,165,250,0.1); border:1px solid rgba(96,165,250,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#60a5fa;">Fusion 360</div>
+                <div style="background:rgba(96,165,250,0.1); border:1px solid rgba(96,165,250,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#60a5fa;">~45 min</div>
+                <div style="background:rgba(96,165,250,0.1); border:1px solid rgba(96,165,250,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#60a5fa;">Week 2</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 2: What C2 needs to do ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>What C2 Has to Do</h2>
+            <ul class="checklist">
+                <li>
+                    <span class="icon">🔵</span>
+                    <span class="label"><strong>Four bearing pockets</strong> — one center, one per arm
+                        <span class="note">All sized to your C1 OD. The pockets are the one dimension you don't get to freestyle.</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">🔩</span>
+                    <span class="label"><strong>Center bolt bore</strong> — ⌀8mm through-hole
+                        <span class="note">This is the ID of the MR128. The center bolt passes through and acts as the axle.</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">⚖️</span>
+                    <span class="label"><strong>Balanced mass distribution</strong> — circular pattern ensures it
+                        <span class="note">Three arms at 120° each. If one arm is heavier, the spinner wobbles.</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">📏</span>
+                    <span class="label"><strong>Body thickness = bearing width</strong> — 3.5mm
+                        <span class="note">Level 1 approach: the body is exactly 3.5mm so bearing pockets go all the way through. Bearings press in from one side.</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">🖨️</span>
+                    <span class="label"><strong>Printable without supports</strong> — keep it flat
+                        <span class="note">A flat 3.5mm body prints face-down with no overhangs. Don't add features that face downward.</span>
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 3: Design freedom — arm shape ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Your Design Choice — The Arm Shape</h2>
+            <div class="callout">
+                The arm profile connecting the center to each bearing pocket is <strong>yours to design</strong>. There is no wrong shape — as long as the pocket circles are correctly placed and sized.
+            </div>
+            <div class="shape-grid">
+                <div class="shape-card">
+                    <svg width="80" height="80" viewBox="0 0 80 80">
+                        <ellipse cx="40" cy="40" rx="10" ry="30" fill="rgba(96,165,250,0.15)" stroke="#60a5fa" stroke-width="2"/>
+                        <circle cx="40" cy="40" r="4" fill="#60a5fa"/>
+                    </svg>
+                    <div class="shape-name">Oval Arm</div>
+                    <div class="shape-tip">Simple. Easy to constrain. Good starting point.</div>
+                </div>
+                <div class="shape-card">
+                    <svg width="80" height="80" viewBox="0 0 80 80">
+                        <rect x="30" y="10" width="20" height="60" rx="4" fill="rgba(96,165,250,0.15)" stroke="#60a5fa" stroke-width="2"/>
+                        <circle cx="40" cy="40" r="4" fill="#60a5fa"/>
+                    </svg>
+                    <div class="shape-name">Rectangle</div>
+                    <div class="shape-tip">Fast to sketch. Add fillets to round the corners.</div>
+                </div>
+                <div class="shape-card">
+                    <svg width="80" height="80" viewBox="0 0 80 80">
+                        <path d="M40 10 C55 10 60 25 55 40 C50 55 40 70 40 70 C40 70 30 55 25 40 C20 25 25 10 40 10Z" fill="rgba(96,165,250,0.15)" stroke="#60a5fa" stroke-width="2"/>
+                        <circle cx="40" cy="40" r="4" fill="#60a5fa"/>
+                    </svg>
+                    <div class="shape-name">Teardrop</div>
+                    <div class="shape-tip">Tapers toward center. Looks professional, harder to sketch.</div>
+                </div>
+                <div class="shape-card">
+                    <svg width="80" height="80" viewBox="0 0 80 80">
+                        <path d="M40 8 L52 35 L40 72 L28 35Z" fill="rgba(96,165,250,0.15)" stroke="#60a5fa" stroke-width="2"/>
+                        <circle cx="40" cy="40" r="4" fill="#60a5fa"/>
+                    </svg>
+                    <div class="shape-name">Diamond</div>
+                    <div class="shape-tip">Sharp angles. Use Fillet to take the edge off.</div>
+                </div>
+            </div>
+            <p style="text-align:center; font-size:1.1em; color:#64748b; margin-top:4px;">
+                Whatever arm shape you choose, the <strong style="color:#93c5fd;">pocket circles and center bore never change</strong> — those are set by the bearing and bolt dimensions.
+            </p>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 4: Sketch strategy ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>The Plan — Think Pocket-First</h2>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>Where the pockets live</h4>
+                    <ul>
+                        <li><strong>Center pocket</strong> — circle at the origin. Your center bearing goes here.</li>
+                        <li><strong>Arm pockets</strong> — one at the end of each arm, all the same distance from the origin.</li>
+                        <li>Common arm length (origin to arm-pocket center): <strong>25–35mm</strong>. Shorter = compact, longer = more spin stability.</li>
+                        <li>All pocket circles are the same diameter — your target fit size from Lesson 2.2.</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Sketch order</h4>
+                    <ul>
+                        <li>Draw the center pocket circle at the origin first — this anchors everything.</li>
+                        <li>Place the first arm pocket circle on the Y-axis (straight up from origin).</li>
+                        <li>Draw your arm profile connecting center to arm pocket.</li>
+                        <li>Circular Pattern the arm + arm pocket × 3 at 360°.</li>
+                        <li>Add the center bolt bore (⌀8mm) last.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout" style="font-size:1.2em;">
+                <strong>Key rule:</strong> Place the arm pocket circle center on a construction line from the origin. Dimension that line (your arm length) — this is the one dimension that lets you quickly resize the whole spinner.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 5: Video placeholder ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Instructor Walkthrough</h2>
+            <div class="video-placeholder">
+                <div class="vid-icon">🎬</div>
+                <p class="vid-title">C2 — Spinner Body in Fusion 360</p>
+                <p>Instructor video coming soon — follow the steps on the next two slides.</p>
+            </div>
+            <ul class="bullet-list" style="margin-top:8px;">
+                <li>Two slides of steps: <strong>Part 1</strong> builds the sketch and extrudes the body; <strong>Part 2</strong> cuts the center bore and saves.</li>
+                <li>Expect to spend <strong>15–20 min on the sketch</strong>, then 10 min on extrude and cuts.</li>
+                <li>If your sketch won't close into a solid profile, check for <strong>gaps between lines</strong> — zoom in on every endpoint.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 6: Steps Part 1 — Sketch ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Steps — Part 1: Build the Sketch</h2>
+            <ol class="step-list">
+                <li>New Component → name it <code>C2_Spinner_Body</code>. Make sure it's <strong>active</strong> (bold in the Browser).</li>
+                <li><strong>Create Sketch → XY plane.</strong></li>
+                <li>Draw a circle at the origin: your target pocket diameter (e.g. <code>⌀12.1mm</code>). This is the center bearing pocket.</li>
+                <li>Draw a <strong>construction line</strong> from the origin straight up (along Y-axis). Dimension it to your arm length (e.g. <code>30mm</code>).</li>
+                <li>At the top of that construction line, draw another circle — same pocket diameter. This is the first arm bearing pocket.</li>
+                <li>Draw your arm profile shape connecting the edge of the center pocket to the edge of the arm pocket. Ensure the profile is <strong>fully closed</strong> — no gaps.</li>
+                <li><strong>Circular Pattern</strong> (Sketch menu): select the arm pocket circle + arm profile lines. Pattern type: Circular. Quantity: <code>3</code>. Full angle: <code>360°</code>. Click OK.</li>
+                <li>Fully dimension the sketch (arm shape + all pocket circles). Verify <strong>no blue lines remain.</strong></li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 7: Steps Part 2 — Extrude & Cuts ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Steps — Part 2: Extrude &amp; Bore</h2>
+            <ol class="step-list">
+                <li><strong>Finish Sketch.</strong> The sketch should show the body profile with the pocket circles as holes in it.</li>
+                <li>Select the <strong>solid regions</strong> of the body (the arm and center frame — everything except the pocket circles). Do not select the pocket interiors.</li>
+                <li><strong>Extrude → 3.5mm</strong> (positive Z direction). The pocket holes go all the way through automatically.</li>
+                <li>Inspect your body: you should see a flat 3.5mm spinner with four through-holes — one at center, one per arm.</li>
+                <li><strong>New Sketch on the top face.</strong> Draw a circle at the origin: <code>⌀8mm</code>. This is the center bolt bore.</li>
+                <li><strong>Finish Sketch → Extrude-Cut → All the way through.</strong> This removes the center of the center pocket so a bolt can pass through.</li>
+                <li>Apply an <strong>Appearance</strong> if desired (Plastic — Matte works well for a printed part).</li>
+                <li><strong>Save</strong> as <code>C2_Spinner_Body</code>. Take a screenshot of the isometric view for your records.</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 8: Pocket sizing ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Pocket Sizing — Choose Your Fit</h2>
+            <p style="font-size:1.2em; color:#94a3b8; text-align:center; margin-bottom:24px;">All four bearing pockets use the same diameter. The MR128 OD is 12.0mm. Your pocket diameter sets the fit.</p>
+            <div class="fit-grid">
+                <div class="fit-box fit-press">
+                    <div class="fit-dim">12.0 mm</div>
+                    <div class="fit-label">Press-Fit</div>
+                    <p>Pocket matches bearing OD exactly. Bearing must be pressed in — won't come out by hand. Relies on your printer being accurate. <strong>Start here for Level 1.</strong></p>
+                </div>
+                <div class="fit-box fit-slip">
+                    <div class="fit-dim">12.1–12.2 mm</div>
+                    <div class="fit-label">Slip-Fit + Glue</div>
+                    <p>Pocket is slightly larger — bearing drops in easily. Use a small drop of CA glue to hold it. More forgiving if your printer runs large.</p>
+                </div>
+            </div>
+            <div class="callout" style="font-size:1.2em; margin-top:10px;">
+                <strong>Tip:</strong> Start with 12.0mm. Print one arm as a test piece first (just one lobe, not the full body). Check the fit. Adjust the pocket dimension, then print the full C2.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 9: Common issues ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Before You Print — Check These</h2>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>Sketch problems</h4>
+                    <ul>
+                        <li><strong>Profile won't select?</strong> There's a gap in your arm outline. Zoom all the way in to each endpoint — look for a tiny break.</li>
+                        <li><strong>Blue lines after pattern?</strong> Add dimensions or constraints to the patterned geometry. Circular Pattern doesn't auto-constrain everything.</li>
+                        <li><strong>Arm overlaps center pocket?</strong> Your arm length is too short. Increase it or shrink the arm width near the center.</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Design checks</h4>
+                    <ul>
+                        <li><strong>Are all three arms identical?</strong> Inspect the circular pattern — it should show 3 equal instances.</li>
+                        <li><strong>Is the center bore through the whole body?</strong> The 8mm cut should go all the way through, not just partway.</li>
+                        <li><strong>Is your body exactly 3.5mm?</strong> Check the extrude distance in the Timeline. This must match your bearing width.</li>
+                        <li><strong>No supports needed?</strong> Flat bodies print support-free. If BambuStudio adds supports, your orientation is wrong.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 10: Done ── -->
+    <div class="slide">
+        <div class="slide-content" style="text-align:center;">
+            <h2>C2 Done — Next: Assembly</h2>
+            <div class="deliverable-box" style="max-width:700px; margin:0 auto 24px;">
+                <h4>Before moving to Lesson 2.6, confirm:</h4>
+                <ul>
+                    <li>C2 model saved in Fusion 360 — fully constrained sketch</li>
+                    <li>Four through-holes: one center, one per arm — all same diameter</li>
+                    <li>Center bore: ⌀8mm cut through the body</li>
+                    <li>Body thickness exactly 3.5mm</li>
+                    <li>Screenshot of isometric view saved</li>
+                    <li>Queued for printing (or printing in progress)</li>
+                </ul>
+            </div>
+            <div style="display:flex; justify-content:center; gap:24px; flex-wrap:wrap;">
+                <a href="Lesson_06_Assembly_Iteration_DBL.html"
+                   style="background:rgba(96,165,250,0.15); border:1px solid rgba(96,165,250,0.4); color:#93c5fd; text-decoration:none; padding:12px 28px; border-radius:8px; font-weight:700; font-size:1.1em;">
+                    Next → Lesson 2.6: Assembly &amp; Iteration
+                </a>
+            </div>
+            <p style="font-size:1em; color:#64748b; margin-top:20px;">
+                While C2 is printing, start Lesson 2.6 so you understand what assembly and iteration will look like when the part comes off the printer.
+            </p>
+        </div>
+    </div>
+
+</div><!-- /.presentation -->
+
+<!-- Navigation -->
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 10</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
+
+<script>
+    var slides = document.querySelectorAll('.slide');
+    var current = 0;
+
+    function showSlide(n) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(n, slides.length - 1));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    }
+
+    function changeSlide(dir) { showSlide(current + dir); }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+
+</body>
+</html>
