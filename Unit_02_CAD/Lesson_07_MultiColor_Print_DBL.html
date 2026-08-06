@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 2.7: Multi-Color Printing | Unit 2 — CAD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #050a14 0%, #0a1628 40%, #0d1f3c 100%);
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.2em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #60a5fa;
+            text-shadow: 0 0 30px rgba(96,165,250,0.4);
+            line-height: 1.15;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #93c5fd;
+            text-align: center;
+        }
+
+        .lesson-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #60a5fa;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            text-align: center;
+            color: #94a3b8;
+            font-weight: 300;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        /* Bullet lists */
+        .bullet-list { list-style: none; padding: 0; margin: 20px 0; }
+
+        .bullet-list li {
+            font-size: 1.4em;
+            padding: 10px 0 10px 46px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .bullet-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #60a5fa;
+            font-size: 1.1em;
+        }
+
+        .bullet-list li strong { color: #e2e8f0; }
+        .bullet-list li em { color: #93c5fd; font-style: normal; font-weight: 600; }
+
+        /* Callout */
+        .callout {
+            background: rgba(96,165,250,0.08);
+            border-left: 5px solid #60a5fa;
+            border-radius: 0 10px 10px 0;
+            padding: 22px 28px;
+            margin: 20px 0;
+            font-size: 1.4em;
+            font-style: italic;
+            color: #93c5fd;
+            line-height: 1.5;
+        }
+
+        .callout strong { color: #e2e8f0; font-style: normal; }
+
+        /* Step list */
+        .step-list { list-style: none; padding: 0; margin: 20px 0; counter-reset: step-counter; }
+
+        .step-list li {
+            font-size: 1.25em;
+            padding: 13px 14px 13px 62px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            background: rgba(96,165,250,0.04);
+            border-radius: 8px;
+        }
+
+        .step-list li::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: rgba(96,165,250,0.18);
+            border: 2px solid #60a5fa;
+            border-radius: 50%;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #60a5fa;
+            text-align: center;
+            line-height: 28px;
+        }
+
+        .step-list li strong { color: #93c5fd; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(96,165,250,0.12);
+            color: #93c5fd;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Two-column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin: 20px 0;
+        }
+
+        .col-box {
+            background: rgba(96,165,250,0.06);
+            border: 1px solid rgba(96,165,250,0.2);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .col-box h4 {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #60a5fa;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .col-box ul { list-style: none; padding: 0; }
+
+        .col-box ul li {
+            font-size: 1.05em;
+            color: #94a3b8;
+            padding: 6px 0 6px 26px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .col-box ul li::before { content: "▸"; position: absolute; left: 0; color: #60a5fa; }
+
+        .col-box p { font-size: 1.05em; color: #94a3b8; line-height: 1.6; }
+
+        /* Checklist (with colored icons) */
+        .checklist { list-style: none; padding: 0; margin: 20px 0; }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            font-size: 1.35em;
+            padding: 10px 0;
+            color: #cbd5e1;
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(96,165,250,0.08);
+        }
+
+        .checklist li:last-child { border-bottom: none; }
+
+        .checklist li .icon { flex-shrink: 0; font-size: 1.1em; margin-top: 1px; }
+        .checklist li .label { flex: 1; }
+        .checklist li .label strong { color: #60a5fa; }
+        .checklist li .note { font-size: 0.75em; color: #64748b; display: block; margin-top: 2px; }
+
+        /* Issues table */
+        .issues-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 1.1em;
+        }
+
+        .issues-table thead tr {
+            background: rgba(96,165,250,0.12);
+        }
+
+        .issues-table th {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85em;
+            font-weight: 700;
+            color: #60a5fa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 2px solid rgba(96,165,250,0.3);
+        }
+
+        .issues-table td {
+            padding: 12px 16px;
+            color: #cbd5e1;
+            border-bottom: 1px solid rgba(96,165,250,0.08);
+            line-height: 1.5;
+            vertical-align: top;
+        }
+
+        .issues-table tbody tr:last-child td { border-bottom: none; }
+
+        .issues-table tbody tr:nth-child(odd) {
+            background: rgba(96,165,250,0.03);
+        }
+
+        .issues-table td.issue { color: #fbbf24; font-weight: 600; }
+        .issues-table td.fix { color: #94a3b8; }
+
+        /* Deliverable box */
+        .deliverable-box {
+            background: rgba(96,165,250,0.08);
+            border: 2px solid rgba(96,165,250,0.4);
+            border-radius: 14px;
+            padding: 28px 32px;
+            margin: 24px 0;
+        }
+
+        .deliverable-box h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+            color: #60a5fa;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .deliverable-box ul { list-style: none; padding: 0; }
+
+        .deliverable-box ul li {
+            font-size: 1.25em;
+            color: #cbd5e1;
+            padding: 8px 0 8px 36px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .deliverable-box ul li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #60a5fa;
+            font-weight: 700;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(5,10,20,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(96,165,250,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
+        }
+
+        .nav button {
+            background: rgba(96,165,250,0.15);
+            color: #93c5fd;
+            border: 1px solid rgba(96,165,250,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover { background: rgba(96,165,250,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 24px;
+            font-size: 0.9em;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #60a5fa; }
+    </style>
+</head>
+<body>
+
+<a href="index.html?track=dbl" class="back-link">← Unit 2</a>
+
+<div class="presentation">
+
+    <!-- ── SLIDE 1: Title ── -->
+    <div class="slide active">
+        <div class="slide-content" style="text-align:center;">
+            <div class="lesson-tag">Unit 2 · CAD &amp; Fabrication · Design &amp; Build Lab</div>
+            <h1>L2.7 Multi-Color<br>Printing</h1>
+            <p class="subtitle">Bambu Studio · AMS · Color Painting</p>
+            <div style="margin-top:40px; display:flex; justify-content:center; gap:30px; flex-wrap:wrap;">
+                <div style="background:rgba(96,165,250,0.1); border:1px solid rgba(96,165,250,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#60a5fa;">Bambu Studio</div>
+                <div style="background:rgba(96,165,250,0.1); border:1px solid rgba(96,165,250,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#60a5fa;">AMS · 4 Colors</div>
+                <div style="background:rgba(96,165,250,0.1); border:1px solid rgba(96,165,250,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#60a5fa;">P3 — Ornament</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 2: What is multi-color FDM? ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>What Is Multi-Color FDM?</h2>
+            <ul class="checklist">
+                <li>
+                    <span class="icon">🎨</span>
+                    <span class="label"><strong>The Bambu AMS holds up to 4 spools</strong> and switches filament mid-print
+                        <span class="note">AMS = Automatic Material System. It sits beside the printer and feeds whichever color the print job needs, when it needs it.</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">🔄</span>
+                    <span class="label"><strong>Every color change requires purging</strong> the old filament out of the nozzle
+                        <span class="note">The nozzle must flush residual color before printing the next one — this creates waste filament captured in the purge tower.</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">🖨️</span>
+                    <span class="label"><strong>Result: one print, multiple distinct color regions</strong>
+                        <span class="note">Colors are hard boundaries — not gradients. Each region must be defined by a body or face before slicing.</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">⚠️</span>
+                    <span class="label"><strong>Key constraint: more color changes = more purge waste</strong>
+                        <span class="note">Changing colors many times per layer balloons the purge tower size and print time. Keep colors grouped in the Z direction.</span>
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 3: Designing for multi-color in Fusion 360 ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Designing for Multi-Color in Fusion 360</h2>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>Approach A — Separate Bodies</h4>
+                    <ul>
+                        <li>Each body in Fusion 360 becomes its own object in the slicer.</li>
+                        <li>Assign a different filament color to each body in Bambu Studio.</li>
+                        <li>Best for <strong>large, distinct regions</strong> — a colored base, a contrasting top layer, separate decorative elements.</li>
+                        <li>Plan body boundaries in F360 to align with where you want color changes.</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Approach B — Face Painting</h4>
+                    <ul>
+                        <li>Paint specific faces of a body a different color directly in Bambu Studio.</li>
+                        <li>No F360 changes needed — works on top of existing geometry.</li>
+                        <li>Best for <strong>details, text, logos, or surface accents</strong> on an existing body.</li>
+                        <li>Overrides the body color for painted faces only.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout">
+                <strong>For P3 (Christmas ornament):</strong> Plan your colors BEFORE modeling so body boundaries in Fusion 360 align with where you want color changes. It is much harder to add color boundaries after the model is complete.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 4: Bambu Studio — Import and set up ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Bambu Studio — Import &amp; Set Up</h2>
+            <ol class="step-list">
+                <li>Open Bambu Studio → <strong>New Project.</strong></li>
+                <li>Click <strong>Import</strong> (or drag-and-drop) your <code>.f3d</code> or <code>.step</code> file onto the build plate.</li>
+                <li>In the top-left dropdown, select your <strong>printer profile</strong> (Bambu X1 or P1 series).</li>
+                <li>Set <strong>layer height: 0.2mm</strong> (standard quality — fine for ornaments).</li>
+                <li>Confirm <strong>bed temperature</strong> and <strong>filament type</strong> match what's loaded in the AMS (PLA is standard).</li>
+                <li>Verify the model is centered on the build plate and oriented flat-side down.</li>
+                <li><strong>Take a screenshot</strong> of this setup screen — you will need it for D_P3B.</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 5: Assigning colors to bodies ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Assigning Colors to Bodies</h2>
+            <div class="callout" style="font-size:1.2em; margin-bottom:20px;">
+                Each body imported from Fusion 360 appears as a separate item in the model panel. Assign each body to an AMS slot before doing any face painting.
+            </div>
+            <ol class="step-list">
+                <li>In the <strong>left sidebar (model panel)</strong>, expand the object list — each Fusion 360 body is listed separately.</li>
+                <li>Click a body to select it. The body highlights in the 3D view.</li>
+                <li><strong>Right-click the body → "Change Filament"</strong> → select AMS slot 1, 2, 3, or 4.</li>
+                <li>Each slot corresponds to a physically loaded filament color. The 3D preview updates in real time.</li>
+                <li>Repeat for every body. <strong>Color every body before painting faces</strong> — face painting overrides the body color for specific faces only.</li>
+            </ol>
+            <p style="font-size:1.1em; color:#64748b; text-align:center; margin-top:8px;">
+                Not sure which spool is in which slot? Open the AMS panel (printer icon, top right) — it shows the filament color assigned to each slot number.
+            </p>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 6: Face painting ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Face Painting</h2>
+            <ol class="step-list">
+                <li>Select the <strong>Paint tool</strong> (brush icon in the top toolbar).</li>
+                <li>Choose <strong>"Color Paint"</strong> from the paint tool options.</li>
+                <li>In the filament selector, pick the <strong>AMS slot color</strong> you want to apply.</li>
+                <li><strong>Click and drag across faces</strong> on the model to paint them that color. The brush highlights faces as you hover.</li>
+                <li>Use the <strong>smoothing slider</strong> to control edge sharpness — lower = sharper boundaries, higher = feathered edges where layers transition.</li>
+                <li>Face painting <strong>overrides the body color</strong> for those faces. Use it for details, text, logos, or gradients between regions.</li>
+            </ol>
+            <div class="callout" style="font-size:1.2em; margin-top:8px;">
+                <strong>Tip:</strong> You can un-paint a face by selecting the base body color and painting over it again. There is no destructive action — just re-paint.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 7: The purge tower ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>The Purge Tower</h2>
+            <ul class="bullet-list">
+                <li>Every filament switch generates <strong>waste filament</strong> — the nozzle must purge the old color before printing the new one.</li>
+                <li>Bambu Studio automatically adds a <strong>Purge Tower</strong> (also called Wipe Tower) to the build plate. It is printed alongside your model.</li>
+                <li><strong>More color changes per layer = a bigger purge tower.</strong> If you switch between all 4 colors on every layer, the tower can consume as much filament as the model itself.</li>
+            </ul>
+            <div class="two-col" style="margin-top:4px;">
+                <div class="col-box">
+                    <h4>How to reduce purge waste</h4>
+                    <ul>
+                        <li>Minimize the number of unique colors per layer.</li>
+                        <li>Group same-color features in the <strong>Z direction</strong> — if your red section is all on one side from bottom to top, there are fewer switches.</li>
+                        <li>Avoid alternating colors that appear on every single layer.</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Purge tower settings</h4>
+                    <ul>
+                        <li>If the tower tips over mid-print, <strong>increase tower width</strong> in Bambu Studio settings.</li>
+                        <li>Enable <strong>brim on the tower</strong> for better bed adhesion.</li>
+                        <li>Check the <strong>filament weight estimate</strong> for the purge tower in the weight summary — count it against your 200g budget.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 8: Slicing and checking weight ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Slicing &amp; Checking Weight</h2>
+            <ol class="step-list">
+                <li>Click <strong>"Slice All"</strong> (top-right button). Bambu Studio processes the model and generates toolpaths.</li>
+                <li>After slicing, check the <strong>print summary panel</strong>: total print time, filament usage by color (grams and meters), and layer preview.</li>
+                <li>Use the <strong>layer slider</strong> (right side) to scrub through the print layer by layer — confirm color regions appear exactly where you expect them.</li>
+                <li>For P3: <strong>total filament across ALL colors must be under 200g</strong> (including purge tower waste).</li>
+                <li>If over 200g: reduce infill to <strong>15%</strong> (fine for ornaments), reduce wall count to <strong>2 walls</strong>, or simplify the model in Fusion 360.</li>
+                <li><strong>Take a screenshot</strong> of the slice preview and weight summary — this is required for D_P3B.</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 9: Common issues and fixes ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Common Issues &amp; Fixes</h2>
+            <table class="issues-table">
+                <thead>
+                    <tr>
+                        <th style="width:40%;">Issue</th>
+                        <th>Fix</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="issue">Color bleeds between regions in preview</td>
+                        <td class="fix">Check body/face boundaries in Fusion 360 — make sure bodies share a clean, watertight face with no gaps or overlaps.</td>
+                    </tr>
+                    <tr>
+                        <td class="issue">Purge tower falls over mid-print</td>
+                        <td class="fix">Increase tower width in Bambu Studio settings, or enable a brim on the tower for better bed adhesion.</td>
+                    </tr>
+                    <tr>
+                        <td class="issue">AMS jam</td>
+                        <td class="fix">Pause the print, unload the filament from the AMS, re-feed it slowly. Avoid over-twisted or tangled spools.</td>
+                    </tr>
+                    <tr>
+                        <td class="issue">Color looks wrong in the preview</td>
+                        <td class="fix">In the model panel, verify which AMS slot each body is assigned to. The slot number must match the physical spool loaded in the AMS.</td>
+                    </tr>
+                    <tr>
+                        <td class="issue">Underextrusion right after a color change</td>
+                        <td class="fix">Increase the purge volume in filament settings — the nozzle needs more material to fully clear the previous color.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 10: Done — P3 checklist ── -->
+    <div class="slide">
+        <div class="slide-content" style="text-align:center;">
+            <h2>Done — P3 Print Queue Checklist</h2>
+            <p style="font-size:1.15em; color:#94a3b8; margin-bottom:16px;">Before you submit your print to the queue:</p>
+            <div class="deliverable-box" style="max-width:780px; margin:0 auto 24px; text-align:left;">
+                <h4>P3 — Christmas Ornament · Multi-Color</h4>
+                <ul>
+                    <li>All bodies assigned to the correct AMS slot — visible in the model panel</li>
+                    <li>Face painting complete and colors appear correctly in the 3D preview</li>
+                    <li>Total filament across all colors confirmed <strong style="color:#60a5fa;">under 200g</strong> (including purge tower)</li>
+                    <li>Bambu Studio screenshot taken — slice preview showing color regions</li>
+                    <li>Bambu Studio screenshot taken — weight summary showing per-color filament usage</li>
+                    <li>Prototype printed and LED fit verified (if applicable)</li>
+                    <li><strong style="color:#60a5fa;">D_P3B submitted</strong> before queuing the final print</li>
+                </ul>
+            </div>
+            <div style="display:flex; justify-content:center; gap:24px; flex-wrap:wrap;">
+                <a href="index.html?track=dbl"
+                   style="background:rgba(96,165,250,0.15); border:1px solid rgba(96,165,250,0.4); color:#93c5fd; text-decoration:none; padding:12px 28px; border-radius:8px; font-weight:700; font-size:1.1em;">
+                    ← Back to Unit 2
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div><!-- /.presentation -->
+
+<!-- Navigation -->
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 10</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
+
+<script>
+    var slides = document.querySelectorAll('.slide');
+    var current = 0;
+
+    function showSlide(n) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(n, slides.length - 1));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    }
+
+    function changeSlide(dir) { showSlide(current + dir); }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+
+</body>
+</html>
