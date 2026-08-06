@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 7.5: Series vs. Parallel Circuits | Unit 7 — Electrical Systems</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0800 0%, #130f00 40%, #1c1700 100%);
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.2em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #f59e0b;
+            text-shadow: 0 0 30px rgba(245,158,11,0.4);
+            line-height: 1.15;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #fcd34d;
+            text-align: center;
+        }
+
+        .lesson-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #f59e0b;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            text-align: center;
+            color: #94a3b8;
+            font-weight: 300;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        /* Bullet lists */
+        .bullet-list { list-style: none; padding: 0; margin: 20px 0; }
+
+        .bullet-list li {
+            font-size: 1.4em;
+            padding: 10px 0 10px 46px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .bullet-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #f59e0b;
+            font-size: 1.1em;
+        }
+
+        .bullet-list li strong { color: #e2e8f0; }
+        .bullet-list li em { color: #fcd34d; font-style: normal; font-weight: 600; }
+
+        /* Callout */
+        .callout {
+            background: rgba(245,158,11,0.08);
+            border-left: 5px solid #f59e0b;
+            border-radius: 0 10px 10px 0;
+            padding: 22px 28px;
+            margin: 20px 0;
+            font-size: 1.4em;
+            font-style: italic;
+            color: #fcd34d;
+            line-height: 1.5;
+        }
+
+        .callout strong { color: #e2e8f0; font-style: normal; }
+
+        /* Step list */
+        .step-list { list-style: none; padding: 0; margin: 20px 0; counter-reset: step-counter; }
+
+        .step-list li {
+            font-size: 1.25em;
+            padding: 13px 14px 13px 62px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            background: rgba(245,158,11,0.04);
+            border-radius: 8px;
+        }
+
+        .step-list li::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: rgba(245,158,11,0.18);
+            border: 2px solid #f59e0b;
+            border-radius: 50%;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #f59e0b;
+            text-align: center;
+            line-height: 28px;
+        }
+
+        .step-list li strong { color: #fcd34d; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(245,158,11,0.12);
+            color: #fcd34d;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Two-column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin: 20px 0;
+        }
+
+        .col-box {
+            background: rgba(245,158,11,0.06);
+            border: 1px solid rgba(245,158,11,0.2);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .col-box h4 {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #f59e0b;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .col-box ul { list-style: none; padding: 0; }
+
+        .col-box ul li {
+            font-size: 1.05em;
+            color: #94a3b8;
+            padding: 6px 0 6px 26px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .col-box ul li::before { content: "▸"; position: absolute; left: 0; color: #f59e0b; }
+
+        .col-box p { font-size: 1.05em; color: #94a3b8; line-height: 1.6; }
+
+        /* Checklist (with colored icons) */
+        .checklist { list-style: none; padding: 0; margin: 20px 0; }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            font-size: 1.35em;
+            padding: 10px 0;
+            color: #cbd5e1;
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(245,158,11,0.08);
+        }
+
+        .checklist li:last-child { border-bottom: none; }
+
+        .checklist li .icon { flex-shrink: 0; font-size: 1.1em; margin-top: 1px; }
+        .checklist li .label { flex: 1; }
+        .checklist li .label strong { color: #f59e0b; }
+        .checklist li .note { font-size: 0.75em; color: #64748b; display: block; margin-top: 2px; }
+
+        /* Issues table */
+        .issues-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 1.1em;
+        }
+
+        .issues-table thead tr {
+            background: rgba(245,158,11,0.12);
+        }
+
+        .issues-table th {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85em;
+            font-weight: 700;
+            color: #f59e0b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 2px solid rgba(245,158,11,0.3);
+        }
+
+        .issues-table td {
+            padding: 12px 16px;
+            color: #cbd5e1;
+            border-bottom: 1px solid rgba(245,158,11,0.08);
+            line-height: 1.5;
+            vertical-align: top;
+        }
+
+        .issues-table tbody tr:last-child td { border-bottom: none; }
+
+        .issues-table tbody tr:nth-child(odd) {
+            background: rgba(245,158,11,0.03);
+        }
+
+        .issues-table td.issue { color: #fbbf24; font-weight: 600; }
+        .issues-table td.fix { color: #94a3b8; }
+
+        /* Deliverable box */
+        .deliverable-box {
+            background: rgba(245,158,11,0.08);
+            border: 2px solid rgba(245,158,11,0.4);
+            border-radius: 14px;
+            padding: 28px 32px;
+            margin: 24px 0;
+        }
+
+        .deliverable-box h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+            color: #f59e0b;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .deliverable-box ul { list-style: none; padding: 0; }
+
+        .deliverable-box ul li {
+            font-size: 1.25em;
+            color: #cbd5e1;
+            padding: 8px 0 8px 36px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .deliverable-box ul li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #f59e0b;
+            font-weight: 700;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(10,8,0,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(245,158,11,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
+        }
+
+        .nav button {
+            background: rgba(245,158,11,0.15);
+            color: #fcd34d;
+            border: 1px solid rgba(245,158,11,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover { background: rgba(245,158,11,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 24px;
+            font-size: 0.9em;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #f59e0b; }
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Unit 7</a>
+
+<div class="presentation">
+
+    <!-- ── SLIDE 1: Title ── -->
+    <div class="slide active">
+        <div class="slide-content" style="text-align:center;">
+            <div class="lesson-tag">Unit 7 · Electrical Systems · All Tracks</div>
+            <h1>L7.5 Series vs.<br>Parallel Circuits</h1>
+            <p class="subtitle">Two Topologies · Very Different Behavior</p>
+            <div style="margin-top:40px; display:flex; justify-content:center; gap:30px; flex-wrap:wrap;">
+                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">Series</div>
+                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">Parallel</div>
+                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">PLTW POE_313</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 2: Series Circuits: The Concept ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Series Circuits</h2>
+            <div class="callout">In a series circuit, <strong>there is only one path for current.</strong> All current must flow through every component in the chain.</div>
+            <ul class="bullet-list">
+                <li>Current is the <strong>same</strong> through every component: I₁ = I₂ = I₃ = I_total</li>
+                <li>Voltage <strong>splits</strong> across the components: V₁ + V₂ + V₃ = V_supply</li>
+                <li>Total resistance <strong>adds up:</strong> R_total = R₁ + R₂ + R₃ + …</li>
+                <li>If <strong>any component fails (open)</strong>, the entire circuit goes dead — no path for current</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 3: Series Math ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Series Math</h2>
+            <ol class="step-list">
+                <li><strong>R_total = R₁ + R₂ + R₃ + …</strong> — just add them all up</li>
+                <li><strong>I = V_supply / R_total</strong> — current is the same everywhere</li>
+                <li><strong>V_n = I × Rn</strong> — voltage drop across each component by Ohm's Law</li>
+                <li><strong>Check:</strong> V₁ + V₂ + V₃ = V_supply (voltage drops must sum to supply)</li>
+            </ol>
+            <div class="callout">Example — 9V supply, R₁ = 100Ω, R₂ = 200Ω, R₃ = 300Ω → R_total = 600Ω → I = 9/600 = 15mA → V₁ = 15mA × 100Ω = 1.5V, V₂ = 3V, V₃ = 4.5V → Check: 1.5 + 3 + 4.5 = 9V ✓</div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 4: Parallel Circuits: The Concept ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Parallel Circuits</h2>
+            <div class="callout">In a parallel circuit, <strong>there are multiple paths for current.</strong> Each branch provides an independent route from + to −.</div>
+            <ul class="bullet-list">
+                <li>Voltage is the <strong>same</strong> across every branch: V₁ = V₂ = V₃ = V_supply</li>
+                <li>Current <strong>splits</strong> among the branches: I_total = I₁ + I₂ + I₃</li>
+                <li>Total resistance <strong>decreases:</strong> 1/R_total = 1/R₁ + 1/R₂ + 1/R₃ + …</li>
+                <li>If <strong>one branch fails (open)</strong>, other branches continue to work independently</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 5: Parallel Math ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Parallel Math</h2>
+            <ol class="step-list">
+                <li><strong>1/R_total = 1/R₁ + 1/R₂ + 1/R₃</strong> — add the reciprocals, then take the reciprocal of the result</li>
+                <li><strong>Special case (2 resistors):</strong> R_total = (R₁ × R₂) / (R₁ + R₂) — the "product over sum" shortcut</li>
+                <li><strong>I_n = V_supply / R_n</strong> — each branch current by Ohm's Law</li>
+                <li><strong>I_total = I₁ + I₂ + I₃</strong> — total current from the supply</li>
+                <li><strong>Check:</strong> I_total × R_total = V_supply ✓</li>
+            </ol>
+            <div class="callout">Example — 9V supply, R₁ = 100Ω, R₂ = 300Ω → R_total = (100 × 300)/(100+300) = 30000/400 = 75Ω → I₁ = 9/100 = 90mA → I₂ = 9/300 = 30mA → I_total = 120mA → Check: 120mA × 75Ω = 9V ✓</div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 6: Comparison Table ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Series vs. Parallel: Side-by-Side</h2>
+            <table class="issues-table">
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>Series</th>
+                        <th>Parallel</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="issue">Current through components</td>
+                        <td>Same everywhere: I₁ = I₂ = I₃</td>
+                        <td>Splits: I_total = I₁ + I₂ + I₃</td>
+                    </tr>
+                    <tr>
+                        <td class="issue">Voltage across components</td>
+                        <td>Splits: V₁ + V₂ + V₃ = V_supply</td>
+                        <td>Same: V₁ = V₂ = V₃ = V_supply</td>
+                    </tr>
+                    <tr>
+                        <td class="issue">Total resistance formula</td>
+                        <td>R_total = R₁ + R₂ + R₃</td>
+                        <td>1/R_total = 1/R₁ + 1/R₂ + ...</td>
+                    </tr>
+                    <tr>
+                        <td class="issue">R_total vs. largest R</td>
+                        <td>Always bigger than any single R</td>
+                        <td>Always smaller than smallest R</td>
+                    </tr>
+                    <tr>
+                        <td class="issue">If one component opens</td>
+                        <td>Entire circuit goes dead</td>
+                        <td>Only that branch goes dead</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="callout">Two quick mental checks: (1) parallel R is always LESS than the smallest individual R. (2) series R is always MORE than the largest individual R. If your answer violates this, recalculate.</div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 7: Real-World Application ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Why Houses Use Parallel Circuits</h2>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>Series Wiring (Bad for Houses)</h4>
+                    <ul>
+                        <li>Every outlet shares the same current path</li>
+                        <li>If you plug in a 1000W heater, it changes the current through every other outlet</li>
+                        <li>If any outlet or appliance fails open, every appliance in the house goes dead</li>
+                        <li>Voltage drops with each appliance added — devices get dim/slow</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Parallel Wiring (How It's Actually Done)</h4>
+                    <ul>
+                        <li>Every outlet gets the full 120V regardless of what else is plugged in</li>
+                        <li>Each appliance draws its own current; adding appliances doesn't affect others</li>
+                        <li>If one appliance fails, only that branch stops — everything else works</li>
+                        <li>Total current (and cost) increases as you add more devices</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout">Your home's circuit breakers respond to <strong>total current</strong> (I_total). When you run too many appliances on one circuit, I_total exceeds the breaker's rating and it trips to protect the wiring.</div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 8: Lab Setup ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Lab: POE_313 — Series vs. Parallel</h2>
+            <div class="deliverable-box">
+                <h4>Build Both</h4>
+                <ul>
+                    <li>Use R₁ = 100Ω, R₂ = 220Ω, R₃ = 470Ω and a 9V battery</li>
+                    <li><strong>Circuit A (Series):</strong> Wire all 3 resistors in series. Predict R_total, I, and V across each component</li>
+                    <li><strong>Circuit B (Parallel):</strong> Wire all 3 resistors in parallel. Predict R_total, I_total, and I through each branch</li>
+                    <li>For each circuit: measure total current (ammeter in series with supply), voltage across each component</li>
+                    <li>Compare measured vs. predicted values. Calculate percent error.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 9: Done Checklist ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Done Checklist</h2>
+            <ul class="checklist">
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>I can calculate R_total, I, and V for a series circuit</strong>
+                        <span class="note">R adds, V splits, I is the same</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>I can calculate R_total, I_total, and branch currents for a parallel circuit</strong>
+                        <span class="note">1/R, I splits, V is the same</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>I know the quick check for parallel resistance</strong>
+                        <span class="note">R_total &lt; smallest R</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>I can explain why homes use parallel wiring</strong>
+                        <span class="note">Full voltage at every outlet, independent branches</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>My lab data and calculations are in my engineering notebook</strong>
+                        <span class="note">Both circuits, predicted and measured values</span>
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div><!-- /.presentation -->
+
+<!-- Navigation -->
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 9</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
+
+<script>
+    var slides = document.querySelectorAll('.slide');
+    var current = 0;
+
+    function showSlide(n) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(n, slides.length - 1));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    }
+
+    function changeSlide(dir) { showSlide(current + dir); }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+
+</body>
+</html>

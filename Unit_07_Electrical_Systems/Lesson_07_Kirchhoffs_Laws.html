@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 7.7: Kirchhoff's Laws | Unit 7 — Electrical Systems</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0800 0%, #130f00 40%, #1c1700 100%);
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.2em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #f59e0b;
+            text-shadow: 0 0 30px rgba(245,158,11,0.4);
+            line-height: 1.15;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #fcd34d;
+            text-align: center;
+        }
+
+        .lesson-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #f59e0b;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            text-align: center;
+            color: #94a3b8;
+            font-weight: 300;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        /* Bullet lists */
+        .bullet-list { list-style: none; padding: 0; margin: 20px 0; }
+
+        .bullet-list li {
+            font-size: 1.4em;
+            padding: 10px 0 10px 46px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .bullet-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #f59e0b;
+            font-size: 1.1em;
+        }
+
+        .bullet-list li strong { color: #e2e8f0; }
+        .bullet-list li em { color: #fcd34d; font-style: normal; font-weight: 600; }
+
+        /* Callout */
+        .callout {
+            background: rgba(245,158,11,0.08);
+            border-left: 5px solid #f59e0b;
+            border-radius: 0 10px 10px 0;
+            padding: 22px 28px;
+            margin: 20px 0;
+            font-size: 1.4em;
+            font-style: italic;
+            color: #fcd34d;
+            line-height: 1.5;
+        }
+
+        .callout strong { color: #e2e8f0; font-style: normal; }
+
+        /* Step list */
+        .step-list { list-style: none; padding: 0; margin: 20px 0; counter-reset: step-counter; }
+
+        .step-list li {
+            font-size: 1.25em;
+            padding: 13px 14px 13px 62px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            background: rgba(245,158,11,0.04);
+            border-radius: 8px;
+        }
+
+        .step-list li::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: rgba(245,158,11,0.18);
+            border: 2px solid #f59e0b;
+            border-radius: 50%;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #f59e0b;
+            text-align: center;
+            line-height: 28px;
+        }
+
+        .step-list li strong { color: #fcd34d; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(245,158,11,0.12);
+            color: #fcd34d;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Two-column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin: 20px 0;
+        }
+
+        .col-box {
+            background: rgba(245,158,11,0.06);
+            border: 1px solid rgba(245,158,11,0.2);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .col-box h4 {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #f59e0b;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .col-box ul { list-style: none; padding: 0; }
+
+        .col-box ul li {
+            font-size: 1.05em;
+            color: #94a3b8;
+            padding: 6px 0 6px 26px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .col-box ul li::before { content: "▸"; position: absolute; left: 0; color: #f59e0b; }
+
+        .col-box p { font-size: 1.05em; color: #94a3b8; line-height: 1.6; }
+
+        /* Checklist (with colored icons) */
+        .checklist { list-style: none; padding: 0; margin: 20px 0; }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            font-size: 1.35em;
+            padding: 10px 0;
+            color: #cbd5e1;
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(245,158,11,0.08);
+        }
+
+        .checklist li:last-child { border-bottom: none; }
+
+        .checklist li .icon { flex-shrink: 0; font-size: 1.1em; margin-top: 1px; }
+        .checklist li .label { flex: 1; }
+        .checklist li .label strong { color: #f59e0b; }
+        .checklist li .note { font-size: 0.75em; color: #64748b; display: block; margin-top: 2px; }
+
+        /* Deliverable box */
+        .deliverable-box {
+            background: rgba(245,158,11,0.08);
+            border: 2px solid rgba(245,158,11,0.4);
+            border-radius: 14px;
+            padding: 28px 32px;
+            margin: 24px 0;
+        }
+
+        .deliverable-box h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+            color: #f59e0b;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .deliverable-box ul { list-style: none; padding: 0; }
+
+        .deliverable-box ul li {
+            font-size: 1.25em;
+            color: #cbd5e1;
+            padding: 8px 0 8px 36px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .deliverable-box ul li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #f59e0b;
+            font-weight: 700;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(10,8,0,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(245,158,11,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
+        }
+
+        .nav button {
+            background: rgba(245,158,11,0.15);
+            color: #fcd34d;
+            border: 1px solid rgba(245,158,11,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover { background: rgba(245,158,11,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 24px;
+            font-size: 0.9em;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #f59e0b; }
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Unit 7</a>
+
+<div class="presentation">
+
+    <!-- ── SLIDE 1: Title ── -->
+    <div class="slide active">
+        <div class="slide-content" style="text-align:center;">
+            <div class="lesson-tag">Unit 7 · Electrical Systems · All Tracks</div>
+            <h1>L7.7 Kirchhoff's<br>Laws</h1>
+            <p class="subtitle">KCL · KVL · Analyzing Complex Circuits</p>
+            <div style="margin-top:40px; display:flex; justify-content:center; gap:30px; flex-wrap:wrap;">
+                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">KCL</div>
+                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">KVL</div>
+                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">PLTW POE_315</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 2: When R_eq Isn't Enough ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>When Series/Parallel Isn't Enough</h2>
+            <div class="callout">
+                Series and parallel rules work when the circuit can be simplified to a single R_eq. But some real circuits have branches that can't be collapsed using those formulas alone. Kirchhoff's Laws handle ANY circuit topology.
+            </div>
+            <ul class="bullet-list">
+                <li><strong>Branch</strong> — a single two-terminal circuit element (e.g., one resistor, one source)</li>
+                <li><strong>Node</strong> — a junction where two or more branches connect. Current splits at nodes.</li>
+                <li><strong>Loop</strong> — any closed path in a circuit that starts and ends at the same point</li>
+                <li>Gustav Kirchhoff (1845) stated two laws that are just Conservation of Energy and Conservation of Charge applied to circuits</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 3: KCL ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>KCL — Kirchhoff's Current Law</h2>
+            <div class="callout">
+                <strong>"The sum of all currents entering a node equals the sum of all currents leaving it."</strong> — I_in = I_out at every node.
+            </div>
+            <ul class="bullet-list">
+                <li>Based on Conservation of Charge — electrons don't accumulate at junctions; whatever flows in must flow out</li>
+                <li>Works for any node, any time, any circuit topology</li>
+                <li>At a simple junction of three wires: if 5A enters from the left and 3A leaves upward, then 2A must leave downward</li>
+                <li><strong>Series circuit consequence:</strong> there's only one path, so current is identical at every point — KCL at every node confirms this automatically</li>
+                <li><strong>Parallel circuit consequence:</strong> I_total = I₁ + I₂ + … — the total current splits into branches at every node</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 4: KVL ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>KVL — Kirchhoff's Voltage Law</h2>
+            <div class="callout">
+                <strong>"The sum of all voltage changes around any closed loop equals zero."</strong> — voltage drops and rises must cancel out.
+            </div>
+            <ul class="bullet-list">
+                <li>Based on Conservation of Energy — you can't gain or lose energy just by traveling around a circuit loop</li>
+                <li><strong>Voltage drop</strong> — traveling through a resistor in the direction of current flow: subtract (V = −I×R)</li>
+                <li><strong>Voltage rise</strong> — traveling through a source from − to + terminal: add (V = +V_source)</li>
+                <li>If you travel against current through a resistor: it's a rise (+I×R). Against current = uphill</li>
+                <li><strong>Series circuit consequence:</strong> the source voltage must equal the sum of all resistor drops — that's KVL</li>
+                <li><strong>Parallel consequence:</strong> every branch has the same voltage because they share the same two nodes — KVL around any loop containing two parallel branches gives zero</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 5: Applying KCL ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Applying KCL — Find Unknown Currents</h2>
+            <ol class="step-list">
+                <li><strong>Label</strong> all node points in the circuit with letters (A, B, C…)</li>
+                <li><strong>Label</strong> current direction for each branch (assume a direction; if result is negative, current actually flows opposite)</li>
+                <li><strong>Write KCL</strong> for each node: I_in = I_out (or ΣI = 0 with sign convention)</li>
+                <li><strong>Solve</strong> the system of equations for unknown currents</li>
+                <li><strong>Verify</strong> by checking that KCL holds at every other node using your solved currents</li>
+            </ol>
+            <div class="callout" style="font-size:1.2em;">
+                Strategy: if the circuit has N nodes, you need N−1 independent KCL equations to solve it. For a simple 2-node circuit, one KCL equation is enough.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 6: Applying KVL ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Applying KVL — Find Unknown Voltages</h2>
+            <ol class="step-list">
+                <li><strong>Identify all loops</strong> in the circuit — trace every unique closed path</li>
+                <li><strong>Choose a direction</strong> to traverse each loop (clockwise or counterclockwise — your choice, be consistent)</li>
+                <li><strong>As you travel the loop</strong>, add voltage rises, subtract voltage drops</li>
+                <li><strong>Set the sum equal to zero:</strong> ΣV = 0</li>
+                <li><strong>Solve</strong> the resulting equation(s) for unknown voltages or currents</li>
+            </ol>
+            <div class="callout" style="font-size:1.2em;">
+                For circuits with multiple loops, each loop gives one equation. If you have 3 unknowns, you need 3 equations — combine KCL and KVL equations as needed.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 7: KCL and KVL — The Underlying Reason ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>KCL and KVL — The Underlying Reason</h2>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>KCL Explains Series Current</h4>
+                    <ul>
+                        <li>In a series circuit, every node has exactly ONE branch entering and ONE branch leaving</li>
+                        <li>KCL at every node: I_in = I_out → same current everywhere</li>
+                        <li>The "current is constant in series" rule isn't a separate fact — it's KCL applied to single-path nodes</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>KVL Explains Parallel Voltage</h4>
+                    <ul>
+                        <li>In a parallel circuit, trace a loop through two parallel branches: +V_source − V₁ = 0 (one loop) and +V_source − V₂ = 0 (another loop)</li>
+                        <li>Therefore V₁ = V₂ = V_source</li>
+                        <li>The "voltage is equal across parallel branches" rule is KVL applied to loops containing parallel branches</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout">
+                Series and parallel rules are just <strong>shortcuts for applying KCL and KVL</strong> to simple topologies. For complex circuits that don't simplify to pure series/parallel, you use KCL and KVL directly.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 8: Lab POE_315 ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Lab: POE_315 — Kirchhoff's Laws Lab</h2>
+            <div class="deliverable-box">
+                <h4>5-Resistor Combination Circuit</h4>
+                <ul>
+                    <li>Choose 5 resistors from: 100Ω, 150Ω, 220Ω, 330Ω, 470Ω</li>
+                    <li>Build a combination circuit with labeled nodes A, B, C, D (teacher provides Figure 8 topology)</li>
+                    <li><strong>KCL Validation:</strong> measure voltage across each resistor; calculate I = V/R for each branch; at each node, verify I_in = I_out within measurement uncertainty</li>
+                    <li><strong>KVL Validation:</strong> identify all 7 closed loops; for each loop sum all voltage drops and rises; verify each sums to approximately 0V</li>
+                    <li>Conclusion Q: use KCL to explain why current is constant in a series circuit (draw and annotate)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 9: Done Checklist ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Done Checklist</h2>
+            <ul class="checklist">
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>I can define branch, node, and loop for any circuit</strong>
+                        <span class="note">Branch = element, Node = junction, Loop = closed path</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>I can apply KCL to find unknown currents at any node</strong>
+                        <span class="note">I_in = I_out; based on Conservation of Charge</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>I can apply KVL to write voltage equations around any loop</strong>
+                        <span class="note">ΣV = 0; based on Conservation of Energy</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>I understand why series current is constant (KCL) and why parallel voltage is equal (KVL)</strong>
+                        <span class="note">These rules are consequences of the laws, not separate facts</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>My 5-resistor lab data shows KCL and KVL verified at each node and loop</strong>
+                        <span class="note">Within measurement uncertainty — DMM readings are not exact</span>
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div><!-- /.presentation -->
+
+<!-- Navigation -->
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 9</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
+
+<script>
+    var slides = document.querySelectorAll('.slide');
+    var current = 0;
+
+    function showSlide(n) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(n, slides.length - 1));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    }
+
+    function changeSlide(dir) { showSlide(current + dir); }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+
+</body>
+</html>

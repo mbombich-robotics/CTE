@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 7.2: Breadboards | Unit 7 — Electrical Systems</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0800 0%, #130f00 40%, #1c1700 100%);
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.2em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #f59e0b;
+            text-shadow: 0 0 30px rgba(245,158,11,0.4);
+            line-height: 1.15;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #fcd34d;
+            text-align: center;
+        }
+
+        .lesson-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #f59e0b;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            text-align: center;
+            color: #94a3b8;
+            font-weight: 300;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        /* Bullet lists */
+        .bullet-list { list-style: none; padding: 0; margin: 20px 0; }
+
+        .bullet-list li {
+            font-size: 1.4em;
+            padding: 10px 0 10px 46px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .bullet-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #f59e0b;
+            font-size: 1.1em;
+        }
+
+        .bullet-list li strong { color: #e2e8f0; }
+        .bullet-list li em { color: #fcd34d; font-style: normal; font-weight: 600; }
+
+        /* Callout */
+        .callout {
+            background: rgba(245,158,11,0.08);
+            border-left: 5px solid #f59e0b;
+            border-radius: 0 10px 10px 0;
+            padding: 22px 28px;
+            margin: 20px 0;
+            font-size: 1.4em;
+            font-style: italic;
+            color: #fcd34d;
+            line-height: 1.5;
+        }
+
+        .callout strong { color: #e2e8f0; font-style: normal; }
+
+        /* Step list */
+        .step-list { list-style: none; padding: 0; margin: 20px 0; counter-reset: step-counter; }
+
+        .step-list li {
+            font-size: 1.25em;
+            padding: 13px 14px 13px 62px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            background: rgba(245,158,11,0.04);
+            border-radius: 8px;
+        }
+
+        .step-list li::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: rgba(245,158,11,0.18);
+            border: 2px solid #f59e0b;
+            border-radius: 50%;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #f59e0b;
+            text-align: center;
+            line-height: 28px;
+        }
+
+        .step-list li strong { color: #fcd34d; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(245,158,11,0.12);
+            color: #fcd34d;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Two-column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin: 20px 0;
+        }
+
+        .col-box {
+            background: rgba(245,158,11,0.06);
+            border: 1px solid rgba(245,158,11,0.2);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .col-box h4 {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #f59e0b;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .col-box ul { list-style: none; padding: 0; }
+
+        .col-box ul li {
+            font-size: 1.05em;
+            color: #94a3b8;
+            padding: 6px 0 6px 26px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .col-box ul li::before { content: "▸"; position: absolute; left: 0; color: #f59e0b; }
+
+        .col-box p { font-size: 1.05em; color: #94a3b8; line-height: 1.6; }
+
+        /* Checklist (with colored icons) */
+        .checklist { list-style: none; padding: 0; margin: 20px 0; }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            font-size: 1.35em;
+            padding: 10px 0;
+            color: #cbd5e1;
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(245,158,11,0.08);
+        }
+
+        .checklist li:last-child { border-bottom: none; }
+
+        .checklist li .icon { flex-shrink: 0; font-size: 1.1em; margin-top: 1px; }
+        .checklist li .label { flex: 1; }
+        .checklist li .label strong { color: #f59e0b; }
+        .checklist li .note { font-size: 0.75em; color: #64748b; display: block; margin-top: 2px; }
+
+        /* Issues table */
+        .issues-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 1.1em;
+        }
+
+        .issues-table thead tr {
+            background: rgba(245,158,11,0.12);
+        }
+
+        .issues-table th {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85em;
+            font-weight: 700;
+            color: #f59e0b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 2px solid rgba(245,158,11,0.3);
+        }
+
+        .issues-table td {
+            padding: 12px 16px;
+            color: #cbd5e1;
+            border-bottom: 1px solid rgba(245,158,11,0.08);
+            line-height: 1.5;
+            vertical-align: top;
+        }
+
+        .issues-table tbody tr:last-child td { border-bottom: none; }
+
+        .issues-table tbody tr:nth-child(odd) {
+            background: rgba(245,158,11,0.03);
+        }
+
+        .issues-table td.issue { color: #fbbf24; font-weight: 600; }
+        .issues-table td.fix { color: #94a3b8; }
+
+        /* Deliverable box */
+        .deliverable-box {
+            background: rgba(245,158,11,0.08);
+            border: 2px solid rgba(245,158,11,0.4);
+            border-radius: 14px;
+            padding: 28px 32px;
+            margin: 24px 0;
+        }
+
+        .deliverable-box h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+            color: #f59e0b;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .deliverable-box ul { list-style: none; padding: 0; }
+
+        .deliverable-box ul li {
+            font-size: 1.25em;
+            color: #cbd5e1;
+            padding: 8px 0 8px 36px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .deliverable-box ul li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #f59e0b;
+            font-weight: 700;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(10,8,0,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(245,158,11,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
+        }
+
+        .nav button {
+            background: rgba(245,158,11,0.15);
+            color: #fcd34d;
+            border: 1px solid rgba(245,158,11,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover { background: rgba(245,158,11,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 24px;
+            font-size: 0.9em;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #f59e0b; }
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Unit 7</a>
+
+<div class="presentation">
+
+    <!-- ── SLIDE 1: Title ── -->
+    <div class="slide active">
+        <div class="slide-content" style="text-align:center;">
+            <div class="lesson-tag">Unit 7 · Electrical Systems · All Tracks</div>
+            <h1>L7.2 Breadboards &amp;<br>Circuit Assembly</h1>
+            <p class="subtitle">Solderless Prototyping · Reading Schematics</p>
+            <div style="margin-top:40px; display:flex; justify-content:center; gap:30px; flex-wrap:wrap;">
+                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">Solderless</div>
+                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">Reusable</div>
+                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">No Heat</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 2: What is a Breadboard? ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>What Is a Breadboard?</h2>
+            <ul class="checklist">
+                <li>
+                    <span class="icon">🔌</span>
+                    <span class="label"><strong>A breadboard is a solderless prototyping board</strong> — push component leads and wires directly into the holes.
+                        <span class="note">No soldering = no heat, no permanent connections. If something doesn't work, just pull it out and try again.</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">🔲</span>
+                    <span class="label"><strong>Made of plastic with spring-loaded metal clips inside each hole</strong> — the clips grip component leads and make electrical contact.
+                        <span class="note">Leads must be thin enough to fit — use 22-gauge solid core wire or standard component leads.</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">♻️</span>
+                    <span class="label"><strong>Reusable</strong> — a good breadboard lasts for thousands of builds.
+                        <span class="note">Cheap breadboards lose their spring. Invest in one that holds components firmly.</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">📐</span>
+                    <span class="label"><strong>Standard size fits DIP chips</strong> — the center gap matches the 0.3" or 0.6" row spacing of DIP (Dual Inline Package) integrated circuits.
+                        <span class="note">Place DIP chips straddling the center gap so each pin connects to a separate row on each side.</span>
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 3: Internal Connections ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>How Breadboards Connect Internally</h2>
+            <div class="callout">
+                The holes you see are just the access points. <strong>The actual connections are hidden inside.</strong> Understanding the internal connections is the single most important thing about breadboards.
+            </div>
+            <ol class="step-list">
+                <li>The board is divided into <strong>two halves</strong> by a center channel (the DIP gap). The channel breaks all connections across the middle.</li>
+                <li>On each half, holes are grouped into <strong>rows of 5</strong>. All 5 holes in a row share one clip — they're all connected together.</li>
+                <li>The rows are numbered 1–30 (or 1–60 on full-size boards). Each row is a separate island of connection.</li>
+                <li><strong>Across</strong> the board (horizontally), rows are NOT connected to each other. Only holes in the same numbered row on the same half share a connection.</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 4: Power Rails ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Power Rails (Bus Strips)</h2>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>The Rails</h4>
+                    <ul>
+                        <li>The long vertical strips on the outer edges are <strong>power rails</strong> (bus strips).</li>
+                        <li>Each rail runs the full length of the board — all holes in that rail are connected together.</li>
+                        <li>Marked with <strong>+</strong> (red) and <strong>−</strong> (blue/black).</li>
+                        <li>Connect your supply voltage to the + rail and ground to the − rail.</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Using the Rails</h4>
+                    <ul>
+                        <li>Pick off power anywhere on the board with a short jumper wire from the rail to your component row.</li>
+                        <li><strong>Most beginners forget:</strong> the top rail and bottom rail on the same side are NOT connected — you must bridge them with a wire if you want power on both sides.</li>
+                        <li>Some boards have a break in the middle of each rail — always check with a DMM.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout">Always connect your power supply <strong>AFTER</strong> you've finished wiring the circuit. Build first, then power on.</div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 5: Schematic Symbols ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Reading Schematic Symbols</h2>
+            <ul class="bullet-list">
+                <li><strong>Resistor</strong> — a rectangular box (US standard) or a zigzag (older style). Value labeled in Ω or kΩ.</li>
+                <li><strong>LED</strong> — a diode symbol (triangle + bar) with two arrows pointing away from it (the arrows = emitted light).</li>
+                <li><strong>Switch / Button</strong> — a line with a gap (open) or a line connecting two contacts (closed). Momentary buttons are labeled SW or BTN.</li>
+                <li><strong>Voltage source (battery)</strong> — long line (+) and short line (−) stacked. Multiple pairs = multi-cell battery.</li>
+                <li><strong>Ground</strong> — three horizontal lines decreasing in width (chassis ground) or a single triangle. All ground symbols in a schematic connect to the same node even if not drawn with a wire.</li>
+                <li><strong>Wire / Node</strong> — wires that touch with a dot (junction dot) are electrically connected. Wires that cross with NO dot are NOT connected.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 6: Building from a Schematic ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Building from a Schematic</h2>
+            <ol class="step-list">
+                <li><strong>Orient</strong> the schematic so power is at the top and ground is at the bottom.</li>
+                <li><strong>Place your most critical components</strong> first — ICs straddle the center gap; resistors and LEDs go in the nearest rows.</li>
+                <li><strong>Connect power and ground rails</strong> but do NOT plug in the supply yet.</li>
+                <li><strong>Follow each wire in the schematic</strong> one at a time. Place a jumper wire on the breadboard for each schematic wire.</li>
+                <li><strong>Double-check every connection</strong> against the schematic before applying power.</li>
+                <li><strong>Apply power last.</strong> If something smells hot or a component gets warm, disconnect immediately.</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 7: Common Mistakes ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Common Breadboard Mistakes</h2>
+            <ul class="bullet-list">
+                <li><strong>Wrong row</strong> — you think two components share a node, but they're in rows 14 and 15 (different rows = different nodes). Count holes carefully.</li>
+                <li><strong>Rail polarity reversed</strong> — red wire on the − rail. Always verify with a DMM before connecting components.</li>
+                <li><strong>DIP chip in the wrong orientation</strong> — pin 1 in the wrong corner, or the chip straddling the gap wrong. Check the datasheet for the pin 1 indicator dot or notch.</li>
+                <li><strong>Wire bridging the DIP gap</strong> — a wire accidentally connecting the two halves where the chip's pins sit, shorting two pins together.</li>
+                <li><strong>Loose component lead</strong> — the lead didn't fully seat into the clip. Push firmly until you feel resistance, then give a gentle tug to confirm it's gripped.</li>
+                <li><strong>Power on while building</strong> — adding or removing components with power applied can damage components and the board.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 8: Lab ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Lab: Your First Breadboard Circuit</h2>
+            <div class="deliverable-box">
+                <h4>Build It</h4>
+                <ul>
+                    <li>Gather: 9V battery, battery snap connector, 330Ω resistor, red LED, breadboard, jumper wires</li>
+                    <li>Draw the schematic first in your engineering notebook (battery → resistor → LED → ground)</li>
+                    <li>Build the circuit on the breadboard following your schematic</li>
+                    <li><strong>Before</strong> powering on, verify every connection against your schematic</li>
+                    <li>Power on. LED should light. If it doesn't, check LED polarity (longer leg = anode = +)</li>
+                </ul>
+            </div>
+            <div class="callout">If your LED is very dim or very bright, explain why using what you know about Ohm's Law. What resistor value would make it brighter? Dimmer? Write your reasoning in your notebook.</div>
+        </div>
+    </div>
+
+</div><!-- /.presentation -->
+
+<!-- Navigation -->
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 8</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
+
+<script>
+    var slides = document.querySelectorAll('.slide');
+    var current = 0;
+
+    function showSlide(n) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(n, slides.length - 1));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    }
+
+    function changeSlide(dir) { showSlide(current + dir); }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+
+</body>
+</html>

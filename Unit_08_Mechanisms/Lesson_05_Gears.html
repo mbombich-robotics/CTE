@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 8.5: Gears &amp; Gear Ratios | Unit 8 — Mechanisms</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #020f02 0%, #061606 40%, #0a1f0a 100%);
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.2em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #4ade80;
+            text-shadow: 0 0 30px rgba(74,222,128,0.4);
+            line-height: 1.15;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #86efac;
+            text-align: center;
+        }
+
+        .lesson-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #4ade80;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            text-align: center;
+            color: #94a3b8;
+            font-weight: 300;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        /* Bullet lists */
+        .bullet-list { list-style: none; padding: 0; margin: 20px 0; }
+
+        .bullet-list li {
+            font-size: 1.4em;
+            padding: 10px 0 10px 46px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .bullet-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #4ade80;
+            font-size: 1.1em;
+        }
+
+        .bullet-list li strong { color: #e2e8f0; }
+        .bullet-list li em { color: #86efac; font-style: normal; font-weight: 600; }
+
+        /* Callout */
+        .callout {
+            background: rgba(74,222,128,0.08);
+            border-left: 5px solid #4ade80;
+            border-radius: 0 10px 10px 0;
+            padding: 22px 28px;
+            margin: 20px 0;
+            font-size: 1.4em;
+            font-style: italic;
+            color: #86efac;
+            line-height: 1.5;
+        }
+
+        .callout strong { color: #e2e8f0; font-style: normal; }
+
+        /* Step list */
+        .step-list { list-style: none; padding: 0; margin: 20px 0; counter-reset: step-counter; }
+
+        .step-list li {
+            font-size: 1.25em;
+            padding: 13px 14px 13px 62px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            background: rgba(74,222,128,0.04);
+            border-radius: 8px;
+        }
+
+        .step-list li::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: rgba(74,222,128,0.18);
+            border: 2px solid #4ade80;
+            border-radius: 50%;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #4ade80;
+            text-align: center;
+            line-height: 28px;
+        }
+
+        .step-list li strong { color: #86efac; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(74,222,128,0.12);
+            color: #86efac;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Two-column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin: 20px 0;
+        }
+
+        .col-box {
+            background: rgba(74,222,128,0.06);
+            border: 1px solid rgba(74,222,128,0.2);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .col-box h4 {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #4ade80;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .col-box ul { list-style: none; padding: 0; }
+
+        .col-box ul li {
+            font-size: 1.05em;
+            color: #94a3b8;
+            padding: 6px 0 6px 26px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .col-box ul li::before { content: "▸"; position: absolute; left: 0; color: #4ade80; }
+
+        .col-box p { font-size: 1.05em; color: #94a3b8; line-height: 1.6; }
+
+        /* Checklist (with colored icons) */
+        .checklist { list-style: none; padding: 0; margin: 20px 0; }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            font-size: 1.35em;
+            padding: 10px 0;
+            color: #cbd5e1;
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(74,222,128,0.08);
+        }
+
+        .checklist li:last-child { border-bottom: none; }
+
+        .checklist li .icon { flex-shrink: 0; font-size: 1.1em; margin-top: 1px; }
+        .checklist li .label { flex: 1; }
+        .checklist li .label strong { color: #4ade80; }
+        .checklist li .note { font-size: 0.75em; color: #64748b; display: block; margin-top: 2px; }
+
+        /* Issues/data table */
+        .issues-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 1.1em;
+        }
+
+        .issues-table thead tr {
+            background: rgba(74,222,128,0.12);
+        }
+
+        .issues-table th {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85em;
+            font-weight: 700;
+            color: #4ade80;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 2px solid rgba(74,222,128,0.3);
+        }
+
+        .issues-table td {
+            padding: 12px 16px;
+            color: #cbd5e1;
+            border-bottom: 1px solid rgba(74,222,128,0.08);
+            line-height: 1.5;
+            vertical-align: top;
+        }
+
+        .issues-table tbody tr:last-child td { border-bottom: none; }
+
+        .issues-table tbody tr:nth-child(odd) {
+            background: rgba(74,222,128,0.03);
+        }
+
+        .issues-table td.driver { color: #86efac; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+        .issues-table td.ratio  { color: #4ade80; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+
+        /* Deliverable box */
+        .deliverable-box {
+            background: rgba(74,222,128,0.08);
+            border: 2px solid rgba(74,222,128,0.4);
+            border-radius: 14px;
+            padding: 28px 32px;
+            margin: 24px 0;
+        }
+
+        .deliverable-box h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+            color: #4ade80;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .deliverable-box ul { list-style: none; padding: 0; }
+
+        .deliverable-box ul li {
+            font-size: 1.25em;
+            color: #cbd5e1;
+            padding: 8px 0 8px 36px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .deliverable-box ul li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4ade80;
+            font-weight: 700;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(2,15,2,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(74,222,128,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
+        }
+
+        .nav button {
+            background: rgba(74,222,128,0.15);
+            color: #86efac;
+            border: 1px solid rgba(74,222,128,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover { background: rgba(74,222,128,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 24px;
+            font-size: 0.9em;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #4ade80; }
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Unit 8</a>
+
+<div class="presentation">
+
+    <!-- ── SLIDE 1: Title ── -->
+    <div class="slide active">
+        <div class="slide-content" style="text-align:center;">
+            <div class="lesson-tag">Unit 8 · Mechanisms · All Tracks</div>
+            <h1>L8.5 Gears &amp;<br>Gear Ratios</h1>
+            <p class="subtitle">Speed · Torque · Direction · PLTW POE_115</p>
+            <div style="margin-top:40px; display:flex; justify-content:center; gap:30px; flex-wrap:wrap;">
+                <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#4ade80;">Gear Ratio</div>
+                <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#4ade80;">Torque vs. Speed</div>
+                <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#4ade80;">VEX Challenge</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 2: What Gears Do ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>What Gears Do</h2>
+            <div class="callout">
+                Gears are <strong>toothed wheels that mesh together</strong> to transfer rotation from one shaft to another. They can change speed, torque, and direction of rotation.
+            </div>
+            <ul class="bullet-list">
+                <li>A vintage tractor engine spins at ~700 RPM. Tractor tires rotate at ~10 RPM. Gears bridge that gap.</li>
+                <li><strong>Gear ratio</strong> determines how speed and torque change between input and output</li>
+                <li><strong>Key insight:</strong> gears conserve power (P = τ × ω). If torque goes up, speed must go down — and vice versa.</li>
+                <li><strong>Meshed teeth ensure no slip</strong> — every tooth on the driver mates with a tooth on the driven gear. Positive drive, unlike belt drives that can slip.</li>
+                <li>Gears also change <strong>rotation direction:</strong> two meshed gears rotate opposite to each other.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 3: The Gear Ratio ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>The Gear Ratio</h2>
+            <div class="callout">
+                <strong>Gear Ratio = Teeth_driven / Teeth_driver</strong> (equivalently: Diameter_driven / Diameter_driver)
+            </div>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>Gear Ratio &gt; 1 (Speed Reduction)</h4>
+                    <ul>
+                        <li>Driven gear has MORE teeth than driver</li>
+                        <li>Driven gear rotates SLOWER</li>
+                        <li>But torque INCREASES by the same factor</li>
+                        <li>Example: 12-tooth driver → 36-tooth driven → Ratio = 36/12 = 3:1 (reads "3 to 1")</li>
+                        <li>The driven gear spins 3× slower and has 3× more torque</li>
+                        <li>Use case: tractor drivetrain, elevator motor, robot arm</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Gear Ratio &lt; 1 (Speed Increase)</h4>
+                    <ul>
+                        <li>Driven gear has FEWER teeth than driver</li>
+                        <li>Driven gear rotates FASTER</li>
+                        <li>But torque DECREASES</li>
+                        <li>Example: 84-tooth driver → 60-tooth driven → Ratio = 60/84 = 0.714</li>
+                        <li>The driven gear spins faster and has less torque</li>
+                        <li>Use case: bicycle shifting up for downhill speed, fan blades</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 4: Hands-On: VEX Gears ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Hands-On with VEX Gears (POE_115)</h2>
+            <ol class="step-list">
+                <li>Mark one tooth on a 36-tooth gear with permanent marker. Mesh with an identical 36-tooth gear.</li>
+                <li>Rotate the driver one full turn and observe the driven gear — same speed, opposite direction. Ratio = 1:1.</li>
+                <li>Now mesh the 36-tooth driver with a <strong>12-tooth</strong> driven gear. How many times does the small gear spin per driver revolution?</li>
+                <li>Predict using the formula: Ratio = 12/36 = 1:3 → driven spins 3× per driver rotation. Test and verify.</li>
+                <li>Measure both gears' diameters. Verify that Diameter_ratio = Teeth_ratio.</li>
+                <li>Build and test 4 prescribed combinations. Record gear ratio and whether each optimizes for torque or speed.</li>
+            </ol>
+            <div class="callout">
+                Gear ratios multiply. If driver A meshes to gear B (ratio 3:1), and B meshes to gear C (ratio 2:1), the total ratio from A to C is 3 × 2 = 6:1. This is how compound gear trains achieve very large ratios.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 5: Rotation Direction and Idler Gears ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Rotation Direction &amp; Idler Gears</h2>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>Opposite Direction</h4>
+                    <ul>
+                        <li>Two directly meshed gears ALWAYS rotate opposite to each other</li>
+                        <li>Driver CW → Driven CCW</li>
+                        <li>This is due to the teeth pushing against each other at the mesh point</li>
+                        <li>Many applications require same-direction output (e.g., both wheels of a drive train turning the same way)</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Idler Gear</h4>
+                    <ul>
+                        <li>Insert a third gear between driver and driven</li>
+                        <li>The idler reverses direction twice: driver → idler (reverses), idler → driven (reverses again)</li>
+                        <li>Net result: driver and final driven rotate in the SAME direction</li>
+                        <li><strong>Key fact:</strong> the idler does NOT change the overall gear ratio — only the final tooth counts of driver and driven determine the ratio</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout">
+                An idler gear is like a language interpreter — it changes how the gears communicate without changing what the final output does. Add an idler: same ratio, same-direction output.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 6: Compound Gear Trains ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Compound Gear Trains</h2>
+            <ol class="step-list">
+                <li>A compound gear train has <strong>multiple meshing stages</strong> in sequence</li>
+                <li>The overall gear ratio = product of each stage's ratio</li>
+                <li>Example: Stage 1 = 12-tooth driver → 36-tooth driven (ratio 3:1); Stage 2 = 12-tooth driver → 84-tooth driven (ratio 7:1)</li>
+                <li>Overall ratio = 3 × 7 = <strong>21:1</strong></li>
+                <li>A motor spinning at 1000 RPM through this train drives the output at 1000 / 21 ≈ <strong>47.6 RPM</strong></li>
+                <li>And the output torque is 21× the motor's torque (minus friction losses)</li>
+            </ol>
+            <div class="callout">
+                Compound gear trains are how clock mechanisms, bicycle transmissions, and industrial gearboxes achieve large ratios in a compact package. Each stage independently contributes to the final ratio.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 7: Four VEX Gear Combinations ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Testing 4 Gear Combinations</h2>
+            <table class="issues-table">
+                <thead>
+                    <tr>
+                        <th>Driver</th>
+                        <th>Driven</th>
+                        <th>Ratio</th>
+                        <th>Effect</th>
+                        <th>Best For</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="driver">12T</td>
+                        <td class="driver">36T</td>
+                        <td class="ratio">3:1</td>
+                        <td>Slower + more torque</td>
+                        <td>Pulling, lifting, gripping</td>
+                    </tr>
+                    <tr>
+                        <td class="driver">60T</td>
+                        <td class="driver">36T</td>
+                        <td class="ratio">0.6:1</td>
+                        <td>Faster + less torque</td>
+                        <td>Speed runs, spinning tools</td>
+                    </tr>
+                    <tr>
+                        <td class="driver">12T</td>
+                        <td class="driver">84T</td>
+                        <td class="ratio">7:1</td>
+                        <td>Much slower + much more torque</td>
+                        <td>High-force tasks (Tug of War)</td>
+                    </tr>
+                    <tr>
+                        <td class="driver">84T</td>
+                        <td class="driver">60T</td>
+                        <td class="ratio">~0.71:1</td>
+                        <td>Faster, less torque</td>
+                        <td>Quick traversal</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="callout">
+                For the Tug-of-War challenge (L8.7), you want the highest possible torque ratio to maximize pulling force. That means gear DOWN as much as possible.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 8: Go For Slow Challenge ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Challenge: "Go for Slow" (POE_115)</h2>
+            <div class="deliverable-box">
+                <h4>Design the Slowest Vehicle</h4>
+                <ul>
+                    <li>Materials: VEX V5 Brain, one Smart Motor (Port 5), Limit Switch (Port A), Battery Pack, available gears</li>
+                    <li><strong>Goal:</strong> design and build the gear train that makes the slowest possible motorized vehicle</li>
+                    <li>Download and run the "VEX Simple Motor Code" provided by your teacher</li>
+                    <li>Measure your vehicle's travel time over a 30 cm course — longer time = lower score (slower = better!)</li>
+                    <li>Record your gear combination, calculate the theoretical ratio, and compare to observed speed</li>
+                </ul>
+            </div>
+            <div class="callout">
+                There's a limit to how slow you can go. Too many gear stages add friction that eventually stalls the motor. Find the ratio that's slow enough to win without stalling. This is engineering — not just calculation.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 9: Done Checklist ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Done Checklist</h2>
+            <ul class="checklist">
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>I can calculate gear ratio from tooth counts and predict speed and torque changes</strong>
+                        <span class="note">GR = T_driven / T_driver; speed ÷ GR, torque × GR</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>I understand the speed-torque tradeoff in gears</strong>
+                        <span class="note">Power is conserved: P = τ × ω stays constant (ideal)</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>I can predict the output direction for a gear train with any number of stages</strong>
+                        <span class="note">Each mesh reverses direction; odd number of meshes = reversed; even = same</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>I know why an idler gear doesn't change the gear ratio</strong>
+                        <span class="note">Only driver and final driven tooth counts set the ratio</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>My "Go for Slow" gear train data is documented with ratio calculation and measured speed</strong>
+                        <span class="note">Engineering notebook: sketch, tooth counts, ratio, time trial result</span>
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div><!-- /.presentation -->
+
+<!-- Navigation -->
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 9</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
+
+<script>
+    var slides = document.querySelectorAll('.slide');
+    var current = 0;
+
+    function showSlide(n) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(n, slides.length - 1));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    }
+
+    function changeSlide(dir) { showSlide(current + dir); }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+
+</body>
+</html>

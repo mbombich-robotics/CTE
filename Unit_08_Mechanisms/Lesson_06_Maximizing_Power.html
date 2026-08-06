@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 8.6: Maximizing Power Output | Unit 8 — Mechanisms</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #020f02 0%, #061606 40%, #0a1f0a 100%);
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.2em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #4ade80;
+            text-shadow: 0 0 30px rgba(74,222,128,0.4);
+            line-height: 1.15;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #86efac;
+            text-align: center;
+        }
+
+        .lesson-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #4ade80;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            text-align: center;
+            color: #94a3b8;
+            font-weight: 300;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        /* Bullet lists */
+        .bullet-list { list-style: none; padding: 0; margin: 20px 0; }
+
+        .bullet-list li {
+            font-size: 1.4em;
+            padding: 10px 0 10px 46px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .bullet-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #4ade80;
+            font-size: 1.1em;
+        }
+
+        .bullet-list li strong { color: #e2e8f0; }
+        .bullet-list li em { color: #86efac; font-style: normal; font-weight: 600; }
+
+        /* Callout */
+        .callout {
+            background: rgba(74,222,128,0.08);
+            border-left: 5px solid #4ade80;
+            border-radius: 0 10px 10px 0;
+            padding: 22px 28px;
+            margin: 20px 0;
+            font-size: 1.4em;
+            font-style: italic;
+            color: #86efac;
+            line-height: 1.5;
+        }
+
+        .callout strong { color: #e2e8f0; font-style: normal; }
+
+        /* Step list */
+        .step-list { list-style: none; padding: 0; margin: 20px 0; counter-reset: step-counter; }
+
+        .step-list li {
+            font-size: 1.25em;
+            padding: 13px 14px 13px 62px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            background: rgba(74,222,128,0.04);
+            border-radius: 8px;
+        }
+
+        .step-list li::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: rgba(74,222,128,0.18);
+            border: 2px solid #4ade80;
+            border-radius: 50%;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #4ade80;
+            text-align: center;
+            line-height: 28px;
+        }
+
+        .step-list li strong { color: #86efac; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(74,222,128,0.12);
+            color: #86efac;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Two-column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin: 20px 0;
+        }
+
+        .col-box {
+            background: rgba(74,222,128,0.06);
+            border: 1px solid rgba(74,222,128,0.2);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .col-box h4 {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #4ade80;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .col-box ul { list-style: none; padding: 0; }
+
+        .col-box ul li {
+            font-size: 1.05em;
+            color: #94a3b8;
+            padding: 6px 0 6px 26px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .col-box ul li::before { content: "▸"; position: absolute; left: 0; color: #4ade80; }
+
+        .col-box p { font-size: 1.05em; color: #94a3b8; line-height: 1.6; }
+
+        /* Checklist */
+        .checklist { list-style: none; padding: 0; margin: 20px 0; }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            font-size: 1.35em;
+            padding: 10px 0;
+            color: #cbd5e1;
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(74,222,128,0.08);
+        }
+
+        .checklist li:last-child { border-bottom: none; }
+
+        .checklist li .icon { flex-shrink: 0; font-size: 1.1em; margin-top: 1px; }
+        .checklist li .label { flex: 1; }
+        .checklist li .label strong { color: #4ade80; }
+        .checklist li .note { font-size: 0.75em; color: #64748b; display: block; margin-top: 2px; }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(2,15,2,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(74,222,128,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
+        }
+
+        .nav button {
+            background: rgba(74,222,128,0.15);
+            color: #86efac;
+            border: 1px solid rgba(74,222,128,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover { background: rgba(74,222,128,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 24px;
+            font-size: 0.9em;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #4ade80; }
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Unit 8</a>
+
+<div class="presentation">
+
+    <!-- ── SLIDE 1: Title ── -->
+    <div class="slide active">
+        <div class="slide-content" style="text-align:center;">
+            <div class="lesson-tag">Unit 8 · Mechanisms · All Tracks</div>
+            <h1>L8.6 Maximizing<br>Power Output</h1>
+            <p class="subtitle">Motor Curves · Stall Torque · Maximum Power Point</p>
+            <div style="margin-top:40px; display:flex; justify-content:center; gap:30px; flex-wrap:wrap;">
+                <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#4ade80;">Torque</div>
+                <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#4ade80;">No-Load Speed</div>
+                <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#4ade80;">PLTW POE_116</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 2: The Four Motor Characteristics ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>What Describes a Motor's Performance?</h2>
+            <div class="callout">
+                A motor's behavior can be described by four things, all plotted as functions of torque: <strong>speed, power, efficiency, and current</strong>. Together they form the motor's characteristic curves.
+            </div>
+            <ul class="bullet-list">
+                <li><strong>No-load speed (ω₀)</strong> — how fast the motor spins when nothing is attached (no load). Maximum speed, zero torque.</li>
+                <li><strong>Stall torque (τ<sub>stall</sub>)</strong> — the torque the motor can produce when it's barely turning (about to stop). Maximum torque, zero speed.</li>
+                <li><strong>Speed vs. Torque is LINEAR:</strong> as you increase the load (torque), speed decreases in a straight line between (ω₀, 0) and (0, τ<sub>stall</sub>)</li>
+                <li><strong>Power vs. Torque is PARABOLIC:</strong> rises then falls, with a maximum in the middle</li>
+                <li><strong>Maximum power</strong> occurs at exactly half the stall torque and half the no-load speed</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 3: Speed vs. Torque Relationship ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Speed vs. Torque — The Linear Relationship</h2>
+            <div class="callout">
+                Formula: <strong>ω = (−ω₀ / τ<sub>stall</sub>) × τ + ω₀</strong> &nbsp;→&nbsp; a straight line from ω₀ (at τ=0) down to 0 (at τ=τ<sub>stall</sub>)
+            </div>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>What the Graph Looks Like</h4>
+                    <ul>
+                        <li>X-axis: torque (τ), from 0 to τ<sub>stall</sub></li>
+                        <li>Y-axis: speed (ω), from ω₀ down to 0</li>
+                        <li>Straight negative slope</li>
+                        <li>At zero torque (free running): max speed ω₀</li>
+                        <li>At max torque (stalled): zero speed</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>What This Means for Engineers</h4>
+                    <ul>
+                        <li>You can't have max speed AND max torque simultaneously</li>
+                        <li>Every gear selection shifts WHERE on this line the motor operates</li>
+                        <li>Gear down (higher ratio): operating point moves toward high-torque, low-speed end</li>
+                        <li>Gear up (lower ratio): operating point moves toward high-speed, low-torque end</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 4: Power = Torque × Speed ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Power: P = τ × ω</h2>
+            <div class="callout">
+                Substituting the speed equation into P = τ × ω gives: <strong>P = (−ω₀/τ<sub>stall</sub>) × τ² + ω₀τ</strong> — a parabola.
+            </div>
+            <ul class="bullet-list">
+                <li>At τ=0: P = 0 (no torque = no work done, even at max speed)</li>
+                <li>At τ=τ<sub>stall</sub>: P = 0 (motor stalled = no movement = no work done)</li>
+                <li>The parabola peaks BETWEEN these extremes</li>
+                <li><strong>Maximum power occurs at τ = τ<sub>stall</sub> / 2</strong> (exactly halfway between 0 and stall torque)</li>
+                <li>At maximum power: speed also equals ω₀ / 2 (halfway between 0 and no-load speed)</li>
+                <li>This is the <strong>Maximum Power Point (MPP)</strong> — the sweet spot for motor operation</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 5: Calculating Stall Torque from Measurements ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Measuring Stall Torque</h2>
+            <ol class="step-list">
+                <li><strong>Setup:</strong> Attach a Vernier Force Sensor to the VEX Gearbox Motor Winch cable. Prevent the output from rotating (create a stall condition by holding the wheel).</li>
+                <li><strong>Record</strong> the force (F, in Newtons or pounds) at the stall condition, and the moment arm distance (d, from the axle center to where the force is applied).</li>
+                <li><strong>Calculate stall torque:</strong> τ<sub>stall</sub> = d × F<sub>⊥</sub> (distance × perpendicular force component)</li>
+                <li><strong>Maximum power torque:</strong> τ<sub>maxPower</sub> = τ<sub>stall</sub> / 2</li>
+                <li>This gives you the target load torque for maximum power delivery</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 6: Using Gear Ratio to Hit the Maximum Power Point ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Gear Selection for Maximum Power</h2>
+            <div class="callout">
+                <strong>Gear Ratio = τ<sub>out</sub> / τ<sub>in</sub></strong> — select the gear ratio so the motor's output torque matches τ<sub>maxPower</sub> for your application's load.
+            </div>
+            <ol class="step-list">
+                <li><strong>Given:</strong> stalled motor force = 1.4 lb at d = 3 inches → τ<sub>stall</sub> = 4.2 lb·in</li>
+                <li><strong>Maximum power torque:</strong> τ<sub>maxPower</sub> = 4.2 / 2 = <strong>2.1 lb·in</strong></li>
+                <li><strong>Load torque:</strong> a winch load of 0.2 lb at a 2-inch radius → τ<sub>load</sub> = 0.4 lb·in</li>
+                <li><strong>Required gear ratio:</strong> GR = τ<sub>load</sub> / τ<sub>maxPower</sub> = 0.4 / 2.1 = <strong>0.19</strong></li>
+                <li><strong>Find closest VEX gear combination:</strong> 12-tooth driver → 60-tooth driven: GR = 12/60 = 0.20 ≈ 0.19 ✓</li>
+                <li>This gear combo makes the motor operate near its maximum power point for this load.</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 7: Lab: Characterize the VEX Motor ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Lab: Motor Characterization (POE_116)</h2>
+            <ol class="step-list">
+                <li>Attach a "finger striker" (doubled-over tape) to the output wheel rim; loop the cable through the wheel spokes; attach force sensor</li>
+                <li>Run motor at 6V. Count 20 revolutions while timing. Record elapsed time. Repeat 3 times.</li>
+                <li>Measure current (I) and voltage (V) with multimeter during operation</li>
+                <li>Calculate no-load speed: ω₀ = (20 revolutions) / (average time)</li>
+                <li>Enter data into the provided Motor Power spreadsheet — it generates the characteristic curves</li>
+                <li>From the graph: identify τ<sub>maxPower</sub>, ω at max power, and P<sub>max</sub></li>
+            </ol>
+            <div class="callout" style="font-size:1.2em; margin-top:8px;">
+                The spreadsheet does the heavy math. Your job is accurate measurements (three trials for precision) and understanding what the resulting graphs mean for your application.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 8: Applying Motor Curves to Design ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Connecting Motor Curves to Gear Selection</h2>
+            <ul class="bullet-list">
+                <li><strong>Undersized gear ratio (too little torque):</strong> motor runs fast but can't move the load; high speed, low torque, low power</li>
+                <li><strong>Oversized gear ratio (too much torque):</strong> motor nearly stalls under normal conditions; high torque, very low speed, low power</li>
+                <li><strong>Optimal gear ratio:</strong> motor operates near τ<sub>stall</sub>/2 → maximum power delivered to load</li>
+                <li>This principle governs: bicycle gearing (shift to stay in the power band), car transmissions (torque converter + gears), industrial machinery (gearbox selection for the load)</li>
+            </ul>
+            <div class="callout">
+                You now have the full toolkit: measure the motor's stall torque → calculate τ<sub>maxPower</sub> → calculate required gear ratio → select the nearest available gear combination. This is real motor-drive system design.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 9: Done Checklist ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Done Checklist</h2>
+            <ul class="checklist">
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label"><strong>I understand the four motor characteristic curves and what each represents</strong>
+                        <span class="note">Speed, power, efficiency, current — all vs. torque</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label"><strong>I know the speed vs. torque relationship is linear and the power vs. torque is parabolic</strong>
+                        <span class="note">Linear → ω₀ to τ<sub>stall</sub>; Parabola → peaks at τ<sub>stall</sub>/2</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label"><strong>I can calculate τ<sub>maxPower</sub> and find the gear ratio to match a given load</strong>
+                        <span class="note">τ<sub>maxPower</sub> = τ<sub>stall</sub>/2; GR = τ<sub>load</sub> / τ<sub>maxPower</sub></span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label"><strong>I measured the VEX motor's no-load speed and used the spreadsheet to build characteristic curves</strong>
+                        <span class="note">Three trials for precision; data entered in Motor Power spreadsheet</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label"><strong>I can explain why both too-high and too-low gear ratios reduce power delivery</strong>
+                        <span class="note">Both ends of the speed-torque line give P = 0; max P is in the middle</span>
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div><!-- /.presentation -->
+
+<!-- Navigation -->
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 9</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
+
+<script>
+    var slides = document.querySelectorAll('.slide');
+    var current = 0;
+
+    function showSlide(n) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(n, slides.length - 1));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    }
+
+    function changeSlide(dir) { showSlide(current + dir); }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+
+</body>
+</html>

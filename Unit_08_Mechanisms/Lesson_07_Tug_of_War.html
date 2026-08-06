@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 8.7: Tug of War Challenge | Unit 8 — Mechanisms</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #020f02 0%, #061606 40%, #0a1f0a 100%);
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.2em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #4ade80;
+            text-shadow: 0 0 30px rgba(74,222,128,0.4);
+            line-height: 1.15;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #86efac;
+            text-align: center;
+        }
+
+        h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #4ade80;
+        }
+
+        .lesson-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #4ade80;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            text-align: center;
+            color: #94a3b8;
+            font-weight: 300;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        /* Bullet lists */
+        .bullet-list { list-style: none; padding: 0; margin: 20px 0; }
+
+        .bullet-list li {
+            font-size: 1.4em;
+            padding: 10px 0 10px 46px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .bullet-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #4ade80;
+            font-size: 1.1em;
+        }
+
+        .bullet-list li strong { color: #e2e8f0; }
+        .bullet-list li em { color: #86efac; font-style: normal; font-weight: 600; }
+
+        /* Callout */
+        .callout {
+            background: rgba(74,222,128,0.08);
+            border-left: 5px solid #4ade80;
+            border-radius: 0 10px 10px 0;
+            padding: 22px 28px;
+            margin: 20px 0;
+            font-size: 1.4em;
+            font-style: italic;
+            color: #86efac;
+            line-height: 1.5;
+        }
+
+        .callout strong { color: #e2e8f0; font-style: normal; }
+
+        .callout-header {
+            font-family: 'Orbitron', sans-serif;
+            font-style: normal;
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #4ade80;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        /* Step list */
+        .step-list { list-style: none; padding: 0; margin: 20px 0; counter-reset: step-counter; }
+
+        .step-list li {
+            font-size: 1.25em;
+            padding: 13px 14px 13px 62px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            background: rgba(74,222,128,0.04);
+            border-radius: 8px;
+        }
+
+        .step-list li::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: rgba(74,222,128,0.18);
+            border: 2px solid #4ade80;
+            border-radius: 50%;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #4ade80;
+            text-align: center;
+            line-height: 28px;
+        }
+
+        .step-list li strong { color: #86efac; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(74,222,128,0.12);
+            color: #86efac;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Two-column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin: 20px 0;
+        }
+
+        .col-box {
+            background: rgba(74,222,128,0.06);
+            border: 1px solid rgba(74,222,128,0.2);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .col-box h4 {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #4ade80;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .col-box ul { list-style: none; padding: 0; }
+
+        .col-box ul li {
+            font-size: 1.05em;
+            color: #94a3b8;
+            padding: 6px 0 6px 26px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .col-box ul li::before { content: "▸"; position: absolute; left: 0; color: #4ade80; }
+
+        .col-box p { font-size: 1.05em; color: #94a3b8; line-height: 1.6; }
+
+        /* Callout-col — callout styled for use inside two-col */
+        .callout-col {
+            background: rgba(74,222,128,0.06);
+            border: 1px solid rgba(74,222,128,0.25);
+            border-top: 4px solid #4ade80;
+            border-radius: 10px;
+            padding: 22px 24px;
+        }
+
+        .callout-col h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            color: #4ade80;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .callout-col p {
+            font-size: 1.1em;
+            color: #86efac;
+            line-height: 1.6;
+        }
+
+        /* Deliverable box */
+        .deliverable-box {
+            background: rgba(74,222,128,0.08);
+            border: 2px solid rgba(74,222,128,0.4);
+            border-radius: 14px;
+            padding: 28px 32px;
+            margin: 24px 0;
+        }
+
+        .deliverable-box h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+            color: #4ade80;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .deliverable-box ul { list-style: none; padding: 0; }
+
+        .deliverable-box ul li {
+            font-size: 1.25em;
+            color: #cbd5e1;
+            padding: 8px 0 8px 36px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .deliverable-box ul li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4ade80;
+            font-weight: 700;
+        }
+
+        /* Issues / data table */
+        .issues-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1.1em;
+        }
+
+        .issues-table th {
+            background: rgba(74,222,128,0.15);
+            color: #4ade80;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8em;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 12px 18px;
+            text-align: left;
+            border-bottom: 2px solid rgba(74,222,128,0.35);
+        }
+
+        .issues-table td {
+            padding: 12px 18px;
+            color: #94a3b8;
+            border-bottom: 1px solid rgba(74,222,128,0.1);
+            line-height: 1.5;
+        }
+
+        .issues-table tr:last-child td { border-bottom: none; }
+
+        .issues-table tr:hover td { background: rgba(74,222,128,0.04); color: #cbd5e1; }
+
+        .table-note {
+            font-size: 1em;
+            color: #475569;
+            font-style: italic;
+            margin-top: 8px;
+        }
+
+        /* Checklist */
+        .checklist { list-style: none; padding: 0; margin: 20px 0; }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            font-size: 1.25em;
+            padding: 10px 0;
+            color: #cbd5e1;
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(74,222,128,0.08);
+        }
+
+        .checklist li:last-child { border-bottom: none; }
+
+        .checklist li .icon { flex-shrink: 0; font-size: 1.1em; margin-top: 1px; }
+        .checklist li .label { flex: 1; }
+        .checklist li .label strong { color: #4ade80; }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(2,15,2,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(74,222,128,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
+        }
+
+        .nav button {
+            background: rgba(74,222,128,0.15);
+            color: #86efac;
+            border: 1px solid rgba(74,222,128,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover { background: rgba(74,222,128,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 24px;
+            font-size: 0.9em;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #4ade80; }
+    </style>
+</head>
+<body>
+
+<a href="../index.html" class="back-link">← Unit 8</a>
+
+<div class="presentation">
+
+    <!-- ── SLIDE 1: Title ── -->
+    <div class="slide active">
+        <div class="slide-content" style="text-align:center;">
+            <div class="lesson-tag">DBL — Design &amp; Build Lab</div>
+            <h1>Tug of War Challenge</h1>
+            <p class="subtitle">Lesson 8.7 · Mechanisms Unit</p>
+            <p class="subtitle" style="margin-top:30px; font-size:1.25em; color:#86efac;">
+                You've analyzed gears, pulleys, and levers.<br>Now design a system that wins.
+            </p>
+            <div style="margin-top:36px; display:flex; justify-content:center; gap:24px; flex-wrap:wrap;">
+                <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#4ade80;">PLTW POE Activity 1.1.7</div>
+                <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#4ade80;">VEX Robot</div>
+                <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#4ade80;">Torque vs. Traction</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 2: The Challenge ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>The Challenge</h2>
+            <div class="callout">
+                <div class="callout-header">⚡ The Mission</div>
+                Two teams. One rope. Your team's VEX robot must pull the other team's robot across the center line.
+            </div>
+            <ul class="bullet-list">
+                <li>Robot must use a drivetrain <strong>(no dragging by hand)</strong></li>
+                <li>Max <strong>4 motors</strong></li>
+                <li>Must fit within a <strong>defined starting box</strong></li>
+                <li>No attaching to the field walls</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 3: Design Variables ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Design Variables</h2>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>Speed Side</h4>
+                    <ul>
+                        <li>High gear ratio (few teeth on driver)</li>
+                        <li>Fast wheel speed</li>
+                        <li>Low pulling torque</li>
+                        <li>Good for: flat surface, light opponent</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Torque Side</h4>
+                    <ul>
+                        <li>Low gear ratio (many teeth on driver)</li>
+                        <li>Slow wheel speed</li>
+                        <li>High pulling torque</li>
+                        <li>Good for: heavy loads, traction battles</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout">
+                <strong>Key insight:</strong> Traction limits torque. A wheel that spins freely contributes nothing.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 4: Accuracy vs. Precision ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Know Your Targets</h2>
+            <div class="two-col">
+                <div class="callout-col">
+                    <h4>Precision</h4>
+                    <p>Your measurements are close together — repeatable — but may not hit the target value.</p>
+                </div>
+                <div class="callout-col">
+                    <h4>Accuracy</h4>
+                    <p>Your measurements are close to the true/target value — correct — but may vary.</p>
+                </div>
+            </div>
+            <div class="callout" style="margin-top:24px;">
+                In engineering, you need <strong>BOTH</strong>. A gear ratio you measured repeatedly as 3.0 (precise) but is actually 2.6 (not accurate) will lose the challenge.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 5: Planning Your Robot ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Planning Your Robot</h2>
+            <ol class="step-list">
+                <li><strong>Choose your wheel size</strong> — larger wheels = more speed, less torque</li>
+                <li><strong>Choose your gear ratio</strong> — calculate using <code>GR = T_driven / T_driver</code></li>
+                <li><strong>Estimate your output torque</strong> — <code>τ_out = τ_motor × GR</code></li>
+                <li><strong>Check traction</strong> — <code>F_traction = μ × weight</code>; if τ/r &gt; F_traction, wheels spin</li>
+                <li><strong>Build, test, iterate</strong> — record data each run</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 6: Testing Protocol ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Run Your Trials</h2>
+            <table class="issues-table">
+                <thead>
+                    <tr>
+                        <th>Trial</th>
+                        <th>Gear Ratio</th>
+                        <th>Result</th>
+                        <th>Observation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>__ : __</td>
+                        <td>Win / Lose / Tie</td>
+                        <td>Wheels spun? Slipped?</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>__ : __</td>
+                        <td>Win / Lose / Tie</td>
+                        <td>Grip better/worse?</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>__ : __</td>
+                        <td>Win / Lose / Tie</td>
+                        <td>What changed?</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="table-note">Record in engineering notebook — data without context is useless.</p>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 7: Iteration ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Iteration</h2>
+            <ul class="bullet-list">
+                <li><strong>Lost?</strong> Ask: was it traction, torque, or strategy?</li>
+                <li><strong>Won easily?</strong> Try a faster ratio — push your understanding</li>
+                <li><strong>Wheels spinning?</strong> Increase weight on the robot or lower gear ratio</li>
+                <li><strong>Pulling but losing ground?</strong> Opponent has more traction — redesign</li>
+                <li>Each iteration is data. <em>No run is wasted.</em></li>
+            </ul>
+            <div class="callout">
+                <strong>Accuracy vs. Precision in practice:</strong> Did your prediction match your result? Analyze the gap.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 8: Deliverables ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Deliverables</h2>
+            <div class="deliverable-box">
+                <h3>Turn In</h3>
+                <ul>
+                    <li>Engineering notebook: design sketch with gear ratio calculations</li>
+                    <li>Data table: all 3+ trial results</li>
+                    <li>Written analysis: what you changed and why</li>
+                    <li>Reflection: what would you do differently with more time?</li>
+                </ul>
+            </div>
+            <ul class="checklist">
+                <li>
+                    <span class="icon">☐</span>
+                    <span class="label"><strong>Gear ratio calculated before building</strong></span>
+                </li>
+                <li>
+                    <span class="icon">☐</span>
+                    <span class="label"><strong>At least 3 trials recorded</strong></span>
+                </li>
+                <li>
+                    <span class="icon">☐</span>
+                    <span class="label"><strong>Accuracy vs. precision addressed in reflection</strong></span>
+                </li>
+                <li>
+                    <span class="icon">☐</span>
+                    <span class="label"><strong>Submitted in Google Classroom</strong></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div><!-- /.presentation -->
+
+<!-- Navigation -->
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 8</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
+
+<script>
+    var slides = document.querySelectorAll('.slide');
+    var current = 0;
+
+    function showSlide(n) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(n, slides.length - 1));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    }
+
+    function changeSlide(dir) { showSlide(current + dir); }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+
+</body>
+</html>

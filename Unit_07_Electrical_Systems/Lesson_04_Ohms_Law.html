@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 7.4: Ohm's Law | Unit 7 — Electrical Systems</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0800 0%, #130f00 40%, #1c1700 100%);
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.2em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #f59e0b;
+            text-shadow: 0 0 30px rgba(245,158,11,0.4);
+            line-height: 1.15;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #fcd34d;
+            text-align: center;
+        }
+
+        .lesson-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #f59e0b;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            text-align: center;
+            color: #94a3b8;
+            font-weight: 300;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        /* Bullet lists */
+        .bullet-list { list-style: none; padding: 0; margin: 20px 0; }
+
+        .bullet-list li {
+            font-size: 1.4em;
+            padding: 10px 0 10px 46px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .bullet-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #f59e0b;
+            font-size: 1.1em;
+        }
+
+        .bullet-list li strong { color: #e2e8f0; }
+        .bullet-list li em { color: #fcd34d; font-style: normal; font-weight: 600; }
+
+        /* Callout */
+        .callout {
+            background: rgba(245,158,11,0.08);
+            border-left: 5px solid #f59e0b;
+            border-radius: 0 10px 10px 0;
+            padding: 22px 28px;
+            margin: 20px 0;
+            font-size: 1.4em;
+            font-style: italic;
+            color: #fcd34d;
+            line-height: 1.5;
+        }
+
+        .callout strong { color: #e2e8f0; font-style: normal; }
+
+        /* Step list */
+        .step-list { list-style: none; padding: 0; margin: 20px 0; counter-reset: step-counter; }
+
+        .step-list li {
+            font-size: 1.25em;
+            padding: 13px 14px 13px 62px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            background: rgba(245,158,11,0.04);
+            border-radius: 8px;
+        }
+
+        .step-list li::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: rgba(245,158,11,0.18);
+            border: 2px solid #f59e0b;
+            border-radius: 50%;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #f59e0b;
+            text-align: center;
+            line-height: 28px;
+        }
+
+        .step-list li strong { color: #fcd34d; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(245,158,11,0.12);
+            color: #fcd34d;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Two-column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin: 20px 0;
+        }
+
+        /* Three-column */
+        .three-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 22px;
+            margin: 20px 0;
+        }
+
+        .col-box {
+            background: rgba(245,158,11,0.06);
+            border: 1px solid rgba(245,158,11,0.2);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .col-box h4 {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #f59e0b;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .col-box ul { list-style: none; padding: 0; }
+
+        .col-box ul li {
+            font-size: 1.05em;
+            color: #94a3b8;
+            padding: 6px 0 6px 26px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .col-box ul li::before { content: "▸"; position: absolute; left: 0; color: #f59e0b; }
+
+        .col-box p { font-size: 1.05em; color: #94a3b8; line-height: 1.6; }
+
+        /* Deliverable box */
+        .deliverable-box {
+            background: rgba(245,158,11,0.08);
+            border: 2px solid rgba(245,158,11,0.4);
+            border-radius: 14px;
+            padding: 28px 32px;
+            margin: 24px 0;
+        }
+
+        .deliverable-box h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+            color: #f59e0b;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .deliverable-box ul { list-style: none; padding: 0; }
+
+        .deliverable-box ul li {
+            font-size: 1.25em;
+            color: #cbd5e1;
+            padding: 8px 0 8px 36px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .deliverable-box ul li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #f59e0b;
+            font-weight: 700;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(10,8,0,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(245,158,11,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
+        }
+
+        .nav button {
+            background: rgba(245,158,11,0.15);
+            color: #fcd34d;
+            border: 1px solid rgba(245,158,11,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover { background: rgba(245,158,11,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 24px;
+            font-size: 0.9em;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #f59e0b; }
+
+        /* Ohm's Law Triangle */
+        .ohm-triangle {
+            display: inline-block;
+            border: 3px solid #f59e0b;
+            border-radius: 10px;
+            overflow: hidden;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2em;
+            font-weight: 900;
+        }
+
+        .ohm-triangle-top {
+            background: rgba(245,158,11,0.15);
+            padding: 22px 80px;
+            text-align: center;
+            border-bottom: 3px solid #f59e0b;
+            color: #fcd34d;
+        }
+
+        .ohm-triangle-bottom {
+            display: flex;
+        }
+
+        .ohm-triangle-bottom-left {
+            padding: 22px 50px;
+            border-right: 3px solid #f59e0b;
+            color: #fcd34d;
+            text-align: center;
+            flex: 1;
+        }
+
+        .ohm-triangle-bottom-right {
+            padding: 22px 50px;
+            color: #fcd34d;
+            text-align: center;
+            flex: 1;
+        }
+
+        .triangle-cover-label {
+            font-size: 0.75em;
+            font-family: 'JetBrains Mono', monospace;
+            color: #94a3b8;
+            margin-top: 6px;
+        }
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Unit 7</a>
+
+<div class="presentation">
+
+    <!-- ── SLIDE 1: Title ── -->
+    <div class="slide active">
+        <div class="slide-content" style="text-align:center;">
+            <div class="lesson-tag">Unit 7 · Electrical Systems · All Tracks</div>
+            <h1>L7.4 Ohm's Law</h1>
+            <p class="subtitle">V = I × R · The Foundation of Circuit Analysis</p>
+            <div style="margin-top:40px; display:flex; justify-content:center; gap:30px; flex-wrap:wrap;">
+                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">Voltage</div>
+                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">Current</div>
+                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">Resistance</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 2: The Relationship ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>V = I × R</h2>
+            <div style="text-align:center; margin: 16px 0 24px;">
+                <span style="font-size:3em; color:#fcd34d; font-family:'Orbitron',sans-serif; font-weight:900; text-shadow: 0 0 20px rgba(252,211,77,0.4);">V = I × R</span>
+            </div>
+            <div class="three-col">
+                <div class="col-box">
+                    <h4>V — Voltage</h4>
+                    <p>The electrical "pressure" that pushes current through a circuit. Measured in Volts (V). Think of it as water pressure in a pipe.</p>
+                </div>
+                <div class="col-box">
+                    <h4>I — Current</h4>
+                    <p>The flow of electrical charge. Measured in Amperes (A) or milliamperes (mA). Think of it as how much water flows per second.</p>
+                </div>
+                <div class="col-box">
+                    <h4>R — Resistance</h4>
+                    <p>Opposition to current flow. Measured in Ohms (Ω). Think of it as the size of the pipe — smaller pipe = more resistance = less flow.</p>
+                </div>
+            </div>
+            <div class="callout">
+                Georg Ohm discovered this relationship in 1827. It's one of the most useful equations in all of electronics — if you know any two values, you can find the third.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 3: The Triangle ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>The Ohm's Law Triangle</h2>
+            <div style="text-align:center; margin: 16px 0 8px;">
+                <div class="ohm-triangle">
+                    <div class="ohm-triangle-top">V</div>
+                    <div class="ohm-triangle-bottom">
+                        <div class="ohm-triangle-bottom-left">I</div>
+                        <div class="ohm-triangle-bottom-right">R</div>
+                    </div>
+                </div>
+                <p style="margin-top:12px; font-size:1.1em; color:#94a3b8; font-style:italic;">Cover the unknown. What's left is how to find it.</p>
+            </div>
+            <div class="three-col" style="margin-top:20px;">
+                <div class="col-box" style="text-align:center;">
+                    <h4>Cover V</h4>
+                    <p style="font-family:'Orbitron',sans-serif; font-size:1.3em; color:#fcd34d; margin:10px 0;">V = I × R</p>
+                    <div class="triangle-cover-label">Multiply I and R</div>
+                </div>
+                <div class="col-box" style="text-align:center;">
+                    <h4>Cover I</h4>
+                    <p style="font-family:'Orbitron',sans-serif; font-size:1.3em; color:#fcd34d; margin:10px 0;">I = V / R</p>
+                    <div class="triangle-cover-label">Divide V by R</div>
+                </div>
+                <div class="col-box" style="text-align:center;">
+                    <h4>Cover R</h4>
+                    <p style="font-family:'Orbitron',sans-serif; font-size:1.3em; color:#fcd34d; margin:10px 0;">R = V / I</p>
+                    <div class="triangle-cover-label">Divide V by I</div>
+                </div>
+            </div>
+            <div class="callout">
+                This triangle only works when the units are correct: Voltage in Volts, Current in Amperes (not milliamperes), Resistance in Ohms.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 4: Units and Prefixes ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Units and Prefixes</h2>
+            <ul class="bullet-list">
+                <li><strong>Voltage:</strong> 1 V = 1 Volt. Common values: AA battery = 1.5V, 9V battery = 9V, Arduino pins = 5V or 3.3V</li>
+                <li><strong>Current:</strong> 1 A = 1 Ampere. Use mA (milliamperes) for small circuits: 1 A = 1000 mA. LED current ≈ 20 mA = 0.020 A</li>
+                <li><strong>Resistance:</strong> 1 Ω = 1 Ohm. Common: 330 Ω, 1 kΩ (= 1,000 Ω), 10 kΩ (= 10,000 Ω)</li>
+                <li><strong>Convert before calculating:</strong> If I is in mA, divide by 1000 before plugging into V = I × R</li>
+            </ul>
+            <div class="callout">
+                Unit error is the #1 math mistake in electrical circuits. Always write units next to every number. If your calculated current is 0.020 A, also write "= 20 mA" to catch errors.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 5: The Proportional Relationship ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>The Proportional Relationship</h2>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>More R → Less I (at fixed V)</h4>
+                    <ul>
+                        <li>If you double the resistance while voltage stays the same, current is cut in half.</li>
+                        <li>R × 2 → I ÷ 2</li>
+                        <li>Example: V = 9V, R = 100Ω → I = 90 mA. Now R = 200Ω → I = 45 mA.</li>
+                        <li>Analogy: narrower pipe = less flow at the same pressure.</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>More V → More I (at fixed R)</h4>
+                    <ul>
+                        <li>If you double the voltage while resistance stays the same, current doubles.</li>
+                        <li>V × 2 → I × 2</li>
+                        <li>Example: R = 100Ω, V = 5V → I = 50 mA. Now V = 10V → I = 100 mA.</li>
+                        <li>Analogy: more pressure = more flow through the same pipe.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout">
+                These proportional relationships let you predict what will happen before you build. Always ask: "If I change X, what happens to Y?"
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 6: Worked Example 1 ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Worked Example 1: Find Current (I)</h2>
+            <ol class="step-list">
+                <li><strong>Known:</strong> V = 12 V, R = 470 Ω</li>
+                <li><strong>Want:</strong> I = ?</li>
+                <li><strong>Formula:</strong> I = V / R</li>
+                <li><strong>Calculate:</strong> I = 12 / 470 = <strong>0.0255 A</strong></li>
+                <li><strong>Convert:</strong> 0.0255 A × 1000 = <strong>25.5 mA</strong></li>
+                <li><strong>Check units:</strong> Volts / Ohms = Amperes ✓</li>
+                <li><strong>Sanity check:</strong> 25.5 mA is a reasonable current for an LED circuit — not too high, not too low. ✓</li>
+            </ol>
+            <div class="callout">
+                Always do a sanity check. If you calculate 500 A flowing through a 9V circuit, something is wrong (maybe you forgot to convert mA to A). Real currents in small electronics are typically in the mA range.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 7: Worked Example 2 ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Worked Example 2: Find Resistance (R)</h2>
+            <ol class="step-list">
+                <li><strong>Scenario:</strong> You want an LED to draw exactly 15 mA from a 5V supply. The LED's forward voltage is 2V.</li>
+                <li><strong>Voltage across resistor:</strong> V<sub>R</sub> = V<sub>supply</sub> − V<sub>f</sub> = 5 − 2 = <strong>3 V</strong></li>
+                <li><strong>Known:</strong> V<sub>R</sub> = 3 V, I = 15 mA = 0.015 A</li>
+                <li><strong>Formula:</strong> R = V / I</li>
+                <li><strong>Calculate:</strong> R = 3 / 0.015 = <strong>200 Ω</strong></li>
+                <li><strong>Pick nearest standard value:</strong> 200 Ω is a standard value ✓ (or use 220 Ω for a tiny bit less current)</li>
+                <li><strong>Verify:</strong> I = 3 / 200 = 15 mA ✓</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 8: Lab ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Lab: Verify Ohm's Law</h2>
+            <div class="deliverable-box">
+                <h4>Procedure</h4>
+                <ul>
+                    <li>Gather 4 different resistors (e.g., 100Ω, 220Ω, 470Ω, 1kΩ), a 9V battery, and your DMM</li>
+                    <li>For each resistor: predict I using I = V / R (use measured V from your battery, not 9V)</li>
+                    <li>Build the circuit: battery → resistor → back to battery (use a breadboard)</li>
+                    <li>Measure actual current with the DMM in series; measure voltage across the resistor</li>
+                    <li>Record predicted I, measured I, and percent error for each resistor</li>
+                </ul>
+            </div>
+            <div class="callout">
+                The measured battery voltage is almost never exactly 9.00V — it depends on charge state. Always use the MEASURED voltage in your calculations, not the nominal value. This is why Step 1 is to measure V first.
+            </div>
+        </div>
+    </div>
+
+</div><!-- /.presentation -->
+
+<!-- Navigation -->
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 8</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
+
+<script>
+    var slides = document.querySelectorAll('.slide');
+    var current = 0;
+
+    function showSlide(n) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(n, slides.length - 1));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    }
+
+    function changeSlide(dir) { showSlide(current + dir); }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 7.3: LED Circuits | Unit 7 — Electrical Systems</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0800 0%, #130f00 40%, #1c1700 100%);
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.2em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #f59e0b;
+            text-shadow: 0 0 30px rgba(245,158,11,0.4);
+            line-height: 1.15;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #fcd34d;
+            text-align: center;
+        }
+
+        .lesson-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #f59e0b;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            text-align: center;
+            color: #94a3b8;
+            font-weight: 300;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        /* Bullet lists */
+        .bullet-list { list-style: none; padding: 0; margin: 20px 0; }
+
+        .bullet-list li {
+            font-size: 1.4em;
+            padding: 10px 0 10px 46px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .bullet-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #f59e0b;
+            font-size: 1.1em;
+        }
+
+        .bullet-list li strong { color: #e2e8f0; }
+        .bullet-list li em { color: #fcd34d; font-style: normal; font-weight: 600; }
+
+        /* Callout */
+        .callout {
+            background: rgba(245,158,11,0.08);
+            border-left: 5px solid #f59e0b;
+            border-radius: 0 10px 10px 0;
+            padding: 22px 28px;
+            margin: 20px 0;
+            font-size: 1.4em;
+            font-style: italic;
+            color: #fcd34d;
+            line-height: 1.5;
+        }
+
+        .callout strong { color: #e2e8f0; font-style: normal; }
+
+        /* Step list */
+        .step-list { list-style: none; padding: 0; margin: 20px 0; counter-reset: step-counter; }
+
+        .step-list li {
+            font-size: 1.25em;
+            padding: 13px 14px 13px 62px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            background: rgba(245,158,11,0.04);
+            border-radius: 8px;
+        }
+
+        .step-list li::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: rgba(245,158,11,0.18);
+            border: 2px solid #f59e0b;
+            border-radius: 50%;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #f59e0b;
+            text-align: center;
+            line-height: 28px;
+        }
+
+        .step-list li strong { color: #fcd34d; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(245,158,11,0.12);
+            color: #fcd34d;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Two-column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin: 20px 0;
+        }
+
+        .col-box {
+            background: rgba(245,158,11,0.06);
+            border: 1px solid rgba(245,158,11,0.2);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .col-box h4 {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #f59e0b;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .col-box ul { list-style: none; padding: 0; }
+
+        .col-box ul li {
+            font-size: 1.05em;
+            color: #94a3b8;
+            padding: 6px 0 6px 26px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .col-box ul li::before { content: "▸"; position: absolute; left: 0; color: #f59e0b; }
+
+        .col-box p { font-size: 1.05em; color: #94a3b8; line-height: 1.6; }
+
+        /* Checklist (with colored icons) */
+        .checklist { list-style: none; padding: 0; margin: 20px 0; }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            font-size: 1.35em;
+            padding: 10px 0;
+            color: #cbd5e1;
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(245,158,11,0.08);
+        }
+
+        .checklist li:last-child { border-bottom: none; }
+
+        .checklist li .icon { flex-shrink: 0; font-size: 1.1em; margin-top: 1px; }
+        .checklist li .label { flex: 1; }
+        .checklist li .label strong { color: #f59e0b; }
+        .checklist li .note { font-size: 0.75em; color: #64748b; display: block; margin-top: 2px; }
+
+        /* Deliverable box */
+        .deliverable-box {
+            background: rgba(245,158,11,0.08);
+            border: 2px solid rgba(245,158,11,0.4);
+            border-radius: 14px;
+            padding: 28px 32px;
+            margin: 24px 0;
+        }
+
+        .deliverable-box h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+            color: #f59e0b;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .deliverable-box ul { list-style: none; padding: 0; }
+
+        .deliverable-box ul li {
+            font-size: 1.25em;
+            color: #cbd5e1;
+            padding: 8px 0 8px 36px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .deliverable-box ul li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #f59e0b;
+            font-weight: 700;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(10,8,0,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(245,158,11,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
+        }
+
+        .nav button {
+            background: rgba(245,158,11,0.15);
+            color: #fcd34d;
+            border: 1px solid rgba(245,158,11,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover { background: rgba(245,158,11,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 24px;
+            font-size: 0.9em;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #f59e0b; }
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Unit 7</a>
+
+<div class="presentation">
+
+    <!-- ── SLIDE 1: Title ── -->
+    <div class="slide active">
+        <div class="slide-content" style="text-align:center;">
+            <div class="lesson-tag">Unit 7 · Electrical Systems · All Tracks</div>
+            <h1>L7.3 LED Circuits<br>Illumination Creation</h1>
+            <p class="subtitle">Forward Voltage · Limiting Resistors · PLTW POE_311</p>
+            <div style="margin-top:40px; display:flex; justify-content:center; gap:30px; flex-wrap:wrap;">
+                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">LED Polarity</div>
+                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">Forward Voltage</div>
+                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">Current Limiting</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 2: What Is an LED? ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>What Is an LED?</h2>
+            <ul class="checklist">
+                <li>
+                    <span class="icon">💡</span>
+                    <span class="label"><strong>LED = Light Emitting Diode</strong> — a semiconductor that emits light when current flows through it in one direction.
+                        <span class="note">"Diode" means it only conducts in one direction. Current flowing the wrong way = no light, and possibly damage.</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">↔️</span>
+                    <span class="label"><strong>Polarity matters</strong> — the LED has a positive terminal (anode) and a negative terminal (cathode).
+                        <span class="note">Connect anode to the higher voltage, cathode to ground. Reversed = no current, no light.</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">🔴🟢🔵</span>
+                    <span class="label"><strong>Color depends on the semiconductor material</strong> — red, green, blue, white, IR, UV LEDs all have slightly different electrical characteristics.
+                        <span class="note">Most common classroom LEDs: red V_f ≈ 1.8–2.2V, green V_f ≈ 2.0–2.4V, blue/white V_f ≈ 2.8–3.4V.</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">⚡</span>
+                    <span class="label"><strong>LEDs are current-driven devices</strong> — more current = more light, but too much current destroys them instantly.
+                        <span class="note">Maximum forward current for standard 5mm LEDs is typically 20–30 mA. Operating at 10–20 mA is safe and gives good brightness.</span>
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 3: Identifying Polarity ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Identifying Anode and Cathode</h2>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>By the Leads</h4>
+                    <ul>
+                        <li><strong>Longer lead = Anode (+)</strong></li>
+                        <li><strong>Shorter lead = Cathode (−)</strong></li>
+                        <li>This is the most reliable method on a new LED</li>
+                        <li>Once leads are trimmed, use the other methods</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>By the Body</h4>
+                    <ul>
+                        <li>Look at the flat side of the plastic lens — that side is the <strong>Cathode (−)</strong></li>
+                        <li>Inside the LED package, the larger metal cup/anvil is the <strong>Cathode</strong></li>
+                        <li>The smaller wire post inside is the <strong>Anode (+)</strong></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout">
+                <strong>Memory trick:</strong> Cathode → Clipped (shorter lead). Anode → A for Above (longer lead). Or just remember: flat side = minus = cathode.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 4: Forward Voltage and Current ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Forward Voltage (V_f) and Forward Current (I_f)</h2>
+            <ul class="bullet-list">
+                <li><strong>V_f (Forward Voltage)</strong> = the voltage drop across the LED when it's conducting. It's relatively fixed regardless of supply voltage.</li>
+                <li><strong>Typical values:</strong> Red ≈ 2.0 V · Green ≈ 2.2 V · Blue/White ≈ 3.2 V</li>
+                <li><strong>I_f (Forward Current)</strong> = the current flowing through the LED. This controls brightness.</li>
+                <li><strong>Typical operating range:</strong> 10–20 mA (0.010–0.020 A) for standard 5mm through-hole LEDs</li>
+                <li><strong>Maximum I_f:</strong> 20–30 mA for most classroom LEDs — exceeding this destroys the LED permanently</li>
+            </ul>
+            <div class="callout">
+                The forward voltage V_f is NOT the same as your supply voltage. V_f is the voltage that drops across the LED itself. The rest of your supply voltage must drop across your limiting resistor.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 5: Why You Need a Limiting Resistor ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Why Every LED Needs a Limiting Resistor</h2>
+            <ol class="step-list">
+                <li>An LED without a limiting resistor connected to a power supply sees all the supply voltage across it.</li>
+                <li>Since V_f is roughly fixed, the LED tries to pull whatever current is needed to maintain that voltage — which is <strong>unlimited</strong> from an ideal supply.</li>
+                <li>In reality, the current skyrockets in microseconds, the junction overheats, and the LED fails permanently.</li>
+                <li>A <strong>series resistor</strong> limits the current by consuming the extra voltage (V_supply − V_f) according to Ohm's Law.</li>
+                <li>Choose R so that at the desired current (say 20 mA), the voltage across R equals V_supply − V_f.</li>
+            </ol>
+            <div class="callout">
+                An LED without a current-limiting resistor is like a garden hose with no nozzle — full pressure, no control. The resistor is the nozzle.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 6: Calculating the Limiting Resistor ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Calculating R — The Limiting Resistor</h2>
+            <div class="callout" style="font-size:1.5em; margin-bottom:20px; text-align:center;">
+                The formula: <strong>R = (V_supply − V_f) / I_f</strong>
+            </div>
+            <ol class="step-list">
+                <li><strong>Identify your supply voltage:</strong> e.g., V_supply = 9 V</li>
+                <li><strong>Look up V_f</strong> for your LED color: e.g., red LED → V_f = 2.0 V</li>
+                <li><strong>Choose your operating current:</strong> e.g., I_f = 20 mA = 0.020 A</li>
+                <li><strong>Calculate:</strong> R = (9 − 2.0) / 0.020 = 7 / 0.020 = <strong>350 Ω</strong></li>
+                <li><strong>Pick the nearest standard value:</strong> use a <strong>330 Ω</strong> or <strong>360 Ω</strong> resistor (standard values). Slightly higher is fine — a bit dimmer but safer.</li>
+                <li><strong>Verify with Ohm's Law:</strong> I = (9 − 2.0) / 330 = 0.0212 A = 21.2 mA ✓ (within range)</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 7: Multiple LEDs ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Multiple LEDs: Series vs. Parallel</h2>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>LEDs in Series</h4>
+                    <ul>
+                        <li>V_supply must be large enough: V_supply &gt; V_f1 + V_f2 + … + V_fn</li>
+                        <li><strong>One resistor</strong> limits current for the entire chain</li>
+                        <li>If any LED burns out, all go out (one path = one failure point)</li>
+                        <li>All LEDs in the chain carry the <strong>same current</strong></li>
+                        <li>Example: 3 red LEDs (3 × 2V = 6V) + 1 resistor from 9V supply → R = (9 − 6) / 0.02 = 150 Ω</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>LEDs in Parallel</h4>
+                    <ul>
+                        <li>Each LED has its <strong>own limiting resistor</strong> — do NOT share one resistor for parallel LEDs</li>
+                        <li>All LEDs see the same voltage (same brightness)</li>
+                        <li>If one LED fails, others keep working</li>
+                        <li>Total current = I_f × number of LEDs</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout">
+                <strong>Rule:</strong> Parallel LEDs always need individual resistors. A shared resistor can't control current for multiple LEDs equally — small V_f differences cause one LED to hog all the current and burn.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 8: Lab: Illumination Creation ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Lab: Illumination Creation (PLTW POE_311)</h2>
+            <div class="deliverable-box">
+                <h4>Your Challenge</h4>
+                <ul>
+                    <li>Design a lighting scheme with 3 or more LEDs for a specific purpose (mood light, indicator panel, sign, etc.)</li>
+                    <li>Choose LED colors and placement intentionally — document your design criteria</li>
+                    <li>Calculate the required limiting resistor for each LED (or chain)</li>
+                    <li>Build the circuit on a breadboard and verify it works</li>
+                    <li>Measure actual voltage across each LED with your DMM and compare to V_f specification</li>
+                </ul>
+            </div>
+            <div class="callout">
+                Record all calculations, your design sketch, and your measured vs. calculated values. Note: does your measured V_f match the datasheet? If not, why might it differ?
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 9: Done Checklist ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Done Checklist</h2>
+            <ul class="checklist">
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label"><strong>I can identify anode and cathode on an LED by at least two physical methods</strong>
+                        <span class="note">Longer lead and flat side</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label"><strong>I know why V_f matters and can look it up or measure it</strong>
+                        <span class="note">Typical: red ≈ 2V, blue/white ≈ 3.2V</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label"><strong>I can calculate the correct limiting resistor for any LED circuit</strong>
+                        <span class="note">R = (V_supply − V_f) / I_f</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label"><strong>I understand why parallel LEDs need individual resistors</strong>
+                        <span class="note">Shared resistor → one LED hogs all the current</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label"><strong>My Illumination Creation circuit is built and documented</strong>
+                        <span class="note">Calculations, sketch, and measured V_f in engineering notebook</span>
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div><!-- /.presentation -->
+
+<!-- Navigation -->
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 9</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
+
+<script>
+    var slides = document.querySelectorAll('.slide');
+    var current = 0;
+
+    function showSlide(n) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(n, slides.length - 1));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    }
+
+    function changeSlide(dir) { showSlide(current + dir); }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+
+</body>
+</html>

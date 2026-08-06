@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 7.6: Equivalent Resistance | Unit 7 — Electrical Systems</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0800 0%, #130f00 40%, #1c1700 100%);
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.2em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #f59e0b;
+            text-shadow: 0 0 30px rgba(245,158,11,0.4);
+            line-height: 1.15;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #fcd34d;
+            text-align: center;
+        }
+
+        .lesson-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #f59e0b;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            text-align: center;
+            color: #94a3b8;
+            font-weight: 300;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        /* Bullet lists */
+        .bullet-list { list-style: none; padding: 0; margin: 20px 0; }
+
+        .bullet-list li {
+            font-size: 1.4em;
+            padding: 10px 0 10px 46px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .bullet-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #f59e0b;
+            font-size: 1.1em;
+        }
+
+        .bullet-list li strong { color: #e2e8f0; }
+        .bullet-list li em { color: #fcd34d; font-style: normal; font-weight: 600; }
+
+        /* Callout */
+        .callout {
+            background: rgba(245,158,11,0.08);
+            border-left: 5px solid #f59e0b;
+            border-radius: 0 10px 10px 0;
+            padding: 22px 28px;
+            margin: 20px 0;
+            font-size: 1.4em;
+            font-style: italic;
+            color: #fcd34d;
+            line-height: 1.5;
+        }
+
+        .callout strong { color: #e2e8f0; font-style: normal; }
+
+        /* Step list */
+        .step-list { list-style: none; padding: 0; margin: 20px 0; counter-reset: step-counter; }
+
+        .step-list li {
+            font-size: 1.25em;
+            padding: 13px 14px 13px 62px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            background: rgba(245,158,11,0.04);
+            border-radius: 8px;
+        }
+
+        .step-list li::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: rgba(245,158,11,0.18);
+            border: 2px solid #f59e0b;
+            border-radius: 50%;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #f59e0b;
+            text-align: center;
+            line-height: 28px;
+        }
+
+        .step-list li strong { color: #fcd34d; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(245,158,11,0.12);
+            color: #fcd34d;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Two-column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin: 20px 0;
+        }
+
+        .col-box {
+            background: rgba(245,158,11,0.06);
+            border: 1px solid rgba(245,158,11,0.2);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .col-box h4 {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #f59e0b;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .col-box ul { list-style: none; padding: 0; }
+
+        .col-box ul li {
+            font-size: 1.05em;
+            color: #94a3b8;
+            padding: 6px 0 6px 26px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .col-box ul li::before { content: "▸"; position: absolute; left: 0; color: #f59e0b; }
+
+        .col-box p { font-size: 1.05em; color: #94a3b8; line-height: 1.6; }
+
+        /* Checklist (with colored icons) */
+        .checklist { list-style: none; padding: 0; margin: 20px 0; }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            font-size: 1.35em;
+            padding: 10px 0;
+            color: #cbd5e1;
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(245,158,11,0.08);
+        }
+
+        .checklist li:last-child { border-bottom: none; }
+
+        .checklist li .icon { flex-shrink: 0; font-size: 1.1em; margin-top: 1px; }
+        .checklist li .label { flex: 1; }
+        .checklist li .label strong { color: #f59e0b; }
+        .checklist li .note { font-size: 0.75em; color: #64748b; display: block; margin-top: 2px; }
+
+        /* Deliverable box */
+        .deliverable-box {
+            background: rgba(245,158,11,0.08);
+            border: 2px solid rgba(245,158,11,0.4);
+            border-radius: 14px;
+            padding: 28px 32px;
+            margin: 24px 0;
+        }
+
+        .deliverable-box h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+            color: #f59e0b;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .deliverable-box ul { list-style: none; padding: 0; }
+
+        .deliverable-box ul li {
+            font-size: 1.25em;
+            color: #cbd5e1;
+            padding: 8px 0 8px 36px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .deliverable-box ul li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #f59e0b;
+            font-weight: 700;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(10,8,0,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(245,158,11,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
+        }
+
+        .nav button {
+            background: rgba(245,158,11,0.15);
+            color: #fcd34d;
+            border: 1px solid rgba(245,158,11,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover { background: rgba(245,158,11,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 24px;
+            font-size: 0.9em;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #f59e0b; }
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Unit 7</a>
+
+<div class="presentation">
+
+    <!-- ── SLIDE 1: Title ── -->
+    <div class="slide active">
+        <div class="slide-content" style="text-align:center;">
+            <div class="lesson-tag">Unit 7 · Electrical Systems · All Tracks</div>
+            <h1>L7.6 Equivalent<br>Resistance</h1>
+            <p class="subtitle">Simplifying Complex Resistor Networks</p>
+            <div style="margin-top:40px; display:flex; justify-content:center; gap:30px; flex-wrap:wrap;">
+                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">Series Formula</div>
+                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">Parallel Formula</div>
+                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">PLTW POE_314</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 2: What Is Equivalent Resistance? ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>What Is Equivalent Resistance?</h2>
+            <div class="callout">
+                R_eq is the <strong>single resistor value</strong> that would draw exactly the same current and produce exactly the same voltage drop as an entire network of resistors. It's how we simplify complex circuits to make analysis tractable.
+            </div>
+            <ul class="bullet-list">
+                <li>A circuit with 10 resistors can be reduced to <strong>one equivalent resistor</strong> without changing the current drawn from the supply</li>
+                <li>R_eq is found by applying series and parallel formulas repeatedly until one number remains</li>
+                <li>R_eq is a mathematical tool — you rarely build it physically. You calculate it to find total current, then work backward to individual branches.</li>
+                <li>Quick sanity checks: <strong>series R_eq &gt; any individual R</strong>; <strong>parallel R_eq &lt; any individual R</strong></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 3: Series Equivalent Resistance ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Series Equivalent Resistance</h2>
+            <div class="callout">
+                <strong>R_eq (series) = R₁ + R₂ + R₃ + … + Rₙ</strong> — just add them all up.
+            </div>
+            <ul class="bullet-list">
+                <li>Series means the resistors share the SAME current path — they're end-to-end</li>
+                <li>Adding any resistor in series increases R_eq (and therefore reduces total current)</li>
+                <li>The formula works for any number of resistors</li>
+                <li>Example: 100 Ω + 220 Ω + 470 Ω = <strong>790 Ω</strong></li>
+                <li>After finding R_eq: use Ohm's Law to get total current: I = V_supply / R_eq</li>
+                <li>Then use Ohm's Law on each resistor to find its voltage drop: V_n = I × Rₙ</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 4: Parallel Equivalent Resistance ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Parallel Equivalent Resistance</h2>
+            <div class="callout">
+                <strong>1/R_eq (parallel) = 1/R₁ + 1/R₂ + … + 1/Rₙ</strong> — add the reciprocals, then take the reciprocal of the result.
+            </div>
+            <ul class="bullet-list">
+                <li>Each parallel branch is an independent path — adding branches gives current MORE ways to flow, so total resistance DECREASES</li>
+                <li>R_eq is always <strong>less than the smallest</strong> individual resistor</li>
+                <li><strong>2-resistor shortcut:</strong> R_eq = (R₁ × R₂) / (R₁ + R₂)</li>
+                <li><strong>N equal resistors in parallel:</strong> R_eq = R / N (e.g., four 100Ω in parallel = 25Ω)</li>
+                <li>Example: 100Ω ∥ 300Ω → R_eq = (100 × 300) / (100 + 300) = 30000 / 400 = <strong>75Ω</strong></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 5: Combination Circuits ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Combination Circuits — Step-by-Step Reduction</h2>
+            <div class="callout">
+                A combination circuit has both series and parallel sections. Reduce it one group at a time.
+            </div>
+            <ol class="step-list">
+                <li><strong>Identify</strong> sections that are purely in series or purely in parallel — look for nodes where wires join or split.</li>
+                <li><strong>Simplify the innermost group first</strong> — usually a parallel group nested inside a series path.</li>
+                <li>Replace that group with its R_eq on the schematic (redraw if helpful).</li>
+                <li><strong>Repeat</strong> until only one resistor remains.</li>
+                <li><strong>Work backward</strong> from R_eq to find individual branch currents and voltages using Ohm's Law.</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 6: Combination Circuit Example ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Combination Circuit — Worked Example</h2>
+            <ol class="step-list">
+                <li><strong>Given:</strong> R₁=150Ω in series with a parallel group of R₂=68Ω ∥ R₃=100Ω, all in series with R₄=220Ω. Supply = 6V.</li>
+                <li><strong>Step 1:</strong> R₂ ∥ R₃: 1/R_p = 1/68 + 1/100 = 0.01471 + 0.01 = 0.02471 → R_p = <strong>40.5Ω</strong></li>
+                <li><strong>Step 2:</strong> R_eq = R₁ + R_p + R₄ = 150 + 40.5 + 220 = <strong>410.5Ω</strong></li>
+                <li><strong>Step 3:</strong> I_total = 6 / 410.5 = <strong>14.6 mA</strong></li>
+                <li><strong>Step 4:</strong> V across parallel group = 14.6mA × 40.5Ω = <strong>0.59V</strong></li>
+                <li><strong>Step 5:</strong> I through R₂ = 0.59/68 = 8.7mA; I through R₃ = 0.59/100 = 5.9mA → Check: 8.7 + 5.9 ≈ 14.6mA ✓</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 7: Tinkercad Verification ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Tinkercad Verification (PLTW POE_314)</h2>
+            <ul class="bullet-list">
+                <li>Build each circuit in Tinkercad (Circuits view)</li>
+                <li>Place an ammeter in series with the supply and a voltmeter across the whole network</li>
+                <li>Calculate R_eq from measurements: R_eq = V_supply / I_total (Ohm's Law)</li>
+                <li>Compare to algebraically calculated R_eq — they should match within a few Ω (Tinkercad uses ideal values)</li>
+                <li>If they don't match, check whether components are actually in the topology you think they are</li>
+            </ul>
+            <div class="callout">
+                Tinkercad is useful for verification, not for learning. <strong>Always calculate first, then simulate to check.</strong> Using the simulator first and then reverse-engineering the algebra misses the learning goal.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 8: Special Cases ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Special Cases Worth Memorizing</h2>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>Two Equal Resistors in Parallel</h4>
+                    <ul>
+                        <li>R_eq = R / 2</li>
+                        <li>Example: two 470Ω in parallel = 235Ω</li>
+                        <li>Three equal: R/3. Four equal: R/4.</li>
+                        <li>Useful when designing balanced circuits</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>One Very Small Parallel Resistor</h4>
+                    <ul>
+                        <li>If R₁ &gt;&gt; R₂ (say 10kΩ ∥ 10Ω), R_eq ≈ R₂</li>
+                        <li>The tiny resistor dominates — it short-circuits the big one</li>
+                        <li>This is why you should never accidentally put a low-resistance path in parallel with a circuit you care about</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout">
+                A <strong>wire</strong> (0Ω) in parallel with any resistor = 0Ω equivalent resistance. This is what a short circuit does — it bypasses all resistance.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 9: Lab ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Lab: POE_314 — Predict and Verify</h2>
+            <div class="deliverable-box">
+                <h4>Three Circuits</h4>
+                <ul>
+                    <li>Circuit A (Series): R₁=100Ω, R₂=220Ω, R₃=470Ω. Calculate R_eq, then verify in Tinkercad</li>
+                    <li>Circuit B (Parallel): same three resistors in parallel. Calculate R_eq, verify in Tinkercad</li>
+                    <li>Circuit C (Combination): design your own 4-resistor combination circuit with at least one parallel group. Draw the schematic, label values, calculate R_eq step by step, then verify in Tinkercad</li>
+                    <li>For each circuit: show all algebra, record Tinkercad-measured V and I, calculate measured R_eq = V/I, compute percent error between calculated and measured R_eq</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div><!-- /.presentation -->
+
+<!-- Navigation -->
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 9</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
+
+<script>
+    var slides = document.querySelectorAll('.slide');
+    var current = 0;
+
+    function showSlide(n) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(n, slides.length - 1));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    }
+
+    function changeSlide(dir) { showSlide(current + dir); }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+
+</body>
+</html>

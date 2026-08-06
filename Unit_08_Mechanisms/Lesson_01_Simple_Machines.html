@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 8.1: Simple Machines &amp; Engineering Design | Unit 8 — Mechanisms</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #020f02 0%, #061606 40%, #0a1f0a 100%);
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.2em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #4ade80;
+            text-shadow: 0 0 30px rgba(74,222,128,0.4);
+            line-height: 1.15;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #86efac;
+            text-align: center;
+        }
+
+        .lesson-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #4ade80;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            text-align: center;
+            color: #94a3b8;
+            font-weight: 300;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        /* Bullet lists */
+        .bullet-list { list-style: none; padding: 0; margin: 20px 0; }
+
+        .bullet-list li {
+            font-size: 1.4em;
+            padding: 10px 0 10px 46px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .bullet-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #4ade80;
+            font-size: 1.1em;
+        }
+
+        .bullet-list li strong { color: #e2e8f0; }
+        .bullet-list li em { color: #86efac; font-style: normal; font-weight: 600; }
+
+        /* Callout */
+        .callout {
+            background: rgba(74,222,128,0.08);
+            border-left: 5px solid #4ade80;
+            border-radius: 0 10px 10px 0;
+            padding: 22px 28px;
+            margin: 20px 0;
+            font-size: 1.4em;
+            font-style: italic;
+            color: #86efac;
+            line-height: 1.5;
+        }
+
+        .callout strong { color: #e2e8f0; font-style: normal; }
+
+        /* Step list */
+        .step-list { list-style: none; padding: 0; margin: 20px 0; counter-reset: step-counter; }
+
+        .step-list li {
+            font-size: 1.25em;
+            padding: 13px 14px 13px 62px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            background: rgba(74,222,128,0.04);
+            border-radius: 8px;
+        }
+
+        .step-list li::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: rgba(74,222,128,0.18);
+            border: 2px solid #4ade80;
+            border-radius: 50%;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #4ade80;
+            text-align: center;
+            line-height: 28px;
+        }
+
+        .step-list li strong { color: #86efac; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(74,222,128,0.12);
+            color: #86efac;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Two-column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin: 20px 0;
+        }
+
+        /* Three-column grid for simple machines */
+        .three-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .col-box {
+            background: rgba(74,222,128,0.06);
+            border: 1px solid rgba(74,222,128,0.2);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .col-box h4 {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #4ade80;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .col-box ul { list-style: none; padding: 0; }
+
+        .col-box ul li {
+            font-size: 1.05em;
+            color: #94a3b8;
+            padding: 6px 0 6px 26px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .col-box ul li::before { content: "▸"; position: absolute; left: 0; color: #4ade80; }
+
+        .col-box p { font-size: 1.05em; color: #94a3b8; line-height: 1.6; }
+
+        /* Checklist (with colored icons) */
+        .checklist { list-style: none; padding: 0; margin: 20px 0; }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            font-size: 1.35em;
+            padding: 10px 0;
+            color: #cbd5e1;
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(74,222,128,0.08);
+        }
+
+        .checklist li:last-child { border-bottom: none; }
+
+        .checklist li .icon { flex-shrink: 0; font-size: 1.1em; margin-top: 1px; }
+        .checklist li .label { flex: 1; }
+        .checklist li .label strong { color: #4ade80; }
+        .checklist li .note { font-size: 0.75em; color: #64748b; display: block; margin-top: 2px; }
+
+        /* Deliverable box */
+        .deliverable-box {
+            background: rgba(74,222,128,0.08);
+            border: 2px solid rgba(74,222,128,0.4);
+            border-radius: 14px;
+            padding: 28px 32px;
+            margin: 24px 0;
+        }
+
+        .deliverable-box h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+            color: #4ade80;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .deliverable-box ul { list-style: none; padding: 0; }
+
+        .deliverable-box ul li {
+            font-size: 1.25em;
+            color: #cbd5e1;
+            padding: 8px 0 8px 36px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .deliverable-box ul li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4ade80;
+            font-weight: 700;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(2,15,2,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(74,222,128,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
+        }
+
+        .nav button {
+            background: rgba(74,222,128,0.15);
+            color: #86efac;
+            border: 1px solid rgba(74,222,128,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover { background: rgba(74,222,128,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 24px;
+            font-size: 0.9em;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #4ade80; }
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Unit 8</a>
+
+<div class="presentation">
+
+    <!-- ── SLIDE 1: Title ── -->
+    <div class="slide active">
+        <div class="slide-content" style="text-align:center;">
+            <div class="lesson-tag">Unit 8 · Mechanisms · All Tracks</div>
+            <h1>L8.1 Simple Machines &amp;<br>Engineering Design</h1>
+            <p class="subtitle">Criteria · Constraints · Six Simple Machines</p>
+            <div style="margin-top:40px; display:flex; justify-content:center; gap:30px; flex-wrap:wrap;">
+                <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#4ade80;">PLTW POE_111/112</div>
+                <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#4ade80;">VEX Kit</div>
+                <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#4ade80;">Combine Harvester</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 2: Meet Fran ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Meet Fran — Farm Engineering</h2>
+            <div class="callout">
+                Francesca (Fran) is a mechanical engineering graduate who wants to improve her farm's efficiency. <strong>Your challenge throughout this unit:</strong> design a mechanical device to solve one of Fran's farm problems.
+            </div>
+            <ul class="bullet-list">
+                <li><strong>Engineering Design Process (EDP)</strong> — the framework we use to solve problems systematically: Define → Research → Generate Ideas → Prototype → Test → Evaluate → Redesign</li>
+                <li><strong>Criteria</strong> — the requirements a solution must meet. Example: "the device must lift 50 kg of hay"</li>
+                <li><strong>Constraints</strong> — the limits on the solution. Example: "must cost under $200 and be built with available materials"</li>
+                <li><strong>Why machines?</strong> In 1800, 90% of Americans worked in farming. Today it's 2% — because machines multiplied what one person can do.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 3: The Six Simple Machines ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>The Six Simple Machines</h2>
+            <div class="three-col">
+                <div class="col-box">
+                    <h4>Lever</h4>
+                    <p>A rigid bar that pivots on a fulcrum.</p>
+                    <ul>
+                        <li>Seesaw</li>
+                        <li>Crowbar</li>
+                        <li>Scissors</li>
+                        <li>Wheelbarrow</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Inclined Plane</h4>
+                    <p>A flat surface tilted at an angle.</p>
+                    <ul>
+                        <li>Ramp</li>
+                        <li>Slide</li>
+                        <li>Road up a hill</li>
+                        <li>Escalator</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Wedge</h4>
+                    <p>Two inclined planes joined at their thick ends.</p>
+                    <ul>
+                        <li>Knife blade</li>
+                        <li>Axe head</li>
+                        <li>Doorstop</li>
+                        <li>Zipper teeth</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Screw</h4>
+                    <p>A spiraling inclined plane around a cylinder.</p>
+                    <ul>
+                        <li>Wood screw</li>
+                        <li>Jar lid</li>
+                        <li>Spiral staircase</li>
+                        <li>Bolt</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Wheel &amp; Axle</h4>
+                    <p>A large wheel fixed to a smaller axle; both rotate together.</p>
+                    <ul>
+                        <li>Steering wheel</li>
+                        <li>Water valve</li>
+                        <li>Screwdriver</li>
+                        <li>Bicycle pedal/sprocket</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Pulley</h4>
+                    <p>A wheel with a grooved rim for a rope or cable.</p>
+                    <ul>
+                        <li>Flagpole</li>
+                        <li>Elevator</li>
+                        <li>Crane</li>
+                        <li>Window blinds</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout" style="font-size:1.2em;">
+                All complex machines — cars, combine harvesters, robots — are just combinations of these six simple machines. Identifying them in any machine is the first step to understanding how it works.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 4: Simple Machines in a Combine Harvester ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Simple Machines Inside a Combine Harvester</h2>
+            <ul class="bullet-list">
+                <li>🌾 <strong>Header / Cutter Bar</strong> — uses <em>wedge</em> action to cut crop stems at the base</li>
+                <li>🔄 <strong>Auger / Screw Conveyor</strong> — a <em>screw</em> rotates to move cut grain horizontally into the machine</li>
+                <li>⚙️ <strong>Threshing Cylinder</strong> — uses spinning <em>wheels</em> attached to axles; beats grain to separate seeds from stalks</li>
+                <li>🪝 <strong>Elevator / Bucket Conveyor</strong> — uses a <em>pulley</em> system to lift separated grain up to the storage tank</li>
+                <li>🎛️ <strong>Operator Controls / Steering</strong> — <em>lever</em> (throttle, selector) and <em>wheel &amp; axle</em> (steering wheel)</li>
+                <li>📐 <strong>Belt/Chain Drives</strong> — the combine uses <em>inclined plane</em> geometry in belt wedges to transfer power between rotating components</li>
+            </ul>
+            <div class="callout">
+                When agricultural engineer Cyrus McCormick developed the mechanical reaper in 1831, it reduced the labor to harvest one acre of wheat from 20+ person-hours to about 1 person-hour. That's mechanical advantage in action.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 5: Mechanical Advantage ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Mechanical Advantage — What Machines Do</h2>
+            <div class="callout">
+                A machine doesn't create force or energy. It <strong>changes the form or direction of an applied force</strong> — letting you do the same work with less effort (by moving farther), or in a different direction.
+            </div>
+            <ul class="bullet-list">
+                <li><strong>Effort Force (F_E)</strong> — the force you apply to the machine</li>
+                <li><strong>Resistance Force (F_R)</strong> — the force the machine applies to the load</li>
+                <li><strong>Mechanical Advantage (MA)</strong> = F_R / F_E — how many times the machine multiplies your force</li>
+                <li>MA &gt; 1: machine multiplies force (but you move farther). Example: crowbar lifting a rock</li>
+                <li>MA &lt; 1: machine multiplies speed/distance (but you need more force). Example: tweezers picking up something small</li>
+                <li>MA = 1: machine changes direction only, no force multiplication. Example: a single fixed pulley</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 6: From Simple to Complex ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Simple → Complex Machines</h2>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>Simple Machine</h4>
+                    <ul>
+                        <li>Performs ONE mechanical function</li>
+                        <li>One input motion → one output motion</li>
+                        <li>Has one or at most a few moving parts</li>
+                        <li>Examples: lever, screw, pulley wheel</li>
+                        <li>Can calculate IMA from pure geometry</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Compound Machine</h4>
+                    <ul>
+                        <li>Two or more simple machines connected together</li>
+                        <li>Output of one simple machine feeds into the next</li>
+                        <li>Can achieve large mechanical advantages</li>
+                        <li>Examples: scissors (wedge + lever), bicycle (wheel/axle + lever + pulley), combine harvester (all six types)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout">
+                The mechanical advantage of a compound machine = MA₁ × MA₂ × MA₃ × … Once you can analyze each simple machine in a compound system, you can analyze the whole system.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 7: Historical Perspective ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Ancient Engineering — Same Six Machines</h2>
+            <ul class="bullet-list">
+                <li>The Great Pyramid of Giza (2560 BCE) — engineers used <strong>levers</strong>, <strong>inclined planes</strong>, <strong>wedges</strong>, and <strong>sleds with rollers</strong> (wheel &amp; axle) to move 2.3 million blocks weighing 2.5–15 tons each</li>
+                <li>Ancient Egyptians had no engines or electricity — only human muscle + clever application of the six simple machines</li>
+                <li>The same principles that moved 15-ton granite blocks now move 15-ton hay bales (or 15-ton car bodies) using the same six simple machines — just with more automation</li>
+            </ul>
+            <div class="callout">
+                Simple machines were "simple" because they consisted of one piece — not because they're unsophisticated. They remain the foundation of all mechanical engineering today.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 8: Activity: Build It ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Activity: Build Three Simple Machines</h2>
+            <div class="deliverable-box">
+                <h4>Using Your VEX Kit</h4>
+                <ul>
+                    <li>Identify 3 different simple machine types found in a real combine harvester</li>
+                    <li>For each: document which simple machine type it is and what it does in the harvester</li>
+                    <li>Construct each one using VEX V5 kit parts (beams, gears, pulleys, axles, rubber bands, etc.)</li>
+                    <li>Measure or estimate the IMA of each machine you built</li>
+                    <li>Share your three machines with another team — compare your designs and IMA values</li>
+                </ul>
+            </div>
+            <div class="callout">
+                Your engineering notebook should have: a sketch of each machine, which combine function it represents, the IMA calculation, and a comparison note from your peer review.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 9: Done Checklist ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Done Checklist</h2>
+            <ul class="checklist">
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>I can name and describe all six types of simple machines</strong>
+                        <span class="note">Lever, inclined plane, wedge, screw, wheel &amp; axle, pulley</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>I can identify simple machines in a complex machine (like a combine)</strong>
+                        <span class="note">At least 5 different types in a combine harvester</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>I understand criteria and constraints and can write them for a real problem</strong>
+                        <span class="note">Criteria = requirements, Constraints = limits</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>I know what mechanical advantage means and how to calculate it</strong>
+                        <span class="note">MA = resistance force / effort force</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>I built three simple machines using VEX kit parts</strong>
+                        <span class="note">Each documented with sketch and IMA in engineering notebook</span>
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div><!-- /.presentation -->
+
+<!-- Navigation -->
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 9</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
+
+<script>
+    var slides = document.querySelectorAll('.slide');
+    var current = 0;
+
+    function showSlide(n) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(n, slides.length - 1));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    }
+
+    function changeSlide(dir) { showSlide(current + dir); }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+
+</body>
+</html>
