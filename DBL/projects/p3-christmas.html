@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+    <title>P3 — Christmas Ornament &amp; Gift | Design &amp; Build Lab</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: #110a00;
+            color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: linear-gradient(135deg, #8B0000 0%, #c41e3a 50%, #8B0000 100%);
+            height: 80px;
+            border-bottom: 3px solid #ffffff;
+            box-shadow: 0 4px 20px rgba(196,30,58,0.5);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            z-index: 100;
+        }
+
+        .circuit-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0.15;
+            background-image:
+                linear-gradient(90deg, transparent 0%, transparent calc(50% - 1px), rgba(255,255,255,0.6) calc(50% - 1px), rgba(255,255,255,0.6) calc(50% + 1px), transparent calc(50% + 1px)),
+                linear-gradient(0deg, transparent 0%, transparent calc(30% - 1px), rgba(255,255,255,0.4) calc(30% - 1px), rgba(255,255,255,0.4) calc(30% + 1px), transparent calc(30% + 1px));
+        }
+
+        .top-bar-content { position: relative; z-index: 1; display: flex; align-items: center; gap: 20px; }
+
+        .school-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border: 2px solid rgba(255,255,255,0.4);
+            text-transform: uppercase;
+        }
+
+        .course-title-compact {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+
+        .layout-container { display: flex; flex: 1; }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: 280px;
+            background: #0a0500;
+            border-right: 3px solid #c41e3a;
+            padding: 30px 0;
+            overflow-y: auto;
+            position: sticky;
+            top: 0;
+            height: calc(100vh - 80px);
+        }
+
+        .sidebar-section { margin-bottom: 10px; }
+
+        .sidebar-header {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            color: #665533;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 15px 25px 10px;
+            font-weight: 700;
+        }
+
+        .unit-link {
+            display: block;
+            padding: 12px 25px;
+            color: #b0a090;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .unit-link:hover { background: rgba(196,30,58,0.1); color: #fff; border-left-color: #c41e3a; }
+        .unit-link.active { background: rgba(245,158,11,0.12); color: #fbbf24; border-left-color: #f59e0b; }
+        .unit-link.back-link { color: #665533; font-size: 0.85rem; border-bottom: 1px solid #1e1408; margin-bottom: 4px; }
+        .unit-link.back-link:hover { color: #ccc; background: rgba(255,255,255,0.04); border-left-color: #555; }
+        .unit-link.coming-soon { opacity: 0.45; cursor: not-allowed; }
+
+        .unit-number { font-family: 'Rajdhani', sans-serif; color: #c41e3a; font-weight: 700; margin-right: 8px; }
+        .unit-number.active-p { color: #f59e0b; }
+
+        .coming-soon-badge {
+            float: right;
+            font-size: 0.7rem;
+            background: rgba(136,136,136,0.15);
+            color: #666;
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid #333;
+        }
+
+        /* ── Main ── */
+        .main-content { flex: 1; padding: 50px 70px; overflow-y: auto; }
+
+        /* ── Hero ── */
+        .project-hero {
+            max-width: 1100px;
+            margin-bottom: 50px;
+            padding-bottom: 35px;
+            border-bottom: 2px solid rgba(245,158,11,0.25);
+        }
+
+        .project-eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: #f59e0b;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 14px;
+        }
+
+        .project-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.2rem;
+            font-weight: 900;
+            color: #ffffff;
+            margin-bottom: 20px;
+            line-height: 1.05;
+            text-shadow: 0 0 40px rgba(245,158,11,0.4), 0 0 80px rgba(245,158,11,0.15);
+        }
+
+        .project-description {
+            font-size: 1.15rem;
+            color: #a09080;
+            line-height: 1.8;
+            max-width: 820px;
+            margin-bottom: 28px;
+        }
+
+        .meta-row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+        .meta-chip {
+            background: rgba(245,158,11,0.1);
+            border: 1px solid rgba(245,158,11,0.35);
+            color: #fbbf24;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            font-family: 'Rajdhani', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ── Section ── */
+        .section-block { max-width: 1100px; margin-bottom: 55px; }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            color: #f59e0b;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(245,158,11,0.3);
+        }
+
+        /* ── Warning callout ── */
+        .rule-callout {
+            background: rgba(220,38,38,0.08);
+            border: 2px solid rgba(220,38,38,0.4);
+            border-left: 5px solid #dc2626;
+            border-radius: 0 12px 12px 0;
+            padding: 20px 26px;
+            margin-bottom: 30px;
+            max-width: 1100px;
+        }
+
+        .rule-callout h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: #f87171;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .rule-callout p { font-size: 1rem; color: #fca5a5; line-height: 1.6; }
+
+        /* ── Constraints grid ── */
+        .constraints-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .constraint-card {
+            background: rgba(245,158,11,0.06);
+            border: 1px solid rgba(245,158,11,0.25);
+            border-radius: 12px;
+            padding: 20px 22px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .constraint-icon { font-size: 1.6rem; flex-shrink: 0; }
+
+        .constraint-text h5 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fbbf24;
+            margin-bottom: 4px;
+        }
+
+        .constraint-text p { font-size: 0.9rem; color: #a09080; line-height: 1.5; }
+
+        /* ── LED reverse engineering ── */
+        .led-panel {
+            background: rgba(245,158,11,0.05);
+            border: 2px solid rgba(245,158,11,0.2);
+            border-radius: 14px;
+            padding: 28px 30px;
+            max-width: 1100px;
+            margin-bottom: 40px;
+        }
+
+        .led-panel h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: #fbbf24;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .led-steps { list-style: none; padding: 0; counter-reset: led-step; }
+
+        .led-steps li {
+            counter-increment: led-step;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(245,158,11,0.08);
+            font-size: 0.95rem;
+            color: #b0a090;
+            line-height: 1.6;
+        }
+
+        .led-steps li:last-child { border-bottom: none; }
+
+        .led-steps li::before {
+            content: counter(led-step);
+            background: rgba(245,158,11,0.15);
+            color: #f59e0b;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* ── Material options ── */
+        .materials-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .material-card {
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .material-required { background: rgba(245,158,11,0.07); border: 2px solid rgba(245,158,11,0.3); }
+        .material-optional { background: rgba(22,163,74,0.05); border: 1px dashed rgba(22,163,74,0.3); }
+
+        .material-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .material-required .material-label { color: #f59e0b; }
+        .material-optional .material-label { color: #4ade80; }
+
+        .material-name {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .material-desc { font-size: 0.9rem; color: #a09080; line-height: 1.5; }
+
+        /* ── Deliverables ── */
+        .deliverables-list { display: flex; flex-direction: column; gap: 20px; }
+
+        .deliverable-card {
+            background: rgba(15,10,0,0.8);
+            border: 2px solid rgba(245,158,11,0.2);
+            border-radius: 12px;
+            padding: 26px 30px;
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 28px;
+            align-items: start;
+            transition: border-color 0.2s;
+        }
+
+        .deliverable-card:hover { border-color: rgba(245,158,11,0.45); }
+
+        .d-left { text-align: center; }
+
+        .d-id {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #f59e0b;
+            margin-bottom: 6px;
+        }
+
+        .d-week {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: #665533;
+            background: rgba(255,255,255,0.04);
+            padding: 3px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .d-type { font-size: 0.75rem; color: #554433; text-transform: uppercase; letter-spacing: 1px; }
+        .d-title { font-family: 'Rajdhani', sans-serif; font-size: 1.25rem; font-weight: 700; color: #ffffff; margin-bottom: 10px; }
+        .d-desc { font-size: 0.95rem; color: #a09080; line-height: 1.6; margin-bottom: 14px; }
+        .d-items { list-style: none; padding: 0; }
+
+        .d-items li {
+            font-size: 0.9rem;
+            color: #c0b0a0;
+            padding: 5px 0 5px 22px;
+            position: relative;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .d-items li:last-child { border-bottom: none; }
+        .d-items li::before { content: "✓"; position: absolute; left: 0; color: #f59e0b; font-weight: 700; }
+
+        /* ── Grading ── */
+        .levels-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .level-card { border-radius: 12px; padding: 24px; }
+        .level-c { background: rgba(0,208,132,0.07); border: 1px solid rgba(0,208,132,0.25); }
+        .level-b { background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.25); }
+        .level-a { background: rgba(220,38,38,0.07); border: 1px solid rgba(220,38,38,0.3); }
+
+        .level-grade { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; font-weight: 900; margin-bottom: 4px; }
+        .level-c .level-grade { color: #00d084; }
+        .level-b .level-grade { color: #fbbf24; }
+        .level-a .level-grade { color: #f87171; }
+
+        .level-name { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 12px; }
+        .level-c .level-name { color: #00d084; }
+        .level-b .level-name { color: #fbbf24; }
+        .level-a .level-name { color: #f87171; }
+
+        .level-req { font-size: 0.9rem; color: #a09080; line-height: 1.6; }
+
+        /* ── Lesson link ── */
+        .lesson-link-row {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            max-width: 1100px;
+            margin-bottom: 50px;
+        }
+
+        .lesson-chip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(245,158,11,0.06);
+            border: 1px solid rgba(245,158,11,0.25);
+            border-radius: 8px;
+            padding: 12px 18px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .lesson-chip:hover { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.5); }
+        .lesson-chip.disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
+
+        .lesson-chip .chip-num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: #f59e0b;
+            font-weight: 700;
+        }
+
+        .lesson-chip .chip-title {
+            font-size: 0.9rem;
+            color: #d4c4a0;
+            font-weight: 600;
+        }
+
+        footer { text-align: center; padding: 30px; background: #0a0500; border-top: 3px solid #c41e3a; color: #665533; font-size: 0.9rem; }
+        footer .mascot { color: #fff; margin: 8px 0; }
+
+        @media (max-width: 1000px) {
+            .constraints-grid { grid-template-columns: 1fr; }
+            .materials-grid { grid-template-columns: 1fr; }
+            .levels-grid { grid-template-columns: 1fr; }
+            .main-content { padding: 35px 30px; }
+        }
+
+        @media (max-width: 768px) {
+            .layout-container { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; }
+            .main-content { padding: 25px 18px; }
+            .project-title { font-size: 2.2rem; }
+            .deliverable-card { grid-template-columns: 1fr; gap: 14px; }
+            .d-left { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="circuit-overlay"></div>
+        <div class="top-bar-content">
+            <div class="school-badge">VHS Bulldogs</div>
+            <div class="course-title-compact">Design &amp; Build Lab</div>
+        </div>
+    </div>
+
+    <div class="layout-container">
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <a href="../index.html" class="unit-link back-link">← Course Overview</a>
+                <div class="sidebar-header">Navigation</div>
+                <a href="../../Portfolio/index.html?track=dbl" class="unit-link" style="background:rgba(99,102,241,0.08); border-left:3px solid #6366f1;">
+                    <span class="unit-number">📋</span> Student Portfolio
+                </a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-header">Course Units</div>
+                <a href="../../Unit_01_Engineering_Design_Process/index.html?track=dbl" class="unit-link">
+                    <span class="unit-number">Unit 1</span> Engineering Design Process
+                </a>
+                <a href="../../Unit_02_CAD/index.html?track=dbl" class="unit-link">
+                    <span class="unit-number">Unit 2</span> CAD &amp; Prototyping
+                </a>
+                <a href="../../Unit_03_Shop_Safety_and_Standard_Practices/index.html?track=dbl" class="unit-link">
+                    <span class="unit-number">Unit 3</span> Shop Safety
+                </a>
+                <a href="../../Unit_04_Programming_Electronics_and_Sensors/index.html?track=dbl" class="unit-link">
+                    <span class="unit-number">Unit 4</span> Programming &amp; Electronics
+                </a>
+                <a href="../../Unit_06_Career_Ready_Practices/index.html?track=dbl" class="unit-link">
+                    <span class="unit-number">Unit 6</span> Career Readiness
+                </a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-header">Projects</div>
+                <a href="p1-fidget-spinner.html" class="unit-link">
+                    <span class="unit-number">P1</span> Fidget Spinner
+                </a>
+                <a href="p2-led-sign.html" class="unit-link">
+                    <span class="unit-number">P2</span> LED Sign &amp; Wall Art
+                </a>
+                <a href="p3-christmas.html" class="unit-link active">
+                    <span class="unit-number active-p">P3</span> Christmas Ornament / Gift
+                </a>
+                <a href="#" class="unit-link coming-soon">
+                    <span class="unit-number">P4</span> — <span class="coming-soon-badge">Soon</span>
+                </a>
+                <a href="#" class="unit-link coming-soon">
+                    <span class="unit-number">P5</span> — <span class="coming-soon-badge">Soon</span>
+                </a>
+                <a href="#" class="unit-link coming-soon">
+                    <span class="unit-number">P6</span> — <span class="coming-soon-badge">Soon</span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+
+            <!-- Hero -->
+            <div class="project-hero">
+                <div class="project-eyebrow">Design &amp; Build Lab · Project 3</div>
+                <h1 class="project-title">Christmas<br>Ornament &amp; Gift</h1>
+                <p class="project-description">
+                    Design and fabricate a multi-color 3D printed Christmas ornament or small gift — entirely from scratch in Fusion 360. You'll reverse engineer an LED to model it accurately, build it into your design, and send a multi-color print to the Bambu. The best ones light up.
+                </p>
+                <div class="meta-row">
+                    <span class="meta-chip">3 Weeks</span>
+                    <span class="meta-chip">Multi-Color Print</span>
+                    <span class="meta-chip">LED Integration</span>
+                    <span class="meta-chip">Reverse Engineering</span>
+                    <span class="meta-chip">Individual</span>
+                </div>
+            </div>
+
+            <!-- No imports rule — prominent -->
+            <div class="rule-callout">
+                <h4>⛔ Original Design Only</h4>
+                <p>No imports from Thingiverse, Printables, MyMiniFactory, or any other model repository. Every surface, body, and feature must be modeled by you in Fusion 360. Submitting a downloaded model — even heavily modified — is an automatic zero.</p>
+            </div>
+
+            <!-- Constraints -->
+            <div class="section-block">
+                <h2 class="section-title">Project Constraints</h2>
+                <div class="constraints-grid">
+                    <div class="constraint-card">
+                        <div class="constraint-icon">🎄</div>
+                        <div class="constraint-text">
+                            <h5>Theme: Christmas</h5>
+                            <p>Your piece must be a Christmas ornament or a small Christmas gift. The theme and intent should be obvious without explanation. Student's choice — ornament or gift.</p>
+                        </div>
+                    </div>
+                    <div class="constraint-card">
+                        <div class="constraint-icon">⚖️</div>
+                        <div class="constraint-text">
+                            <h5>Filament &lt; 200g</h5>
+                            <p>Your final print(s) must use fewer than 200g of filament combined. Prototyping material does not count. Verify in Bambu Studio before submitting your sliced file.</p>
+                        </div>
+                    </div>
+                    <div class="constraint-card">
+                        <div class="constraint-icon">💡</div>
+                        <div class="constraint-text">
+                            <h5>Exactly 2 LEDs</h5>
+                            <p>Your design must incorporate exactly 2 LEDs. LED placement must be intentional — they should enhance the piece, not be taped on as an afterthought.</p>
+                        </div>
+                    </div>
+                    <div class="constraint-card">
+                        <div class="constraint-icon">🎨</div>
+                        <div class="constraint-text">
+                            <h5>Multi-Color Required</h5>
+                            <p>Your final print must use 2 or more filament colors via the Bambu AMS. Single-color prints do not meet the project requirements regardless of quality.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LED reverse engineering -->
+            <div class="section-block">
+                <h2 class="section-title">Reverse Engineering the LED</h2>
+                <div class="led-panel">
+                    <h3>🔬 No CAD file exists for this LED — you model it from the physical part</h3>
+                    <ol class="led-steps">
+                        <li>Obtain your LED from the class supply. Handle it carefully — the leads bend easily.</li>
+                        <li>Measure the LED body: outer diameter, body length, lens dome height. Use digital calipers. Record all dimensions with units in your design brief.</li>
+                        <li>Measure the leads: length from base of body, spacing between leads (anode and cathode), lead diameter.</li>
+                        <li>Document the electrical spec: forward voltage (V<sub>f</sub>) and forward current (I<sub>f</sub>) from the class reference sheet or by testing.</li>
+                        <li>Model the LED as a component in Fusion 360 — body, dome, and leads as separate features. Dimension every sketch to match your measurements.</li>
+                        <li>Use the LED model as a reference when designing your cavity or mount in the main ornament/gift body. The pocket should hold the LED snugly without adhesive at Level 2+.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Materials -->
+            <div class="section-block">
+                <h2 class="section-title">Materials</h2>
+                <div class="materials-grid">
+                    <div class="material-card material-required">
+                        <div class="material-label">Required</div>
+                        <div class="material-name">PLA Filament — Multi-Color</div>
+                        <p class="material-desc">Your primary material. Choose your colors intentionally — the color plan should be part of your design brief. Limit: &lt;200g for the final piece. Prototyping filament (single-color, low infill) is provided separately and doesn't count toward your limit.</p>
+                    </div>
+                    <div class="material-card material-optional">
+                        <div class="material-label">Optional — Level 2 &amp; 3</div>
+                        <div class="material-name">Mixed Materials</div>
+                        <p class="material-desc">Your design may incorporate additional materials for a more complex or refined piece. Examples: a laser-engraved wood placard (xTool), fabric, wire, or sheet metal accents. Affixing methods must be designed — glue joints, press fits, or rivets. Document your assembly method in D_P3A.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Linked lessons -->
+            <div class="section-block">
+                <h2 class="section-title">Lessons for This Project</h2>
+                <div class="lesson-link-row">
+                    <a href="../../Unit_02_CAD/Lesson_07_MultiColor_Print_DBL.html" class="lesson-chip disabled">
+                        <span class="chip-num">L2.7</span>
+                        <span class="chip-title">Multi-Color Printing in Bambu Studio</span>
+                    </a>
+                </div>
+                <p style="font-size:0.9rem; color:#665533; margin-top:-10px;">Lesson in development — check back soon.</p>
+            </div>
+
+            <!-- Deliverables -->
+            <div class="section-block">
+                <h2 class="section-title">Deliverables</h2>
+                <div class="deliverables-list">
+
+                    <div class="deliverable-card">
+                        <div class="d-left">
+                            <div class="d-id">D_P3A</div>
+                            <div class="d-week">Week 1</div>
+                            <div class="d-type">Planning</div>
+                        </div>
+                        <div>
+                            <div class="d-title">Design Brief &amp; LED Model</div>
+                            <p class="d-desc">Define what you're making and prove you understand the LED before any design work begins. The LED model must be complete before you start modeling your ornament or gift.</p>
+                            <ul class="d-items">
+                                <li>Problem statement: who is this for, what does it need to do or say</li>
+                                <li>At least 2 concept sketches of the ornament/gift with LED placement shown</li>
+                                <li>Decision matrix confirming your chosen concept</li>
+                                <li>LED measurements table: body diameter, body length, lens height, lead length, lead spacing, V<sub>f</sub>, I<sub>f</sub></li>
+                                <li>F360 screenshot of your completed LED model with dimensions visible</li>
+                                <li>Color plan: which filament colors, what goes where, and why</li>
+                                <li>If using mixed materials: assembly method sketched and justified</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="deliverable-card">
+                        <div class="d-left">
+                            <div class="d-id">D_P3B</div>
+                            <div class="d-week">Week 2</div>
+                            <div class="d-type">CAD &amp; Prototype</div>
+                        </div>
+                        <div>
+                            <div class="d-title">Model, Slicer Setup &amp; Prototype</div>
+                            <p class="d-desc">Your complete CAD model, sliced and ready to print, with a prototype proving the LED fits. Due before your final print is submitted to the queue.</p>
+                            <ul class="d-items">
+                                <li>F360 screenshot: final model in isometric view showing all features</li>
+                                <li>F360 screenshot: LED model placed in or near its cavity to show fit intent</li>
+                                <li>If multi-part design: F360 assembly screenshot with joints visible</li>
+                                <li>Bambu Studio screenshot: color-painted model showing all color regions</li>
+                                <li>Bambu Studio screenshot: slicing preview confirming filament use &lt;200g</li>
+                                <li>Prototype photo: printed test piece (single color, low infill is fine) with LED physically test-fitted</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="deliverable-card">
+                        <div class="d-left">
+                            <div class="d-id">D_P3C</div>
+                            <div class="d-week">Week 3</div>
+                            <div class="d-type">Finished Product</div>
+                        </div>
+                        <div>
+                            <div class="d-title">Final Product &amp; Iteration Log</div>
+                            <p class="d-desc">Your finished, lit piece — ready to give as a gift or hang on a tree. Two photos required so both the print quality and the LED effect are visible.</p>
+                            <ul class="d-items">
+                                <li>Photo: finished piece in normal light — shows print quality and color accuracy</li>
+                                <li>Photo: finished piece with LEDs on in a dim environment — shows the lighting effect</li>
+                                <li>If mixed materials: photo showing the assembly/affixing detail</li>
+                                <li>Iteration log: at least one change made after the prototype (design, fit, color, or assembly) with before/after description</li>
+                                <li>Filament weight confirmed: actual weight of finished piece documented</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Grading -->
+            <div class="section-block">
+                <h2 class="section-title">Grading Levels</h2>
+                <div class="levels-grid">
+                    <div class="level-card level-c">
+                        <div class="level-grade">C</div>
+                        <div class="level-name">Level 1 — Complete</div>
+                        <p class="level-req">A finished, original multi-color 3D print that is recognizably a Christmas ornament or gift. 1–2 filament colors. 2 LEDs installed. No assembly required. All three deliverables submitted on time with an iteration log entry.</p>
+                    </div>
+                    <div class="level-card level-b">
+                        <div class="level-grade">B</div>
+                        <div class="level-name">Level 2 — Refined</div>
+                        <p class="level-req">Complete Level 1, plus: 3 or more filament colors used intentionally. LED cavity modeled to hold the LEDs without adhesive (press fit). Either a multi-part design with a simple assembly, or additional material incorporated (laser-engraved wood, etc.). Iteration log shows a meaningful design change with evidence.</p>
+                    </div>
+                    <div class="level-card level-a">
+                        <div class="level-grade">A</div>
+                        <div class="level-name">Level 3 — Exceptional</div>
+                        <p class="level-req">Complete Level 2, plus: multiple modeled parts with a fully constrained F360 assembly (joints, mates, no free degrees of freedom). High design complexity — compound curves, detailed features, or mechanical function. Exceptional print quality and color execution. The finished piece is a genuinely excellent product you'd be proud to give as a gift.</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <footer>
+        <div class="mascot">GO BULLDOGS!</div>
+        <p>Vicksburg High School | Design &amp; Build Lab</p>
+        <p>Mr. Bombich | Room 70 | mbombich@vicksburgschools.org</p>
+    </footer>
+</body>
+</html>
