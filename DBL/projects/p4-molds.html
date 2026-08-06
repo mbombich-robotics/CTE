@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
-    <title>P3 — Christmas Ornament &amp; Gift | Design &amp; Build Lab</title>
+    <title>P4 — Silicone Mold Making | Design &amp; Build Lab</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Exo 2', sans-serif;
-            background: #110a00;
+            background: #020d12;
             color: #f5f5f5;
             display: flex;
             flex-direction: column;
@@ -19,10 +19,10 @@
         }
 
         .top-bar {
-            background: linear-gradient(135deg, #8B0000 0%, #c41e3a 50%, #8B0000 100%);
+            background: linear-gradient(135deg, #042f3e 0%, #065872 50%, #042f3e 100%);
             height: 80px;
-            border-bottom: 3px solid #ffffff;
-            box-shadow: 0 4px 20px rgba(196,30,58,0.5);
+            border-bottom: 3px solid #67e8f9;
+            box-shadow: 0 4px 20px rgba(8,145,178,0.4);
             position: relative;
             overflow: hidden;
             display: flex;
@@ -68,8 +68,8 @@
         /* ── Sidebar ── */
         .sidebar {
             width: 280px;
-            background: #0a0500;
-            border-right: 3px solid #c41e3a;
+            background: #010a0f;
+            border-right: 3px solid #0891b2;
             padding: 30px 0;
             overflow-y: auto;
             position: sticky;
@@ -82,7 +82,7 @@
         .sidebar-header {
             font-family: 'Rajdhani', sans-serif;
             font-size: 0.85rem;
-            color: #665533;
+            color: #1a4050;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             padding: 15px 25px 10px;
@@ -92,7 +92,7 @@
         .unit-link {
             display: block;
             padding: 12px 25px;
-            color: #b0a090;
+            color: #7aaab6;
             text-decoration: none;
             font-size: 0.95rem;
             font-weight: 600;
@@ -100,14 +100,14 @@
             border-left: 4px solid transparent;
         }
 
-        .unit-link:hover { background: rgba(196,30,58,0.1); color: #fff; border-left-color: #c41e3a; }
-        .unit-link.active { background: rgba(245,158,11,0.12); color: #fbbf24; border-left-color: #f59e0b; }
-        .unit-link.back-link { color: #665533; font-size: 0.85rem; border-bottom: 1px solid #1e1408; margin-bottom: 4px; }
+        .unit-link:hover { background: rgba(8,145,178,0.1); color: #fff; border-left-color: #0891b2; }
+        .unit-link.active { background: rgba(8,145,178,0.12); color: #67e8f9; border-left-color: #0891b2; }
+        .unit-link.back-link { color: #1a4050; font-size: 0.85rem; border-bottom: 1px solid #051520; margin-bottom: 4px; }
         .unit-link.back-link:hover { color: #ccc; background: rgba(255,255,255,0.04); border-left-color: #555; }
         .unit-link.coming-soon { opacity: 0.45; cursor: not-allowed; }
 
-        .unit-number { font-family: 'Rajdhani', sans-serif; color: #c41e3a; font-weight: 700; margin-right: 8px; }
-        .unit-number.active-p { color: #f59e0b; }
+        .unit-number { font-family: 'Rajdhani', sans-serif; color: #0891b2; font-weight: 700; margin-right: 8px; }
+        .unit-number.active-p { color: #67e8f9; }
 
         .coming-soon-badge {
             float: right;
@@ -127,13 +127,13 @@
             max-width: 1100px;
             margin-bottom: 50px;
             padding-bottom: 35px;
-            border-bottom: 2px solid rgba(245,158,11,0.25);
+            border-bottom: 2px solid rgba(8,145,178,0.25);
         }
 
         .project-eyebrow {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.85rem;
-            color: #f59e0b;
+            color: #0891b2;
             text-transform: uppercase;
             letter-spacing: 2px;
             margin-bottom: 14px;
@@ -146,12 +146,12 @@
             color: #ffffff;
             margin-bottom: 20px;
             line-height: 1.05;
-            text-shadow: 0 0 40px rgba(245,158,11,0.4), 0 0 80px rgba(245,158,11,0.15);
+            text-shadow: 0 0 40px rgba(8,145,178,0.4), 0 0 80px rgba(8,145,178,0.15);
         }
 
         .project-description {
             font-size: 1.15rem;
-            color: #a09080;
+            color: #5a8a96;
             line-height: 1.8;
             max-width: 820px;
             margin-bottom: 28px;
@@ -160,9 +160,9 @@
         .meta-row { display: flex; gap: 12px; flex-wrap: wrap; }
 
         .meta-chip {
-            background: rgba(245,158,11,0.1);
-            border: 1px solid rgba(245,158,11,0.35);
-            color: #fbbf24;
+            background: rgba(8,145,178,0.1);
+            border: 1px solid rgba(8,145,178,0.35);
+            color: #67e8f9;
             padding: 6px 16px;
             border-radius: 20px;
             font-size: 0.85rem;
@@ -178,11 +178,11 @@
         .section-title {
             font-family: 'Orbitron', sans-serif;
             font-size: 1.4rem;
-            color: #f59e0b;
+            color: #0891b2;
             margin-bottom: 24px;
             text-transform: uppercase;
             letter-spacing: 2px;
-            text-shadow: 0 0 15px rgba(245,158,11,0.3);
+            text-shadow: 0 0 15px rgba(8,145,178,0.3);
         }
 
         /* ── Warning callout ── */
@@ -207,6 +207,37 @@
 
         .rule-callout p { font-size: 1rem; color: #fca5a5; line-height: 1.6; }
 
+        /* ── Partner review callout (teal) ── */
+        .review-callout {
+            background: rgba(8,145,178,0.06);
+            border: 2px solid rgba(8,145,178,0.35);
+            border-left: 5px solid #0891b2;
+            border-radius: 0 12px 12px 0;
+            padding: 20px 26px;
+            margin-bottom: 30px;
+            max-width: 1100px;
+        }
+
+        .review-callout h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: #67e8f9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .review-callout p { font-size: 1rem; color: #a0d4e0; line-height: 1.6; }
+        .review-callout ul { list-style: none; padding: 0; margin-top: 10px; }
+        .review-callout ul li {
+            font-size: 0.95rem;
+            color: #a0d4e0;
+            padding: 4px 0 4px 20px;
+            position: relative;
+            line-height: 1.5;
+        }
+        .review-callout ul li::before { content: "•"; position: absolute; left: 0; color: #0891b2; font-weight: 700; }
+
         /* ── Constraints grid ── */
         .constraints-grid {
             display: grid;
@@ -216,8 +247,8 @@
         }
 
         .constraint-card {
-            background: rgba(245,158,11,0.06);
-            border: 1px solid rgba(245,158,11,0.25);
+            background: rgba(8,145,178,0.06);
+            border: 1px solid rgba(8,145,178,0.25);
             border-radius: 12px;
             padding: 20px 22px;
             display: flex;
@@ -230,26 +261,26 @@
         .constraint-text h5 {
             font-size: 1rem;
             font-weight: 700;
-            color: #fbbf24;
+            color: #67e8f9;
             margin-bottom: 4px;
         }
 
-        .constraint-text p { font-size: 0.9rem; color: #a09080; line-height: 1.5; }
+        .constraint-text p { font-size: 0.9rem; color: #5a8a96; line-height: 1.5; }
 
-        /* ── LED reverse engineering ── */
-        .led-panel {
-            background: rgba(245,158,11,0.05);
-            border: 2px solid rgba(245,158,11,0.2);
+        /* ── Mold engineering panel (mirrors led-panel) ── */
+        .mold-panel {
+            background: rgba(8,145,178,0.05);
+            border: 2px solid rgba(8,145,178,0.2);
             border-radius: 14px;
             padding: 28px 30px;
             max-width: 1100px;
             margin-bottom: 40px;
         }
 
-        .led-panel h3 {
+        .mold-panel h3 {
             font-family: 'Orbitron', sans-serif;
             font-size: 1rem;
-            color: #fbbf24;
+            color: #67e8f9;
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 16px;
@@ -263,9 +294,9 @@
             align-items: flex-start;
             gap: 14px;
             padding: 10px 0;
-            border-bottom: 1px solid rgba(245,158,11,0.08);
+            border-bottom: 1px solid rgba(8,145,178,0.08);
             font-size: 0.95rem;
-            color: #b0a090;
+            color: #7aaab6;
             line-height: 1.6;
         }
 
@@ -273,8 +304,8 @@
 
         .led-steps li::before {
             content: counter(led-step);
-            background: rgba(245,158,11,0.15);
-            color: #f59e0b;
+            background: rgba(8,145,178,0.15);
+            color: #0891b2;
             font-family: 'Orbitron', sans-serif;
             font-size: 0.8rem;
             font-weight: 700;
@@ -300,7 +331,7 @@
             padding: 22px;
         }
 
-        .material-required { background: rgba(245,158,11,0.07); border: 2px solid rgba(245,158,11,0.3); }
+        .material-required { background: rgba(8,145,178,0.07); border: 2px solid rgba(8,145,178,0.3); }
         .material-optional { background: rgba(22,163,74,0.05); border: 1px dashed rgba(22,163,74,0.3); }
 
         .material-label {
@@ -311,7 +342,7 @@
             margin-bottom: 6px;
         }
 
-        .material-required .material-label { color: #f59e0b; }
+        .material-required .material-label { color: #0891b2; }
         .material-optional .material-label { color: #4ade80; }
 
         .material-name {
@@ -322,14 +353,14 @@
             margin-bottom: 8px;
         }
 
-        .material-desc { font-size: 0.9rem; color: #a09080; line-height: 1.5; }
+        .material-desc { font-size: 0.9rem; color: #5a8a96; line-height: 1.5; }
 
         /* ── Deliverables ── */
         .deliverables-list { display: flex; flex-direction: column; gap: 20px; }
 
         .deliverable-card {
-            background: rgba(15,10,0,0.8);
-            border: 2px solid rgba(245,158,11,0.2);
+            background: rgba(3,14,21,0.8);
+            border: 2px solid rgba(8,145,178,0.2);
             border-radius: 12px;
             padding: 26px 30px;
             display: grid;
@@ -339,7 +370,7 @@
             transition: border-color 0.2s;
         }
 
-        .deliverable-card:hover { border-color: rgba(245,158,11,0.45); }
+        .deliverable-card:hover { border-color: rgba(8,145,178,0.45); }
 
         .d-left { text-align: center; }
 
@@ -347,14 +378,14 @@
             font-family: 'Orbitron', sans-serif;
             font-size: 1.4rem;
             font-weight: 900;
-            color: #f59e0b;
+            color: #0891b2;
             margin-bottom: 6px;
         }
 
         .d-week {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.8rem;
-            color: #665533;
+            color: #1a4050;
             background: rgba(255,255,255,0.04);
             padding: 3px 10px;
             border-radius: 4px;
@@ -362,21 +393,21 @@
             margin-bottom: 10px;
         }
 
-        .d-type { font-size: 0.75rem; color: #554433; text-transform: uppercase; letter-spacing: 1px; }
+        .d-type { font-size: 0.75rem; color: #143040; text-transform: uppercase; letter-spacing: 1px; }
         .d-title { font-family: 'Rajdhani', sans-serif; font-size: 1.25rem; font-weight: 700; color: #ffffff; margin-bottom: 10px; }
-        .d-desc { font-size: 0.95rem; color: #a09080; line-height: 1.6; margin-bottom: 14px; }
+        .d-desc { font-size: 0.95rem; color: #5a8a96; line-height: 1.6; margin-bottom: 14px; }
         .d-items { list-style: none; padding: 0; }
 
         .d-items li {
             font-size: 0.9rem;
-            color: #c0b0a0;
+            color: #90bac6;
             padding: 5px 0 5px 22px;
             position: relative;
             border-bottom: 1px solid rgba(255,255,255,0.03);
         }
 
         .d-items li:last-child { border-bottom: none; }
-        .d-items li::before { content: "✓"; position: absolute; left: 0; color: #f59e0b; font-weight: 700; }
+        .d-items li::before { content: "✓"; position: absolute; left: 0; color: #0891b2; font-weight: 700; }
 
         /* ── Grading ── */
         .levels-grid {
@@ -387,59 +418,22 @@
 
         .level-card { border-radius: 12px; padding: 24px; }
         .level-c { background: rgba(0,208,132,0.07); border: 1px solid rgba(0,208,132,0.25); }
-        .level-b { background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.25); }
+        .level-b { background: rgba(8,145,178,0.07); border: 1px solid rgba(8,145,178,0.25); }
         .level-a { background: rgba(220,38,38,0.07); border: 1px solid rgba(220,38,38,0.3); }
 
         .level-grade { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; font-weight: 900; margin-bottom: 4px; }
         .level-c .level-grade { color: #00d084; }
-        .level-b .level-grade { color: #fbbf24; }
+        .level-b .level-grade { color: #67e8f9; }
         .level-a .level-grade { color: #f87171; }
 
         .level-name { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 12px; }
         .level-c .level-name { color: #00d084; }
-        .level-b .level-name { color: #fbbf24; }
+        .level-b .level-name { color: #67e8f9; }
         .level-a .level-name { color: #f87171; }
 
-        .level-req { font-size: 0.9rem; color: #a09080; line-height: 1.6; }
+        .level-req { font-size: 0.9rem; color: #5a8a96; line-height: 1.6; }
 
-        /* ── Lesson link ── */
-        .lesson-link-row {
-            display: flex;
-            gap: 14px;
-            flex-wrap: wrap;
-            max-width: 1100px;
-            margin-bottom: 50px;
-        }
-
-        .lesson-chip {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(245,158,11,0.06);
-            border: 1px solid rgba(245,158,11,0.25);
-            border-radius: 8px;
-            padding: 12px 18px;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-
-        .lesson-chip:hover { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.5); }
-        .lesson-chip.disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
-
-        .lesson-chip .chip-num {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.8rem;
-            color: #f59e0b;
-            font-weight: 700;
-        }
-
-        .lesson-chip .chip-title {
-            font-size: 0.9rem;
-            color: #d4c4a0;
-            font-weight: 600;
-        }
-
-        footer { text-align: center; padding: 30px; background: #0a0500; border-top: 3px solid #c41e3a; color: #665533; font-size: 0.9rem; }
+        footer { text-align: center; padding: 30px; background: #010a0f; border-top: 3px solid #0891b2; color: #1a4050; font-size: 0.9rem; }
         footer .mascot { color: #fff; margin: 8px 0; }
 
         @media (max-width: 1000px) {
@@ -505,11 +499,11 @@
                 <a href="p2-led-sign.html" class="unit-link">
                     <span class="unit-number">P2</span> LED Sign &amp; Wall Art
                 </a>
-                <a href="p3-christmas.html" class="unit-link active">
-                    <span class="unit-number active-p">P3</span> Christmas Ornament / Gift
+                <a href="p3-christmas.html" class="unit-link">
+                    <span class="unit-number">P3</span> Christmas Ornament / Gift
                 </a>
-                <a href="p4-molds.html" class="unit-link">
-                    <span class="unit-number">P4</span> Silicone Mold Making
+                <a href="p4-molds.html" class="unit-link active">
+                    <span class="unit-number active-p">P4</span> Silicone Mold Making
                 </a>
                 <a href="#" class="unit-link coming-soon">
                     <span class="unit-number">P5</span> — <span class="coming-soon-badge">Soon</span>
@@ -524,27 +518,26 @@
 
             <!-- Hero -->
             <div class="project-hero">
-                <div class="project-eyebrow">Design &amp; Build Lab · Project 3</div>
-                <h1 class="project-title">Christmas<br>Ornament &amp; Gift</h1>
+                <div class="project-eyebrow">Design &amp; Build Lab · Project 4</div>
+                <h1 class="project-title">Silicone<br>Mold Making</h1>
                 <p class="project-description">
-                    Design and fabricate a multi-color 3D printed holiday ornament or small gift — entirely from scratch in Fusion 360. You'll reverse engineer an LED to model it accurately, build it into your design, and send a multi-color print to the Bambu. The best ones light up.
+                    Design a product in Fusion 360, build the mold around it, pour Smooth-On Mold Star 15A silicone, and cast soap or wax you can actually use. The mold is the deliverable — if it doesn't release cleanly, it doesn't grade.
                 </p>
                 <p class="project-description" style="margin-top:10px; font-size:0.9em; opacity:0.7;">
-                    The class theme is Christmas. If you celebrate a different holiday this time of year — Hanukkah, Kwanzaa, Eid, Diwali, or anything else — design for that instead. Same engineering requirements, your tradition.
+                    The class default is soap. If you want to make a candle instead, talk to Mr. Bombich first — candles require a different pour process. Taking your mold home to cast candy or popsicles? Go for it, the silicone is food-safe.
                 </p>
                 <div class="meta-row">
-                    <span class="meta-chip">3 Weeks</span>
-                    <span class="meta-chip">Multi-Color Print</span>
-                    <span class="meta-chip">LED Integration</span>
-                    <span class="meta-chip">Reverse Engineering</span>
+                    <span class="meta-chip">4 Weeks</span>
+                    <span class="meta-chip">Silicone Pour</span>
+                    <span class="meta-chip">Soap &amp; Wax</span>
                     <span class="meta-chip">Individual</span>
                 </div>
             </div>
 
-            <!-- No imports rule — prominent -->
+            <!-- No imports rule -->
             <div class="rule-callout">
                 <h4>⛔ Original Design Only</h4>
-                <p>No imports from Thingiverse, Printables, MyMiniFactory, or any other model repository. Every surface, body, and feature must be modeled by you in Fusion 360. Submitting a downloaded model — even heavily modified — is an automatic zero.</p>
+                <p>No imports from Thingiverse, Printables, or any model repository. The positive — the object your mold will cast — must be designed by you in Fusion 360. Downloading a soap bar model and molding it is an automatic zero.</p>
             </div>
 
             <!-- Constraints -->
@@ -552,50 +545,65 @@
                 <h2 class="section-title">Project Constraints</h2>
                 <div class="constraints-grid">
                     <div class="constraint-card">
-                        <div class="constraint-icon">🎄</div>
+                        <div class="constraint-icon">🧼</div>
                         <div class="constraint-text">
-                            <h5>Theme: Holiday</h5>
-                            <p>Default theme is Christmas — ornament or small gift. If you celebrate a different holiday, design for that instead. Either way, the theme and intent must be obvious without explanation.</p>
+                            <h5>Volume Requirement</h5>
+                            <p>Your mold cavity must hold at least the volume of a hotel soap bar (~30 mL). Measure the cavity volume using Fusion's Inspect → Measure tool and document the result in your design brief. Tiny, low-effort designs that don't meet this threshold do not satisfy Level 1.</p>
                         </div>
                     </div>
                     <div class="constraint-card">
-                        <div class="constraint-icon">⚖️</div>
+                        <div class="constraint-icon">📐</div>
                         <div class="constraint-text">
-                            <h5>Filament &lt; 200g</h5>
-                            <p>Your final print(s) must use fewer than 200g of filament combined. Prototyping material does not count. Verify in Bambu Studio before submitting your sliced file.</p>
+                            <h5>Draft Angles Required</h5>
+                            <p>All vertical walls on the positive must include at least 2–3° of draft. Without draft, silicone grips the positive and won't release. Check every face before printing. Your partner review must confirm draft is present.</p>
                         </div>
                     </div>
                     <div class="constraint-card">
-                        <div class="constraint-icon">💡</div>
+                        <div class="constraint-icon">🏭</div>
                         <div class="constraint-text">
-                            <h5>Exactly 2 LEDs</h5>
-                            <p>Your design must incorporate exactly 2 LEDs. LED placement must be intentional — they should enhance the piece, not be taped on as an afterthought.</p>
+                            <h5>Mold Must Release</h5>
+                            <p>If the silicone traps the positive and cannot be separated without destroying the mold, you must redesign and re-pour. A mold that doesn't release does not receive a grade until it works. Plan your draft angles and avoid undercuts.</p>
                         </div>
                     </div>
                     <div class="constraint-card">
-                        <div class="constraint-icon">🎨</div>
+                        <div class="constraint-icon">🖨️</div>
                         <div class="constraint-text">
-                            <h5>Multi-Color Required</h5>
-                            <p>Your final print must use 2 or more filament colors via the Bambu AMS. Single-color prints do not meet the project requirements regardless of quality.</p>
+                            <h5>Print Material by Mold Type</h5>
+                            <p>One-part silicone molds: print in PLA — the mold box and positive are one print. Two-part rigid molds (Level 3): print in PETG — PLA will deform at soap and wax pour temperatures. PETG requests go in the printer queue labeled with your name and "PETG."</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- LED reverse engineering -->
+            <!-- Mold engineering panel -->
             <div class="section-block">
-                <h2 class="section-title">Reverse Engineering the LED</h2>
-                <div class="led-panel">
-                    <h3>🔬 No CAD file exists for this LED — you model it from the physical part</h3>
+                <h2 class="section-title">Designing the Mold Assembly</h2>
+                <div class="mold-panel">
+                    <h3>🔬 Designing the Mold Assembly in Fusion 360</h3>
                     <ol class="led-steps">
-                        <li>Obtain your LED from the class supply. Handle it carefully — the leads bend easily.</li>
-                        <li>Measure the LED body: outer diameter, body length, lens dome height. Use digital calipers. Record all dimensions with units in your design brief.</li>
-                        <li>Measure the leads: length from base of body, spacing between leads (anode and cathode), lead diameter.</li>
-                        <li>Document the electrical spec: forward voltage (V<sub>f</sub>) and forward current (I<sub>f</sub>) from the class reference sheet or by testing.</li>
-                        <li>Model the LED as a component in Fusion 360 — body, dome, and leads as separate features. Dimension every sketch to match your measurements.</li>
-                        <li>Use the LED model as a reference when designing your cavity or mount in the main ornament/gift body. The pocket should hold the LED snugly without adhesive at Level 2+.</li>
+                        <li>Design your product (the positive) first — this is the object your soap or wax will become. Model it as if it were the final product. Surface detail, text, and relief work all transfer to the cast.</li>
+                        <li>Add draft to every vertical wall — select each face and apply a 2–3° taper toward the open top of the mold. Do this before building the mold box around it.</li>
+                        <li>Check for undercuts — any feature that overhangs or is wider at the bottom than the top will trap the silicone. Silicone is flexible so mild undercuts are OK; severe ones are not. When in doubt, redesign.</li>
+                        <li>Build the mold box around the positive — walls must be at least 10 mm thick on all sides and at the base. The top is open. The positive sits at the bottom, attached to the base (model it as part of the box — do not try to glue a separate positive in place).</li>
+                        <li>Measure your cavity volume — use Inspect → Measure → Volume on the void space inside the mold box. Must be ≥ 30 mL. Document the number in your design brief.</li>
+                        <li>For Level 3 (two-part rigid mold): design both halves as separate bodies in the same Fusion file. Add alignment pins (cylindrical, 4 mm diameter, 8 mm tall — male on one half, pocket on the other). Add a gate channel (8 mm diameter, top-center) and a vent (3 mm, highest point of the cavity). Apply draft to all cavity faces. Print in PETG.</li>
                     </ol>
                 </div>
+            </div>
+
+            <!-- Partner review -->
+            <div class="review-callout">
+                <h4>🔍 Partner Design Review — Required Before Printing</h4>
+                <p>Before you submit anything to the print queue, a classmate reviews your Fusion model and signs off. This is how it works in every professional engineering environment — someone else catches what you miss.</p>
+                <p style="margin-top: 10px; font-weight: 700; color: #67e8f9; font-size: 0.9rem;">Reviewer checklist:</p>
+                <ul>
+                    <li>Do all vertical walls have visible draft (at least 2–3°)?</li>
+                    <li>Are there any undercuts that would prevent the silicone from releasing?</li>
+                    <li>Are embossed or engraved features at least 1 mm deep/tall? (shallower features won't cast reliably)</li>
+                    <li>Is the cavity volume documented and ≥ 30 mL?</li>
+                    <li>For Level 3: do both halves have alignment pins? Is the gate at the lowest point? Is there a vent?</li>
+                </ul>
+                <p style="margin-top: 10px;">The reviewer's name goes in the design brief. Both students are responsible — reviewer included.</p>
             </div>
 
             <!-- Materials -->
@@ -604,27 +612,15 @@
                 <div class="materials-grid">
                     <div class="material-card material-required">
                         <div class="material-label">Required</div>
-                        <div class="material-name">PLA Filament — Multi-Color</div>
-                        <p class="material-desc">Your primary material. Choose your colors intentionally — the color plan should be part of your design brief. Limit: &lt;200g for the final piece. Prototyping filament (single-color, low infill) is provided separately and doesn't count toward your limit.</p>
+                        <div class="material-name">Smooth-On Mold Star 15A</div>
+                        <p class="material-desc">Teacher-supplied. Food-safe platinum silicone, shore hardness 15A (soft and flexible). Mix ratio 1:1 by volume. Pot life approximately 15 minutes — have your mold ready before you open the containers. Cure time 24 hours at room temperature. Do not rush the cure. Your mold will be poured as a class during a designated pour day.</p>
                     </div>
                     <div class="material-card material-optional">
-                        <div class="material-label">Optional — Level 2 &amp; 3</div>
-                        <div class="material-name">Mixed Materials</div>
-                        <p class="material-desc">Your design may incorporate additional materials for a more complex or refined piece. Examples: a laser-engraved wood placard (xTool), fabric, wire, or sheet metal accents. Affixing methods must be designed — glue joints, press fits, or rivets. Document your assembly method in D_P3A.</p>
+                        <div class="material-label">Optional — Level 3</div>
+                        <div class="material-name">Mold Release Spray</div>
+                        <p class="material-desc">Required for two-part rigid PETG molds. A light coat on each half before pouring prevents the wax or soap from bonding to the plastic. Teacher has a can — ask before your pour day. One-part silicone molds don't need release agent.</p>
                     </div>
                 </div>
-            </div>
-
-            <!-- Linked lessons -->
-            <div class="section-block">
-                <h2 class="section-title">Lessons for This Project</h2>
-                <div class="lesson-link-row">
-                    <a href="../../Unit_02_CAD/Lesson_07_MultiColor_Print_DBL.html" class="lesson-chip">
-                        <span class="chip-num">L2.7</span>
-                        <span class="chip-title">Multi-Color Printing in Bambu Studio</span>
-                    </a>
-                </div>
-                <p style="font-size:0.9rem; color:#665533; margin-top:-10px;">Lesson in development — check back soon.</p>
             </div>
 
             <!-- Deliverables -->
@@ -634,60 +630,58 @@
 
                     <div class="deliverable-card">
                         <div class="d-left">
-                            <div class="d-id">D_P3A</div>
-                            <div class="d-week">Week 1</div>
+                            <div class="d-id">D_P4A</div>
+                            <div class="d-week">Week 1–2</div>
                             <div class="d-type">Planning</div>
                         </div>
                         <div>
-                            <div class="d-title">Design Brief &amp; LED Model</div>
-                            <p class="d-desc">Define what you're making and prove you understand the LED before any design work begins. The LED model must be complete before you start modeling your ornament or gift.</p>
+                            <div class="d-title">Design Brief &amp; Partner Review</div>
+                            <p class="d-desc">Define your product, prove your mold will work on paper before anything goes to the printer. Partner sign-off required.</p>
                             <ul class="d-items">
-                                <li>Problem statement: who is this for, what does it need to do or say</li>
-                                <li>At least 2 concept sketches of the ornament/gift with LED placement shown</li>
+                                <li>Problem statement: who is this for, what should it look like, what will they do with it</li>
+                                <li>At least 2 concept sketches of the positive with mold box shown</li>
                                 <li>Decision matrix confirming your chosen concept</li>
-                                <li>LED measurements table: body diameter, body length, lens height, lead length, lead spacing, V<sub>f</sub>, I<sub>f</sub></li>
-                                <li>F360 screenshot of your completed LED model with dimensions visible</li>
-                                <li>Color plan: which filament colors, what goes where, and why</li>
-                                <li>If using mixed materials: assembly method sketched and justified</li>
+                                <li>Fusion 360 screenshot: complete mold assembly in isometric view</li>
+                                <li>Fusion 360 screenshot: Inspect → Measure showing cavity volume ≥ 30 mL</li>
+                                <li>Partner review: reviewer's name + confirmation all checklist items passed</li>
+                                <li>For Level 3: screenshot of both mold halves with alignment pins visible</li>
                             </ul>
                         </div>
                     </div>
 
                     <div class="deliverable-card">
                         <div class="d-left">
-                            <div class="d-id">D_P3B</div>
-                            <div class="d-week">Week 2</div>
-                            <div class="d-type">CAD &amp; Prototype</div>
+                            <div class="d-id">D_P4B</div>
+                            <div class="d-week">Week 2–3</div>
+                            <div class="d-type">Fabrication</div>
                         </div>
                         <div>
-                            <div class="d-title">Model, Slicer Setup &amp; Prototype</div>
-                            <p class="d-desc">Your complete CAD model, sliced and ready to print, with a prototype proving the LED fits. Due before your final print is submitted to the queue.</p>
+                            <div class="d-title">Printed Mold &amp; Silicone Pour</div>
+                            <p class="d-desc">Physical evidence of your mold assembly before and after the pour. This is due the class period after your pour day.</p>
                             <ul class="d-items">
-                                <li>F360 screenshot: final model in isometric view showing all features</li>
-                                <li>F360 screenshot: LED model placed in or near its cavity to show fit intent</li>
-                                <li>If multi-part design: F360 assembly screenshot with joints visible</li>
-                                <li>Bambu Studio screenshot: color-painted model showing all color regions</li>
-                                <li>Bambu Studio screenshot: slicing preview confirming filament use &lt;200g</li>
-                                <li>Prototype photo: printed test piece (single color, low infill is fine) with LED physically test-fitted</li>
+                                <li>Photo: printed mold assembly ready for pour (positive inside box, before silicone)</li>
+                                <li>Photo: silicone poured, filling the mold (wet — take this in class on pour day)</li>
+                                <li>Photo: released silicone mold showing the cavity clearly</li>
+                                <li>If the mold failed to release: photo of the failure, written explanation of cause, revised design brief with corrections</li>
+                                <li>For Level 3: photo of both halves clamped together before wax pour</li>
                             </ul>
                         </div>
                     </div>
 
                     <div class="deliverable-card">
                         <div class="d-left">
-                            <div class="d-id">D_P3C</div>
-                            <div class="d-week">Week 3</div>
-                            <div class="d-type">Finished Product</div>
+                            <div class="d-id">D_P4C</div>
+                            <div class="d-week">Week 4</div>
+                            <div class="d-type">Final Product</div>
                         </div>
                         <div>
-                            <div class="d-title">Final Product &amp; Iteration Log</div>
-                            <p class="d-desc">Your finished, lit piece — ready to give as a gift or hang on a tree. Two photos required so both the print quality and the LED effect are visible.</p>
+                            <div class="d-title">Cast Product &amp; Iteration Log</div>
+                            <p class="d-desc">The soap bar or candle your mold produced — the real test of everything you designed.</p>
                             <ul class="d-items">
-                                <li>Photo: finished piece in normal light — shows print quality and color accuracy</li>
-                                <li>Photo: finished piece with LEDs on in a dim environment — shows the lighting effect</li>
-                                <li>If mixed materials: photo showing the assembly/affixing detail</li>
-                                <li>Iteration log: at least one change made after the prototype (design, fit, color, or assembly) with before/after description</li>
-                                <li>Filament weight confirmed: actual weight of finished piece documented</li>
+                                <li>Photo: final cast product (soap bar or wax candle) removed from mold</li>
+                                <li>Photo: mold and cast side-by-side showing how features transferred</li>
+                                <li>Iteration log: at least one change made after seeing your first result, with before/after description</li>
+                                <li>Reflection: what would you change if you were producing 500 of these? What limited your design?</li>
                             </ul>
                         </div>
                     </div>
@@ -702,17 +696,17 @@
                     <div class="level-card level-c">
                         <div class="level-grade">C</div>
                         <div class="level-name">Level 1 — Complete</div>
-                        <p class="level-req">A finished, original multi-color 3D print that is recognizably a holiday ornament or gift. 1–2 filament colors. 2 LEDs installed. No assembly required. All three deliverables submitted on time with an iteration log entry.</p>
+                        <p class="level-req">A one-part silicone mold that releases cleanly. Cavity volume meets the hotel bar minimum. The positive has at least one piece of intentional surface artwork, text, or relief — not a plain block. All three deliverables submitted. Partner review signed.</p>
                     </div>
                     <div class="level-card level-b">
                         <div class="level-grade">B</div>
                         <div class="level-name">Level 2 — Refined</div>
-                        <p class="level-req">Complete Level 1, plus: 3 or more filament colors used intentionally. LED cavity modeled to hold the LEDs without adhesive (press fit). Either a multi-part design with a simple assembly, or additional material incorporated (laser-engraved wood, etc.). Iteration log shows a meaningful design change with evidence.</p>
+                        <p class="level-req">Everything in Level 1, plus: draft angles intentionally designed and documented (not accidental). Surface design shows genuine effort — composition, detail, and feature clarity transfer to the cast. The finished soap bar or candle is giftable quality. Iteration log shows a real design change with evidence.</p>
                     </div>
                     <div class="level-card level-a">
                         <div class="level-grade">A</div>
                         <div class="level-name">Level 3 — Exceptional</div>
-                        <p class="level-req">Complete Level 2, plus: multiple modeled parts with a fully constrained F360 assembly (joints, mates, no free degrees of freedom). High design complexity — compound curves, detailed features, or mechanical function. Exceptional print quality and color execution. The finished piece is a genuinely excellent product you'd be proud to give as a gift.</p>
+                        <p class="level-req">Everything in Level 2, plus: two-part rigid PETG mold with alignment pins, gate, and vent correctly positioned. The cast product is fully three-dimensional — not flat-backed. Wax candle cast from the rigid mold. Both halves register cleanly with no flash at the parting line. Documentation traces every major design decision from brief to final result.</p>
                     </div>
                 </div>
             </div>
