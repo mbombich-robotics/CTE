@@ -181,6 +181,98 @@
 
         .cs-text { font-size: 1.1rem; color: #888; line-height: 1.7; max-width: 500px; margin: 0 auto; }
 
+        /* Lesson grid */
+        .lessons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .lesson-card {
+            background: linear-gradient(135deg, rgba(245,158,11,0.05) 0%, rgba(42,42,42,0.8) 100%);
+            border: 2px solid rgba(245,158,11,0.3);
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+
+        .lesson-card:hover {
+            transform: translateY(-3px);
+            border-color: #f59e0b;
+            box-shadow: 0 8px 25px rgba(245,158,11,0.3);
+        }
+
+        .lesson-number {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+            color: #f59e0b;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .lesson-week {
+            font-size: 0.8rem;
+            color: #888;
+            font-weight: 400;
+            margin-left: 8px;
+        }
+
+        .lesson-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.4rem;
+            color: #ffffff;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .lesson-topics {
+            list-style: none;
+            margin: 15px 0;
+            padding: 0;
+        }
+
+        .lesson-topics li {
+            font-size: 0.85rem;
+            color: #d0d0d0;
+            padding: 5px 0 5px 20px;
+            position: relative;
+        }
+
+        .lesson-topics li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #f59e0b;
+        }
+
+        .lesson-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(245,158,11,0.2);
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .status-ready {
+            background: rgba(245,158,11,0.2);
+            color: #fcd34d;
+            border: 1px solid #f59e0b;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
         footer { text-align: center; padding: 30px; background: #0d0d0d; border-top: 3px solid #f59e0b; color: #888; font-size: 0.9rem; }
         footer .mascot { color: #fff; margin: 8px 0; }
 
@@ -189,6 +281,7 @@
             .sidebar { width: 100%; height: auto; position: relative; }
             .main-content { padding: 30px 20px; }
             .unit-title { font-size: 2rem; }
+            .lessons-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -233,9 +326,8 @@
                 <a href="index.html" class="unit-link active">
                     <span class="unit-number">Unit 7</span> Electrical Systems
                 </a>
-                <a href="../Unit_08_Mechanisms/index.html" class="unit-link coming-soon" data-unit="Unit_08">
+                <a href="../Unit_08_Mechanisms/index.html" class="unit-link" data-unit="Unit_08">
                     <span class="unit-number">Unit 8</span> Mechanisms
-                    <span class="coming-soon-badge">Soon</span>
                 </a>
             </div>
 
@@ -270,17 +362,98 @@
                     Explore how electricity, components, and circuits work together in real engineering systems. You'll move from basic circuit theory to building and troubleshooting circuits that power the devices you've already built.
                 </p>
                 <div class="unit-meta">
-                    <span class="meta-badge" id="meta-weeks">Coming Soon</span>
-                    <span class="meta-badge">Hands-On</span>
+                    <span class="meta-badge" id="meta-weeks">~3–4 Weeks</span>
+                    <span class="meta-badge">Hands-On Lab</span>
+                    <span class="meta-badge">7 Lessons</span>
                 </div>
             </div>
 
-            <div class="coming-soon-panel">
-                <div class="cs-icon">⚡</div>
-                <h2 class="cs-title">Lessons In Development</h2>
-                <p class="cs-text">
-                    Unit 7 content is being built now. Check back soon — lessons will appear here as they're completed. In the meantime, continue working on your current unit or project.
-                </p>
+            <div class="lessons-grid">
+
+                <a href="Lesson_01_Multimeter.html" class="lesson-card">
+                    <div class="lesson-number">Lesson 7.1 <span class="lesson-week">Week 1</span></div>
+                    <div class="lesson-title">Using a Multimeter</div>
+                    <ul class="lesson-topics">
+                        <li>Voltage, current, and resistance measurement</li>
+                        <li>Reading the DMM display and selecting ranges</li>
+                        <li>Polarity and probe placement</li>
+                        <li>Lab: measure battery voltage and resistor values</li>
+                    </ul>
+                    <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                </a>
+
+                <a href="Lesson_02_Breadboards.html" class="lesson-card">
+                    <div class="lesson-number">Lesson 7.2 <span class="lesson-week">Week 1</span></div>
+                    <div class="lesson-title">Breadboards & Circuit Assembly</div>
+                    <ul class="lesson-topics">
+                        <li>How breadboard rows, columns, and rails connect internally</li>
+                        <li>Reading schematic symbols and translating to hardware</li>
+                        <li>Avoiding short circuits and power-rail mistakes</li>
+                        <li>Lab: build your first circuit from a schematic</li>
+                    </ul>
+                    <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                </a>
+
+                <a href="Lesson_03_LED_Circuits.html" class="lesson-card">
+                    <div class="lesson-number">Lesson 7.3 <span class="lesson-week">Week 1</span></div>
+                    <div class="lesson-title">LED Circuits — Illumination Creation</div>
+                    <ul class="lesson-topics">
+                        <li>LED forward voltage, forward current, and polarity</li>
+                        <li>Why every LED needs a current-limiting resistor</li>
+                        <li>Calculating R from supply voltage and LED specs</li>
+                        <li>Lab: light multiple LEDs in the same circuit</li>
+                    </ul>
+                    <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                </a>
+
+                <a href="Lesson_04_Ohms_Law.html" class="lesson-card">
+                    <div class="lesson-number">Lesson 7.4 <span class="lesson-week">Week 2</span></div>
+                    <div class="lesson-title">Ohm's Law</div>
+                    <ul class="lesson-topics">
+                        <li>V = I × R — solving for any unknown variable</li>
+                        <li>Units: Volts, Amperes, Ohms</li>
+                        <li>Proportional relationships: more R → less I (same V)</li>
+                        <li>Lab: verify Ohm's Law experimentally with multimeter</li>
+                    </ul>
+                    <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                </a>
+
+                <a href="Lesson_05_Series_Parallel.html" class="lesson-card">
+                    <div class="lesson-number">Lesson 7.5 <span class="lesson-week">Week 2</span></div>
+                    <div class="lesson-title">Series vs. Parallel Circuits</div>
+                    <ul class="lesson-topics">
+                        <li>Series: R<sub>total</sub> = R₁ + R₂ + … ; current is shared</li>
+                        <li>Parallel: 1/R<sub>total</sub> = 1/R₁ + 1/R₂ + … ; voltage is shared</li>
+                        <li>Why household circuits are wired in parallel</li>
+                        <li>Lab: measure voltage and current in both topologies</li>
+                    </ul>
+                    <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                </a>
+
+                <a href="Lesson_06_Equivalent_Resistance.html" class="lesson-card">
+                    <div class="lesson-number">Lesson 7.6 <span class="lesson-week">Week 3</span></div>
+                    <div class="lesson-title">Equivalent Resistance</div>
+                    <ul class="lesson-topics">
+                        <li>Identify series groups and parallel groups in a network</li>
+                        <li>Step-by-step reduction to find R<sub>eq</sub></li>
+                        <li>Mixed circuits: series within parallel (and vice versa)</li>
+                        <li>Lab: predict and verify R<sub>eq</sub> for multi-resistor networks</li>
+                    </ul>
+                    <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                </a>
+
+                <a href="Lesson_07_Kirchhoffs_Laws.html" class="lesson-card">
+                    <div class="lesson-number">Lesson 7.7 <span class="lesson-week">Week 3–4</span></div>
+                    <div class="lesson-title">Kirchhoff's Laws</div>
+                    <ul class="lesson-topics">
+                        <li>KCL — currents into a node must equal currents out</li>
+                        <li>KVL — voltage rises and drops around any loop sum to zero</li>
+                        <li>Applying both laws to analyze multi-loop circuits</li>
+                        <li>Lab: trace voltage and current through a complex circuit</li>
+                    </ul>
+                    <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                </a>
+
             </div>
         </main>
     </div>
@@ -320,8 +493,6 @@
         if (track === 'dbl') {
             var desc = document.getElementById('unit-desc');
             if (desc) desc.textContent = 'Learn the fundamentals of electricity and electronic components — voltage, current, resistance, and how they combine in circuits. This unit supports the electronics-based projects you\'ll build in Design & Build Lab.';
-            var mw = document.getElementById('meta-weeks');
-            if (mw) mw.textContent = 'Coming Soon';
             var nav = document.getElementById('dbl-projects-nav');
             if (nav) nav.style.display = 'block';
         }

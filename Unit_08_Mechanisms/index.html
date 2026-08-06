@@ -180,6 +180,98 @@
 
         .cs-text { font-size: 1.1rem; color: #888; line-height: 1.7; max-width: 500px; margin: 0 auto; }
 
+        /* Lesson grid */
+        .lessons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .lesson-card {
+            background: linear-gradient(135deg, rgba(22,163,74,0.05) 0%, rgba(42,42,42,0.8) 100%);
+            border: 2px solid rgba(22,163,74,0.3);
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+
+        .lesson-card:hover {
+            transform: translateY(-3px);
+            border-color: #16a34a;
+            box-shadow: 0 8px 25px rgba(22,163,74,0.3);
+        }
+
+        .lesson-number {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+            color: #16a34a;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .lesson-week {
+            font-size: 0.8rem;
+            color: #888;
+            font-weight: 400;
+            margin-left: 8px;
+        }
+
+        .lesson-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.4rem;
+            color: #ffffff;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .lesson-topics {
+            list-style: none;
+            margin: 15px 0;
+            padding: 0;
+        }
+
+        .lesson-topics li {
+            font-size: 0.85rem;
+            color: #d0d0d0;
+            padding: 5px 0 5px 20px;
+            position: relative;
+        }
+
+        .lesson-topics li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #16a34a;
+        }
+
+        .lesson-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(22,163,74,0.2);
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .status-ready {
+            background: rgba(22,163,74,0.2);
+            color: #4ade80;
+            border: 1px solid #16a34a;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
         footer { text-align: center; padding: 30px; background: #0d0d0d; border-top: 3px solid #16a34a; color: #888; font-size: 0.9rem; }
         footer .mascot { color: #fff; margin: 8px 0; }
 
@@ -188,6 +280,7 @@
             .sidebar { width: 100%; height: auto; position: relative; }
             .main-content { padding: 30px 20px; }
             .unit-title { font-size: 2rem; }
+            .lessons-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -268,17 +361,134 @@
                     Study how forces, motion, and mechanical advantage work in engineered systems. You'll analyze gears, linkages, levers, and the mechanisms inside the machines you use every day — then apply those principles to your own designs.
                 </p>
                 <div class="unit-meta">
-                    <span class="meta-badge" id="meta-weeks">Coming Soon</span>
-                    <span class="meta-badge">Hands-On</span>
+                    <span class="meta-badge" id="meta-weeks">~5–6 Weeks</span>
+                    <span class="meta-badge">Hands-On Lab</span>
+                    <span class="meta-badge">10 Lessons</span>
                 </div>
             </div>
 
-            <div class="coming-soon-panel">
-                <div class="cs-icon">⚙️</div>
-                <h2 class="cs-title">Lessons In Development</h2>
-                <p class="cs-text">
-                    Unit 8 content is being built now. Check back soon — lessons will appear here as they're completed. In the meantime, continue working on your current unit or project.
-                </p>
+            <div class="lessons-grid">
+
+                <a href="Lesson_01_Simple_Machines.html" class="lesson-card">
+                    <div class="lesson-number">Lesson 8.1 <span class="lesson-week">Week 1</span></div>
+                    <div class="lesson-title">Simple Machines & Engineering Design</div>
+                    <ul class="lesson-topics">
+                        <li>The six types of simple machines and where they appear</li>
+                        <li>Criteria and constraints in the design process</li>
+                        <li>Simple machines inside a combine harvester</li>
+                        <li>Activity: identify and build 3 simple machines from VEX kit</li>
+                    </ul>
+                    <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                </a>
+
+                <a href="Lesson_02_Mechanical_Advantage.html" class="lesson-card">
+                    <div class="lesson-number">Lesson 8.2 <span class="lesson-week">Week 1</span></div>
+                    <div class="lesson-title">Mechanical Advantage</div>
+                    <ul class="lesson-topics">
+                        <li>Ideal Mechanical Advantage (IMA) — calculated from geometry</li>
+                        <li>Actual Mechanical Advantage (AMA) — measured from forces</li>
+                        <li>IMA formulas: lever (arm ratio), inclined plane (slope/height)</li>
+                        <li>Why AMA is always less than IMA (friction)</li>
+                    </ul>
+                    <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                </a>
+
+                <a href="Lesson_03_Work_Power_Efficiency.html" class="lesson-card">
+                    <div class="lesson-number">Lesson 8.3 <span class="lesson-week">Week 2</span></div>
+                    <div class="lesson-title">Work, Power & Efficiency</div>
+                    <ul class="lesson-topics">
+                        <li>W = F × d — work measured in Joules</li>
+                        <li>P = W / t — power measured in Watts</li>
+                        <li>η = E<sub>out</sub> / E<sub>in</sub> — efficiency as a percentage</li>
+                        <li>Lab: VEX motor winch measures input vs. output energy</li>
+                    </ul>
+                    <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                </a>
+
+                <a href="Lesson_04_Pulleys.html" class="lesson-card">
+                    <div class="lesson-number">Lesson 8.4 <span class="lesson-week">Week 2</span></div>
+                    <div class="lesson-title">Pulley Systems</div>
+                    <ul class="lesson-topics">
+                        <li>Fixed, movable, and compound pulley configurations</li>
+                        <li>IMA = number of rope segments supporting the load</li>
+                        <li>Tradeoff: more rope pulled = less force needed</li>
+                        <li>Lab: Onshape pulley simulation + power calculations</li>
+                    </ul>
+                    <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                </a>
+
+                <a href="Lesson_05_Gears.html" class="lesson-card">
+                    <div class="lesson-number">Lesson 8.5 <span class="lesson-week">Week 3</span></div>
+                    <div class="lesson-title">Gears & Gear Ratios</div>
+                    <ul class="lesson-topics">
+                        <li>Gear ratio = teeth<sub>driven</sub> / teeth<sub>driver</sub></li>
+                        <li>Torque vs. speed tradeoff — gear up for speed, down for torque</li>
+                        <li>Idler gears and rotation direction</li>
+                        <li>Build: "Go for Slow" — design the slowest VEX vehicle</li>
+                    </ul>
+                    <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                </a>
+
+                <a href="Lesson_06_Maximizing_Power.html" class="lesson-card">
+                    <div class="lesson-number">Lesson 8.6 <span class="lesson-week">Week 3</span></div>
+                    <div class="lesson-title">Maximizing Power Output</div>
+                    <ul class="lesson-topics">
+                        <li>Motor power curves: speed vs. torque vs. power</li>
+                        <li>Finding the operating point that maximizes output power</li>
+                        <li>How gear selection shifts the operating point</li>
+                        <li>Lab: measure motor output at different loads</li>
+                    </ul>
+                    <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                </a>
+
+                <a href="Lesson_07_Tug_of_War.html" class="lesson-card">
+                    <div class="lesson-number">Lesson 8.7 <span class="lesson-week">Week 4</span></div>
+                    <div class="lesson-title">Tug of War Challenge</div>
+                    <ul class="lesson-topics">
+                        <li>Apply gear ratio and power concepts in a direct competition</li>
+                        <li>Design a drivetrain that maximizes pulling force</li>
+                        <li>Iteration: test, measure, and improve your design</li>
+                        <li>Challenge: class Tug of War tournament</li>
+                    </ul>
+                    <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                </a>
+
+                <a href="Lesson_08_Linkages.html" class="lesson-card">
+                    <div class="lesson-number">Lesson 8.8 <span class="lesson-week">Week 4</span></div>
+                    <div class="lesson-title">Linkages</div>
+                    <ul class="lesson-topics">
+                        <li>What linkages do: transmit and transform motion</li>
+                        <li>4-bar linkage: input link, coupler, output link, ground</li>
+                        <li>Slider-crank: converts rotation to reciprocating motion</li>
+                        <li>Activity: A-Door-Able Hens — design a chicken coop door mechanism</li>
+                    </ul>
+                    <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                </a>
+
+                <a href="Lesson_09_Types_of_Motion.html" class="lesson-card">
+                    <div class="lesson-number">Lesson 8.9 <span class="lesson-week">Week 5</span></div>
+                    <div class="lesson-title">Types of Motion</div>
+                    <ul class="lesson-topics">
+                        <li>Rotary, linear, reciprocating, and oscillating motion</li>
+                        <li>Mechanisms that convert between motion types</li>
+                        <li>Real-world examples: pistons, cams, crankshafts, escapements</li>
+                        <li>Activity: identify motion types in compound machines</li>
+                    </ul>
+                    <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                </a>
+
+                <a href="Lesson_10_Fix_Frans_Farm.html" class="lesson-card">
+                    <div class="lesson-number">Lesson 8.10 <span class="lesson-week">Week 5–6</span></div>
+                    <div class="lesson-title">Fix Fran's Farm — Capstone</div>
+                    <ul class="lesson-topics">
+                        <li>Unit capstone: design a mechanical device for Fran's farm</li>
+                        <li>Apply simple machines, gears, linkages, and motion types</li>
+                        <li>Build and test your design; iterate based on results</li>
+                        <li>Present: how your mechanism works and how you'd improve it</li>
+                    </ul>
+                    <div class="lesson-meta"><span class="status-ready">Live</span></div>
+                </a>
+
             </div>
         </main>
     </div>
