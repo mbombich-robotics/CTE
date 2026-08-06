@@ -238,6 +238,29 @@
                     <span class="coming-soon-badge">Soon</span>
                 </a>
             </div>
+
+            <!-- DBL Projects nav — shown only for dbl track -->
+            <div class="sidebar-section" id="dbl-projects-nav" style="display:none;">
+                <div class="sidebar-header">Projects</div>
+                <a href="../DBL/projects/p1-fidget-spinner.html" class="unit-link">
+                    <span class="unit-number">P1</span> Fidget Spinner
+                </a>
+                <a href="../DBL/projects/p2-led-sign.html" class="unit-link">
+                    <span class="unit-number">P2</span> LED Sign / Wall Art
+                </a>
+                <a href="#" class="unit-link coming-soon">
+                    <span class="unit-number">P3</span> — <span class="coming-soon-badge">Soon</span>
+                </a>
+                <a href="#" class="unit-link coming-soon">
+                    <span class="unit-number">P4</span> — <span class="coming-soon-badge">Soon</span>
+                </a>
+                <a href="#" class="unit-link coming-soon">
+                    <span class="unit-number">P5</span> — <span class="coming-soon-badge">Soon</span>
+                </a>
+                <a href="#" class="unit-link coming-soon">
+                    <span class="unit-number">P6</span> — <span class="coming-soon-badge">Soon</span>
+                </a>
+            </div>
         </aside>
 
         <main class="main-content">
@@ -299,6 +322,8 @@
             if (desc) desc.textContent = 'Learn the fundamentals of electricity and electronic components — voltage, current, resistance, and how they combine in circuits. This unit supports the electronics-based projects you\'ll build in Design & Build Lab.';
             var mw = document.getElementById('meta-weeks');
             if (mw) mw.textContent = 'Coming Soon';
+            var nav = document.getElementById('dbl-projects-nav');
+            if (nav) nav.style.display = 'block';
         }
 
         var titleParts = document.title.split('|');
