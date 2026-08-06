@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 8.9: Types of Motion &amp; Motion Conversion | Unit 8 — Mechanisms</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #020f02 0%, #061606 40%, #0a1f0a 100%);
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.2em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #4ade80;
+            text-shadow: 0 0 30px rgba(74,222,128,0.4);
+            line-height: 1.15;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #86efac;
+            text-align: center;
+        }
+
+        h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #4ade80;
+        }
+
+        .lesson-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #4ade80;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            text-align: center;
+            color: #94a3b8;
+            font-weight: 300;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        /* Bullet lists */
+        .bullet-list { list-style: none; padding: 0; margin: 20px 0; }
+
+        .bullet-list li {
+            font-size: 1.4em;
+            padding: 10px 0 10px 46px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .bullet-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #4ade80;
+            font-size: 1.1em;
+        }
+
+        .bullet-list li strong { color: #e2e8f0; }
+        .bullet-list li em { color: #86efac; font-style: normal; font-weight: 600; }
+
+        /* Callout */
+        .callout {
+            background: rgba(74,222,128,0.08);
+            border-left: 5px solid #4ade80;
+            border-radius: 0 10px 10px 0;
+            padding: 22px 28px;
+            margin: 20px 0;
+            font-size: 1.4em;
+            font-style: italic;
+            color: #86efac;
+            line-height: 1.5;
+        }
+
+        .callout strong { color: #e2e8f0; font-style: normal; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(74,222,128,0.12);
+            color: #86efac;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Two-column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin: 20px 0;
+        }
+
+        /* Four-item motion grid */
+        .four-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .col-box {
+            background: rgba(74,222,128,0.06);
+            border: 1px solid rgba(74,222,128,0.2);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .col-box h4 {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #4ade80;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .col-box ul { list-style: none; padding: 0; }
+
+        .col-box ul li {
+            font-size: 1.05em;
+            color: #94a3b8;
+            padding: 6px 0 6px 26px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .col-box ul li::before { content: "▸"; position: absolute; left: 0; color: #4ade80; }
+
+        .col-box p { font-size: 1.05em; color: #94a3b8; line-height: 1.6; }
+
+        /* Summary table */
+        .issues-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1.1em;
+        }
+
+        .issues-table th {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8em;
+            font-weight: 700;
+            color: #4ade80;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 2px solid rgba(74,222,128,0.4);
+            background: rgba(74,222,128,0.08);
+        }
+
+        .issues-table td {
+            padding: 12px 16px;
+            color: #cbd5e1;
+            border-bottom: 1px solid rgba(74,222,128,0.1);
+            vertical-align: top;
+            line-height: 1.5;
+        }
+
+        .issues-table tr:last-child td { border-bottom: none; }
+
+        .issues-table tr:hover td { background: rgba(74,222,128,0.04); }
+
+        .issues-table td:first-child {
+            color: #86efac;
+            font-weight: 700;
+        }
+
+        /* Deliverable box */
+        .deliverable-box {
+            background: rgba(74,222,128,0.08);
+            border: 2px solid rgba(74,222,128,0.4);
+            border-radius: 14px;
+            padding: 28px 32px;
+            margin: 24px 0;
+        }
+
+        .deliverable-box h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+            color: #4ade80;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .deliverable-box p {
+            font-size: 1.2em;
+            color: #cbd5e1;
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .deliverable-box ul { list-style: none; padding: 0; }
+
+        .deliverable-box ul li {
+            font-size: 1.2em;
+            color: #cbd5e1;
+            padding: 8px 0 8px 36px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .deliverable-box ul li::before {
+            content: "☐";
+            position: absolute;
+            left: 0;
+            color: #4ade80;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(2,15,2,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(74,222,128,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
+        }
+
+        .nav button {
+            background: rgba(74,222,128,0.15);
+            color: #86efac;
+            border: 1px solid rgba(74,222,128,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover { background: rgba(74,222,128,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 24px;
+            font-size: 0.9em;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #4ade80; }
+    </style>
+</head>
+<body>
+
+<a href="../index.html" class="back-link">← Unit 8</a>
+
+<div class="presentation">
+
+    <!-- ── SLIDE 1: Title ── -->
+    <div class="slide active">
+        <div class="slide-content" style="text-align:center;">
+            <div class="lesson-tag">DBL — Design &amp; Build Lab</div>
+            <h1>Motion Conversion</h1>
+            <p class="subtitle">Lesson 8.9 · Mechanisms Unit</p>
+            <div class="callout" style="margin-top:40px; text-align:left; font-size:1.3em;">
+                Five classic mechanisms that convert one type of motion into another.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 2: The Motion Menu ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>The Motion Menu</h2>
+            <div class="four-col">
+                <div class="col-box">
+                    <h4>Rotational</h4>
+                    <p>Continuous spinning</p>
+                    <ul>
+                        <li>Motors</li>
+                        <li>Wheels</li>
+                        <li>Gears</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Oscillating</h4>
+                    <p>Back-and-forth rotation / arc</p>
+                    <ul>
+                        <li>Pendulum</li>
+                        <li>Rocker arm</li>
+                        <li>Wiper blade</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Reciprocating</h4>
+                    <p>Back-and-forth in a straight line</p>
+                    <ul>
+                        <li>Piston</li>
+                        <li>Sewing needle</li>
+                        <li>Pump</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Linear</h4>
+                    <p>One-direction straight-line motion</p>
+                    <ul>
+                        <li>Conveyor belt</li>
+                        <li>Slider</li>
+                        <li>Door</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout">
+                Real machines almost always need to <strong>CONVERT</strong> between these — that's what the next five mechanisms do.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 3: Rack and Pinion ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Rack &amp; Pinion</h2>
+            <ul class="bullet-list">
+                <li>Converts: <strong>Rotational → Linear</strong></li>
+                <li>A circular gear (pinion) meshes with a flat toothed bar (rack)</li>
+                <li>Rotating the pinion slides the rack left or right</li>
+                <li>Direction of rotation = direction of linear travel</li>
+            </ul>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>Examples</h4>
+                    <ul>
+                        <li>Steering rack in a car</li>
+                        <li>CNC machine axis drive</li>
+                        <li>Camera zoom lens</li>
+                        <li>Height-adjustable desk</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Key Equation</h4>
+                    <p>Linear travel per rotation = π × d (pinion diameter) × number of rotations</p>
+                </div>
+            </div>
+            <div class="callout">
+                Every time you turn a car's steering wheel, you're using a rack and pinion.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 4: Crank and Slider ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Crank &amp; Slider</h2>
+            <ul class="bullet-list">
+                <li>Converts: <strong>Rotational → Reciprocating</strong></li>
+                <li>A rotating crank arm is pinned to a connecting rod, which drives a sliding piston</li>
+                <li>The piston only moves in a straight line — the crank rotates continuously</li>
+                <li>This is how every gasoline engine works</li>
+            </ul>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>Examples</h4>
+                    <ul>
+                        <li>Car engine pistons</li>
+                        <li>Bicycle pedal → wheel (reverse: reciprocating → rotational)</li>
+                        <li>Air compressor pump</li>
+                        <li>Reciprocating saw</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Key Insight</h4>
+                    <p>Crank length = stroke / 2. A 50 mm crank = 100 mm total piston stroke.</p>
+                </div>
+            </div>
+            <div class="callout">
+                You can run it backward: push the piston to make the crank rotate — that's how a bicycle works.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 5: Treadle Linkage ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Treadle Linkage</h2>
+            <ul class="bullet-list">
+                <li>Converts: <strong>Oscillating → Rotational</strong> (or reverse)</li>
+                <li>A foot pedal (treadle) rocks back and forth, driving a flywheel via a connecting rod</li>
+                <li>The flywheel smooths out the pulsed input into continuous rotation</li>
+            </ul>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>Classic Examples</h4>
+                    <ul>
+                        <li>Treadle sewing machine</li>
+                        <li>Foot-powered lathe</li>
+                        <li>Pump organ bellows</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Modern Version</h4>
+                    <p>Elliptical exercise machines and some rowing machines use the same principle — oscillating human motion → smooth rotational output.</p>
+                </div>
+            </div>
+            <div class="callout">
+                Before electric motors, the treadle was THE way to power tools with human foot energy.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 6: Quick-Return Mechanism ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Quick-Return Mechanism</h2>
+            <ul class="bullet-list">
+                <li>Converts: <strong>Rotational → Reciprocating</strong> — but with unequal speeds in each direction</li>
+                <li>The cutting stroke (forward) is slow and powerful</li>
+                <li>The return stroke is fast (no work being done)</li>
+                <li>Saves time on the non-productive return</li>
+            </ul>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>Examples</h4>
+                    <ul>
+                        <li>Shaper machine (metal cutting)</li>
+                        <li>Power hacksaw</li>
+                        <li>Slotting machine</li>
+                        <li>Some packaging machines</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Why It Matters</h4>
+                    <p>On a shaper, 60% of time is cutting stroke, 40% is fast return. Without quick-return, 50/50 — 20% slower overall.</p>
+                </div>
+            </div>
+            <div class="callout">
+                Engineering isn't just about making things work — it's about making them <strong>efficient</strong>.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 7: Cam and Follower ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Cam &amp; Follower</h2>
+            <ul class="bullet-list">
+                <li>Converts: <strong>Rotational → Oscillating</strong> (or any custom output profile)</li>
+                <li>A shaped disk (cam) rotates; a follower rides on its surface</li>
+                <li>The <em>cam profile</em> defines the follower's motion — any shape you want</li>
+                <li>"One-way" means the follower only follows in one direction (usually spring-loaded)</li>
+            </ul>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>Examples</h4>
+                    <ul>
+                        <li>Engine valve timing (every car engine!)</li>
+                        <li>Music boxes</li>
+                        <li>Automatic door locks</li>
+                        <li>Printing press ink rollers</li>
+                        <li>Washing machine cycle control</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Cam Profile Design</h4>
+                    <p>Circular arc → smooth motion. Steep face → fast follower jump. Dwell region → follower holds position while cam rotates.</p>
+                </div>
+            </div>
+            <div class="callout">
+                The shape of the cam <strong>IS</strong> the program. Engineers literally design custom motion by carving the right shape.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 8: Mechanism Summary ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Five Mechanisms at a Glance</h2>
+            <table class="issues-table">
+                <thead>
+                    <tr>
+                        <th>Mechanism</th>
+                        <th>Converts</th>
+                        <th>Key Feature</th>
+                        <th>Real Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Rack &amp; Pinion</td>
+                        <td>Rotational → Linear</td>
+                        <td>Gear teeth on flat bar</td>
+                        <td>Car steering</td>
+                    </tr>
+                    <tr>
+                        <td>Crank &amp; Slider</td>
+                        <td>Rotational → Reciprocating</td>
+                        <td>Rotating crank + sliding piston</td>
+                        <td>Engine cylinder</td>
+                    </tr>
+                    <tr>
+                        <td>Treadle Linkage</td>
+                        <td>Oscillating → Rotational</td>
+                        <td>Foot pedal + flywheel</td>
+                        <td>Old sewing machine</td>
+                    </tr>
+                    <tr>
+                        <td>Quick-Return</td>
+                        <td>Rotational → Reciprocating (unequal)</td>
+                        <td>Fast return stroke</td>
+                        <td>Metal shaper</td>
+                    </tr>
+                    <tr>
+                        <td>Cam &amp; Follower</td>
+                        <td>Rotational → Custom / Oscillating</td>
+                        <td>Shaped disk + follower</td>
+                        <td>Engine valves</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 9: Deliverables ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="deliverable-box">
+                <h3>Activity &amp; Turn In</h3>
+                <p>For each of the 5 mechanisms, find or sketch ONE real-world example not already listed above.</p>
+                <ul>
+                    <li>All 5 mechanisms identified in your notebook</li>
+                    <li>Real-world example for each (not from this lesson)</li>
+                    <li>Motion types correctly labeled (input → output)</li>
+                    <li>At least 2 mechanisms found in the classroom or shop</li>
+                </ul>
+            </div>
+            <div class="callout">
+                Which mechanism would you use to convert a motor's rotation into a pump that fills a water tank? Explain your reasoning.
+            </div>
+        </div>
+    </div>
+
+</div><!-- /.presentation -->
+
+<!-- Navigation -->
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 9</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
+
+<script>
+    var slides = document.querySelectorAll('.slide');
+    var current = 0;
+
+    function showSlide(n) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(n, slides.length - 1));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    }
+
+    function changeSlide(dir) { showSlide(current + dir); }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 8.10: Fix Fran's Farm! | Unit 8 — Mechanisms</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #020f02 0%, #061606 40%, #0a1f0a 100%);
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.2em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #4ade80;
+            text-shadow: 0 0 30px rgba(74,222,128,0.4);
+            line-height: 1.15;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #86efac;
+            text-align: center;
+        }
+
+        h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #4ade80;
+            margin-bottom: 16px;
+        }
+
+        .lesson-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #4ade80;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            text-align: center;
+            color: #94a3b8;
+            font-weight: 300;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        /* Bullet lists */
+        .bullet-list { list-style: none; padding: 0; margin: 20px 0; }
+
+        .bullet-list li {
+            font-size: 1.4em;
+            padding: 10px 0 10px 46px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .bullet-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #4ade80;
+            font-size: 1.1em;
+        }
+
+        .bullet-list li strong { color: #e2e8f0; }
+        .bullet-list li em { color: #86efac; font-style: normal; font-weight: 600; }
+
+        /* Callout */
+        .callout {
+            background: rgba(74,222,128,0.08);
+            border-left: 5px solid #4ade80;
+            border-radius: 0 10px 10px 0;
+            padding: 22px 28px;
+            margin: 20px 0;
+            font-size: 1.4em;
+            font-style: italic;
+            color: #86efac;
+            line-height: 1.5;
+        }
+
+        .callout strong { color: #e2e8f0; font-style: normal; }
+
+        .callout-header {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #4ade80;
+            font-style: normal;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        /* Step list */
+        .step-list { list-style: none; padding: 0; margin: 20px 0; counter-reset: step-counter; }
+
+        .step-list li {
+            font-size: 1.25em;
+            padding: 13px 14px 13px 62px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            background: rgba(74,222,128,0.04);
+            border-radius: 8px;
+        }
+
+        .step-list li::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: rgba(74,222,128,0.18);
+            border: 2px solid #4ade80;
+            border-radius: 50%;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #4ade80;
+            text-align: center;
+            line-height: 28px;
+        }
+
+        .step-list li strong { color: #86efac; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(74,222,128,0.12);
+            color: #86efac;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Two-column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin: 20px 0;
+        }
+
+        /* Three-column grid */
+        .three-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .col-box {
+            background: rgba(74,222,128,0.06);
+            border: 1px solid rgba(74,222,128,0.2);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .col-box h4 {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #4ade80;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .col-box ul { list-style: none; padding: 0; }
+
+        .col-box ul li {
+            font-size: 1.05em;
+            color: #94a3b8;
+            padding: 6px 0 6px 26px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .col-box ul li::before { content: "▸"; position: absolute; left: 0; color: #4ade80; }
+
+        .col-box p { font-size: 1.05em; color: #94a3b8; line-height: 1.6; }
+
+        /* Challenge boxes (Slide 2) */
+        .challenge-box {
+            background: rgba(74,222,128,0.06);
+            border: 1px solid rgba(74,222,128,0.25);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 16px;
+            font-size: 1.2em;
+            color: #cbd5e1;
+            line-height: 1.55;
+        }
+
+        .challenge-box strong { color: #4ade80; }
+
+        /* Issues / data table */
+        .issues-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1.05em;
+        }
+
+        .issues-table th {
+            background: rgba(74,222,128,0.15);
+            color: #4ade80;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.78em;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 12px 18px;
+            text-align: left;
+            border-bottom: 2px solid rgba(74,222,128,0.35);
+        }
+
+        .issues-table td {
+            padding: 12px 18px;
+            color: #94a3b8;
+            border-bottom: 1px solid rgba(74,222,128,0.1);
+            line-height: 1.5;
+            vertical-align: top;
+        }
+
+        .issues-table td:first-child {
+            color: #e2e8f0;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .issues-table tr:last-child td { border-bottom: none; }
+
+        .issues-table tr:hover td { background: rgba(74,222,128,0.04); color: #cbd5e1; }
+
+        /* Checklist */
+        .checklist { list-style: none; padding: 0; margin: 16px 0; }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            font-size: 1.2em;
+            padding: 9px 0;
+            color: #cbd5e1;
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(74,222,128,0.08);
+        }
+
+        .checklist li:last-child { border-bottom: none; }
+
+        .checklist li .box {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(74,222,128,0.5);
+            border-radius: 4px;
+            margin-top: 3px;
+        }
+
+        /* Deliverable box */
+        .deliverable-box {
+            background: rgba(74,222,128,0.08);
+            border: 2px solid rgba(74,222,128,0.4);
+            border-radius: 14px;
+            padding: 24px 28px;
+            margin: 20px 0;
+        }
+
+        .deliverable-box h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.05em;
+            color: #4ade80;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .deliverable-box ul { list-style: none; padding: 0; }
+
+        .deliverable-box ul li {
+            font-size: 1.2em;
+            color: #cbd5e1;
+            padding: 8px 0 8px 36px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .deliverable-box ul li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4ade80;
+            font-weight: 700;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(2,15,2,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(74,222,128,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
+        }
+
+        .nav button {
+            background: rgba(74,222,128,0.15);
+            color: #86efac;
+            border: 1px solid rgba(74,222,128,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover { background: rgba(74,222,128,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 24px;
+            font-size: 0.9em;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #4ade80; }
+    </style>
+</head>
+<body>
+
+<a href="../index.html" class="back-link">← Unit 8</a>
+
+<div class="presentation">
+
+    <!-- ── SLIDE 1: Title ── -->
+    <div class="slide active">
+        <div class="slide-content" style="text-align:center;">
+            <div class="lesson-tag">DBL — Design &amp; Build Lab</div>
+            <h1>Fix Fran's Farm!</h1>
+            <p class="subtitle">Lesson 8.10 · Unit 8 Capstone</p>
+            <div class="callout" style="margin-top:36px; text-align:left; font-size:1.3em;">
+                Three engineering challenges. One farm. Apply everything you know about mechanisms.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 2: Meet the Challenges ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Fran's Three Problems</h2>
+            <div class="challenge-box">
+                🌾 <strong>Challenge 1 — The Hay Problem:</strong> Fran must lift 441 N (99 lb) of hay to a loft 3.5 m above the barn floor. Design a pulley system that a single person can operate with no more than 150 N of effort.
+            </div>
+            <div class="challenge-box">
+                ⚙️ <strong>Challenge 2 — The Mill Problem:</strong> The old grain mill wheel turns at 8 rpm. The grinding stone needs to spin at 32 rpm. Design a gear train to achieve this speed increase.
+            </div>
+            <div class="challenge-box">
+                🔧 <strong>Challenge 3 — The Gate Problem:</strong> Design a four-bar linkage latch for the chicken coop gate that stays latched under wind load but opens with one hand.
+            </div>
+            <div class="callout" style="margin-top:4px;">
+                Pick <strong>ONE</strong> challenge to engineer in depth. Your team will present to an investor panel.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 3: Challenge 1: Hay Pulley ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Challenge 1 — The Hay Pulley</h2>
+            <ul class="bullet-list">
+                <li>Required effort ≤ 150 N; load = 441 N</li>
+                <li>Minimum IMA needed: 441 / 150 = 2.94 → must use IMA ≥ 3</li>
+                <li>A compound pulley with 3 rope segments gives IMA = 3</li>
+                <li>Actual effort = Load / AMA; AMA = IMA × η</li>
+            </ul>
+            <ol class="step-list">
+                <li>Sketch your pulley arrangement — show all rope segments</li>
+                <li>Count rope segments supporting the load (= IMA)</li>
+                <li>Account for efficiency: assume η = 0.85 → AMA = 3 × 0.85 = 2.55</li>
+                <li>Calculate actual effort: F_e = 441 / 2.55 = 173 N — still over! Add a 4th segment.</li>
+                <li>With IMA=4, AMA=3.4 → F_e = 441/3.4 = 130 N ✓</li>
+            </ol>
+            <div class="callout">
+                More mechanical advantage = more rope to pull. Fran pulls more distance but with less force.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 4: Challenge 2: Mill Gear Train ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Challenge 2 — Mill Speed</h2>
+            <ul class="bullet-list">
+                <li>Input: 8 rpm (waterwheel); Output: 32 rpm (grinding stone)</li>
+                <li>Speed ratio needed: 32/8 = 4.0 (speed increase)</li>
+                <li>Gear ratio = T_driven / T_driver → for speed increase, T_driver &gt; T_driven</li>
+                <li>GR = 1/4 → driver has 4× the teeth of driven</li>
+            </ul>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>Single-Stage Option</h4>
+                    <ul>
+                        <li>Driver = 80 teeth, Driven = 20 teeth</li>
+                        <li>GR = 20/80 = 0.25</li>
+                        <li>ω_out = 8 × 4 = 32 rpm ✓</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Two-Stage Option</h4>
+                    <ul>
+                        <li>Stage 1: GR = 0.5 (double speed)</li>
+                        <li>Stage 2: GR = 0.5 (double again)</li>
+                        <li>Combined: 0.5 × 0.5 = 0.25 → same result, smaller gears</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout">
+                Compound gear trains let you achieve large ratios with gears that physically fit in the machine.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 5: Challenge 3: Gate Latch ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Challenge 3 — Gate Latch</h2>
+            <ul class="bullet-list">
+                <li>The latch must: stay closed under 50 N wind load, open with ≤ 20 N hand force</li>
+                <li>Use a four-bar linkage with an over-center lock (like a toggle clamp)</li>
+                <li>Over-center: when the linkage passes slightly past the equilibrium point, wind load <em>HELPS</em> lock it further</li>
+            </ul>
+            <ol class="step-list">
+                <li>Sketch the four-bar configuration — identify ground, driver, coupler, output</li>
+                <li>Mark the "over-center" position (where the coupler and driver are nearly collinear)</li>
+                <li>Calculate mechanical advantage at latch point — the handle gets force amplification near over-center</li>
+                <li>Test: apply 50 N to the gate — does it stay latched?</li>
+            </ol>
+            <div class="callout">
+                Over-center mechanisms are self-locking: the harder you push, the more locked they become.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 6: Engineering Design Process ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Your Design Sprint</h2>
+            <ol class="step-list">
+                <li><strong>Define</strong> — Write your criteria (must do) and constraints (must not exceed) for your chosen challenge</li>
+                <li><strong>Research</strong> — Review your notes from L8.1–L8.9; identify which mechanisms apply</li>
+                <li><strong>Ideate</strong> — Sketch 3 different solutions; no idea is wrong at this stage</li>
+                <li><strong>Select</strong> — Use a decision matrix to pick the best solution</li>
+                <li><strong>Build &amp; Test</strong> — Construct prototype, measure actual performance vs. criteria</li>
+                <li><strong>Communicate</strong> — Prepare your investor pitch (see next slide)</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 7: The Investor Pitch ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>The Investor Pitch</h2>
+            <div class="callout">
+                <span class="callout-header">💼 Investor Panel Presentation</span>
+                You have <strong>3 minutes</strong> to convince investors to fund your solution.
+            </div>
+            <ul class="bullet-list">
+                <li><strong>Problem</strong> (30 sec): What is Fran's problem? Why does it matter?</li>
+                <li><strong>Solution</strong> (60 sec): Which mechanism did you choose and why? Show your design sketch.</li>
+                <li><strong>Data</strong> (60 sec): Does your solution meet the criteria? Show the math.</li>
+                <li><strong>Tradeoffs</strong> (30 sec): What did your design sacrifice? What would you improve?</li>
+            </ul>
+            <div class="callout">
+                Investors fund solutions, not ideas. <strong>Your math is your proof.</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 8: Scoring Rubric ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>How You'll Be Graded</h2>
+            <table class="issues-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>4 — Exceeds</th>
+                        <th>3 — Meets</th>
+                        <th>2 — Approaching</th>
+                        <th>1 — Beginning</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Mechanism Choice</td>
+                        <td>Explains why this mechanism is optimal</td>
+                        <td>Correct mechanism, brief reasoning</td>
+                        <td>Correct mechanism, no reasoning</td>
+                        <td>Wrong mechanism</td>
+                    </tr>
+                    <tr>
+                        <td>Calculations</td>
+                        <td>All math shown, correct, with units</td>
+                        <td>Correct with units</td>
+                        <td>Minor errors</td>
+                        <td>Missing or wrong</td>
+                    </tr>
+                    <tr>
+                        <td>Prototype</td>
+                        <td>Meets all criteria, tested 3+ times</td>
+                        <td>Meets all criteria</td>
+                        <td>Meets most criteria</td>
+                        <td>Does not meet criteria</td>
+                    </tr>
+                    <tr>
+                        <td>Pitch</td>
+                        <td>Clear, compelling, within time</td>
+                        <td>Clear, meets time</td>
+                        <td>Hard to follow</td>
+                        <td>Missing sections</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 9: Deliverables ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Deliverables</h2>
+            <div class="deliverable-box">
+                <h3>Submit to Google Classroom</h3>
+                <ul>
+                    <li>Engineering notebook pages (all sketches, calculations, decision matrix)</li>
+                    <li>Photo/video of working prototype</li>
+                    <li>Pitch slide deck (Google Slides, 3–5 slides)</li>
+                    <li>Self-assessment: which part of the design process was hardest?</li>
+                </ul>
+            </div>
+            <ul class="checklist">
+                <li><span class="box"></span>Challenge selected and stated clearly</li>
+                <li><span class="box"></span>Criteria and constraints written before designing</li>
+                <li><span class="box"></span>At least 3 sketches in notebook</li>
+                <li><span class="box"></span>Calculations correct and labeled with units</li>
+                <li><span class="box"></span>Prototype tested and results recorded</li>
+                <li><span class="box"></span>Pitch rehearsed (can deliver in 3 min or less)</li>
+            </ul>
+        </div>
+    </div>
+
+</div><!-- /.presentation -->
+
+<!-- Navigation -->
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 9</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
+
+<script>
+    var slides = document.querySelectorAll('.slide');
+    var current = 0;
+
+    function showSlide(n) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(n, slides.length - 1));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    }
+
+    function changeSlide(dir) { showSlide(current + dir); }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+
+</body>
+</html>

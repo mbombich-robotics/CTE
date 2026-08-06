@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 8.8: Linkages | Unit 8 — Mechanisms</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #020f02 0%, #061606 40%, #0a1f0a 100%);
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.2em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #4ade80;
+            text-shadow: 0 0 30px rgba(74,222,128,0.4);
+            line-height: 1.15;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #86efac;
+            text-align: center;
+        }
+
+        .lesson-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #4ade80;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            text-align: center;
+            color: #94a3b8;
+            font-weight: 300;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        /* Bullet lists */
+        .bullet-list { list-style: none; padding: 0; margin: 20px 0; }
+
+        .bullet-list li {
+            font-size: 1.4em;
+            padding: 10px 0 10px 46px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .bullet-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #4ade80;
+            font-size: 1.1em;
+        }
+
+        .bullet-list li strong { color: #e2e8f0; }
+        .bullet-list li em { color: #86efac; font-style: normal; font-weight: 600; }
+
+        /* Callout */
+        .callout {
+            background: rgba(74,222,128,0.08);
+            border-left: 5px solid #4ade80;
+            border-radius: 0 10px 10px 0;
+            padding: 22px 28px;
+            margin: 20px 0;
+            font-size: 1.4em;
+            font-style: italic;
+            color: #86efac;
+            line-height: 1.5;
+        }
+
+        .callout strong { color: #e2e8f0; font-style: normal; }
+
+        .callout-header {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            font-style: normal;
+            font-weight: 700;
+            color: #4ade80;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        /* Step list */
+        .step-list { list-style: none; padding: 0; margin: 20px 0; counter-reset: step-counter; }
+
+        .step-list li {
+            font-size: 1.25em;
+            padding: 13px 14px 13px 62px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            background: rgba(74,222,128,0.04);
+            border-radius: 8px;
+        }
+
+        .step-list li::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: rgba(74,222,128,0.18);
+            border: 2px solid #4ade80;
+            border-radius: 50%;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #4ade80;
+            text-align: center;
+            line-height: 28px;
+        }
+
+        .step-list li strong { color: #86efac; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(74,222,128,0.12);
+            color: #86efac;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Two-column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin: 20px 0;
+        }
+
+        /* Three-column grid */
+        .three-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .col-box {
+            background: rgba(74,222,128,0.06);
+            border: 1px solid rgba(74,222,128,0.2);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .col-box h4 {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #4ade80;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .col-box ul { list-style: none; padding: 0; }
+
+        .col-box ul li {
+            font-size: 1.05em;
+            color: #94a3b8;
+            padding: 6px 0 6px 26px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .col-box ul li::before { content: "▸"; position: absolute; left: 0; color: #4ade80; }
+
+        .col-box p { font-size: 1.05em; color: #94a3b8; line-height: 1.6; }
+
+        /* Checklist (with colored icons) */
+        .checklist { list-style: none; padding: 0; margin: 20px 0; }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            font-size: 1.35em;
+            padding: 10px 0;
+            color: #cbd5e1;
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(74,222,128,0.08);
+        }
+
+        .checklist li:last-child { border-bottom: none; }
+
+        .checklist li .icon { flex-shrink: 0; font-size: 1.1em; margin-top: 1px; }
+        .checklist li .label { flex: 1; }
+        .checklist li .label strong { color: #4ade80; }
+        .checklist li .note { font-size: 0.75em; color: #64748b; display: block; margin-top: 2px; }
+
+        /* Deliverable box */
+        .deliverable-box {
+            background: rgba(74,222,128,0.08);
+            border: 2px solid rgba(74,222,128,0.4);
+            border-radius: 14px;
+            padding: 28px 32px;
+            margin: 24px 0;
+        }
+
+        .deliverable-box h3,
+        .deliverable-box h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+            color: #4ade80;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .deliverable-box ul { list-style: none; padding: 0; }
+
+        .deliverable-box ul li {
+            font-size: 1.25em;
+            color: #cbd5e1;
+            padding: 8px 0 8px 36px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .deliverable-box ul li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4ade80;
+            font-weight: 700;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(2,15,2,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(74,222,128,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
+        }
+
+        .nav button {
+            background: rgba(74,222,128,0.15);
+            color: #86efac;
+            border: 1px solid rgba(74,222,128,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover { background: rgba(74,222,128,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 24px;
+            font-size: 0.9em;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #4ade80; }
+    </style>
+</head>
+<body>
+
+<a href="../index.html" class="back-link">← Unit 8</a>
+
+<div class="presentation">
+
+    <!-- ── SLIDE 1: Title ── -->
+    <div class="slide active">
+        <div class="slide-content" style="text-align:center;">
+            <div class="lesson-tag">DBL — Design &amp; Build Lab</div>
+            <h1>Linkages</h1>
+            <p class="subtitle">Lesson 8.8 · Mechanisms Unit</p>
+            <p style="margin-top:36px; font-size:1.35em; color:#94a3b8; max-width:760px; margin-left:auto; margin-right:auto; line-height:1.6;">
+                A linkage converts one type of motion into another using connected rigid links.
+            </p>
+            <div style="margin-top:40px; display:flex; justify-content:center; gap:30px; flex-wrap:wrap;">
+                <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#4ade80;">PLTW POE Activity 1.2.1</div>
+                <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#4ade80;">Four-Bar Linkage</div>
+                <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#4ade80;">VEX Kit</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 2: Four Types of Motion ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Motion in Machines</h2>
+            <ul class="bullet-list">
+                <li><strong>Rotational</strong> — spinning around a fixed axis (wheels, gears, pulleys)</li>
+                <li><strong>Linear</strong> — straight-line motion in one direction (a drawer, a piston stroke)</li>
+                <li><strong>Reciprocating</strong> — back-and-forth linear motion (sewing needle, engine piston)</li>
+                <li><strong>Oscillating</strong> — back-and-forth rotational/arc motion (pendulum, windshield wiper)</li>
+            </ul>
+            <div class="callout">
+                Linkages are the bridges between these motion types.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 3: What Is a Linkage? ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>The Four-Bar Linkage</h2>
+            <ul class="bullet-list">
+                <li>Four rigid bars (links) connected at pivot joints (pins)</li>
+                <li>One link is fixed (the frame/ground link)</li>
+                <li>The driver link rotates or oscillates, driving the output link</li>
+                <li>The coupler link connects driver to output</li>
+            </ul>
+            <div class="callout">
+                The four-bar linkage is the most common mechanism in engineering. Legs, windshield wipers, suspension, and robot arms all use it.
+            </div>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>Grashof's Rule</h4>
+                    <p>If the shortest link + longest link &le; sum of the other two, at least one link can fully rotate.</p>
+                </div>
+                <div class="col-box">
+                    <h4>Link Ratios Matter</h4>
+                    <p>Changing link lengths changes the output motion path — same principle, wildly different behavior.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 4: Latch Design Challenge ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="callout">
+                <span class="callout-header">🔧 Fran's Gate Problem</span>
+                Fran's barn gate needs a latch that can be opened with one hand and stays locked when released. Design a four-bar linkage latch mechanism.
+            </div>
+            <ol class="step-list">
+                <li>Sketch the gate and latch position (open vs. closed)</li>
+                <li>Identify what motion type you need at the handle (rotational → linear lock motion)</li>
+                <li>Draw the four links and label: ground, driver, coupler, output</li>
+                <li>Test on paper: does the latch snap shut? Can it be opened easily?</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 5: Designing with Links ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>From Sketch to Build</h2>
+            <ul class="bullet-list">
+                <li>Start with the required <strong>OUTPUT</strong> motion — what must the end of the mechanism do?</li>
+                <li>Work backward: what <strong>INPUT</strong> produces that output?</li>
+                <li>Sketch multiple configurations before picking one</li>
+                <li>Consider: range of motion, force advantage, compactness, failure modes</li>
+                <li>A good linkage feels inevitable — the motion looks "right"</li>
+            </ul>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>Over-constrained</h4>
+                    <p>Too many links → mechanism jams or is rigid. No motion at all.</p>
+                </div>
+                <div class="col-box">
+                    <h4>Under-constrained</h4>
+                    <p>Too few constraints → floppy mechanism. Unpredictable motion.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 6: Common Linkage Applications ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Where You've Seen This</h2>
+            <ul class="bullet-list">
+                <li>🚗 <strong>Car suspension</strong> — double-wishbone is a four-bar linkage keeping the wheel vertical</li>
+                <li>✂️ <strong>Scissors</strong> — crossed four-bar linkage; handles rotate, blades close linearly</li>
+                <li>🦾 <strong>Robot arm</strong> — multiple four-bar stages linked in series</li>
+                <li>🚪 <strong>Trunk lid mechanism</strong> — guided opening arc using a four-bar</li>
+                <li>🪟 <strong>Windshield wipers</strong> — crank-rocker four-bar, converts rotational motor to oscillating wipe</li>
+            </ul>
+            <div class="callout">
+                If it moves predictably, there's probably a linkage behind it.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 7: Analysis: Degrees of Freedom ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Will It Move?</h2>
+            <ul class="bullet-list">
+                <li>A rigid body in a plane has 3 degrees of freedom (DOF): x, y, rotation</li>
+                <li>Each pinned joint removes 2 DOF (constrains x and y)</li>
+                <li>Each link adds 3 DOF</li>
+                <li>Formula: <strong>DOF = 3(L &minus; 1) &minus; 2J</strong> &nbsp;where L = links, J = joints</li>
+            </ul>
+            <div class="callout">
+                <strong>Worked example:</strong> Four-bar linkage: L=4, J=4 &rarr; DOF = 3(3) &minus; 2(4) = 9 &minus; 8 = <strong>1 ✓</strong> (one input drives the whole mechanism)
+            </div>
+            <div class="callout" style="margin-top:12px;">
+                DOF = 0 &rarr; rigid structure. &nbsp; DOF &gt; 1 &rarr; needs multiple inputs.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 8: Build It ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Activity: Design a Latch</h2>
+            <ol class="step-list">
+                <li>Sketch two designs: one that fully rotates (crank) and one that oscillates (rocker)</li>
+                <li>Calculate DOF for each design</li>
+                <li>Build your chosen design using VEX linkage components</li>
+                <li>Test: does it latch reliably? Does it release cleanly?</li>
+                <li>Document: photograph mechanism open and closed</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 9: Deliverables ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="deliverable-box">
+                <h3>Turn In</h3>
+                <ul>
+                    <li>Sketch with links labeled (ground, driver, coupler, output)</li>
+                    <li>DOF calculation shown</li>
+                    <li>Photo of built mechanism (open + closed position)</li>
+                    <li>Reflection: what motion type does your latch use? What would break it?</li>
+                </ul>
+            </div>
+            <ul class="checklist">
+                <li>
+                    <span class="icon">☐</span>
+                    <span class="label"><strong>Four-bar terms correctly labeled on sketch</strong></span>
+                </li>
+                <li>
+                    <span class="icon">☐</span>
+                    <span class="label"><strong>DOF = 1 confirmed</strong></span>
+                </li>
+                <li>
+                    <span class="icon">☐</span>
+                    <span class="label"><strong>Two photos (open and closed)</strong></span>
+                </li>
+                <li>
+                    <span class="icon">☐</span>
+                    <span class="label"><strong>Motion type identified in reflection</strong></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div><!-- /.presentation -->
+
+<!-- Navigation -->
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 9</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
+
+<script>
+    var slides = document.querySelectorAll('.slide');
+    var current = 0;
+
+    function showSlide(n) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(n, slides.length - 1));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    }
+
+    function changeSlide(dir) { showSlide(current + dir); }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+
+</body>
+</html>
