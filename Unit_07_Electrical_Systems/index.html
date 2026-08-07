@@ -317,7 +317,7 @@
                 <a href="../Unit_04_Programming_Electronics_and_Sensors/index.html" class="unit-link" data-unit="Unit_04">
                     <span class="unit-number">Unit 4</span> Programming &amp; Electronics
                 </a>
-                <a href="../Unit_05_Artificial_Intelligence/index.html" class="unit-link" data-unit="Unit_05">
+                <a href="../Unit_05_Artificial_Intelligence/index.html" class="unit-link" id="nav-unit5" data-unit="Unit_05">
                     <span class="unit-number">Unit 5</span> AI &amp; Machine Learning
                 </a>
                 <a href="../Unit_06_Career_Ready_Practices/index.html" class="unit-link" data-unit="Unit_06">
@@ -495,6 +495,8 @@
             if (desc) desc.textContent = 'Learn the fundamentals of electricity and electronic components — voltage, current, resistance, and how they combine in circuits. This unit supports the electronics-based projects you\'ll build in Design & Build Lab.';
             var nav = document.getElementById('dbl-projects-nav');
             if (nav) nav.style.display = 'block';
+            var u5 = document.getElementById('nav-unit5');
+            if (u5) u5.style.display = 'none';
         }
 
         var titleParts = document.title.split('|');

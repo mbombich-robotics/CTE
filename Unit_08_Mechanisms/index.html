@@ -316,7 +316,7 @@
                 <a href="../Unit_04_Programming_Electronics_and_Sensors/index.html" class="unit-link" data-unit>
                     <span class="unit-number">Unit 4</span> Programming &amp; Electronics
                 </a>
-                <a href="../Unit_05_Artificial_Intelligence/index.html" class="unit-link" data-unit>
+                <a href="../Unit_05_Artificial_Intelligence/index.html" class="unit-link" id="nav-unit5" data-unit>
                     <span class="unit-number">Unit 5</span> AI &amp; Machine Learning
                 </a>
                 <a href="../Unit_06_Career_Ready_Practices/index.html" class="unit-link" data-unit>
@@ -528,6 +528,8 @@
         if (track === 'dbl') {
             var desc = document.getElementById('unit-desc');
             if (desc) desc.textContent = 'Explore how mechanical systems transfer and transform motion. You\'ll study the mechanisms behind the projects you\'ve already built and apply those principles to design and fabricate your own mechanical systems in Design & Build Lab.';
+            var u5 = document.getElementById('nav-unit5');
+            if (u5) u5.style.display = 'none';
         }
 
         var titleParts = document.title.split('|');
