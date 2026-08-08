@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
-    <title>P4 — Silicone Mold Making | Design &amp; Build Lab</title>
+    <title>P5 — Useless Box | Design &amp; Build Lab</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -207,7 +207,7 @@
 
         .rule-callout p { font-size: 1rem; color: #fca5a5; line-height: 1.6; }
 
-        /* ── Partner review callout (teal) ── */
+        /* ── Info callout (teal) ── */
         .review-callout {
             background: rgba(8,145,178,0.06);
             border: 2px solid rgba(8,145,178,0.35);
@@ -267,8 +267,8 @@
 
         .constraint-text p { font-size: 0.9rem; color: #5a8a96; line-height: 1.5; }
 
-        /* ── Mold engineering panel (mirrors led-panel) ── */
-        .mold-panel {
+        /* ── Engineering panel ── */
+        .eng-panel {
             background: rgba(8,145,178,0.05);
             border: 2px solid rgba(8,145,178,0.2);
             border-radius: 14px;
@@ -277,7 +277,7 @@
             margin-bottom: 40px;
         }
 
-        .mold-panel h3 {
+        .eng-panel h3 {
             font-family: 'Orbitron', sans-serif;
             font-size: 1rem;
             color: #67e8f9;
@@ -286,10 +286,10 @@
             margin-bottom: 16px;
         }
 
-        .led-steps { list-style: none; padding: 0; counter-reset: led-step; }
+        .eng-steps { list-style: none; padding: 0; counter-reset: eng-step; }
 
-        .led-steps li {
-            counter-increment: led-step;
+        .eng-steps li {
+            counter-increment: eng-step;
             display: flex;
             align-items: flex-start;
             gap: 14px;
@@ -300,10 +300,10 @@
             line-height: 1.6;
         }
 
-        .led-steps li:last-child { border-bottom: none; }
+        .eng-steps li:last-child { border-bottom: none; }
 
-        .led-steps li::before {
-            content: counter(led-step);
+        .eng-steps li::before {
+            content: counter(eng-step);
             background: rgba(8,145,178,0.15);
             color: #0891b2;
             font-family: 'Orbitron', sans-serif;
@@ -319,6 +319,82 @@
             margin-top: 1px;
         }
 
+        /* ── Component cards ── */
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .component-card {
+            background: rgba(8,145,178,0.06);
+            border: 1px solid rgba(8,145,178,0.25);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .component-icon { font-size: 2rem; margin-bottom: 12px; }
+
+        .component-card h5 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #67e8f9;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .component-card p { font-size: 0.9rem; color: #5a8a96; line-height: 1.5; }
+
+        /* ── Event sequence ── */
+        .event-sequence {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .event-sequence::before {
+            content: '';
+            position: absolute;
+            left: 31px;
+            top: 24px;
+            bottom: 24px;
+            width: 2px;
+            background: linear-gradient(to bottom, #0891b2, rgba(8,145,178,0.2));
+        }
+
+        .event-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 14px 0;
+        }
+
+        .event-num {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #0891b2;
+            color: #020d12;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .event-text strong { color: #67e8f9; }
+        .event-text p { font-size: 0.9rem; color: #5a8a96; margin-top: 2px; line-height: 1.5; }
+
         /* ── Material options ── */
         .materials-grid {
             display: grid;
@@ -326,11 +402,7 @@
             gap: 18px;
         }
 
-        .material-card {
-            border-radius: 12px;
-            padding: 22px;
-        }
-
+        .material-card { border-radius: 12px; padding: 22px; }
         .material-required { background: rgba(8,145,178,0.07); border: 2px solid rgba(8,145,178,0.3); }
         .material-optional { background: rgba(22,163,74,0.05); border: 1px dashed rgba(22,163,74,0.3); }
 
@@ -354,6 +426,17 @@
         }
 
         .material-desc { font-size: 0.9rem; color: #5a8a96; line-height: 1.5; }
+
+        .material-list { list-style: none; padding: 0; margin-top: 10px; }
+        .material-list li {
+            font-size: 0.9rem;
+            color: #7aaab6;
+            padding: 5px 0 5px 18px;
+            position: relative;
+            border-bottom: 1px solid rgba(8,145,178,0.07);
+        }
+        .material-list li:last-child { border-bottom: none; }
+        .material-list li::before { content: "→"; position: absolute; left: 0; color: #0891b2; font-size: 0.8rem; }
 
         /* ── Deliverables ── */
         .deliverables-list { display: flex; flex-direction: column; gap: 20px; }
@@ -438,6 +521,7 @@
 
         @media (max-width: 1000px) {
             .constraints-grid { grid-template-columns: 1fr; }
+            .components-grid { grid-template-columns: 1fr; }
             .materials-grid { grid-template-columns: 1fr; }
             .levels-grid { grid-template-columns: 1fr; }
             .main-content { padding: 35px 30px; }
@@ -468,7 +552,7 @@
                 <a href="../index.html" class="unit-link back-link">← Course Overview</a>
                 <div class="sidebar-header">Navigation</div>
                 <a href="../../Portfolio/index.html?track=dbl" class="unit-link" style="background:rgba(99,102,241,0.08); border-left:3px solid #6366f1;">
-                    <span class="unit-number">📋</span> Student Portfolio
+                    <span class="unit-number" style="color:#6366f1;">📋</span> Student Portfolio
                 </a>
             </div>
 
@@ -489,6 +573,12 @@
                 <a href="../../Unit_06_Career_Ready_Practices/index.html?track=dbl" class="unit-link">
                     <span class="unit-number">Unit 6</span> Career Readiness
                 </a>
+                <a href="../../Unit_07_Electrical_Systems/index.html?track=dbl" class="unit-link">
+                    <span class="unit-number">Unit 7</span> Electrical Systems
+                </a>
+                <a href="../../Unit_08_Mechanisms/index.html?track=dbl" class="unit-link">
+                    <span class="unit-number">Unit 8</span> Mechanisms
+                </a>
             </div>
 
             <div class="sidebar-section">
@@ -502,11 +592,11 @@
                 <a href="p3-led-sign.html" class="unit-link">
                     <span class="unit-number">P3</span> LED Sign &amp; Wall Art
                 </a>
-                <a href="p4-molds.html" class="unit-link active">
-                    <span class="unit-number active-p">P4</span> Silicone Mold Making
+                <a href="p4-molds.html" class="unit-link">
+                    <span class="unit-number">P4</span> Silicone Mold Making
                 </a>
-                <a href="p5-useless-box.html" class="unit-link">
-                    <span class="unit-number">P5</span> Useless Box
+                <a href="p5-useless-box.html" class="unit-link active">
+                    <span class="unit-number active-p">P5</span> Useless Box
                 </a>
                 <a href="#" class="unit-link coming-soon">
                     <span class="unit-number">P6</span> — <span class="coming-soon-badge">Soon</span>
@@ -518,18 +608,18 @@
 
             <!-- Hero -->
             <div class="project-hero">
-                <div class="project-eyebrow">Design &amp; Build Lab · Project 4</div>
-                <h1 class="project-title">Silicone<br>Mold Making</h1>
+                <div class="project-eyebrow">Design &amp; Build Lab · Project 5</div>
+                <h1 class="project-title">Useless<br>Box</h1>
                 <p class="project-description">
-                    Design a product in Fusion 360, build the mold around it, pour Smooth-On Mold Star 15A silicone, and cast soap or wax you can actually use. The mold is the deliverable — if it doesn't release cleanly, it doesn't grade.
+                    Build a device that exists only to undo itself. Flip the switch — a mechanism reaches out, flips it back, and goes to sleep. Your job is to design the box, the lid, and the arm that makes it happen, then wire a two-switch circuit that controls motor direction and stopping. No code. No microcontroller. Just mechanical design and a circuit that does exactly one useless thing.
                 </p>
-                <p class="project-description" style="margin-top:10px; font-size:0.9em; opacity:0.7;">
-                    The class default is soap. If you want to make a candle instead, talk to Mr. Bombich first — candles require a different pour process. Taking your mold home to cast candy or popsicles? Go for it, the silicone is food-safe.
+                <p class="project-description" style="margin-top: 10px; font-size: 0.9em; opacity: 0.7;">
+                    This project is reverse-engineered from a commercial kit. Your first task is to figure out how it works — then design your own version from scratch.
                 </p>
                 <div class="meta-row">
                     <span class="meta-chip">4 Weeks</span>
-                    <span class="meta-chip">Silicone Pour</span>
-                    <span class="meta-chip">Soap &amp; Wax</span>
+                    <span class="meta-chip">Mechanisms</span>
+                    <span class="meta-chip">Circuits</span>
                     <span class="meta-chip">Individual</span>
                 </div>
             </div>
@@ -537,7 +627,7 @@
             <!-- No imports rule -->
             <div class="rule-callout">
                 <h4>⛔ Original Design Only</h4>
-                <p>No imports from Thingiverse, Printables, or any model repository. The positive — the object your mold will cast — must be designed by you in Fusion 360. Downloading a soap bar model and molding it is an automatic zero.</p>
+                <p>No downloads from Thingiverse, Printables, or any model repository. The box body, lid, and actuator arm must be designed by you in Fusion 360. The only exception is the motor coupler — if your motor shaft requires a specific adapter, that part may be sourced. Everything visible is yours.</p>
             </div>
 
             <!-- Constraints -->
@@ -545,65 +635,122 @@
                 <h2 class="section-title">Project Constraints</h2>
                 <div class="constraints-grid">
                     <div class="constraint-card">
-                        <div class="constraint-icon">🧼</div>
+                        <div class="constraint-icon">📦</div>
                         <div class="constraint-text">
-                            <h5>Volume Requirement</h5>
-                            <p>Your mold cavity must hold at least the volume of a hotel soap bar (~30 mL). Measure the cavity volume using Fusion's Inspect → Measure tool and document the result in your design brief. Tiny, low-effort designs that don't meet this threshold do not satisfy Level 1.</p>
+                            <h5>Internal Clearance</h5>
+                            <p>The box interior must fit the motor, battery holder, both switches, and all wiring with room to close the lid. Measure your components before you model your box. A box that doesn't close is not a working box.</p>
                         </div>
                     </div>
                     <div class="constraint-card">
-                        <div class="constraint-icon">📐</div>
+                        <div class="constraint-icon">🔄</div>
                         <div class="constraint-text">
-                            <h5>Draft Angles Required</h5>
-                            <p>All vertical walls on the positive must include at least 2–3° of draft. Without draft, silicone grips the positive and won't release. Check every face before printing. Your partner review must confirm draft is present.</p>
+                            <h5>Arm Must Flip the Switch</h5>
+                            <p>The actuator arm must travel far enough — and at the right angle — to fully flip the DPDT toggle from ON to OFF. Partial contact doesn't count. If the switch doesn't flip, the circuit doesn't reverse, and the arm doesn't come back.</p>
                         </div>
                     </div>
                     <div class="constraint-card">
-                        <div class="constraint-icon">🏭</div>
+                        <div class="constraint-icon">⚡</div>
                         <div class="constraint-text">
-                            <h5>Mold Must Release</h5>
-                            <p>If the silicone traps the positive and cannot be separated without destroying the mold, you must redesign and re-pour. A mold that doesn't release does not receive a grade until it works. Plan your draft angles and avoid undercuts.</p>
+                            <h5>Motor Must Stop at Home</h5>
+                            <p>The SPST limit switch must break the circuit when the arm reaches home position. A motor that runs continuously against a physical stop will overheat and burn out. The limit switch is not optional — it is the reason the motor survives.</p>
                         </div>
                     </div>
                     <div class="constraint-card">
                         <div class="constraint-icon">🖨️</div>
                         <div class="constraint-text">
-                            <h5>Print Material by Mold Type</h5>
-                            <p>One-part silicone molds: print in PLA — the mold box and positive are one print. Two-part rigid molds (Level 3): print in PETG — PLA will deform at soap and wax pour temperatures. PETG requests go in the printer queue labeled with your name and "PETG."</p>
+                            <h5>Three Designed Parts</h5>
+                            <p>Box body, lid, and actuator arm are all original designs. Each must function as intended — not just look right. The hinge must pivot, the arm must sweep the correct arc, and the box must close completely when the arm is at home.</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Mold engineering panel -->
+            <!-- How the circuit works -->
             <div class="section-block">
-                <h2 class="section-title">Designing the Mold Assembly</h2>
-                <div class="mold-panel">
-                    <h3>🔬 Designing the Mold Assembly in Fusion 360</h3>
-                    <ol class="led-steps">
-                        <li>Design your product (the positive) first — this is the object your soap or wax will become. Model it as if it were the final product. Surface detail, text, and relief work all transfer to the cast.</li>
-                        <li>Add draft to every vertical wall — select each face and apply a 2–3° taper toward the open top of the mold. Do this before building the mold box around it.</li>
-                        <li>Check for undercuts — any feature that overhangs or is wider at the bottom than the top will trap the silicone. Silicone is flexible so mild undercuts are OK; severe ones are not. When in doubt, redesign.</li>
-                        <li>Build the mold box around the positive — walls must be at least 10 mm thick on all sides and at the base. The top is open. The positive sits at the bottom, attached to the base (model it as part of the box — do not try to glue a separate positive in place).</li>
-                        <li>Measure your cavity volume — use Inspect → Measure → Volume on the void space inside the mold box. Must be ≥ 30 mL. Document the number in your design brief.</li>
-                        <li>For Level 3 (two-part rigid mold): design both halves as separate bodies in the same Fusion file. Add alignment pins (cylindrical, 4 mm diameter, 8 mm tall — male on one half, pocket on the other). Add a gate channel (8 mm diameter, top-center) and a vent (3 mm, highest point of the cavity). Apply draft to all cavity faces. Print in PETG.</li>
-                    </ol>
+                <h2 class="section-title">How the Circuit Works</h2>
+                <div class="eng-panel">
+                    <h3>⚡ The DPDT + Limit Switch Sequence</h3>
+                    <div class="event-sequence">
+                        <div class="event-row">
+                            <div class="event-num">1</div>
+                            <div class="event-text">
+                                <strong>You flip the DPDT toggle to ON.</strong>
+                                <p>Current flows through the DPDT in its "forward" configuration. The motor spins in the forward direction, rotating the actuator arm out of the box.</p>
+                            </div>
+                        </div>
+                        <div class="event-row">
+                            <div class="event-num">2</div>
+                            <div class="event-text">
+                                <strong>The arm pushes the lid open and reaches the toggle.</strong>
+                                <p>The actuator arm sweeps through its range of motion, opening the lid as it goes. The arm makes contact with the toggle switch and flips it back to OFF.</p>
+                            </div>
+                        </div>
+                        <div class="event-row">
+                            <div class="event-num">3</div>
+                            <div class="event-text">
+                                <strong>DPDT flipped — motor reverses.</strong>
+                                <p>With the toggle back to OFF, the DPDT is now in its "reverse" configuration. Both motor terminals swap polarity simultaneously. The motor now spins in the opposite direction, pulling the arm back into the box.</p>
+                            </div>
+                        </div>
+                        <div class="event-row">
+                            <div class="event-num">4</div>
+                            <div class="event-text">
+                                <strong>Arm retracts, lid closes behind it.</strong>
+                                <p>The arm returns to home position. The lid swings closed — either by gravity, spring tension, or the arm geometry pulling it shut.</p>
+                            </div>
+                        </div>
+                        <div class="event-row">
+                            <div class="event-num">5</div>
+                            <div class="event-text">
+                                <strong>Limit switch breaks the circuit. Motor stops.</strong>
+                                <p>At home position, the arm contacts the SPST lever microswitch. This normally-closed switch opens, breaking the circuit. The motor stops. The box sits silent — waiting for the next flip.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="review-callout">
+                    <h4>🔁 Why the DPDT Is the Key</h4>
+                    <p>A DPDT (Double Pole Double Throw) switch controls two separate circuits at once. Each pole connects to one terminal of the motor. When the switch flips, both poles swap simultaneously — reversing which motor terminal is positive and which is negative. Direction changes with no additional wiring logic. One switch. Two circuits. Motor reversal.</p>
                 </div>
             </div>
 
-            <!-- Partner review -->
-            <div class="review-callout">
-                <h4>🔍 Partner Design Review — Required Before Printing</h4>
-                <p>Before you submit anything to the print queue, a classmate reviews your Fusion model and signs off. This is how it works in every professional engineering environment — someone else catches what you miss.</p>
-                <p style="margin-top: 10px; font-weight: 700; color: #67e8f9; font-size: 0.9rem;">Reviewer checklist:</p>
-                <ul>
-                    <li>Do all vertical walls have visible draft (at least 2–3°)?</li>
-                    <li>Are there any undercuts that would prevent the silicone from releasing?</li>
-                    <li>Are embossed or engraved features at least 1 mm deep/tall? (shallower features won't cast reliably)</li>
-                    <li>Is the cavity volume documented and ≥ 30 mL?</li>
-                    <li>For Level 3: do both halves have alignment pins? Is the gate at the lowest point? Is there a vent?</li>
-                </ul>
-                <p style="margin-top: 10px;">The reviewer's name goes in the design brief. Both students are responsible — reviewer included.</p>
+            <!-- Range of motion -->
+            <div class="section-block">
+                <h2 class="section-title">The Range-of-Motion Challenge</h2>
+                <div class="eng-panel">
+                    <h3>📐 Sketch Before You Model — Three Events Must Happen in Order</h3>
+                    <ol class="eng-steps">
+                        <li><strong>Event 1 — Lid opens:</strong> The lid must be open wide enough to allow the arm to pass through before the arm reaches the toggle switch. If the arm hits the lid before the lid is clear, nothing works. This happens early in the arm's rotation arc.</li>
+                        <li><strong>Event 2 — Arm flips the toggle:</strong> At some point in the arc, the arm must contact and fully flip the DPDT toggle switch. The arm length, motor position, and toggle switch position all determine whether this is geometrically possible. This is the heart of the design.</li>
+                        <li><strong>Event 3 — Arm returns home and stops:</strong> The limit switch must be positioned so the arm contacts it only at the fully-retracted home position — not mid-arc, and not past home. Its placement must be intentional.</li>
+                    </ol>
+                    <p style="margin-top: 18px; font-size: 0.9rem; color: #4a7080; border-top: 1px solid rgba(8,145,178,0.1); padding-top: 16px;">
+                        <strong style="color: #67e8f9;">Do this on paper first.</strong> Draw a side view of the box. Mark the motor shaft center, the hinge pin center, and the toggle switch. Draw the arm at home, at mid-arc, and at full extension. Confirm all three events happen in the right order before modeling anything. A geometry that doesn't work on paper will not work in plastic.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Designed components -->
+            <div class="section-block">
+                <h2 class="section-title">Your Designed Components</h2>
+                <div class="components-grid">
+                    <div class="component-card">
+                        <div class="component-icon">📦</div>
+                        <h5>Box Body</h5>
+                        <p>Houses the motor, battery holder, and limit switch. Must be large enough for component clearance, with mounting features (bosses, channels, or clips) to secure internals without relying on friction alone. Exterior styling is a design decision.</p>
+                    </div>
+                    <div class="component-card">
+                        <div class="component-icon">🔲</div>
+                        <h5>Lid</h5>
+                        <p>Hinged to the box body using integrated pin pivots — no screws or hardware. Must open far enough to allow arm clearance and close flush when the arm is at home. Lid material (PLA, PETG, or acrylic) is your choice.</p>
+                    </div>
+                    <div class="component-card">
+                        <div class="component-icon">🦾</div>
+                        <h5>Actuator Arm</h5>
+                        <p>Mounts to the motor shaft and sweeps the arc that opens the lid and flips the switch. Arm length and pivot angle are determined by your range-of-motion sketch. The motor-shaft interface must be designed to match your specific motor.</p>
+                    </div>
+                </div>
             </div>
 
             <!-- Materials -->
@@ -611,14 +758,26 @@
                 <h2 class="section-title">Materials</h2>
                 <div class="materials-grid">
                     <div class="material-card material-required">
-                        <div class="material-label">Required</div>
-                        <div class="material-name">Smooth-On Mold Star 15A</div>
-                        <p class="material-desc">Teacher-supplied. Food-safe platinum silicone, shore hardness 15A (soft and flexible). Mix ratio 1:1 by volume. Pot life approximately 15 minutes — have your mold ready before you open the containers. Cure time 24 hours at room temperature. Do not rush the cure. Your mold will be poured as a class during a designated pour day.</p>
+                        <div class="material-label">Teacher-Provided</div>
+                        <div class="material-name">Electrical Components &amp; Filament</div>
+                        <ul class="material-list">
+                            <li>DC gear motor (hobby gearmotor, D-shaft)</li>
+                            <li>DPDT panel-mount toggle switch</li>
+                            <li>SPST lever microswitch (limit switch)</li>
+                            <li>Battery holder (4×AA)</li>
+                            <li>22 AWG hookup wire (multiple colors)</li>
+                            <li>PLA and PETG filament</li>
+                        </ul>
                     </div>
                     <div class="material-card material-optional">
-                        <div class="material-label">Optional — Level 3</div>
-                        <div class="material-name">Mold Release Spray</div>
-                        <p class="material-desc">Required for two-part rigid PETG molds. A light coat on each half before pouring prevents the wax or soap from bonding to the plastic. Teacher has a can — ask before your pour day. One-part silicone molds don't need release agent.</p>
+                        <div class="material-label">Optional</div>
+                        <div class="material-name">Upgrades &amp; Variations</div>
+                        <ul class="material-list">
+                            <li>Torsion spring — for lid return force if gravity alone is insufficient</li>
+                            <li>Clear acrylic sheet — laser-cut and engrave a personalized lid (replaces the 3D printed lid)</li>
+                            <li>Spray paint or vinyl wrap — exterior finish</li>
+                        </ul>
+                        <p class="material-desc" style="margin-top: 12px;">All optional materials must be discussed with Mr. Bombich before use. Acrylic lid engravings are done as a class batch — get your design approved and in the queue on time.</p>
                     </div>
                 </div>
             </div>
@@ -630,58 +789,58 @@
 
                     <div class="deliverable-card">
                         <div class="d-left">
-                            <div class="d-id">D_P4A</div>
+                            <div class="d-id">D_P5A</div>
                             <div class="d-week">Week 1–2</div>
                             <div class="d-type">Planning</div>
                         </div>
                         <div>
-                            <div class="d-title">Design Brief &amp; Partner Review</div>
-                            <p class="d-desc">Define your product, prove your mold will work on paper before anything goes to the printer. Partner sign-off required.</p>
+                            <div class="d-title">Design Brief &amp; Range-of-Motion Sketch</div>
+                            <p class="d-desc">Prove your design is geometrically feasible on paper before anything is modeled or printed. This is the document that shows your thinking, not just your result.</p>
                             <ul class="d-items">
-                                <li>Problem statement: who is this for, what should it look like, what will they do with it</li>
-                                <li>At least 2 concept sketches of the positive with mold box shown</li>
-                                <li>Decision matrix confirming your chosen concept</li>
-                                <li>Fusion 360 screenshot: complete mold assembly in isometric view</li>
-                                <li>Fusion 360 screenshot: Inspect → Measure showing cavity volume ≥ 30 mL</li>
-                                <li>Partner review: reviewer's name + confirmation all checklist items passed</li>
-                                <li>For Level 3: screenshot of both mold halves with alignment pins visible</li>
+                                <li>Problem statement: what is a useless box, and what is your design approach</li>
+                                <li>At least 2 concept sketches showing exterior styling and general proportions</li>
+                                <li>Decision matrix for at least one design decision (lid material, arm shape, box proportions)</li>
+                                <li>Range-of-motion side-view sketch: motor shaft, hinge, toggle switch, and arm positions at Events 1, 2, and 3 all labeled</li>
+                                <li>Component layout top-view sketch: how motor, battery holder, and switches fit inside the box</li>
+                                <li>Fusion 360 screenshots of all three designed components (box body, lid, actuator arm)</li>
                             </ul>
                         </div>
                     </div>
 
                     <div class="deliverable-card">
                         <div class="d-left">
-                            <div class="d-id">D_P4B</div>
-                            <div class="d-week">Week 2–3</div>
+                            <div class="d-id">D_P5B</div>
+                            <div class="d-week">Week 3</div>
                             <div class="d-type">Fabrication</div>
                         </div>
                         <div>
-                            <div class="d-title">Printed Mold &amp; Silicone Pour</div>
-                            <p class="d-desc">Physical evidence of your mold assembly before and after the pour. This is due the class period after your pour day.</p>
+                            <div class="d-title">Assembled &amp; Wired Box</div>
+                            <p class="d-desc">Physical evidence of your assembled box with all components mounted and wired. The box must function — a box that is assembled but does not complete the full cycle does not receive credit for this deliverable.</p>
                             <ul class="d-items">
-                                <li>Photo: printed mold assembly ready for pour (positive inside box, before silicone)</li>
-                                <li>Photo: silicone poured, filling the mold (wet — take this in class on pour day)</li>
-                                <li>Photo: released silicone mold showing the cavity clearly</li>
-                                <li>If the mold failed to release: photo of the failure, written explanation of cause, revised design brief with corrections</li>
-                                <li>For Level 3: photo of both halves clamped together before wax pour</li>
+                                <li>Photo: all three printed components laid out before assembly</li>
+                                <li>Photo: interior wiring with components mounted (lid open, taken from above)</li>
+                                <li>Photo: closed box, exterior view</li>
+                                <li>Photo or video: arm at its full extension (mid-cycle, arm flipping the switch)</li>
+                                <li>If the first assembly did not work: photo of the failure point, written diagnosis, and revised component(s) with before/after photos</li>
                             </ul>
                         </div>
                     </div>
 
                     <div class="deliverable-card">
                         <div class="d-left">
-                            <div class="d-id">D_P4C</div>
+                            <div class="d-id">D_P5C</div>
                             <div class="d-week">Week 4</div>
-                            <div class="d-type">Final Product</div>
+                            <div class="d-type">Demo &amp; Reflection</div>
                         </div>
                         <div>
-                            <div class="d-title">Cast Product &amp; Iteration Log</div>
-                            <p class="d-desc">The soap bar or candle your mold produced — the real test of everything you designed.</p>
+                            <div class="d-title">Demonstration &amp; Reflection</div>
+                            <p class="d-desc">The final test. Three consecutive successful cycles — no assists, no repositioning between cycles. Then the written reflection that shows you understood what you built.</p>
                             <ul class="d-items">
-                                <li>Photo: final cast product (soap bar or wax candle) removed from mold</li>
-                                <li>Photo: mold and cast side-by-side showing how features transferred</li>
-                                <li>Iteration log: at least one change made after seeing your first result, with before/after description</li>
-                                <li>Reflection: what would you change if you were producing 500 of these? What limited your design?</li>
+                                <li>Video or live demo: three complete cycles without stopping or adjusting</li>
+                                <li>Reflection: describe two design decisions you made and why — what were the options, what did you choose, and what would you change</li>
+                                <li>Reflection: explain in your own words how the DPDT controls motor direction</li>
+                                <li>Reflection: what was the hardest part to get right, and how did you solve it</li>
+                                <li>For Level 3: documentation of your iteration (before/after with explanation) or completed acrylic lid with laser engraving</li>
                             </ul>
                         </div>
                     </div>
@@ -695,18 +854,18 @@
                 <div class="levels-grid">
                     <div class="level-card level-c">
                         <div class="level-grade">C</div>
-                        <div class="level-name">Level 1 — Complete</div>
-                        <p class="level-req">A one-part silicone mold that releases cleanly. Cavity volume meets the hotel bar minimum. The positive has at least one piece of intentional surface artwork, text, or relief — not a plain block. All three deliverables submitted. Partner review signed.</p>
+                        <div class="level-name">Level 1 — Working</div>
+                        <p class="level-req">A box that completes the full cycle. Arm extends, flips the DPDT, retracts, and stops when the limit switch is contacted. All three designed components are original Fusion 360 models. All three deliverables submitted. The box closes when the arm is at home.</p>
                     </div>
                     <div class="level-card level-b">
                         <div class="level-grade">B</div>
                         <div class="level-name">Level 2 — Refined</div>
-                        <p class="level-req">Everything in Level 1, plus: draft angles intentionally designed and documented (not accidental). Surface design shows genuine effort — composition, detail, and feature clarity transfer to the cast. The finished soap bar or candle is giftable quality. Iteration log shows a real design change with evidence.</p>
+                        <p class="level-req">Everything in Level 1, plus: range-of-motion sketch in the design brief with all three events labeled and geometrically accurate. Lid opens fully before the arm reaches the toggle — no collision. Wire management is clean: no exposed conductors, wires routed and secured. Exterior shows intentional design beyond a plain rectangular box.</p>
                     </div>
                     <div class="level-card level-a">
                         <div class="level-grade">A</div>
                         <div class="level-name">Level 3 — Exceptional</div>
-                        <p class="level-req">Everything in Level 2, plus: two-part rigid PETG mold with alignment pins, gate, and vent correctly positioned. The cast product is fully three-dimensional — not flat-backed. Wax candle cast from the rigid mold. Both halves register cleanly with no flash at the parting line. Documentation traces every major design decision from brief to final result.</p>
+                        <p class="level-req">Everything in Level 2, plus one of: (a) laser-engraved acrylic lid with a personalized design, submitted to the engraving queue on time; or (b) a documented design iteration — a component that was redesigned after testing, with before/after photos and a written explanation of what failed and why. Arm reliably flips the switch on every cycle without manual adjustment. Reflection explains all three mechanical events in the student's own words.</p>
                     </div>
                 </div>
             </div>
@@ -717,7 +876,7 @@
     <footer>
         <div class="mascot">GO BULLDOGS!</div>
         <p>Vicksburg High School | Design &amp; Build Lab</p>
-        <p>Mr. Bombich | Room 70 | mbombich@vicksburgschools.org</p>
+        <p>Mr. Bombich | Room 70</p>
     </footer>
 </body>
 </html>
