@@ -195,23 +195,63 @@
             display: block;
         }
 
-        /* Video embed */
-        .video-wrap {
+        /* Video thumbnail link */
+        .video-thumb {
             position: relative;
-            padding-bottom: 54%;
-            height: 0;
-            overflow: hidden;
+            display: block;
             border-radius: 14px;
             border: 2px solid rgba(96,165,250,0.25);
             margin: 16px 0;
+            overflow: hidden;
+            cursor: pointer;
+            text-decoration: none;
         }
 
-        .video-wrap iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .video-thumb img {
             width: 100%;
-            height: 100%;
+            display: block;
+            max-height: 420px;
+            object-fit: cover;
+        }
+
+        .video-thumb .play-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: rgba(255,0,0,0.85);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .video-thumb:hover .play-btn {
+            background: #ff0000;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .video-thumb .play-btn svg {
+            width: 32px;
+            height: 32px;
+            fill: white;
+            margin-left: 5px;
+        }
+
+        .video-thumb .yt-label {
+            position: absolute;
+            bottom: 14px;
+            right: 18px;
+            background: rgba(0,0,0,0.75);
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8em;
+            padding: 4px 10px;
+            border-radius: 6px;
+            letter-spacing: 1px;
         }
 
         .watch-note {
@@ -346,13 +386,15 @@
         <div class="slide-content">
             <div class="slide-eyebrow">Video Lesson</div>
             <h2 style="margin-bottom:12px;">Watch: One-Part Mold Walkthrough</h2>
-            <div class="video-wrap">
-                <iframe src="https://www.youtube.com/embed/smbb4rJPBGg"
-                        frameborder="0"
-                        allow="autoplay; encrypted-media; picture-in-picture"
-                        allowfullscreen>
-                </iframe>
-            </div>
+            <a href="https://www.youtube.com/watch?v=smbb4rJPBGg" target="_blank" rel="noopener" class="video-thumb">
+                <img src="https://img.youtube.com/vi/smbb4rJPBGg/maxresdefault.jpg"
+                     onerror="this.src='https://img.youtube.com/vi/smbb4rJPBGg/hqdefault.jpg'"
+                     alt="One-Part Silicone Mold Walkthrough">
+                <div class="play-btn">
+                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+                <span class="yt-label">▶ Watch on YouTube</span>
+            </a>
             <p class="watch-note">Watch all the way through first. On a second pass, pause and take notes on technique.</p>
         </div>
     </div>
