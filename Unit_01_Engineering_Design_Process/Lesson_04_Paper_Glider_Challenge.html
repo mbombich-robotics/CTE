@@ -13,35 +13,80 @@
         .slide { position: absolute; width: 100%; min-height: 100%; display: none; flex-direction: column; justify-content: flex-start; align-items: center; padding: 55px 60px 120px 60px; opacity: 0; transition: opacity 0.5s ease; overflow-y: auto; overflow-x: hidden; }
         .slide.active { display: flex; opacity: 1; }
         .slide-content { max-width: 1200px; width: 100%; }
-        h1 { font-family: 'Orbitron', sans-serif; font-size: 3.5rem; font-weight: 900; color: #ff6b35; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 20px rgba(255,107,53,0.5); animation: glow 2s ease-in-out infinite alternate; }
-        @keyframes glow { from { text-shadow: 0 0 20px rgba(255,107,53,0.5); } to { text-shadow: 0 0 30px rgba(255,107,53,0.8); } }
-        h2 { font-family: 'Orbitron', sans-serif; font-size: 2.5rem; font-weight: 700; color: #ff6b35; margin-bottom: 18px; text-transform: uppercase; }
-        h3 { font-family: 'Exo 2', sans-serif; font-size: 1.5rem; font-weight: 600; color: #ffa500; margin-bottom: 12px; }
+        h1 { font-family: 'Orbitron', sans-serif; font-size: 3.5rem; font-weight: 900; color: #c41e3a; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 20px rgba(196,30,58,0.5); animation: glow 2s ease-in-out infinite alternate; }
+        @keyframes glow { from { text-shadow: 0 0 20px rgba(196,30,58,0.5); } to { text-shadow: 0 0 30px rgba(196,30,58,0.8); } }
+        h2 { font-family: 'Orbitron', sans-serif; font-size: 2.5rem; font-weight: 700; color: #c41e3a; margin-bottom: 18px; text-transform: uppercase; }
+        h3 { font-family: 'Exo 2', sans-serif; font-size: 1.5rem; font-weight: 600; color: #e05a6a; margin-bottom: 12px; }
         p { font-size: 1.15rem; line-height: 1.6; margin-bottom: 12px; color: #b8c5d6; }
-        .subtitle { font-size: 1.3rem; color: #ffa500; font-weight: 600; margin-bottom: 30px; }
-        .objective-box { background: linear-gradient(135deg, rgba(255,107,53,0.1) 0%, rgba(255,107,53,0.05) 100%); border: 3px solid #ff6b35; border-radius: 12px; padding: 20px; margin: 20px 0; box-shadow: 0 0 30px rgba(255,107,53,0.2); }
-        .objective-box h3 { color: #ff6b35; }
+        .subtitle { font-size: 1.3rem; color: #e05a6a; font-weight: 600; margin-bottom: 30px; }
+        .objective-box { background: linear-gradient(135deg, rgba(196,30,58,0.1) 0%, rgba(196,30,58,0.05) 100%); border: 3px solid #c41e3a; border-radius: 12px; padding: 20px; margin: 20px 0; box-shadow: 0 0 30px rgba(196,30,58,0.2); }
+        .objective-box h3 { color: #c41e3a; }
         .bullet-list { list-style: none; padding-left: 0; }
         .bullet-list li { font-size: 1.15rem; margin: 12px 0; padding-left: 35px; position: relative; color: #b8c5d6; line-height: 1.5; }
-        .bullet-list li::before { content: '▸'; position: absolute; left: 0; color: #ffa500; font-size: 1.5rem; line-height: 1; }
+        .bullet-list li::before { content: '▸'; position: absolute; left: 0; color: #e05a6a; font-size: 1.5rem; line-height: 1; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px; }
         .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px; }
-        .box { background: rgba(255,107,53,0.05); border: 2px solid #ff6b35; border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(255,107,53,0.1); }
-        .highlight { color: #ff6b35; font-weight: 700; }
+        .box { background: rgba(196,30,58,0.05); border: 2px solid #c41e3a; border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(196,30,58,0.1); }
+        .highlight { color: #c41e3a; font-weight: 700; }
         .success { color: #50fa7b; font-weight: 700; }
         .checkmark { color: #50fa7b; font-size: 1.5rem; margin-right: 10px; }
-        .step-box { background: linear-gradient(135deg, rgba(255,165,0,0.15) 0%, rgba(255,165,0,0.05) 100%); border: 2px solid #ffa500; border-radius: 12px; padding: 25px; margin: 20px 0; }
-        .step-box h3 { color: #ffa500; }
-        .controls { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; justify-content: center; align-items: center; gap: 20px; z-index: 1000; }
-        button { background: linear-gradient(135deg, #ff6b35 0%, #cc5429 100%); border: none; color: #1a0f0a; padding: 15px 30px; font-size: 1rem; font-weight: 700; border-radius: 8px; cursor: pointer; font-family: 'Exo 2', sans-serif; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255,107,53,0.3); }
-        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,107,53,0.5); }
-        button:disabled { opacity: 0.3; cursor: not-allowed; }
-        .nav-button { background: linear-gradient(135deg, #ff6b35 0%, #cc5429 100%); border: none; color: #1a0f0a; padding: 15px 30px; font-size: 1rem; font-weight: 700; border-radius: 8px; cursor: pointer; font-family: 'Exo 2', sans-serif; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255,107,53,0.3); text-decoration: none; display: inline-block; }
-        .nav-button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,107,53,0.5); }
-        .slide-number { position: fixed; bottom: 30px; left: 30px; font-family: 'Space Mono', monospace; font-size: 1rem; color: #ff6b35; z-index: 1000; }
+        .step-box { background: linear-gradient(135deg, rgba(255,165,0,0.15) 0%, rgba(255,165,0,0.05) 100%); border: 2px solid #e05a6a; border-radius: 12px; padding: 25px; margin: 20px 0; }
+        .step-box h3 { color: #e05a6a; }
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(10,2,4,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(196,30,58,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
+        }
+
+        .nav button {
+            background: rgba(196,30,58,0.15);
+            color: #e88a8a;
+            border: 1px solid rgba(196,30,58,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover { background: rgba(196,30,58,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 24px;
+            font-size: 0.9em;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #c41e3a; }
         .pltw-tag { display: inline-block; background: rgba(80,250,123,0.15); color: #50fa7b; border: 1px solid #50fa7b; border-radius: 6px; padding: 3px 10px; font-size: 0.8rem; font-weight: 700; margin-left: 10px; vertical-align: middle; }
         .edp-badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-family: 'Orbitron', sans-serif; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; vertical-align: middle; margin-left: 10px; }
-        .s1 { background: rgba(255,107,53,0.15); color: #ff6b35; border: 1px solid #ff6b35; }
+        .s1 { background: rgba(196,30,58,0.15); color: #c41e3a; border: 1px solid #c41e3a; }
         .s2 { background: rgba(255,149,0,0.15); color: #ff9500; border: 1px solid #ff9500; }
         .s3 { background: rgba(255,215,0,0.12); color: #ffd700; border: 1px solid #ffd700; }
         .s4 { background: rgba(80,250,123,0.12); color: #50fa7b; border: 1px solid #50fa7b; }
@@ -56,13 +101,14 @@
         .opt-c { background: rgba(80,250,123,0.06); border: 2px solid rgba(80,250,123,0.4); }
         .opt-c:hover { border-color: #50fa7b; background: rgba(80,250,123,0.12); }
         .opt-c h3 { color: #50fa7b; }
-        .material-item { display: flex; align-items: center; gap: 20px; padding: 14px 18px; border: 2px solid rgba(255,107,53,0.3); border-radius: 10px; margin: 8px 0; background: rgba(255,107,53,0.04); }
-        .material-qty { font-family: 'Orbitron', sans-serif; font-size: 1.6rem; font-weight: 900; color: #ff6b35; min-width: 55px; text-align: center; }
+        .material-item { display: flex; align-items: center; gap: 20px; padding: 14px 18px; border: 2px solid rgba(196,30,58,0.3); border-radius: 10px; margin: 8px 0; background: rgba(196,30,58,0.04); }
+        .material-qty { font-family: 'Orbitron', sans-serif; font-size: 1.6rem; font-weight: 900; color: #c41e3a; min-width: 55px; text-align: center; }
         .material-name { font-size: 1.15rem; font-weight: 600; color: #e0e6f0; }
         @media (max-width: 768px) { h1 { font-size: 2.5rem; } h2 { font-size: 2rem; } .slide { padding: 30px; } .grid-2, .grid-3 { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
+<a href="index.html" class="back-link">← Unit 1</a>
 <div class="presentation">
 
     <!-- Slide 1: Title -->
@@ -108,7 +154,7 @@
                 </div>
             </div>
             <div class="step-box" style="margin-top: 20px; text-align: center;">
-                <p style="font-size: 1.1rem; margin: 0; color: #ffa500; font-weight: 700;">By the end of class, you'll know if the process changes anything.</p>
+                <p style="font-size: 1.1rem; margin: 0; color: #e05a6a; font-weight: 700;">By the end of class, you'll know if the process changes anything.</p>
             </div>
         </div>
     </div>
@@ -121,7 +167,7 @@
             <div class="objective-box" style="margin-top: 15px;">
                 <h3>Draft Problem Statement (class activity)</h3>
                 <p style="font-size: 1.2rem; color: #e0e6f0; margin-bottom: 5px;">Template:</p>
-                <p style="font-family: 'Space Mono', monospace; font-size: 1.1rem; color: #ffa500; line-height: 1.8; margin: 0;">
+                <p style="font-family: 'Space Mono', monospace; font-size: 1.1rem; color: #e05a6a; line-height: 1.8; margin: 0;">
                     A student needs a way to _____________ using only _____________ so that _____________.
                 </p>
             </div>
@@ -220,8 +266,8 @@
                             <li>Folds — simple vs. layered</li>
                         </ul>
                     </div>
-                    <div class="box" style="margin-top: 14px; border-color: #ffa500; background: rgba(255,165,0,0.05);">
-                        <p style="font-size: 1rem; color: #ffa500; font-weight: 700; margin: 0; text-align: center;">5 minutes to sketch. Then we pick one and build.</p>
+                    <div class="box" style="margin-top: 14px; border-color: #e05a6a; background: rgba(255,165,0,0.05);">
+                        <p style="font-size: 1rem; color: #e05a6a; font-weight: 700; margin: 0; text-align: center;">5 minutes to sketch. Then we pick one and build.</p>
                     </div>
                 </div>
             </div>
@@ -280,7 +326,7 @@
                 <p style="margin: 0;">The constraint is intentional. Fewer variables = clearer test results. If every team has different materials, you can't compare results.</p>
             </div>
             <div class="objective-box" style="margin-top: 20px; text-align: center;">
-                <p style="font-size: 1.3rem; color: #ffa500; font-weight: 700; margin: 0;">Get your sheet when you're ready to start building. Timer starts on the next slide.</p>
+                <p style="font-size: 1.3rem; color: #e05a6a; font-weight: 700; margin: 0;">Get your sheet when you're ready to start building. Timer starts on the next slide.</p>
             </div>
         </div>
     </div>
@@ -362,8 +408,8 @@
                             4. What would V2 look like?
                         </p>
                     </div>
-                    <div class="box" style="margin-top: 14px; border-color: #ffa500; background: rgba(255,165,0,0.05);">
-                        <p style="font-size: 1rem; color: #ffa500; font-weight: 700; margin: 0;">If we had time for V2: this is where the cycle loops back to Step 1 or Step 2.</p>
+                    <div class="box" style="margin-top: 14px; border-color: #e05a6a; background: rgba(255,165,0,0.05);">
+                        <p style="font-size: 1rem; color: #e05a6a; font-weight: 700; margin: 0;">If we had time for V2: this is where the cycle loops back to Step 1 or Step 2.</p>
                     </div>
                 </div>
             </div>
@@ -401,7 +447,7 @@
                 </div>
             </div>
             <div class="step-box" style="margin-top: 20px; text-align: center;">
-                <p style="font-size: 1.1rem; margin: 0; color: #ffa500; font-weight: 700;">The process doesn't make you build faster. It makes your failures useful.</p>
+                <p style="font-size: 1.1rem; margin: 0; color: #e05a6a; font-weight: 700;">The process doesn't make you build faster. It makes your failures useful.</p>
             </div>
         </div>
     </div>
@@ -459,47 +505,41 @@
 
 </div>
 
-<div class="slide-number">
-    <span id="current-slide">1</span> / <span id="total-slides">13</span>
-</div>
-
-<div class="controls">
-    <button id="prev-btn" onclick="previousSlide()">← Previous</button>
-    <a href="index.html" class="nav-button">↑ Unit 1</a>
-    <a href="../index.html" class="nav-button">⌂ Home</a>
-    <button id="next-btn" onclick="nextSlide()">Next →</button>
-</div>
+<!-- Navigation -->
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 13</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
 
 <script>
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.slide');
-    const totalSlides = slides.length;
-    document.getElementById('total-slides').textContent = totalSlides;
+    var slides = document.querySelectorAll('.slide');
+    var current = 0;
 
-    const BUILD_SLIDE = 7; // 0-based index of the BUILD slide
-    const TIMER_DURATION = 5 * 60;
-    let timeRemaining = TIMER_DURATION;
-    let timerInterval = null;
+    var BUILD_SLIDE = 7;
+    var TIMER_DURATION = 5 * 60;
+    var timeRemaining = TIMER_DURATION;
+    var timerInterval = null;
 
     function formatTime(seconds) {
-        const m = Math.floor(seconds / 60);
-        const s = seconds % 60;
-        return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        var m = Math.floor(seconds / 60);
+        var s = seconds % 60;
+        return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
     }
 
     function updateCountdownDisplay() {
-        const el = document.getElementById('countdown');
+        var el = document.getElementById('countdown');
         if (!el) return;
         el.textContent = formatTime(timeRemaining);
         if (timeRemaining <= 0) {
-            el.textContent = 'TIME\'S UP';
+            el.textContent = "TIME'S UP";
             el.style.color = '#ff5555';
             el.style.textShadow = '0 0 40px rgba(255,85,85,0.8)';
         } else if (timeRemaining <= 60) {
             el.style.color = '#ff5555';
             el.style.textShadow = '0 0 40px rgba(255,85,85,0.7)';
         } else if (timeRemaining <= 120) {
-            el.style.color = '#ffa500';
+            el.style.color = '#e05a6a';
             el.style.textShadow = '0 0 30px rgba(255,165,0,0.6)';
         } else {
             el.style.color = '#50fa7b';
@@ -509,7 +549,7 @@
 
     function startTimer() {
         if (timerInterval) return;
-        timerInterval = setInterval(() => {
+        timerInterval = setInterval(function() {
             if (timeRemaining > 0) {
                 timeRemaining--;
                 updateCountdownDisplay();
@@ -533,31 +573,28 @@
     }
 
     function showSlide(n) {
-        const leaving = currentSlide;
-        slides[currentSlide].classList.remove('active');
-        currentSlide = (n + totalSlides) % totalSlides;
-        slides[currentSlide].classList.add('active');
-        document.getElementById('current-slide').textContent = currentSlide + 1;
-        document.getElementById('prev-btn').disabled = currentSlide === 0;
-        document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        var leaving = current;
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(n, slides.length - 1));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
 
         if (leaving === BUILD_SLIDE) stopTimer();
-        if (currentSlide === BUILD_SLIDE) {
+        if (current === BUILD_SLIDE) {
             updateCountdownDisplay();
             startTimer();
         }
     }
 
-    function nextSlide() { if (currentSlide < totalSlides - 1) showSlide(currentSlide + 1); }
-    function previousSlide() { if (currentSlide > 0) showSlide(currentSlide - 1); }
+    function changeSlide(dir) { showSlide(current + dir); }
 
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
-        else if (e.key === 'ArrowLeft') { e.preventDefault(); previousSlide(); }
-        else if (e.key === 'r' || e.key === 'R') { if (currentSlide === BUILD_SLIDE) resetTimer(); }
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+        if (e.key === 'r' || e.key === 'R') { if (current === BUILD_SLIDE) resetTimer(); }
     });
-
-    showSlide(0);
 </script>
 </body>
 </html>

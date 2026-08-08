@@ -145,34 +145,58 @@
             color: #00d084; font-size: 1.3rem; line-height: 1.2;
         }
 
-        /* Controls */
-        .controls {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            display: flex; justify-content: center; align-items: center; gap: 20px; z-index: 1000;
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(2,10,6,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0,208,132,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
         }
-        button {
-            background: linear-gradient(135deg, #00d084 0%, #009960 100%);
-            border: none; color: #050f0a; padding: 15px 30px; font-size: 1rem;
-            font-weight: 700; border-radius: 8px; cursor: pointer;
-            font-family: 'Exo 2', sans-serif; transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,208,132,0.3);
-        }
-        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,208,132,0.5); }
-        button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
-        .nav-button {
-            background: linear-gradient(135deg, #00d084 0%, #009960 100%);
-            border: none; color: #050f0a; padding: 15px 30px; font-size: 1rem;
-            font-weight: 700; border-radius: 8px; cursor: pointer;
-            font-family: 'Exo 2', sans-serif; text-decoration: none; display: inline-block;
-            box-shadow: 0 4px 15px rgba(0,208,132,0.3); transition: all 0.3s ease;
-        }
-        .nav-button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,208,132,0.5); }
 
-        .slide-number {
-            position: fixed; bottom: 30px; left: 30px;
-            font-family: 'Space Mono', monospace; font-size: 1rem;
-            color: #00d084; z-index: 1000;
+        .nav button {
+            background: rgba(0,208,132,0.15);
+            color: #6ee7b7;
+            border: 1px solid rgba(0,208,132,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
         }
+
+        .nav button:hover { background: rgba(0,208,132,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 24px;
+            font-size: 0.9em;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #00d084; }
 
         @media (max-width: 768px) {
             h1 { font-size: 2.5rem; } h2 { font-size: 1.8rem; }
@@ -182,6 +206,7 @@
     </style>
 </head>
 <body>
+<a href="index.html" class="back-link">← Unit 2</a>
 <div class="presentation">
 
 <!-- ─────────────────────────────────────── SLIDE 1: Title -->
@@ -445,41 +470,32 @@
 
 </div><!-- /presentation -->
 
-<div class="slide-number">
-    <span id="current-slide">1</span> / <span id="total-slides">8</span>
-</div>
-
-<div class="controls">
-    <button id="prev-btn" onclick="previousSlide()">← Previous</button>
-    <a href="index.html" class="nav-button">↑ Unit 2</a>
-    <a href="../index.html" class="nav-button">⌂ Home</a>
-    <button id="next-btn" onclick="nextSlide()">Next →</button>
-</div>
+<!-- Navigation -->
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 8</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
 
 <script>
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.slide');
-    const totalSlides = slides.length;
-    document.getElementById('total-slides').textContent = totalSlides;
+    var slides = document.querySelectorAll('.slide');
+    var current = 0;
 
     function showSlide(n) {
-        slides[currentSlide].classList.remove('active');
-        currentSlide = (n + totalSlides) % totalSlides;
-        slides[currentSlide].classList.add('active');
-        document.getElementById('current-slide').textContent = currentSlide + 1;
-        document.getElementById('prev-btn').disabled = currentSlide === 0;
-        document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(n, slides.length - 1));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
     }
 
-    function nextSlide() { if (currentSlide < totalSlides - 1) showSlide(currentSlide + 1); }
-    function previousSlide() { if (currentSlide > 0) showSlide(currentSlide - 1); }
+    function changeSlide(dir) { showSlide(current + dir); }
 
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
-        else if (e.key === 'ArrowLeft') { e.preventDefault(); previousSlide(); }
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
     });
-
-    showSlide(0);
 </script>
 </body>
 </html>
