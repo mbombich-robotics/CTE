@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 2.11: One-Part Silicone Molds | Unit 2 — CAD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #050a14 0%, #0a1628 40%, #0d1f3c 100%);
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .slide.active.top-align {
+            justify-content: flex-start;
+            padding-top: 48px;
+        }
+
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.2em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #60a5fa;
+            text-shadow: 0 0 30px rgba(96,165,250,0.4);
+            line-height: 1.15;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: #93c5fd;
+            text-align: center;
+        }
+
+        .lesson-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #60a5fa;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.4em;
+            text-align: center;
+            color: #94a3b8;
+            font-weight: 300;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        .badge-row {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 36px;
+        }
+
+        .badge {
+            background: rgba(96,165,250,0.1);
+            border: 1px solid rgba(96,165,250,0.3);
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-size: 1em;
+            color: #60a5fa;
+        }
+
+        .bullet-list { list-style: none; padding: 0; margin: 20px 0; }
+
+        .bullet-list li {
+            font-size: 1.35em;
+            padding: 10px 0 10px 46px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .bullet-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #60a5fa;
+            font-size: 1.1em;
+        }
+
+        .bullet-list li strong { color: #e2e8f0; }
+        .bullet-list li em { color: #93c5fd; font-style: normal; font-weight: 600; }
+
+        /* Two column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin: 20px 0;
+        }
+
+        .col-box {
+            background: rgba(96,165,250,0.06);
+            border: 1px solid rgba(96,165,250,0.2);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .col-box h4 {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #60a5fa;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .col-box ul { list-style: none; padding: 0; }
+
+        .col-box ul li {
+            font-size: 1.05em;
+            color: #94a3b8;
+            padding: 6px 0 6px 26px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .col-box ul li::before { content: "▸"; position: absolute; left: 0; color: #60a5fa; }
+
+        /* Callout */
+        .callout {
+            background: rgba(96,165,250,0.08);
+            border-left: 5px solid #60a5fa;
+            border-radius: 0 10px 10px 0;
+            padding: 18px 24px;
+            margin: 16px 0;
+            font-size: 1.25em;
+            color: #93c5fd;
+            line-height: 1.5;
+        }
+
+        .callout strong { color: #e2e8f0; font-weight: 700; }
+
+        /* Teal P4 callout */
+        .p4-callout {
+            background: rgba(8,145,178,0.10);
+            border-left: 5px solid #06b6d4;
+            border-radius: 0 10px 10px 0;
+            padding: 18px 24px;
+            margin: 16px 0;
+            font-size: 1.2em;
+            color: #67e8f9;
+            line-height: 1.6;
+        }
+
+        .p4-callout strong { color: #e2e8f0; font-weight: 700; }
+
+        .p4-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75em;
+            color: #06b6d4;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        /* Video embed */
+        .video-wrap {
+            position: relative;
+            padding-bottom: 54%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 14px;
+            border: 2px solid rgba(96,165,250,0.25);
+            margin: 16px 0;
+        }
+
+        .video-wrap iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .watch-note {
+            text-align: center;
+            color: #64748b;
+            font-size: 1em;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(5,10,20,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(96,165,250,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
+        }
+
+        .nav button {
+            background: rgba(96,165,250,0.15);
+            color: #93c5fd;
+            border: 1px solid rgba(96,165,250,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover { background: rgba(96,165,250,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 24px;
+            font-size: 0.9em;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #60a5fa; }
+
+        /* Small label above h2 */
+        .slide-eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em;
+            color: #475569;
+            text-align: center;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<a href="index.html?track=dbl" class="back-link">← Unit 2</a>
+
+<div class="presentation">
+
+    <!-- ── SLIDE 1: Title ── -->
+    <div class="slide active">
+        <div class="slide-content" style="text-align:center;">
+            <div class="lesson-tag">Unit 2 · CAD &amp; Fabrication · Design &amp; Build Lab</div>
+            <h1>L2.11 One-Part<br>Silicone Molds</h1>
+            <p class="subtitle">Model the positive · Pour silicone · Repeat forever</p>
+            <div class="badge-row">
+                <div class="badge">P4 — Molds Project</div>
+                <div class="badge">Fusion 360</div>
+                <div class="badge">Smooth-On Mold Star 15A</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 2: The Concept ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="slide-eyebrow">What You're Building</div>
+            <h2>The One-Part Mold</h2>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>How It Works</h4>
+                    <ul>
+                        <li>Model the <strong>positive</strong> — the shape you want the final product to be</li>
+                        <li>Model an <strong>open-top container</strong> around it — this becomes the mold body</li>
+                        <li>Print the positive + container as <strong>one part</strong></li>
+                        <li>Pour silicone in, wait 24 hours, <strong>flex and release</strong></li>
+                        <li>Your mold is ready — use it dozens of times</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>When to Use It</h4>
+                    <ul>
+                        <li>Object has a <strong>flat back</strong> or exits cleanly from the top</li>
+                        <li>No <strong>undercuts</strong> — nothing that would trap the mold</li>
+                        <li>Great for: candy, soap bars, candles, small decorative objects</li>
+                        <li>Silicone stretches, so <em>minor</em> undercuts often still release</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout">
+                <strong>Key insight:</strong> In Fusion 360 you design <em>what you want to make</em>, not the mold itself.
+                The mold shape is the void left around your positive.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 3: Watch the Video ── -->
+    <div class="slide top-align">
+        <div class="slide-content">
+            <div class="slide-eyebrow">Video Lesson</div>
+            <h2 style="margin-bottom:12px;">Watch: One-Part Mold Walkthrough</h2>
+            <div class="video-wrap">
+                <iframe src="https://www.youtube.com/embed/smbb4rJPBGg"
+                        frameborder="0"
+                        allow="autoplay; encrypted-media; picture-in-picture"
+                        allowfullscreen>
+                </iframe>
+            </div>
+            <p class="watch-note">Watch all the way through first. On a second pass, pause and take notes on technique.</p>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 4: What to Notice ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="slide-eyebrow">Active Watching</div>
+            <h2>What to Notice in the Video</h2>
+            <ul class="bullet-list">
+                <li><strong>Draft angle:</strong> a slight taper on vertical walls makes the positive easier to release — even 1–2° helps</li>
+                <li><strong>Surface quality transfers:</strong> a rough FDM print gives a rough mold interior; sand it or coat it if surface matters</li>
+                <li><strong>Container wall thickness:</strong> thicker walls = more stable mold; ~6–8mm minimum for small molds</li>
+                <li><strong>Silicone shrinks slightly</strong> (~1–2%) — your finished cast will be just barely smaller than your positive</li>
+                <li><strong>Mixing ratio matters:</strong> Mold Star 15A is 1:1 by volume — weigh it or measure carefully, or it won't cure</li>
+                <li><strong>Pot life is ~15 minutes</strong> — mix, pour, and set it down before it starts to gel</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 5: P4 Connection ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="slide-eyebrow">Your Project</div>
+            <h2>Applying This to P4</h2>
+            <div class="p4-callout">
+                <span class="p4-label">P4 — Silicone Molds Project</span>
+                In Fusion 360, you'll model your product positive and the container as a <strong>single printed body</strong>.
+                The silicone fills the space around the positive to create your mold.
+                When cured, flex the mold to release the positive, then you're ready to cast soap or wax.
+            </div>
+            <ul class="bullet-list">
+                <li><strong>Design brief first:</strong> what are you making? soap bar? wax ornament? pick your pour material before modeling</li>
+                <li><strong>Volume constraint:</strong> your mold cavity must hold <em>at least 30 mL</em> — about the size of a hotel soap bar</li>
+                <li><strong>Partner review checkpoint:</strong> before printing, a classmate checks your draft angles, undercuts, and cavity volume</li>
+                <li><strong>C-level:</strong> one-part mold that releases cleanly and produces usable casts</li>
+            </ul>
+        </div>
+    </div>
+
+</div><!-- /.presentation -->
+
+<!-- Navigation -->
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 5</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
+
+<script>
+    var slides = document.querySelectorAll('.slide');
+    var current = 0;
+
+    function showSlide(n) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(n, slides.length - 1));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    }
+
+    function changeSlide(dir) { showSlide(current + dir); }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+
+</body>
+</html>
