@@ -4,817 +4,622 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <title>Class Hub — VHS CTE</title>
+    <title>Class Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg:         #0a0a0a;
+            --surface:    #111111;
+            --surface-2:  #181818;
+            --border:     rgba(255,255,255,0.07);
+            --text:       #e2e8f0;
+            --text-dim:   #94a3b8;
+            --text-muted: #475569;
+            --portfolio:  #6366f1;
+            --portfolio-h:#4f46e5;
+        }
 
         body {
             font-family: 'Exo 2', sans-serif;
-            background: #111;
-            color: #f0f0f0;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
         }
 
-        /* ── Header ─────────────────────────── */
-        .header {
-            background: linear-gradient(135deg, #8B0000 0%, #c41e3a 55%, #8B0000 100%);
-            padding: 0 40px;
-            height: 72px;
+        /* ── Track selector ─────────────────────────────────── */
+
+        #selector {
+            min-height: 100vh;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            border-bottom: 3px solid rgba(255,255,255,0.15);
-            box-shadow: 0 4px 24px rgba(196,30,58,0.45);
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .selector-inner { max-width: 680px; width: 100%; text-align: center; }
+
+        .selector-eyebrow {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .selector-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 40px;
+        }
+
+        .track-btns {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .track-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px 16px;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            text-align: center;
+        }
+
+        .track-btn:hover {
+            background: var(--surface-2);
+            transform: translateY(-3px);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .track-btn-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 900;
+        }
+
+        .track-btn-name {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            line-height: 1.4;
+        }
+
+        /* ── Hub ────────────────────────────────────────────── */
+
+        #hub { display: none; flex-direction: column; min-height: 100vh; }
+
+        /* Top bar */
+        .top-bar {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            padding: 0 28px;
+            gap: 16px;
             position: sticky;
             top: 0;
             z-index: 50;
-        }
-
-        .header-left { display: flex; flex-direction: column; gap: 2px; }
-
-        .school-name {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 0.72rem;
-            letter-spacing: 2.5px;
-            text-transform: uppercase;
-            color: rgba(255,255,255,0.6);
-        }
-
-        .class-name {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #fff;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .portfolio-btn-header {
-            background: rgba(255,255,255,0.12);
-            border: 2px solid rgba(255,255,255,0.4);
-            color: #fff;
-            font-family: 'Exo 2', sans-serif;
-            font-weight: 700;
-            font-size: 0.9rem;
-            padding: 9px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-        .portfolio-btn-header:hover { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.7); }
-
-        /* ── Track selector ──────────────────── */
-        .track-selector {
-            max-width: 620px;
-            margin: 90px auto 0;
-            padding: 0 24px;
-            text-align: center;
-        }
-        .track-selector h2 {
-            font-family: 'Orbitron', sans-serif;
-            color: #00d4ff;
-            font-size: 1.6rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-        }
-        .track-selector > p { color: #666; font-size: 0.95rem; margin-bottom: 40px; }
-        .track-cards { display: flex; flex-direction: column; gap: 12px; }
-        .track-card {
-            background: rgba(196,30,58,0.07);
-            border: 2px solid rgba(196,30,58,0.25);
-            border-radius: 12px;
-            padding: 22px 28px;
-            text-decoration: none;
-            color: #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: all 0.2s;
-        }
-        .track-card:hover { background: rgba(196,30,58,0.14); border-color: #c41e3a; transform: translateX(5px); }
-        .track-card-name { font-weight: 700; font-size: 1.05rem; text-align: left; }
-        .track-card-arrow { font-size: 1.3rem; color: #c41e3a; flex-shrink: 0; margin-left: 16px; }
-
-        /* ── Main hub layout ─────────────────── */
-        .hub-layout {
-            display: grid;
-            grid-template-columns: 240px 1fr;
-            min-height: calc(100vh - 72px);
-        }
-
-        /* ── Sidebar ─────────────────────────── */
-        .sidebar {
-            background: #0a0a0a;
-            border-right: 2px solid #1e1e1e;
-            padding: 28px 0;
-            position: sticky;
-            top: 72px;
-            height: calc(100vh - 72px);
-            overflow-y: auto;
-        }
-        .sidebar-label {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 0.7rem;
-            color: #444;
-            text-transform: uppercase;
-            letter-spacing: 2.5px;
-            padding: 14px 22px 6px;
-        }
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 22px;
-            color: #666;
-            text-decoration: none;
-            font-size: 0.88rem;
-            font-weight: 600;
-            border-left: 3px solid transparent;
-            transition: all 0.15s;
-        }
-        .sidebar-link:hover { color: #f0f0f0; background: rgba(196,30,58,0.08); border-left-color: #c41e3a; }
-        .sidebar-link.active-unit { color: #f0f0f0; background: rgba(196,30,58,0.11); border-left-color: #c41e3a; }
-        .sidebar-link.disabled { opacity: 0.3; cursor: default; pointer-events: none; }
-        .pill {
-            font-size: 0.62rem;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-family: 'Rajdhani', sans-serif;
-            letter-spacing: 1px;
-            text-transform: uppercase;
             flex-shrink: 0;
         }
-        .pill-now { background: rgba(0,212,255,0.12); color: #00d4ff; border: 1px solid rgba(0,212,255,0.25); }
-        .pill-soon { background: rgba(136,136,136,0.12); color: #555; }
 
-        /* ── Main ────────────────────────────── */
-        .main { padding: 40px 56px 80px; }
-
-        /* ── This Week ───────────────────────── */
-        .this-week {
-            background: linear-gradient(135deg, rgba(0,212,255,0.06) 0%, rgba(0,212,255,0.02) 100%);
-            border: 1px solid rgba(0,212,255,0.25);
-            border-left: 4px solid #00d4ff;
-            border-radius: 12px;
-            padding: 24px 28px;
-            margin-bottom: 40px;
-            display: flex;
-            align-items: flex-start;
-            gap: 24px;
+        .school-badge {
+            background: rgba(255,255,255,0.18);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 20px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            color: #fff;
+            flex-shrink: 0;
         }
-        .week-badge {
+
+        .course-name {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .top-bar-right { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+
+        .portfolio-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: var(--portfolio);
+            color: #fff;
+            text-decoration: none;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            padding: 9px 22px;
+            border-radius: 8px;
+            transition: background 0.15s, box-shadow 0.15s;
+            white-space: nowrap;
+        }
+
+        .portfolio-btn:hover {
+            background: var(--portfolio-h);
+            box-shadow: 0 4px 20px rgba(99,102,241,0.4);
+        }
+
+        .switch-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-family: 'Exo 2', sans-serif;
+            font-size: 0.75rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: color 0.15s;
+        }
+        .switch-btn:hover { color: var(--text-dim); }
+
+        /* Main content */
+        .hub-main { flex: 1; padding: 32px 28px 48px; max-width: 1300px; width: 100%; margin: 0 auto; }
+
+        .section { margin-bottom: 36px; }
+
+        .section-label {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Unit / project grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .unit-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--card-accent, #555);
+            border-radius: 0 8px 8px 0;
+            padding: 14px 16px 12px;
+            text-decoration: none;
+            color: var(--text);
+            transition: background 0.15s, transform 0.15s, border-color 0.15s;
+            position: relative;
+            min-height: 80px;
+        }
+
+        .unit-card:hover {
+            background: var(--surface-2);
+            transform: translateY(-2px);
+            border-color: rgba(255,255,255,0.12);
+            border-left-color: var(--card-accent, #555);
+        }
+
+        .unit-card:hover .card-arrow { opacity: 1; }
+
+        .card-num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.62rem;
+            font-weight: 700;
+            color: var(--card-accent, #94a3b8);
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .card-name {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.98rem;
+            font-weight: 600;
+            line-height: 1.3;
+            color: var(--text);
+            flex: 1;
+        }
+
+        .card-arrow {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            opacity: 0;
+            transition: opacity 0.15s;
+            align-self: flex-end;
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            background: var(--card-accent, #555);
+            color: #000;
+            padding: 2px 7px;
+            border-radius: 4px;
+        }
+
+        .card-coming {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* DBL project grid — 3 columns */
+        .project-grid { grid-template-columns: repeat(3, 1fr); }
+
+        .project-card { min-height: 90px; }
+
+        .card-icon {
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        /* Reference unit chips */
+        .ref-row { display: flex; flex-wrap: wrap; gap: 10px; }
+
+        .ref-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 18px;
+            text-decoration: none;
+            color: var(--text-dim);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.15s;
+        }
+
+        .ref-chip:hover { background: var(--surface-2); color: var(--text); border-color: rgba(255,255,255,0.15); }
+
+        .ref-chip-num {
             font-family: 'Orbitron', sans-serif;
             font-size: 0.65rem;
             font-weight: 700;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: #0a0e27;
-            background: #00d4ff;
-            padding: 4px 12px;
-            border-radius: 20px;
-            white-space: nowrap;
-            flex-shrink: 0;
-            margin-top: 3px;
         }
-        .week-badge.pre-school { background: #555; color: #ccc; }
-        .week-badge.post-school { background: #333; color: #888; }
-        .this-week-body { flex: 1; }
-        .this-week-label {
-            font-family: 'Exo 2', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: #f0f0f0;
-            margin-bottom: 4px;
-        }
-        .this-week-note { font-size: 0.88rem; color: #777; line-height: 1.5; }
-        .this-week-link {
-            display: inline-block;
-            margin-top: 12px;
-            background: rgba(0,212,255,0.1);
-            border: 1px solid rgba(0,212,255,0.3);
-            color: #00d4ff;
-            font-size: 0.82rem;
-            font-weight: 700;
-            padding: 6px 14px;
-            border-radius: 6px;
-            text-decoration: none;
-            letter-spacing: 0.5px;
-            transition: background 0.15s;
-        }
-        .this-week-link:hover { background: rgba(0,212,255,0.2); }
 
-        /* Portfolio CTA */
-        .portfolio-cta {
-            background: linear-gradient(135deg, rgba(196,30,58,0.12) 0%, rgba(196,30,58,0.04) 100%);
-            border: 2px solid rgba(196,30,58,0.35);
-            border-radius: 16px;
-            padding: 28px 32px;
-            display: flex;
+        /* Tools */
+        .tools-row { display: flex; flex-wrap: wrap; gap: 10px; }
+
+        .tool-btn {
+            display: inline-flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 24px;
-            margin-bottom: 48px;
-        }
-        .cta-text h2 { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 700; color: #f0f0f0; margin-bottom: 4px; }
-        .cta-text p { color: #666; font-size: 0.92rem; }
-        .cta-btn {
-            background: linear-gradient(135deg, #c41e3a 0%, #e8223f 100%);
-            color: #fff;
-            font-family: 'Exo 2', sans-serif;
-            font-weight: 800;
-            font-size: 1rem;
-            padding: 14px 28px;
-            border-radius: 10px;
-            text-decoration: none;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            box-shadow: 0 4px 20px rgba(196,30,58,0.35);
-            white-space: nowrap;
-            transition: all 0.2s;
-        }
-        .cta-btn:hover { box-shadow: 0 6px 28px rgba(196,30,58,0.55); transform: translateY(-2px); }
-
-        /* Unit sections */
-        .unit-section { margin-bottom: 48px; }
-        .unit-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
-        .unit-badge {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.68rem;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            flex-shrink: 0;
-        }
-        .unit-badge-active { background: #00d4ff; color: #0a0e27; }
-        .unit-badge-grey   { background: #2a2a2a; color: #666; }
-        .unit-title { font-family: 'Exo 2', sans-serif; font-size: 1.05rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
-
-        /* Lesson grid */
-        .lesson-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
-        .lesson-card {
-            background: rgba(0,212,255,0.03);
-            border: 1px solid rgba(0,212,255,0.15);
-            border-radius: 12px;
-            padding: 16px 20px;
-            text-decoration: none;
-            color: #f0f0f0;
-            display: block;
-            transition: all 0.2s;
-            position: relative;
-        }
-        .lesson-card:hover { background: rgba(0,212,255,0.07); border-color: rgba(0,212,255,0.4); transform: translateY(-2px); box-shadow: 0 4px 18px rgba(0,212,255,0.08); }
-        .lesson-card.current-week { border-color: #00d4ff; background: rgba(0,212,255,0.07); box-shadow: 0 0 16px rgba(0,212,255,0.12); }
-        .lesson-card.grey-card { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.07); pointer-events: none; }
-        .lesson-card.grey-card:hover { transform: none; box-shadow: none; }
-        .lesson-num { font-family: 'Orbitron', sans-serif; font-size: 0.68rem; color: #00d4ff; letter-spacing: 1px; margin-bottom: 5px; }
-        .lesson-card.grey-card .lesson-num { color: #444; }
-        .lesson-title { font-weight: 700; font-size: 0.97rem; margin-bottom: 4px; line-height: 1.3; }
-        .lesson-card.grey-card .lesson-title { color: #555; }
-        .lesson-desc { font-size: 0.8rem; color: #555; line-height: 1.4; margin-bottom: 10px; }
-        .lesson-card.grey-card .lesson-desc { color: #3a3a3a; }
-        .card-chips { display: flex; gap: 6px; flex-wrap: wrap; }
-        .chip { font-size: 0.64rem; padding: 2px 7px; border-radius: 4px; font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
-        .chip-lesson   { background: rgba(0,212,255,0.08); color: #00d4ff; border: 1px solid rgba(0,212,255,0.2); }
-        .chip-activity { background: rgba(255,149,0,0.08); color: #ff9500; border: 1px solid rgba(255,149,0,0.2); }
-        .chip-grey     { background: rgba(136,136,136,0.08); color: #444; border: 1px solid rgba(136,136,136,0.15); }
-        .chip-now      { background: rgba(0,212,255,0.15); color: #00d4ff; border: 1px solid rgba(0,212,255,0.4); }
-        .week-dot {
-            position: absolute;
-            top: 12px; right: 14px;
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 0.62rem;
-            color: #444;
-            letter-spacing: 0.5px;
-        }
-        .lesson-card.current-week .week-dot { color: #00d4ff; font-weight: 700; }
-
-        /* Resources */
-        .resource-links { display: flex; gap: 10px; flex-wrap: wrap; }
-        .resource-link {
-            display: inline-block;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid #252525;
-            color: #888;
-            font-size: 0.88rem;
-            font-weight: 600;
-            padding: 9px 18px;
+            gap: 9px;
+            background: var(--surface);
+            border: 1px solid var(--border);
             border-radius: 8px;
+            padding: 11px 20px;
             text-decoration: none;
+            color: var(--text-dim);
+            font-family: 'Exo 2', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
             transition: all 0.15s;
         }
-        .resource-link:hover { border-color: #00d4ff; color: #00d4ff; background: rgba(0,212,255,0.04); }
-        .section-eyebrow { font-family: 'Rajdhani', sans-serif; font-size: 0.72rem; letter-spacing: 2.5px; text-transform: uppercase; color: #444; margin-bottom: 14px; }
 
-        /* Responsive */
-        @media (max-width: 840px) {
-            .hub-layout { grid-template-columns: 1fr; }
-            .sidebar { display: none; }
-            .main { padding: 24px 20px 60px; }
-            .portfolio-cta { flex-direction: column; align-items: stretch; }
-            .cta-btn { text-align: center; }
-            .header { padding: 0 20px; }
-            .class-name { font-size: 0.9rem; }
-            .this-week { flex-direction: column; gap: 12px; }
+        .tool-btn:hover { background: var(--surface-2); color: var(--text); border-color: rgba(255,255,255,0.15); }
+
+        .tool-icon { font-size: 1rem; }
+
+        /* ── Responsive ─────────────────────────────────────── */
+
+        @media (max-width: 960px) {
+            .card-grid { grid-template-columns: repeat(3, 1fr); }
+            .project-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 680px) {
+            .track-btns { grid-template-columns: 1fr; }
+            .card-grid { grid-template-columns: repeat(2, 1fr); }
+            .project-grid { grid-template-columns: repeat(2, 1fr); }
+            .top-bar { padding: 0 16px; }
+            .hub-main { padding: 20px 16px 40px; }
+            .course-name { font-size: 1rem; }
+        }
+
+        @media (max-width: 420px) {
+            .card-grid { grid-template-columns: 1fr; }
+            .project-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-<!-- ── HEADER ──────────────────────────────────────────────── -->
-<header class="header">
-    <div class="header-left">
-        <span class="school-name">Vicksburg High School &middot; CTE</span>
-        <span class="class-name" id="headerClassName">Applied Engineering &amp; Robotics</span>
-    </div>
-    <a href="#" class="portfolio-btn-header" id="headerPortfolioBtn">My Portfolio →</a>
-</header>
-
-<!-- ── TRACK SELECTOR ──────────────────────────────────────── -->
-<div class="track-selector" id="trackSelector" style="display:none;">
-    <h2>Select Your Class</h2>
-    <p>Choose the class you're enrolled in. Bookmark the URL after you select so you land here directly next time.</p>
-    <div class="track-cards">
-        <a href="hub.html?track=hsaer" class="track-card">
-            <span class="track-card-name">HS Applied Engineering &amp; Robotics</span>
-            <span class="track-card-arrow">→</span>
-        </a>
-        <a href="hub.html?track=aer8th" class="track-card">
-            <span class="track-card-name">8th Grade Applied Engineering &amp; Robotics</span>
-            <span class="track-card-arrow">→</span>
-        </a>
-        <a href="hub.html?track=dbl" class="track-card">
-            <span class="track-card-name">Design &amp; Build Lab</span>
-            <span class="track-card-arrow">→</span>
-        </a>
+<!-- ── Track selector ──────────────────────────────────────── -->
+<div id="selector">
+    <div class="selector-inner">
+        <div class="selector-eyebrow">Vicksburg CTE · Mr. Bombich</div>
+        <h1 class="selector-title">Which class are you in?</h1>
+        <div class="track-btns">
+            <button class="track-btn" onclick="selectTrack('hsaer')">
+                <span class="track-btn-label" style="color:#c41e3a">HS</span>
+                <span class="track-btn-name">Applied Engineering<br>&amp; Robotics</span>
+            </button>
+            <button class="track-btn" onclick="selectTrack('8aer')">
+                <span class="track-btn-label" style="color:#c41e3a">8th</span>
+                <span class="track-btn-name">Applied Engineering<br>&amp; Robotics</span>
+            </button>
+            <button class="track-btn" onclick="selectTrack('dbl')">
+                <span class="track-btn-label" style="color:#0891b2">DBL</span>
+                <span class="track-btn-name">Design &amp;<br>Build Lab</span>
+            </button>
+        </div>
     </div>
 </div>
 
-<!-- ── HUB ─────────────────────────────────────────────────── -->
-<div class="hub-layout" id="hubLayout" style="display:none;">
-    <aside class="sidebar" id="sidebar"></aside>
-    <main class="main">
-        <div id="thisWeekSection"></div>
-        <div class="portfolio-cta">
-            <div class="cta-text">
-                <h2>Your Portfolio</h2>
-                <p>Track deliverables, earn points, and submit your work.</p>
+<!-- ── Hub ─────────────────────────────────────────────────── -->
+<div id="hub">
+    <header class="top-bar" id="top-bar">
+        <span class="school-badge" id="school-badge">VHS</span>
+        <span class="course-name" id="course-name">AE&R</span>
+        <div class="top-bar-right">
+            <a href="#" class="portfolio-btn" id="portfolio-btn">📋 My Portfolio</a>
+            <button class="switch-btn" onclick="resetTrack()" title="Switch class">switch class</button>
+        </div>
+    </header>
+
+    <div class="hub-main">
+
+        <!-- AER units -->
+        <div id="aer-hub">
+            <div class="section">
+                <div class="section-label">Course Units</div>
+                <div class="card-grid" id="unit-grid"></div>
             </div>
-            <a href="#" class="cta-btn" id="portfolioCTA">Open My Portfolio →</a>
+            <div class="section">
+                <div class="section-label">Tools</div>
+                <div class="tools-row">
+                    <a href="ai-tutor.html" class="tool-btn"><span class="tool-icon">🤖</span> AI Tutor</a>
+                    <a href="CountdownClock/vhs_countdown.html" class="tool-btn"><span class="tool-icon">⏱</span> Countdown Clock</a>
+                    <a href="resources/pico2w-reference.html" target="_blank" class="tool-btn"><span class="tool-icon">📡</span> Pico 2W Reference</a>
+                </div>
+            </div>
         </div>
-        <div id="unitSections"></div>
-        <div class="unit-section">
-            <p class="section-eyebrow">Quick Links</p>
-            <div class="resource-links" id="quickLinks"></div>
+
+        <!-- DBL projects -->
+        <div id="dbl-hub" style="display:none">
+            <div class="section">
+                <div class="section-label">Projects</div>
+                <div class="card-grid project-grid" id="project-grid"></div>
+            </div>
+            <div class="section">
+                <div class="section-label">Reference Units</div>
+                <div class="ref-row" id="ref-unit-row"></div>
+            </div>
+            <div class="section">
+                <div class="section-label">Tools</div>
+                <div class="tools-row">
+                    <a href="ai-tutor.html" class="tool-btn"><span class="tool-icon">🤖</span> AI Tutor</a>
+                </div>
+            </div>
         </div>
-    </main>
-</div>
+
+    </div><!-- /hub-main -->
+</div><!-- /hub -->
 
 <script>
-// ── Week calendar ─────────────────────────────────────────────────────────
-// Each entry is the Monday of that instructional week.
-// Breaks (Thanksgiving, Winter, Spring) are gaps — not counted as weeks.
-const WEEK_STARTS = [
-    '2026-08-31', // 1
-    '2026-09-07', // 2  Labor Day Mon
-    '2026-09-14', // 3
-    '2026-09-21', // 4
-    '2026-09-28', // 5
-    '2026-10-05', // 6
-    '2026-10-12', // 7
-    '2026-10-19', // 8
-    '2026-10-26', // 9
-    '2026-11-02', // 10
-    '2026-11-09', // 11
-    '2026-11-16', // 12
-    '2026-11-23', // 13  Mon–Tue only (Thanksgiving)
-    '2026-11-30', // 14
-    '2026-12-07', // 15
-    '2026-12-14', // 16
-    // Winter break Dec 21 – Jan 3
-    '2027-01-04', // 17
-    '2027-01-11', // 18
-    '2027-01-18', // 19  MLK Mon; S1 ends Jan 21
-    // S2 begins Jan 25
-    '2027-01-25', // 20
-    '2027-02-01', // 21
-    '2027-02-08', // 22
-    '2027-02-15', // 23  Presidents Day Mon
-    '2027-02-22', // 24
-    '2027-03-01', // 25
-    '2027-03-08', // 26
-    '2027-03-15', // 27
-    '2027-03-22', // 28  ~3.5 days; spring break Mar 26
-    // Spring break Mar 26 – Apr 4
-    '2027-04-05', // 29
-    '2027-04-12', // 30
-    '2027-04-19', // 31
-    '2027-04-26', // 32
-    '2027-05-03', // 33
-    '2027-05-10', // 34
-    '2027-05-17', // 35
-    '2027-05-24', // 36
-    '2027-05-31', // 37  Memorial Day Mon
-    '2027-06-07', // 38
-];
+(function () {
 
-const SCHOOL_END = '2027-06-11';
+    /* ── Data ────────────────────────────────────────────── */
 
-function getCurrentWeek() {
-    const today = new Date(); today.setHours(0,0,0,0);
-    const starts = WEEK_STARTS.map(s => new Date(s).setHours(0,0,0,0));
-    const end    = new Date(SCHOOL_END).setHours(0,0,0,0);
-    if (today < starts[0]) return 0;
-    if (today > end)       return -1;
-    let w = 1;
-    for (let i = 0; i < starts.length; i++) {
-        if (today >= starts[i]) w = i + 1;
-    }
-    return w;
-}
-
-// ── Lesson helpers ────────────────────────────────────────────────────────
-const U1 = 'Unit_01_Engineering_Design_Process/';
-const U2 = 'Unit_02_CAD/';
-const U3 = 'Unit_03_Shop_Safety_and_Standard_Practices/';
-const U4 = 'Unit_04_Programming_Electronics_and_Sensors/';
-const U5 = 'Unit_05_Artificial_Intelligence/';
-const U6 = 'Unit_06_Career_Ready_Practices/';
-
-// Shared lesson definitions — { num, title, desc, week, lesson, activity }
-// week: instructional week number per HS AER pacing (override per track if needed)
-// lesson / activity: null means file not yet built
-const LESSONS = {
-    // Unit 1
-    '1.1': { num:'1.1', title:'Intro to Engineering Design',     desc:'EDP framework, career connections',                              week:1,  lesson:U1+'Lesson_01_Intro_to_Engineering_Design.html', activity:null },
-    '1.2': { num:'1.2', title:'Spaghetti Tower Challenge',       desc:'Apply EDP — design, build, and test a tall structure',           week:1,  lesson:U1+'Lesson_02_Spaghetti_Tower_Challenge.html',    activity:null },
-    '1.3': { num:'1.3', title:'EDP Framework',                   desc:'Identify · Research · Brainstorm · Prototype · Test',            week:1,  lesson:U1+'Lesson_03_EDP_Framework.html',                activity:null },
-    '1.4': { num:'1.4', title:'Paper Glider Challenge',          desc:'Iterate on a glider design through multiple test cycles',        week:1,  lesson:U1+'Lesson_04_Paper_Glider_Challenge.html',       activity:null },
-    '1.5': { num:'1.5', title:'Design Brief Workshop',           desc:'Write and refine a structured engineering design brief',         week:1,  lesson:U1+'Lesson_05_Design_Brief_Workshop.html',        activity:null },
-    '1.6': { num:'1.6', title:'Client Interview & Design Statement', desc:'Interview the client; extract component requirements; write problem statement + design statement', week:2, lesson:U1+'Lesson_06_Client_Interview.html', activity:null },
-    '1.7': { num:'1.7', title:'Concept Sketching & Decision Matrix', desc:'Three hand-drawn design concepts; decision matrix; instructor approval before F360', week:2, lesson:U1+'Lesson_07_Concept_Sketching.html', activity:null },
-    '1.8': { num:'1.8', title:'Build, Test & Peer Review',       desc:'(Retired — EDP build-test-iterate now lives in Unit 2)',                week:2,  lesson:null, activity:null },
-    '1.9': { num:'1.9', title:'Iterate & Reflect',               desc:'(Retired — EDP quiz and reflection now happen during Unit 2 C1 iteration)', week:2, lesson:null, activity:null },
-    // Unit 2
-    '2.1': { num:'2.1', title:'F360 Orientation — Kennedy Video',         desc:'Kevin Kennedy F360 for Beginners; watch twice; orientation check', week:2, lesson:U2+'Lesson_01_F360_Orientation_Kennedy.html', activity:null },
-    '2.2': { num:'2.2', title:'C1: Component Modeling (Video)',            desc:'Model your first component following instructor video; export + queue for print', week:3, lesson:U2+'Lesson_02_C1_Wheel_Hub.html', activity:null },
-    '2.3': { num:'2.3', title:'Measurement Tools Workshop',               desc:'Calipers, reading tolerances, measure printed C1 against design brief',  week:3, lesson:U2+'Lesson_03_Measurement_Tools_Workshop.html', activity:null },
-    '2.4': { num:'2.4', title:'3D Printing: Model to Part',               desc:'Export from F360, slice in BambuStudio, print + post-process',   week:3,  lesson:U2+'Lesson_04_3D_Printing.html',                 activity:null },
-    '2.5': { num:'2.5', title:'C2: Drive Wheel',                          desc:'Hex bore, Circular Pattern spokes, student design choice',        week:4,  lesson:U2+'Lesson_05_C2_Drive_Wheel.html',              activity:null },
-    '2.6': { num:'2.6', title:'C3: Motor Sleeve Mount',                   desc:'Sleeve bore from motor model; T-slot nut-capture rail',           week:5,  lesson:U2+'Lesson_06_C3_Motor_Mount.html',              activity:null },
-    '2.7': { num:'2.7', title:'C4: Robot Deck + Assembly Intro',          desc:'Robot deck plate; assembly file; constrain components',           week:6,  lesson:U2+'Lesson_07_C4_Deck_Assembly.html',            activity:null },
-    '2.8': { num:'2.8', title:'C5, C6, C7: Mounts & Final Assembly',      desc:'Omni wheel mount, IR sensor mount, ultrasonic mount; interference check', week:7, lesson:U2+'Lesson_08_C5_C6_C7_Assembly.html', activity:null },
-    // Unit 3
-    '3.1': { num:'3.1', title:'Shop Safety Fundamentals',        desc:'OSHA · LOTO · PPE · SDS · tool certifications',                 week:9,  lesson:U3+'Lesson_01_Shop_Safety_Fundamentals.html', activity:null },
-    '3.2': { num:'3.2', title:'Case Review: Matthew Henne',      desc:'Real incident analysis and prevention lessons',                 week:9,  lesson:U3+'Lesson_02_Case_Review_Matthew_Henne.html', activity:null },
-    '3.3': { num:'3.3', title:'Safety Quiz',                     desc:'Tool certifications + safety knowledge assessment',             week:9,  lesson:U3+'Lesson_03_Quiz.html',                     activity:null },
-    // Unit 4
-    '4.1': { num:'4.1', title:'Microcontroller Fundamentals',    desc:'Pico 2W hardware · GPIO · Thonny · MicroPython REPL',           week:12, lesson:U4+'Lesson_01_Microcontroller_Fundamentals.html', activity:U4+'Activity_01_Blink.html' },
-    '4.2': { num:'4.2', title:'Variables & Types',               desc:'int · float · str · bool · type() · int()/float() · clamp',    week:12, lesson:U4+'Lesson_02_Variables_Types.html',              activity:U4+'Activity_02_Variables_Types.html' },
-    '4.3': { num:'4.3', title:'Functions',                       desc:'def · parameters · DRY · scope · global keyword',              week:12, lesson:U4+'Lesson_03_Functions.html',                   activity:U4+'Activity_03_Functions.html' },
-    '4.4': { num:'4.4', title:'Digital Input',                   desc:'Button wiring · pull-up/pull-down · state detection',          week:13, lesson:U4+'Lesson_04_Digital_Input.html',                activity:U4+'Activity_04_Button.html' },
-    '4.5': { num:'4.5', title:'PWM & Analog Output',             desc:'Pulse-width modulation · duty cycle · LED dimming',            week:14, lesson:U4+'Lesson_05_PWM.html',                          activity:U4+'Activity_05_PWM.html' },
-    '4.6': { num:'4.6', title:'Motor Control',                   desc:'H-bridge driver · motor.py · drive functions · L.E.O. bot',    week:15, lesson:U4+'Lesson_06_Motor_Control.html',                activity:U4+'Activity_06_Motor_Control.html' },
-    // Unit 5
-    '5.1': { num:'5.1', title:'What Is AI?',                     desc:'Types of AI · how machines learn · real-world applications',   week:24, lesson:U5+'Lesson_01_What_Is_AI.html',         activity:null },
-    '5.2': { num:'5.2', title:'Ethics in AI',                    desc:'Bias, fairness, privacy, and responsible AI design',           week:24, lesson:U5+'Lesson_02_Ethics_in_AI.html',        activity:null },
-    '5.3': { num:'5.3', title:'Teachable Machine',               desc:'Train an image classifier; test with live webcam',             week:24, lesson:U5+'Lesson_03_Teachable_Machine.html',   activity:null },
-    '5.4': { num:'5.4', title:'AI Unit Quiz',                    desc:'Knowledge check covering all AI & ML topics',                  week:25, lesson:U5+'Lesson_04_Quiz.html',               activity:null },
-    // Unit 6
-    '6.A': { num:'6.A', title:'Career Ready Practices',          desc:'Self-paced: 12 CRPs — communication, teamwork, critical thinking', week:null, lesson:U6+'CRP_Student_Activity.html', activity:null },
-    '6.B': { num:'6.B', title:'Career Connections',              desc:'Meet 17 real engineers and scientists via PLTW profiles',     week:null, lesson:U6+'career-connections.html',          activity:null },
-};
-
-// ── Track definitions ─────────────────────────────────────────────────────
-const TRACKS = {
-
-    hsaer: {
-        name: 'HS Applied Engineering & Robotics',
-        short: 'HS AE&R',
-        portfolio: 'Portfolio/index.html?track=hsaer',
-        courseHub: 'HSAER/index.html',
-        units: [
-            { num:1, title:'Engineering Design Process', url:U1+'index.html',
-              keys:['1.1','1.2','1.3','1.4','1.5','1.6','1.7'] },
-            { num:2, title:'CAD: Component-Based Design', url:U2+'index.html',
-              keys:['2.1','2.2','2.3','2.4','2.5','2.6','2.7','2.8'] },
-            { num:3, title:'Shop Safety',                  url:U3+'index.html',
-              keys:['3.1','3.2','3.3'] },
-            { num:4, title:'Programming, Electronics & Sensors', url:U4+'index.html',
-              keys:['4.1','4.2','4.3','4.4','4.5','4.6'] },
-            { num:5, title:'AI & Machine Learning',        url:U5+'index.html',
-              keys:['5.1','5.2','5.3','5.4'] },
-            { num:6, title:'Career Readiness',             url:U6+'index.html',
-              keys:['6.A','6.B'] },
-        ],
-        weekContent: {
-            1:  { label:'Unit 1 — Engineering Design Process', note:'Lessons 1.1–1.5: Intro to AE&R → Spaghetti Tower → EDP Framework → Paper Glider → Design Brief', url:U1+'Lesson_01_Intro_to_Engineering_Design.html' },
-            2:  { label:'Unit 1 — Engineering Design Process', note:'L1.6 Client Interview + Design Statement (Mon–Thu); L1.7 Concept Sketching + Decision Matrix; L2.1 Kennedy F360 video (Fri)', url:U1+'Lesson_06_Client_Interview.html' },
-            3:  { label:'Unit 2 — CAD: Component-Based Design', note:'L2.2 C1 modeling video; L2.3 Measurement Tools Workshop; L2.4 3D Printing — print C1, measure, iterate', url:U2+'Lesson_02_C1_Wheel_Hub.html' },
-            4:  { label:'Unit 2 — CAD', note:'L2.5: C2 Drive Wheel — hex bore, Circular Pattern spokes, student design choice', url:U2+'Lesson_05_C2_Drive_Wheel.html' },
-            5:  { label:'Unit 2 — CAD', note:'L2.6: C3 Motor Sleeve Mount (complete); print + iterate', url:U2+'Lesson_06_C3_Motor_Mount.html' },
-            6:  { label:'Unit 2 — CAD', note:'L2.7: C4 Robot Deck + CAD assemblies intro', url:U2+'Lesson_07_C4_Deck_Assembly.html' },
-            7:  { label:'Unit 2 — CAD', note:'L2.8: C5 Omni Wheel Mount; C6 IR Sensor Mount; C7 Ultrasonic Sensor Mount; print all', url:U2+'Lesson_08_C5_C6_C7_Assembly.html' },
-            8:  { label:'Unit 2 — CAD', note:'Final robot CAD assembly; 2nd-year: C8 Electronics Board Mount', url:U2+'index.html' },
-            9:  { label:'Unit 3 — Shop Safety', note:'OSHA · LOTO · PPE · SDS; Matthew Henne case study; drill press, pedestal grinder, hand drill certs', url:U3+'Lesson_01_Shop_Safety_Fundamentals.html' },
-            10: { label:'Unit 3 — Shop Safety', note:'CNC toolpaths; cutting robot decks on CNC router', url:U3+'Lesson_03_Quiz.html' },
-            11: { label:'Robot Assembly', note:'Physical build week — motors, wheels, caster, electronics board, wiring', url:null },
-            12: { label:'Unit 4 — Programming', note:'L4.1 Microcontroller Fundamentals + Blink; L4.2 Variables & Types; L4.3 Functions + SOS', url:U4+'Lesson_01_Microcontroller_Fundamentals.html' },
-            13: { label:'Unit 4 — Programming', note:'L4.4 Digital Input + Switches activity (Mon–Tue only — Thanksgiving week)', url:U4+'Lesson_04_Digital_Input.html' },
-            14: { label:'Unit 4 — Programming', note:'Finish A4.4 Switches; L4.5 PWM & Analog Output', url:U4+'Lesson_05_PWM.html' },
-            15: { label:'Unit 4 — Programming', note:'L4.6 Motor Control; Programming Quiz; D41 due', url:U4+'Lesson_06_Motor_Control.html' },
-            16: { label:'3D Print Holiday Project', note:'Students design and print a take-home item — ornament, keychain, or name plate', url:null },
-            17: { label:'Robot Tuning', note:'Motor control on physical robot; drive + turn functions; encoder wiring', url:null },
-            18: { label:'Robot Tuning', note:'Drive-straight with encoder feedback; IMU intro — Qwiic plug-in, read yaw angle', url:null },
-            19: { label:'Robot Tuning / Midterm', note:'IMU heading hold; catch-up; Midterm Exam (EDP, CAD, Safety, Programming)', url:null },
-            20: { label:'Ultrasonic Sensing', note:'I2C ultrasonic via TCA9548A mux; 3 sensors; obstacle detection logic', url:null },
-            21: { label:'Wall Following', note:'Maintain fixed distance from wall using ultrasonic sensors; proportional correction', url:null },
-            22: { label:'Line Following', note:'5-sensor IR array; per-sensor threshold calibration; binary line following', url:null },
-            23: { label:'Line Following', note:'Weighted-sensor error; PID control; tune + course practical — D: Line Following', url:null },
-            24: { label:'Unit 5 — AI & Machine Learning', note:'L5.1 What Is AI; L5.2 Ethics in AI; A5.3 Teachable Machine (Days 3–4)', url:U5+'Lesson_01_What_Is_AI.html' },
-            25: { label:'Mechanisms', note:'AI Quiz (Day 1); simple machines intro; mechanical advantage + efficiency', url:null },
-            26: { label:'Mechanisms', note:'Pulley systems — fixed, movable, compound; intro to gear ratios', url:null },
-            27: { label:'Mechanisms', note:'Multi-stage gear trains; converting motion — cams, cranks, linkages', url:null },
-            28: { label:'Mechanisms', note:'Mechanism design challenge (~3.5 days — spring break starts Mar 26)', url:null },
-            29: { label:'Servo Build Project', note:'Project intro + design brief; servo control review; begin build', url:null },
-            30: { label:'Servo Build Project', note:'Build (limited days — state testing Tue–Thu)', url:null },
-            31: { label:'Servo Build Project', note:'Build + test + iterate', url:null },
-            32: { label:'Servo Build Project', note:'Final demo + portfolio submission — D: Servo Mechanism', url:null },
-            33: { label:'Capstone', note:'Open-ended challenge or robot improvement project', url:null },
-            34: { label:'Capstone', note:'Portfolio completion push; all deliverables finalized', url:null },
-            35: { label:'Review', note:'EDP, CAD, safety, programming review; last day for seniors May 20', url:null },
-            36: { label:'Final Exam', note:'Final exam', url:null },
-            37: { label:'Wrap-up', note:'Return exams; wrap-up projects; demos', url:null },
-            38: { label:'Wrap-up', note:'End-of-year reflection; equipment return', url:null },
+    var TRACKS = {
+        hsaer: {
+            label:   'Applied Engineering & Robotics',
+            badge:   'VHS Bulldogs',
+            home:    'HSAER/index.html',
+            portfolio: 'hsaer',
+            type:    'aer',
+            r: 196, g: 30, b: 58,   // crimson
+            accent:  '#c41e3a'
         },
-    },
-
-    aer8th: {
-        name: '8th Grade Applied Engineering & Robotics',
-        short: '8th AE&R',
-        portfolio: 'Portfolio/index.html?track=aer8th',
-        courseHub: '8AER/index.html',
-        units: [
-            { num:1, title:'Engineering Design Process', url:U1+'index.html',
-              keys:['1.1','1.2','1.3','1.4','1.5','1.6','1.7'] },
-            { num:2, title:'CAD: Component-Based Design', url:U2+'index.html',
-              keys:['2.1','2.2','2.3','2.4','2.5'] },
-            { num:3, title:'Shop Safety',                  url:U3+'index.html',
-              keys:['3.1','3.2','3.3'] },
-            { num:4, title:'Programming, Electronics & Sensors', url:U4+'index.html',
-              keys:['4.1','4.3','4.6'] },
-        ],
-        // 8AER is S1 only (Weeks 1–19); week numbers match same calendar as HS AER
-        lessonWeekOverride: { '3.1':6,'3.2':6,'3.3':6, '4.1':9,'4.3':10,'4.6':11 },
-        weekContent: {
-            1:  { label:'Unit 1 — Engineering Design Process', note:'Lessons 1.1–1.5: Intro to AE&R → Spaghetti Tower → EDP → Paper Glider → Design Brief', url:U1+'Lesson_01_Intro_to_Engineering_Design.html' },
-            2:  { label:'Unit 1 — Engineering Design Process', note:'L1.6 Client Interview + Design Statement; L1.7 Concept Sketching + Decision Matrix; L2.1 Kennedy F360 video (Fri)', url:U1+'Lesson_06_Client_Interview.html' },
-            3:  { label:'Unit 2 — CAD', note:'L2.2 C1 modeling video; L2.3 Measurement Tools Workshop; L2.4 3D Printing — print C1, measure, iterate', url:U2+'Lesson_02_C1_Wheel_Hub.html' },
-            4:  { label:'Unit 2 — CAD', note:'L2.5: C2 Drive Wheel — hex bore, Circular Pattern spokes', url:U2+'Lesson_05_C2_Drive_Wheel.html' },
-            5:  { label:'Unit 2 — CAD', note:'C3: Robot Deck + full robot CAD assembly due end of week', url:U2+'index.html' },
-            6:  { label:'Unit 3 — Shop Safety', note:'Hand drill cert; CNC awareness; Safety Quiz + Tool Cert Card', url:U3+'Lesson_01_Shop_Safety_Fundamentals.html' },
-            7:  { label:'Build Week', note:'Manage 3D print queue; teacher cuts decks on CNC during class', url:null },
-            8:  { label:'Build Week', note:'Assemble frame: motors, wheels, caster; mount electronics; wire motors — build gate: robot rolls', url:null },
-            9:  { label:'Unit 4 — Programming', note:'L4.1 Microcontroller Fundamentals + Blink activity', url:U4+'Lesson_01_Microcontroller_Fundamentals.html' },
-            10: { label:'Unit 4 — Programming', note:'L4.3 Functions; A4.2 SOS pattern with named functions', url:U4+'Lesson_03_Functions.html' },
-            11: { label:'Unit 4 — Programming', note:'L4.6 Motor Control — drive_forward(), turn_left(), stop(); test on robot', url:U4+'Lesson_06_Motor_Control.html' },
-            12: { label:'Unit 4 — Programming', note:'Robot Driving Challenge: timed obstacle course; iterate drive functions; Programming Quiz', url:null },
-            13: { label:'Buffer / Make-up', note:'Finish robot driving challenge submissions (Mon–Tue — Thanksgiving week)', url:null },
-            14: { label:'Mechanisms', note:'Simple machines + mechanical advantage; gear ratios; print and assemble 2-stage gear train', url:null },
-            15: { label:'Mechanisms', note:'CAD housing for gear train; print and assemble; measure actual vs. calculated MA', url:null },
-            16: { label:'3D Print Holiday Project', note:'Design and print a take-home item — ornament, keychain, or small mechanism toy', url:null },
-            17: { label:'Mechanisms', note:'Pulleys and motion conversion; belt/chain drive ratios; CAD linkage or crank arm', url:null },
-            18: { label:'Mechanisms', note:'Mechanism showcase; portfolio documentation (photo + caption)', url:null },
-            19: { label:'Review / Midterm', note:'Midterm Exam (EDP, CAD, gear ratios, motor control); portfolio submission', url:null },
+        '8aer': {
+            label:   '8th Grade AE&R',
+            badge:   'VMS Bulldogs',
+            home:    '8AER/index.html',
+            portfolio: 'aer8th',
+            type:    'aer',
+            r: 196, g: 30, b: 58,
+            accent:  '#c41e3a'
         },
-    },
+        dbl: {
+            label:   'Design & Build Lab',
+            badge:   'VHS Bulldogs',
+            home:    'DBL/index.html',
+            portfolio: 'dbl',
+            type:    'dbl',
+            r: 8, g: 145, b: 178,   // teal
+            accent:  '#0891b2'
+        }
+    };
 
-    dbl: {
-        name: 'Design & Build Lab',
-        short: 'D&B Lab',
-        portfolio: 'Portfolio/index.html?track=dbl',
-        courseHub: 'DBL/index.html',
-        units: [
-            { num:1, title:'Engineering Design Process', url:U1+'index.html',
-              keys:['1.1','1.2','1.3','1.4','1.5','1.6','1.7'] },
-            { num:2, title:'CAD: Digital Modeling',      url:U2+'index.html',
-              keys:['2.1','2.2','2.3','2.4'] },
-            { num:3, title:'Shop Safety',                url:U3+'index.html',
-              keys:['3.1','3.2','3.3'] },
-        ],
-        lessonWeekOverride: { '3.1':6,'3.2':6,'3.3':6 },
-        dblProjects: [
-            { id:'P1', title:'3D Printed Fidget Spinner', weeks:'7–8',  desc:'Slice + print; post-process; assembly + spin test; portfolio photo' },
-            { id:'P2', title:'LED Sign / Wall Art',        weeks:'9–13', desc:'Group project: design → CNC/plasma cut → LED circuit → showcase' },
-            { id:'P3', title:'Custom Acrylic Ornament',    weeks:'14–16',desc:'CNC or laser engraving; LED light base kit; holiday showcase' },
-            { id:'P4', title:'Silicone Molds',             weeks:'17–20',desc:'CAD mold master → 3D print → pour silicone → cast and finish' },
-            { id:'P5', title:'Automated Plant Watering',   weeks:'21–27',desc:'Arduino + soil sensor + relay + pump; enclosure CAD; group demo' },
-            { id:'P6', title:'Capstone Project',           weeks:'28–38',desc:'Student-driven group project using skills from P1–P5' },
-        ],
-        weekContent: {
-            1:  { label:'Unit 1 — EDP', note:'Intro to DBL; EDP framework; client interview — fidget spinner design challenge; design statement', url:U1+'Lesson_01_Intro_to_Engineering_Design.html' },
-            2:  { label:'Unit 1 — EDP', note:'L1.6 Client Interview + Design Statement (fidget spinner brief); L1.7 Concept Sketching + Decision Matrix; L2.1 Kennedy F360 video (Fri)', url:U1+'Lesson_06_Client_Interview.html' },
-            3:  { label:'Unit 2 — CAD', note:'L2.2 Fidget Spinner modeling video; L2.3 Measurement Tools Workshop; L2.4 3D Printing — print spinner, measure bearing fit, iterate', url:U2+'Lesson_02_C1_Wheel_Hub.html' },
-            4:  { label:'Unit 2 — CAD', note:'Revolve/extrude features; bearing pocket dimensions (608 bearing: 22mm OD × 7mm deep); parametric constraints', url:U2+'index.html' },
-            5:  { label:'Unit 2 — CAD', note:'Add arm/grip features; model bearing cap; assemble + render; export for print', url:U2+'index.html' },
-            6:  { label:'Unit 3 — Safety', note:'3D printer safety + operator cert; hand tools; CNC router + plasma cutter awareness; Safety Quiz', url:U3+'Lesson_01_Shop_Safety_Fundamentals.html' },
-            7:  { label:'P1 — Fidget Spinner', note:'Slice spinner files; load print queue; manage active prints; post-process (remove supports, sand, finish)', url:null },
-            8:  { label:'P1 — Fidget Spinner', note:'Bearing press-fit + assembly; spin test + caliper check; photography; class showcase', url:null },
-            9:  { label:'P2 — LED Sign / Wall Art', note:'Group formation; design brief; concept sketch — name sign, wall art, or team logo', url:null },
-            10: { label:'P2 — LED Sign / Wall Art', note:'Finalize design; lay out in F360/vector; prepare CNC or plasma file', url:null },
-            11: { label:'P2 — LED Sign / Wall Art', note:'Cut substrate (CNC plywood or plasma steel); deburr, sand, prime, base coat', url:null },
-            12: { label:'P2 — LED Sign / Wall Art', note:'LED circuits: series/parallel, voltage drop, resistor selection; solder; wire to 12V; test', url:null },
-            13: { label:'P2 — LED Sign / Wall Art', note:'Attach hardware; final photo; group presentations (Mon–Tue — Thanksgiving week)', url:null },
-            14: { label:'P3 — Acrylic Ornament', note:'Choose ornament shape; design art/text; prepare CNC or laser engrave file', url:null },
-            15: { label:'P3 — Acrylic Ornament', note:'Cut + engrave acrylic; assemble LED light base kit; test; add hanging hardware', url:null },
-            16: { label:'P3 — Acrylic Ornament', note:'Finishing + photography; holiday showcase; S1 portfolio submission (P1–P3 complete)', url:null },
-            17: { label:'P4 — Silicone Molds', note:'Design mold master in F360 — coin, nameplate, or small relief (draft-angle aware); print', url:null },
-            18: { label:'P4 — Silicone Molds', note:'Build mold box (clay walls or printed frame); prep release agent', url:null },
-            19: { label:'P4 — Silicone Molds', note:'Mix and pour silicone; allow 24 hr cure', url:null },
-            20: { label:'P4 — Silicone Molds', note:'Demold silicone; pour casting (resin, plaster, or soap); sand and finish; photograph', url:null },
-            21: { label:'P5 — Automated Plant Watering', note:'Arduino IDE setup; upload Blink; digital I/O; read analog pin with analogRead()', url:null },
-            22: { label:'P5 — Automated Plant Watering', note:'Capacitive soil moisture sensor: calibrate wet/dry thresholds; print to serial monitor', url:null },
-            23: { label:'P5 — Automated Plant Watering', note:'Relay module + mini pump; threshold logic — if soil dry → pump on 3 sec', url:null },
-            24: { label:'P5 — Automated Plant Watering', note:'Enclosure design in F360: mount Arduino, relay, pump, reservoir; 3D print or cut panels', url:null },
-            25: { label:'P5 — Automated Plant Watering', note:'Full system integration: sensor in soil, all components in enclosure, test watering cycle', url:null },
-            26: { label:'P5 — Automated Plant Watering', note:'Iterate + refine (timing, threshold, leak check); circuit diagram; build log', url:null },
-            27: { label:'P5 — Automated Plant Watering', note:'Group presentations; peer review', url:null },
-            28: { label:'P6 — Capstone', note:'Group formation; brainstorm project ideas; teacher feasibility check — pitch due', url:null },
-            29: { label:'P6 — Capstone', note:'Design brief + concept development; materials list; teacher approval gate', url:null },
-            30: { label:'P6 — Capstone', note:'CAD / detailed design; identify fabrication methods; divide labor within group', url:null },
-            31: { label:'P6 — Capstone', note:'Build phase 1 — fabrication (cut, print, shape raw parts)', url:null },
-            32: { label:'P6 — Capstone', note:'Build phase 2 — assembly + wiring; mid-project progress check', url:null },
-            33: { label:'P6 — Capstone', note:'Test and iterate; troubleshoot; refine finish', url:null },
-            34: { label:'P6 — Capstone', note:'Final build complete; photography; prepare presentation (slides or demo board)', url:null },
-            35: { label:'Presentations', note:'Group presentations to class + invited audience; peer and teacher evaluation', url:null },
-            36: { label:'Portfolio', note:'Finalization: all projects documented, reflections written, self-grade review', url:null },
-            37: { label:'Buffer', note:'Make-up work; CI list projects; shop deep-clean', url:null },
-            38: { label:'Buffer', note:'Final grade review; equipment inventory; close out year', url:null },
-        },
-    },
-};
+    var UNITS = [
+        { n: 1, label: 'Unit 1', name: 'Engineering Design Process', path: 'Unit_01_Engineering_Design_Process/index.html', accent: '#c41e3a', r: 196, g: 30,  b: 58  },
+        { n: 2, label: 'Unit 2', name: 'CAD: Component Design',       path: 'Unit_02_CAD/index.html',                        accent: '#00d084', r: 0,   g: 208, b: 132 },
+        { n: 3, label: 'Unit 3', name: 'Shop Safety',                  path: 'Unit_03_Shop_Safety_and_Standard_Practices/index.html', accent: '#f59e0b', r: 245, g: 158, b: 11  },
+        { n: 4, label: 'Unit 4', name: 'Programming, Electronics & Sensors', path: 'Unit_04_Programming_Electronics_and_Sensors/index.html', accent: '#00d4ff', r: 0, g: 212, b: 255 },
+        { n: 5, label: 'Unit 5', name: 'AI & Machine Learning',        path: 'Unit_05_Artificial_Intelligence/index.html',    accent: '#a855f7', r: 168, g: 85,  b: 247 },
+        { n: 6, label: 'Unit 6', name: 'Career Readiness',             path: 'Unit_06_Career_Ready_Practices/index.html',     accent: '#6366f1', r: 99,  g: 102, b: 241 },
+        { n: 7, label: 'Unit 7', name: 'Electrical Systems',           path: 'Unit_07_Electrical_Systems/index.html',         accent: '#f59e0b', r: 245, g: 158, b: 11  },
+        { n: 8, label: 'Unit 8', name: 'Mechanisms',                   path: 'Unit_08_Mechanisms/index.html',                 accent: '#4ade80', r: 74,  g: 222, b: 128 }
+    ];
 
-// ── Rendering ─────────────────────────────────────────────────────────────
-function renderThisWeek(cfg, w) {
-    const el = document.getElementById('thisWeekSection');
-    if (w === 0) {
-        el.innerHTML = `<div class="this-week">
-            <span class="week-badge pre-school">Before School</span>
-            <div class="this-week-body">
-                <div class="this-week-label">School starts August 31</div>
-                <div class="this-week-note">Get familiar with the hub — bookmark this page once you've selected your class.</div>
-            </div></div>`;
-        return;
-    }
-    if (w === -1) {
-        el.innerHTML = `<div class="this-week">
-            <span class="week-badge post-school">School Year Complete</span>
-            <div class="this-week-body">
-                <div class="this-week-label">2026–27 school year is over</div>
-                <div class="this-week-note">Nice work this year. Check your final portfolio grade.</div>
-            </div></div>`;
-        return;
-    }
-    const wc = cfg.weekContent[w] || { label:'Week ' + w, note:'', url:null };
-    const linkHtml = wc.url
-        ? `<a href="${wc.url}" class="this-week-link">Open this week's lesson →</a>`
-        : '';
-    el.innerHTML = `<div class="this-week">
-        <span class="week-badge">Week ${w}</span>
-        <div class="this-week-body">
-            <div class="this-week-label">${wc.label}</div>
-            <div class="this-week-note">${wc.note}</div>
-            ${linkHtml}
-        </div></div>`;
-}
+    var DBL_PROJECTS = [
+        { n: 'P1', name: 'Fidget Spinner',      icon: '🌀', path: 'DBL/projects/p1-fidget-spinner.html' },
+        { n: 'P2', name: 'Christmas Ornament',  icon: '🎄', path: 'DBL/projects/p2-christmas.html'      },
+        { n: 'P3', name: 'LED Sign / Wall Art', icon: '💡', path: 'DBL/projects/p3-led-sign.html'       },
+        { n: 'P4', name: 'Silicone Mold Making',icon: '🧪', path: 'DBL/projects/p4-molds.html'          },
+        { n: 'P5', name: 'Useless Box',         icon: '📦', path: 'DBL/projects/p5-useless-box.html'    },
+        { n: 'P6', name: 'Capstone',            icon: '🏆', path: '#', coming: true                      }
+    ];
 
-function renderSidebar(cfg, w) {
-    const sb = document.getElementById('sidebar');
-    let html = `<div class="sidebar-label">Course Content</div>`;
-    cfg.units.forEach(u => {
-        const isActive = cfg.weekContent[w] && cfg.weekContent[w].label.includes('Unit ' + u.num);
-        html += `<a href="${u.url || '#'}" class="sidebar-link${isActive ? ' active-unit' : ''}">
-            <span>Unit ${u.num} &mdash; ${u.title}</span>
-            ${isActive ? '<span class="pill pill-now">now</span>' : ''}
-        </a>`;
-    });
-    if (cfg.dblProjects) {
-        html += `<div class="sidebar-label" style="margin-top:10px;">Projects</div>`;
-        cfg.dblProjects.forEach(p => {
-            html += `<a class="sidebar-link disabled"><span>${p.id} &mdash; ${p.title}</span></a>`;
-        });
-    }
-    html += `<div class="sidebar-label" style="margin-top:18px;">Tools</div>
-        <a href="resources/pico2w-reference.html" class="sidebar-link">Pico 2W Reference</a>
-        <a href="ai-tutor.html" class="sidebar-link">AI Tutor</a>
-        <a href="${cfg.courseHub}" class="sidebar-link">Course Overview</a>`;
-    sb.innerHTML = html;
-}
+    var DBL_REF_UNITS = [
+        { n: 1, label: 'Unit 1', name: 'EDP',         path: 'Unit_01_Engineering_Design_Process/index.html', accent: '#c41e3a' },
+        { n: 2, label: 'Unit 2', name: 'CAD',         path: 'Unit_02_CAD/index.html',                        accent: '#00d084' },
+        { n: 3, label: 'Unit 3', name: 'Shop Safety', path: 'Unit_03_Shop_Safety_and_Standard_Practices/index.html', accent: '#f59e0b' },
+        { n: 7, label: 'Unit 7', name: 'Electrical Systems', path: 'Unit_07_Electrical_Systems/index.html',  accent: '#f59e0b' },
+        { n: 8, label: 'Unit 8', name: 'Mechanisms',  path: 'Unit_08_Mechanisms/index.html',                 accent: '#4ade80' }
+    ];
 
-function renderCard(key, cfg, currentWeek) {
-    const l = Object.assign({}, LESSONS[key]);
-    // Apply per-track week overrides
-    if (cfg.lessonWeekOverride && cfg.lessonWeekOverride[key] !== undefined) {
-        l.week = cfg.lessonWeekOverride[key];
-    }
-    const isBuilt  = !!l.lesson;
-    const isCurrent = isBuilt && l.week === currentWeek;
-    const cardClass = isBuilt ? (isCurrent ? 'lesson-card current-week' : 'lesson-card') : 'lesson-card grey-card';
-    const numStyle  = isBuilt ? '' : 'color:#444';
-    const lessonChip  = isBuilt ? '<span class="chip chip-lesson">Lesson</span>' : '<span class="chip chip-grey">Coming Soon</span>';
-    const actChip     = l.activity ? '<span class="chip chip-activity">Activity</span>' : '';
-    const currentChip = isCurrent ? '<span class="chip chip-now">This Week</span>' : '';
-    const weekDot     = l.week ? `<span class="week-dot">Wk ${l.week}</span>` : '';
-    const href  = isBuilt ? ` href="${l.lesson}"` : '';
-    const tag   = isBuilt ? 'a' : 'div';
-    return `<${tag}${href} class="${cardClass}">
-        ${weekDot}
-        <div class="lesson-num" style="${numStyle}">L${l.num}</div>
-        <div class="lesson-title">${l.title}</div>
-        <div class="lesson-desc">${l.desc}</div>
-        <div class="card-chips">${lessonChip}${actChip}${currentChip}</div>
-    </${tag}>`;
-}
+    /* ── Helpers ─────────────────────────────────────────── */
 
-function renderUnits(cfg, currentWeek) {
-    const container = document.getElementById('unitSections');
-    let html = '';
-    cfg.units.forEach(u => {
-        const isActive = cfg.weekContent[currentWeek] && cfg.weekContent[currentWeek].label.includes('Unit ' + u.num);
-        const badgeClass = isActive ? 'unit-badge unit-badge-active' : 'unit-badge unit-badge-grey';
-        const titleStyle = isActive ? '' : 'color:#666';
-        const cards = u.keys.map(k => renderCard(k, cfg, currentWeek)).join('');
-        html += `<div class="unit-section">
-            <div class="unit-header">
-                <span class="${badgeClass}">Unit ${u.num}</span>
-                <span class="unit-title" style="${titleStyle}">${u.title}</span>
-            </div>
-            <div class="lesson-grid">${cards}</div>
-        </div>`;
-    });
-    // DBL projects section
-    if (cfg.dblProjects) {
-        const currentProjectLabel = cfg.weekContent[currentWeek] ? cfg.weekContent[currentWeek].label : '';
-        html += `<div class="unit-section">
-            <div class="unit-header">
-                <span class="unit-badge unit-badge-grey">Projects</span>
-                <span class="unit-title" style="color:#666">Project Sequence</span>
-            </div>
-            <div class="lesson-grid">
-            ${cfg.dblProjects.map(p => {
-                const isCur = currentProjectLabel.includes(p.id);
-                return `<div class="lesson-card${isCur ? ' current-week' : ''}">
-                    <div class="week-dot" style="${isCur ? 'color:#00d4ff;font-weight:700' : ''}">Wks ${p.weeks}</div>
-                    <div class="lesson-num" style="color:#ff9500">${p.id}</div>
-                    <div class="lesson-title">${p.title}</div>
-                    <div class="lesson-desc">${p.desc}</div>
-                    <div class="card-chips">${isCur ? '<span class="chip chip-now">This Week</span>' : '<span class="chip chip-activity">Project</span>'}</div>
-                </div>`;
-            }).join('')}
-            </div>
-        </div>`;
-    }
-    container.innerHTML = html;
-}
-
-function renderQuickLinks(cfg) {
-    const el = document.getElementById('quickLinks');
-    el.innerHTML = `
-        <a href="resources/pico2w-reference.html" class="resource-link">Pico 2W Reference</a>
-        <a href="ai-tutor.html" class="resource-link">AI Tutor</a>
-        <a href="${cfg.courseHub}" class="resource-link">Course Overview ↗</a>`;
-}
-
-function init() {
-    const track = new URLSearchParams(window.location.search).get('track');
-    const cfg   = TRACKS[track];
-
-    if (!cfg) {
-        document.getElementById('trackSelector').style.display = 'block';
-        document.title = 'Select Your Class — VHS CTE';
-        return;
+    function param(key) {
+        return new URLSearchParams(location.search).get(key);
     }
 
-    const w = getCurrentWeek();
-    document.getElementById('hubLayout').style.display = 'grid';
-    document.getElementById('headerClassName').textContent = cfg.name;
-    document.title = cfg.short + ' — VHS CTE Hub';
-    document.getElementById('headerPortfolioBtn').href = cfg.portfolio;
-    document.getElementById('portfolioCTA').href      = cfg.portfolio;
+    function makeCard(href, accentHex, r, g, b, numText, nameText, isCurrent, icon, isProject, isComingSoon) {
+        var a = document.createElement(isComingSoon ? 'div' : 'a');
+        if (!isComingSoon) a.href = href;
+        a.className = 'unit-card' + (isProject ? ' project-card' : '') + (isComingSoon ? ' card-coming' : '');
+        a.style.setProperty('--card-accent', accentHex);
+        a.style.setProperty('--card-bg', 'rgba(' + r + ',' + g + ',' + b + ',0.06)');
+        a.style.background = 'rgba(' + r + ',' + g + ',' + b + ',0.06)';
 
-    renderThisWeek(cfg, w);
-    renderSidebar(cfg, w);
-    renderUnits(cfg, w);
-    renderQuickLinks(cfg);
-}
+        var num = document.createElement('div');
+        num.className = 'card-num';
+        if (icon) num.textContent = icon + '  ' + numText;
+        else num.textContent = numText;
 
-init();
+        var name = document.createElement('div');
+        name.className = 'card-name';
+        name.textContent = nameText;
+
+        var arrow = document.createElement('div');
+        arrow.className = 'card-arrow';
+        arrow.textContent = isComingSoon ? 'Coming soon' : 'Open →';
+
+        a.appendChild(num);
+        a.appendChild(name);
+        a.appendChild(arrow);
+
+        if (isCurrent) {
+            var badge = document.createElement('div');
+            badge.className = 'card-badge';
+            badge.textContent = 'NOW';
+            a.appendChild(badge);
+        }
+
+        return a;
+    }
+
+    /* ── Render ──────────────────────────────────────────── */
+
+    function render(trackKey) {
+        var cfg = TRACKS[trackKey];
+        var current = parseInt(param('current'), 10) || 0;
+
+        // Top bar
+        var tb = document.getElementById('top-bar');
+        tb.style.background = 'linear-gradient(135deg, rgba(' + cfg.r + ',' + cfg.g + ',' + cfg.b + ',0.25) 0%, rgba(' + cfg.r + ',' + cfg.g + ',' + cfg.b + ',0.12) 100%)';
+        tb.style.borderBottom = '1px solid rgba(' + cfg.r + ',' + cfg.g + ',' + cfg.b + ',0.3)';
+        document.getElementById('school-badge').textContent = cfg.badge;
+        document.getElementById('course-name').textContent = cfg.label;
+
+        // Portfolio
+        var pb = document.getElementById('portfolio-btn');
+        pb.href = 'Portfolio/index.html?track=' + cfg.portfolio;
+
+        // Show correct section
+        document.getElementById('selector').style.display = 'none';
+        document.getElementById('hub').style.display = 'flex';
+        document.getElementById('hub').style.flexDirection = 'column';
+
+        if (cfg.type === 'aer') {
+            document.getElementById('aer-hub').style.display = 'block';
+            document.getElementById('dbl-hub').style.display = 'none';
+
+            var grid = document.getElementById('unit-grid');
+            grid.innerHTML = '';
+            UNITS.forEach(function (u) {
+                var isCurrent = (u.n === current);
+                var card = makeCard(u.path + '?track=' + trackKey, u.accent, u.r, u.g, u.b, u.label, u.name, isCurrent, null, false, false);
+                grid.appendChild(card);
+            });
+
+        } else {
+            document.getElementById('aer-hub').style.display = 'none';
+            document.getElementById('dbl-hub').style.display = 'block';
+
+            // Projects
+            var pgrid = document.getElementById('project-grid');
+            pgrid.innerHTML = '';
+            DBL_PROJECTS.forEach(function (p) {
+                var card = makeCard(p.path + (p.coming ? '' : '?track=dbl'), cfg.accent, cfg.r, cfg.g, cfg.b, p.n, p.name, false, p.icon, true, !!p.coming);
+                pgrid.appendChild(card);
+            });
+
+            // Reference units
+            var rrow = document.getElementById('ref-unit-row');
+            rrow.innerHTML = '';
+            DBL_REF_UNITS.forEach(function (u) {
+                var chip = document.createElement('a');
+                chip.href = u.path + '?track=dbl';
+                chip.className = 'ref-chip';
+                chip.innerHTML = '<span class="ref-chip-num" style="color:' + u.accent + '">' + u.label + '</span>' + u.name;
+                rrow.appendChild(chip);
+            });
+        }
+    }
+
+    /* ── Track management ────────────────────────────────── */
+
+    function selectTrack(key) {
+        localStorage.setItem('cteTrack', key);
+        render(key);
+    }
+
+    function resetTrack() {
+        localStorage.removeItem('cteTrack');
+        document.getElementById('hub').style.display = 'none';
+        document.getElementById('selector').style.display = 'flex';
+    }
+
+    window.selectTrack = selectTrack;
+    window.resetTrack  = resetTrack;
+
+    /* ── Init ────────────────────────────────────────────── */
+
+    var track = param('track') || localStorage.getItem('cteTrack');
+    if (track && TRACKS[track]) {
+        localStorage.setItem('cteTrack', track);
+        render(track);
+    }
+    // else: selector screen stays visible (default state)
+
+}());
 </script>
 </body>
 </html>
