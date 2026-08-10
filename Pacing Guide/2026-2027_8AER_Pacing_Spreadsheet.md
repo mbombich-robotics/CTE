@@ -23,10 +23,10 @@
 | 12 | Nov 16–20 | 5 | 4 — Programming | | Robot Driving Challenge: timed obstacle course; iterate and refine drive functions; intro to `utime.sleep_ms()` for precision timing | Programming Quiz; D: challenge score |
 | 13 | Nov 23–24 | 2 | 4 — Programming | 🟡 Thanksgiving week | Buffer / make-up; finish robot driving challenge submissions | |
 | — | Nov 25–28 | — | — | 🌿 Thanksgiving Break | | |
-| 14 | Nov 30–Dec 4 | 5 | 5 — Mechanisms | | Simple machines + mechanical advantage (POE 111/113); gear ratios — teacher-provided gear STL files; students print and assemble 2-stage gear train; calculate input/output RPM | D: gear ratio calculation sheet |
-| 15 | Dec 7–11 | 5 | 5 — Mechanisms | | CAD: students design a housing or output arm to hold teacher-provided gear train; print and assemble; measure actual vs. calculated MA | D: CAD housing file + reflection |
-| 16 | Dec 14–18 | 5 | 5 — Mechanisms | | 3D Print Holiday Project — design and print a small take-home item (ornament, keychain, small mechanism toy); teacher approves design before print | D: holiday print |
+| 14 | Nov 30–Dec 4 | 5 | 8 — Mechanisms | | Simple machines + mechanical advantage (POE 111/113); gear ratios — teacher-provided gear STL files; students print and assemble 2-stage gear train; calculate input/output RPM | D: gear ratio calculation sheet |
+| 15 | Dec 7–11 | 5 | 8 — Mechanisms | | CAD: students design a housing or output arm to hold teacher-provided gear train; print and assemble; measure actual vs. calculated MA | D: CAD housing file + reflection |
+| 16 | Dec 14–18 | 5 | 8 — Mechanisms | | 3D Print Holiday Project — design and print a small take-home item (ornament, keychain, small mechanism toy); teacher approves design before print | D: holiday print |
 | — | Dec 21–Jan 3 | — | — | 🌿 Winter Break | | |
-| 17 | Jan 4–8 | 5 | 5 — Mechanisms | | Pulleys and motion conversion (POE 114/122): belt/chain drive ratios; teacher-provided pulley files; students print and build pulley system; CAD linkage or crank arm | D: pulley ratio calculation + CAD file |
-| 18 | Jan 11–15 | 5 | 5 — Mechanisms | ⚡ Jan 13 (20-min period) | Mechanism showcase: mount gear or pulley system to robot frame or stand; photograph and document for portfolio; peer review | D: portfolio evidence (photo + caption) |
+| 17 | Jan 4–8 | 5 | 8 — Mechanisms | | Pulleys and motion conversion (POE 114/122): belt/chain drive ratios; teacher-provided pulley files; students print and build pulley system; CAD linkage or crank arm | D: pulley ratio calculation + CAD file |
+| 18 | Jan 11–15 | 5 | 8 — Mechanisms | ⚡ Jan 13 (20-min period) | Mechanism showcase: mount gear or pulley system to robot frame or stand; photograph and document for portfolio; peer review | D: portfolio evidence (photo + caption) |
 | 19 | Jan 18–21 | 3 | Review | 🔴 MLK Day Jan 18 · Last student day Thu Jan 21 · Records Day Jan 22 (no students) | Midterm Exam (written: EDP, CAD concepts, gear/pulley ratios, motor control); portfolio submission and grade review | Midterm Exam; Portfolio complete |

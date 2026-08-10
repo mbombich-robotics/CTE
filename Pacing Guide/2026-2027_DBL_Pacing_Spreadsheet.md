@@ -12,7 +12,7 @@
 | P2 | Christmas Ornament / Gift | Individual | Multi-color 3D print, LED circuits (Unit 7) |
 | P3 | LED Sign / Wall Art | Individual | xTool laser/CNC, ATtiny85, soldering |
 | P4 | Silicone Mold Making | Individual | CAD, Smooth-On pour, soap/wax casting |
-| P5 | TBD | TBD | TBD |
+| P5 | Useless Box | Individual | Electronics, switch wiring, servo control, mechanism CAD |
 | P6 | Capstone | Individual or small group | Student-driven, integrated skills |
 
 ---
@@ -50,9 +50,9 @@
 | 28 | Mar 22–25 | 3 | 8 — Mechanisms | 🟡 🔴 ½-day Records Day Mar 25 · Mar 26 Spring Break starts | L8.8 Linkages (four-bar, DOF, Fran's gate latch); L8.9 Types of Motion (5 converting mechanisms) | |
 | — | Mar 27–Apr 4 | — | — | 🌿 Spring Break | | |
 | 29 | Apr 5–9 | 5 | 8 — Mechanisms | | L8.10 Fix Fran's Farm capstone: choose a challenge (hay pulley / mill gear train / gate latch), EDP sprint, investor pitch presentation | Unit 8 Quiz; D: Fix Fran's Farm deliverable |
-| 30 | Apr 12–16 | 5 | P5 — TBD | | TBD | |
-| 31 | Apr 19–23 | 5 | P5 — TBD | | TBD | |
-| 32 | Apr 26–30 | 5 | P5 — TBD | | TBD | |
+| 30 | Apr 12–16 | ~2 | P5 — Useless Box | 🧪 State testing Tue–Thu | Project intro (limited time); design brief; how does the arm flip the switch? Concept sketches for servo linkage or cam mechanism | D: design brief + concept sketch |
+| 31 | Apr 19–23 | 5 | P5 — Useless Box | | F360: box body, lid, servo mount, arm mechanism; assemble in F360; check arm sweep clearance; slice + queue print | D: CAD files approved |
+| 32 | Apr 26–30 | 5 | P5 — Useless Box | | Wire toggle switch + servo to Pico 2W; MicroPython servo control on switch trigger; assemble + test; iterate arm geometry if needed; photography; portfolio | D: working useless box + portfolio photo |
 | 33 | May 3–7 | 5 | P6 — Capstone | | Capstone intro; student problem selection; design brief; teacher feasibility check | D: project idea pitch |
 | 34 | May 10–14 | 5 | P6 — Capstone | | CAD + detailed design; fabrication methods identified; teacher approval gate | D: design brief approved + CAD |
 | 35 | May 17–21 | 5 | P6 — Capstone | | Build phase — fabrication, assembly, wiring (if applicable); mid-project check | D: progress check |

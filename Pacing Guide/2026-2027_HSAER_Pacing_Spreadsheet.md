@@ -23,7 +23,7 @@
 | **13** | **Nov 23–24** | **2** | **4 — Programming** | **🟡 Mon–Tue only** | **L4.3 (Functions) + A4.3 (SOS with Functions); begin L4.4 (Digital Input)** | |
 | — | Nov 25–28 | — | — | 🌿 Thanksgiving Break | | |
 | **14** | **Nov 30–Dec 4** | **5** | **4 — Programming** | | **Finish L4.4 (Digital Input) + A4.4 (Switches); L4.5 (PWM) + A4.5** | |
-| **15** | **Dec 7–11** | **5** | **4 — Programming** | | **L4.6 (Motor Control) + A4.6; Programming Quiz** | **D41: Programming Basics Q&A; Programming Quiz** |
+| **15** | **Dec 7–11** | **5** | **4 — Programming** | | **L4.6 (Motor Control) + A4.6; Programming Quiz** | **D51: Programming Basics Q&A; Programming Quiz** |
 | 16 | Dec 14–18 | 5 | 3D Print Holiday Project | | Students design and print a small item to take home — ornament, keychain, name plate, or similar; student chooses and customizes | |
 | — | Dec 21–Jan 3 | — | — | 🌿 Winter Break | | |
 
@@ -46,19 +46,20 @@
 | 20 | Jan 25–29 | 5 | Ultrasonic | S2 begins Jan 25 | I2C ultrasonic via TCA9548A mux (3 sensors); distance measurement; obstacle detection logic | |
 | 21 | Feb 1–5 | 5 | Wall Following | | Maintain fixed distance from a wall using ultrasonic sensors; proportional correction | |
 | 22 | Feb 8–12 | 5 | Line Following | | 5-sensor IR array; per-sensor threshold calibration; binary line following | |
-| 23 | Feb 15–19 | 4 | Line Following | 🔴 Presidents Day Feb 15 | Weighted-sensor error; PID control; tune + course practical | D: Line Following |
-| 24 | Feb 22–26 | 4 | 5 — AI & ML | 🔴 Feb 26 mid-winter break | L5.1 What Is AI (Day 1); L5.2 Ethics in AI (Day 2); Activity 5.3 Teachable Machine (Days 3–4) — quiz held Day 1 of Week 25 | AI Quiz |
-| 25 | Mar 1–5 | 5 | Mechanisms | | **AI Quiz (Day 1)**; Simple machines intro; mechanical advantage + efficiency (POE 111/113) | |
-| 26 | Mar 8–12 | 5 | Mechanisms | ⚡ Mar 10 (20-min period) | Pulley systems — fixed, movable, compound (POE 114); intro to gear ratios (POE 115) | |
-| 27 | Mar 15–19 | 5 | Mechanisms | | Gear ratios + multi-stage gear trains (POE 115 complete); converting motion — cams, cranks, linkages, rotary→linear (POE 122) | |
-| 28 | Mar 22–25 | ~3.5 | Mechanisms | 🟡 🔴 Mar 25 ½-day Records Day · Mar 26 spring break begins | Mechanism design challenge | |
+| 23 | Feb 15–19 | 4 | Line Following | 🔴 Presidents Day Feb 15 | Weighted-sensor error; PID control; tune + course practical | D52: Line Following Practical |
+| 24 | Feb 22–26 | 4 | 5 — AI & ML | 🔴 Feb 26 mid-winter break | L5.1 What Is AI (Day 1); L5.2 Ethics in AI (Day 2); L5.3 Teachable Machine (Days 3–4) — quiz held Day 1 of Week 25 | AI Quiz |
+| 25 | Mar 1–5 | 5 | 7 — Electrical Systems | | **AI Quiz (Day 1)**; L7.1 Intro to Electricity (charge, voltage, current); L7.2 Ohm's Law + resistance; L7.3 Series vs. parallel circuits | |
+| 26 | Mar 8–12 | 5 | 7 — Electrical Systems | ⚡ Mar 10 (20-min period) | L7.4 Using a Multimeter; L7.5 Breadboarding basics; L7.6 LED Circuits; L7.7 Circuit Troubleshooting; **Electrical Quiz** | Electrical Quiz |
+| 27 | Mar 15–19 | 5 | 8 — Mechanisms | | L8.1 Simple Machines (6 machines, IMA); L8.2 Mechanical Advantage (IMA vs AMA, lever classes); L8.3 Work, Power & Efficiency | |
+| 28 | Mar 22–25 | ~3.5 | 8 — Mechanisms | 🟡 🔴 Mar 25 ½-day Records Day · Mar 26 spring break begins | L8.4 Pulleys — fixed, movable, compound; L8.5 Gears — gear ratios, multi-stage trains | |
 | — | Mar 26–Apr 4 | — | — | 🌿 Spring Break | | |
-| 29 | Apr 5–9 | 5 | Servo Build | | Project intro + design brief; servo control review; begin build | |
-| 30 | Apr 12–16 | ~2 | Servo Build | 🧪 State testing Tue–Thu | Build (limited time) | |
-| 31 | Apr 19–23 | 5 | Servo Build | | Build + test + iterate | |
-| 32 | Apr 26–30 | 5 | Servo Build | | Final demo + portfolio submission | D: Servo Mechanism |
-| 33 | May 3–7 | 5 | Capstone | ⚡ May 5 (20-min period) | Open-ended challenge or improvement project | |
-| 34 | May 10–14 | 5 | Capstone | | Portfolio completion push; all deliverables finalized | |
+| 29 | Apr 5–9 | 5 | 8 — Mechanisms | | L8.6 Maximizing Power (motor curves, stall torque); L8.7 Tug of War design-build-test; L8.8 Linkages (four-bar, DOF) | |
+| 30 | Apr 12–16 | ~2 | 8 — Mechanisms | 🧪 State testing Tue–Thu | L8.9 Types of Motion; L8.10 Fix Fran's Farm capstone challenge; **Unit 8 Quiz** | Unit 8 Quiz |
+| 31 | Apr 19–23 | 5 | Servo Build | | Project intro + design brief; servo control review; begin build | |
+| 32 | Apr 26–30 | 5 | Servo Build | | Build + test + iterate | |
+| 33 | May 3–7 | 5 | Servo Build | ⚡ May 5 (20-min period) | Final demo + portfolio submission | D53: Servo Build Project |
+| 34 | May 10–14 | 5 | Capstone | | Open-ended challenge or improvement project | |
+| 35 | May 17–21 | 5 | Portfolio / Review | 🎓 May 20 last day for seniors | Portfolio completion push; all deliverables finalized; EDP, CAD, safety, programming review | |
 | 35 | May 17–21 | 5 | Review | 🎓 May 20 last day for seniors | EDP, CAD, safety, programming review | |
 | 36 | May 24–28 | 5 | Final | | Final exam | |
 | 37 | May 31–Jun 4 | 4 | Wrap-up | 🔴 Memorial Day May 31 | Return exams; wrap-up projects; demos | |
@@ -76,5 +77,6 @@ Students who completed the course in 2025–26 have already seen basic ultrasoni
 | 20–21 | Ultrasonic + obstacle avoidance | IMU heading hold integrated with obstacle avoidance; Wi-Fi remote control |
 | 22–23 | Line following (5-sensor array, PID) | Remote PID tuning via Wi-Fi; stream live sensor data to browser dashboard |
 | 24 | AI & Machine Learning | Same as 1st year — Teachable Machine is standalone, no LEO integration |
-| 25–27 | Scanner robot | Autonomous navigation using IMU heading + scanner; map obstacles to OLED |
-| 29–32 | Claw project | Claw with Wi-Fi control interface; telemetry logging |
+| 25–26 | 7 — Electrical Systems | Same as 1st year — electrical fundamentals are new for everyone |
+| 27–30 | 8 — Mechanisms | Same as 1st year; strong students extend with full mechanism design challenge |
+| 31–33 | Servo Build Project | Servo mechanism with Wi-Fi control interface; telemetry logging to browser dashboard |
