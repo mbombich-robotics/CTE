@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.11.0';
+const BACKEND_VERSION = 'v2.12.0';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2523,6 +2523,7 @@ design_statement (max 4): How well the statement synthesizes user, problem, crit
     'FEEDBACK TONE:\n' +
     'Write in an encouraging, specific voice. Speak directly to the student using "you." Lead with what they did well, then give one concrete, actionable suggestion. Keep each feedback to 1–2 sentences.\n\n' +
     'IMPORTANT: The document may contain template instruction text in highlighted boxes, or lines starting with "📋 INSTRUCTION" or "DELETE THIS BOX." Ignore all template/instruction text — grade only what the student actually wrote.\n\n' +
+    'INSTRUCTION BOX CHECK: After scoring, scan the document for any remaining text that starts with "📋 INSTRUCTION" or contains "delete this box." If any instruction boxes are still present, prepend this exact sentence to your problem_id feedback: "Reminder: delete the yellow instruction boxes before submitting — they should be gone before your teacher reviews your work. " (Then continue with your normal feedback for that criterion.)\n\n' +
     rubric + '\n\n' +
     'Return ONLY a valid JSON object — no markdown fences, no explanation. One entry per criterion key.\n\n' +
     'Format: {"problem_id": {"score": 3, "max": 4, "feedback": "..."}, "criteria_completeness": {"score": 4, "max": 4, "feedback": "..."}, ...}\n\n' +
@@ -2785,6 +2786,63 @@ function createDesignBriefTemplate() {
     for (var i = 0; i < 7; i++) sketchCell.appendParagraph('');
     sketchTable.getRow(0).setMinimumHeight(180);
   });
+
+  // ── Section 7: Decision Matrix ────────────────────────────────────────────
+  addSection('7', 'DECISION MATRIX', 'Evaluate your three concepts — then pick one',
+    '📋 INSTRUCTION — delete this box after reading\n' +
+    'Score each concept against each criterion from Section 3 using a 1–5 scale:\n' +
+    '5 = fully meets this criterion   3 = partially meets it   1 = barely addresses it\n' +
+    'Add each column. The highest total is your recommended choice. ' +
+    'You may choose a different concept if you have a good reason — explain it on the line below the table.');
+
+  var dmData = [
+    ['Criterion (copy from Section 3)', 'Concept A', 'Concept B', 'Concept C'],
+    ['1.', '', '', ''],
+    ['2.', '', '', ''],
+    ['3.', '', '', ''],
+    ['4.', '', '', ''],
+    ['TOTAL', '', '', '']
+  ];
+
+  var dmTable = body.appendTable(dmData);
+  dmTable.setBorderWidth(0.5);
+  dmTable.setColumnWidth(0, 230);
+  dmTable.setColumnWidth(1, 65);
+  dmTable.setColumnWidth(2, 65);
+  dmTable.setColumnWidth(3, 65);
+
+  // Style header row
+  var dmHeaderRow = dmTable.getRow(0);
+  for (var dh = 0; dh < 4; dh++) {
+    var dmHCell = dmHeaderRow.getCell(dh);
+    dmHCell.setBackgroundColor('#e8f0fe');
+    var dmHStyle = {};
+    dmHStyle[DocumentApp.Attribute.BOLD]            = true;
+    dmHStyle[DocumentApp.Attribute.FONT_SIZE]       = 10;
+    dmHStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#1a3461';
+    dmHCell.getChild(0).setAttributes(dmHStyle);
+    if (dh > 0) dmHCell.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+  }
+
+  // Style data rows
+  for (var dr = 1; dr < dmTable.getNumRows(); dr++) {
+    var isTotalRow = dr === dmTable.getNumRows() - 1;
+    for (var dc = 0; dc < 4; dc++) {
+      var dmCell = dmTable.getRow(dr).getCell(dc);
+      var dmStyle = {};
+      dmStyle[DocumentApp.Attribute.FONT_SIZE] = 10;
+      if (dc === 0 || isTotalRow) dmStyle[DocumentApp.Attribute.BOLD] = true;
+      dmCell.getChild(0).setAttributes(dmStyle);
+      if (isTotalRow) dmCell.setBackgroundColor('#f8f9fa');
+      if (dc > 0) {
+        dmCell.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+        dmTable.getRow(dr).setMinimumHeight(28);
+      }
+    }
+  }
+
+  body.appendParagraph('Selected concept: _______     Reason (if not highest score): _________________________________')
+    .setFontSize(10).setSpacingBefore(10);
 
   // ── Footer ────────────────────────────────────────────────────────────────
   body.appendHorizontalRule();
