@@ -610,6 +610,32 @@ function setStatus(msg, type) {
   statusMsg.className   = type || '';
 }
 
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// Apps Script can intermittently redirect POST→GET (returning plain text / HTML instead of JSON).
+// Retry up to 3 times with exponential backoff before giving up.
+async function postToServer(payload, retries) {
+  retries = retries || 3;
+  for (var attempt = 1; attempt <= retries; attempt++) {
+    var res  = await fetch(PHOTO_BOOTH_URL, {
+      method:  'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body:    JSON.stringify(payload)
+    });
+    var text = await res.text();
+    // Detect redirect response: Apps Script returned HTML or its own doGet plain text
+    if (text.charAt(0) !== '{') {
+      if (attempt < retries) {
+        setStatus('Retrying… (attempt ' + (attempt + 1) + ')');
+        await sleep(800 * attempt);
+        continue;
+      }
+      throw new Error('Server returned a redirect response after ' + retries + ' attempts. Try again in a moment.');
+    }
+    return JSON.parse(text);
+  }
+}
+
 btnUpload.addEventListener('click', async () => {
   const name      = inpName.value.trim();
   const studentId = inpEmail.value.trim().replace(/@.*/, ''); // strip domain if pasted
@@ -629,24 +655,21 @@ btnUpload.addEventListener('click', async () => {
 
   const uploaded = [];
 
-  // Upload each photo sequentially
+  // Upload each photo sequentially with a brief pause to avoid AS rate-limiting
   for (let i = 0; i < queue.length; i++) {
+    if (i > 0) await sleep(400); // brief pause between uploads
+
     const thumb = document.getElementById('thumb-' + i);
     if (thumb) thumb.classList.add('uploading');
     setStatus(`Uploading photo ${i + 1} of ${queue.length}…`);
 
     try {
-      const res  = await fetch(PHOTO_BOOTH_URL, {
-        method:  'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body:    JSON.stringify({
-          action:    'uploadPhoto',
-          name, subject,
-          imageData: queue[i].base64,
-          index:     i + 1
-        })
+      const data = await postToServer({
+        action:    'uploadPhoto',
+        name, subject, email,
+        imageData: queue[i].base64,
+        index:     i + 1
       });
-      const data = await res.json();
       if (!data.success) throw new Error(data.error || 'Upload failed');
 
       uploaded.push({ filename: data.filename, fileUrl: data.fileUrl });
@@ -663,12 +686,7 @@ btnUpload.addEventListener('click', async () => {
   // Send email
   setStatus('Sending email…');
   try {
-    const res  = await fetch(PHOTO_BOOTH_URL, {
-      method:  'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body:    JSON.stringify({ action: 'sendEmail', name, email, subject, files: uploaded })
-    });
-    const data = await res.json();
+    const data = await postToServer({ action: 'sendEmail', name, email, subject, files: uploaded });
     if (!data.success) throw new Error(data.error || 'Email failed');
   } catch (err) {
     setStatus('Photos uploaded but email failed: ' + err.message, 'error');
