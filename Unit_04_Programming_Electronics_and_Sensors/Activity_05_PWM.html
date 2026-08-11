@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="../favicon.svg">
-    <title>Activity 5.4 — PWM & LED Brightness</title>
+    <title>Activity 4.5 — PWM & LED Brightness</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -242,7 +242,7 @@
 
 <!-- ── SIDEBAR ── -->
 <nav class="sidebar">
-    <div class="sidebar-title">Activity 5.4</div>
+    <div class="sidebar-title">Activity 4.5</div>
     <a href="#part1"      class="nav-item active"><span class="nav-num">1</span> Brightness Levels</a>
     <a href="#part2"      class="nav-item"><span class="nav-num">2</span> Breathing LED</a>
     <a href="#part3"      class="nav-item"><span class="nav-num">3</span> set_brightness()</a>
@@ -252,18 +252,18 @@
     <div class="sidebar-links">
         <a href="Activity_05_PWM.html">↺ This page</a>
         <a href="../resources/pico2w-reference.html" target="_blank">Pico 2W Ref ↗</a>
-        <a href="Lesson_05_PWM.html">← Lesson 5.5</a>
+        <a href="Lesson_05_PWM.html">← Lesson 4.5</a>
     </div>
 </nav>
 
 <!-- ── MAIN ── -->
 <main>
     <div class="activity-header">
-        <h1>Activity 5.4 — PWM &amp; LED Brightness</h1>
+        <h1>Activity 4.5 — PWM &amp; LED Brightness</h1>
         <p style="color:#6272a4; margin-bottom:0;">Control an LED at multiple brightness levels, create a fade loop, then wrap it in a clean function. Raise your hand at each checkpoint before moving on.</p>
         <div class="header-meta">
             <span class="meta-tag meta-time">~30 minutes</span>
-            <span class="meta-tag meta-level">Lesson 5.4</span>
+            <span class="meta-tag meta-level">Lesson 4.5</span>
         </div>
     </div>
 
@@ -473,7 +473,7 @@ time.<span class="fn">sleep</span>(<span class="num">1</span>)</pre>
         <div class="callout callout-info">
             <div class="callout-icon">🔗</div>
             <div class="callout-body">
-                <strong>Preview: L5.5 Motor Control</strong>
+                <strong>Preview: L4.6 Motor Control</strong>
                 <p>In the next lesson, <code>drive_forward(speed)</code> uses this exact same pattern — it takes a 0–100 percentage and calls the motor driver's PWM at the right duty value. You're building the mental model now, in a context where you can see the result immediately.</p>
             </div>
         </div>
@@ -521,7 +521,7 @@ time.<span class="fn">sleep</span>(<span class="num">1</span>)</pre>
                     <span class="challenge-num">C3</span>
                     <span class="challenge-title">Button-Controlled Brightness</span>
                 </div>
-                <p>Use what you learned in L5.3. Use BTN1 (GP18) — the board already has a pull-up resistor built in, so the pin reads HIGH at rest and LOW when pressed. Each button press cycles the LED to the next brightness level: 0% → 25% → 50% → 75% → 100% → back to 0%.</p>
+                <p>Use what you learned in L4.4. Use BTN1 (GP18) — the board already has a pull-up resistor built in, so the pin reads HIGH at rest and LOW when pressed. Each button press cycles the LED to the next brightness level: 0% → 25% → 50% → 75% → 100% → back to 0%.</p>
                 <p>Hints: store the current level in a variable (0–4). On each button press, increment it and use <code>% 5</code> to wrap around. Map each level to a percentage: <code>levels = [0, 25, 50, 75, 100]</code>.</p>
             </div>
 
