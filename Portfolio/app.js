@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.7',
+    VERSION: 'v2.14.8',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -200,6 +200,7 @@ const DELIVERABLES = [
         title: 'C3 — Motor Sleeve Mount',
         unit: '02',
         week: 4,
+        tracks: ['hsaer'],
         phase: 'cad',
         type: 'googleDoc',
         description: 'Document your completed Motor Sleeve Mount. Track the dimensions that control the motor fit — sleeve bore diameter, T-slot channel dimensions, and face screw hole positions.',
@@ -215,6 +216,7 @@ const DELIVERABLES = [
         title: 'C4 — Robot Deck (Final)',
         unit: '02',
         week: 8,
+        tracks: ['hsaer'],
         phase: 'cad',
         type: 'googleDoc',
         description: 'Document your finalized Robot Deck. Track the key hole pattern dimensions and assembly evolution (v1-Base through v5-Final). Submit a full assembly screenshot with zero interference check collisions.',
@@ -230,6 +232,7 @@ const DELIVERABLES = [
         title: 'C5 — Omni Wheel Mount',
         unit: '02',
         week: 6,
+        tracks: ['hsaer'],
         phase: 'cad',
         type: 'googleDoc',
         description: 'Document your completed Omni Wheel Mount. Track the dimensions that control axle fit and arm spacing, and submit the mount constrained to the deck in your assembly.',
@@ -245,6 +248,7 @@ const DELIVERABLES = [
         title: 'C6 — IR Sensor Mount',
         unit: '02',
         week: 7,
+        tracks: ['hsaer'],
         phase: 'cad',
         type: 'googleDoc',
         description: 'Document your completed IR Sensor Mount. Track the dimensions that control sensor ground clearance and bracket geometry.',
@@ -260,6 +264,7 @@ const DELIVERABLES = [
         title: 'C7 — Ultrasonic Sensor Mount',
         unit: '02',
         week: 7,
+        tracks: ['hsaer'],
         phase: 'cad',
         type: 'googleDoc',
         description: 'Document your completed Ultrasonic Sensor Mount — the final component before the deck is locked. Track the sensor bore dimensions and L-bracket geometry.',
@@ -276,6 +281,7 @@ const DELIVERABLES = [
         title: 'Tool Safety Certifications',
         unit: '03',
         week: 10,
+        tracks: ['hsaer'],
         points: 50,
         phase: 'safety',
         description: 'Complete all required shop safety certifications before the build phase. Each certification requires passing the safety rules check and an observed hands-on demonstration with Mr. Bombich.',
@@ -294,6 +300,7 @@ const DELIVERABLES = [
         unit: '04',
         points: 80,
         phase: 'programming',
+        tracks: ['hsaer'],
         description: 'Answer Q1–Q5 from Activities 4.1, 4.2, 4.3, 4.4, and 4.5. Answer from memory — you may look up syntax in the Pico 2W Reference, but not back at the activity guides.',
         requirements: [
             '4.1 Q1: What does while True: do, and why does every robot program need one?',
@@ -331,6 +338,7 @@ const DELIVERABLES = [
         week: 23,
         points: 75,
         phase: 'linefollow',
+        tracks: ['hsaer'],
         description: 'Demonstrate PID-tuned line following on the course, then answer the reflection questions. Practical demonstration to Mr. Bombich must be completed before the end of Week 23.',
         requirements: [
             'Robot completes the course lap without losing the line (practical demonstration signed off by Mr. Bombich)',
@@ -348,6 +356,7 @@ const DELIVERABLES = [
         week: 32,
         points: 100,
         phase: 'servo',
+        tracks: ['hsaer'],
         description: 'Design, build, and program a mechanism driven by one or more servo motors. Final demo and submission due end of Week 32.',
         requirements: [
             'Design brief: problem statement, at least 3 measurable criteria, at least 2 constraints',
@@ -365,6 +374,7 @@ const DELIVERABLES = [
         week: null,
         points: 50,
         phase: 'ai',
+        tracks: ['hsaer'],
         description: 'Train a 3-class image classifier using Google Teachable Machine, deliberately build a biased model to observe its failure modes, then answer the reflection questions.',
         requirements: [
             'Name your 3 image classes and explain why each produces visually distinct training samples',
@@ -382,6 +392,7 @@ const DELIVERABLES = [
         title: 'Gear Ratio Calculation Sheet',
         unit: '08',
         week: 14,
+        tracks: ['aer8th'],
         phase: 'mechanisms',
         description: 'Calculate input and output RPM for a 2-stage gear train using teacher-provided gear STL files. Show all work for each stage.',
         requirements: [
@@ -397,6 +408,7 @@ const DELIVERABLES = [
         title: 'Mechanism CAD Housing + Reflection',
         unit: '08',
         week: 15,
+        tracks: ['aer8th'],
         phase: 'mechanisms',
         description: 'Design a housing or output arm in Fusion 360 to hold the teacher-provided gear train. Print, assemble, and document.',
         requirements: [
@@ -411,6 +423,7 @@ const DELIVERABLES = [
         title: 'Holiday 3D Print',
         unit: '08',
         week: 16,
+        tracks: ['aer8th'],
         phase: 'mechanisms',
         description: 'Design and print a small take-home item — ornament, keychain, name plate, or similar. Teacher approval required before printing.',
         requirements: [
@@ -424,6 +437,7 @@ const DELIVERABLES = [
         title: 'Pulley System — Ratio & CAD',
         unit: '08',
         week: 17,
+        tracks: ['aer8th'],
         phase: 'mechanisms',
         description: 'Calculate belt/chain drive ratios using teacher-provided pulley files, then design a CAD linkage or crank arm.',
         requirements: [
@@ -437,6 +451,7 @@ const DELIVERABLES = [
         title: 'Mechanism Showcase — Portfolio Evidence',
         unit: '08',
         week: 18,
+        tracks: ['aer8th'],
         phase: 'mechanisms',
         description: 'Photograph and document your gear or pulley system mounted to the robot frame or stand. Write a peer-reviewed caption.',
         requirements: [
@@ -1526,7 +1541,7 @@ function updateDashboardDeliverables() {
 
     list.innerHTML = unitGroups.map(u => {
         const unitDeliverables = DELIVERABLES.filter(d =>
-            d.unit === u.key && !d.hidden && !skipWeeks.includes(d.id)
+            d.unit === u.key && !d.hidden && !skipWeeks.includes(d.id) && isForCourse(d)
         );
         if (!unitDeliverables.length) return '';
         return `
@@ -1652,6 +1667,14 @@ function getCurrentPhase() {
     return { name: 'Final Demo', key: 'final' };
 }
 
+// Returns true if deliverable d should be shown for the current student's course.
+// Deliverables with no `tracks` array are visible to all tracks.
+function isForCourse(d) {
+    if (!d.tracks) return true;
+    const course = state.student?.course || URL_TRACK || 'hsaer';
+    return d.tracks.includes(course);
+}
+
 function calculatePoints() {
     let points = 0;
     Object.keys(state.weeklyReflections).forEach(week => {
@@ -1666,6 +1689,7 @@ function calculatePoints() {
         }
     });
     DELIVERABLES.forEach(d => {
+        if (!isForCourse(d)) return; // skip deliverables not for this track
         const deliverable = state.deliverables[d.id];
         if (deliverable?.status === 'completed') {
             // Use teacher grade if available, otherwise use default points
@@ -1719,7 +1743,7 @@ function updateUpcoming() {
         upcoming.push({ title: `${weekLabel(state.currentWeek)} Reflection`, due: 'Friday', points: 20, overdue: false });
     }
 
-    const currentDeliverable = DELIVERABLES.find(d => !d.hidden && d.week === state.currentWeek);
+    const currentDeliverable = DELIVERABLES.find(d => !d.hidden && isForCourse(d) && d.week === state.currentWeek);
     if (currentDeliverable && !currentDeliverable.optional
             && !state.config.skipDeliverableWeeks.includes(currentDeliverable.id)
             && state.deliverables[currentDeliverable.id]?.status !== 'completed') {
@@ -1731,7 +1755,7 @@ function updateUpcoming() {
             upcoming.unshift({ title: `${weekLabel(week)} Reflection`, due: 'OVERDUE', points: 20, overdue: true });
         }
         // Check for overdue deliverables from previous weeks (skip optional and skipped weeks)
-        const overdueDeliverable = DELIVERABLES.find(d => !d.hidden && d.week === week);
+        const overdueDeliverable = DELIVERABLES.find(d => !d.hidden && isForCourse(d) && d.week === week);
         if (overdueDeliverable && !overdueDeliverable.optional
                 && !state.config.skipDeliverableWeeks.includes(overdueDeliverable.id)
                 && !!state.config.deliverableDueDates[overdueDeliverable.id]
@@ -1802,7 +1826,7 @@ function updateDeliverablesList() {
     const activePhase = document.querySelector('.phase-tab.active')?.dataset.phase || 'all';
 
     const filtered = (activePhase === 'all' ? DELIVERABLES : DELIVERABLES.filter(d => d.phase === activePhase))
-        .filter(d => !d.hidden && !state.config.skipDeliverableWeeks.includes(d.id));
+        .filter(d => !d.hidden && !state.config.skipDeliverableWeeks.includes(d.id) && isForCourse(d));
 
     if (activePhase === 'all') {
         const unitGroups = [
