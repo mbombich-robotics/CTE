@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.13.0';
+const BACKEND_VERSION = 'v2.14.0';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2511,7 +2511,7 @@ constraints (max 4): Specificity of constraints. 4=3 or more specific, realistic
 
 design_statement (max 4): How well the statement synthesizes user, problem, criteria, and constraints into a goal. 4=names user and problem, references criteria and constraints, sets a clear goal without prescribing a specific design; 3=most elements present, clear goal stated; 2=partially synthesized, missing user, constraints, or goal; 1=generic restatement of the problem only; 0=blank.
 
-decision_matrix (max 4): Completeness and quality of the Section 7 decision matrix. 4=all criteria scored for all three concepts, totals calculated, concept selected — if selection differs from highest total a reason is given; 3=all criteria scored and totals present, concept selected but no reason given for any discrepancy; 2=matrix partially filled — missing scores for one or more concepts, or totals absent; 1=matrix started but mostly empty; 0=blank or section missing entirely.`;
+decision_matrix (max 4): Completeness and mathematical correctness of the Section 7 weighted decision matrix. 4=all criteria have a weight (1–3), every concept cell shows a weight×score product, weighted totals are correct (verify by spot-checking: weight × score = cell value, column sum = total), concept is selected and — if selection differs from highest total — a reason is given; 3=weights and scores present, totals calculated, concept selected, but one arithmetic error or missing reason; 2=matrix partially filled — weights or scores missing for one or more rows/concepts, or totals absent; 1=matrix started but mostly empty or weights ignored (raw scores only, no multiplication shown); 0=blank or section missing entirely.`;
 
     criteriaKeys = ['problem_id', 'criteria_completeness', 'criteria_quality', 'constraints', 'design_statement', 'decision_matrix'];
 
@@ -2792,35 +2792,38 @@ function createDesignBriefTemplate() {
   // ── Section 7: Decision Matrix ────────────────────────────────────────────
   addSection('7', 'DECISION MATRIX', 'Evaluate your three concepts — then pick one',
     '📋 INSTRUCTION — delete this box after reading\n' +
-    'Score each concept against each criterion from Section 3 using a 1–5 scale:\n' +
-    '5 = fully meets this criterion   3 = partially meets it   1 = barely addresses it\n' +
-    'Add each column. The highest total is your recommended choice. ' +
-    'You may choose a different concept if you have a good reason — explain it on the line below the table.');
+    'Step 1 — Copy your criteria from Section 3 into the Criterion column.\n' +
+    'Step 2 — Assign a Weight to each criterion: 1 = nice to have, 2 = important, 3 = must have.\n' +
+    'Step 3 — Score each concept against each criterion: 5 = fully meets it, 3 = partially, 1 = barely.\n' +
+    'Step 4 — For each cell multiply: Weight × Score. Write the product in the cell.\n' +
+    'Step 5 — Add each concept column and write the total. Circle the highest — that is your recommended concept.\n' +
+    'You may choose a different concept if you have a good reason — explain it on the line below.');
 
   var dmData = [
-    ['Criterion (copy from Section 3)', 'Concept A', 'Concept B', 'Concept C'],
-    ['1.', '', '', ''],
-    ['2.', '', '', ''],
-    ['3.', '', '', ''],
-    ['4.', '', '', ''],
-    ['TOTAL', '', '', '']
+    ['Criterion (copy from Section 3)', 'Weight\n(1–3)', 'Concept A\nWt × Score', 'Concept B\nWt × Score', 'Concept C\nWt × Score'],
+    ['1.', '', '', '', ''],
+    ['2.', '', '', '', ''],
+    ['3.', '', '', '', ''],
+    ['4.', '', '', '', ''],
+    ['WEIGHTED TOTAL', '—', '', '', '']
   ];
 
   var dmTable = body.appendTable(dmData);
   dmTable.setBorderWidth(0.5);
-  dmTable.setColumnWidth(0, 230);
-  dmTable.setColumnWidth(1, 65);
-  dmTable.setColumnWidth(2, 65);
-  dmTable.setColumnWidth(3, 65);
+  dmTable.setColumnWidth(0, 195);
+  dmTable.setColumnWidth(1, 48);
+  dmTable.setColumnWidth(2, 72);
+  dmTable.setColumnWidth(3, 72);
+  dmTable.setColumnWidth(4, 72);
 
   // Style header row
   var dmHeaderRow = dmTable.getRow(0);
-  for (var dh = 0; dh < 4; dh++) {
+  for (var dh = 0; dh < 5; dh++) {
     var dmHCell = dmHeaderRow.getCell(dh);
     dmHCell.setBackgroundColor('#e8f0fe');
     var dmHStyle = {};
-    dmHStyle[DocumentApp.Attribute.BOLD]            = true;
-    dmHStyle[DocumentApp.Attribute.FONT_SIZE]       = 10;
+    dmHStyle[DocumentApp.Attribute.BOLD]             = true;
+    dmHStyle[DocumentApp.Attribute.FONT_SIZE]        = 9;
     dmHStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#1a3461';
     dmHCell.getChild(0).setAttributes(dmHStyle);
     if (dh > 0) dmHCell.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER);
@@ -2829,7 +2832,7 @@ function createDesignBriefTemplate() {
   // Style data rows
   for (var dr = 1; dr < dmTable.getNumRows(); dr++) {
     var isTotalRow = dr === dmTable.getNumRows() - 1;
-    for (var dc = 0; dc < 4; dc++) {
+    for (var dc = 0; dc < 5; dc++) {
       var dmCell = dmTable.getRow(dr).getCell(dc);
       var dmStyle = {};
       dmStyle[DocumentApp.Attribute.FONT_SIZE] = 10;
@@ -2843,7 +2846,7 @@ function createDesignBriefTemplate() {
     }
   }
 
-  body.appendParagraph('Selected concept: _______     Reason (if not highest score): _________________________________')
+  body.appendParagraph('Selected concept: _______     Reason (if different from highest weighted total): _____________________')
     .setFontSize(10).setSpacingBefore(10);
 
   // ── Footer ────────────────────────────────────────────────────────────────
