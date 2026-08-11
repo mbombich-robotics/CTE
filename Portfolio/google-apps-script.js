@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.0';
+const BACKEND_VERSION = 'v2.14.1';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2515,6 +2515,22 @@ decision_matrix (max 4): Completeness and mathematical correctness of the Sectio
 
     criteriaKeys = ['problem_id', 'criteria_completeness', 'criteria_quality', 'constraints', 'design_statement', 'decision_matrix'];
 
+  } else if (deliverableId === 13) {
+    // ── D13: Completed Component ───────────────────────────────────────────
+    rubric = `RUBRIC — COMPLETED COMPONENT (5 criteria, 4 pts each):
+
+key_dimensions (max 4): Quality and specificity of the key dimensions table in Section 1. 4=4–5 dimensions with specific target values; names clearly describe what each controls (e.g., M3 clearance hole, M8 bore, counterbore depth); 3=3 dimensions with target values; 2=2–3 dimensions listed but targets vague or missing; 1=1–2 dimensions, no targets; 0=blank.
+
+version_log (max 4): Completeness and specificity of the version log in Section 2. 4=every version row has all measurements AND a specific note on what changed and why (e.g., "bore was 0.2 mm too small, increased to 8.6 mm to get press fit"); 3=all versions have measurements, notes present but some lack specifics; 2=most versions logged, measurements or notes missing for some rows; 1=only 1–2 versions documented; 0=blank.
+
+iteration_logic (max 4): Whether changes between versions logically address the measured discrepancies. 4=changes directly address measured errors with explicit reasoning connecting measurements to decisions; 3=changes reasonable and mostly explained; 2=some changes unexplained or not connected to measurements; 1=versions differ but no reasoning shown; 0=blank or only one version.
+
+cad_evidence (max 4): Quality of the CAD screenshot in Section 3. 4=screenshot present; ALL key dimensions from Section 1 called out with visible, readable dimension lines; no overlapping text; clean, professional layout; 3=screenshot present, most key dimensions labeled, minor readability issues; 2=screenshot present, fewer than half the key dimensions labeled, or readability is poor; 1=screenshot present but no dimension callouts at all; 0=no screenshot.
+
+reflection (max 4): Depth and specificity of the Section 4 reflection. 4=specific and data-driven; references measured values by name and number; clearly connects data to decisions; identifies concrete changes they would make if starting over; 3=addresses what worked and what they would change, references at least one measurement; 2=mentions iteration but no connection to actual measurement data; 1=generic or one sentence; 0=blank.`;
+
+    criteriaKeys = ['key_dimensions', 'version_log', 'iteration_logic', 'cad_evidence', 'reflection'];
+
   } else {
     throw new Error('No rubric configured for deliverable ' + deliverableId);
   }
@@ -2869,6 +2885,345 @@ function createDesignBriefTemplate() {
   Logger.log('   Key:   DELIVERABLE_DOC_TEMPLATE_11');
   Logger.log('   Value: ' + doc.getId());
   Logger.log('3. Students can now click "Create My Design Brief" in the portfolio app.');
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// ONE-TIME SETUP — run from Apps Script IDE to create the Completed Component
+// template document. After running, copy the logged Doc ID and add it to
+// Script Properties in each of your 3 Apps Script projects as:
+//   Key:   DELIVERABLE_DOC_TEMPLATE_13
+//   Value: <the doc ID>
+// ──────────────────────────────────────────────────────────────────────────────
+function createCompletedComponentTemplate() {
+  var doc  = DocumentApp.create('Completed Component — TEMPLATE (do not edit)');
+  var body = doc.getBody();
+  body.clear();
+
+  var bodyStyle = {};
+  bodyStyle[DocumentApp.Attribute.FONT_FAMILY] = 'Arial';
+  bodyStyle[DocumentApp.Attribute.FONT_SIZE]   = 11;
+  body.setAttributes(bodyStyle);
+
+  // ── Title & subtitle ──────────────────────────────────────────────────────
+  body.appendParagraph('COMPLETED COMPONENT')
+    .setHeading(DocumentApp.ParagraphHeading.TITLE)
+    .setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+
+  body.appendParagraph('Component-Based Design  ·  CAD Unit')
+    .setHeading(DocumentApp.ParagraphHeading.SUBTITLE)
+    .setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+
+  body.appendHorizontalRule();
+
+  // ── Info fields ───────────────────────────────────────────────────────────
+  [['Student Name:',  '[[STUDENT_NAME]]'],
+   ['Date:',          '[[DATE]]'],
+   ['Component:',     '___________________________________'],
+   ['Final Version:', '_____']
+  ].forEach(function(pair) {
+    var p = body.appendParagraph('');
+    p.appendText(pair[0]).setBold(true);
+    p.appendText('   ' + pair[1]);
+    p.setSpacingAfter(4);
+  });
+
+  body.appendHorizontalRule();
+
+  // ── Rubric table ──────────────────────────────────────────────────────────
+  body.appendParagraph('GRADING RUBRIC — read before you begin')
+    .setBold(true).setFontSize(10).setForegroundColor('#444444');
+
+  var rubricData = [
+    ['Criterion', '4 — Exceeds', '3 — Meets', '2 — Approaching', '1 — Beginning', '0'],
+    ['Key\nDimensions',
+     '4–5 specific dimensions with target values; names describe what each controls',
+     '3 dimensions with target values',
+     '2–3 dimensions; targets missing or vague',
+     '1–2 dimensions; no targets',
+     'Blank'],
+    ['Version\nLog',
+     'Every version has all measurements AND a specific note on what changed and why',
+     'All versions have measurements; notes present but some lack specifics',
+     'Most versions logged; measurements or notes missing for some',
+     '1–2 versions documented; sparse data',
+     'Blank'],
+    ['Iteration\nLogic',
+     'Changes directly address measured errors; reasoning is explicit and connects measurements to decisions',
+     'Changes reasonable and mostly explained',
+     'Some changes unexplained or not connected to measurements',
+     'Versions differ but no reasoning shown',
+     'Blank'],
+    ['CAD\nEvidence',
+     'ALL key dimensions labeled with readable callouts; no overlapping text; clean layout',
+     'Screenshot present; most dimensions labeled; minor readability issues',
+     'Screenshot present; fewer than half the key dimensions labeled',
+     'Screenshot present but no dimension callouts',
+     'No screenshot'],
+    ['Reflection',
+     'Specific and data-driven; names measured values; connects data to decisions; concrete changes for next time',
+     'Addresses what worked and what they would change; references at least one measurement',
+     'Mentions iteration but no connection to actual data',
+     'Generic or one sentence',
+     'Blank']
+  ];
+
+  var rubricTable = body.appendTable(rubricData);
+  rubricTable.setBorderWidth(0.5);
+  rubricTable.setColumnWidth(0, 75);
+  rubricTable.setColumnWidth(1, 85);
+  rubricTable.setColumnWidth(2, 80);
+  rubricTable.setColumnWidth(3, 80);
+  rubricTable.setColumnWidth(4, 75);
+  rubricTable.setColumnWidth(5, 48);
+
+  var rubricHeaderRow = rubricTable.getRow(0);
+  for (var rh = 0; rh < 6; rh++) {
+    var rhCell = rubricHeaderRow.getCell(rh);
+    rhCell.setBackgroundColor('#e8f0fe');
+    var rhStyle = {};
+    rhStyle[DocumentApp.Attribute.BOLD]            = true;
+    rhStyle[DocumentApp.Attribute.FONT_SIZE]        = 9;
+    rhStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#1a3461';
+    rhCell.getChild(0).setAttributes(rhStyle);
+  }
+  for (var rr = 1; rr < rubricTable.getNumRows(); rr++) {
+    for (var rc = 0; rc < 6; rc++) {
+      var rdCell = rubricTable.getRow(rr).getCell(rc);
+      var rdStyle = {};
+      rdStyle[DocumentApp.Attribute.FONT_SIZE] = 9;
+      if (rc === 0) rdStyle[DocumentApp.Attribute.BOLD] = true;
+      rdCell.getChild(0).setAttributes(rdStyle);
+      if (rr % 2 === 0) rdCell.setBackgroundColor('#f8f9fa');
+    }
+  }
+
+  body.appendParagraph('AI feedback is available in the portfolio app before you submit.')
+    .setFontSize(9).setItalic(true).setForegroundColor('#9aa0a6')
+    .setAlignment(DocumentApp.HorizontalAlignment.RIGHT);
+
+  body.appendHorizontalRule();
+
+  // ── Section helper (same pattern as Design Brief) ─────────────────────────
+  function addSection(num, title, subtitle, instructionText) {
+    var headStyle = {};
+    headStyle[DocumentApp.Attribute.BOLD]           = true;
+    headStyle[DocumentApp.Attribute.FONT_SIZE]      = 11;
+    headStyle[DocumentApp.Attribute.SPACING_BEFORE] = 18;
+    body.appendParagraph(num + '  ·  ' + title).setAttributes(headStyle);
+
+    if (subtitle) {
+      var subStyle = {};
+      subStyle[DocumentApp.Attribute.FONT_SIZE]        = 9;
+      subStyle[DocumentApp.Attribute.ITALIC]           = true;
+      subStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#5f6368';
+      body.appendParagraph(subtitle).setAttributes(subStyle);
+    }
+
+    var instrTable = body.appendTable([[instructionText]]);
+    instrTable.setBorderWidth(0);
+    var instrCell = instrTable.getRow(0).getCell(0);
+    instrCell.setBackgroundColor('#fff8e1');
+    instrCell.setPaddingTop(6);
+    instrCell.setPaddingBottom(6);
+    instrCell.setPaddingLeft(12);
+    instrCell.setPaddingRight(12);
+    var instrStyle = {};
+    instrStyle[DocumentApp.Attribute.FONT_SIZE]        = 9;
+    instrStyle[DocumentApp.Attribute.ITALIC]           = true;
+    instrStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#6d4500';
+    instrCell.getChild(0).setAttributes(instrStyle);
+  }
+
+  // ── Section 1: Key Dimensions ─────────────────────────────────────────────
+  addSection('1', 'KEY DIMENSIONS',
+    'Identify the 3–5 measurements most critical for this part to function correctly.',
+    '📋 INSTRUCTION — delete this box after reading\n' +
+    'List the dimensions that determine whether your part works. Think about what it interfaces with: ' +
+    'holes that must clear a screw, bores that must press onto a shaft, faces that must sit flush. ' +
+    'For each dimension, write its name, what it controls, and your target value from your CAD model. ' +
+    'You will measure each of these with calipers after every print.');
+
+  var dimData = [
+    ['#', 'Dimension Name', 'What it controls (fit, function, or assembly)', 'Target (mm)'],
+    ['1', '', '', ''],
+    ['2', '', '', ''],
+    ['3', '', '', ''],
+    ['4', '', '', ''],
+    ['5', '', '', '']
+  ];
+  var dimTable = body.appendTable(dimData);
+  dimTable.setBorderWidth(0.5);
+  dimTable.setColumnWidth(0, 20);
+  dimTable.setColumnWidth(1, 140);
+  dimTable.setColumnWidth(2, 228);
+  dimTable.setColumnWidth(3, 75);
+
+  var dimHeader = dimTable.getRow(0);
+  for (var dh = 0; dh < 4; dh++) {
+    var dhCell = dimHeader.getCell(dh);
+    dhCell.setBackgroundColor('#e8f0fe');
+    var dhStyle = {};
+    dhStyle[DocumentApp.Attribute.BOLD]            = true;
+    dhStyle[DocumentApp.Attribute.FONT_SIZE]        = 9;
+    dhStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#1a3461';
+    dhCell.getChild(0).setAttributes(dhStyle);
+  }
+  for (var dr = 1; dr < dimTable.getNumRows(); dr++) {
+    dimTable.getRow(dr).setMinimumHeight(28);
+    var drStyle = {};
+    drStyle[DocumentApp.Attribute.FONT_SIZE] = 10;
+    for (var dc = 0; dc < 4; dc++) {
+      dimTable.getRow(dr).getCell(dc).getChild(0).setAttributes(drStyle);
+      if (dc === 0 || dc === 3) {
+        dimTable.getRow(dr).getCell(dc).getChild(0).asParagraph()
+          .setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+      }
+    }
+  }
+
+  // ── Section 2: Version Log ────────────────────────────────────────────────
+  addSection('2', 'VERSION LOG',
+    'Record your caliper measurements after every print. Add rows as needed.',
+    '📋 INSTRUCTION — delete this box after reading\n' +
+    'After each print, measure all key dimensions with calipers and fill in this table. ' +
+    'Name each version consistently — e.g., WheelHub_v1.0, WheelHub_v1.1. ' +
+    'In the last column, explain what you changed from the previous version and WHY — be specific about ' +
+    'which measurement was off and by how much (e.g., "M3 tap hole was 2.50 mm, screws would not thread — increased to 2.90 mm").\n' +
+    'Tip: replace the "Dim 1" – "Dim 5" header cells with your actual dimension names from Section 1.');
+
+  var versionData = [
+    ['Version', 'Dim 1', 'Dim 2', 'Dim 3', 'Dim 4', 'Dim 5', 'What changed / problems encountered'],
+    ['[Component]_v1.0', '', '', '', '', '', '(first version — describe your initial design choices)'],
+    ['_v1.1', '', '', '', '', '', ''],
+    ['_v1.2', '', '', '', '', '', ''],
+    ['_v1.3', '', '', '', '', '', ''],
+    ['_v1.4', '', '', '', '', '', ''],
+    ['_v1.5', '', '', '', '', '', '']
+  ];
+  var versionTable = body.appendTable(versionData);
+  versionTable.setBorderWidth(0.5);
+  versionTable.setColumnWidth(0, 95);
+  versionTable.setColumnWidth(1, 38);
+  versionTable.setColumnWidth(2, 38);
+  versionTable.setColumnWidth(3, 38);
+  versionTable.setColumnWidth(4, 38);
+  versionTable.setColumnWidth(5, 38);
+  versionTable.setColumnWidth(6, 178);
+
+  var vHeader = versionTable.getRow(0);
+  for (var vh = 0; vh < 7; vh++) {
+    var vhCell = vHeader.getCell(vh);
+    vhCell.setBackgroundColor('#e8f0fe');
+    var vhStyle = {};
+    vhStyle[DocumentApp.Attribute.BOLD]            = true;
+    vhStyle[DocumentApp.Attribute.FONT_SIZE]        = 9;
+    vhStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#1a3461';
+    vhCell.getChild(0).setAttributes(vhStyle);
+    if (vh >= 1 && vh <= 5) {
+      vhCell.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+    }
+  }
+  for (var vr = 1; vr < versionTable.getNumRows(); vr++) {
+    versionTable.getRow(vr).setMinimumHeight(42);
+    var vrStyle = {};
+    vrStyle[DocumentApp.Attribute.FONT_SIZE] = 10;
+    for (var vc = 0; vc < 7; vc++) {
+      versionTable.getRow(vr).getCell(vc).getChild(0).setAttributes(vrStyle);
+      if (vc >= 1 && vc <= 5) {
+        versionTable.getRow(vr).getCell(vc).getChild(0).asParagraph()
+          .setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+      }
+    }
+    if (vr % 2 === 0) {
+      for (var ve = 0; ve < 7; ve++) {
+        versionTable.getRow(vr).getCell(ve).setBackgroundColor('#f8f9fa');
+      }
+    }
+  }
+
+  // ── Section 3: Evidence ───────────────────────────────────────────────────
+  addSection('3', 'EVIDENCE',
+    'CAD screenshot + photo of your final print',
+    '📋 INSTRUCTION — delete this box after reading\n' +
+    'Insert two items below:\n' +
+    '  A) A screenshot of your final CAD model with all key dimensions called out. ' +
+    'Every dimension from Section 1 must be visible and labeled. ' +
+    'Arrange your dimension lines so all text is readable — overlapping callouts are hard to read and score lower.\n' +
+    '  B) A photo of your printed part next to calipers showing a key measurement.\n' +
+    'To insert: Insert → Image → Upload from computer  ' +
+    '(or use the Photo Booth app → send to your school email → download → insert here).');
+
+  ['A — CAD Screenshot (all key dimensions labeled)', 'B — Photo of final print with calipers'].forEach(function(label) {
+    var lblStyle = {};
+    lblStyle[DocumentApp.Attribute.BOLD]            = true;
+    lblStyle[DocumentApp.Attribute.FONT_SIZE]       = 10;
+    lblStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#5f6368';
+    lblStyle[DocumentApp.Attribute.SPACING_BEFORE]  = 12;
+    body.appendParagraph(label).setAttributes(lblStyle);
+
+    var imgTable = body.appendTable([['[ Insert ' + label + ' — Insert → Image → Upload from computer ]']]);
+    imgTable.setBorderWidth(0.5);
+    var imgCell = imgTable.getRow(0).getCell(0);
+    imgCell.setBackgroundColor('#f8f9fa');
+    imgCell.setPaddingTop(8);
+    imgCell.setPaddingBottom(8);
+    var imgStyle = {};
+    imgStyle[DocumentApp.Attribute.FONT_SIZE]        = 10;
+    imgStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#9aa0a6';
+    imgStyle[DocumentApp.Attribute.ITALIC]           = true;
+    imgCell.getChild(0).setAttributes(imgStyle);
+    imgCell.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+    for (var i = 0; i < 8; i++) imgCell.appendParagraph('');
+    imgTable.getRow(0).setMinimumHeight(200);
+  });
+
+  // ── Section 4: Reflection ─────────────────────────────────────────────────
+  addSection('4', 'REFLECTION', null,
+    '📋 INSTRUCTION — delete this box after reading\n' +
+    'Answer both questions in 3–5 sentences each. Reference specific measurements from your version log. ' +
+    'Vague answers ("it turned out fine") score low. ' +
+    'Strong answers name specific values and connect your data to your decisions.');
+
+  [['What did your measurements tell you about your design?',
+    'Reference at least two values from your version log. What did you discover that you did not expect?'],
+   ['If you were starting this component over, what would you do differently?',
+    'Think about your first version — were your initial targets well-reasoned? What did you learn about how to set targets for 3D-printed parts?']
+  ].forEach(function(q, qi) {
+    var qStyle = {};
+    qStyle[DocumentApp.Attribute.BOLD]           = true;
+    qStyle[DocumentApp.Attribute.FONT_SIZE]      = 10;
+    qStyle[DocumentApp.Attribute.SPACING_BEFORE] = 14;
+    body.appendParagraph((qi + 1) + '.  ' + q[0]).setAttributes(qStyle);
+
+    var hintStyle = {};
+    hintStyle[DocumentApp.Attribute.FONT_SIZE]        = 9;
+    hintStyle[DocumentApp.Attribute.ITALIC]           = true;
+    hintStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#5f6368';
+    body.appendParagraph('    ' + q[1]).setAttributes(hintStyle);
+
+    for (var j = 0; j < 4; j++) body.appendParagraph('');
+  });
+
+  // ── Footer ────────────────────────────────────────────────────────────────
+  body.appendHorizontalRule();
+  body.appendParagraph('Score: ___ / ___      |      Component-Based Design · CAD Unit      |      Submit via the portfolio app')
+    .setFontSize(8).setForegroundColor('#9aa0a6')
+    .setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+
+  doc.saveAndClose();
+
+  Logger.log('');
+  Logger.log('✅ Completed Component template created!');
+  Logger.log('');
+  Logger.log('Doc ID  → ' + doc.getId());
+  Logger.log('Doc URL → https://docs.google.com/document/d/' + doc.getId() + '/edit');
+  Logger.log('');
+  Logger.log('Next steps:');
+  Logger.log('1. Open the doc and review formatting. Widen the last column of Section 2 by dragging the column border if needed.');
+  Logger.log('2. In EACH of your 3 Apps Script projects → Project Settings → Script Properties, add:');
+  Logger.log('   Key:   DELIVERABLE_DOC_TEMPLATE_13');
+  Logger.log('   Value: ' + doc.getId());
+  Logger.log('3. Students can now click "Create My Completed Component" in the portfolio app.');
 }
 
 // ============================================

@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.4',
+    VERSION: 'v2.14.5',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -162,6 +162,21 @@ const DELIVERABLES = [
             'Photo of your concept sketch with decision matrix annotations',
             'Photo of your completed cardboard prototype',
             'One documented iteration: what changed, why you changed it, and what improved'
+        ]
+    },
+    {
+        id: 13,
+        title: 'Completed Component',
+        unit: '01',
+        week: 4,
+        phase: 'edp',
+        type: 'googleDoc',
+        description: 'Document your completed 3D-printed component — identify key dimensions, track every print version in a measurement log, and submit a labeled CAD screenshot with photo evidence.',
+        requirements: [
+            'Section 1: 3–5 key dimensions with names, what they control, and target values',
+            'Section 2: Version log — caliper measurements for every print, with specific notes on what changed and why',
+            'Section 3: CAD screenshot with ALL key dimensions labeled and readable + photo of final print with calipers',
+            'Section 4: Reflection referencing specific measured values from your version log',
         ]
     },
     // ── Unit 2: CAD — Component-Based (D21–D27) ─────────────────────────
@@ -2988,7 +3003,14 @@ const DOC_RUBRIC_CRITERIA = {
         { key: 'constraints',            label: 'Constraints',           max: 4 },
         { key: 'design_statement',       label: 'Design Statement',      max: 4 },
         { key: 'decision_matrix',        label: 'Decision Matrix',       max: 4 },
-    ]
+    ],
+    13: [
+        { key: 'key_dimensions',   label: 'Key Dimensions',   max: 4 },
+        { key: 'version_log',      label: 'Version Log',      max: 4 },
+        { key: 'iteration_logic',  label: 'Iteration Logic',  max: 4 },
+        { key: 'cad_evidence',     label: 'CAD Evidence',     max: 4 },
+        { key: 'reflection',       label: 'Reflection',       max: 4 },
+    ],
 };
 
 function renderDocDeliverableUI(id, deliverable, existing) {
