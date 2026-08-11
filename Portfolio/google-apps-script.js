@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.1';
+const BACKEND_VERSION = 'v2.14.2';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2420,15 +2420,22 @@ function handleCreateDeliverableDoc(data) {
 
   if (!email) return { success: false, error: 'Missing student email.' };
 
-  var templateId = PropertiesService.getScriptProperties()
-                     .getProperty('DELIVERABLE_DOC_TEMPLATE_' + deliverableId);
+  var deliverableTitle = data.deliverableTitle || '';
+
+  // Look up template: specific key first, then shared component fallback
+  var props      = PropertiesService.getScriptProperties();
+  var templateId = props.getProperty('DELIVERABLE_DOC_TEMPLATE_' + deliverableId)
+                || props.getProperty('DELIVERABLE_DOC_TEMPLATE_COMPONENT');
   if (!templateId) {
     return { success: false, error: 'Template not configured for deliverable ' + deliverableId + '. Ask your teacher to complete the one-time setup.' };
   }
 
   try {
     var templateFile = DriveApp.getFileById(templateId);
-    var title = 'Design Brief — ' + (studentName || email.split('@')[0]);
+    var shortName    = studentName || email.split('@')[0];
+    var title = deliverableTitle
+        ? deliverableTitle + ' — ' + shortName
+        : 'Deliverable ' + deliverableId + ' — ' + shortName;
     var copy  = templateFile.makeCopy(title);
     var docId = copy.getId();
 
@@ -2438,7 +2445,8 @@ function handleCreateDeliverableDoc(data) {
     body.replaceText('\\[\\[STUDENT_NAME\\]\\]', studentName || '');
     body.replaceText('\\[\\[DATE\\]\\]',
       Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'MMMM d, yyyy'));
-    body.replaceText('\\[\\[PROJECT\\]\\]', projectName || '');
+    body.replaceText('\\[\\[PROJECT\\]\\]',   projectName   || '');
+    body.replaceText('\\[\\[COMPONENT\\]\\]', deliverableTitle || '');
     doc.saveAndClose();
 
     // Share with student and transfer ownership so the doc lives in their Drive
@@ -2515,8 +2523,8 @@ decision_matrix (max 4): Completeness and mathematical correctness of the Sectio
 
     criteriaKeys = ['problem_id', 'criteria_completeness', 'criteria_quality', 'constraints', 'design_statement', 'decision_matrix'];
 
-  } else if (deliverableId === 13) {
-    // ── D13: Completed Component ───────────────────────────────────────────
+  } else if (deliverableId === 13 || (deliverableId >= 21 && deliverableId <= 27)) {
+    // ── D13 / D21–D27: Completed Component ────────────────────────────────
     rubric = `RUBRIC — COMPLETED COMPONENT (5 criteria, 4 pts each):
 
 key_dimensions (max 4): Quality and specificity of the key dimensions table in Section 1. 4=4–5 dimensions with specific target values; names clearly describe what each controls (e.g., M3 clearance hole, M8 bore, counterbore depth); 3=3 dimensions with target values; 2=2–3 dimensions listed but targets vague or missing; 1=1–2 dimensions, no targets; 0=blank.
@@ -2918,7 +2926,7 @@ function createCompletedComponentTemplate() {
   // ── Info fields ───────────────────────────────────────────────────────────
   [['Student Name:',  '[[STUDENT_NAME]]'],
    ['Date:',          '[[DATE]]'],
-   ['Component:',     '___________________________________'],
+   ['Component:',     '[[COMPONENT]]'],
    ['Final Version:', '_____']
   ].forEach(function(pair) {
     var p = body.appendParagraph('');

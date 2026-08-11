@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.5',
+    VERSION: 'v2.14.6',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -164,44 +164,21 @@ const DELIVERABLES = [
             'One documented iteration: what changed, why you changed it, and what improved'
         ]
     },
-    {
-        id: 13,
-        title: 'Completed Component',
-        unit: '01',
-        week: 4,
-        phase: 'edp',
-        type: 'googleDoc',
-        description: 'Document your completed 3D-printed component — identify key dimensions, track every print version in a measurement log, and submit a labeled CAD screenshot with photo evidence.',
-        requirements: [
-            'Section 1: 3–5 key dimensions with names, what they control, and target values',
-            'Section 2: Version log — caliper measurements for every print, with specific notes on what changed and why',
-            'Section 3: CAD screenshot with ALL key dimensions labeled and readable + photo of final print with calipers',
-            'Section 4: Reflection referencing specific measured values from your version log',
-        ]
-    },
     // ── Unit 2: CAD — Component-Based (D21–D27) ─────────────────────────
-    // Points are placeholder (50 each) — to be finalized once full course is written
+    // All use the Completed Component Google Doc template (DELIVERABLE_DOC_TEMPLATE_COMPONENT)
     {
         id: 21,
         title: 'C1 — Wheel Hub',
         unit: '02',
         week: 3,
-        points: 50,
         phase: 'cad',
-        hasLevelSelect: true,
-        description: 'Submit your completed Wheel Hub model with screenshots and learning check answers.',
+        type: 'googleDoc',
+        description: 'Document your completed Wheel Hub. Identify the key dimensions (M3 clearance holes, M3 tap hole, M8 bore, counterbore depth, assembled width), log every print version with caliper measurements, and submit a labeled CAD screenshot.',
         requirements: [
-            'Screenshot: isometric view showing the hub cylinder, flange, and all 4 mounting holes',
-            'Screenshot: top view showing the central bore and fully constrained sketch (or a note that sketch was fully constrained before extruding)',
-            'File saved as Lastname_WheelHub_v1-Base (or higher version if you iterated)',
-            'Learning Check Q1–Q5 answered below'
-        ],
-        questions: [
-            'What does "fully constrained" mean in Fusion 360? How can you tell when a sketch is fully constrained?',
-            'The hub uses two different extrude depths — one for the flange, one for the hub cylinder. What does each depth represent, and why are both needed?',
-            'If the central bore is 0.3mm too small, what happens when you try to press the bearing in? What would you do to fix it?',
-            'Why do 3D-printed bores often need to be slightly larger than the nominal size of the part that goes inside? What causes this?',
-            'You added a Fillet to the outer edge of the flange. Would the hub still function without it? Why include it anyway?'
+            'Section 1: 3–5 key dimensions with target values — include bore diameters, clearance holes, and counterbore depth',
+            'Section 2: Version log with caliper measurements after every print and specific notes on what changed',
+            'Section 3: CAD screenshot with all key dimensions labeled + photo of final print with calipers',
+            'Section 4: Reflection referencing specific measured values from your log',
         ]
     },
     {
@@ -209,22 +186,14 @@ const DELIVERABLES = [
         title: 'C2 — Drive Wheel',
         unit: '02',
         week: 4,
-        points: 50,
         phase: 'cad',
-        hasLevelSelect: true,
-        description: 'Submit your completed Drive Wheel model with screenshots and learning check answers.',
+        type: 'googleDoc',
+        description: 'Document your completed Drive Wheel. Track the key dimensions that control fit and function — hex bore, outer diameter (interference fit with silicone tire), and spoke geometry.',
         requirements: [
-            'Screenshot: isometric view showing the spoke pattern, hex bore, and outer rim',
-            'Screenshot: front view showing spoke symmetry',
-            'File saved as Lastname_DriveWheel_v1-Base',
-            'Learning Check Q1–Q5 answered below'
-        ],
-        questions: [
-            'What two things do you define when using Circular Pattern? Why is it better than drawing each spoke individually?',
-            'Why does the hub use a hex bore instead of a round bore? What would happen if the bore were round?',
-            'What is Extrude-Cut? Give a specific example of where you used it on the Drive Wheel.',
-            'The outer diameter must create an interference fit with the silicone tire. Explain in your own words what interference fit means and why it holds without glue or fasteners.',
-            'If you modeled the outer diameter exactly equal to the tire\'s inner diameter, would it press on securely or slip off? Why?'
+            'Section 1: 3–5 key dimensions with target values — include hex bore width, outer diameter, and spoke count/spacing',
+            'Section 2: Version log with caliper measurements after every print and specific notes on what changed',
+            'Section 3: CAD screenshot with all key dimensions labeled + photo of final print with tire pressed on',
+            'Section 4: Reflection referencing specific measured values from your log',
         ]
     },
     {
@@ -232,22 +201,14 @@ const DELIVERABLES = [
         title: 'C3 — Motor Sleeve Mount',
         unit: '02',
         week: 4,
-        points: 50,
         phase: 'cad',
-        hasLevelSelect: true,
-        description: 'Submit your completed Motor Sleeve Mount model with screenshots and learning check answers.',
+        type: 'googleDoc',
+        description: 'Document your completed Motor Sleeve Mount. Track the dimensions that control the motor fit — sleeve bore diameter, T-slot channel dimensions, and face screw hole positions.',
         requirements: [
-            'Screenshot: isometric view showing the sleeve bore, T-slot rail, and face screw holes',
-            'Screenshot: end face view showing the T-slot cross-section clearly',
-            'File saved as Lastname_SleevMount_v1-Base',
-            'Learning Check Q1–Q5 answered below'
-        ],
-        questions: [
-            'Describe how the T-slot nut-capture channel works. Why must the top slot be narrower than the bottom cavity?',
-            'You sketched the T-slot profile on the end face, then extruded it the full length. Why use this approach instead of drawing the final T-shape directly in the original outer profile?',
-            'If you left out the face screw holes, what would prevent the motor from sliding out of the sleeve during operation?',
-            'A student makes the T-slot bottom cavity exactly the width of the nut with zero clearance. What problem will they run into when trying to install the nut?',
-            'List the assembly steps for installing the motor. Why must the nut be inserted into the T-slot before the mount is bolted to the deck?'
+            'Section 1: 3–5 key dimensions with target values — include sleeve bore, T-slot width/depth, and hole spacing',
+            'Section 2: Version log with caliper measurements after every print and specific notes on what changed',
+            'Section 3: CAD screenshot with all key dimensions labeled + photo of motor seated in mount',
+            'Section 4: Reflection referencing specific measured values from your log',
         ]
     },
     {
@@ -255,23 +216,14 @@ const DELIVERABLES = [
         title: 'C4 — Robot Deck (Final)',
         unit: '02',
         week: 8,
-        points: 75,
         phase: 'cad',
-        hasLevelSelect: true,
-        description: 'Submit your finalized Robot Deck file and full assembly screenshot after passing Interference Check. This deliverable is due at the end of Week 8 — the deck is modified throughout Weeks 5–7 as each component is added to the assembly.',
+        type: 'googleDoc',
+        description: 'Document your finalized Robot Deck. Track the key hole pattern dimensions and assembly evolution (v1-Base through v5-Final). Submit a full assembly screenshot with zero interference check collisions.',
         requirements: [
-            'Screenshot: top view of the finalized deck showing all component hole patterns (C3, C5, C6, C7)',
-            'Screenshot: full assembly isometric view with all 5 components (deck + C3 + C5 + C6 + C7) constrained',
-            'Interference Check: zero collisions confirmed before submitting',
-            'File version trail: v1-Base → v2-C5 → v3-C6 → v4-C7 → v5-Final (or equivalent)',
-            'Learning Check Q1–Q5 answered below'
-        ],
-        questions: [
-            'What is a Fusion 360 assembly file? How is it different from a regular part file?',
-            'Describe the full workflow for adding mounting holes to the deck for a new component. List every step in order.',
-            'You dragged C5 freely in the assembly to find a good position, then edited the deck sketch to add C5 holes and saved. What happens in the assembly automatically after you save the deck file?',
-            'Every interior corner of the deck must be filleted to at least the CNC bit radius. What happens physically during CNC machining if a corner is sharper than the bit?',
-            'The Interference Check shows two components overlapping. Name two possible causes and describe how you would fix each one.'
+            'Section 1: Key dimensions — component hole patterns, fillet radii (≥ CNC bit radius), overall board dimensions',
+            'Section 2: Version log showing how the deck evolved as each component was added (v1-Base → v5-Final)',
+            'Section 3: Final assembly CAD screenshot (all 5 components constrained) + photo of assembled robot frame',
+            'Section 4: Reflection referencing at least one change made after finding an issue in the assembly',
         ]
     },
     {
@@ -279,22 +231,14 @@ const DELIVERABLES = [
         title: 'C5 — Omni Wheel Mount',
         unit: '02',
         week: 6,
-        points: 50,
         phase: 'cad',
-        hasLevelSelect: true,
-        description: 'Submit your completed Omni Wheel Mount and an updated assembly screenshot showing C5 constrained to the deck.',
+        type: 'googleDoc',
+        description: 'Document your completed Omni Wheel Mount. Track the dimensions that control axle fit and arm spacing, and submit the mount constrained to the deck in your assembly.',
         requirements: [
-            'Screenshot: isometric view of the Omni Wheel Mount showing both arms and axle bores',
-            'Screenshot: assembly isometric showing C5 constrained in position on the deck',
-            'File saved as Lastname_OmniMount_v1-Base',
-            'Learning Check Q1–Q5 answered below'
-        ],
-        questions: [
-            'You needed to sketch on a side face of the mount body — a different plane from the original sketch. What F360 method lets you start a sketch on an existing face?',
-            'If the two arms are spaced too far apart, what happens to the axle? What happens if they are too close together?',
-            'What does a joint or constraint do in Fusion 360? What does the assembly look like if you insert a component but never constrain it?',
-            'You positioned C5 freely in the assembly before drilling holes in the deck. Why is this better than calculating the hole location from a drawing or estimating?',
-            'The M3×20 screws pass through the mount arms into the omni wheel hub flanges. Why should the holes in the arms be slightly larger than 3mm?'
+            'Section 1: 3–5 key dimensions with target values — include axle bore diameter, arm spacing, and mount hole positions',
+            'Section 2: Version log with caliper measurements after every print and specific notes on what changed',
+            'Section 3: CAD screenshot with dimensions labeled + assembly screenshot showing C5 constrained on deck',
+            'Section 4: Reflection referencing specific measured values from your log',
         ]
     },
     {
@@ -302,22 +246,14 @@ const DELIVERABLES = [
         title: 'C6 — IR Sensor Mount',
         unit: '02',
         week: 7,
-        points: 50,
         phase: 'cad',
-        hasLevelSelect: true,
-        description: 'Submit your completed IR Sensor Mount and an updated assembly screenshot showing C6 constrained to the deck.',
+        type: 'googleDoc',
+        description: 'Document your completed IR Sensor Mount. Track the dimensions that control sensor ground clearance and bracket geometry.',
         requirements: [
-            'Screenshot: isometric view of the IR Sensor Mount showing the U-bracket arms and bottom web',
-            'Screenshot: assembly isometric showing C6 in position (front underside of deck)',
-            'File saved as Lastname_IRSensorMount_v1-Base',
-            'Learning Check Q1–Q5 answered below'
-        ],
-        questions: [
-            'What does the Mirror tool do in Fusion 360? What two things do you need to define to use it?',
-            'You used Mirror instead of drawing both arms separately. What advantage does this give you if you need to change the arm thickness or spacing later?',
-            'The bracket height controls sensor ground clearance. Why does clearance matter for line following performance? What happens if the sensor is mounted too high?',
-            'What is a Slot feature in Fusion 360? Where did you use it on the IR Sensor Mount and why is it a better choice than a rectangle in that location?',
-            'You moved C6 into position in the assembly before editing the deck sketch to add holes. Why is positioning the part in the assembly better than guessing the hole location from a drawing?'
+            'Section 1: 3–5 key dimensions — include slot dimensions, arm thickness, sensor clearance height, and mount hole positions',
+            'Section 2: Version log with caliper measurements after every print and specific notes on what changed',
+            'Section 3: CAD screenshot with dimensions labeled + assembly screenshot showing C6 in position on deck underside',
+            'Section 4: Reflection referencing specific measured values from your log',
         ]
     },
     {
@@ -325,23 +261,14 @@ const DELIVERABLES = [
         title: 'C7 — Ultrasonic Sensor Mount',
         unit: '02',
         week: 7,
-        points: 50,
         phase: 'cad',
-        hasLevelSelect: true,
-        description: 'Submit your completed Ultrasonic Sensor Mount and the final assembly screenshot with all 5 components constrained. This is the last component before the deck is finalized.',
+        type: 'googleDoc',
+        description: 'Document your completed Ultrasonic Sensor Mount — the final component before the deck is locked. Track the sensor bore dimensions and L-bracket geometry.',
         requirements: [
-            'Screenshot: front view of the Ultrasonic Mount showing both sensor bores',
-            'Screenshot: isometric view showing the L-bracket geometry',
-            'Screenshot: full assembly showing all 5 components (deck + C3 + C5 + C6 + C7) before final interference check',
-            'File saved as Lastname_UltrasonicMount_v1-Base',
-            'Learning Check Q1–Q5 answered below'
-        ],
-        questions: [
-            'You measured the HC-SR04 sensor bores using Inspect → Measure on the provided model. Name one advantage of measuring the 3D model compared to using a physical caliper.',
-            'What is press-fit tolerance? If you model the bore diameter exactly equal to the sensor housing OD, will the sensor press-fit or be loose after 3D printing? Explain why.',
-            'The mount is an L-bracket shape. Describe how you created it using extrudes on two different faces — which face did each extrude start on?',
-            'What would happen to the robot\'s obstacle detection if the sensor were tilted 20° to one side instead of facing straight ahead?',
-            'After completing C7 and the Interference Check passes with zero collisions, what is the next step? Why is the Interference Check the gate before that step?'
+            'Section 1: 3–5 key dimensions — include sensor bore diameters (HC-SR04 OD), L-bracket arm dimensions, and mount hole positions',
+            'Section 2: Version log with caliper measurements after every print and specific notes on what changed',
+            'Section 3: CAD screenshot with dimensions labeled + full assembly screenshot (all 5 components) with zero interference',
+            'Section 4: Reflection referencing specific measured values from your log',
         ]
     },
     // ── Unit 3: Safety Certification ────────────────────────────────────
@@ -2995,6 +2922,14 @@ function renderD0FeedbackPanel(grades) {
 // GOOGLE DOC DELIVERABLES
 // ============================================
 
+const COMPONENT_RUBRIC_CRITERIA = [
+    { key: 'key_dimensions',   label: 'Key Dimensions',   max: 4 },
+    { key: 'version_log',      label: 'Version Log',      max: 4 },
+    { key: 'iteration_logic',  label: 'Iteration Logic',  max: 4 },
+    { key: 'cad_evidence',     label: 'CAD Evidence',     max: 4 },
+    { key: 'reflection',       label: 'Reflection',       max: 4 },
+];
+
 const DOC_RUBRIC_CRITERIA = {
     11: [
         { key: 'problem_id',             label: 'Client & End User',     max: 4 },
@@ -3004,13 +2939,14 @@ const DOC_RUBRIC_CRITERIA = {
         { key: 'design_statement',       label: 'Design Statement',      max: 4 },
         { key: 'decision_matrix',        label: 'Decision Matrix',       max: 4 },
     ],
-    13: [
-        { key: 'key_dimensions',   label: 'Key Dimensions',   max: 4 },
-        { key: 'version_log',      label: 'Version Log',      max: 4 },
-        { key: 'iteration_logic',  label: 'Iteration Logic',  max: 4 },
-        { key: 'cad_evidence',     label: 'CAD Evidence',     max: 4 },
-        { key: 'reflection',       label: 'Reflection',       max: 4 },
-    ],
+    // D21–D27: Completed Component (all share the same 5-criterion rubric)
+    21: COMPONENT_RUBRIC_CRITERIA,
+    22: COMPONENT_RUBRIC_CRITERIA,
+    23: COMPONENT_RUBRIC_CRITERIA,
+    24: COMPONENT_RUBRIC_CRITERIA,
+    25: COMPONENT_RUBRIC_CRITERIA,
+    26: COMPONENT_RUBRIC_CRITERIA,
+    27: COMPONENT_RUBRIC_CRITERIA,
 };
 
 function renderDocDeliverableUI(id, deliverable, existing) {
@@ -3091,6 +3027,7 @@ async function createDeliverableDoc(id) {
                 action: 'createDeliverableDoc',
                 email: state.student?.email || '',
                 deliverableId: id,
+                deliverableTitle: DELIVERABLES.find(d => d.id === id)?.title || '',
                 studentName: state.student?.name || '',
                 projectName: state.config?.projectName || ''
             })
