@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.10',
+    VERSION: 'v2.14.11',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -1839,6 +1839,7 @@ function updateDeliverablesList() {
             { key: '04', label: 'Unit 4 — Programming, Electronics & Sensors' },
             { key: '05', label: 'Unit 5 — AI & Machine Learning' },
             { key: '06', label: 'Unit 6 — Career Readiness' },
+            { key: '08', label: 'Unit 8 — Mechanisms' },
         ];
         list.innerHTML = unitGroups.map(u => {
             const unitDeliverables = filtered.filter(d => d.unit === u.key);
