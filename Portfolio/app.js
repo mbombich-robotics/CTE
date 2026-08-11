@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.0',
+    VERSION: 'v2.14.1',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -3061,7 +3061,7 @@ async function createDeliverableDoc(id) {
     if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating…'; }
 
     try {
-        const res = await fetch(APPS_SCRIPT_URL, {
+        const res = await fetch(CONFIG.SHEETS_API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -3102,7 +3102,7 @@ async function requestDocFeedback(id) {
     if (panel) { panel.innerHTML = ''; }
 
     try {
-        const res = await fetch(APPS_SCRIPT_URL, {
+        const res = await fetch(CONFIG.SHEETS_API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
