@@ -1,4 +1,4 @@
-﻿// Robotics Portfolio - Main Application (Google Auth Edition)
+// Robotics Portfolio - Main Application (Google Auth Edition)
 
 // ============================================
 // CONFIGURATION - UPDATE THESE VALUES
@@ -6,13 +6,13 @@
 // Placeholder image (data URI - won't be blocked by firewalls)
 const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iI2UwZTBlMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5QaG90bzwvdGV4dD48L3N2Zz4=';
 
-// Track param from URL - set by class hub pages (?track=hsaer / aer8th / dbl)
+// Track param from URL - set by class hub pages (?track=hsaer / 8aer / dbl)
 // Overrides stored course for returning students in multiple classes.
 const URL_TRACK = new URLSearchParams(window.location.search).get('track') || null;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.8',
+    VERSION: 'v2.14.9',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -20,7 +20,7 @@ const CONFIG = {
     // One entry per course track - keys match state.student.course
     BACKEND_URLS: {
         hsaer:  'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-        aer8th: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
+        '8aer': 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
         dbl:    'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
     },
 
@@ -392,7 +392,7 @@ const DELIVERABLES = [
         title: 'Gear Ratio Calculation Sheet',
         unit: '08',
         week: 14,
-        tracks: ['aer8th'],
+        tracks: ['8aer'],
         phase: 'mechanisms',
         description: 'Calculate input and output RPM for a 2-stage gear train using teacher-provided gear STL files. Show all work for each stage.',
         requirements: [
@@ -408,7 +408,7 @@ const DELIVERABLES = [
         title: 'Mechanism CAD Housing + Reflection',
         unit: '08',
         week: 15,
-        tracks: ['aer8th'],
+        tracks: ['8aer'],
         phase: 'mechanisms',
         description: 'Design a housing or output arm in Fusion 360 to hold the teacher-provided gear train. Print, assemble, and document.',
         requirements: [
@@ -423,7 +423,7 @@ const DELIVERABLES = [
         title: 'Holiday 3D Print',
         unit: '08',
         week: 16,
-        tracks: ['aer8th'],
+        tracks: ['8aer'],
         phase: 'mechanisms',
         description: 'Design and print a small take-home item — ornament, keychain, name plate, or similar. Teacher approval required before printing.',
         requirements: [
@@ -437,7 +437,7 @@ const DELIVERABLES = [
         title: 'Pulley System — Ratio & CAD',
         unit: '08',
         week: 17,
-        tracks: ['aer8th'],
+        tracks: ['8aer'],
         phase: 'mechanisms',
         description: 'Calculate belt/chain drive ratios using teacher-provided pulley files, then design a CAD linkage or crank arm.',
         requirements: [
@@ -451,7 +451,7 @@ const DELIVERABLES = [
         title: 'Mechanism Showcase — Portfolio Evidence',
         unit: '08',
         week: 18,
-        tracks: ['aer8th'],
+        tracks: ['8aer'],
         phase: 'mechanisms',
         description: 'Photograph and document your gear or pulley system mounted to the robot frame or stand. Write a peer-reviewed caption.',
         requirements: [
@@ -857,7 +857,7 @@ window.onload = function () {
     if (versionEl) versionEl.textContent = CONFIG.VERSION;
 
     // Set portfolio title based on track param
-    const TRACK_TITLES = { hsaer: 'HS AE&R Portfolio', aer8th: '8th Grade Portfolio', dbl: 'D&B Lab Portfolio' };
+    const TRACK_TITLES = { hsaer: 'HS AE&R Portfolio', '8aer': '8th Grade Portfolio', dbl: 'D&B Lab Portfolio' };
     const titleEl = document.getElementById('portfolioTitle');
     if (titleEl && URL_TRACK) titleEl.textContent = TRACK_TITLES[URL_TRACK] || 'AE&R Portfolio';
 
@@ -1496,7 +1496,7 @@ function updateUI() {
     document.getElementById('avatarInitials').textContent = getInitials(state.student.name);
     document.getElementById('studentName').textContent = state.student.name;
 
-    const COURSE_DISPLAY = { hsaer: 'HS AE&R', aer8th: '8th Grade AE&R', dbl: 'Design & Build Lab' };
+    const COURSE_DISPLAY = { hsaer: 'HS AE&R', '8aer': '8th Grade AE&R', dbl: 'Design & Build Lab' };
     const course = URL_TRACK || state.student.course || 'hsaer';
     document.getElementById('projectBadge').textContent = COURSE_DISPLAY[course] || course;
 
