@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AER Photo Booth</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:          #0d1117;
+    --panel:       #161b22;
+    --border:      #30363d;
+    --border-light:#21262d;
+    --text:        #e6edf3;
+    --muted:       #8b949e;
+    --blue:        #1f6feb;
+    --blue-hover:  #388bfd;
+    --green:       #238636;
+    --green-hover: #2ea043;
+    --red:         #da3633;
+    --red-hover:   #f85149;
+    --flash:       rgba(255,255,255,0.6);
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+    font-size: 15px;
+    overflow: hidden;
+  }
+
+  /* ── Layout ─────────────────────────────────────────────── */
+  #app {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    height: 100vh;
+  }
+
+  /* ── Camera side ─────────────────────────────────────────── */
+  #camera-side {
+    display: flex;
+    flex-direction: column;
+    background: #000;
+    position: relative;
+  }
+
+  #video-wrap {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  #flash-overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--flash);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.05s ease;
+  }
+
+  #no-camera {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    gap: 12px;
+    font-size: 14px;
+    text-align: center;
+    padding: 24px;
+  }
+
+  #no-camera svg { opacity: 0.3; }
+
+  #capture-bar {
+    padding: 16px 24px;
+    background: #0d1117;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  #camera-select {
+    flex: 1;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    padding: 8px 10px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  #camera-select:focus { outline: 2px solid var(--blue); outline-offset: 1px; }
+
+  #btn-capture {
+    flex: 0 0 auto;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.15s;
+  }
+
+  #btn-capture:hover:not(:disabled) { background: var(--blue-hover); }
+  #btn-capture:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  #photo-count {
+    color: var(--muted);
+    font-size: 13px;
+    min-width: 60px;
+    text-align: center;
+  }
+
+  /* ── Control panel ───────────────────────────────────────── */
+  #control-panel {
+    background: var(--panel);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  #panel-header {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  #panel-header h1 {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  #panel-header p {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  #panel-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* ── Form fields ─────────────────────────────────────────── */
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 6px;
+  }
+
+  .field input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    padding: 9px 12px;
+    font-size: 14px;
+    transition: border-color 0.15s;
+  }
+
+  .field input:focus {
+    outline: none;
+    border-color: var(--blue);
+  }
+
+  .field input::placeholder { color: var(--muted); }
+
+  /* ── Queue ───────────────────────────────────────────────── */
+  #queue-section { flex: 1; }
+
+  #queue-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 8px;
+  }
+
+  #queue-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    min-height: 80px;
+  }
+
+  .queue-empty {
+    grid-column: 1 / -1;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+    padding: 24px 0;
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+  }
+
+  .thumb-wrap {
+    position: relative;
+    aspect-ratio: 4/3;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    cursor: pointer;
+  }
+
+  .thumb-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .thumb-num {
+    position: absolute;
+    bottom: 4px;
+    left: 5px;
+    background: rgba(0,0,0,0.7);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .thumb-del {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    background: rgba(218,54,51,0.9);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: background 0.1s;
+  }
+
+  .thumb-del:hover { background: var(--red-hover); }
+
+  .thumb-wrap.uploading::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(13,17,23,0.65);
+  }
+
+  .thumb-wrap.done::after {
+    content: '✓';
+    position: absolute;
+    inset: 0;
+    background: rgba(35,134,54,0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  /* ── Panel footer ────────────────────────────────────────── */
+  #panel-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #btn-upload {
+    width: 100%;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 13px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+    letter-spacing: 0.3px;
+  }
+
+  #btn-upload:hover:not(:disabled) { background: var(--green-hover); }
+  #btn-upload:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  #status-msg {
+    font-size: 12px;
+    text-align: center;
+    min-height: 16px;
+    color: var(--muted);
+  }
+
+  #status-msg.error { color: var(--red); }
+  #status-msg.success { color: var(--green-hover); }
+
+  /* ── Success screen ──────────────────────────────────────── */
+  #success-screen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    text-align: center;
+    padding: 40px;
+    z-index: 100;
+  }
+
+  #success-screen.active { display: flex; }
+
+  #success-icon {
+    font-size: 72px;
+    line-height: 1;
+  }
+
+  #success-screen h2 {
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  #success-screen p {
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 380px;
+    line-height: 1.6;
+  }
+
+  #success-email-display {
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  #btn-reset {
+    margin-top: 8px;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 40px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  #btn-reset:hover { background: var(--blue-hover); }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ── Camera side ─────────────────────────────────────── -->
+  <div id="camera-side">
+    <div id="video-wrap">
+      <video id="video" autoplay playsinline muted></video>
+      <div id="flash-overlay"></div>
+      <div id="no-camera" style="display:none;">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+        <span>Camera not available.<br>Check browser permissions and refresh.</span>
+      </div>
+    </div>
+    <div id="capture-bar">
+      <select id="camera-select" title="Select camera"></select>
+      <span id="photo-count">0 / 5</span>
+      <button id="btn-capture" disabled>📷 &nbsp;Capture</button>
+    </div>
+  </div>
+
+  <!-- ── Control panel ───────────────────────────────────── -->
+  <div id="control-panel">
+    <div id="panel-header">
+      <h1>AER Photo Booth</h1>
+      <p>Fill in your info, then capture your photos.</p>
+    </div>
+
+    <div id="panel-body">
+      <div class="field">
+        <label>Your Name</label>
+        <input id="inp-name" type="text" placeholder="First Last" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="field">
+        <label>School Email</label>
+        <input id="inp-email" type="email" placeholder="you@vicksburgschools.org" autocomplete="off">
+      </div>
+      <div class="field">
+        <label>Subject / Component</label>
+        <input id="inp-subject" type="text" placeholder="e.g. Component 1 v2" autocomplete="off" spellcheck="false">
+      </div>
+
+      <div id="queue-section">
+        <div id="queue-label">Photos (0 / 5)</div>
+        <div id="queue-grid">
+          <div class="queue-empty">No photos yet — press Capture</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="panel-footer">
+      <button id="btn-upload" disabled>Upload &amp; Send Email</button>
+      <div id="status-msg"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Success screen ──────────────────────────────────────── -->
+<div id="success-screen">
+  <div id="success-icon">✅</div>
+  <h2>Photos Sent!</h2>
+  <p>Check your email at<br><span id="success-email-display"></span><br>for links to your photos.</p>
+  <button id="btn-reset">Next Student</button>
+</div>
+
+<canvas id="capture-canvas" style="display:none;"></canvas>
+
+<script>
+// ── Config ──────────────────────────────────────────────────────────────────
+// Paste your Apps Script deployment URL here after deploying photo-booth-apps-script.js
+const PHOTO_BOOTH_URL = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
+const MAX_PHOTOS = 5;
+
+// ── State ────────────────────────────────────────────────────────────────────
+const queue = []; // { dataUrl, base64 }
+let stream = null;
+let devices = [];
+
+// ── Elements ─────────────────────────────────────────────────────────────────
+const video         = document.getElementById('video');
+const flashOverlay  = document.getElementById('flash-overlay');
+const noCam         = document.getElementById('no-camera');
+const cameraSelect  = document.getElementById('camera-select');
+const photoCount    = document.getElementById('photo-count');
+const btnCapture    = document.getElementById('btn-capture');
+const canvas        = document.getElementById('capture-canvas');
+const queueGrid     = document.getElementById('queue-grid');
+const queueLabel    = document.getElementById('queue-label');
+const inpName       = document.getElementById('inp-name');
+const inpEmail      = document.getElementById('inp-email');
+const inpSubject    = document.getElementById('inp-subject');
+const btnUpload     = document.getElementById('btn-upload');
+const statusMsg     = document.getElementById('status-msg');
+const successScreen = document.getElementById('success-screen');
+const successEmail  = document.getElementById('success-email-display');
+const btnReset      = document.getElementById('btn-reset');
+
+// ── Camera init ───────────────────────────────────────────────────────────────
+async function initCamera(deviceId) {
+  if (stream) stream.getTracks().forEach(t => t.stop());
+  try {
+    const constraints = {
+      video: {
+        deviceId: deviceId ? { exact: deviceId } : undefined,
+        width:  { ideal: 1920 },
+        height: { ideal: 1080 }
+      }
+    };
+    stream = await navigator.mediaDevices.getUserMedia(constraints);
+    video.srcObject = stream;
+    video.style.display = 'block';
+    noCam.style.display = 'none';
+    btnCapture.disabled = false;
+  } catch (err) {
+    video.style.display = 'none';
+    noCam.style.display = 'flex';
+    btnCapture.disabled = true;
+    console.error('Camera error:', err);
+  }
+}
+
+async function populateCameras() {
+  try {
+    // Trigger permission prompt first
+    const tmpStream = await navigator.mediaDevices.getUserMedia({ video: true });
+    tmpStream.getTracks().forEach(t => t.stop());
+
+    const all = await navigator.mediaDevices.enumerateDevices();
+    devices = all.filter(d => d.kind === 'videoinput');
+
+    cameraSelect.innerHTML = devices.map((d, i) =>
+      `<option value="${d.deviceId}">${d.label || 'Camera ' + (i + 1)}</option>`
+    ).join('');
+
+    cameraSelect.addEventListener('change', () => initCamera(cameraSelect.value));
+    await initCamera(devices[0]?.deviceId);
+  } catch (err) {
+    noCam.style.display = 'flex';
+    btnCapture.disabled = true;
+  }
+}
+
+populateCameras();
+
+// ── Capture ───────────────────────────────────────────────────────────────────
+btnCapture.addEventListener('click', () => {
+  if (queue.length >= MAX_PHOTOS) return;
+
+  // Draw frame to canvas
+  canvas.width  = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
+  const base64  = dataUrl.split(',')[1];
+
+  queue.push({ dataUrl, base64 });
+  renderQueue();
+  flash();
+});
+
+function flash() {
+  flashOverlay.style.opacity = '1';
+  setTimeout(() => { flashOverlay.style.opacity = '0'; }, 100);
+}
+
+// ── Queue render ──────────────────────────────────────────────────────────────
+function renderQueue() {
+  const count = queue.length;
+  photoCount.textContent = count + ' / ' + MAX_PHOTOS;
+  queueLabel.textContent = 'Photos (' + count + ' / ' + MAX_PHOTOS + ')';
+  btnCapture.disabled = count >= MAX_PHOTOS;
+  updateUploadBtn();
+
+  if (!count) {
+    queueGrid.innerHTML = '<div class="queue-empty">No photos yet — press Capture</div>';
+    return;
+  }
+
+  queueGrid.innerHTML = queue.map((item, i) => `
+    <div class="thumb-wrap" id="thumb-${i}">
+      <img src="${item.dataUrl}" alt="Photo ${i+1}">
+      <span class="thumb-num">${i + 1}</span>
+      <button class="thumb-del" onclick="deletePhoto(${i})" title="Delete">✕</button>
+    </div>
+  `).join('');
+}
+
+function deletePhoto(i) {
+  queue.splice(i, 1);
+  renderQueue();
+}
+
+// ── Upload & email ────────────────────────────────────────────────────────────
+function updateUploadBtn() {
+  btnUpload.disabled = queue.length === 0;
+}
+
+function setStatus(msg, type) {
+  statusMsg.textContent = msg;
+  statusMsg.className   = type || '';
+}
+
+btnUpload.addEventListener('click', async () => {
+  const name    = inpName.value.trim();
+  const email   = inpEmail.value.trim();
+  const subject = inpSubject.value.trim();
+
+  if (!name)    { setStatus('Enter your name.', 'error');    inpName.focus();    return; }
+  if (!email)   { setStatus('Enter your email.', 'error');   inpEmail.focus();   return; }
+  if (!subject) { setStatus('Enter a subject.', 'error');    inpSubject.focus(); return; }
+  if (PHOTO_BOOTH_URL === 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
+    setStatus('Apps Script URL not configured — see photo-booth.html.', 'error');
+    return;
+  }
+
+  btnUpload.disabled = true;
+  btnCapture.disabled = true;
+
+  const uploaded = [];
+
+  // Upload each photo sequentially
+  for (let i = 0; i < queue.length; i++) {
+    const thumb = document.getElementById('thumb-' + i);
+    if (thumb) thumb.classList.add('uploading');
+    setStatus(`Uploading photo ${i + 1} of ${queue.length}…`);
+
+    try {
+      const res  = await fetch(PHOTO_BOOTH_URL, {
+        method:  'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body:    JSON.stringify({
+          action:    'uploadPhoto',
+          name, subject,
+          imageData: queue[i].base64,
+          index:     i + 1
+        })
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Upload failed');
+
+      uploaded.push({ filename: data.filename, fileUrl: data.fileUrl });
+      if (thumb) { thumb.classList.remove('uploading'); thumb.classList.add('done'); }
+    } catch (err) {
+      setStatus('Upload failed: ' + err.message, 'error');
+      if (thumb) thumb.classList.remove('uploading');
+      btnUpload.disabled  = false;
+      btnCapture.disabled = queue.length >= MAX_PHOTOS;
+      return;
+    }
+  }
+
+  // Send email
+  setStatus('Sending email…');
+  try {
+    const res  = await fetch(PHOTO_BOOTH_URL, {
+      method:  'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body:    JSON.stringify({ action: 'sendEmail', name, email, subject, files: uploaded })
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || 'Email failed');
+  } catch (err) {
+    setStatus('Photos uploaded but email failed: ' + err.message, 'error');
+    btnUpload.disabled  = false;
+    return;
+  }
+
+  // Success
+  successEmail.textContent = email;
+  successScreen.classList.add('active');
+});
+
+// ── Reset ─────────────────────────────────────────────────────────────────────
+btnReset.addEventListener('click', () => {
+  queue.length = 0;
+  inpName.value    = '';
+  inpEmail.value   = '';
+  inpSubject.value = '';
+  renderQueue();
+  setStatus('');
+  successScreen.classList.remove('active');
+  btnCapture.disabled = false;
+  inpName.focus();
+});
+
+// Init
+renderQueue();
+inpName.focus();
+</script>
+</body>
+</html>
