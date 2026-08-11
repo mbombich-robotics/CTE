@@ -16,14 +16,14 @@
 | 6 | Oct 5–9 | 5 | 2 — CAD | | **L2.7: C4 Deck** + CAD assemblies intro | D2.4 — C4: key dimensions + iteration log |
 | 7 | Oct 12–16 | 5 | 2 — CAD | | **L2.8: C5** Front Wheel Mount; **C6** IR Sensor Mount; **C7** Ultrasonic Sensor Mount | D2.5, D2.6, D2.7 — C5, C6, C7: key dimensions + iteration logs |
 | 8 | Oct 19–23 | 5 | 2 — CAD | 2nd yr: **C8: Electronics Board Mount** w/ strain relief | Final robot CAD assembly | **Q2: CAD Quiz**; D2.8 — Robot Assembly |
-| 9 | Oct 26–30 | 4 | 3 — Safety | 🟡 🔴 Records Day Oct 30 | OSHA/LOTO/PPE/SDS; Matthew Henne case study; drill press, pedestal grinder, hand drill certs; CNC awareness; manufacturing processes | **Q4: Safety Quiz**; Tool Cert Cards |
+| 9 | Oct 26–30 | 4 | 3 — Safety | 🟡 🔴 Records Day Oct 30 | OSHA/LOTO/PPE/SDS; Matthew Henne case study; drill press, pedestal grinder, hand drill certs; CNC awareness; manufacturing processes | **Q3: Safety Quiz**; Tool Cert Cards |
 | 10 | Nov 2–6 | 5 | 3 — Safety | | CNC toolpaths; cut decks | D3.1 — Toolpaths to cut deck |
 | 11 | Nov 9–13 | 5 | Build | ⚡ Nov 11 (20-min period) | Robot physical assembly | |
 | **12** | **Nov 16–20** | **5** | **4 — Programming** | | **L4.1 (Microcontroller Fundamentals) + A4.1 (Blink); L4.2 (Variables & Types) + A4.2** | |
 | **13** | **Nov 23–24** | **2** | **4 — Programming** | **🟡 Mon–Tue only** | **L4.3 (Functions) + A4.3 (SOS with Functions)** | **D4.1 — Programming Basics: Lessons 4.1–4.3** |
 | — | Nov 25–28 | — | — | 🌿 Thanksgiving Break | | |
 | **14** | **Nov 30–Dec 4** | **5** | **4 — Programming** | | **Finish L4.4 (Digital Input) + A4.4 (Switches); L4.5 (PWM) + A4.5** | |
-| **15** | **Dec 7–11** | **5** | **4 — Programming** | | **L4.6 (Motor Control) + A4.6** | **D4.2 — Programming Basics: Lessons 4.4–4.6; Q5: Programming Quiz** |
+| **15** | **Dec 7–11** | **5** | **4 — Programming** | | **L4.6 (Motor Control) + A4.6** | **D4.2 — Programming Basics: Lessons 4.4–4.6; Q4: Programming Quiz** |
 | 16 | Dec 14–18 | 5 | 3D Print Holiday Project | | Students design and print a small item to take home — ornament, keychain, name plate, or similar; student chooses and customizes | |
 | — | Dec 21–Jan 3 | — | — | 🌿 Winter Break | | |
 
@@ -35,7 +35,7 @@
 |------|-------|------|------|-------|---------|--------------------|
 | 17 | Jan 4–8 | 5 | Robot Tuning | | Motor control on physical robot; drive + turn functions; encoder wiring and pulse counting | |
 | 18 | Jan 11–15 | 5 | Robot Tuning | ⚡ Jan 13 (20-min period) | Drive-straight with encoder feedback; IMU intro — Qwiic plug-in, read yaw angle | |
-| 19 | Jan 18–21 | 3 | Robot Tuning / Midterm | 🔴 MLK Day Jan 18 · Last student day Thu Jan 21 · Records Day Jan 22 (no students) | IMU heading hold; catch-up; **Q6: Midterm Exam** (covers EDP, CAD, Safety, Programming Basics) | **Q6: Midterm Exam** |
+| 19 | Jan 18–21 | 3 | Robot Tuning / Midterm | 🔴 MLK Day Jan 18 · Last student day Thu Jan 21 · Records Day Jan 22 (no students) | IMU heading hold; catch-up; **Q5: Midterm Exam** (covers EDP, CAD, Safety, Programming Basics) | **Q5: Midterm Exam** |
 
 ---
 
@@ -47,22 +47,22 @@
 | 21 | Feb 1–5 | 5 | Wall Following | | Maintain fixed distance from a wall using ultrasonic sensors; proportional correction | |
 | 22 | Feb 8–12 | 5 | Line Following | | 5-sensor IR array; per-sensor threshold calibration; binary line following | |
 | 23 | Feb 15–19 | 4 | Line Following | 🔴 Presidents Day Feb 15 | Weighted-sensor error; PID control; tune + course practical | D5.2 — Line Following Practical |
-| 24 | Feb 22–26 | 4 | 5 — AI & ML | 🔴 Feb 26 mid-winter break | L5.1 What Is AI; L5.2 Ethics in AI; L5.3 Teachable Machine | **Q7: AI Quiz** |
+| 24 | Feb 22–26 | 4 | 5 — AI & ML | 🔴 Feb 26 mid-winter break | L5.1 What Is AI; L5.2 Ethics in AI; L5.3 Teachable Machine | **Q6: AI Quiz** |
 | 25 | Mar 1–5 | 5 | 7 — Electrical Systems | | L7.1 Intro to Electricity (charge, voltage, current); L7.2 Ohm's Law + resistance; L7.3 Series vs. parallel circuits | |
-| 26 | Mar 8–12 | 5 | 7 — Electrical Systems | ⚡ Mar 10 (20-min period) | L7.4 Using a Multimeter; L7.5 Breadboarding basics; L7.6 LED Circuits; L7.7 Circuit Troubleshooting | **Q8: Electrical Systems Quiz** |
+| 26 | Mar 8–12 | 5 | 7 — Electrical Systems | ⚡ Mar 10 (20-min period) | L7.4 Using a Multimeter; L7.5 Breadboarding basics; L7.6 LED Circuits; L7.7 Circuit Troubleshooting | **Q7: Electrical Systems Quiz** |
 | 27 | Mar 15–19 | 5 | 8 — Mechanisms | | L8.1 Simple Machines (6 machines, IMA); L8.2 Mechanical Advantage (IMA vs AMA, lever classes); L8.3 Work, Power & Efficiency | |
 | 28 | Mar 22–25 | ~3.5 | 8 — Mechanisms | 🟡 🔴 Mar 25 ½-day Records Day · Mar 26 spring break begins | L8.4 Pulleys — fixed, movable, compound; L8.5 Gears — gear ratios, multi-stage trains | |
 | — | Mar 26–Apr 4 | — | — | 🌿 Spring Break | | |
 | 29 | Apr 5–9 | 5 | 8 — Mechanisms | | L8.6 Maximizing Power (motor curves, stall torque); L8.7 Tug of War design-build-test; L8.8 Linkages (four-bar, DOF) | |
 | 30 | Apr 12–16 | ~2 | 8 — Mechanisms | 🧪 State testing Tue–Thu | L8.9 Types of Motion; L8.10 Fix Fran's Farm capstone challenge | |
-| 31 | Apr 19–23 | 5 | 8 → Servo Build | | **Q9: Unit 8 Mechanisms Quiz**; Project intro + design brief; servo control review; begin build | **Q9: Unit 8 Mechanisms Quiz** |
+| 31 | Apr 19–23 | 5 | 8 → Servo Build | | **Q8: Unit 8 Mechanisms Quiz**; Project intro + design brief; servo control review; begin build | **Q8: Unit 8 Mechanisms Quiz** |
 | 32 | Apr 26–30 | 5 | Servo Build | | Build + test + iterate | |
 | 33 | May 3–7 | 5 | Servo Build | ⚡ May 5 (20-min period) | Final demo + portfolio submission | D5.3 — Servo Build Project |
 | 34 | May 10–14 | 5 | Capstone | | Open-ended challenge or improvement project | |
-| 35 | May 17–21 | 5 | Portfolio / Review | 🎓 May 20 last day for seniors | Portfolio completion push; all deliverables finalized; review for non-seniors | **Q10: Final Exam (seniors — before May 20)** |
+| 35 | May 17–21 | 5 | Portfolio / Review | 🎓 May 20 last day for seniors | Portfolio completion push; all deliverables finalized; review for non-seniors | **Q9: Final Exam (seniors — before May 20)** |
 | 36 | May 24–28 | 5 | Review | | EDP, CAD, Safety, Programming review for non-seniors | |
 | 37 | May 31–Jun 4 | 4 | Wrap-up | 🔴 Memorial Day May 31 | Return exams; wrap-up projects; demos | |
-| 38 | Jun 7–11 | 4.5 | Wrap-up / Final | Half day Jun 11 (last day) | **Q10: Final Exam (non-seniors)**; end-of-year reflection; equipment return | **Q10: Final Exam (non-seniors)** |
+| 38 | Jun 7–11 | 4.5 | Wrap-up / Final | Half day Jun 11 (last day) | **Q9: Final Exam (non-seniors)**; end-of-year reflection; equipment return | **Q9: Final Exam (non-seniors)** |
 
 ---
 
@@ -72,15 +72,13 @@
 |---|------|------|-------|
 | Q1 | EDP Quiz | 3 | Unit 1 — Engineering Design Process |
 | Q2 | CAD Quiz | 8 | Unit 2 — Fundamentals of CAD |
-| Q4 | Safety Quiz | 9 | Unit 3 — Shop Safety |
-| Q5 | Programming Quiz | 15 | Unit 4 — Programming, Electronics & Sensors |
-| Q6 | Midterm Exam | 19 | Units 1–4 cumulative |
-| Q7 | AI Quiz | 24 | Unit 5 — AI & Machine Learning |
-| Q8 | Electrical Systems Quiz | 26 | Unit 7 — Electrical Systems |
-| Q9 | Unit 8 Mechanisms Quiz | 31 | Unit 8 — Mechanisms |
-| Q10 | Final Exam | 35 (seniors) / 38 (others) | Cumulative |
-
-*Q3 is reserved / not assigned this year.*
+| Q3 | Safety Quiz | 9 | Unit 3 — Shop Safety |
+| Q4 | Programming Quiz | 15 | Unit 4 — Programming, Electronics & Sensors |
+| Q5 | Midterm Exam | 19 | Units 1–4 cumulative |
+| Q6 | AI Quiz | 24 | Unit 5 — AI & Machine Learning |
+| Q7 | Electrical Systems Quiz | 26 | Unit 7 — Electrical Systems |
+| Q8 | Unit 8 Mechanisms Quiz | 31 | Unit 8 — Mechanisms |
+| Q9 | Final Exam | 35 (seniors) / 38 (others) | Cumulative |
 
 ---
 

@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.11',
+    VERSION: 'v2.14.12',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -293,15 +293,16 @@ const DELIVERABLES = [
             'Signed certification card on file before Week 11 build phase begins'
         ]
     },
-    // ── Unit 4: Programming Basics ───────────────────────────────────────
+    // ── Unit 4: Programming Basics — D4.1 (Lessons 4.1–4.3) ────────────
     {
-        id: 51,
-        title: 'Programming Basics — Check Your Understanding',
+        id: 41,
+        title: 'D4.1 — Programming Basics: Lessons 4.1–4.3',
         unit: '04',
-        points: 80,
+        week: 13,
+        points: 50,
         phase: 'programming',
         tracks: ['hsaer'],
-        description: 'Answer Q1–Q5 from Activities 4.1, 4.2, 4.3, 4.4, and 4.5. Answer from memory — you may look up syntax in the Pico 2W Reference, but not back at the activity guides.',
+        description: 'Answer Q1–Q5 from Activities 4.1, 4.2, and 4.3. Answer from memory — you may look up syntax in the Pico 2W Reference, but not back at the activity guides.',
         requirements: [
             '4.1 Q1: What does while True: do, and why does every robot program need one?',
             '4.1 Q2: Why do we write Pin("LED", Pin.OUT) instead of Pin(25, Pin.OUT) on the Pico 2W?',
@@ -318,6 +319,19 @@ const DELIVERABLES = [
             '4.3 Q3: SW_2 uses Pin.PULL_DOWN. If you changed it to Pin.PULL_UP, what would you need to change in the if statement to keep the same behavior? Why?',
             '4.3 Q4: The LED stays on all the time and nothing changes when you press the switch. List the three most likely causes you would check first.',
             '4.3 Q5: Identify and write the corrected lines for the two bugs in the debug snippet from Activity 4.3.',
+        ]
+    },
+    // ── Unit 4: Programming Basics — D4.2 (Lessons 4.4–4.6) ────────────
+    {
+        id: 42,
+        title: 'D4.2 — Programming Basics: Lessons 4.4–4.6',
+        unit: '04',
+        week: 15,
+        points: 50,
+        phase: 'programming',
+        tracks: ['hsaer'],
+        description: 'Answer Q1–Q5 from Activities 4.4, 4.5, and 4.6. Answer from memory — you may look up syntax in the Pico 2W Reference, but not back at the activity guides.',
+        requirements: [
             '4.4 Q1: What does PWM stand for? Explain how rapid on/off switching simulates lower power without changing voltage.',
             '4.4 Q2: duty_u16() accepts values 0–65535. What value gives 75% duty cycle? Show your calculation.',
             '4.4 Q3: What does freq() control in a PWM signal? Would you notice a difference between freq(10) and freq(1000) on an LED? Explain.',
@@ -327,7 +341,12 @@ const DELIVERABLES = [
             '4.5 Q2: In set_speed(pct), the line pct = max(0, min(100, pct)) clamps the input. Trace what happens when you call set_speed(150) — what value does pct hold after that line, and why?',
             '4.5 Q3: After calling set_speed(75), you call get_speed(). What does it return? Explain what happened to _speed during both calls.',
             '4.5 Q4: You call set_speed(50) but the motor does not spin. List three distinct things you would check first, in order.',
-            '4.5 Q5: Identify and write the corrected lines for the two bugs in the debug snippet from Activity 4.5.'
+            '4.5 Q5: Identify and write the corrected lines for the two bugs in the debug snippet from Activity 4.5.',
+            '4.6 Q1: In motor.py, the drive(left, right) function takes two speed values. What range do these values accept, and what does 0 mean for each motor?',
+            '4.6 Q2: Write the drive() call that makes L.E.O. turn right in place. Explain which motor runs forward and which runs backward, and why.',
+            '4.6 Q3: You call drive(60, 60) but the robot curves left instead of going straight. Name two hardware causes and one software fix you would try first.',
+            '4.6 Q4: How do you bring L.E.O. to a full stop using motor.py? Write the exact call and explain what it sets internally.',
+            '4.6 Q5: Identify and write the corrected lines for the two bugs in the debug snippet from Activity 4.6.',
         ]
     },
     // ── Unit 4: Line Following Practical ────────────────────────────────
