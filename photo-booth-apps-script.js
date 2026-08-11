@@ -15,7 +15,7 @@
 //   5. Copy the deployment URL into photo-booth.html (PHOTO_BOOTH_URL constant).
 // ============================================================
 
-const PHOTO_BOOTH_VERSION = 'v1.0.0';
+const PHOTO_BOOTH_VERSION = 'v1.0.1';
 
 function doGet() {
   return ContentService
@@ -65,8 +65,12 @@ function handleUploadPhoto(data) {
     var imageBytes = Utilities.base64Decode(imageData);
     var blob       = Utilities.newBlob(imageBytes, 'image/jpeg', filename);
     var file       = dateFolder.createFile(blob);
-    // Share within domain only (district policy blocks public sharing)
-    file.setSharing(DriveApp.Access.DOMAIN, DriveApp.Permission.VIEW);
+    // Give only this student viewer access (avoids sharing policy restrictions)
+    if (data.email) {
+      try { file.addViewer(data.email); } catch(shareErr) {
+        Logger.log('addViewer skipped: ' + shareErr);
+      }
+    }
 
     return { success: true, fileId: file.getId(), fileUrl: file.getUrl(), filename: filename };
   } catch (err) {
