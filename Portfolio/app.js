@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.9',
+    VERSION: 'v2.14.10',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -1671,7 +1671,10 @@ function getCurrentPhase() {
 // Deliverables with no `tracks` array are visible to all tracks.
 function isForCourse(d) {
     if (!d.tracks) return true;
-    const course = state.student?.course || URL_TRACK || 'hsaer';
+    // URL_TRACK (from ?track= param) takes priority over stored course,
+    // same as setBackendForCourse — lets a student in two classes open
+    // the correct track from each hub without re-registering.
+    const course = URL_TRACK || state.student?.course || 'hsaer';
     return d.tracks.includes(course);
 }
 
