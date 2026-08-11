@@ -15,7 +15,7 @@
 //   5. Copy the deployment URL into photo-booth.html (PHOTO_BOOTH_URL constant).
 // ============================================================
 
-const PHOTO_BOOTH_VERSION = 'v1.0.1';
+const PHOTO_BOOTH_VERSION = 'v1.0.2';
 
 function doGet() {
   return ContentService
@@ -110,14 +110,14 @@ function handleSendEmail(data) {
       '<th style="padding:8px 14px;text-align:left;font-size:12px;color:#5f6368;font-weight:600;">#</th>' +
       '<th style="padding:8px 14px;text-align:left;font-size:12px;color:#5f6368;font-weight:600;">FILE</th>' +
       '</tr>' + rows + '</table>' +
-      '<h3 style="font-size:14px;">Adding photos to your Design Brief</h3>' +
+      '<h3 style="font-size:14px;">Adding photos to your Google Doc</h3>' +
       '<ol style="font-size:13px;line-height:2;">' +
       '<li>Click a photo link above to open it in Google Drive.</li>' +
-      '<li>Click the <strong>download</strong> button (⬇) in the top-right corner.</li>' +
+      '<li>Click the <strong>download</strong> button (⬇) in the top-left corner.</li>' +
       '<li>Open your Design Brief &rarr; <strong>Insert &rarr; Image &rarr; Upload from computer</strong>.</li>' +
       '</ol>' +
       '<p style="font-size:11px;color:#9aa0a6;margin-top:28px;border-top:1px solid #e8eaed;padding-top:12px;">' +
-      'Sent automatically by the AER Photo Booth</p>' +
+      'Sent automatically by the Robotics Lab Photo Booth</p>' +
       '</div>';
 
     MailApp.sendEmail({
