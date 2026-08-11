@@ -45,6 +45,8 @@
     flex-direction: column;
     background: #000;
     position: relative;
+    overflow: hidden;  /* prevents video from expanding the column */
+    min-height: 0;
   }
 
   #video-wrap {
@@ -426,8 +428,12 @@
         <input id="inp-name" type="text" placeholder="First Last" autocomplete="off" spellcheck="false">
       </div>
       <div class="field">
-        <label>School Email</label>
-        <input id="inp-email" type="email" placeholder="you@vicksburgschools.org" autocomplete="off">
+        <label>Student Number</label>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <input id="inp-email" type="text" inputmode="numeric" placeholder="123456" autocomplete="off"
+                 style="width:100px;flex-shrink:0;">
+          <span style="color:var(--muted);font-size:13px;">@vicksburgschools.org</span>
+        </div>
       </div>
       <div class="field">
         <label>Subject / Component</label>
@@ -605,13 +611,14 @@ function setStatus(msg, type) {
 }
 
 btnUpload.addEventListener('click', async () => {
-  const name    = inpName.value.trim();
-  const email   = inpEmail.value.trim();
-  const subject = inpSubject.value.trim();
+  const name      = inpName.value.trim();
+  const studentId = inpEmail.value.trim().replace(/@.*/, ''); // strip domain if pasted
+  const email     = studentId ? studentId + '@vicksburgschools.org' : '';
+  const subject   = inpSubject.value.trim();
 
-  if (!name)    { setStatus('Enter your name.', 'error');    inpName.focus();    return; }
-  if (!email)   { setStatus('Enter your email.', 'error');   inpEmail.focus();   return; }
-  if (!subject) { setStatus('Enter a subject.', 'error');    inpSubject.focus(); return; }
+  if (!name)      { setStatus('Enter your name.', 'error');           inpName.focus();    return; }
+  if (!studentId) { setStatus('Enter your student number.', 'error'); inpEmail.focus();   return; }
+  if (!subject)   { setStatus('Enter a subject.', 'error');           inpSubject.focus(); return; }
   if (PHOTO_BOOTH_URL === 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
     setStatus('Apps Script URL not configured — see photo-booth.html.', 'error');
     return;
