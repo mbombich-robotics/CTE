@@ -1,12 +1,12 @@
 // Teacher Portal - Dashboard for viewing student portfolios
-// Tracks: HS AE&R (robotics), 8th Grade AE&R (aer8), Design & Build Lab (dbl)
+// Tracks: HS AE&R (hsaer), 8th Grade AE&R (aer8), Design & Build Lab (dbl)
 
 // ============================================
 // CONFIGURATION
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.37',
+    VERSION: 'v2.9.38',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -19,7 +19,7 @@ const CONFIG = {
 
     // Course configurations
     COURSES: {
-        robotics: {
+        hsaer: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
             currentAppVersion: 'v2.14.7',
@@ -71,24 +71,44 @@ const CONFIG = {
 // TRACK DELIVERABLES
 // ============================================
 const TRACK_DELIVERABLES = {
-    robotics: [
-        { id: 0,  label: 'D0 — Career Ready Practices',         week: null },
-        { id: 11, label: 'D1.1 — Design Brief',                  week: 1   },
-        { id: 12, label: 'D1.2 — Robot Deck Design Record',      week: 2   },
-        { id: 21, label: 'D2.1 — C1: Wheel Hub',                 week: 3   },
-        { id: 22, label: 'D2.2 — C2: Drive Wheel',               week: 4   },
-        { id: 23, label: 'D2.3 — C3: Motor Sleeve Mount',        week: 4   },
-        { id: 24, label: 'D2.4 — C4: Robot Deck (Final)',         week: 8   },
-        { id: 25, label: 'D2.5 — C5: Omni Wheel Mount',          week: 6   },
-        { id: 26, label: 'D2.6 — C6: IR Sensor Mount',           week: 7   },
-        { id: 27, label: 'D2.7 — C7: Ultrasonic Sensor Mount',   week: 7   },
-        { id: 31, label: 'D3.1 — Tool Safety Certifications',    week: 10  },
-        { id: 51, label: 'D5.1 — Programming Basics',            week: null },
-        { id: 52, label: 'D5.2 — Line Following Practical',      week: 23  },
-        { id: 53, label: 'D5.3 — Servo Mechanism Project',        week: 32  },
-        { id: 54, label: 'D5.4 — Teachable Machine Project',     week: null },
+    // ── HS AE&R ─────────────────────────────────────────────────────────
+    hsaer: [
+        { id:  0, label: 'D0  — Career Ready Practices',          week: null },
+        { id: 10, label: 'D10 — Signed Syllabus & Safety Contract', week: 1  },
+        { id: 11, label: 'D11 — Design Brief',                     week: 1  },
+        // Unit 2: Component deliverables (Google Doc template)
+        { id: 21, label: 'D21 — C1: Wheel Hub',                    week: 3  },
+        { id: 22, label: 'D22 — C2: Drive Wheel',                  week: 4  },
+        { id: 23, label: 'D23 — C3: Motor Sleeve Mount',           week: 4  },
+        { id: 25, label: 'D25 — C5: Omni Wheel Mount',             week: 6  },
+        { id: 26, label: 'D26 — C6: IR Sensor Mount',              week: 7  },
+        { id: 27, label: 'D27 — C7: Ultrasonic Sensor Mount',      week: 7  },
+        { id: 24, label: 'D24 — C4: Robot Deck (Final)',            week: 8  },
+        // Unit 3
+        { id: 31, label: 'D31 — Tool Safety Certifications',       week: 10 },
+        // Unit 4 / 5: Programming & ML
+        { id: 51, label: 'D51 — Programming Basics',               week: null },
+        { id: 52, label: 'D52 — Line Following Practical',         week: 23 },
+        { id: 53, label: 'D53 — Servo Mechanism Project',          week: 32 },
+        { id: 54, label: 'D54 — Teachable Machine Project',        week: null },
     ],
-    aer8: [],
+    // ── 8th Grade AE&R ──────────────────────────────────────────────────
+    aer8: [
+        { id:  0, label: 'D0  — Career Ready Practices',          week: null },
+        { id: 10, label: 'D10 — Signed Syllabus & Safety Contract', week: 1  },
+        { id: 11, label: 'D11 — Design Brief',                     week: 2  },
+        // Unit 2: Component deliverables
+        { id: 21, label: 'D21 — C1: Wheel Hub',                    week: 3  },
+        { id: 22, label: 'D22 — C2: Drive Wheel',                  week: 4  },
+        // Unit 8: Mechanisms (weeks 14–18)
+        { id: 81, label: 'D81 — Gear Ratio Calculation Sheet',     week: 14 },
+        { id: 82, label: 'D82 — Mechanism CAD Housing + Reflection', week: 15 },
+        { id: 83, label: 'D83 — Holiday 3D Print',                 week: 16 },
+        { id: 84, label: 'D84 — Pulley System — Ratio & CAD',      week: 17 },
+        { id: 85, label: 'D85 — Mechanism Showcase — Portfolio Evidence', week: 18 },
+    ],
+    // ── Design & Build Lab ───────────────────────────────────────────────
+    // P1–P6 project deliverables TBD (app.js not yet updated for DBL)
     dbl:  [],
 };
 
@@ -96,7 +116,7 @@ const TRACK_DELIVERABLES = {
 // GRADING RUBRICS
 // ============================================
 const RUBRICS = {
-    robotics: {
+    hsaer: {
         4: {
             categories: [
                 { name: 'Customized CAD Model', points: 20 },
@@ -212,7 +232,7 @@ function tallyRubric(uid, deliverableId, email) {
 // WEEK SETTINGS (localStorage)
 // ============================================
 let weekSettings = {
-    robotics: { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {} },
+    hsaer: { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {} },
     aer8:     { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {} },
     dbl:      { skipDeliverables: [], deliverableDueDates: {} },
     currentWeekOverride: null
@@ -224,7 +244,7 @@ function loadWeekSettings() {
         if (saved) {
             const parsed = JSON.parse(saved);
             weekSettings = { ...weekSettings, ...parsed };
-            weekSettings.robotics = { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {}, ...parsed.robotics };
+            weekSettings.hsaer = { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {}, ...parsed.hsaer };
             weekSettings.aer8     = { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {}, ...parsed.aer8 };
             weekSettings.dbl      = { skipDeliverables: [], deliverableDueDates: {}, ...parsed.dbl };
         }
@@ -249,7 +269,7 @@ function deliverableForWeek(courseId, week) {
 // ============================================
 let state = {
     teacherEmail: null,
-    activeCourse: 'robotics',
+    activeCourse: 'hsaer',
     rawData: null,        // Raw data from API
     students: [],         // Processed student list
     filters: {
@@ -1026,7 +1046,7 @@ function openStudentDetail(email) {
     const quizTab   = document.getElementById('quizDetailTab');
     const quizPanel = document.getElementById('quizPanel');
     if (quizTab && quizPanel) {
-        if (state.activeCourse === 'robotics') {
+        if (state.activeCourse === 'hsaer') {
             quizTab.style.display = '';
             const quizRow = (state.rawData?.quiz || []).find(r => r[1] === student.email);
             if (!quizRow) {
@@ -1119,7 +1139,7 @@ async function regradeQuiz(email, btn) {
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Grading…';
     try {
-        const course = CONFIG.COURSES['robotics'];
+        const course = CONFIG.COURSES['hsaer'];
         const res = await fetch(course.apiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain' },
@@ -1163,7 +1183,7 @@ async function saveQuizGrade(email, btn) {
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
     try {
-        const course = CONFIG.COURSES['robotics'];
+        const course = CONFIG.COURSES['hsaer'];
         const res = await fetch(course.apiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain' },
@@ -1770,7 +1790,7 @@ function updateAssignmentSelect() {
 
     if (type === 'deliverable') {
         // Deliverables
-        const deliverableNames = state.activeCourse === 'robotics'
+        const deliverableNames = state.activeCourse === 'hsaer'
             ? {
                 1: 'Line Following Practical #1',
                 2: 'Line Following Final Practical',
@@ -1977,20 +1997,20 @@ function closeLeaderboard() {
 }
 
 async function loadLeaderboardData() {
-    const [roboticsRes, frcRes] = await Promise.all([
-        fetch(CONFIG.COURSES.robotics.apiUrl + '?action=all&_t=' + Date.now()),
+    const [hsaerRes, frcRes] = await Promise.all([
+        fetch(CONFIG.COURSES.hsaer.apiUrl + '?action=all&_t=' + Date.now()),
         fetch(CONFIG.COURSES.frc.apiUrl + '?action=all&_t=' + Date.now())
     ]);
     return {
-        robotics: await roboticsRes.json(),
+        hsaer: await hsaerRes.json(),
         frc: await frcRes.json()
     };
 }
 
 function buildLeaderboardClasses(allData) {
     const classes = [
-        buildClassData('6th Hour', allData.robotics, CONFIG.COURSES.robotics, 'hour6', 'fa-robot', 'robotics'),
-        buildClassData('7th Hour', allData.robotics, CONFIG.COURSES.robotics, 'hour7', 'fa-robot', 'robotics'),
+        buildClassData('6th Hour', allData.hsaer, CONFIG.COURSES.hsaer, 'hour6', 'fa-robot', 'hsaer'),
+        buildClassData('7th Hour', allData.hsaer, CONFIG.COURSES.hsaer, 'hour7', 'fa-robot', 'hsaer'),
         buildClassData('FRC', allData.frc, CONFIG.COURSES.frc, null, 'fa-cogs', 'frc')
     ];
 
@@ -2223,7 +2243,7 @@ async function openWeekSettings() {
     overrideSelect.value = weekSettings.currentWeekOverride !== null ? weekSettings.currentWeekOverride : '';
 
     // Populate deliverables, quiz toggles, and version fields for all three tracks
-    for (const courseId of ['robotics', 'aer8', 'dbl']) {
+    for (const courseId of ['hsaer', 'aer8', 'dbl']) {
         // Deliverables table (keyed by deliverable ID)
         const deliverables = TRACK_DELIVERABLES[courseId] || [];
         const delTbody = document.getElementById(courseId + 'DeliverableSettingsBody');
@@ -2248,7 +2268,7 @@ async function openWeekSettings() {
         }
 
         // Quiz toggle + key selector (HS AE&R and 8AER only)
-        if (courseId === 'robotics' || courseId === 'aer8') {
+        if (courseId === 'hsaer' || courseId === 'aer8') {
             const suffix = courseId === 'aer8' ? '_aer8' : '';
             const quizToggle = document.getElementById('quizEnabledToggle' + suffix);
             if (quizToggle) quizToggle.checked = weekSettings[courseId].quizEnabled || false;
@@ -2266,7 +2286,7 @@ async function openWeekSettings() {
     modal.classList.add('active');
 
     // Fetch backend versions for all three tracks in parallel
-    await Promise.all(['robotics', 'aer8', 'dbl'].map(async courseId => {
+    await Promise.all(['hsaer', 'aer8', 'dbl'].map(async courseId => {
         try {
             const cfg = await fetch(CONFIG.COURSES[courseId].apiUrl + '?action=getConfig&_t=' + Date.now()).then(r => r.json());
             const backendEl = document.getElementById('backendVersion_' + courseId);
@@ -2301,7 +2321,7 @@ async function applyWeekSettings() {
     weekSettings.currentWeekOverride = overrideVal ? parseInt(overrideVal) : null;
 
     // Read DOM values for all three tracks (modal renders all simultaneously)
-    for (const courseId of ['robotics', 'aer8', 'dbl']) {
+    for (const courseId of ['hsaer', 'aer8', 'dbl']) {
         // Deliverables (keyed by deliverable ID)
         weekSettings[courseId].skipDeliverables = [];
         weekSettings[courseId].deliverableDueDates = {};
@@ -2313,7 +2333,7 @@ async function applyWeekSettings() {
 
         weekSettings[courseId].expectedVersion = document.getElementById(`expectedVersion_${courseId}`)?.value.trim() || '';
 
-        if (courseId === 'robotics' || courseId === 'aer8') {
+        if (courseId === 'hsaer' || courseId === 'aer8') {
             const suffix = courseId === 'aer8' ? '_aer8' : '';
             weekSettings[courseId].quizEnabled = document.getElementById('quizEnabledToggle' + suffix)?.checked || false;
             weekSettings[courseId].quizKey     = document.getElementById('quizKeySelect' + suffix)?.value || 'claw';
@@ -2330,7 +2350,7 @@ async function applyWeekSettings() {
     saveBtn.disabled = true;
 
     try {
-        await Promise.all(['robotics', 'aer8', 'dbl'].map(courseId => {
+        await Promise.all(['hsaer', 'aer8', 'dbl'].map(courseId => {
             const body = {
                 action: 'setConfig',
                 token: CONFIG.TEACHER_TOKEN,
@@ -2338,7 +2358,7 @@ async function applyWeekSettings() {
                 expectedVersion:      weekSettings[courseId].expectedVersion,
                 deliverableDueDates:  weekSettings[courseId].deliverableDueDates || {}
             };
-            if (courseId === 'robotics' || courseId === 'aer8') {
+            if (courseId === 'hsaer' || courseId === 'aer8') {
                 body.quizEnabled = weekSettings[courseId].quizEnabled;
                 body.quizKey     = weekSettings[courseId].quizKey || 'claw';
             }
@@ -2381,7 +2401,7 @@ async function openD0Grader(email, content, studentName) {
         <i class="fas fa-spinner fa-spin"></i> Grading with AI…</div>`;
 
     try {
-        const course = CONFIG.COURSES['robotics'];
+        const course = CONFIG.COURSES['hsaer'];
         const res = await fetch(course.apiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain' },
@@ -2421,7 +2441,7 @@ async function openDesignBriefGrader(email, deliverableId, docUrl, deliverableTi
     overlay.style.display = 'block';
 
     try {
-        const course = CONFIG.COURSES['robotics'];
+        const course = CONFIG.COURSES['hsaer'];
         const res = await fetch(course.apiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain' },
