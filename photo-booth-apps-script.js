@@ -65,7 +65,8 @@ function handleUploadPhoto(data) {
     var imageBytes = Utilities.base64Decode(imageData);
     var blob       = Utilities.newBlob(imageBytes, 'image/jpeg', filename);
     var file       = dateFolder.createFile(blob);
-    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    // Share within domain only (district policy blocks public sharing)
+    file.setSharing(DriveApp.Access.DOMAIN, DriveApp.Permission.VIEW);
 
     return { success: true, fileId: file.getId(), fileUrl: file.getUrl(), filename: filename };
   } catch (err) {
