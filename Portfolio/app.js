@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.2',
+    VERSION: 'v2.14.3',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -3066,9 +3066,9 @@ async function createDeliverableDoc(id) {
             headers: { 'Content-Type': 'text/plain' }, // Required for Google Apps Script CORS
             body: JSON.stringify({
                 action: 'createDeliverableDoc',
-                email: state.user?.email || '',
+                email: state.student?.email || '',
                 deliverableId: id,
-                studentName: state.user?.name || '',
+                studentName: state.student?.name || '',
                 projectName: state.config?.projectName || ''
             })
         });
@@ -3107,7 +3107,7 @@ async function requestDocFeedback(id) {
             headers: { 'Content-Type': 'text/plain' }, // Required for Google Apps Script CORS
             body: JSON.stringify({
                 action: 'getDocAIFeedback',
-                email: state.user?.email || '',
+                email: state.student?.email || '',
                 deliverableId: id,
                 docId
             })
