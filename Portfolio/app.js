@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.13.1',
+    VERSION: 'v2.14.0',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -138,14 +138,16 @@ const DELIVERABLES = [
         title: 'Design Brief',
         unit: '01',
         week: 1,
-        points: 50,
         phase: 'edp',
-        description: 'Submit your completed design brief for the Robot Deck challenge.',
+        type: 'googleDoc',
+        description: 'Create a formal design brief in Google Docs. Your document lives in your Google Drive and serves as the official record of your design requirements.',
         requirements: [
-            'Problem statement (1–2 sentences: who needs what and why)',
-            'At least 3 criteria — specific and measurable',
-            'All constraints listed',
-            'Design statement (one sentence combining criteria and constraints)'
+            'Client & End User — specifically named, not vague',
+            'Problem Statement — describes the problem, not the solution',
+            'At least 3 measurable criteria ("The solution must…")',
+            'At least 2 realistic constraints ("The solution must not…")',
+            'Design Statement — 2–3 sentences synthesizing all four sections',
+            'Three distinct concept sketches with your name visible on each'
         ]
     },
     {
@@ -2553,6 +2555,9 @@ function openDeliverableForm(id) {
             </div>
             ` : ''}
 
+            ${deliverable.type === 'googleDoc'
+                ? renderDocDeliverableUI(id, deliverable, existing)
+                : `
             ${id !== 0 && !deliverable.questions?.length ? `
             <div class="form-group">
                 <label for="deliverableContent">Your Submission</label>
@@ -2598,17 +2603,6 @@ function openDeliverableForm(id) {
                 <textarea id="deliverableLinks" rows="3" placeholder="Links, notes, or brief code snippets">${existing.links || ''}</textarea>
             </div>
 
-            <div class="form-group">
-                <label for="deliverableSelfAssessment">Self-Assessment (1-10)</label>
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <input type="number" id="deliverableSelfAssessment" min="1" max="10" value="${existing.selfAssessment || ''}"
-                           style="width: 80px;" placeholder="1-10">
-                    <span style="color: var(--gray-500); font-size: 13px;">
-                        How well did you meet the requirements?
-                    </span>
-                </div>
-            </div>
-
             <div class="form-actions">
                 <button type="button" class="btn btn-secondary" onclick="saveDeliverableDraft(${id})">
                     <i class="fas fa-save"></i> Save Draft
@@ -2619,7 +2613,7 @@ function openDeliverableForm(id) {
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-paper-plane"></i> Submit
                 </button>
-            </div>
+            </div>`}
         </form>
         ${id === 0 ? '<div id="d0FeedbackResult" style="margin-top:16px;"></div>' : ''}
     `;
@@ -2732,7 +2726,6 @@ function saveDeliverableDraft(id) {
         ...state.deliverables[id],
         content: document.getElementById('deliverableContent')?.value || '',
         links: document.getElementById('deliverableLinks')?.value || '',
-        selfAssessment: document.getElementById('deliverableSelfAssessment').value,
         completionTime: completionTimeEl ? parseInt(completionTimeEl.value) || null : null,
         ...(id === 0 ? collectDeliverable0CustomData() : {}),
         ...(CAD_DELIVERABLE_IDS.includes(id) ? collectCadDeliverableData() : {}),
@@ -2845,6 +2838,10 @@ function formatDeliverable0Content(d) {
 
 function submitDeliverable(id) {
     const deliverable = DELIVERABLES.find(d => d.id === id);
+    if (deliverable?.type === 'googleDoc') {
+        submitGoogleDocDeliverable(id);
+        return;
+    }
     if (!deliverable?.alwaysOpen && state.deliverables[id]?.status !== 'completed' && !state.config.deliverableDueDates[deliverable?.id]) {
         showToast('This deliverable hasn\'t been assigned yet.', 'error');
         return;
@@ -2892,7 +2889,6 @@ function submitDeliverable(id) {
     state.deliverables[id] = {
         content: finalContent,
         links: document.getElementById('deliverableLinks')?.value || '',
-        selfAssessment: document.getElementById('deliverableSelfAssessment').value,
         completionTime: completionTimeEl ? parseInt(completionTimeEl.value) || null : null,
         ...customData,
         photos,
@@ -2978,6 +2974,205 @@ function renderD0FeedbackPanel(grades) {
         ${rows}
         <p style="font-size:12px;color:var(--gray-500,#999);margin-top:8px;">This feedback is a guide — your teacher assigns the final grade.</p>
     `;
+}
+
+// ============================================
+// GOOGLE DOC DELIVERABLES
+// ============================================
+
+const DOC_RUBRIC_CRITERIA = {
+    11: [
+        { key: 'problem_id',             label: 'Client & End User',     max: 4 },
+        { key: 'criteria_completeness',  label: 'Criteria (quantity)',   max: 4 },
+        { key: 'criteria_quality',       label: 'Criteria (quality)',    max: 4 },
+        { key: 'constraints',            label: 'Constraints',           max: 4 },
+        { key: 'design_statement',       label: 'Design Statement',      max: 4 },
+    ]
+};
+
+function renderDocDeliverableUI(id, deliverable, existing) {
+    const docId  = existing?.docId  || '';
+    const docUrl = existing?.docUrl || '';
+    const hasDoc = !!docId;
+    const isSubmitted = existing?.status === 'completed';
+
+    const createBtn = hasDoc
+        ? ''
+        : `<button type="button" class="btn btn-primary" onclick="createDeliverableDoc(${id})" id="createDocBtn">
+               <i class="fas fa-file-alt"></i> Create My ${deliverable.title}
+           </button>`;
+
+    const docLink = hasDoc
+        ? `<div style="margin-bottom:16px;">
+               <a href="${docUrl}" target="_blank" rel="noopener"
+                  style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:var(--gray-100);border:1px solid var(--gray-300);border-radius:8px;color:var(--primary);text-decoration:none;font-weight:600;font-size:14px;">
+                   <i class="fas fa-external-link-alt"></i> Open My ${deliverable.title} in Google Docs
+               </a>
+           </div>`
+        : '';
+
+    const feedbackSection = hasDoc && !isSubmitted
+        ? `<div style="margin-bottom:16px;">
+               <button type="button" class="btn btn-secondary" onclick="requestDocFeedback(${id})" id="docFeedbackBtn">
+                   <i class="fas fa-comments"></i> Get AI Feedback
+               </button>
+               <div id="docFeedbackResult" style="margin-top:16px;"></div>
+           </div>`
+        : hasDoc && isSubmitted
+        ? `<div id="docFeedbackResult" style="margin-top:0;"></div>`
+        : '';
+
+    const submitBtn = hasDoc && !isSubmitted
+        ? `<div class="form-actions">
+               <button type="button" class="btn btn-primary" onclick="submitDeliverable(${id})">
+                   <i class="fas fa-paper-plane"></i> Submit
+               </button>
+           </div>`
+        : isSubmitted
+        ? `<div style="display:flex;align-items:center;gap:8px;color:var(--success,#2e7d32);font-weight:600;margin-top:8px;">
+               <i class="fas fa-check-circle"></i> Submitted
+           </div>`
+        : '';
+
+    const instructions = `
+        <div style="background:var(--gray-50,#fafafa);border:1px solid var(--gray-200);border-radius:8px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:var(--gray-600);">
+            <strong>How it works:</strong>
+            <ol style="margin:8px 0 0 16px;padding:0;line-height:1.8;">
+                <li>Click <strong>Create My ${deliverable.title}</strong> — your personal copy opens in Google Docs.</li>
+                <li>Read the yellow instruction boxes, then <strong>delete them</strong> as you complete each section.</li>
+                <li>Fill in all sections. Photos go directly into the doc.</li>
+                <li>Click <strong>Get AI Feedback</strong> to check your work before submitting.</li>
+                <li>When you're satisfied, click <strong>Submit</strong>.</li>
+            </ol>
+        </div>`;
+
+    return `
+        ${instructions}
+        <div id="docDeliverableArea">
+            ${createBtn}
+            ${docLink}
+            ${feedbackSection}
+            ${submitBtn}
+        </div>`;
+}
+
+async function createDeliverableDoc(id) {
+    const btn = document.getElementById('createDocBtn');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating…'; }
+
+    try {
+        const res = await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'createDeliverableDoc',
+                email: state.user?.email || '',
+                deliverableId: id,
+                studentName: state.user?.name || '',
+                projectName: state.config?.projectName || ''
+            })
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error || 'Unknown error');
+
+        state.deliverables[id] = {
+            ...state.deliverables[id],
+            docId:  data.docId,
+            docUrl: data.editUrl,
+            status: 'in-progress',
+            updatedAt: new Date().toISOString()
+        };
+        await saveToCloud();
+
+        // Re-open the form so the doc link and feedback button appear
+        window.open(data.editUrl, '_blank');
+        openDeliverableForm(id);
+    } catch (err) {
+        showToast('Could not create document: ' + err.message, 'error');
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-file-alt"></i> Create My Document'; }
+    }
+}
+
+async function requestDocFeedback(id) {
+    const btn    = document.getElementById('docFeedbackBtn');
+    const panel  = document.getElementById('docFeedbackResult');
+    const docId  = state.deliverables[id]?.docId;
+    if (!docId) { showToast('No document linked yet.', 'error'); return; }
+    if (btn)   { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking…'; }
+    if (panel) { panel.innerHTML = ''; }
+
+    try {
+        const res = await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'getDocAIFeedback',
+                email: state.user?.email || '',
+                deliverableId: id,
+                docId
+            })
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error || 'Unknown error');
+
+        const criteria = DOC_RUBRIC_CRITERIA[id] || [];
+        if (panel) panel.innerHTML = renderDocFeedbackPanel(data.grades, criteria);
+    } catch (err) {
+        if (panel) panel.innerHTML = `<p style="color:var(--danger,#c62828);font-size:14px;">${err.message}</p>`;
+    } finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-comments"></i> Get AI Feedback'; }
+    }
+}
+
+function renderDocFeedbackPanel(grades, criteria) {
+    const total    = criteria.reduce((sum, c) => sum + (grades[c.key]?.score || 0), 0);
+    const maxTotal = criteria.reduce((sum, c) => sum + (c.max || 4), 0);
+
+    const rows = criteria.map(c => {
+        const g    = grades[c.key] || { score: 0, max: c.max || 4, feedback: '' };
+        const pct  = g.max > 0 ? g.score / g.max : 0;
+        const color = pct >= 0.75 ? 'var(--success,#2e7d32)' : pct >= 0.5 ? 'var(--warning,#f57c00)' : 'var(--danger,#c62828)';
+        return `
+            <div style="border:1px solid var(--gray-200,#e0e0e0);border-radius:8px;padding:12px 14px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                    <span style="font-weight:600;font-size:14px;">${c.label}</span>
+                    <span style="font-weight:700;font-size:15px;color:${color};">${g.score}/${g.max}</span>
+                </div>
+                <p style="font-size:13px;color:var(--gray-700,#444);margin:0;line-height:1.5;">${g.feedback || ''}</p>
+            </div>`;
+    }).join('');
+
+    return `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--gray-100,#f5f5f5);border-radius:8px;margin-bottom:4px;">
+            <span style="font-weight:700;">Total</span>
+            <span style="font-weight:700;font-size:18px;">${total} / ${maxTotal}</span>
+        </div>
+        ${rows}
+        <p style="font-size:12px;color:var(--gray-500,#999);margin-top:8px;">This feedback is a guide — your teacher assigns the final grade.</p>`;
+}
+
+async function submitGoogleDocDeliverable(id) {
+    const docId  = state.deliverables[id]?.docId;
+    const docUrl = state.deliverables[id]?.docUrl;
+    const deliverable = DELIVERABLES.find(d => d.id === id);
+
+    if (!docId) {
+        showToast('Create your document first.', 'error');
+        return;
+    }
+
+    state.deliverables[id] = {
+        ...state.deliverables[id],
+        docId,
+        docUrl,
+        content: docUrl, // store URL as content so Sheets has a reference
+        status: 'completed',
+        submittedAt: new Date().toISOString()
+    };
+    await saveToCloud();
+    updateUI();
+    document.getElementById('deliverableModal').classList.remove('active');
+    showCelebration(`${deliverable.title} Submitted!`);
 }
 
 // ============================================

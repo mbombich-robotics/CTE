@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.10.1';
+const BACKEND_VERSION = 'v2.11.0';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -454,6 +454,12 @@ function doPost(e) {
 
       case 'saveTutorProgress':
         return jsonResponse(saveTutorProgress(data));
+
+      case 'createDeliverableDoc':
+        return jsonResponse(handleCreateDeliverableDoc(data));
+
+      case 'getDocAIFeedback':
+        return jsonResponse(handleGetDocAIFeedback(data));
 
       default:
         return jsonResponse({ error: 'Unknown action' });
@@ -2396,6 +2402,410 @@ function getOrCreateTutorSheet() {
     sheet.setFrozenRows(1);
   }
   return sheet;
+}
+
+// ============================================
+// GOOGLE DOC DELIVERABLE SYSTEM
+// ============================================
+
+/**
+ * Creates a copy of a Google Doc template in the student's Drive.
+ * Template IDs are stored in Script Properties as DELIVERABLE_DOC_TEMPLATE_<id>
+ */
+function handleCreateDeliverableDoc(data) {
+  var email         = data.email         || '';
+  var deliverableId = Number(data.deliverableId);
+  var studentName   = data.studentName   || '';
+  var projectName   = data.projectName   || '';
+
+  if (!email) return { success: false, error: 'Missing student email.' };
+
+  var templateId = PropertiesService.getScriptProperties()
+                     .getProperty('DELIVERABLE_DOC_TEMPLATE_' + deliverableId);
+  if (!templateId) {
+    return { success: false, error: 'Template not configured for deliverable ' + deliverableId + '. Ask your teacher to complete the one-time setup.' };
+  }
+
+  try {
+    var templateFile = DriveApp.getFileById(templateId);
+    var title = 'Design Brief — ' + (studentName || email.split('@')[0]);
+    var copy  = templateFile.makeCopy(title);
+    var docId = copy.getId();
+
+    // Pre-fill placeholder text
+    var doc  = DocumentApp.openById(docId);
+    var body = doc.getBody();
+    body.replaceText('\\[\\[STUDENT_NAME\\]\\]', studentName || '');
+    body.replaceText('\\[\\[DATE\\]\\]',
+      Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'MMMM d, yyyy'));
+    body.replaceText('\\[\\[PROJECT\\]\\]', projectName || '');
+    doc.saveAndClose();
+
+    // Share with student and transfer ownership so the doc lives in their Drive
+    copy.addEditor(email);
+    try {
+      copy.setOwner(email); // teacher retains editor access after this
+    } catch (ownerErr) {
+      Logger.log('setOwner skipped (may be cross-domain): ' + ownerErr);
+      // Student still has editor access in "Shared with me"
+    }
+
+    return {
+      success: true,
+      docId:   docId,
+      editUrl: 'https://docs.google.com/document/d/' + docId + '/edit'
+    };
+  } catch (e) {
+    Logger.log('handleCreateDeliverableDoc error: ' + e);
+    return { success: false, error: e.toString() };
+  }
+}
+
+/**
+ * Reads a student's Google Doc deliverable and returns AI rubric feedback.
+ */
+function handleGetDocAIFeedback(data) {
+  var docId         = data.docId || '';
+  var deliverableId = Number(data.deliverableId);
+
+  if (!docId) return { success: false, error: 'No document ID provided.' };
+
+  try {
+    var doc  = DocumentApp.openById(docId);
+    var text = doc.getBody().getText();
+
+    if (!text || text.trim().length < 80) {
+      return { success: false, error: 'Your document looks empty or very short. Fill in each section first, then come back for feedback.' };
+    }
+
+    var grades = gradeDocWithRubric(text, deliverableId);
+    return { success: true, grades: grades };
+
+  } catch (e) {
+    Logger.log('handleGetDocAIFeedback error: ' + e);
+    if (e.message && e.message.indexOf('does not exist') !== -1) {
+      return { success: false, error: 'Document not found — it may have been deleted. Create a new copy from the portfolio.' };
+    }
+    return { success: false, error: 'Could not read your document: ' + e.message };
+  }
+}
+
+/**
+ * Grades a Google Doc deliverable against its rubric using Claude Haiku.
+ * Add a new if/else block here for each new googleDoc deliverable.
+ */
+function gradeDocWithRubric(docText, deliverableId) {
+  var rubric, criteriaKeys;
+
+  if (deliverableId === 11) {
+    // ── D11: Design Brief ──────────────────────────────────────────────────
+    rubric = `RUBRIC — DESIGN BRIEF (5 criteria, 4 pts each):
+
+problem_id (max 4): Student names a specific client or end user AND describes the actual problem — not the solution. 4=user specifically named, problem clearly stated, no solution language, specific enough to test against; 3=user named, problem clear but could be more specific; 2=user is vague ("people," "students") OR problem describes a solution instead of a need; 1=missing either the user or a clear problem statement; 0=blank.
+
+criteria_completeness (max 4): Number of criteria listed. 4=4 or more; 3=exactly 3; 2=2 criteria; 1=only 1 criterion; 0=none listed.
+
+criteria_quality (max 4): How measurable and testable the criteria are. 4=all criteria are objectively testable with specific values or observable outcomes ("must hold 500 g," "must fit within 30 cm"); 3=most measurable, one slightly vague; 2=about half measurable, rest too vague to test; 1=all vague ("must be strong," "must look nice"); 0=blank.
+
+constraints (max 4): Specificity of constraints. 4=3 or more specific, realistic limits on materials, dimensions, time, or cost; 3=2 clear, realistic constraints; 2=1 specific constraint, others vague or missing; 1=listed but all vague; 0=none.
+
+design_statement (max 4): How well the statement synthesizes user, problem, criteria, and constraints into a goal. 4=names user and problem, references criteria and constraints, sets a clear goal without prescribing a specific design; 3=most elements present, clear goal stated; 2=partially synthesized, missing user, constraints, or goal; 1=generic restatement of the problem only; 0=blank.`;
+
+    criteriaKeys = ['problem_id', 'criteria_completeness', 'criteria_quality', 'constraints', 'design_statement'];
+
+  } else {
+    throw new Error('No rubric configured for deliverable ' + deliverableId);
+  }
+
+  var prompt = 'You are grading a high school student\'s deliverable for an Applied Engineering & Robotics course.\n\n' +
+    'SCORING PHILOSOPHY:\n' +
+    'Award points generously when the student demonstrates genuine effort, even if imperfectly worded. Reserve 0–1 for sections that are truly absent or show no engagement. A hardworking student who has genuinely filled out all sections should score in the 85–95% range overall.\n\n' +
+    'FEEDBACK TONE:\n' +
+    'Write in an encouraging, specific voice. Speak directly to the student using "you." Lead with what they did well, then give one concrete, actionable suggestion. Keep each feedback to 1–2 sentences.\n\n' +
+    'IMPORTANT: The document may contain template instruction text in highlighted boxes, or lines starting with "📋 INSTRUCTION" or "DELETE THIS BOX." Ignore all template/instruction text — grade only what the student actually wrote.\n\n' +
+    rubric + '\n\n' +
+    'Return ONLY a valid JSON object — no markdown fences, no explanation. One entry per criterion key.\n\n' +
+    'Format: {"problem_id": {"score": 3, "max": 4, "feedback": "..."}, "criteria_completeness": {"score": 4, "max": 4, "feedback": "..."}, ...}\n\n' +
+    'STUDENT DOCUMENT:\n' + docText;
+
+  var apiKey = PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY');
+  if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set in Script Properties.');
+
+  var response = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
+    method:  'post',
+    headers: {
+      'x-api-key':         apiKey,
+      'anthropic-version': '2023-06-01',
+      'content-type':      'application/json'
+    },
+    payload: JSON.stringify({
+      model:      'claude-haiku-4-5-20251001',
+      max_tokens: 1024,
+      messages:   [{ role: 'user', content: prompt }]
+    }),
+    muteHttpExceptions: true
+  });
+
+  var result = JSON.parse(response.getContentText());
+  if (result.type === 'error') throw new Error('Claude API: ' + result.error.message);
+
+  var text  = result.content[0].text;
+  var first = text.indexOf('{');
+  var last  = text.lastIndexOf('}');
+  if (first === -1 || last === -1) throw new Error('No JSON in Claude response');
+  return JSON.parse(text.substring(first, last + 1));
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// ONE-TIME SETUP — run from the Apps Script IDE to create the Design Brief
+// template document. After running, copy the logged Doc ID and add it to
+// Script Properties in each of your 3 Apps Script projects as:
+//   Key:   DELIVERABLE_DOC_TEMPLATE_11
+//   Value: <the doc ID>
+// ──────────────────────────────────────────────────────────────────────────────
+function createDesignBriefTemplate() {
+  var doc  = DocumentApp.create('Design Brief — TEMPLATE (do not edit)');
+  var body = doc.getBody();
+  body.clear();
+
+  var bodyStyle = {};
+  bodyStyle[DocumentApp.Attribute.FONT_FAMILY] = 'Arial';
+  bodyStyle[DocumentApp.Attribute.FONT_SIZE]   = 11;
+  body.setAttributes(bodyStyle);
+
+  // ── Title & subtitle ──────────────────────────────────────────────────────
+  body.appendParagraph('DESIGN BRIEF')
+    .setHeading(DocumentApp.ParagraphHeading.TITLE)
+    .setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+
+  body.appendParagraph('Engineering Design Process  ·  Unit 1')
+    .setHeading(DocumentApp.ParagraphHeading.SUBTITLE)
+    .setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+
+  body.appendHorizontalRule();
+
+  // ── Info fields ───────────────────────────────────────────────────────────
+  [['Student Name:', '[[STUDENT_NAME]]'],
+   ['Date:',         '[[DATE]]'],
+   ['Project:',      '[[PROJECT]]'],
+   ['Group # (if applicable):', '']
+  ].forEach(function(pair) {
+    var p = body.appendParagraph('');
+    p.appendText(pair[0]).setBold(true);
+    p.appendText('   ' + pair[1]);
+    p.setSpacingAfter(4);
+  });
+
+  body.appendHorizontalRule();
+
+  // ── Rubric table ──────────────────────────────────────────────────────────
+  body.appendParagraph('GRADING RUBRIC — read before you begin')
+    .setBold(true).setFontSize(10).setForegroundColor('#444444');
+
+  var rubricData = [
+    ['Criterion', '4 — Exceeds', '3 — Meets', '2 — Approaching', '1 — Beginning', '0'],
+    ['Problem\nIdentification',
+     'User specifically named; problem clearly stated; no solution language; specific and testable',
+     'User named; problem clear but could be more specific',
+     'User vague ("people," "students") OR problem describes a solution',
+     'Missing either the user or a clear problem statement',
+     'Blank'],
+    ['Criteria —\nCompleteness', '4 or more criteria', 'Exactly 3 criteria', '2 criteria', '1 criterion', 'Blank'],
+    ['Criteria —\nQuality',
+     'All measurable with specific values or observable outcomes',
+     'Most measurable; one slightly vague',
+     'About half measurable; rest too vague to test',
+     'All vague ("must be strong," "must look good")',
+     'Blank'],
+    ['Constraints',
+     '3+ specific, realistic limits on materials, dimensions, time, or cost',
+     '2 clear, realistic constraints',
+     '1 specific constraint; others vague or missing',
+     'Constraints listed but all vague',
+     'Blank'],
+    ['Design\nStatement',
+     'Names user + problem; references criteria and constraints; clear goal without prescribing a specific design',
+     'Most elements present; clear goal stated',
+     'Partially synthesized; missing user, constraints, or goal',
+     'Generic restatement of the problem only; no goal',
+     'Blank']
+  ];
+
+  var rubricTable = body.appendTable(rubricData);
+  rubricTable.setBorderWidth(0.5);
+  rubricTable.setColumnWidth(0, 90);
+  rubricTable.setColumnWidth(1, 80);
+  rubricTable.setColumnWidth(2, 75);
+  rubricTable.setColumnWidth(3, 75);
+  rubricTable.setColumnWidth(4, 70);
+  rubricTable.setColumnWidth(5, 50);
+
+  // Style header row
+  var headerRow = rubricTable.getRow(0);
+  for (var c = 0; c < 6; c++) {
+    var hCell = headerRow.getCell(c);
+    hCell.setBackgroundColor('#e8f0fe');
+    var hStyle = {};
+    hStyle[DocumentApp.Attribute.BOLD]            = true;
+    hStyle[DocumentApp.Attribute.FONT_SIZE]        = 9;
+    hStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#1a3461';
+    hCell.getChild(0).setAttributes(hStyle);
+  }
+
+  // Style data rows
+  for (var r = 1; r < rubricTable.getNumRows(); r++) {
+    for (var c2 = 0; c2 < rubricTable.getRow(r).getNumCells(); c2++) {
+      var dCell = rubricTable.getRow(r).getCell(c2);
+      var dStyle = {};
+      dStyle[DocumentApp.Attribute.FONT_SIZE] = 9;
+      if (c2 === 0) dStyle[DocumentApp.Attribute.BOLD] = true;
+      dCell.getChild(0).setAttributes(dStyle);
+      if (r % 2 === 0) dCell.setBackgroundColor('#f8f9fa');
+    }
+  }
+
+  body.appendParagraph('AI feedback is available in the portfolio app before you submit.')
+    .setFontSize(9).setItalic(true).setForegroundColor('#9aa0a6')
+    .setAlignment(DocumentApp.HorizontalAlignment.RIGHT);
+
+  body.appendHorizontalRule();
+
+  // ── Section helper ────────────────────────────────────────────────────────
+  function addSection(num, title, subtitle, instructionText) {
+    var headStyle = {};
+    headStyle[DocumentApp.Attribute.BOLD]           = true;
+    headStyle[DocumentApp.Attribute.FONT_SIZE]      = 11;
+    headStyle[DocumentApp.Attribute.SPACING_BEFORE] = 18;
+    body.appendParagraph(num + '  ·  ' + title).setAttributes(headStyle);
+
+    if (subtitle) {
+      var subStyle = {};
+      subStyle[DocumentApp.Attribute.FONT_SIZE]       = 9;
+      subStyle[DocumentApp.Attribute.ITALIC]          = true;
+      subStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#5f6368';
+      body.appendParagraph(subtitle).setAttributes(subStyle);
+    }
+
+    var instrTable = body.appendTable([[instructionText]]);
+    instrTable.setBorderWidth(0);
+    var instrCell = instrTable.getRow(0).getCell(0);
+    instrCell.setBackgroundColor('#fff8e1');
+    instrCell.setPaddingTop(6);
+    instrCell.setPaddingBottom(6);
+    instrCell.setPaddingLeft(12);
+    instrCell.setPaddingRight(12);
+    var instrStyle = {};
+    instrStyle[DocumentApp.Attribute.FONT_SIZE]       = 9;
+    instrStyle[DocumentApp.Attribute.ITALIC]          = true;
+    instrStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#6d4500';
+    instrCell.getChild(0).setAttributes(instrStyle);
+  }
+
+  function addBlankLines(n) {
+    for (var i = 0; i < n; i++) body.appendParagraph('');
+  }
+
+  // ── Section 1: Client & End User ──────────────────────────────────────────
+  addSection('1', 'CLIENT & END USER', 'Who are you designing for?',
+    '📋 INSTRUCTION — delete this box after reading\n' +
+    'Name the specific person, group, or organization you are designing for. ' +
+    'A real client has a name. A hypothetical user should be described specifically enough that you could interview them. ' +
+    'Vague answers like "people" or "students" score a 2 or lower.');
+  addBlankLines(3);
+
+  // ── Section 2: Problem Statement ─────────────────────────────────────────
+  addSection('2', 'PROBLEM STATEMENT', 'What problem needs to be solved?',
+    '📋 INSTRUCTION — delete this box after reading\n' +
+    'Describe the problem, not your solution. What is missing, broken, inefficient, or not working well? ' +
+    'Do not write "I need to build" or "I will make" — this section describes the need only.');
+  addBlankLines(4);
+
+  // ── Section 3: Criteria ───────────────────────────────────────────────────
+  addSection('3', 'CRITERIA', 'What must your solution do? (minimum 3 — must be measurable)',
+    '📋 INSTRUCTION — delete this box after reading\n' +
+    'List what your design must achieve. Each criterion must be measurable — ' +
+    'a judge should be able to say "yes" or "no" when looking at your finished design. ' +
+    'Weak criteria ("must be sturdy") score low. Strong criteria give a number, size, material, or observable outcome. ' +
+    'Start each with "The solution must…"');
+
+  ['1.   The solution must ___________________________________________________',
+   '2.   The solution must ___________________________________________________',
+   '3.   The solution must ___________________________________________________',
+   '4.   The solution must ___________________________________________________ (optional)'
+  ].forEach(function(line) { body.appendParagraph(line).setFontSize(11); });
+
+  // ── Section 4: Constraints ───────────────────────────────────────────────
+  addSection('4', 'CONSTRAINTS', 'What limits your solution? (minimum 2)',
+    '📋 INSTRUCTION — delete this box after reading\n' +
+    'List the limits you must work within — materials, dimensions, budget, time, or what is off-limits. ' +
+    'Start each with "The solution must not…" or "The solution is limited to…"');
+
+  ['1.   The solution must not / is limited to ________________________________',
+   '2.   The solution must not / is limited to ________________________________',
+   '3.   The solution must not / is limited to ________________________________ (optional)'
+  ].forEach(function(line) { body.appendParagraph(line).setFontSize(11); });
+
+  // ── Section 5: Design Statement ──────────────────────────────────────────
+  addSection('5', 'DESIGN STATEMENT', 'Bring it all together in 2–3 sentences',
+    '📋 INSTRUCTION — delete this box after reading\n' +
+    'Write 2–3 sentences that synthesize your user, the problem, and the goal — ' +
+    'without describing your specific design. A strong design statement names who needs help, ' +
+    'what the problem is, and what a successful outcome looks like.');
+  addBlankLines(4);
+
+  // ── Section 6: Concept Sketches ──────────────────────────────────────────
+  addSection('6', 'CONCEPT SKETCHES', 'Three distinct concepts required — label key features on each',
+    '📋 INSTRUCTION — delete this box after reading\n' +
+    'Insert three different design concepts. Each must be a meaningfully different approach to the problem — ' +
+    'not the same idea drawn three ways. Make your name clearly visible in each image. ' +
+    'Group members may each draw one or more sketches and copy all three here.\n' +
+    'To insert: Insert → Image → Upload from computer (or drag and drop a photo onto the page).');
+
+  ['Concept A', 'Concept B', 'Concept C'].forEach(function(label) {
+    var lblStyle = {};
+    lblStyle[DocumentApp.Attribute.BOLD]            = true;
+    lblStyle[DocumentApp.Attribute.FONT_SIZE]       = 10;
+    lblStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#5f6368';
+    lblStyle[DocumentApp.Attribute.SPACING_BEFORE]  = 14;
+    body.appendParagraph(label).setAttributes(lblStyle);
+
+    var sketchTable = body.appendTable([['[ Insert ' + label + ' here — Insert → Image → Upload from computer ]']]);
+    sketchTable.setBorderWidth(0.5);
+    var sketchCell = sketchTable.getRow(0).getCell(0);
+    sketchCell.setBackgroundColor('#f8f9fa');
+    sketchCell.setPaddingTop(8);
+    sketchCell.setPaddingBottom(8);
+    var skStyle = {};
+    skStyle[DocumentApp.Attribute.FONT_SIZE]       = 10;
+    skStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#9aa0a6';
+    skStyle[DocumentApp.Attribute.ITALIC]          = true;
+    sketchCell.getChild(0).setAttributes(skStyle);
+    sketchCell.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+    // Add blank lines to give the cell height for a sketch
+    for (var i = 0; i < 7; i++) sketchCell.appendParagraph('');
+    sketchTable.getRow(0).setMinimumHeight(180);
+  });
+
+  // ── Footer ────────────────────────────────────────────────────────────────
+  body.appendHorizontalRule();
+  body.appendParagraph('Score: ___ / ___      |      Engineering Design Process · Unit 1      |      Submit via the portfolio app')
+    .setFontSize(8).setForegroundColor('#9aa0a6')
+    .setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+
+  doc.saveAndClose();
+
+  Logger.log('');
+  Logger.log('✅ Design Brief template created successfully!');
+  Logger.log('');
+  Logger.log('Doc ID  → ' + doc.getId());
+  Logger.log('Doc URL → https://docs.google.com/document/d/' + doc.getId() + '/edit');
+  Logger.log('');
+  Logger.log('Next steps:');
+  Logger.log('1. Open the doc and review formatting. Adjust column widths or colors as needed.');
+  Logger.log('2. In EACH of your 3 Apps Script projects → Project Settings → Script Properties, add:');
+  Logger.log('   Key:   DELIVERABLE_DOC_TEMPLATE_11');
+  Logger.log('   Value: ' + doc.getId());
+  Logger.log('3. Students can now click "Create My Design Brief" in the portfolio app.');
 }
 
 // ============================================
