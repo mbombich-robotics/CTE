@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.6',
+    VERSION: 'v2.14.7',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -134,6 +134,19 @@ const DELIVERABLES = [
     },
     // ── Unit 1: Engineering Design Process ──────────────────────────────
     {
+        id: 10,
+        title: 'Signed Syllabus & Safety Contract',
+        unit: '01',
+        week: 1,
+        phase: 'edp',
+        alwaysOpen: true,
+        description: 'Return your signed syllabus and safety contract to Mr. Bombich. Both must be signed by you and a parent/guardian.',
+        requirements: [
+            'Syllabus signed by student and parent/guardian — returned to Mr. Bombich',
+            'Safety contract signed by student and parent/guardian — returned to Mr. Bombich',
+        ]
+    },
+    {
         id: 11,
         title: 'Design Brief',
         unit: '01',
@@ -148,20 +161,6 @@ const DELIVERABLES = [
             'At least 2 realistic constraints ("The solution must not…")',
             'Design Statement — 2–3 sentences synthesizing all four sections',
             'Three distinct concept sketches with your name visible on each'
-        ]
-    },
-    {
-        id: 12,
-        title: 'Robot Deck Design Record',
-        unit: '01',
-        week: 2,
-        points: 50,
-        phase: 'edp',
-        description: 'Document your design process from concept to prototype.',
-        requirements: [
-            'Photo of your concept sketch with decision matrix annotations',
-            'Photo of your completed cardboard prototype',
-            'One documented iteration: what changed, why you changed it, and what improved'
         ]
     },
     // ── Unit 2: CAD — Component-Based (D21–D27) ─────────────────────────
@@ -373,6 +372,77 @@ const DELIVERABLES = [
             'Describe the biased model you built in Step 6 — which class suffered most, and why does training sample count affect accuracy?',
             'Identify who bears responsibility when a biased model causes real harm: the data collector, the engineer who deployed it, or the company?',
             'What would you do differently in a production model compared to this 5-minute classroom activity?'
+        ]
+    },
+    // ── Unit 8: Mechanisms (8AER — Weeks 14–18) ─────────────────────────
+    // HSAER Unit 8 deliverables TBD; use skipDeliverableWeeks in teacher portal
+    // to hide 8AER-only entries from HSAER students.
+    {
+        id: 81,
+        title: 'Gear Ratio Calculation Sheet',
+        unit: '08',
+        week: 14,
+        phase: 'mechanisms',
+        description: 'Calculate input and output RPM for a 2-stage gear train using teacher-provided gear STL files. Show all work for each stage.',
+        requirements: [
+            'Identify the number of teeth on each gear in both stages',
+            'Calculate the gear ratio for each stage (driven ÷ driver)',
+            'Calculate the overall gear ratio (stage 1 × stage 2)',
+            'Calculate output RPM given the motor input RPM',
+            'Show all calculations with correct units',
+        ]
+    },
+    {
+        id: 82,
+        title: 'Mechanism CAD Housing + Reflection',
+        unit: '08',
+        week: 15,
+        phase: 'mechanisms',
+        description: 'Design a housing or output arm in Fusion 360 to hold the teacher-provided gear train. Print, assemble, and document.',
+        requirements: [
+            'F360 file: housing or arm designed to mount the 2-stage gear train',
+            'Screenshot: isometric view of the completed housing/arm',
+            'Printed and assembled — photo of assembled mechanism',
+            'Reflection: how does your measured actual MA compare to your calculated MA? What caused any difference?',
+        ]
+    },
+    {
+        id: 83,
+        title: 'Holiday 3D Print',
+        unit: '08',
+        week: 16,
+        phase: 'mechanisms',
+        description: 'Design and print a small take-home item — ornament, keychain, name plate, or similar. Teacher approval required before printing.',
+        requirements: [
+            'Original design in Fusion 360 (not downloaded from Thingiverse)',
+            'Teacher approval received before slicing',
+            'Completed print — photo of finished item',
+        ]
+    },
+    {
+        id: 84,
+        title: 'Pulley System — Ratio & CAD',
+        unit: '08',
+        week: 17,
+        phase: 'mechanisms',
+        description: 'Calculate belt/chain drive ratios using teacher-provided pulley files, then design a CAD linkage or crank arm.',
+        requirements: [
+            'Pulley ratio calculation: driven ÷ driver for your pulley system — show all work',
+            'F360 file: linkage or crank arm CAD — screenshot of completed part',
+            'Assembled pulley system — photo of build',
+        ]
+    },
+    {
+        id: 85,
+        title: 'Mechanism Showcase — Portfolio Evidence',
+        unit: '08',
+        week: 18,
+        phase: 'mechanisms',
+        description: 'Photograph and document your gear or pulley system mounted to the robot frame or stand. Write a peer-reviewed caption.',
+        requirements: [
+            'Photo: mechanism mounted to robot frame or stand (clear shot of gears/pulleys)',
+            'Caption: identify the mechanism type, state the overall ratio, and describe what the mechanism does to motor output',
+            'Peer review: one classmate signs off on your caption accuracy',
         ]
     },
 ];
@@ -1449,6 +1519,7 @@ function updateDashboardDeliverables() {
         { key: '04', label: 'Unit 4 — Programming, Electronics & Sensors' },
         { key: '05', label: 'Unit 5 — AI & Machine Learning' },
         { key: '06', label: 'Unit 6 — Career Readiness' },
+        { key: '08', label: 'Unit 8 — Mechanisms' },
     ];
 
     const skipWeeks = state.config.skipDeliverableWeeks || [];
