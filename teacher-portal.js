@@ -1,12 +1,12 @@
 // Teacher Portal - Dashboard for viewing student portfolios
-// Tracks: HS AE&R (hsaer), 8th Grade AE&R (aer8), Design & Build Lab (dbl)
+// Tracks: HS AE&R (hsaer), 8th Grade AE&R (8aer), Design & Build Lab (dbl)
 
 // ============================================
 // CONFIGURATION
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.38',
+    VERSION: 'v2.9.39',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -33,7 +33,7 @@ const CONFIG = {
                 { id: 'final_exam', name: 'Final Exam', questionCount: 41, maxPoints: 41 }
             ]
         },
-        aer8: {
+        '8aer': {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
             currentAppVersion: 'v2.14.7',
@@ -93,7 +93,7 @@ const TRACK_DELIVERABLES = {
         { id: 54, label: 'D54 — Teachable Machine Project',        week: null },
     ],
     // ── 8th Grade AE&R ──────────────────────────────────────────────────
-    aer8: [
+    '8aer': [
         { id:  0, label: 'D0  — Career Ready Practices',          week: null },
         { id: 10, label: 'D10 — Signed Syllabus & Safety Contract', week: 1  },
         { id: 11, label: 'D11 — Design Brief',                     week: 2  },
@@ -233,7 +233,7 @@ function tallyRubric(uid, deliverableId, email) {
 // ============================================
 let weekSettings = {
     hsaer: { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {} },
-    aer8:     { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {} },
+    '8aer':     { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {} },
     dbl:      { skipDeliverables: [], deliverableDueDates: {} },
     currentWeekOverride: null
 };
@@ -245,7 +245,7 @@ function loadWeekSettings() {
             const parsed = JSON.parse(saved);
             weekSettings = { ...weekSettings, ...parsed };
             weekSettings.hsaer = { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {}, ...parsed.hsaer };
-            weekSettings.aer8     = { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {}, ...parsed.aer8 };
+            weekSettings['8aer']     = { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {}, ...parsed['8aer'] };
             weekSettings.dbl      = { skipDeliverables: [], deliverableDueDates: {}, ...parsed.dbl };
         }
     } catch(e) {}
@@ -2243,7 +2243,7 @@ async function openWeekSettings() {
     overrideSelect.value = weekSettings.currentWeekOverride !== null ? weekSettings.currentWeekOverride : '';
 
     // Populate deliverables, quiz toggles, and version fields for all three tracks
-    for (const courseId of ['hsaer', 'aer8', 'dbl']) {
+    for (const courseId of ['hsaer', '8aer', 'dbl']) {
         // Deliverables table (keyed by deliverable ID)
         const deliverables = TRACK_DELIVERABLES[courseId] || [];
         const delTbody = document.getElementById(courseId + 'DeliverableSettingsBody');
@@ -2268,8 +2268,8 @@ async function openWeekSettings() {
         }
 
         // Quiz toggle + key selector (HS AE&R and 8AER only)
-        if (courseId === 'hsaer' || courseId === 'aer8') {
-            const suffix = courseId === 'aer8' ? '_aer8' : '';
+        if (courseId === 'hsaer' || courseId === '8aer') {
+            const suffix = courseId === '8aer' ? '_8aer' : '';
             const quizToggle = document.getElementById('quizEnabledToggle' + suffix);
             if (quizToggle) quizToggle.checked = weekSettings[courseId].quizEnabled || false;
             const quizKeySelect = document.getElementById('quizKeySelect' + suffix);
@@ -2286,7 +2286,7 @@ async function openWeekSettings() {
     modal.classList.add('active');
 
     // Fetch backend versions for all three tracks in parallel
-    await Promise.all(['hsaer', 'aer8', 'dbl'].map(async courseId => {
+    await Promise.all(['hsaer', '8aer', 'dbl'].map(async courseId => {
         try {
             const cfg = await fetch(CONFIG.COURSES[courseId].apiUrl + '?action=getConfig&_t=' + Date.now()).then(r => r.json());
             const backendEl = document.getElementById('backendVersion_' + courseId);
@@ -2321,7 +2321,7 @@ async function applyWeekSettings() {
     weekSettings.currentWeekOverride = overrideVal ? parseInt(overrideVal) : null;
 
     // Read DOM values for all three tracks (modal renders all simultaneously)
-    for (const courseId of ['hsaer', 'aer8', 'dbl']) {
+    for (const courseId of ['hsaer', '8aer', 'dbl']) {
         // Deliverables (keyed by deliverable ID)
         weekSettings[courseId].skipDeliverables = [];
         weekSettings[courseId].deliverableDueDates = {};
@@ -2333,8 +2333,8 @@ async function applyWeekSettings() {
 
         weekSettings[courseId].expectedVersion = document.getElementById(`expectedVersion_${courseId}`)?.value.trim() || '';
 
-        if (courseId === 'hsaer' || courseId === 'aer8') {
-            const suffix = courseId === 'aer8' ? '_aer8' : '';
+        if (courseId === 'hsaer' || courseId === '8aer') {
+            const suffix = courseId === '8aer' ? '_8aer' : '';
             weekSettings[courseId].quizEnabled = document.getElementById('quizEnabledToggle' + suffix)?.checked || false;
             weekSettings[courseId].quizKey     = document.getElementById('quizKeySelect' + suffix)?.value || 'claw';
         }
@@ -2350,7 +2350,7 @@ async function applyWeekSettings() {
     saveBtn.disabled = true;
 
     try {
-        await Promise.all(['hsaer', 'aer8', 'dbl'].map(courseId => {
+        await Promise.all(['hsaer', '8aer', 'dbl'].map(courseId => {
             const body = {
                 action: 'setConfig',
                 token: CONFIG.TEACHER_TOKEN,
@@ -2358,7 +2358,7 @@ async function applyWeekSettings() {
                 expectedVersion:      weekSettings[courseId].expectedVersion,
                 deliverableDueDates:  weekSettings[courseId].deliverableDueDates || {}
             };
-            if (courseId === 'hsaer' || courseId === 'aer8') {
+            if (courseId === 'hsaer' || courseId === '8aer') {
                 body.quizEnabled = weekSettings[courseId].quizEnabled;
                 body.quizKey     = weekSettings[courseId].quizKey || 'claw';
             }
