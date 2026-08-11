@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.12.0';
+const BACKEND_VERSION = 'v2.13.0';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2509,9 +2509,11 @@ criteria_quality (max 4): How measurable and testable the criteria are. 4=all cr
 
 constraints (max 4): Specificity of constraints. 4=3 or more specific, realistic limits on materials, dimensions, time, or cost; 3=2 clear, realistic constraints; 2=1 specific constraint, others vague or missing; 1=listed but all vague; 0=none.
 
-design_statement (max 4): How well the statement synthesizes user, problem, criteria, and constraints into a goal. 4=names user and problem, references criteria and constraints, sets a clear goal without prescribing a specific design; 3=most elements present, clear goal stated; 2=partially synthesized, missing user, constraints, or goal; 1=generic restatement of the problem only; 0=blank.`;
+design_statement (max 4): How well the statement synthesizes user, problem, criteria, and constraints into a goal. 4=names user and problem, references criteria and constraints, sets a clear goal without prescribing a specific design; 3=most elements present, clear goal stated; 2=partially synthesized, missing user, constraints, or goal; 1=generic restatement of the problem only; 0=blank.
 
-    criteriaKeys = ['problem_id', 'criteria_completeness', 'criteria_quality', 'constraints', 'design_statement'];
+decision_matrix (max 4): Completeness and quality of the Section 7 decision matrix. 4=all criteria scored for all three concepts, totals calculated, concept selected — if selection differs from highest total a reason is given; 3=all criteria scored and totals present, concept selected but no reason given for any discrepancy; 2=matrix partially filled — missing scores for one or more concepts, or totals absent; 1=matrix started but mostly empty; 0=blank or section missing entirely.`;
+
+    criteriaKeys = ['problem_id', 'criteria_completeness', 'criteria_quality', 'constraints', 'design_statement', 'decision_matrix'];
 
   } else {
     throw new Error('No rubric configured for deliverable ' + deliverableId);

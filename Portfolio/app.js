@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.3',
+    VERSION: 'v2.14.4',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -2987,6 +2987,7 @@ const DOC_RUBRIC_CRITERIA = {
         { key: 'criteria_quality',       label: 'Criteria (quality)',    max: 4 },
         { key: 'constraints',            label: 'Constraints',           max: 4 },
         { key: 'design_statement',       label: 'Design Statement',      max: 4 },
+        { key: 'decision_matrix',        label: 'Decision Matrix',       max: 4 },
     ]
 };
 
