@@ -48,13 +48,13 @@
 | 22 | Feb 8–12 | 5 | 4 — Line Following | | L4.10 OSOYOO 5-sensor IR array — wire, calibrate thresholds, binary line following; A4.10 Binary Line Following | |
 | 23 | Feb 15–19 | 4 | 4 — Line Following | 🔴 Presidents Day Feb 15 | L4.11 Weighted-sensor error; proportional control first, then full PID tuning; A4.11 PID Challenge (scaffolded) | **D5.2 — Line Following Practical** |
 | 24 | Feb 22–26 | 4 | 5 — AI & ML | 🔴 Feb 26 mid-winter break | L5.1 What Is AI; L5.2 Ethics in AI; L5.3 Teachable Machine | **Q6: AI Quiz** |
-| 25 | Mar 1–5 | 5 | 7 — Electrical Systems | | L7.1 Intro to Electricity (charge, voltage, current); L7.2 Ohm's Law + resistance; L7.3 Series vs. parallel circuits | |
-| 26 | Mar 8–12 | 5 | 7 — Electrical Systems | ⚡ Mar 10 (20-min period) | L7.4 Using a Multimeter; L7.5 Breadboarding basics; L7.6 LED Circuits; L7.7 Circuit Troubleshooting | **Q7: Electrical Systems Quiz** |
-| 27 | Mar 15–19 | 5 | 8 — Mechanisms | | L8.1 Simple Machines (6 machines, IMA); L8.2 Mechanical Advantage (IMA vs AMA, lever classes); L8.3 Work, Power & Efficiency | |
-| 28 | Mar 22–25 | ~3.5 | 8 — Mechanisms | 🟡 🔴 Mar 25 ½-day Records Day · Mar 26 spring break begins | L8.4 Pulleys — fixed, movable, compound; L8.5 Gears — gear ratios, multi-stage trains | |
+| 25 | Mar 1–5 | 5 | 7 — Electrical Systems | | L7.1 Using a Multimeter — meter modes, reading voltage/resistance/continuity; L7.2 Breadboards — layout, power rails, jumper wiring; L7.3 LED Circuits — current-limiting resistor, forward voltage | |
+| 26 | Mar 8–12 | 5 | 7 — Electrical Systems | ⚡ Mar 10 (20-min period) | L7.4 Ohm's Law — V=IR, solving for V/I/R; L7.5 Series vs. Parallel Circuits — voltage/current rules; L7.6 Equivalent Resistance — series/parallel simplification; L7.7 Kirchhoff's Laws — KVL and KCL | **Q7: Electrical Systems Quiz** |
+| 27 | Mar 15–19 | 5 | 8 — Mechanisms | | L8.1 Simple Machines & Engineering Design — 6 simple machines, IMA; L8.2 Mechanical Advantage — IMA vs AMA, lever classes; L8.3 Work, Power & Efficiency | |
+| 28 | Mar 22–25 | ~3.5 | 8 — Mechanisms | 🟡 🔴 Mar 25 ½-day Records Day · Mar 26 spring break begins | L8.4 Pulley Systems — fixed, movable, compound; L8.5 Gears & Gear Ratios — gear ratios, multi-stage trains | |
 | — | Mar 26–Apr 4 | — | — | 🌿 Spring Break | | |
-| 29 | Apr 5–9 | 5 | 8 — Mechanisms | | L8.6 Maximizing Power (motor curves, stall torque); L8.7 Tug of War design-build-test; L8.8 Linkages (four-bar, DOF) | |
-| 30 | Apr 12–16 | ~2 | 8 — Mechanisms | 🧪 State testing Tue–Thu | L8.9 Types of Motion; L8.10 Fix Fran's Farm capstone challenge | |
+| 29 | Apr 5–9 | 5 | 8 — Mechanisms | | L8.6 Maximizing Power Output — motor curves, stall torque; L8.7 Tug of War Challenge — design-build-test; L8.8 Linkages — four-bar linkage, DOF | |
+| 30 | Apr 12–16 | ~2 | 8 — Mechanisms | 🧪 State testing Tue–Thu | L8.9 Types of Motion & Motion Conversion; L8.10 Fix Fran's Farm! — capstone challenge | |
 | 31 | Apr 19–23 | 5 | 8 → Servo Build | | **Q8: Unit 8 Mechanisms Quiz**; Project intro + design brief; servo control review; begin build | **Q8: Unit 8 Mechanisms Quiz** |
 | 32 | Apr 26–30 | 5 | Servo Build | | Build + test + iterate | |
 | 33 | May 3–7 | 5 | Servo Build | ⚡ May 5 (20-min period) | Final demo + portfolio submission | D5.3 — Servo Build Project |
