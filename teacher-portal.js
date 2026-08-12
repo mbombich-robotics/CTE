@@ -22,7 +22,7 @@ const CONFIG = {
         hsaer: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-            currentAppVersion: 'v2.14.14',
+            currentAppVersion: 'v2.14.15',
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
@@ -36,7 +36,7 @@ const CONFIG = {
         '8aer': {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
-            currentAppVersion: 'v2.14.14',
+            currentAppVersion: 'v2.14.15',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
@@ -50,7 +50,7 @@ const CONFIG = {
         dbl: {
             name: 'Design & Build Lab',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
-            currentAppVersion: 'v2.14.14',
+            currentAppVersion: 'v2.14.15',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
@@ -91,8 +91,8 @@ const TRACK_DELIVERABLES = {
         { id: 42, label: 'D4.2 — Programming Basics: Lessons 4.4–4.6', week: 15 },
         { id: 43, label: 'D4.3 — IMU Navigation',                  week: 18 },
         { id: 44, label: 'D4.4 — Ultrasonic: Obstacle & Wall Following', week: 21 },
-        { id: 52, label: 'D52 — Line Following Practical',         week: 23 },
-        { id: 53, label: 'D53 — Servo Mechanism Project',          week: 32 },
+        { id: 52, label: 'D4.5 — Line Following Practical',         week: 23 },
+        { id: 53, label: 'D8.1 — Servo Mechanism Project',         week: 33 },
         { id: 54, label: 'D54 — Teachable Machine Project',        week: null },
     ],
     // ── 8th Grade AE&R ──────────────────────────────────────────────────

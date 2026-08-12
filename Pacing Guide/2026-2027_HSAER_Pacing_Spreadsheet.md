@@ -46,7 +46,7 @@
 | 20 | Jan 25–29 | 5 | 4 — Ultrasonic | S2 begins Jan 25 | L4.8 HC-SR04 I2C via TCA9548A mux — distance reading from 3 sensors; L4.9 Obstacle Avoidance — stop/turn logic; A4.8 Obstacle Detection (scaffolded) | |
 | 21 | Feb 1–5 | 5 | 4 — Ultrasonic | | L4.9 Wall Following — proportional correction to maintain fixed distance from wall; A4.9 Wall Following Challenge (scaffolded) | **D4.4 — Ultrasonic: Obstacle & Wall Following** |
 | 22 | Feb 8–12 | 5 | 4 — Line Following | | L4.10 OSOYOO 5-sensor IR array — wire, calibrate thresholds, binary line following; A4.10 Binary Line Following | |
-| 23 | Feb 15–19 | 4 | 4 — Line Following | 🔴 Presidents Day Feb 15 | L4.11 Weighted-sensor error; proportional control first, then full PID tuning; A4.11 PID Challenge (scaffolded) | **D5.2 — Line Following Practical** |
+| 23 | Feb 15–19 | 4 | 4 — Line Following | 🔴 Presidents Day Feb 15 | L4.11 Weighted-sensor error; proportional control first, then full PID tuning; A4.11 PID Challenge (scaffolded) | **D4.5 — Line Following Practical** |
 | 24 | Feb 22–26 | 4 | 5 — AI & ML | 🔴 Feb 26 mid-winter break | L5.1 What Is AI; L5.2 Ethics in AI; L5.3 Teachable Machine | **Q6: AI Quiz** |
 | 25 | Mar 1–5 | 5 | 7 — Electrical Systems | | L7.1 Using a Multimeter — meter modes, reading voltage/resistance/continuity; L7.2 Breadboards — layout, power rails, jumper wiring; L7.3 LED Circuits — current-limiting resistor, forward voltage | |
 | 26 | Mar 8–12 | 5 | 7 — Electrical Systems | ⚡ Mar 10 (20-min period) | L7.4 Ohm's Law — V=IR, solving for V/I/R; L7.5 Series vs. Parallel Circuits — voltage/current rules; L7.6 Equivalent Resistance — series/parallel simplification; L7.7 Kirchhoff's Laws — KVL and KCL | **Q7: Electrical Systems Quiz** |
@@ -57,7 +57,7 @@
 | 30 | Apr 12–16 | ~2 | 8 — Mechanisms | 🧪 State testing Tue–Thu | L8.9 Types of Motion & Motion Conversion; L8.10 Fix Fran's Farm! — capstone challenge | |
 | 31 | Apr 19–23 | 5 | 8 → Servo Build | | **Q8: Unit 8 Mechanisms Quiz**; Project intro + design brief; servo control review; begin build | **Q8: Unit 8 Mechanisms Quiz** |
 | 32 | Apr 26–30 | 5 | Servo Build | | Build + test + iterate | |
-| 33 | May 3–7 | 5 | Servo Build | ⚡ May 5 (20-min period) | Final demo + portfolio submission | D5.3 — Servo Build Project |
+| 33 | May 3–7 | 5 | Servo Build | ⚡ May 5 (20-min period) | Final demo + portfolio submission | **D8.1 — Servo Build Project** |
 | 34 | May 10–14 | 5 | Capstone | | Open-ended challenge or improvement project | |
 | 35 | May 17–21 | 5 | Portfolio / Review | 🎓 May 20 last day for seniors | Portfolio completion push; all deliverables finalized; review for non-seniors | **Q9: Final Exam (seniors — before May 20)** |
 | 36 | May 24–28 | 5 | Review | | EDP, CAD, Safety, Programming review for non-seniors | |
@@ -101,8 +101,8 @@
 | D4.2 | Programming Basics: Lessons 4.4–4.6 | 15 |
 | D4.3 | IMU Navigation | 18 |
 | D4.4 | Ultrasonic: Obstacle Detection & Wall Following | 21 |
-| D5.2 | Line Following Practical | 23 |
-| D5.3 | Servo Build Project | 33 |
+| D4.5 | Line Following Practical | 23 |
+| D8.1 | Servo Build Project | 33 |
 
 ---
 

@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.14',
+    VERSION: 'v2.14.15',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -77,7 +77,7 @@ const WEEK_TOPICS = {
     21: { title: 'L4.9 Wall Following + A4.9 + D4.4', phase: 'ultrasonic', unit: '04', focus: 'L4.9 Wall Following — proportional correction to maintain fixed distance; A4.9 Wall Following Challenge (scaffolded). D4.4 due end of week.' },
     // Line Following (Feb 8–19)
     22: { title: 'L4.10 IR Array + Binary Line Following', phase: 'linefollow', unit: '04', focus: 'L4.10 OSOYOO 5-sensor IR array — wire, calibrate thresholds, binary line following; A4.10 Binary Line Following' },
-    23: { title: 'L4.11 PID + A4.11 + D5.2', phase: 'linefollow', unit: '04', focus: 'L4.11 Weighted-sensor error; P control first, then full PID tuning; A4.11 PID Challenge (scaffolded). Presidents Day Feb 15 — 4-day week. D5.2 Line Following Practical due.' },
+    23: { title: 'L4.11 PID + A4.11 + D4.5', phase: 'linefollow', unit: '04', focus: 'L4.11 Weighted-sensor error; P control first, then full PID tuning; A4.11 PID Challenge (scaffolded). Presidents Day Feb 15 — 4-day week. D4.5 Line Following Practical due.' },
     // Mechanisms (Feb 22 – Mar 25)
     24: { title: 'AI & Machine Learning', phase: 'ai', unit: '05', focus: 'L5.1 What Is AI (Day 1); L5.2 Ethics in AI (Day 2); Activity 5.3 Teachable Machine (Days 3–4). AI Quiz Day 1 of Week 25. Feb 26 mid-winter break.' },
     25: { title: 'AI Quiz + Mechanisms: Simple Machines', phase: 'mechanisms', unit: '04', focus: 'AI Quiz (Day 1); simple machines intro; mechanical advantage + efficiency (POE 111/113)' },
@@ -403,16 +403,16 @@ const DELIVERABLES = [
             'Describe one specific iteration you made to your code or hardware during tuning and what improved'
         ]
     },
-    // ── Unit 4: Servo Build Project ──────────────────────────────────────
+    // ── Unit 8: Servo Build Project ──────────────────────────────────────
     {
         id: 53,
         title: 'Servo Mechanism Project',
-        unit: '04',
-        week: 32,
+        unit: '08',
+        week: 33,
         points: 100,
         phase: 'servo',
         tracks: ['hsaer'],
-        description: 'Design, build, and program a mechanism driven by one or more servo motors. Final demo and submission due end of Week 32.',
+        description: 'Design, build, and program a mechanism driven by one or more servo motors. Final demo and submission due end of Week 33.',
         requirements: [
             'Design brief: problem statement, at least 3 measurable criteria, at least 2 constraints',
             'Photo or short video of your completed mechanism in operation',
