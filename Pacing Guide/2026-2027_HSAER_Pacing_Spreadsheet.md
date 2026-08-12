@@ -55,9 +55,9 @@
 | — | Mar 26–Apr 4 | — | — | 🌿 Spring Break | | |
 | 29 | Apr 5–9 | 5 | 8 — Mechanisms | | L8.6 Maximizing Power Output — motor curves, stall torque; L8.7 Tug of War Challenge — design-build-test; L8.8 Linkages — four-bar linkage, DOF | |
 | 30 | Apr 12–16 | ~2 | 8 — Mechanisms | 🧪 State testing Tue–Thu | L8.9 Types of Motion & Motion Conversion; L8.10 Fix Fran's Farm! — capstone challenge | |
-| 31 | Apr 19–23 | 5 | 8 → Servo Build | | **Q8: Unit 8 Mechanisms Quiz**; Project intro + design brief; servo control review; begin build | **Q8: Unit 8 Mechanisms Quiz** |
+| 31 | Apr 19–23 | 5 | 8 → Servo Build | | **Q8: Unit 8 Mechanisms Quiz**; Project intro + design brief; servo control review; begin build | **Q8: Unit 8 Mechanisms Quiz**; **D8.1 — Servo Design Brief** |
 | 32 | Apr 26–30 | 5 | Servo Build | | Build + test + iterate | |
-| 33 | May 3–7 | 5 | Servo Build | ⚡ May 5 (20-min period) | Final demo + portfolio submission | **D8.1 — Servo Build Project** |
+| 33 | May 3–7 | 5 | Servo Build | ⚡ May 5 (20-min period) | Final demo + portfolio submission | **D8.2 — Servo Build Project** |
 | 34 | May 10–14 | 5 | Capstone | | Open-ended challenge or improvement project | |
 | 35 | May 17–21 | 5 | Portfolio / Review | 🎓 May 20 last day for seniors | Portfolio completion push; all deliverables finalized; review for non-seniors | **Q9: Final Exam (seniors — before May 20)** |
 | 36 | May 24–28 | 5 | Review | | EDP, CAD, Safety, Programming review for non-seniors | |
@@ -102,7 +102,8 @@
 | D4.3 | IMU Navigation | 18 |
 | D4.4 | Ultrasonic: Obstacle Detection & Wall Following | 21 |
 | D4.5 | Line Following Practical | 23 |
-| D8.1 | Servo Build Project | 33 |
+| D8.1 | Servo Design Brief | 31 |
+| D8.2 | Servo Build Project | 33 |
 
 ---
 

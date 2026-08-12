@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.15',
+    VERSION: 'v2.14.16',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -401,6 +401,24 @@ const DELIVERABLES = [
             'Describe the role of the derivative term (Kd): what does it prevent, and how did adding it change your robot\'s behavior?',
             'What is per-sensor threshold calibration and why must it be done before running PID line following?',
             'Describe one specific iteration you made to your code or hardware during tuning and what improved'
+        ]
+    },
+    // ── Unit 8: Servo Design Brief ───────────────────────────────────────
+    {
+        id: 55,
+        title: 'Servo Project Design Brief',
+        unit: '08',
+        week: 31,
+        points: 50,
+        phase: 'servo',
+        tracks: ['hsaer'],
+        description: 'Complete a design brief for your motorized mechanism project before beginning construction. Must be approved by Mr. Bombich before you start building.',
+        requirements: [
+            'Problem statement: describe in 2–3 sentences what your mechanism will do and why',
+            'At least 3 measurable criteria (e.g., servo must rotate ≥90°, arm must lift ≥100g, cycle time < 5 s)',
+            'At least 2 constraints (e.g., must fit within 20×20 cm footprint, must use provided servo, must run on Pico 2W)',
+            'At least 2 labeled concept sketches showing different design approaches',
+            'Decision matrix or written justification explaining which concept you chose and why'
         ]
     },
     // ── Unit 8: Servo Build Project ──────────────────────────────────────
