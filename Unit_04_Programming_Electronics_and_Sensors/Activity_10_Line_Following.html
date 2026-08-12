@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activity 4.10 — Binary Line Following</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Exo 2', sans-serif; background: #0a0e27; color: #e0e6f0; font-size: 15px; line-height: 1.6; }
+.layout { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+.sidebar { position: sticky; top: 0; height: 100vh; background: #0d1117; border-right: 1px solid rgba(0,212,255,0.15); overflow-y: auto; padding: 24px 0; display: flex; flex-direction: column; }
+.sidebar-title { font-family: 'Orbitron', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #6272a4; padding: 0 20px 16px; border-bottom: 1px solid rgba(0,212,255,0.1); margin-bottom: 8px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; text-decoration: none; color: #6272a4; font-size: 0.88rem; font-weight: 500; transition: color 0.15s, background 0.15s; border-left: 3px solid transparent; }
+.nav-item:hover { color: #b8c5d6; background: rgba(0,212,255,0.04); }
+.nav-item.active { color: #00d4ff; border-left-color: #00d4ff; background: rgba(0,212,255,0.07); }
+.nav-num { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: rgba(0,212,255,0.12); border: 1px solid rgba(0,212,255,0.3); color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.72rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.nav-item.active .nav-num { background: #00d4ff; color: #0a0e27; }
+.nav-divider { height: 1px; background: rgba(0,212,255,0.08); margin: 8px 20px; }
+.sidebar-links { margin-top: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; }
+.sidebar-links a { font-size: 0.8rem; color: #6272a4; text-decoration: none; padding: 6px 10px; border: 1px solid rgba(0,212,255,0.15); border-radius: 6px; text-align: center; transition: color 0.15s, border-color 0.15s; }
+.sidebar-links a:hover { color: #00d4ff; border-color: rgba(0,212,255,0.4); }
+main { padding: 40px 48px 80px; max-width: 860px; }
+.activity-header { margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid rgba(0,212,255,0.15); }
+.activity-header h1 { font-family: 'Orbitron', sans-serif; font-size: 1.6rem; font-weight: 700; color: #00d4ff; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+.header-meta { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px; }
+.meta-tag { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 10px; border-radius: 4px; }
+.meta-time { background: rgba(0,212,255,0.12); color: #00d4ff; border: 1px solid rgba(0,212,255,0.3); }
+.meta-level { background: rgba(80,250,123,0.12); color: #50fa7b; border: 1px solid rgba(80,250,123,0.3); }
+section { margin-bottom: 56px; scroll-margin-top: 24px; }
+.section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid rgba(0,212,255,0.2); }
+.section-num { flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #00d4ff, #0099cc); color: #0a0e27; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 16px rgba(0,212,255,0.4); }
+.section-title { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 700; color: #00d4ff; text-transform: uppercase; letter-spacing: 0.05em; }
+.section-time { font-size: 0.8rem; color: #6272a4; margin-left: auto; font-family: 'Space Mono', monospace; }
+p { color: #b8c5d6; margin-bottom: 12px; }
+.steps { display: flex; flex-direction: column; gap: 16px; margin: 16px 0; }
+.step { display: flex; gap: 16px; align-items: flex-start; background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.15); border-radius: 10px; padding: 16px 18px; }
+.step-n { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.4); color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.82rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.step-body { flex: 1; }
+.step-body strong { display: block; color: #e0e6f0; font-size: 1rem; margin-bottom: 5px; }
+.step-body p { font-size: 0.95rem; margin-bottom: 0; }
+.code-wrap { position: relative; margin: 14px 0; }
+.code-label { position: absolute; top: -10px; left: 14px; z-index: 1; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; background: #0a0e27; color: #6272a4; border: 1px solid rgba(0,212,255,0.2); }
+pre { background: #0d1117; border: 1.5px solid rgba(0,212,255,0.25); border-radius: 10px; padding: 18px 20px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; line-height: 1.75; color: #e0e6f0; }
+.copy-btn { position: absolute; top: 8px; right: 10px; background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.25); color: #6272a4; font-family: 'Space Mono', monospace; font-size: 0.7rem; padding: 3px 8px; border-radius: 4px; cursor: pointer; transition: color 0.15s, background 0.15s; }
+.copy-btn:hover { color: #00d4ff; background: rgba(0,212,255,0.2); }
+.copy-btn.copied { color: #50fa7b; border-color: rgba(80,250,123,0.4); }
+.kw { color: #ff79c6; } .cls { color: #ffb86c; font-weight: 700; } .fn { color: #8be9fd; } .str { color: #f1fa8c; } .num { color: #bd93f9; } .cm { color: #6272a4; font-style: italic; } .op { color: #b8c5d6; }
+.callout { border-radius: 10px; padding: 16px 18px; margin: 16px 0; display: flex; gap: 14px; align-items: flex-start; }
+.callout-icon { font-size: 1.3rem; flex-shrink: 0; line-height: 1.4; }
+.callout-body p { margin-bottom: 0; font-size: 0.95rem; }
+.callout-body strong { display: block; margin-bottom: 4px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.callout-warn { background: rgba(255,149,0,0.08); border: 1px solid rgba(255,149,0,0.35); }
+.callout-warn strong { color: #ff9500; }
+.callout-info { background: rgba(0,212,255,0.07); border: 1px solid rgba(0,212,255,0.25); }
+.callout-info strong { color: #00d4ff; }
+.checkpoint { background: linear-gradient(135deg, rgba(80,250,123,0.1), rgba(80,250,123,0.04)); border: 2px solid #50fa7b; border-radius: 10px; padding: 16px 20px; margin: 24px 0; display: flex; gap: 14px; align-items: center; }
+.checkpoint-icon { font-size: 1.5rem; flex-shrink: 0; }
+.checkpoint-body strong { color: #50fa7b; display: block; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 3px; }
+.checkpoint-body p { color: #b8c5d6; font-size: 0.95rem; margin: 0; }
+.challenge-set { display: flex; flex-direction: column; gap: 14px; margin: 16px 0; }
+.challenge { background: rgba(80,250,123,0.05); border: 1.5px solid rgba(80,250,123,0.3); border-radius: 10px; padding: 16px 18px; }
+.challenge-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+.challenge-num { font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; color: #50fa7b; background: rgba(80,250,123,0.12); padding: 2px 7px; border-radius: 4px; }
+.challenge-title { font-weight: 700; color: #e0e6f0; font-size: 1rem; }
+.challenge p { font-size: 0.95rem; margin-bottom: 6px; }
+.question-set { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
+.question { background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.2); border-radius: 10px; padding: 16px 18px; }
+.question-num { font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; color: #00d4ff; margin-bottom: 6px; display: block; }
+.question p { font-size: 0.95rem; margin-bottom: 0; }
+code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; color: #00d4ff; background: rgba(0,212,255,0.1); padding: 1px 5px; border-radius: 4px; white-space: nowrap; font-variant-ligatures: none; }
+@media (max-width: 720px) { .layout { grid-template-columns: 1fr; } .sidebar { position: static; height: auto; } main { padding: 24px 20px 60px; } }
+.back-link { position: fixed; top: 18px; right: 24px; font-size: 0.78rem; font-weight: 700; color: #67e3ff; text-decoration: none; background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.35); padding: 5px 12px; border-radius: 20px; z-index: 100; transition: background 0.2s; }
+.back-link:hover { background: rgba(0,212,255,0.3); }
+
+/* sensor table */
+.sensor-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.9rem; }
+.sensor-table th { background: rgba(0,212,255,0.12); color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 10px 14px; border: 1px solid rgba(0,212,255,0.2); text-align: left; }
+.sensor-table td { padding: 9px 14px; border: 1px solid rgba(0,212,255,0.1); color: #b8c5d6; vertical-align: middle; }
+.sensor-table tr:nth-child(even) td { background: rgba(0,212,255,0.03); }
+.sensor-table td code { white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<a href="../index.html" class="back-link">&#8592; Unit 4</a>
+
+<div class="layout">
+
+  <!-- ═══════════════════════════════════════════════════ SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-title">Activity 4.10</div>
+
+    <a href="#wire" class="nav-item active" data-section="wire">
+      <span class="nav-num">1</span>
+      Wire &amp; Test
+    </a>
+    <a href="#calibrate" class="nav-item" data-section="calibrate">
+      <span class="nav-num">2</span>
+      Calibrate
+    </a>
+    <a href="#follow" class="nav-item" data-section="follow">
+      <span class="nav-num">3</span>
+      Line Follow
+    </a>
+    <div class="nav-divider"></div>
+    <a href="#challenges" class="nav-item" data-section="challenges">
+      <span class="nav-num">&#9733;</span>
+      Challenges
+    </a>
+    <a href="#questions" class="nav-item" data-section="questions">
+      <span class="nav-num">?</span>
+      Reflection
+    </a>
+
+    <div class="sidebar-links">
+      <a href="https://micropython.org/doc/en/latest/" target="_blank">MicroPython Docs</a>
+      <a href="https://datasheets.raspberrypi.com/picow/pico-2-w-datasheet.pdf" target="_blank">Pico 2W Pinout</a>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════════════ MAIN -->
+  <main>
+    <header class="activity-header">
+      <h1>Activity 4.10 — Binary Line Following</h1>
+      <p style="color:#6272a4; font-size:0.85rem; margin-bottom:0;">Lesson 4.10 &nbsp;·&nbsp; L.E.O. Robot &nbsp;·&nbsp; MicroPython on Raspberry Pi Pico 2W</p>
+      <div class="header-meta">
+        <span class="meta-tag meta-time">&#128336; ~55 minutes</span>
+        <span class="meta-tag meta-level">Lesson 4.10</span>
+      </div>
+    </header>
+
+    <!-- ══════════════════════════════════════════ SECTION 1 -->
+    <section id="wire">
+      <div class="section-header">
+        <div class="section-num">1</div>
+        <div class="section-title">Wire &amp; Test the Sensor Array</div>
+        <div class="section-time">~10 min</div>
+      </div>
+
+      <p>L.E.O. uses an <strong style="color:#e0e6f0;">OSOYOO 5-channel IR line tracking sensor</strong> to detect black lines on a white surface. Before writing any following logic, wire the sensor and confirm that the raw readings make sense.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <div class="step-body">
+            <strong>Connect the OSOYOO sensor to L.E.O.</strong>
+            <p>Wire the five signal outputs to the Pico 2W: <code>OUT1 &rarr; GP6</code>, <code>OUT2 &rarr; GP7</code>, <code>OUT3 &rarr; GP8</code> (center), <code>OUT4 &rarr; GP9</code>, <code>OUT5 &rarr; GP10</code>. Connect <code>VCC &rarr; 3.3V</code> (or 5V if your module requires it) and <code>GND &rarr; GND</code>. Double-check — adjust the pin numbers below if your physical wiring is different.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-n">2</div>
+          <div class="step-body">
+            <strong>Open Thonny and create <code>line_test.py</code></strong>
+            <p>Make sure Thonny is connected to the Pico 2W (bottom-right should show "MicroPython (Raspberry Pi Pico 2W)").</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-n">3</div>
+          <div class="step-body">
+            <strong>Paste and run the sensor test</strong>
+            <div class="code-wrap">
+              <div class="code-label">line_test.py</div>
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+              <pre><span class="kw">import</span> machine, time
+
+SENSOR_PINS <span class="op">=</span> [<span class="num">6</span>, <span class="num">7</span>, <span class="num">8</span>, <span class="num">9</span>, <span class="num">10</span>]  <span class="cm"># S1(left)…S5(right) — adjust if needed</span>
+sensors <span class="op">=</span> [machine.<span class="cls">Pin</span>(p, machine.<span class="cls">Pin</span>.IN) <span class="kw">for</span> p <span class="kw">in</span> SENSOR_PINS]
+
+<span class="kw">def</span> <span class="fn">read_sensors</span>():
+    <span class="kw">return</span> [s.<span class="fn">value</span>() <span class="kw">for</span> s <span class="kw">in</span> sensors]
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="fn">print</span>(<span class="fn">read_sensors</span>())
+    time.<span class="fn">sleep_ms</span>(<span class="num">100</span>)</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-n">4</div>
+          <div class="step-body">
+            <strong>Test over the white floor</strong>
+            <p>Hold the sensor array over the white surface (no line). All five values should read <code>1</code> — the IR light reflects strongly back to the receiver.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-n">5</div>
+          <div class="step-body">
+            <strong>Test over the black line</strong>
+            <p>Slowly move the sensor over the black tape. At least one value should flip to <code>0</code> — the black surface absorbs IR light so the receiver sees less reflection.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <div class="callout-icon">&#9888;</div>
+        <div class="callout-body">
+          <strong>All values stuck at 0 or all stuck at 1?</strong>
+          <p>Check that VCC is connected to 3.3V or 5V (not GND), and verify your GPIO pin numbers match the actual wires. If everything looks right, try adjusting the trim potentiometer on the module.</p>
+        </div>
+      </div>
+
+      <div class="checkpoint">
+        <div class="checkpoint-icon">&#9745;</div>
+        <div class="checkpoint-body">
+          <strong>Checkpoint 1</strong>
+          <p>You can see values changing in the Thonny console as you move the sensor over and off the line.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ SECTION 2 -->
+    <section id="calibrate">
+      <div class="section-header">
+        <div class="section-num">2</div>
+        <div class="section-title">Calibrate &amp; Understand the Output</div>
+        <div class="section-time">~15 min</div>
+      </div>
+
+      <p>Before writing the following logic you need to understand exactly what patterns the sensors produce at each robot position. Run <code>line_test.py</code> while moving L.E.O. slowly across the line and observe each reading.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <div class="step-body">
+            <strong>Center the robot over the line</strong>
+            <p>Position L.E.O. so S3 (index 2, center sensor) is directly over the black tape. The console should show <code>[1, 1, 0, 1, 1]</code>.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-n">2</div>
+          <div class="step-body">
+            <strong>Shift slightly left</strong>
+            <p>Nudge the robot left until S2 and S3 both cover the line. Expected output: <code>[1, 0, 0, 1, 1]</code>. Two sensors see the line simultaneously.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-n">3</div>
+          <div class="step-body">
+            <strong>Move far left</strong>
+            <p>Slide the robot further left so the line passes under S1. Expected: <code>[0, 1, 1, 1, 1]</code>. Only the leftmost sensor sees the line.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-n">4</div>
+          <div class="step-body">
+            <strong>Watch the indicator LEDs</strong>
+            <p>The OSOYOO module has five small LEDs — one per sensor — that light up when that sensor detects the line. Use these for quick visual checks while the robot is running and you cannot see the Thonny console.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-n">5</div>
+          <div class="step-body">
+            <strong>Adjust the trim pot if needed</strong>
+            <p>If readings are inconsistent (flipping on a solid surface, or not flipping over the line), use a small screwdriver to turn the trim potentiometer on the module. Clockwise typically increases sensitivity.</p>
+          </div>
+        </div>
+      </div>
+
+      <p style="margin-top:20px; margin-bottom:8px; color:#e0e6f0; font-weight:600;">Sensor pattern reference</p>
+      <table class="sensor-table">
+        <thead>
+          <tr>
+            <th>Robot Position</th>
+            <th>Sensor Pattern</th>
+            <th>Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Centered</td>
+            <td><code>[1, 1, 0, 1, 1]</code></td>
+            <td>S3 on line</td>
+          </tr>
+          <tr>
+            <td>Slightly left</td>
+            <td><code>[1, 0, 0, 1, 1]</code></td>
+            <td>S2 + S3 on line</td>
+          </tr>
+          <tr>
+            <td>Far left</td>
+            <td><code>[0, 0, 1, 1, 1]</code></td>
+            <td>S1 + S2 on line</td>
+          </tr>
+          <tr>
+            <td>Slightly right</td>
+            <td><code>[1, 1, 1, 0, 0]</code></td>
+            <td>S4 + S5 on line</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">&#128161;</div>
+        <div class="callout-body">
+          <strong>0 means line detected — 1 means no line</strong>
+          <p>This is the opposite of what you might expect. Black absorbs IR light, so the receiver sees very little signal — the digital output goes LOW (0). White reflects IR strongly, so the output stays HIGH (1). Keep this in mind when writing your <code>if</code>-statements: you are checking for <code>== 0</code>, not <code>== 1</code>.</p>
+        </div>
+      </div>
+
+      <div class="checkpoint">
+        <div class="checkpoint-icon">&#9745;</div>
+        <div class="checkpoint-body">
+          <strong>Checkpoint 2</strong>
+          <p>You can predict what the sensor output will be before reading it — look at the robot's position, then check the console to confirm.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ SECTION 3 -->
+    <section id="follow">
+      <div class="section-header">
+        <div class="section-num">3</div>
+        <div class="section-title">Binary Line Following</div>
+        <div class="section-time">~25 min</div>
+      </div>
+
+      <p>Now you will write the control logic. The idea is simple: check which sensor (or sensors) sees the line and steer toward it. A chain of <code>if/elif</code> statements handles each case.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <div class="step-body">
+            <strong>Create <code>line_follow.py</code></strong>
+            <p>Open a new file in Thonny. Copy your sensor setup from Part 1 — the <code>SENSOR_PINS</code> list, the <code>sensors</code> list comprehension, and the <code>read_sensors()</code> function — and paste it at the top of the new file.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-n">2</div>
+          <div class="step-body">
+            <strong>Add the motor import and the following function</strong>
+            <div class="code-wrap">
+              <div class="code-label">line_follow.py</div>
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+              <pre><span class="kw">import</span> machine, time
+<span class="kw">import</span> motor
+
+SENSOR_PINS <span class="op">=</span> [<span class="num">6</span>, <span class="num">7</span>, <span class="num">8</span>, <span class="num">9</span>, <span class="num">10</span>]  <span class="cm"># S1(left)…S5(right) — adjust if needed</span>
+sensors <span class="op">=</span> [machine.<span class="cls">Pin</span>(p, machine.<span class="cls">Pin</span>.IN) <span class="kw">for</span> p <span class="kw">in</span> SENSOR_PINS]
+
+<span class="kw">def</span> <span class="fn">read_sensors</span>():
+    <span class="kw">return</span> [s.<span class="fn">value</span>() <span class="kw">for</span> s <span class="kw">in</span> sensors]
+
+<span class="kw">def</span> <span class="fn">follow_line_binary</span>():
+    <span class="str">"""Follow a black line on a white surface using binary sensor logic."""</span>
+    <span class="kw">while</span> <span class="kw">True</span>:
+        v <span class="op">=</span> <span class="fn">read_sensors</span>()           <span class="cm"># [s1, s2, s3, s4, s5], 0=line, 1=no line</span>
+
+        <span class="kw">if</span>   v[<span class="num">2</span>] <span class="op">==</span> <span class="num">0</span>:             <span class="cm"># center on line → go straight</span>
+            motor.<span class="fn">drive</span>(<span class="num">40</span>, <span class="num">40</span>)
+        <span class="kw">elif</span> v[<span class="num">1</span>] <span class="op">==</span> <span class="num">0</span>:             <span class="cm"># slightly left  → gentle right turn</span>
+            motor.<span class="fn">drive</span>(<span class="num">50</span>, <span class="num">20</span>)
+        <span class="kw">elif</span> v[<span class="num">0</span>] <span class="op">==</span> <span class="num">0</span>:             <span class="cm"># far left       → hard right turn</span>
+            motor.<span class="fn">drive</span>(<span class="num">60</span>,  <span class="num">0</span>)
+        <span class="kw">elif</span> v[<span class="num">3</span>] <span class="op">==</span> <span class="num">0</span>:             <span class="cm"># slightly right → gentle left turn</span>
+            motor.<span class="fn">drive</span>(<span class="num">20</span>, <span class="num">50</span>)
+        <span class="kw">elif</span> v[<span class="num">4</span>] <span class="op">==</span> <span class="num">0</span>:             <span class="cm"># far right      → hard left turn</span>
+            motor.<span class="fn">drive</span>( <span class="num">0</span>, <span class="num">60</span>)
+        <span class="kw">else</span>:                       <span class="cm"># no line seen   → slow search spin</span>
+            motor.<span class="fn">drive</span>(<span class="num">20</span>, <span class="op">-</span><span class="num">20</span>)
+
+        time.<span class="fn">sleep_ms</span>(<span class="num">10</span>)
+
+<span class="fn">follow_line_binary</span>()</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-n">3</div>
+          <div class="step-body">
+            <strong>Place L.E.O. on the line course and run</strong>
+            <p>Start the robot at the beginning of the course. Begin at speed 40 — resist the urge to go faster until you have confirmed it follows reliably. Press the red Stop button in Thonny (or the hardware button if wired) to halt the robot.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-n">4</div>
+          <div class="step-body">
+            <strong>Diagnose direction problems</strong>
+            <p>If the robot turns the wrong direction when it drifts off the line, your S1/S5 left-right orientation may be flipped. Check whether S1 is on the physical left or right side of the robot and swap the pin assignments if needed.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">&#128161;</div>
+        <div class="callout-body">
+          <strong>Robot turns the wrong direction?</strong>
+          <p>If the robot turns LEFT when it drifts right (and vice versa), swap your S1 and S5 pin assignments at the top of the file. The sensor may be mounted with S1 physically on the right side of the robot.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <div class="callout-icon">&#9888;</div>
+        <div class="callout-body">
+          <strong>Keep speed low until it works</strong>
+          <p>Do not increase <code>motor.drive()</code> values above 60 until the robot is reliably following the line. At high speed, the sensor reads the new position too late and the robot overshoots every correction.</p>
+        </div>
+      </div>
+
+      <div class="checkpoint">
+        <div class="checkpoint-icon">&#9745;</div>
+        <div class="checkpoint-body">
+          <strong>Checkpoint 3 — Show Mr. Bombich</strong>
+          <p>L.E.O. follows a straight section and a gentle curve without losing the line. Demonstrate this before moving on to the challenges.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ CHALLENGES -->
+    <section id="challenges">
+      <div class="section-header">
+        <div class="section-num">&#9733;</div>
+        <div class="section-title">Challenges</div>
+        <div class="section-time">early finishers</div>
+      </div>
+
+      <p>Completed the checkpoint? Pick any challenge below — they are independent, so you can try them in any order.</p>
+
+      <div class="challenge-set">
+        <div class="challenge">
+          <div class="challenge-header">
+            <span class="challenge-num">C-1</span>
+            <span class="challenge-title">Speed Test</span>
+          </div>
+          <p>Gradually increase your base motor speed: 40 &rarr; 50 &rarr; 60 &rarr; 70. Run a full lap at each speed and note whether the robot stays on the line. What is the fastest speed before it reliably loses the line on a curve? Record your findings.</p>
+        </div>
+
+        <div class="challenge">
+          <div class="challenge-header">
+            <span class="challenge-num">C-2</span>
+            <span class="challenge-title">Two-Sensor Center</span>
+          </div>
+          <p>Modify the code so that when <em>both</em> <code>v[1]</code> and <code>v[2]</code> are <code>0</code> simultaneously (S2 and S3 both see the line), the robot drives straight. Add this as a new <code>elif</code> branch <em>before</em> the single-sensor cases. Does this make following smoother on a wide line?</p>
+        </div>
+
+        <div class="challenge">
+          <div class="challenge-header">
+            <span class="challenge-num">C-3</span>
+            <span class="challenge-title">Speed Modulation</span>
+          </div>
+          <p>Use two different speeds: on a straight (only S3 sees the line) drive both motors at 60; on a curve (only S1 or S5 sees the line) reduce both to 30. Does the robot complete a lap faster than a fixed-speed version? Time a few laps and compare.</p>
+        </div>
+
+        <div class="challenge">
+          <div class="challenge-header">
+            <span class="challenge-num">C-4</span>
+            <span class="challenge-title">Figure-8</span>
+          </div>
+          <p>Set up (or find) a figure-8 track that crosses over itself. What happens when the robot reaches the intersection where two lines cross at right angles? Does it follow correctly, freeze, or go the wrong way? How could you modify the code to handle the intersection?</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ QUESTIONS -->
+    <section id="questions">
+      <div class="section-header">
+        <div class="section-num">?</div>
+        <div class="section-title">Reflection Questions</div>
+      </div>
+
+      <p>Answer these in your portfolio. Use complete sentences and refer to specific parts of the code or your test results where relevant.</p>
+
+      <div class="question-set">
+        <div class="question">
+          <span class="question-num">Q1</span>
+          <p>The sensor outputs <code>1</code> when there is <em>no</em> line and <code>0</code> when it <em>detects</em> a line. Why does IR line sensing work this way? What physical property of white vs. black surfaces causes this difference in output?</p>
+        </div>
+
+        <div class="question">
+          <span class="question-num">Q2</span>
+          <p>Your robot follows a straight line perfectly but loses the line on sharp curves. What specific change (or changes) would you make to the code to help it handle tight turns without losing the line?</p>
+        </div>
+
+        <div class="question">
+          <span class="question-num">Q3</span>
+          <p>The <code>else</code> branch currently spins the robot in place (<code>motor.drive(20, -20)</code>) when no sensor sees the line. Describe what would happen if you replaced that with <code>motor.drive(30, 30)</code> — driving both motors forward. When is a spin better? When might driving forward be better?</p>
+        </div>
+
+        <div class="question">
+          <span class="question-num">Q4</span>
+          <p>Look at the priority order of the <code>if/elif</code> chain. If <code>v[2] == 0</code> AND <code>v[1] == 0</code> at the same time (both S3 and S2 see the line), which branch executes? Is this the correct behavior for that situation? Why or why not?</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+/* ── Copy buttons ── */
+function copyCode(btn) {
+  const pre = btn.closest('.code-wrap').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = 'copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1800);
+  });
+}
+
+/* ── Sidebar active highlight ── */
+(function () {
+  const sections = document.querySelectorAll('section[id]');
+  const navItems = document.querySelectorAll('.nav-item[data-section]');
+
+  function setActive(id) {
+    navItems.forEach(item => {
+      const match = item.dataset.section === id;
+      item.classList.toggle('active', match);
+    });
+  }
+
+  /* IntersectionObserver — marks the section most visible near the top */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) setActive(entry.target.id);
+    });
+  }, { rootMargin: '-15% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+
+  /* Smooth-scroll nav clicks */
+  navItems.forEach(item => {
+    item.addEventListener('click', e => {
+      const targetId = item.getAttribute('href').slice(1);
+      const target = document.getElementById(targetId);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth' });
+        setActive(targetId);
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>

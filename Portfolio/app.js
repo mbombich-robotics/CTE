@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.13',
+    VERSION: 'v2.14.14',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -68,16 +68,16 @@ const WEEK_TOPICS = {
     14: { title: 'L4.4 Digital Input + L4.5 PWM', phase: 'programming', unit: '04', focus: 'L4.4 Digital Input + A4.4 Switches; L4.5 PWM + A4.5' },
     15: { title: 'L4.6 Motor Control + D4.2', phase: 'programming', unit: '04', focus: 'L4.6 Motor Control + A4.6; Programming Quiz; D4.2 Programming Basics due end of week' },
     16: { title: '3D Print Holiday Project', phase: 'programming', unit: '04', focus: 'Design and 3D print a small item to take home — ornament, keychain, name plate. Winter Break ~Dec 21.' },
-    // Robot Tuning — Encoders & IMU (Jan 4–21)
-    17: { title: 'Robot Tuning: Motor Control + Encoders', phase: 'tuning', unit: '04', focus: 'Motor control on physical robot; drive + turn functions; encoder wiring and pulse counting' },
-    18: { title: 'Robot Tuning: Encoder Feedback + IMU', phase: 'tuning', unit: '04', focus: 'Drive-straight with encoder feedback; IMU intro — Qwiic plug-in, read yaw angle. Jan 13 = 20-min period day.' },
-    19: { title: 'Robot Tuning: IMU Heading + Midterm', phase: 'tuning', unit: '04', focus: 'IMU heading hold; catch-up; Midterm Exam (EDP, CAD, Safety, Programming Basics). MLK Day Jan 18 — last student day Thu Jan 21.' },
-    // Ultrasonic & Wall Following (Jan 25 – Feb 5)
-    20: { title: 'Ultrasonic: Distance + Obstacle Detection', phase: 'ultrasonic', unit: '04', focus: 'I2C ultrasonic via TCA9548A mux (3 sensors); distance measurement; obstacle detection logic. S2 begins Jan 25.' },
-    21: { title: 'Wall Following', phase: 'ultrasonic', unit: '04', focus: 'Maintain fixed distance from a wall using ultrasonic; proportional correction' },
+    // Robot Motion + IMU (Jan 4–21)
+    17: { title: 'L4.7 IMU Intro on Robot', phase: 'tuning', unit: '04', focus: 'L4.6 motor.py on physical robot: drive() calibration + straight-line practice; L4.7 IMU intro — GY-521 MPU6050 wired to I2C mux, wake sensor, read raw gyro Z' },
+    18: { title: 'L4.7 IMU Heading Hold + A4.7 + D4.3', phase: 'tuning', unit: '04', focus: 'L4.7 Integrate gyro Z for yaw; implement tank_turn(deg); A4.7 IMU Navigation Challenge (scaffolded). Jan 13 = 20-min period. D4.3 due end of week.' },
+    19: { title: 'Catch-up + Q5 Midterm', phase: 'tuning', unit: '04', focus: 'Catch-up + D4.3 makeups; Midterm Exam (EDP, CAD, Safety, Programming Basics). MLK Day Jan 18 — last student day Thu Jan 21.' },
+    // Ultrasonic (Jan 25 – Feb 5)
+    20: { title: 'L4.8 Ultrasonic + L4.9 Obstacle Detection', phase: 'ultrasonic', unit: '04', focus: 'S2 begins Jan 25. L4.8 HC-SR04 I2C via TCA9548A mux — read distance from 3 sensors; L4.9 Obstacle Avoidance — stop/turn logic; A4.8 Obstacle Detection (scaffolded)' },
+    21: { title: 'L4.9 Wall Following + A4.9 + D4.4', phase: 'ultrasonic', unit: '04', focus: 'L4.9 Wall Following — proportional correction to maintain fixed distance; A4.9 Wall Following Challenge (scaffolded). D4.4 due end of week.' },
     // Line Following (Feb 8–19)
-    22: { title: 'Line Following: IR Array + Calibration', phase: 'linefollow', unit: '04', focus: '5-sensor IR array; per-sensor threshold calibration; binary line following' },
-    23: { title: 'Line Following: PID + Practical', phase: 'linefollow', unit: '04', focus: 'Weighted-sensor error; PID control; tune + course practical. Presidents Day Feb 15 — 4-day week.' },
+    22: { title: 'L4.10 IR Array + Binary Line Following', phase: 'linefollow', unit: '04', focus: 'L4.10 OSOYOO 5-sensor IR array — wire, calibrate thresholds, binary line following; A4.10 Binary Line Following' },
+    23: { title: 'L4.11 PID + A4.11 + D5.2', phase: 'linefollow', unit: '04', focus: 'L4.11 Weighted-sensor error; P control first, then full PID tuning; A4.11 PID Challenge (scaffolded). Presidents Day Feb 15 — 4-day week. D5.2 Line Following Practical due.' },
     // Mechanisms (Feb 22 – Mar 25)
     24: { title: 'AI & Machine Learning', phase: 'ai', unit: '05', focus: 'L5.1 What Is AI (Day 1); L5.2 Ethics in AI (Day 2); Activity 5.3 Teachable Machine (Days 3–4). AI Quiz Day 1 of Week 25. Feb 26 mid-winter break.' },
     25: { title: 'AI Quiz + Mechanisms: Simple Machines', phase: 'mechanisms', unit: '04', focus: 'AI Quiz (Day 1); simple machines intro; mechanical advantage + efficiency (POE 111/113)' },
@@ -347,6 +347,42 @@ const DELIVERABLES = [
             '4.6 Q3: You call drive(60, 60) but the robot curves left instead of going straight. Name two hardware causes and one software fix you would try first.',
             '4.6 Q4: How do you bring L.E.O. to a full stop using motor.py? Write the exact call and explain what it sets internally.',
             '4.6 Q5: Identify and write the corrected lines for the two bugs in the debug snippet from Activity 4.6.',
+        ]
+    },
+    // ── Unit 4: IMU Navigation (D4.3) ───────────────────────────────────
+    {
+        id: 43,
+        title: 'D4.3 — IMU Navigation',
+        unit: '04',
+        week: 18,
+        points: 50,
+        phase: 'tuning',
+        tracks: ['hsaer'],
+        description: 'Demonstrate IMU-guided robot motion to Mr. Bombich, then answer the reflection questions. All demonstrations must be signed off before the end of Week 18.',
+        requirements: [
+            'Drive straight ≥2 m using IMU heading hold — within ±5° of starting heading (demonstrated to Mr. Bombich)',
+            'Execute a 90° tank turn within ±10° of target using tank_turn() — demonstrated to Mr. Bombich',
+            'Drive a complete square using tank_turn(90) — demonstrated to Mr. Bombich',
+            'Explain how gyro integration gives you a heading: what is being accumulated each loop, and why does the heading drift over time?',
+            'Describe one tuning decision you made (turn speed, loop delay, or stop threshold) and the specific effect it had on your robot\'s behavior'
+        ]
+    },
+    // ── Unit 4: Ultrasonic (D4.4) ────────────────────────────────────────
+    {
+        id: 44,
+        title: 'D4.4 — Ultrasonic: Obstacle & Wall Following',
+        unit: '04',
+        week: 21,
+        points: 50,
+        phase: 'ultrasonic',
+        tracks: ['hsaer'],
+        description: 'Demonstrate ultrasonic-based robot behaviors to Mr. Bombich, then answer the reflection questions. All demonstrations must be signed off before the end of Week 21.',
+        requirements: [
+            'Obstacle detection: robot stops within 20 cm of an obstacle placed in its path — demonstrated to Mr. Bombich',
+            'Obstacle avoidance: robot detects the obstacle, turns, and clears it without contact — demonstrated to Mr. Bombich',
+            'Wall following: robot maintains a target distance from a wall for ≥2 m — demonstrated to Mr. Bombich',
+            'Explain what happens to wall-following behavior when Kp is too large. What happens when it is too small?',
+            'Describe one specific iteration you made to your obstacle or wall-following code and explain what changed in the robot\'s behavior'
         ]
     },
     // ── Unit 4: Line Following Practical ────────────────────────────────

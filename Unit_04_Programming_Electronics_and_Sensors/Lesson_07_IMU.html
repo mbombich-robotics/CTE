@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>IMU Heading Hold — L.E.O. Robotics Lesson 4.7</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Exo 2', sans-serif; background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); color: #e0e6f0; height: 100vh; }
+        .presentation { width: 100%; height: 100vh; position: relative; }
+        .slide { position: absolute; width: 100%; min-height: 100%; display: none; flex-direction: column; justify-content: flex-start; align-items: center; padding: 55px 60px 120px 60px; opacity: 0; transition: opacity 0.5s ease; overflow-y: auto; overflow-x: hidden; }
+        .slide.active { display: flex; opacity: 1; }
+        .slide-content { max-width: 1200px; width: 100%; }
+        h1 { font-family: 'Orbitron', sans-serif; font-size: 3.5rem; font-weight: 900; color: #00d4ff; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 20px rgba(0,212,255,0.5); animation: glow 2s ease-in-out infinite alternate; }
+        @keyframes glow { from { text-shadow: 0 0 20px rgba(0,212,255,0.5); } to { text-shadow: 0 0 35px rgba(0,212,255,0.9); } }
+        h2 { font-family: 'Orbitron', sans-serif; font-size: 2.4rem; font-weight: 700; color: #00d4ff; margin-bottom: 18px; text-transform: uppercase; }
+        h3 { font-family: 'Exo 2', sans-serif; font-size: 1.5rem; font-weight: 600; color: #ff9500; margin-bottom: 12px; }
+        p { font-size: 1.15rem; line-height: 1.6; margin-bottom: 12px; color: #b8c5d6; }
+        .subtitle { font-size: 1.3rem; color: #ff9500; font-weight: 600; margin-bottom: 30px; }
+        .objective-box { background: linear-gradient(135deg, rgba(0,212,255,0.1) 0%, rgba(0,212,255,0.04) 100%); border: 3px solid #00d4ff; border-radius: 12px; padding: 20px; margin: 20px 0; box-shadow: 0 0 30px rgba(0,212,255,0.15); }
+        .objective-box h3 { color: #00d4ff; }
+        .bullet-list { list-style: none; padding-left: 0; }
+        .bullet-list li { font-size: 1.15rem; margin: 12px 0; padding-left: 35px; position: relative; color: #b8c5d6; line-height: 1.5; }
+        .bullet-list li::before { content: '▸'; position: absolute; left: 0; color: #ff9500; font-size: 1.5rem; line-height: 1; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .box { background: rgba(0,212,255,0.05); border: 2px solid #00d4ff; border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(0,212,255,0.1); }
+        .box-orange { background: rgba(255,149,0,0.07); border: 2px solid #ff9500; border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(255,149,0,0.1); }
+        .box-green { background: rgba(80,250,123,0.07); border: 2px solid #50fa7b; border-radius: 12px; padding: 20px; }
+        .highlight { color: #00d4ff; font-weight: 700; }
+        .warning { color: #ff9500; font-weight: 700; }
+        .success { color: #50fa7b; font-weight: 700; }
+        code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: #00d4ff; background: rgba(0,212,255,0.1); padding: 1px 5px; border-radius: 4px; white-space: nowrap; font-variant-ligatures: none; }
+        .code-block { background: #0d1117; border: 2px solid #00d4ff; border-radius: 10px; padding: 20px 24px; margin: 16px 0; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; line-height: 1.75; white-space: pre; font-variant-ligatures: none; }
+        .kw  { color: #ff79c6; }
+        .cls { color: #ffb86c; font-weight: 700; }
+        .fn  { color: #8be9fd; }
+        .str { color: #f1fa8c; }
+        .num { color: #bd93f9; }
+        .cm  { color: #6272a4; font-style: italic; }
+        .op  { color: #b8c5d6; }
+        .reg-table { width: 100%; border-collapse: collapse; font-size: 1rem; margin: 14px 0; }
+        .reg-table th { background: rgba(0,212,255,0.15); color: #00d4ff; padding: 10px 14px; border: 1.5px solid rgba(0,212,255,0.3); font-family: 'Space Mono', monospace; font-size: 0.85rem; text-align: center; }
+        .reg-table td { padding: 9px 14px; border: 1px solid rgba(0,212,255,0.15); text-align: center; color: #b8c5d6; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; }
+        .reg-table tr:nth-child(even) td { background: rgba(0,212,255,0.03); }
+        .reg-table .accent { color: #00d4ff; font-weight: 700; }
+        .controls { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; justify-content: center; align-items: center; gap: 20px; z-index: 1000; }
+        button { background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%); border: none; color: #0a0e27; padding: 15px 30px; font-size: 1rem; font-weight: 700; border-radius: 8px; cursor: pointer; font-family: 'Exo 2', sans-serif; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,212,255,0.3); }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,212,255,0.5); }
+        button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+        .slide-number { position: fixed; bottom: 30px; left: 30px; font-family: 'Space Mono', monospace; font-size: 1rem; color: #00d4ff; z-index: 1000; }
+        .ref-link { position: fixed; bottom: 30px; right: 30px; z-index: 1000; }
+        .ref-link a { background: rgba(0,212,255,0.12); border: 1px solid #00d4ff; color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.85rem; padding: 8px 14px; border-radius: 6px; text-decoration: none; transition: background 0.2s; }
+        .ref-link a:hover { background: rgba(0,212,255,0.25); }
+        @media (max-width: 768px) { h1 { font-size: 2.5rem; } h2 { font-size: 1.8rem; } .slide { padding: 30px 20px 100px; } .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+        .back-link { position: fixed; top: 18px; right: 24px; font-size: 0.78rem; font-weight: 700; color: #67e3ff; text-decoration: none; background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.35); padding: 5px 12px; border-radius: 20px; z-index: 100; transition: background 0.2s; }
+        .back-link:hover { background: rgba(0,212,255,0.3); }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← Unit 4</a>
+    <div class="presentation">
+
+<!-- ─────────────────────────────────── SLIDE 1: Title ─────────────────────────────────── -->
+<div class="slide active">
+    <div class="slide-content" style="text-align:center;">
+        <h1>IMU Heading Hold</h1>
+        <p class="subtitle">Unit 4 · Programming, Electronics &amp; Sensors · Lesson 4.7</p>
+
+        <div style="margin: 28px auto; max-width: 480px;">
+            <svg viewBox="0 0 440 270" fill="none" xmlns="http://www.w3.org/2000/svg"
+                 style="width:100%; filter:drop-shadow(0 0 18px rgba(0,212,255,0.4));">
+                <!-- Robot body (top-down) -->
+                <rect x="130" y="90" width="180" height="100" rx="14"
+                      fill="rgba(0,212,255,0.07)" stroke="#00d4ff" stroke-width="2"/>
+                <!-- Wheels left -->
+                <rect x="98"  y="100" width="30" height="38" rx="6"
+                      fill="rgba(255,149,0,0.12)" stroke="#ff9500" stroke-width="2"/>
+                <rect x="98"  y="152" width="30" height="38" rx="6"
+                      fill="rgba(255,149,0,0.12)" stroke="#ff9500" stroke-width="2"/>
+                <!-- Wheels right -->
+                <rect x="312" y="100" width="30" height="38" rx="6"
+                      fill="rgba(255,149,0,0.12)" stroke="#ff9500" stroke-width="2"/>
+                <rect x="312" y="152" width="30" height="38" rx="6"
+                      fill="rgba(255,149,0,0.12)" stroke="#ff9500" stroke-width="2"/>
+                <!-- IMU chip -->
+                <rect x="193" y="122" width="54" height="40" rx="5"
+                      fill="rgba(80,250,123,0.12)" stroke="#50fa7b" stroke-width="1.5"/>
+                <text x="220" y="138" text-anchor="middle"
+                      font-family="JetBrains Mono,monospace" font-size="8.5" fill="#50fa7b">GY-521</text>
+                <text x="220" y="152" text-anchor="middle"
+                      font-family="JetBrains Mono,monospace" font-size="8.5" fill="#50fa7b">MPU6050</text>
+                <!-- "Gyroscope inside" label with line -->
+                <line x1="220" y1="122" x2="220" y2="108" stroke="#50fa7b" stroke-width="1" stroke-dasharray="3,2"/>
+                <text x="220" y="104" text-anchor="middle"
+                      font-family="Exo 2,sans-serif" font-size="11" fill="#50fa7b" font-weight="600">Gyroscope inside</text>
+                <!-- Curved rotation arrow (clockwise) -->
+                <path d="M 220 58 A 100 100 0 0 1 340 150"
+                      stroke="#ff79c6" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                <!-- Arrowhead at end of arc -->
+                <polygon points="340,150 324,140 335,128" fill="#ff79c6"/>
+                <!-- Arc label -->
+                <text x="318" y="108" text-anchor="start"
+                      font-family="Exo 2,sans-serif" font-size="11" fill="#ff79c6" font-weight="600">yaw rotation</text>
+                <!-- Front indicator -->
+                <line x1="220" y1="90" x2="220" y2="70" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="4,3"/>
+                <polygon points="220,62 214,72 226,72" fill="#00d4ff"/>
+                <text x="220" y="58" text-anchor="middle"
+                      font-family="Exo 2,sans-serif" font-size="11" fill="#00d4ff">FRONT</text>
+            </svg>
+        </div>
+
+        <p style="color:#6272a4; font-size:0.95rem; margin-top:16px;">Lesson 4.7 · Weeks 17–18</p>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────── SLIDE 2: Objectives ─────────────────────────────────── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Learning Objectives</h2>
+        <div class="objective-box">
+            <h3>By the end of this lesson you will be able to…</h3>
+            <ul class="bullet-list">
+                <li><span class="highlight">Explain</span> how the MPU6050 gyroscope measures rotation rate in degrees per second</li>
+                <li><span class="highlight">Read</span> and integrate gyro Z output to track L.E.O.'s heading in real time</li>
+                <li><span class="highlight">Write</span> a heading-hold loop and a <code>tank_turn(deg)</code> function for precise turns</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────── SLIDE 3: Problem ─────────────────────────────────── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Why Motors Don't Drive Straight</h2>
+        <p>No two motors are identical. Friction, battery voltage, and manufacturing tolerances make one side spin slightly faster — even at the same PWM duty cycle. The robot curves instead of going straight.</p>
+        <p>We need a sensor that tells us <span class="highlight">how much we've rotated</span>, not just how fast the motors are spinning.</p>
+
+        <div class="grid-2">
+            <div class="box-orange">
+                <h3>&#10007; Open Loop (no feedback)</h3>
+                <ul class="bullet-list">
+                    <li>Set left = right = 50</li>
+                    <li>Robot curves slightly left or right</li>
+                    <li>Error grows with distance traveled</li>
+                    <li>No way to correct — code is blind</li>
+                </ul>
+            </div>
+            <div class="box-green">
+                <h3>&#10003; Closed Loop (with IMU)</h3>
+                <ul class="bullet-list">
+                    <li>IMU detects any yaw rotation</li>
+                    <li>Code compares heading to target (0°)</li>
+                    <li>Slows one motor to correct the drift</li>
+                    <li>Self-corrects every 20 ms</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────── SLIDE 4: GY-521 ─────────────────────────────────── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>The GY-521 &amp; MPU6050</h2>
+        <p><span class="highlight">GY-521</span> is the blue breakout board — it adds a voltage regulator and I2C pull-up resistors.<br>
+           <span class="highlight">MPU6050</span> is the sensor chip soldered to it.</p>
+
+        <div class="grid-2" style="margin-top:22px;">
+            <div class="box">
+                <h3>6-Axis Sensor</h3>
+                <ul class="bullet-list">
+                    <li><span class="highlight">3-axis gyroscope</span> — measures rotation rate (°/s)</li>
+                    <li>3-axis accelerometer — measures g-force</li>
+                    <li>We only need <span class="warning">gyro Z</span> (yaw) to steer L.E.O.</li>
+                    <li>16-bit ADC gives very fine resolution</li>
+                </ul>
+            </div>
+            <div class="box">
+                <h3>Interface &amp; Key Detail</h3>
+                <ul class="bullet-list">
+                    <li>I2C protocol, address <code>0x68</code></li>
+                    <li>Connected through TCA9548A mux (<code>0x70</code>)</li>
+                    <li>Select the mux channel before talking to IMU</li>
+                    <li><span class="warning">Chip boots in sleep mode</span> — must wake it</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────── SLIDE 5: Registers ─────────────────────────────────── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Reading Gyro Z</h2>
+        <p>The MPU6050 stores measurements in hardware registers (one byte each). Gyro Z spans two consecutive bytes — read them together and combine into a signed 16-bit integer, then scale to degrees per second.</p>
+
+        <div class="grid-2" style="margin-top:16px;">
+            <div>
+                <h3>Key Registers</h3>
+                <table class="reg-table">
+                    <tr><th>Name</th><th>Address</th><th>Purpose</th></tr>
+                    <tr><td>PWR_MGMT_1</td><td class="accent">0x6B</td><td>Sleep / wake control</td></tr>
+                    <tr><td>GYRO_ZOUT_H</td><td class="accent">0x47</td><td>Gyro Z — high byte</td></tr>
+                    <tr><td>GYRO_ZOUT_L</td><td class="accent">0x48</td><td>Gyro Z — low byte</td></tr>
+                </table>
+                <p style="margin-top:10px; font-size:1.05rem;">Reading <code>0x47</code> with length <code>2</code> grabs both bytes in one call (big-endian order).</p>
+            </div>
+            <div>
+                <h3>Scaling: raw → °/s</h3>
+                <table class="reg-table">
+                    <tr><th>Raw value</th><th>÷ 131.0</th><th>Result</th></tr>
+                    <tr><td>131</td><td>÷ 131.0</td><td class="accent">1.0 °/s</td></tr>
+                    <tr><td>655</td><td>÷ 131.0</td><td class="accent">5.0 °/s</td></tr>
+                    <tr><td>1310</td><td>÷ 131.0</td><td class="accent">10.0 °/s</td></tr>
+                    <tr><td>−1310</td><td>÷ 131.0</td><td class="accent">−10.0 °/s</td></tr>
+                </table>
+                <p style="margin-top:10px; font-size:1.05rem;">Default range = <span class="highlight">±250 °/s → 131 LSB per °/s</span>.<br>Negative values = counter-clockwise rotation.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────── SLIDE 6: Wake Up ─────────────────────────────────── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Step 1: Wake Up</h2>
+        <p>The MPU6050 boots with its sleep bit set and ignores all requests. Write <code>0x00</code> to register <code>0x6B</code> (PWR_MGMT_1) to clear the sleep bit and start the chip.</p>
+
+<div class="code-block"><span class="kw">import</span> machine, struct, time
+
+i2c <span class="op">=</span> machine.<span class="cls">I2C</span>(<span class="num">0</span>, scl<span class="op">=</span>machine.<span class="cls">Pin</span>(<span class="num">1</span>), sda<span class="op">=</span>machine.<span class="cls">Pin</span>(<span class="num">0</span>), freq<span class="op">=</span><span class="num">400000</span>)
+
+<span class="cm"># Select IMU channel on TCA9548A mux (your channel may differ)</span>
+i2c.<span class="fn">writeto</span>(<span class="num">0x70</span>, <span class="cls">bytes</span>([<span class="num">1</span> <span class="op">&lt;&lt;</span> <span class="num">0</span>]))
+
+IMU_ADDR <span class="op">=</span> <span class="num">0x68</span>
+<span class="cm"># Wake up: clear sleep bit in PWR_MGMT_1 (register 0x6B)</span>
+i2c.<span class="fn">writeto_mem</span>(IMU_ADDR, <span class="num">0x6B</span>, <span class="cls">bytes</span>([<span class="num">0x00</span>]))
+time.<span class="fn">sleep_ms</span>(<span class="num">100</span>)
+<span class="fn">print</span>(<span class="str">"IMU ready"</span>)</div>
+
+        <div class="box-orange" style="margin-top:16px;">
+            <h3>Why the 100 ms delay?</h3>
+            <p>The chip needs time to complete its internal startup after waking. Skipping the delay may cause the first few reads to return garbage values. 100 ms is conservative and safe.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────── SLIDE 7: Read & Scale ─────────────────────────────────── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Step 2: Read &amp; Scale</h2>
+        <p>Read 2 bytes starting at <code>0x47</code>, unpack as a signed big-endian integer, then divide by <code>131.0</code> to get degrees per second.</p>
+
+<div class="code-block"><span class="kw">def</span> <span class="fn">read_gyro_z</span>():
+    <span class="str">"""Return rotation rate in degrees/second (positive = clockwise)."""</span>
+    data <span class="op">=</span> i2c.<span class="fn">readfrom_mem</span>(IMU_ADDR, <span class="num">0x47</span>, <span class="num">2</span>)   <span class="cm"># GYRO_ZOUT_H/L</span>
+    raw  <span class="op">=</span> struct.<span class="fn">unpack</span>(<span class="str">'>h'</span>, data)[<span class="num">0</span>]            <span class="cm"># signed 16-bit big-endian</span>
+    <span class="kw">return</span> raw <span class="op">/</span> <span class="num">131.0</span>                             <span class="cm"># ±250°/s → 131 LSB/°/s</span>
+
+<span class="cm"># Quick test — run this loop to see the gyro live</span>
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="fn">print</span>(<span class="str">f"Gyro Z: {read_gyro_z():.2f} °/s"</span>)
+    time.<span class="fn">sleep_ms</span>(<span class="num">100</span>)</div>
+
+        <div class="box" style="margin-top:16px;">
+            <h3>Gyro Bias — Hold Still First</h3>
+            <p>With L.E.O. at rest, any non-zero reading is <span class="warning">gyro bias</span> — a tiny built-in offset. It's normal and small (typically &lt;2 °/s). It will cause yaw to drift slowly, but that error is negligible for short maneuvers.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────── SLIDE 8: Integrate Yaw ─────────────────────────────────── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Step 3: Track Heading</h2>
+        <p>A gyroscope reports <span class="highlight">rotation rate</span> (°/s), not angle. To get heading you <span class="highlight">integrate</span>: multiply the rate by how much time has passed, then add it to the running total.</p>
+
+        <div class="box" style="text-align:center; padding:14px 20px; margin: 16px 0;">
+            <span style="font-size:1.3rem; font-family:'Space Mono',monospace; color:#00d4ff;">
+                yaw = yaw + (°/s) × dt
+            </span>
+            <p style="margin:6px 0 0; font-size:1rem;">where dt = loop interval in seconds (20 ms = 0.020 s)</p>
+        </div>
+
+<div class="code-block">LOOP_MS <span class="op">=</span> <span class="num">20</span>       <span class="cm"># run loop every 20 ms</span>
+yaw     <span class="op">=</span> <span class="num">0.0</span>      <span class="cm"># degrees from start, positive = clockwise</span>
+
+start <span class="op">=</span> time.<span class="fn">ticks_ms</span>()
+<span class="kw">while</span> <span class="kw">True</span>:
+    gz   <span class="op">=</span> <span class="fn">read_gyro_z</span>()
+    dt   <span class="op">=</span> LOOP_MS <span class="op">/</span> <span class="num">1000.0</span>          <span class="cm"># convert ms → seconds</span>
+    yaw <span class="op">+=</span> gz <span class="op">*</span> dt                   <span class="cm"># integrate: add rotation this tick</span>
+
+    <span class="fn">print</span>(<span class="str">f"Yaw: {yaw:+.1f}°"</span>)
+    time.<span class="fn">sleep_ms</span>(LOOP_MS)</div>
+
+        <div class="box-orange" style="margin-top:12px;">
+            <h3>Drift Over Time</h3>
+            <p>Gyro bias multiplies by elapsed time — after several minutes yaw will wander noticeably. For a 2-second straight run the drift is tiny and acceptable.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────── SLIDE 9: Heading Hold ─────────────────────────────────── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Driving Straight with IMU</h2>
+        <p>Every loop tick: read gyro, update yaw, then compare to target (0°). If drift exceeds the dead band, nudge the faster motor down slightly. The dead band prevents over-correction when the error is tiny.</p>
+
+<div class="code-block"><span class="kw">import</span> motor
+
+DEAD_BAND <span class="op">=</span> <span class="num">2.5</span>   <span class="cm"># ignore drift smaller than this (degrees)</span>
+
+<span class="kw">def</span> <span class="fn">drive_straight_imu</span>(speed<span class="op">=</span><span class="num">50</span>, duration_ms<span class="op">=</span><span class="num">2000</span>):
+    <span class="str">"""Drive forward for duration_ms using IMU to hold heading."""</span>
+    yaw <span class="op">=</span> <span class="num">0.0</span>
+    t0  <span class="op">=</span> time.<span class="fn">ticks_ms</span>()
+    <span class="kw">while</span> time.<span class="fn">ticks_diff</span>(time.<span class="fn">ticks_ms</span>(), t0) <span class="op">&lt;</span> duration_ms:
+        gz   <span class="op">=</span> <span class="fn">read_gyro_z</span>()
+        yaw <span class="op">+=</span> gz <span class="op">*</span> (LOOP_MS <span class="op">/</span> <span class="num">1000.0</span>)
+
+        <span class="kw">if</span>   yaw <span class="op">&gt;</span>  DEAD_BAND:
+            motor.<span class="fn">drive</span>(speed <span class="op">-</span> <span class="num">8</span>, speed)   <span class="cm"># drifted right → slow left motor</span>
+        <span class="kw">elif</span> yaw <span class="op">&lt;</span> <span class="op">-</span>DEAD_BAND:
+            motor.<span class="fn">drive</span>(speed, speed <span class="op">-</span> <span class="num">8</span>)   <span class="cm"># drifted left  → slow right motor</span>
+        <span class="kw">else</span>:
+            motor.<span class="fn">drive</span>(speed, speed)
+        time.<span class="fn">sleep_ms</span>(LOOP_MS)
+    motor.<span class="fn">drive</span>(<span class="num">0</span>, <span class="num">0</span>)</div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────── SLIDE 10: tank_turn ─────────────────────────────────── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Precise Turns: tank_turn()</h2>
+        <p>Drive one side forward and the other backward — the robot spins in place. Integrate yaw each tick until the accumulated angle reaches the target, then stop and let the robot settle.</p>
+
+<div class="code-block"><span class="kw">def</span> <span class="fn">tank_turn</span>(degrees, speed<span class="op">=</span><span class="num">30</span>):
+    <span class="str">"""
+    Turn in place by 'degrees'.
+    Positive = clockwise (right), negative = counter-clockwise (left).
+    """</span>
+    target    <span class="op">=</span> <span class="fn">abs</span>(degrees)
+    direction <span class="op">=</span> <span class="num">1</span> <span class="kw">if</span> degrees <span class="op">&gt;</span> <span class="num">0</span> <span class="kw">else</span> <span class="op">-</span><span class="num">1</span>
+    yaw       <span class="op">=</span> <span class="num">0.0</span>
+
+    <span class="kw">while</span> <span class="fn">abs</span>(yaw) <span class="op">&lt;</span> target <span class="op">-</span> <span class="num">2</span>:   <span class="cm"># 2-degree stop margin</span>
+        gz   <span class="op">=</span> <span class="fn">read_gyro_z</span>()
+        yaw <span class="op">+=</span> gz <span class="op">*</span> (LOOP_MS <span class="op">/</span> <span class="num">1000.0</span>)
+        motor.<span class="fn">drive</span>(direction <span class="op">*</span> speed, <span class="op">-</span>direction <span class="op">*</span> speed)
+        time.<span class="fn">sleep_ms</span>(LOOP_MS)
+
+    motor.<span class="fn">drive</span>(<span class="num">0</span>, <span class="num">0</span>)
+    time.<span class="fn">sleep_ms</span>(<span class="num">150</span>)             <span class="cm"># settle before next move</span>
+
+<span class="cm"># Drive a square: 4 sides × 90° turns</span>
+<span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="num">4</span>):
+    <span class="fn">drive_straight_imu</span>(speed<span class="op">=</span><span class="num">50</span>, duration_ms<span class="op">=</span><span class="num">1500</span>)
+    <span class="fn">tank_turn</span>(<span class="num">90</span>)</div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────── SLIDE 11: Debug ─────────────────────────────────── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Debug Challenge</h2>
+        <p>This code should drive straight for 2 seconds. <span class="warning">Find and fix the two bugs.</span></p>
+
+<div class="code-block"><span class="kw">import</span> machine, struct, time, motor
+
+i2c <span class="op">=</span> machine.<span class="cls">I2C</span>(<span class="num">0</span>, scl<span class="op">=</span>machine.<span class="cls">Pin</span>(<span class="num">1</span>), sda<span class="op">=</span>machine.<span class="cls">Pin</span>(<span class="num">0</span>), freq<span class="op">=</span><span class="num">400000</span>)
+i2c.<span class="fn">writeto</span>(<span class="num">0x70</span>, <span class="cls">bytes</span>([<span class="num">1</span> <span class="op">&lt;&lt;</span> <span class="num">0</span>]))
+i2c.<span class="fn">writeto_mem</span>(<span class="num">0x68</span>, <span class="num">0x6B</span>, <span class="cls">bytes</span>([<span class="num">0x00</span>]))
+time.<span class="fn">sleep_ms</span>(<span class="num">100</span>)
+
+<span class="kw">def</span> <span class="fn">read_gyro_z</span>():
+    data <span class="op">=</span> i2c.<span class="fn">readfrom_mem</span>(<span class="num">0x68</span>, <span class="num">0x47</span>, <span class="num">2</span>)
+    raw  <span class="op">=</span> struct.<span class="fn">unpack</span>(<span class="str">'>h'</span>, data)[<span class="num">0</span>]
+    <span class="kw">return</span> raw <span class="op">/</span> <span class="num">131.0</span>
+
+yaw     <span class="op">=</span> <span class="num">0.0</span>
+LOOP_MS <span class="op">=</span> <span class="num">20</span>
+t0      <span class="op">=</span> time.<span class="fn">ticks_ms</span>()
+
+<span class="kw">while</span> time.<span class="fn">ticks_diff</span>(time.<span class="fn">ticks_ms</span>(), t0) <span class="op">&lt;</span> <span class="num">2000</span>:
+    gz   <span class="op">=</span> <span class="fn">read_gyro_z</span>()
+    yaw <span class="op">+=</span> gz                        <span class="cm"># BUG 1: missing × dt</span>
+
+    <span class="kw">if</span> yaw <span class="op">&gt;</span> <span class="num">2.5</span>:
+        motor.<span class="fn">drive</span>(<span class="num">42</span>, <span class="num">50</span>)
+    <span class="kw">elif</span> yaw <span class="op">&lt;</span> <span class="op">-</span><span class="num">2.5</span>:
+        motor.<span class="fn">drive</span>(<span class="num">50</span>, <span class="num">42</span>)
+    <span class="kw">else</span>:
+        motor.<span class="fn">drive</span>(<span class="num">50</span>, <span class="num">50</span>)
+    time.<span class="fn">sleep_ms</span>(LOOP_MS)
+
+motor.<span class="fn">stop</span>()                         <span class="cm"># BUG 2: motor.stop() doesn't exist</span></div>
+
+        <div class="box-orange" style="margin-top:16px;">
+            <h3>What are the bugs?</h3>
+            <ul class="bullet-list">
+                <li><span class="warning">Bug 1:</span> <code>yaw += gz</code> — missing <code>* (LOOP_MS / 1000.0)</code>. Without multiplying by dt, yaw accumulates raw °/s values instead of degrees, so the heading calculation is completely wrong.</li>
+                <li><span class="warning">Bug 2:</span> <code>motor.stop()</code> — this function does not exist in motor.py. The correct call is <code>motor.drive(0, 0)</code>.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+    </div><!-- end .presentation -->
+
+    <div class="slide-number" id="slideNum">1 / 11</div>
+    <div class="controls">
+        <button id="prevBtn" onclick="changeSlide(-1)" disabled>&#9664; Prev</button>
+        <button id="nextBtn" onclick="changeSlide(1)">Next &#9654;</button>
+    </div>
+    <div class="ref-link"><a href="Activity_07_IMU.html">&#8594; Activity 4.7</a></div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        let current = 0;
+        const total = slides.length;
+        document.getElementById('slideNum').textContent = `1 / ${total}`;
+        function changeSlide(dir) {
+            slides[current].classList.remove('active');
+            slides[current].style.display = 'none';
+            current = Math.max(0, Math.min(total - 1, current + dir));
+            slides[current].style.display = 'flex';
+            setTimeout(() => slides[current].classList.add('active'), 10);
+            document.getElementById('prevBtn').disabled = current === 0;
+            document.getElementById('nextBtn').disabled = current === total - 1;
+            document.getElementById('slideNum').textContent = `${current + 1} / ${total}`;
+            window.scrollTo(0, 0);
+        }
+        slides[0].style.display = 'flex';
+    </script>
+</body>
+</html>

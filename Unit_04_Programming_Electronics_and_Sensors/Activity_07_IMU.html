@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Activity 4.7 — IMU Navigation Challenge</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Exo 2', sans-serif; background: #0a0e27; color: #e0e6f0; font-size: 15px; line-height: 1.6; }
+        .layout { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+        .sidebar { position: sticky; top: 0; height: 100vh; background: #0d1117; border-right: 1px solid rgba(0,212,255,0.15); overflow-y: auto; padding: 24px 0; display: flex; flex-direction: column; gap: 0; }
+        .sidebar-title { font-family: 'Orbitron', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #6272a4; padding: 0 20px 16px; border-bottom: 1px solid rgba(0,212,255,0.1); margin-bottom: 8px; }
+        .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; text-decoration: none; color: #6272a4; font-size: 0.88rem; font-weight: 500; transition: color 0.15s, background 0.15s; border-left: 3px solid transparent; }
+        .nav-item:hover { color: #b8c5d6; background: rgba(0,212,255,0.04); }
+        .nav-item.active { color: #00d4ff; border-left-color: #00d4ff; background: rgba(0,212,255,0.07); }
+        .nav-num { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: rgba(0,212,255,0.12); border: 1px solid rgba(0,212,255,0.3); color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.72rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+        .nav-item.active .nav-num { background: #00d4ff; color: #0a0e27; }
+        .nav-divider { height: 1px; background: rgba(0,212,255,0.08); margin: 8px 20px; }
+        .sidebar-links { margin-top: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; }
+        .sidebar-links a { font-size: 0.8rem; color: #6272a4; text-decoration: none; padding: 6px 10px; border: 1px solid rgba(0,212,255,0.15); border-radius: 6px; text-align: center; transition: color 0.15s, border-color 0.15s; }
+        .sidebar-links a:hover { color: #00d4ff; border-color: rgba(0,212,255,0.4); }
+        main { padding: 40px 48px 80px; max-width: 860px; }
+        .activity-header { margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid rgba(0,212,255,0.15); }
+        .activity-header h1 { font-family: 'Orbitron', sans-serif; font-size: 1.6rem; font-weight: 700; color: #00d4ff; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+        .header-meta { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px; }
+        .meta-tag { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 10px; border-radius: 4px; }
+        .meta-time { background: rgba(0,212,255,0.12); color: #00d4ff; border: 1px solid rgba(0,212,255,0.3); }
+        .meta-level { background: rgba(80,250,123,0.12); color: #50fa7b; border: 1px solid rgba(80,250,123,0.3); }
+        section { margin-bottom: 56px; scroll-margin-top: 24px; }
+        .section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid rgba(0,212,255,0.2); }
+        .section-num { flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #00d4ff, #0099cc); color: #0a0e27; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 16px rgba(0,212,255,0.4); }
+        .section-title { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 700; color: #00d4ff; text-transform: uppercase; letter-spacing: 0.05em; }
+        .section-time { font-size: 0.8rem; color: #6272a4; margin-left: auto; font-family: 'Space Mono', monospace; }
+        p { color: #b8c5d6; margin-bottom: 12px; }
+        .steps { display: flex; flex-direction: column; gap: 16px; margin: 16px 0; }
+        .step { display: flex; gap: 16px; align-items: flex-start; background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.15); border-radius: 10px; padding: 16px 18px; }
+        .step-n { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.4); color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.82rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+        .step-body { flex: 1; }
+        .step-body strong { display: block; color: #e0e6f0; font-size: 1rem; margin-bottom: 5px; }
+        .step-body p { font-size: 0.95rem; margin-bottom: 0; }
+        .code-wrap { position: relative; margin: 14px 0; }
+        .code-label { position: absolute; top: -10px; left: 14px; z-index: 1; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; background: #0a0e27; color: #6272a4; border: 1px solid rgba(0,212,255,0.2); }
+        pre { background: #0d1117; border: 1.5px solid rgba(0,212,255,0.25); border-radius: 10px; padding: 18px 20px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; line-height: 1.75; color: #e0e6f0; }
+        .copy-btn { position: absolute; top: 8px; right: 10px; background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.25); color: #6272a4; font-family: 'Space Mono', monospace; font-size: 0.7rem; padding: 3px 8px; border-radius: 4px; cursor: pointer; transition: color 0.15s, background 0.15s; }
+        .copy-btn:hover { color: #00d4ff; background: rgba(0,212,255,0.2); }
+        .copy-btn.copied { color: #50fa7b; border-color: rgba(80,250,123,0.4); }
+        .kw { color: #ff79c6; } .cls { color: #ffb86c; font-weight: 700; } .fn { color: #8be9fd; } .str { color: #f1fa8c; } .num { color: #bd93f9; } .cm { color: #6272a4; font-style: italic; } .op { color: #b8c5d6; }
+        .callout { border-radius: 10px; padding: 16px 18px; margin: 16px 0; display: flex; gap: 14px; align-items: flex-start; }
+        .callout-icon { font-size: 1.3rem; flex-shrink: 0; line-height: 1.4; }
+        .callout-body p { margin-bottom: 0; font-size: 0.95rem; }
+        .callout-body strong { display: block; margin-bottom: 4px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .callout-warn { background: rgba(255,149,0,0.08); border: 1px solid rgba(255,149,0,0.35); }
+        .callout-warn strong { color: #ff9500; }
+        .callout-info { background: rgba(0,212,255,0.07); border: 1px solid rgba(0,212,255,0.25); }
+        .callout-info strong { color: #00d4ff; }
+        .checkpoint { background: linear-gradient(135deg, rgba(80,250,123,0.1), rgba(80,250,123,0.04)); border: 2px solid #50fa7b; border-radius: 10px; padding: 16px 20px; margin: 24px 0; display: flex; gap: 14px; align-items: center; }
+        .checkpoint-icon { font-size: 1.5rem; flex-shrink: 0; }
+        .checkpoint-body strong { color: #50fa7b; display: block; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 3px; }
+        .checkpoint-body p { color: #b8c5d6; font-size: 0.95rem; margin: 0; }
+        .challenge-set { display: flex; flex-direction: column; gap: 14px; margin: 16px 0; }
+        .challenge { background: rgba(80,250,123,0.05); border: 1.5px solid rgba(80,250,123,0.3); border-radius: 10px; padding: 16px 18px; }
+        .challenge-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+        .challenge-num { font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; color: #50fa7b; background: rgba(80,250,123,0.12); padding: 2px 7px; border-radius: 4px; }
+        .challenge-title { font-weight: 700; color: #e0e6f0; font-size: 1rem; }
+        .challenge p { font-size: 0.95rem; margin-bottom: 6px; }
+        .challenge p:last-child { margin-bottom: 0; }
+        .question-set { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
+        .question { background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.2); border-radius: 10px; padding: 16px 18px; }
+        .question-num { font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; color: #00d4ff; margin-bottom: 6px; display: block; }
+        .question p { font-size: 0.95rem; margin-bottom: 0; }
+        code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; color: #00d4ff; background: rgba(0,212,255,0.1); padding: 1px 5px; border-radius: 4px; white-space: nowrap; font-variant-ligatures: none; }
+        @media (max-width: 720px) { .layout { grid-template-columns: 1fr; } .sidebar { position: static; height: auto; flex-direction: row; flex-wrap: wrap; padding: 12px; } .sidebar-title { display: none; } .nav-item { padding: 6px 12px; border-left: none; border-bottom: 2px solid transparent; } .nav-item.active { border-bottom-color: #00d4ff; border-left-color: transparent; } .sidebar-links { display: none; } main { padding: 24px 20px 60px; } }
+        .back-link { position: fixed; top: 18px; right: 24px; font-size: 0.78rem; font-weight: 700; color: #67e3ff; text-decoration: none; background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.35); padding: 5px 12px; border-radius: 20px; z-index: 100; transition: background 0.2s; }
+        .back-link:hover { background: rgba(0,212,255,0.3); }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← Unit 4</a>
+    <div class="layout">
+        <nav class="sidebar">
+            <div class="sidebar-title">Activity 4.7</div>
+            <a href="#wake" class="nav-item active">
+                <span class="nav-num">1</span>
+                Wire &amp; Wake
+            </a>
+            <a href="#integrate" class="nav-item">
+                <span class="nav-num">2</span>
+                Integrate Yaw
+            </a>
+            <a href="#turns" class="nav-item">
+                <span class="nav-num">3</span>
+                Tank Turn
+            </a>
+            <div class="nav-divider"></div>
+            <a href="#challenge" class="nav-item">
+                <span class="nav-num">★</span>
+                Challenges
+            </a>
+            <a href="#questions" class="nav-item">
+                <span class="nav-num">?</span>
+                Questions
+            </a>
+            <div class="sidebar-links">
+                <a href="Activity_07_IMU.html">↺ This page</a>
+                <a href="Lesson_07_IMU.html">← Lesson 4.7</a>
+            </div>
+        </nav>
+
+        <main>
+            <!-- Activity Header -->
+            <div class="activity-header">
+                <h1>Activity 4.7 — IMU Navigation Challenge</h1>
+                <p>Work through each part in order. Raise your hand at each checkpoint before moving on.</p>
+                <div class="header-meta">
+                    <span class="meta-tag meta-time">~60 minutes</span>
+                    <span class="meta-tag meta-level">Lesson 4.7</span>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════
+                 SECTION 1 — Wire & Wake the IMU
+            ═══════════════════════════════════════════ -->
+            <section id="wake">
+                <div class="section-header">
+                    <div class="section-num">1</div>
+                    <div class="section-title">Wire &amp; Wake the IMU</div>
+                    <span class="section-time">~15 min</span>
+                </div>
+
+                <p>The GY-521 connects to the I2C mux. Boot it up and confirm it's responding before writing any motion code.</p>
+
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-n">1</div>
+                        <div class="step-body">
+                            <strong>Connect the GY-521</strong>
+                            <p>Wire SDA → mux SDA, SCL → mux SCL, VCC → 3.3 V, GND → GND. Note which mux channel your teacher has assigned to your robot.</p>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-n">2</div>
+                        <div class="step-body">
+                            <strong>Open Thonny and create a new file</strong>
+                            <p>Save it as <code>imu_test.py</code>.</p>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-n">3</div>
+                        <div class="step-body">
+                            <strong>Copy, paste, and run the starter code</strong>
+                            <div class="code-wrap">
+                                <span class="code-label">imu_test.py</span>
+                                <button class="copy-btn">Copy</button>
+                                <pre><span class="kw">import</span> <span class="cls">machine</span>, <span class="cls">struct</span>, <span class="cls">time</span>
+
+i2c <span class="op">=</span> <span class="cls">machine</span>.<span class="fn">I2C</span>(<span class="num">0</span>, scl<span class="op">=</span><span class="cls">machine</span>.<span class="fn">Pin</span>(<span class="num">1</span>), sda<span class="op">=</span><span class="cls">machine</span>.<span class="fn">Pin</span>(<span class="num">0</span>), freq<span class="op">=</span><span class="num">400000</span>)
+
+<span class="cm"># Select your mux channel (ask your teacher which channel your IMU is on)</span>
+IMU_CHANNEL <span class="op">=</span> <span class="num">0</span>
+i2c.<span class="fn">writeto</span>(<span class="num">0x70</span>, <span class="fn">bytes</span>([<span class="num">1</span> <span class="op">&lt;&lt;</span> IMU_CHANNEL]))
+
+IMU_ADDR <span class="op">=</span> <span class="num">0x68</span>
+<span class="cm"># Wake the IMU</span>
+i2c.<span class="fn">writeto_mem</span>(IMU_ADDR, <span class="num">0x6B</span>, <span class="fn">bytes</span>([<span class="num">0x00</span>]))
+<span class="cls">time</span>.<span class="fn">sleep_ms</span>(<span class="num">100</span>)
+<span class="fn">print</span>(<span class="str">"IMU awake"</span>)
+
+<span class="cm"># Read gyro Z in a loop</span>
+<span class="kw">def</span> <span class="fn">read_gyro_z</span>():
+    data <span class="op">=</span> i2c.<span class="fn">readfrom_mem</span>(IMU_ADDR, <span class="num">0x47</span>, <span class="num">2</span>)
+    raw  <span class="op">=</span> <span class="cls">struct</span>.<span class="fn">unpack</span>(<span class="str">'&gt;h'</span>, data)[<span class="num">0</span>]
+    <span class="kw">return</span> raw <span class="op">/</span> <span class="num">131.0</span>
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="fn">print</span>(<span class="str">f"Gyro Z: {read_gyro_z():.2f} °/s"</span>)
+    <span class="cls">time</span>.<span class="fn">sleep_ms</span>(<span class="num">100</span>)</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-n">4</div>
+                        <div class="step-body">
+                            <strong>Observe the output</strong>
+                            <p>Rotate the robot by hand — the number should change. Hold still — it should return near zero.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="callout callout-warn">
+                    <span class="callout-icon">⚠️</span>
+                    <div class="callout-body">
+                        <strong>Connection error?</strong>
+                        <p>If you get <code>OSError: [Errno 5]</code>, your mux channel is wrong or there is a loose wiring connection. Double-check every wire and confirm the correct channel with your teacher.</p>
+                    </div>
+                </div>
+
+                <div class="checkpoint">
+                    <span class="checkpoint-icon">✅</span>
+                    <div class="checkpoint-body">
+                        <strong>Checkpoint 1</strong>
+                        <p>Show Mr. Bombich the gyro Z output changing when you rotate the robot.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════════════════════════════════════════
+                 SECTION 2 — Integrate Yaw & Drive Straight
+            ═══════════════════════════════════════════ -->
+            <section id="integrate">
+                <div class="section-header">
+                    <div class="section-num">2</div>
+                    <div class="section-title">Integrate Yaw &amp; Drive Straight</div>
+                    <span class="section-time">~20 min</span>
+                </div>
+
+                <p>Now track how much the robot has rotated and use that to keep it driving straight. You will integrate the gyro's angular velocity to get a running angle — then nudge the motors to correct any drift.</p>
+
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-n">1</div>
+                        <div class="step-body">
+                            <strong>Stop the test loop and create a new file</strong>
+                            <p>Stop the program in Thonny, then create a new file called <code>heading_hold.py</code>.</p>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-n">2</div>
+                        <div class="step-body">
+                            <strong>Copy the setup code from Part 1</strong>
+                            <p>At the top of <code>heading_hold.py</code>, copy your <code>i2c</code> init, mux select, IMU wake, and <code>read_gyro_z()</code> function from Part 1.</p>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-n">3</div>
+                        <div class="step-body">
+                            <strong>Add the heading-hold drive function below</strong>
+                            <div class="code-wrap">
+                                <span class="code-label">heading_hold.py — drive function</span>
+                                <button class="copy-btn">Copy</button>
+                                <pre><span class="kw">import</span> <span class="cls">motor</span>
+
+LOOP_MS   <span class="op">=</span> <span class="num">20</span>
+DEAD_BAND <span class="op">=</span> <span class="num">2.5</span>   <span class="cm"># degrees of acceptable drift</span>
+
+<span class="kw">def</span> <span class="fn">drive_straight_imu</span>(speed<span class="op">=</span><span class="num">50</span>, duration_ms<span class="op">=</span><span class="num">2000</span>):
+    <span class="str">"""Drive forward for duration_ms holding IMU heading."""</span>
+    yaw <span class="op">=</span> <span class="num">0.0</span>
+    t0  <span class="op">=</span> <span class="cls">time</span>.<span class="fn">ticks_ms</span>()
+    <span class="kw">while</span> <span class="cls">time</span>.<span class="fn">ticks_diff</span>(<span class="cls">time</span>.<span class="fn">ticks_ms</span>(), t0) <span class="op">&lt;</span> duration_ms:
+        gz   <span class="op">=</span> <span class="fn">read_gyro_z</span>()
+        yaw <span class="op">+=</span> gz <span class="op">*</span> (LOOP_MS <span class="op">/</span> <span class="num">1000.0</span>)   <span class="cm"># integrate: °/s × s = degrees</span>
+
+        <span class="kw">if</span>   yaw <span class="op">&gt;</span>  DEAD_BAND:
+            <span class="cls">motor</span>.<span class="fn">drive</span>(speed <span class="op">-</span> <span class="num">8</span>, speed)   <span class="cm"># drifted right → slow left motor</span>
+        <span class="kw">elif</span> yaw <span class="op">&lt;</span> <span class="op">-</span>DEAD_BAND:
+            <span class="cls">motor</span>.<span class="fn">drive</span>(speed, speed <span class="op">-</span> <span class="num">8</span>)   <span class="cm"># drifted left  → slow right motor</span>
+        <span class="kw">else</span>:
+            <span class="cls">motor</span>.<span class="fn">drive</span>(speed, speed)
+        <span class="cls">time</span>.<span class="fn">sleep_ms</span>(LOOP_MS)
+    <span class="cls">motor</span>.<span class="fn">drive</span>(<span class="num">0</span>, <span class="num">0</span>)
+
+<span class="fn">drive_straight_imu</span>(speed<span class="op">=</span><span class="num">50</span>, duration_ms<span class="op">=</span><span class="num">3000</span>)</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-n">4</div>
+                        <div class="step-body">
+                            <strong>Run it on your robot</strong>
+                            <p>Does L.E.O. drive straighter over 2+ meters than it did without IMU correction?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="callout callout-info">
+                    <span class="callout-icon">💡</span>
+                    <div class="callout-body">
+                        <strong>Experiment with DEAD_BAND</strong>
+                        <p>Try changing <code>DEAD_BAND</code> to <code>1.0</code> and then to <code>5.0</code>. What do you notice about how the robot moves? Is there a tradeoff between smoothness and straightness?</p>
+                    </div>
+                </div>
+
+                <div class="checkpoint">
+                    <span class="checkpoint-icon">✅</span>
+                    <div class="checkpoint-body">
+                        <strong>Checkpoint 2</strong>
+                        <p>L.E.O. drives noticeably straighter over 2+ meters with IMU heading hold active.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════════════════════════════════════════
+                 SECTION 3 — tank_turn(deg) & Drive a Square
+            ═══════════════════════════════════════════ -->
+            <section id="turns">
+                <div class="section-header">
+                    <div class="section-num">3</div>
+                    <div class="section-title">tank_turn(deg) &amp; Drive a Square</div>
+                    <span class="section-time">~20 min</span>
+                </div>
+
+                <p>Now add precise turns. <code>tank_turn(deg)</code> rotates L.E.O. in place by exactly that many degrees using the gyro — no encoders needed.</p>
+
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-n">1</div>
+                        <div class="step-body">
+                            <strong>Add tank_turn() below drive_straight_imu()</strong>
+                            <div class="code-wrap">
+                                <span class="code-label">heading_hold.py — turn function</span>
+                                <button class="copy-btn">Copy</button>
+                                <pre><span class="kw">def</span> <span class="fn">tank_turn</span>(degrees, speed<span class="op">=</span><span class="num">30</span>):
+    <span class="str">"""
+    Turn in place. Positive = clockwise (right), negative = left.
+    """</span>
+    target    <span class="op">=</span> <span class="fn">abs</span>(degrees)
+    direction <span class="op">=</span> <span class="num">1</span> <span class="kw">if</span> degrees <span class="op">&gt;</span> <span class="num">0</span> <span class="kw">else</span> <span class="op">-</span><span class="num">1</span>
+    yaw       <span class="op">=</span> <span class="num">0.0</span>
+
+    <span class="kw">while</span> <span class="fn">abs</span>(yaw) <span class="op">&lt;</span> target <span class="op">-</span> <span class="num">2</span>:   <span class="cm"># stop 2° early to account for coast</span>
+        gz   <span class="op">=</span> <span class="fn">read_gyro_z</span>()
+        yaw <span class="op">+=</span> gz <span class="op">*</span> (LOOP_MS <span class="op">/</span> <span class="num">1000.0</span>)
+        <span class="cls">motor</span>.<span class="fn">drive</span>(direction <span class="op">*</span> speed, <span class="op">-</span>direction <span class="op">*</span> speed)
+        <span class="cls">time</span>.<span class="fn">sleep_ms</span>(LOOP_MS)
+
+    <span class="cls">motor</span>.<span class="fn">drive</span>(<span class="num">0</span>, <span class="num">0</span>)
+    <span class="cls">time</span>.<span class="fn">sleep_ms</span>(<span class="num">150</span>)   <span class="cm"># brief settle before next move</span></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-n">2</div>
+                        <div class="step-body">
+                            <strong>Test the turn alone</strong>
+                            <p>Run <code>tank_turn(90)</code>. Measure the actual angle with a protractor or by eye. Adjust <code>speed</code> if the result is far off.</p>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-n">3</div>
+                        <div class="step-body">
+                            <strong>Drive a square</strong>
+                            <div class="code-wrap">
+                                <span class="code-label">heading_hold.py — square</span>
+                                <button class="copy-btn">Copy</button>
+                                <pre><span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="num">4</span>):
+    <span class="fn">drive_straight_imu</span>(speed<span class="op">=</span><span class="num">50</span>, duration_ms<span class="op">=</span><span class="num">1500</span>)
+    <span class="fn">tank_turn</span>(<span class="num">90</span>)</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="callout callout-warn">
+                    <span class="callout-icon">⚠️</span>
+                    <div class="callout-body">
+                        <strong>Tuning tips</strong>
+                        <p>If the turn <strong>overshoots</strong>, reduce <code>speed</code>. If it <strong>undershoots</strong>, reduce the <code>- 2</code> stop margin in the <code>while</code> condition.</p>
+                    </div>
+                </div>
+
+                <div class="checkpoint">
+                    <span class="checkpoint-icon">✅</span>
+                    <div class="checkpoint-body">
+                        <strong>Checkpoint 3</strong>
+                        <p>L.E.O. completes a recognizable square. Show Mr. Bombich before moving on.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════════════════════════════════════════
+                 SECTION ★ — Challenges
+            ═══════════════════════════════════════════ -->
+            <section id="challenge">
+                <div class="section-header">
+                    <div class="section-num">★</div>
+                    <div class="section-title">Challenges</div>
+                </div>
+
+                <p>Finished early or want a harder problem? Work through these in order.</p>
+
+                <div class="challenge-set">
+                    <div class="challenge">
+                        <div class="challenge-header">
+                            <span class="challenge-num">C-1</span>
+                            <span class="challenge-title">Left-Turn Square</span>
+                        </div>
+                        <p>Modify the square program to use <code>tank_turn(-90)</code> instead of <code>tank_turn(90)</code>. Run it and compare — does L.E.O. stay as square when turning left?</p>
+                    </div>
+
+                    <div class="challenge">
+                        <div class="challenge-header">
+                            <span class="challenge-num">C-2</span>
+                            <span class="challenge-title">Right Triangle</span>
+                        </div>
+                        <p>Drive three sides of a triangle with 120° turns. <strong>Plan the turn values on paper first</strong> — think about the exterior angle of an equilateral triangle before you write a single line of code.</p>
+                    </div>
+
+                    <div class="challenge">
+                        <div class="challenge-header">
+                            <span class="challenge-num">C-3</span>
+                            <span class="challenge-title">Speed vs. Accuracy</span>
+                        </div>
+                        <p>Test <code>tank_turn(90)</code> at speeds 20, 30, 40, and 50. Record the actual angle turned for each. What is the tradeoff between speed and accuracy? At what speed does accuracy fall off most sharply?</p>
+                    </div>
+
+                    <div class="challenge">
+                        <div class="challenge-header">
+                            <span class="challenge-num">C-4</span>
+                            <span class="challenge-title">Extension: Figure-8</span>
+                        </div>
+                        <p>Drive a figure-8 path. This requires both right and left turns with direction reversals between the two loops. Sketch the path on paper and label each segment's direction before coding.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════════════════════════════════════════
+                 SECTION ? — Reflection Questions
+            ═══════════════════════════════════════════ -->
+            <section id="questions">
+                <div class="section-header">
+                    <div class="section-num">?</div>
+                    <div class="section-title">Reflection Questions</div>
+                </div>
+
+                <p>Answer these in your portfolio. Use complete sentences — one or two is enough for each.</p>
+
+                <div class="question-set">
+                    <div class="question">
+                        <span class="question-num">Q1 — Gyro Integration</span>
+                        <p>What is gyro integration? In your own words, explain what the line <code>yaw += gz * (LOOP_MS / 1000.0)</code> is calculating. What units does <code>gz</code> have, and what units does <code>yaw</code> end up in?</p>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-num">Q2 — Gyro Drift</span>
+                        <p>If you leave L.E.O. sitting completely still for 60 seconds and print <code>yaw</code>, it will not read exactly 0°. Why does this happen, and what is this error called?</p>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-num">Q3 — Dead Band Tradeoff</span>
+                        <p>You increase <code>DEAD_BAND</code> from 2.5° to 10°. How does this change the robot's straight-line driving? Is a bigger dead band always worse — or can it ever be an advantage?</p>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-num">Q4 — Turn Accuracy</span>
+                        <p>A classmate's <code>tank_turn(90)</code> consistently turns only 80°. List two things they could change in the code to fix the undershoot.</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        // Copy button functionality
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const pre = btn.closest('.code-wrap').querySelector('pre');
+                navigator.clipboard.writeText(pre.innerText).then(() => {
+                    btn.textContent = 'Copied!';
+                    btn.classList.add('copied');
+                    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+                });
+            });
+        });
+
+        // Sidebar scroll highlight
+        const sections = document.querySelectorAll('section[id]');
+        const navItems = document.querySelectorAll('.nav-item[href^="#"]');
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
+            navItems.forEach(a => { a.classList.toggle('active', a.getAttribute('href') === '#' + current); });
+        });
+    </script>
+</body>
+</html>

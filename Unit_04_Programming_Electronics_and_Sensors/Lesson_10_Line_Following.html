@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>IR Array & Line Following — Lesson 4.10</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Exo 2', sans-serif; background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); color: #e0e6f0; height: 100vh; }
+        .presentation { width: 100%; height: 100vh; position: relative; }
+        .slide { position: absolute; width: 100%; min-height: 100%; display: none; flex-direction: column; justify-content: flex-start; align-items: center; padding: 55px 60px 120px 60px; opacity: 0; transition: opacity 0.5s ease; overflow-y: auto; overflow-x: hidden; }
+        .slide.active { display: flex; opacity: 1; }
+        .slide-content { max-width: 1200px; width: 100%; }
+        h1 { font-family: 'Orbitron', sans-serif; font-size: 3.5rem; font-weight: 900; color: #00d4ff; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 20px rgba(0,212,255,0.5); animation: glow 2s ease-in-out infinite alternate; }
+        @keyframes glow { from { text-shadow: 0 0 20px rgba(0,212,255,0.5); } to { text-shadow: 0 0 35px rgba(0,212,255,0.9); } }
+        h2 { font-family: 'Orbitron', sans-serif; font-size: 2.4rem; font-weight: 700; color: #00d4ff; margin-bottom: 18px; text-transform: uppercase; }
+        h3 { font-family: 'Exo 2', sans-serif; font-size: 1.5rem; font-weight: 600; color: #ff9500; margin-bottom: 12px; }
+        p { font-size: 1.15rem; line-height: 1.6; margin-bottom: 12px; color: #b8c5d6; }
+        .subtitle { font-size: 1.3rem; color: #ff9500; font-weight: 600; margin-bottom: 30px; }
+        .objective-box { background: linear-gradient(135deg, rgba(0,212,255,0.1) 0%, rgba(0,212,255,0.04) 100%); border: 3px solid #00d4ff; border-radius: 12px; padding: 20px; margin: 20px 0; box-shadow: 0 0 30px rgba(0,212,255,0.15); }
+        .objective-box h3 { color: #00d4ff; }
+        .bullet-list { list-style: none; padding-left: 0; }
+        .bullet-list li { font-size: 1.15rem; margin: 12px 0; padding-left: 35px; position: relative; color: #b8c5d6; line-height: 1.5; }
+        .bullet-list li::before { content: '▸'; position: absolute; left: 0; color: #ff9500; font-size: 1.5rem; line-height: 1; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .box { background: rgba(0,212,255,0.05); border: 2px solid #00d4ff; border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(0,212,255,0.1); }
+        .box-orange { background: rgba(255,149,0,0.07); border: 2px solid #ff9500; border-radius: 12px; padding: 20px; }
+        .box-green { background: rgba(80,250,123,0.07); border: 2px solid #50fa7b; border-radius: 12px; padding: 20px; }
+        .highlight { color: #00d4ff; font-weight: 700; }
+        .warning { color: #ff9500; font-weight: 700; }
+        .success { color: #50fa7b; font-weight: 700; }
+        code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: #00d4ff; background: rgba(0,212,255,0.1); padding: 1px 5px; border-radius: 4px; white-space: nowrap; font-variant-ligatures: none; }
+        .code-block { background: #0d1117; border: 2px solid #00d4ff; border-radius: 10px; padding: 20px 24px; margin: 16px 0; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; line-height: 1.75; white-space: pre; font-variant-ligatures: none; }
+        .kw { color: #ff79c6; } .cls { color: #ffb86c; font-weight: 700; } .fn { color: #8be9fd; } .str { color: #f1fa8c; } .num { color: #bd93f9; } .cm { color: #6272a4; font-style: italic; } .op { color: #b8c5d6; }
+        .controls { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 1000; }
+        button { background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%); border: none; color: #0a0e27; padding: 15px 30px; font-size: 1rem; font-weight: 700; border-radius: 8px; cursor: pointer; font-family: 'Exo 2', sans-serif; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,212,255,0.3); }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,212,255,0.5); }
+        button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+        .slide-number { position: fixed; bottom: 30px; left: 30px; font-family: 'Space Mono', monospace; font-size: 1rem; color: #00d4ff; z-index: 1000; }
+        .ref-link { position: fixed; bottom: 30px; right: 30px; z-index: 1000; }
+        .ref-link a { background: rgba(0,212,255,0.12); border: 1px solid #00d4ff; color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.85rem; padding: 8px 14px; border-radius: 6px; text-decoration: none; }
+        .ref-link a:hover { background: rgba(0,212,255,0.25); }
+        @media (max-width: 768px) { h1 { font-size: 2.5rem; } h2 { font-size: 1.8rem; } .slide { padding: 30px 20px 100px; } .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+        .back-link { position: fixed; top: 18px; right: 24px; font-size: 0.78rem; font-weight: 700; color: #67e3ff; text-decoration: none; background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.35); padding: 5px 12px; border-radius: 20px; z-index: 100; transition: background 0.2s; }
+        .back-link:hover { background: rgba(0,212,255,0.3); }
+        /* Additional utility styles */
+        .table-wrapper { overflow-x: auto; margin: 16px 0; }
+        table { width: 100%; border-collapse: collapse; font-size: 1.05rem; }
+        th { background: rgba(0,212,255,0.15); color: #00d4ff; font-family: 'Exo 2', sans-serif; font-weight: 700; padding: 10px 14px; text-align: left; border: 1px solid rgba(0,212,255,0.3); }
+        td { padding: 9px 14px; border: 1px solid rgba(0,212,255,0.15); color: #b8c5d6; vertical-align: top; }
+        tr:nth-child(even) td { background: rgba(0,212,255,0.03); }
+        .callout { border-radius: 10px; padding: 14px 18px; margin: 14px 0; font-size: 1.05rem; line-height: 1.6; }
+        .callout-info { background: rgba(0,212,255,0.08); border-left: 4px solid #00d4ff; color: #b8c5d6; }
+        .callout-warn { background: rgba(255,149,0,0.08); border-left: 4px solid #ff9500; color: #b8c5d6; }
+        .callout-success { background: rgba(80,250,123,0.08); border-left: 4px solid #50fa7b; color: #b8c5d6; }
+        .callout-danger { background: rgba(255,80,80,0.08); border-left: 4px solid #ff5555; color: #b8c5d6; }
+        .footnote { margin-top: 30px; font-size: 0.95rem; color: #4a5568; font-family: 'Space Mono', monospace; }
+        .step-list { list-style: none; padding-left: 0; counter-reset: steps; }
+        .step-list li { font-size: 1.15rem; margin: 14px 0; padding-left: 50px; position: relative; color: #b8c5d6; line-height: 1.5; counter-increment: steps; }
+        .step-list li::before { content: counter(steps); position: absolute; left: 0; width: 32px; height: 32px; background: rgba(0,212,255,0.2); border: 2px solid #00d4ff; border-radius: 50%; color: #00d4ff; font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; top: 0; }
+        .sensor-dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; margin: 0 2px; vertical-align: middle; }
+        .dot-active { background: #50fa7b; box-shadow: 0 0 6px #50fa7b; }
+        .dot-inactive { background: #4a5568; }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← Unit 4</a>
+    <div class="presentation">
+
+        <!-- SLIDE 1: Title -->
+        <div class="slide active" style="display:flex;">
+            <div class="slide-content" style="text-align:center;">
+                <div style="margin-bottom: 18px;">
+                    <!-- Top-down robot SVG with sensor dots and line -->
+                    <svg width="420" height="260" viewBox="0 0 420 260" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+                        <!-- Black line on floor -->
+                        <rect x="185" y="0" width="50" height="260" fill="#111" rx="4"/>
+                        <!-- Floor surface -->
+                        <rect x="0" y="0" width="185" height="260" fill="#1e2535" rx="0"/>
+                        <rect x="235" y="0" width="185" height="260" fill="#1e2535" rx="0"/>
+                        <!-- Robot body (top-down view) -->
+                        <rect x="110" y="60" width="200" height="160" rx="18" fill="#1a2040" stroke="#00d4ff" stroke-width="2.5"/>
+                        <!-- Robot wheel left -->
+                        <rect x="88" y="80" width="24" height="120" rx="8" fill="#2a3560" stroke="#00d4ff" stroke-width="1.5"/>
+                        <!-- Robot wheel right -->
+                        <rect x="308" y="80" width="24" height="120" rx="8" fill="#2a3560" stroke="#00d4ff" stroke-width="1.5"/>
+                        <!-- L.E.O. label -->
+                        <text x="210" y="148" text-anchor="middle" font-family="Orbitron,sans-serif" font-size="22" font-weight="900" fill="#00d4ff" opacity="0.9">L.E.O.</text>
+                        <!-- Direction arrow -->
+                        <polygon points="210,68 200,85 220,85" fill="#ff9500" opacity="0.8"/>
+                        <!-- Sensor bar at front of robot -->
+                        <rect x="128" y="57" width="164" height="10" rx="4" fill="#0d1117" stroke="#00d4ff" stroke-width="1.5"/>
+                        <!-- S1 — leftmost, over floor (inactive) -->
+                        <circle cx="152" cy="62" r="7" fill="#ff5555" opacity="0.4"/>
+                        <text x="152" y="46" text-anchor="middle" font-family="Space Mono,monospace" font-size="11" fill="#b8c5d6">S1</text>
+                        <!-- S2 — over floor (inactive) -->
+                        <circle cx="178" cy="62" r="7" fill="#ff5555" opacity="0.4"/>
+                        <text x="178" y="46" text-anchor="middle" font-family="Space Mono,monospace" font-size="11" fill="#b8c5d6">S2</text>
+                        <!-- S3 — center, over line (active/green) -->
+                        <circle cx="210" cy="62" r="7" fill="#50fa7b"/>
+                        <circle cx="210" cy="62" r="10" fill="none" stroke="#50fa7b" stroke-width="1.5" opacity="0.5"/>
+                        <text x="210" y="46" text-anchor="middle" font-family="Space Mono,monospace" font-size="11" fill="#50fa7b" font-weight="700">S3</text>
+                        <!-- S4 — over floor (inactive) -->
+                        <circle cx="242" cy="62" r="7" fill="#ff5555" opacity="0.4"/>
+                        <text x="242" y="46" text-anchor="middle" font-family="Space Mono,monospace" font-size="11" fill="#b8c5d6">S4</text>
+                        <!-- S5 — rightmost, over floor (inactive) -->
+                        <circle cx="268" cy="62" r="7" fill="#ff5555" opacity="0.4"/>
+                        <text x="268" y="46" text-anchor="middle" font-family="Space Mono,monospace" font-size="11" fill="#b8c5d6">S5</text>
+                        <!-- Reading label -->
+                        <text x="210" y="230" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="15" fill="#6272a4">[1, 1, 0, 1, 1]</text>
+                        <text x="322" y="230" text-anchor="middle" font-family="Exo 2,sans-serif" font-size="12" fill="#50fa7b">← center on line</text>
+                    </svg>
+                </div>
+                <h1>Line Following</h1>
+                <p class="subtitle">Unit 4 · Programming, Electronics &amp; Sensors · Lesson 4.10</p>
+                <p style="color:#6272a4; font-size:1.05rem;">Using a 5-channel IR array to steer L.E.O. along a track</p>
+                <p class="footnote">Lesson 4.10 · Week 22</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: Learning Objectives -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Learning Objectives</h2>
+                <div class="objective-box">
+                    <h3>By the end of this lesson you will be able to:</h3>
+                    <ul class="bullet-list" style="margin-top:10px;">
+                        <li><strong>Explain</strong> how IR reflection sensing distinguishes a dark line from a light surface</li>
+                        <li><strong>Wire and calibrate</strong> the OSOYOO 5-sensor array on L.E.O.</li>
+                        <li><strong>Write</strong> binary line-following logic that steers the robot using sensor patterns</li>
+                    </ul>
+                </div>
+                <div class="grid-2" style="margin-top:28px;">
+                    <div class="box-orange">
+                        <h3>You Will Need</h3>
+                        <ul class="bullet-list">
+                            <li>L.E.O. with motor library loaded</li>
+                            <li>OSOYOO 5-channel IR sensor module</li>
+                            <li>Jumper wires (6 total: VCC, GND, OUT1–OUT5)</li>
+                            <li>Black tape line track on white surface</li>
+                        </ul>
+                    </div>
+                    <div class="box-green">
+                        <h3>You Will Produce</h3>
+                        <ul class="bullet-list">
+                            <li>Wired and calibrated IR sensor array</li>
+                            <li><code>read_sensors()</code> function</li>
+                            <li>Binary line-following program</li>
+                            <li>L.E.O. successfully tracking the line</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: How IR Line Sensing Works -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>IR Sensing: Light vs. Dark</h2>
+                <p>Each sensor has two components side by side: an <span class="highlight">IR LED</span> that emits infrared light, and an <span class="highlight">IR detector</span> (phototransistor) that measures how much comes back.</p>
+                <div class="grid-2" style="margin-top: 20px; align-items: start;">
+                    <div class="box">
+                        <h3>How It Works</h3>
+                        <!-- SVG IR emitter/detector diagram -->
+                        <svg width="100%" height="200" viewBox="0 0 340 200" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Light surface side -->
+                            <rect x="10" y="10" width="140" height="180" rx="8" fill="rgba(0,212,255,0.05)" stroke="#00d4ff" stroke-width="1" stroke-dasharray="4,3"/>
+                            <text x="80" y="28" text-anchor="middle" font-family="Exo 2,sans-serif" font-size="12" fill="#00d4ff">LIGHT SURFACE</text>
+                            <!-- emitter left -->
+                            <rect x="30" y="40" width="30" height="20" rx="4" fill="#ff79c6" opacity="0.8"/>
+                            <text x="45" y="54" text-anchor="middle" font-family="Exo 2,sans-serif" font-size="10" fill="#0d1117" font-weight="700">IR LED</text>
+                            <!-- detector left -->
+                            <rect x="100" y="40" width="30" height="20" rx="4" fill="#8be9fd" opacity="0.8"/>
+                            <text x="115" y="54" text-anchor="middle" font-family="Exo 2,sans-serif" font-size="9" fill="#0d1117" font-weight="700">DETECT</text>
+                            <!-- IR rays going down and bouncing back -->
+                            <line x1="45" y1="60" x2="45" y2="140" stroke="#ff79c6" stroke-width="1.5" stroke-dasharray="4,3"/>
+                            <line x1="60" y1="60" x2="75" y2="140" stroke="#ff79c6" stroke-width="1.5" stroke-dasharray="4,3"/>
+                            <!-- bounce back -->
+                            <line x1="45" y1="140" x2="115" y2="60" stroke="#8be9fd" stroke-width="2" stroke-dasharray="4,3"/>
+                            <line x1="75" y1="140" x2="115" y2="60" stroke="#8be9fd" stroke-width="2" stroke-dasharray="3,3"/>
+                            <!-- surface -->
+                            <rect x="20" y="145" width="120" height="14" rx="3" fill="#d0d0d0"/>
+                            <text x="80" y="156" text-anchor="middle" font-family="Exo 2,sans-serif" font-size="10" fill="#333">white / light floor</text>
+                            <!-- output label -->
+                            <text x="80" y="180" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#50fa7b" font-weight="700">OUTPUT: 1 (HIGH)</text>
+                            <text x="80" y="194" text-anchor="middle" font-family="Exo 2,sans-serif" font-size="11" fill="#6272a4">reflects IR → no line</text>
+
+                            <!-- Dark surface side -->
+                            <rect x="185" y="10" width="140" height="180" rx="8" fill="rgba(255,149,0,0.05)" stroke="#ff9500" stroke-width="1" stroke-dasharray="4,3"/>
+                            <text x="255" y="28" text-anchor="middle" font-family="Exo 2,sans-serif" font-size="12" fill="#ff9500">DARK LINE</text>
+                            <!-- emitter right -->
+                            <rect x="205" y="40" width="30" height="20" rx="4" fill="#ff79c6" opacity="0.8"/>
+                            <text x="220" y="54" text-anchor="middle" font-family="Exo 2,sans-serif" font-size="10" fill="#0d1117" font-weight="700">IR LED</text>
+                            <!-- detector right -->
+                            <rect x="275" y="40" width="30" height="20" rx="4" fill="#4a5568" opacity="0.8"/>
+                            <text x="290" y="54" text-anchor="middle" font-family="Exo 2,sans-serif" font-size="9" fill="#b8c5d6" font-weight="700">DETECT</text>
+                            <!-- IR rays going down, absorbed -->
+                            <line x1="220" y1="60" x2="220" y2="140" stroke="#ff79c6" stroke-width="1.5" stroke-dasharray="4,3"/>
+                            <line x1="235" y1="60" x2="250" y2="140" stroke="#ff79c6" stroke-width="1.5" stroke-dasharray="4,3"/>
+                            <!-- X marks absorbed -->
+                            <text x="237" y="130" font-family="Exo 2,sans-serif" font-size="18" fill="#ff5555" font-weight="900">✕</text>
+                            <!-- surface dark -->
+                            <rect x="195" y="145" width="120" height="14" rx="3" fill="#111"/>
+                            <text x="255" y="156" text-anchor="middle" font-family="Exo 2,sans-serif" font-size="10" fill="#b8c5d6">black tape / dark line</text>
+                            <!-- output label -->
+                            <text x="255" y="180" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#ff5555" font-weight="700">OUTPUT: 0 (LOW)</text>
+                            <text x="255" y="194" text-anchor="middle" font-family="Exo 2,sans-serif" font-size="11" fill="#6272a4">absorbs IR → line!</text>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="box-orange" style="margin-bottom:18px;">
+                            <h3>Output Truth Table</h3>
+                            <table>
+                                <thead><tr><th>Surface</th><th>IR Reflection</th><th>Pin Output</th><th>Meaning</th></tr></thead>
+                                <tbody>
+                                    <tr><td>Light (floor)</td><td>High</td><td><span class="success">1 (HIGH)</span></td><td>No line</td></tr>
+                                    <tr><td>Dark (tape)</td><td>Low</td><td><span class="warning">0 (LOW)</span></td><td>Line detected</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="callout callout-info">
+                            <strong class="highlight">Key Rule:</strong> <code>0</code> = line detected &nbsp;|&nbsp; <code>1</code> = no line
+                            <br>This is the opposite of what you might expect — keep it in mind when writing your logic!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: Hardware Overview -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Hardware Overview</h2>
+                <p>The <span class="highlight">OSOYOO 5-channel IR line tracking sensor module</span> puts five emitter/detector pairs in a single row. Each pair produces one digital output pin.</p>
+                <div class="grid-2" style="margin-top: 20px; align-items: start;">
+                    <div>
+                        <div class="box" style="margin-bottom:18px;">
+                            <h3>Module Features</h3>
+                            <ul class="bullet-list">
+                                <li>5 independent IR emitter/detector pairs</li>
+                                <li>Digital output per sensor (0 or 1 — no analog needed)</li>
+                                <li><span class="highlight">Onboard indicator LEDs</span> — each lights when that sensor detects the line</li>
+                                <li>Trim potentiometer for sensitivity adjustment</li>
+                                <li>Works at 3.3 V or 5 V (use 3.3 V on the Pico 2W)</li>
+                            </ul>
+                        </div>
+                        <div class="callout callout-info">
+                            The indicator LEDs are your best friend during setup. Before running any code, slide the module over the line by hand — watch the LEDs blink on and off to confirm the sensors are working.
+                        </div>
+                    </div>
+                    <div class="box-orange">
+                        <h3>Sensor Positions</h3>
+                        <!-- Sensor array SVG -->
+                        <svg width="100%" height="130" viewBox="0 0 360 130" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Module body -->
+                            <rect x="10" y="30" width="340" height="60" rx="10" fill="#0d1117" stroke="#ff9500" stroke-width="2"/>
+                            <!-- PCB detail lines -->
+                            <line x1="10" y1="60" x2="350" y2="60" stroke="#1a2040" stroke-width="1"/>
+                            <!-- Sensor circles with labels -->
+                            <!-- S1 -->
+                            <circle cx="48" cy="60" r="18" fill="#1a2040" stroke="#00d4ff" stroke-width="2"/>
+                            <circle cx="48" cy="60" r="8" fill="#ff79c6" opacity="0.5"/>
+                            <circle cx="60" cy="54" r="4" fill="#8be9fd" opacity="0.6"/>
+                            <text x="48" y="96" text-anchor="middle" font-family="Space Mono,monospace" font-size="13" fill="#00d4ff" font-weight="700">S1</text>
+                            <text x="48" y="110" text-anchor="middle" font-family="Exo 2,sans-serif" font-size="11" fill="#6272a4">leftmost</text>
+                            <!-- S2 -->
+                            <circle cx="118" cy="60" r="18" fill="#1a2040" stroke="#00d4ff" stroke-width="2"/>
+                            <circle cx="118" cy="60" r="8" fill="#ff79c6" opacity="0.5"/>
+                            <circle cx="130" cy="54" r="4" fill="#8be9fd" opacity="0.6"/>
+                            <text x="118" y="96" text-anchor="middle" font-family="Space Mono,monospace" font-size="13" fill="#00d4ff" font-weight="700">S2</text>
+                            <!-- S3 center -->
+                            <circle cx="188" cy="60" r="18" fill="#1a2040" stroke="#ff9500" stroke-width="2.5"/>
+                            <circle cx="188" cy="60" r="8" fill="#ff79c6" opacity="0.5"/>
+                            <circle cx="200" cy="54" r="4" fill="#8be9fd" opacity="0.6"/>
+                            <text x="188" y="96" text-anchor="middle" font-family="Space Mono,monospace" font-size="13" fill="#ff9500" font-weight="700">S3</text>
+                            <text x="188" y="110" text-anchor="middle" font-family="Exo 2,sans-serif" font-size="11" fill="#ff9500">center</text>
+                            <!-- S4 -->
+                            <circle cx="258" cy="60" r="18" fill="#1a2040" stroke="#00d4ff" stroke-width="2"/>
+                            <circle cx="258" cy="60" r="8" fill="#ff79c6" opacity="0.5"/>
+                            <circle cx="270" cy="54" r="4" fill="#8be9fd" opacity="0.6"/>
+                            <text x="258" y="96" text-anchor="middle" font-family="Space Mono,monospace" font-size="13" fill="#00d4ff" font-weight="700">S4</text>
+                            <!-- S5 -->
+                            <circle cx="322" cy="60" r="18" fill="#1a2040" stroke="#00d4ff" stroke-width="2"/>
+                            <circle cx="322" cy="60" r="8" fill="#ff79c6" opacity="0.5"/>
+                            <circle cx="334" cy="54" r="4" fill="#8be9fd" opacity="0.6"/>
+                            <text x="322" y="96" text-anchor="middle" font-family="Space Mono,monospace" font-size="13" fill="#00d4ff" font-weight="700">S5</text>
+                            <text x="322" y="110" text-anchor="middle" font-family="Exo 2,sans-serif" font-size="11" fill="#6272a4">rightmost</text>
+                            <!-- direction arrow -->
+                            <text x="180" y="18" text-anchor="middle" font-family="Exo 2,sans-serif" font-size="11" fill="#6272a4">← LEFT &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RIGHT →</text>
+                        </svg>
+                        <p style="margin-top:10px; font-size:1.05rem;"><span class="highlight">S3 is center</span> — the reference sensor. When the robot is on track, S3 should be over the line.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: Wiring -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Wiring to the Pico 2W</h2>
+                <p>Connect 7 wires total: VCC, GND, and one wire per sensor output (OUT1–OUT5).</p>
+                <div class="table-wrapper" style="margin: 20px 0;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Module Pin</th>
+                                <th>Pico 2W Pin</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="warning">VCC</span></td>
+                                <td>3.3V (Pin 36)</td>
+                                <td>Use 3.3 V — the Pico's GPIO is not 5 V tolerant</td>
+                            </tr>
+                            <tr>
+                                <td><span class="warning">GND</span></td>
+                                <td>GND (any GND pin)</td>
+                                <td>Share GND with the rest of the circuit</td>
+                            </tr>
+                            <tr>
+                                <td>OUT1 <span style="color:#6272a4;">(S1, leftmost)</span></td>
+                                <td><span class="highlight">GP6</span></td>
+                                <td>Adjust to match your wiring</td>
+                            </tr>
+                            <tr>
+                                <td>OUT2 <span style="color:#6272a4;">(S2)</span></td>
+                                <td><span class="highlight">GP7</span></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>OUT3 <span style="color:#6272a4;">(S3, center)</span></td>
+                                <td><span class="highlight">GP8</span></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>OUT4 <span style="color:#6272a4;">(S4)</span></td>
+                                <td><span class="highlight">GP9</span></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>OUT5 <span style="color:#6272a4;">(S5, rightmost)</span></td>
+                                <td><span class="highlight">GP10</span></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="callout callout-warn">
+                    <strong class="warning">Pin Order Matters:</strong> Adjust the GPIO numbers to match your actual wiring. Whatever pins you use, <strong>S1 must map to the leftmost sensor</strong> and S5 to the rightmost — otherwise left/right steering will be reversed.
+                </div>
+                <div class="callout callout-info">
+                    <strong class="highlight">Double-check VCC:</strong> Some OSOYOO modules work at either 3.3 V or 5 V. On the Pico 2W, always use the <strong>3.3 V pin (Pin 36)</strong> — do not connect to VBUS (5 V) or you risk damaging the GPIO pins.
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: Reading the Sensors -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Reading 5 Sensors at Once</h2>
+                <p>A list comprehension lets us read all five pins in one line and store the results as a list.</p>
+                <div class="code-block"><span class="kw">import</span> machine<span class="op">,</span> time
+
+<span class="cm"># Sensor pins — adjust to match your wiring (S1=left, S5=right)</span>
+<span class="cls">SENSOR_PINS</span> <span class="op">=</span> [<span class="num">6</span><span class="op">,</span> <span class="num">7</span><span class="op">,</span> <span class="num">8</span><span class="op">,</span> <span class="num">9</span><span class="op">,</span> <span class="num">10</span>]
+sensors <span class="op">=</span> [machine<span class="op">.</span><span class="cls">Pin</span>(p<span class="op">,</span> machine<span class="op">.</span><span class="cls">Pin</span><span class="op">.</span><span class="cls">IN</span>) <span class="kw">for</span> p <span class="kw">in</span> <span class="cls">SENSOR_PINS</span>]
+
+<span class="kw">def</span> <span class="fn">read_sensors</span>():
+    <span class="str">"""Return list of 5 values: 0=line, 1=no line"""</span>
+    <span class="kw">return</span> [s<span class="op">.</span><span class="fn">value</span>() <span class="kw">for</span> s <span class="kw">in</span> sensors]
+
+<span class="cm"># Test — run this to see live readings</span>
+<span class="kw">while</span> <span class="kw">True</span>:
+    vals <span class="op">=</span> <span class="fn">read_sensors</span>()
+    <span class="fn">print</span>(vals)       <span class="cm"># e.g. [1, 1, 0, 1, 1] = center on line</span>
+    time<span class="op">.</span><span class="fn">sleep_ms</span>(<span class="num">100</span>)</div>
+                <div class="grid-2" style="margin-top: 16px;">
+                    <div class="box">
+                        <h3>Reading the Output</h3>
+                        <table>
+                            <thead><tr><th>Reading</th><th>What It Means</th></tr></thead>
+                            <tbody>
+                                <tr><td><code>[1, 1, 0, 1, 1]</code></td><td>Center (S3) on line — perfectly centered</td></tr>
+                                <tr><td><code>[1, 0, 0, 1, 1]</code></td><td>S2 + S3 on line — slightly left of center</td></tr>
+                                <tr><td><code>[0, 0, 1, 1, 1]</code></td><td>S1 + S2 on line — far left</td></tr>
+                                <tr><td><code>[1, 1, 1, 1, 1]</code></td><td>No sensor on line — lost the track</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="callout callout-info" style="align-self: start;">
+                        <strong class="highlight">Tip:</strong> Run the test loop first, before writing any driving code. Slide L.E.O. over the track by hand and watch the values in the serial monitor. This confirms your wiring is correct and the sensors are reading as expected.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: Calibration -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Calibration Check</h2>
+                <p>Before writing any driving logic, verify that your sensor readings make sense on your specific track.</p>
+                <ol class="step-list" style="margin: 20px 0 24px;">
+                    <li>Place the robot on the <strong>white surface</strong> next to the line — all sensors should read <code>[1, 1, 1, 1, 1]</code></li>
+                    <li>Slide the robot so <strong>only the center sensor (S3) is over the black line</strong> — should read <code>[1, 1, 0, 1, 1]</code></li>
+                    <li>Check each sensor individually by sliding the module across the line — each sensor should flip from <code>1</code> to <code>0</code> as it crosses</li>
+                    <li><strong>Adjust the trim pot</strong> on the module if readings are inconsistent or the sensors don't switch cleanly</li>
+                    <li>Use the <strong>onboard indicator LEDs</strong> for a quick visual check — no code needed</li>
+                </ol>
+                <div class="grid-2">
+                    <div class="callout callout-warn">
+                        <strong class="warning">If you see <code>[0, 0, 0, 0, 0]</code> everywhere</strong> or readings don't change at all:
+                        <ul style="margin-top: 8px; padding-left: 20px; color: #b8c5d6; font-size: 1rem; line-height: 1.7;">
+                            <li>Check VCC — is it connected to 3.3 V?</li>
+                            <li>Check GND is shared</li>
+                            <li>Verify the module's indicator LEDs light at all</li>
+                            <li>Confirm your GPIO pin numbers match the code</li>
+                        </ul>
+                    </div>
+                    <div class="callout callout-info">
+                        <strong class="highlight">Trim Pot Tip:</strong> Turn the pot slowly with a small screwdriver. Clockwise usually increases sensitivity (sensors trigger more easily). Find the setting where sensors read <code>1</code> cleanly on white and <code>0</code> cleanly on the black tape — no flickering.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: Binary Line Following Logic -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Steering Decisions</h2>
+                <p>Binary line following works by matching the current sensor pattern to a known situation, then issuing a fixed motor command. It's a <span class="highlight">priority-based lookup</span> — not an average or calculation.</p>
+                <div class="table-wrapper" style="margin: 20px 0;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Sensor Pattern</th>
+                                <th>Situation</th>
+                                <th>Action</th>
+                                <th>Motor Command</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>[1, 1, <span style="color:#50fa7b;">0</span>, 1, 1]</code></td>
+                                <td>Centered on line</td>
+                                <td><span class="success">Go straight</span></td>
+                                <td><code>drive(40, 40)</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>[1, <span style="color:#50fa7b;">0</span>, ?, 1, 1]</code></td>
+                                <td>Slightly left of center</td>
+                                <td>Turn right gently</td>
+                                <td><code>drive(50, 20)</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>[<span style="color:#50fa7b;">0</span>, ?, 1, 1, 1]</code></td>
+                                <td>Far left</td>
+                                <td><span class="warning">Turn right hard</span></td>
+                                <td><code>drive(60, 0)</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>[1, 1, ?, <span style="color:#50fa7b;">0</span>, 1]</code></td>
+                                <td>Slightly right of center</td>
+                                <td>Turn left gently</td>
+                                <td><code>drive(20, 50)</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>[1, 1, 1, ?, <span style="color:#50fa7b;">0</span>]</code></td>
+                                <td>Far right</td>
+                                <td><span class="warning">Turn left hard</span></td>
+                                <td><code>drive(0, 60)</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>[1, 1, 1, 1, 1]</code></td>
+                                <td>No line detected</td>
+                                <td>Slow search spin</td>
+                                <td><code>drive(20, -20)</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="callout callout-info">
+                    <strong class="highlight">Priority order matters:</strong> Check center first. If center is already on the line, don't bother checking the others. The <code>if / elif</code> chain handles this automatically — the first matching condition wins.
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: Binary Follow Code -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Putting It Together</h2>
+                <div class="code-block"><span class="kw">import</span> motor<span class="op">,</span> time
+
+<span class="kw">def</span> <span class="fn">follow_line_binary</span>():
+    <span class="kw">while</span> <span class="kw">True</span>:
+        v <span class="op">=</span> <span class="fn">read_sensors</span>()           <span class="cm"># [s1, s2, s3, s4, s5], 0=line</span>
+
+        <span class="kw">if</span>   v[<span class="num">2</span>] <span class="op">==</span> <span class="num">0</span><span class="op">:</span>              <span class="cm"># center on line → straight</span>
+            motor<span class="op">.</span><span class="fn">drive</span>(<span class="num">40</span><span class="op">,</span> <span class="num">40</span>)
+        <span class="kw">elif</span> v[<span class="num">1</span>] <span class="op">==</span> <span class="num">0</span><span class="op">:</span>              <span class="cm"># slightly left   → turn right</span>
+            motor<span class="op">.</span><span class="fn">drive</span>(<span class="num">50</span><span class="op">,</span> <span class="num">20</span>)
+        <span class="kw">elif</span> v[<span class="num">0</span>] <span class="op">==</span> <span class="num">0</span><span class="op">:</span>              <span class="cm"># far left        → hard right</span>
+            motor<span class="op">.</span><span class="fn">drive</span>(<span class="num">60</span><span class="op">,</span>  <span class="num">0</span>)
+        <span class="kw">elif</span> v[<span class="num">3</span>] <span class="op">==</span> <span class="num">0</span><span class="op">:</span>              <span class="cm"># slightly right  → turn left</span>
+            motor<span class="op">.</span><span class="fn">drive</span>(<span class="num">20</span><span class="op">,</span> <span class="num">50</span>)
+        <span class="kw">elif</span> v[<span class="num">4</span>] <span class="op">==</span> <span class="num">0</span><span class="op">:</span>              <span class="cm"># far right       → hard left</span>
+            motor<span class="op">.</span><span class="fn">drive</span>( <span class="num">0</span><span class="op">,</span> <span class="num">60</span>)
+        <span class="kw">else</span><span class="op">:</span>                        <span class="cm"># no line at all  → slow search</span>
+            motor<span class="op">.</span><span class="fn">drive</span>(<span class="num">20</span><span class="op">,</span> <span class="op">-</span><span class="num">20</span>)
+
+        time<span class="op">.</span><span class="fn">sleep_ms</span>(<span class="num">10</span>)
+
+<span class="fn">follow_line_binary</span>()</div>
+                <div class="grid-2" style="margin-top:10px;">
+                    <div class="callout callout-info">
+                        <strong class="highlight">Start slow:</strong> Begin at speed <code>40</code>. Once the robot is reliably tracking, increase speed gradually. Most line-follow failures at high speed are just too much momentum to steer.
+                    </div>
+                    <div class="callout callout-success">
+                        <strong class="success">Don't forget:</strong> This function uses <code>read_sensors()</code> — make sure that function and the <code>sensors</code> list are defined earlier in the same file before calling <code>follow_line_binary()</code>.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 10: Debug Challenge -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Debug Challenge</h2>
+                <p>This code should follow a line, but L.E.O. just spins in place constantly. Find the <span class="warning">two bugs</span>.</p>
+                <div class="code-block"><span class="kw">import</span> machine<span class="op">,</span> motor<span class="op">,</span> time
+
+<span class="cls">SENSOR_PINS</span> <span class="op">=</span> [<span class="num">6</span><span class="op">,</span> <span class="num">7</span><span class="op">,</span> <span class="num">8</span><span class="op">,</span> <span class="num">9</span><span class="op">,</span> <span class="num">10</span>]
+sensors <span class="op">=</span> [machine<span class="op">.</span><span class="cls">Pin</span>(p<span class="op">,</span> machine<span class="op">.</span><span class="cls">Pin</span><span class="op">.</span><span class="cls">IN</span>) <span class="kw">for</span> p <span class="kw">in</span> <span class="cls">SENSOR_PINS</span>]
+
+<span class="kw">def</span> <span class="fn">read_sensors</span>():
+    <span class="kw">return</span> [s<span class="op">.</span><span class="fn">value</span>() <span class="kw">for</span> s <span class="kw">in</span> sensors]
+
+<span class="kw">def</span> <span class="fn">follow_line_binary</span>():
+    <span class="kw">while</span> <span class="kw">True</span>:
+        v <span class="op">=</span> <span class="fn">read_sensors</span>()
+
+        <span class="kw">if</span>   v[<span class="num">2</span>] <span class="op">==</span> <span class="num" style="background:rgba(255,80,80,0.18);border-radius:3px;padding:0 3px;">1</span><span class="op">:</span>              <span class="cm"># BUG 1: should be == 0  (1 = no line!)</span>
+            motor<span class="op">.</span><span class="fn">drive</span>(<span class="num">40</span><span class="op">,</span> <span class="num">40</span>)
+        <span class="kw">elif</span> v[<span class="num">1</span>] <span class="op">==</span> <span class="num">0</span><span class="op">:</span>
+            motor<span class="op">.</span><span class="fn">drive</span>(<span class="num">50</span><span class="op">,</span> <span class="num">20</span>)
+        <span class="kw">elif</span> v[<span class="num">0</span>] <span class="op">==</span> <span class="num">0</span><span class="op">:</span>
+            motor<span class="op">.</span><span class="fn">drive</span>(<span class="num">60</span><span class="op">,</span>  <span class="num">0</span>)
+        <span class="kw">elif</span> v[<span class="num">3</span>] <span class="op">==</span> <span class="num">0</span><span class="op">:</span>
+            motor<span class="op">.</span><span class="fn">drive</span>(<span class="num">20</span><span class="op">,</span> <span class="num">50</span>)
+        <span class="kw">elif</span> v[<span class="num">4</span>] <span class="op">==</span> <span class="num">0</span><span class="op">:</span>
+            motor<span class="op">.</span><span class="fn">drive</span>( <span class="num">0</span><span class="op">,</span> <span class="num">60</span>)
+        <span class="kw">else</span><span class="op">:</span>
+            motor<span class="op">.</span><span class="fn">drive</span>(<span class="num">20</span><span class="op">,</span> <span class="op">-</span><span class="num">20</span>)
+
+        time<span class="op">.</span><span class="fn">sleep_ms</span>(<span class="num">10</span>)
+
+<span class="fn" style="background:rgba(255,80,80,0.18);border-radius:3px;padding:0 3px;">follow_line_binary</span>
+<span class="cm"># BUG 2: missing ()  —  this is just a reference, not a function call</span></div>
+                <div class="grid-2" style="margin-top: 14px;">
+                    <div class="callout callout-danger" style="border-left-color:#ff5555; background:rgba(255,80,80,0.08);">
+                        <strong style="color:#ff5555;">Bug 1 — Wrong comparison value</strong><br>
+                        Line: <code>if v[2] == <span style="color:#ff5555;">1</span>:</code><br>
+                        Fix: <code>if v[2] == <span style="color:#50fa7b;">0</span>:</code><br>
+                        <span style="color:#b8c5d6;">Remember: <code>0</code> = line detected. Checking for <code>1</code> means "go straight when there is NO line at center" — the exact opposite of what we want, so the robot always falls to the <code>else</code> (spin) case.</span>
+                    </div>
+                    <div class="callout callout-danger" style="border-left-color:#ff5555; background:rgba(255,80,80,0.08);">
+                        <strong style="color:#ff5555;">Bug 2 — Function never called</strong><br>
+                        Line: <code>follow_line_binary</code><br>
+                        Fix: <code>follow_line_binary<span style="color:#50fa7b;">()</span></code><br>
+                        <span style="color:#b8c5d6;">Without parentheses this is just a reference to the function object — it doesn't run. Python doesn't raise an error; it silently does nothing. The robot never even starts.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- end .presentation -->
+
+    <div class="slide-number" id="slideNum">1 / 10</div>
+    <div class="controls">
+        <button id="prevBtn" onclick="changeSlide(-1)" disabled>◀ Prev</button>
+        <button id="nextBtn" onclick="changeSlide(1)">Next ▶</button>
+    </div>
+    <div class="ref-link"><a href="Activity_10_Line_Following.html">→ Activity 4.10</a></div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        let current = 0;
+        const total = slides.length;
+        document.getElementById('slideNum').textContent = `1 / ${total}`;
+        function changeSlide(dir) {
+            slides[current].classList.remove('active');
+            slides[current].style.display = 'none';
+            current = Math.max(0, Math.min(total - 1, current + dir));
+            slides[current].style.display = 'flex';
+            setTimeout(() => slides[current].classList.add('active'), 10);
+            document.getElementById('prevBtn').disabled = current === 0;
+            document.getElementById('nextBtn').disabled = current === total - 1;
+            document.getElementById('slideNum').textContent = `${current + 1} / ${total}`;
+            window.scrollTo(0, 0);
+        }
+        slides[0].style.display = 'flex';
+    </script>
+</body>
+</html>

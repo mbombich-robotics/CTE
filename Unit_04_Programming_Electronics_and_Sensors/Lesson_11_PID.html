@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>PID Line Following — L.E.O. Robotics Lesson 4.11</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Exo 2', sans-serif; background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); color: #e0e6f0; height: 100vh; }
+        .presentation { width: 100%; height: 100vh; position: relative; }
+        .slide { position: absolute; width: 100%; min-height: 100%; display: none; flex-direction: column; justify-content: flex-start; align-items: center; padding: 55px 60px 120px 60px; opacity: 0; transition: opacity 0.5s ease; overflow-y: auto; overflow-x: hidden; }
+        .slide.active { display: flex; opacity: 1; }
+        .slide-content { max-width: 1200px; width: 100%; }
+        h1 { font-family: 'Orbitron', sans-serif; font-size: 3.5rem; font-weight: 900; color: #00d4ff; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 20px rgba(0,212,255,0.5); animation: glow 2s ease-in-out infinite alternate; }
+        @keyframes glow { from { text-shadow: 0 0 20px rgba(0,212,255,0.5); } to { text-shadow: 0 0 35px rgba(0,212,255,0.9); } }
+        h2 { font-family: 'Orbitron', sans-serif; font-size: 2.4rem; font-weight: 700; color: #00d4ff; margin-bottom: 18px; text-transform: uppercase; }
+        h3 { font-family: 'Exo 2', sans-serif; font-size: 1.5rem; font-weight: 600; color: #ff9500; margin-bottom: 12px; }
+        p { font-size: 1.15rem; line-height: 1.6; margin-bottom: 12px; color: #b8c5d6; }
+        .subtitle { font-size: 1.3rem; color: #ff9500; font-weight: 600; margin-bottom: 30px; }
+        .objective-box { background: linear-gradient(135deg, rgba(0,212,255,0.1) 0%, rgba(0,212,255,0.04) 100%); border: 3px solid #00d4ff; border-radius: 12px; padding: 20px; margin: 20px 0; box-shadow: 0 0 30px rgba(0,212,255,0.15); }
+        .objective-box h3 { color: #00d4ff; }
+        .bullet-list { list-style: none; padding-left: 0; }
+        .bullet-list li { font-size: 1.15rem; margin: 12px 0; padding-left: 35px; position: relative; color: #b8c5d6; line-height: 1.5; }
+        .bullet-list li::before { content: '▸'; position: absolute; left: 0; color: #ff9500; font-size: 1.5rem; line-height: 1; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .box { background: rgba(0,212,255,0.05); border: 2px solid #00d4ff; border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(0,212,255,0.1); }
+        .box-orange { background: rgba(255,149,0,0.07); border: 2px solid #ff9500; border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(255,149,0,0.1); }
+        .box-green { background: rgba(80,250,123,0.07); border: 2px solid #50fa7b; border-radius: 12px; padding: 20px; }
+        .highlight { color: #00d4ff; font-weight: 700; }
+        .warning { color: #ff9500; font-weight: 700; }
+        .success { color: #50fa7b; font-weight: 700; }
+        code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: #00d4ff; background: rgba(0,212,255,0.1); padding: 1px 5px; border-radius: 4px; white-space: nowrap; font-variant-ligatures: none; }
+        .code-block { background: #0d1117; border: 2px solid #00d4ff; border-radius: 10px; padding: 20px 24px; margin: 16px 0; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; line-height: 1.75; white-space: pre; font-variant-ligatures: none; }
+        .kw  { color: #ff79c6; }
+        .cls { color: #ffb86c; font-weight: 700; }
+        .fn  { color: #8be9fd; }
+        .str { color: #f1fa8c; }
+        .num { color: #bd93f9; }
+        .cm  { color: #6272a4; font-style: italic; }
+        .op  { color: #b8c5d6; }
+        .reg-table { width: 100%; border-collapse: collapse; font-size: 1rem; margin: 14px 0; }
+        .reg-table th { background: rgba(0,212,255,0.15); color: #00d4ff; padding: 10px 14px; border: 1.5px solid rgba(0,212,255,0.3); font-family: 'Space Mono', monospace; font-size: 0.85rem; text-align: center; }
+        .reg-table td { padding: 9px 14px; border: 1px solid rgba(0,212,255,0.15); text-align: center; color: #b8c5d6; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; }
+        .reg-table tr:nth-child(even) td { background: rgba(0,212,255,0.03); }
+        .reg-table .accent { color: #00d4ff; font-weight: 700; }
+        .formula { font-family: 'Space Mono', monospace; font-size: 1.5rem; color: #00d4ff; background: rgba(0,212,255,0.08); border: 2px solid rgba(0,212,255,0.3); border-radius: 10px; padding: 18px 28px; margin: 20px 0; text-align: center; letter-spacing: 0.04em; }
+        .controls { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; justify-content: center; align-items: center; gap: 20px; z-index: 1000; }
+        button { background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%); border: none; color: #0a0e27; padding: 15px 30px; font-size: 1rem; font-weight: 700; border-radius: 8px; cursor: pointer; font-family: 'Exo 2', sans-serif; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,212,255,0.3); }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,212,255,0.5); }
+        button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+        .slide-number { position: fixed; bottom: 30px; left: 30px; font-family: 'Space Mono', monospace; font-size: 1rem; color: #00d4ff; z-index: 1000; }
+        .ref-link { position: fixed; bottom: 30px; right: 30px; z-index: 1000; }
+        .ref-link a { background: rgba(0,212,255,0.12); border: 1px solid #00d4ff; color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.85rem; padding: 8px 14px; border-radius: 6px; text-decoration: none; transition: background 0.2s; }
+        .ref-link a:hover { background: rgba(0,212,255,0.25); }
+        @media (max-width: 768px) { h1 { font-size: 2.5rem; } h2 { font-size: 1.8rem; } .slide { padding: 30px 20px 100px; } .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+        .back-link { position: fixed; top: 18px; right: 24px; font-size: 0.78rem; font-weight: 700; color: #67e3ff; text-decoration: none; background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.35); padding: 5px 12px; border-radius: 20px; z-index: 100; transition: background 0.2s; }
+        .back-link:hover { background: rgba(0,212,255,0.3); }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← Unit 4</a>
+    <div class="presentation">
+
+<!-- ─────────────────────────────────── SLIDE 1: Title ─────────────────────────────────── -->
+<div class="slide active">
+    <div class="slide-content" style="text-align:center;">
+        <h1>PID Line Following</h1>
+        <p class="subtitle">Unit 4 · Programming, Electronics &amp; Sensors · Lesson 4.11</p>
+
+        <div style="margin: 28px auto; max-width: 520px;">
+            <svg viewBox="0 0 520 240" fill="none" xmlns="http://www.w3.org/2000/svg"
+                 style="width:100%; filter:drop-shadow(0 0 18px rgba(0,212,255,0.35));">
+                <!-- Black line (track) -->
+                <rect x="234" y="0" width="52" height="240" rx="6" fill="#141820"/>
+                <!-- Robot body (top-down) -->
+                <rect x="170" y="80" width="180" height="90" rx="12"
+                      fill="rgba(0,212,255,0.07)" stroke="#00d4ff" stroke-width="2"/>
+                <!-- Wheels left -->
+                <rect x="140" y="90" width="28" height="34" rx="5"
+                      fill="rgba(255,149,0,0.12)" stroke="#ff9500" stroke-width="2"/>
+                <rect x="140" y="136" width="28" height="34" rx="5"
+                      fill="rgba(255,149,0,0.12)" stroke="#ff9500" stroke-width="2"/>
+                <!-- Wheels right -->
+                <rect x="352" y="90" width="28" height="34" rx="5"
+                      fill="rgba(255,149,0,0.12)" stroke="#ff9500" stroke-width="2"/>
+                <rect x="352" y="136" width="28" height="34" rx="5"
+                      fill="rgba(255,149,0,0.12)" stroke="#ff9500" stroke-width="2"/>
+                <!-- 5 sensor dots on front of robot -->
+                <circle cx="210" cy="82" r="7" fill="#6272a4" stroke="#444" stroke-width="1"/>
+                <circle cx="233" cy="82" r="7" fill="#6272a4" stroke="#444" stroke-width="1"/>
+                <!-- S2 center — over the line, glowing green -->
+                <circle cx="260" cy="82" r="8" fill="#50fa7b" stroke="#50fa7b" stroke-width="1.5"
+                        style="filter:drop-shadow(0 0 6px #50fa7b)"/>
+                <circle cx="287" cy="82" r="7" fill="#6272a4" stroke="#444" stroke-width="1"/>
+                <circle cx="310" cy="82" r="7" fill="#6272a4" stroke="#444" stroke-width="1"/>
+                <!-- Sensor labels -->
+                <text x="210" y="67" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6272a4">S0</text>
+                <text x="233" y="67" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6272a4">S1</text>
+                <text x="260" y="67" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#50fa7b">S2</text>
+                <text x="287" y="67" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6272a4">S3</text>
+                <text x="310" y="67" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6272a4">S4</text>
+                <!-- Reading annotation -->
+                <text x="260" y="200" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#b8c5d6">[1, 1,</text>
+                <text x="305" y="200" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#50fa7b">0</text>
+                <text x="348" y="200" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#b8c5d6">, 1, 1]</text>
+                <text x="260" y="220" text-anchor="middle" font-family="Exo 2,sans-serif" font-size="11" fill="#6272a4">error = 0  (centered)</text>
+                <!-- Error signal curve (orange sine-like) -->
+                <path d="M 30 170 Q 60 145 90 170 Q 120 195 150 170 Q 165 157 185 170"
+                      stroke="#ff9500" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+                <text x="107" y="215" text-anchor="middle" font-family="Exo 2,sans-serif" font-size="11" fill="#ff9500" opacity="0.8">error signal</text>
+                <!-- Front arrow -->
+                <polygon points="260,48 253,58 267,58" fill="#00d4ff"/>
+                <text x="260" y="44" text-anchor="middle" font-family="Exo 2,sans-serif" font-size="11" fill="#00d4ff">FRONT</text>
+            </svg>
+        </div>
+
+        <p style="color:#6272a4; font-size:0.95rem; margin-top:16px;">Lesson 4.11 · Weeks 22–23</p>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────── SLIDE 2: Objectives ─────────────────────────────────── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Learning Objectives</h2>
+
+        <div class="objective-box">
+            <h3>By the end of this lesson you will be able to:</h3>
+            <ul class="bullet-list">
+                <li><span class="highlight">Compute</span> a weighted sensor error from the 5-sensor IR array.</li>
+                <li><span class="highlight">Implement</span> proportional (P) control to steer L.E.O. on a line.</li>
+                <li><span class="highlight">Add</span> derivative (D) and integral (I) terms to reduce oscillation and steady-state error.</li>
+            </ul>
+        </div>
+
+        <div class="grid-2" style="margin-top: 28px;">
+            <div class="box">
+                <h3>You Will Need</h3>
+                <ul class="bullet-list">
+                    <li>L.E.O. robot with OSOYOO 5-sensor IR array (wired from Activity 4.10)</li>
+                    <li>Black-tape line course on a white surface</li>
+                    <li><code>motor.py</code> installed on Pico</li>
+                </ul>
+            </div>
+            <div class="box-orange">
+                <h3>You Will Produce</h3>
+                <ul class="bullet-list">
+                    <li>A <code>compute_error()</code> function using weighted sensor positions</li>
+                    <li>A P-control loop that follows a line</li>
+                    <li>A PD-control loop that reduces oscillation</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────── SLIDE 3: Why Binary Isn't Enough ─────────────────────────────────── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Why Binary Control Isn't Enough</h2>
+
+        <div class="grid-2">
+            <div class="box-orange">
+                <h3>⚠️ Binary Control</h3>
+                <ul class="bullet-list">
+                    <li>Abrupt left/right switching — full speed turns only</li>
+                    <li>Produces a <span class="warning">zigzag path</span> even on straight sections</li>
+                    <li>Loses the line easily on sharp curves</li>
+                    <li>Can't distinguish "slightly off" from "way off"</li>
+                </ul>
+            </div>
+            <div class="box-green">
+                <h3>✅ PID Control</h3>
+                <ul class="bullet-list">
+                    <li>Correction is <span class="success">proportional</span> to how far off-center</li>
+                    <li>Small error → gentle correction; large error → strong correction</li>
+                    <li>Handles straight sections, gentle curves, and sharp bends</li>
+                    <li>One number (error) drives everything</li>
+                </ul>
+            </div>
+        </div>
+
+        <p style="margin-top:24px;">The key idea: replace the <code>if/elif</code> tree with a <strong class="highlight">single numeric error value</strong> — a measure of how far the detected line is from the center of the sensor array. Then use that number to calculate exactly how much to correct.</p>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────── SLIDE 4: The 5-Sensor Array ─────────────────────────────────── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>The 5-Sensor Array (Review)</h2>
+
+        <p>From Lesson 4.10: 5 digital outputs, <code>0</code> = line detected (dark surface absorbs IR), <code>1</code> = no line. Assign a <span class="highlight">weight</span> to each sensor position, with center = 0:</p>
+
+        <table class="reg-table" style="margin: 20px 0;">
+            <thead>
+                <tr><th>Sensor</th><th>GPIO</th><th>Weight</th><th>Meaning</th></tr>
+            </thead>
+            <tbody>
+                <tr><td class="accent">S0</td><td>GP6</td><td class="accent">−2</td><td>Far left</td></tr>
+                <tr><td class="accent">S1</td><td>GP7</td><td class="accent">−1</td><td>Slightly left</td></tr>
+                <tr><td class="accent">S2</td><td>GP8</td><td class="accent">0</td><td>Center</td></tr>
+                <tr><td class="accent">S3</td><td>GP9</td><td class="accent">+1</td><td>Slightly right</td></tr>
+                <tr><td class="accent">S4</td><td>GP10</td><td class="accent">+2</td><td>Far right</td></tr>
+            </tbody>
+        </table>
+
+        <div class="box-orange" style="margin-top:10px;">
+            <h3>⚠️ Inverted Logic!</h3>
+            <p style="margin:0;"><code>0</code> means the sensor <em>sees</em> the line — the dark surface absorbs IR, so the sensor returns LOW. <code>1</code> means no line. This is backwards from what most people expect. Always verify with a <code>print()</code> before writing control logic.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────── SLIDE 5: Weighted Error Formula ─────────────────────────────────── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Computing the Weighted Error</h2>
+
+        <div class="formula">
+            error = Σ(weight × detected) / Σ(detected)
+        </div>
+
+        <p>Where <code>detected = 1 − sensor_value</code> (inverts the signal so 1 = line seen, 0 = no line).</p>
+
+        <ul class="bullet-list">
+            <li>For each sensor seeing the line, add its weight to the total.</li>
+            <li>Divide by the number of sensors that see the line — keeps the magnitude consistent regardless of how many sensors are on the tape.</li>
+            <li>Result: <span class="highlight">0</span> when centered, <span class="warning">negative</span> when line is left, <span class="success">positive</span> when line is right.</li>
+            <li>Returns <code>None</code> if no sensors see the line (robot is lost).</li>
+        </ul>
+
+        <div class="code-block"><span class="kw">def</span> <span class="fn">compute_error</span>(sensors):
+    <span class="str">"""Weighted position error. Returns float or None if line not found."""</span>
+    weights <span class="op">=</span> [<span class="num">-2</span>, <span class="num">-1</span>, <span class="num">0</span>, <span class="num">1</span>, <span class="num">2</span>]
+    total_weight <span class="op">=</span> <span class="num">0</span>
+    count <span class="op">=</span> <span class="num">0</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>):
+        detected <span class="op">=</span> <span class="num">1</span> <span class="op">-</span> sensors[i]   <span class="cm"># invert: 0→line present</span>
+        total_weight <span class="op">+=</span> weights[i] <span class="op">*</span> detected
+        count <span class="op">+=</span> detected
+    <span class="kw">if</span> count <span class="op">==</span> <span class="num">0</span>:
+        <span class="kw">return</span> <span class="kw">None</span>             <span class="cm"># no sensors see the line</span>
+    <span class="kw">return</span> total_weight <span class="op">/</span> count</div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────── SLIDE 6: P Control ─────────────────────────────────── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Step 1 — Proportional (P) Control</h2>
+
+        <div class="formula">correction = Kp × error</div>
+
+        <p style="margin-bottom:6px;">Motor speeds: <code>left = base_speed + correction</code> &nbsp;·&nbsp; <code>right = base_speed − correction</code></p>
+        <p>When the line is to the right (positive error), left motor speeds up and right slows — steering right. The response is always proportional to how far off-center the robot is.</p>
+
+        <div class="code-block"><span class="kw">import</span> <span class="cls">time</span>
+<span class="kw">import</span> <span class="cls">motor</span>
+
+Kp <span class="op">=</span> <span class="num">25</span>          <span class="cm"># start here; tune by observation</span>
+base_speed <span class="op">=</span> <span class="num">40</span>  <span class="cm"># % duty cycle</span>
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    sensors <span class="op">=</span> <span class="fn">read_sensors</span>()
+    error <span class="op">=</span> <span class="fn">compute_error</span>(sensors)
+
+    <span class="kw">if</span> error <span class="kw">is</span> <span class="kw">None</span>:
+        <span class="fn">motor.drive</span>(<span class="num">0</span>, <span class="num">0</span>)     <span class="cm"># lost the line — stop</span>
+        <span class="kw">continue</span>
+
+    correction <span class="op">=</span> Kp <span class="op">*</span> error
+    left  <span class="op">=</span> base_speed <span class="op">+</span> correction
+    right <span class="op">=</span> base_speed <span class="op">-</span> correction
+    <span class="fn">motor.drive</span>(left, right)
+    <span class="cls">time</span>.<span class="fn">sleep</span>(<span class="num">0.01</span>)</div>
+
+        <div class="box-orange" style="margin-top:12px;">
+            <h3>Tuning Kp</h3>
+            <p style="margin:0;">Too low → sluggish, misses curves. Too high → oscillates wildly. Start at <code>Kp = 20–25</code> and adjust in steps of 5. Get P working before adding D or I.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────── SLIDE 7: Tuning Kp ─────────────────────────────────── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Tuning Kp — What to Watch For</h2>
+
+        <div class="grid-3">
+            <div class="box-orange">
+                <h3>Too Low (Kp &lt; 15)</h3>
+                <ul class="bullet-list">
+                    <li>Robot drifts slowly off the line</li>
+                    <li>Falls off on any curve</li>
+                    <li><span class="warning">Fix:</span> Increase Kp by 5</li>
+                </ul>
+            </div>
+            <div class="box-green">
+                <h3>Just Right</h3>
+                <ul class="bullet-list">
+                    <li>Smooth tracking on straight sections</li>
+                    <li>Handles gentle curves cleanly</li>
+                    <li>Small wobble on transitions — acceptable</li>
+                </ul>
+            </div>
+            <div class="box-orange">
+                <h3>Too High (Kp &gt; 50)</h3>
+                <ul class="bullet-list">
+                    <li>Robot oscillates left-right rapidly</li>
+                    <li>May lose the line entirely</li>
+                    <li><span class="warning">Fix:</span> Decrease Kp, or add D term</li>
+                </ul>
+            </div>
+        </div>
+
+        <p style="margin-top:24px;">Suggested starting values based on speed:</p>
+        <table class="reg-table" style="max-width:420px;">
+            <thead>
+                <tr><th>base_speed (%)</th><th>Starting Kp</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>30</td><td class="accent">15 – 25</td></tr>
+                <tr><td>40</td><td class="accent">25 – 35</td></tr>
+                <tr><td>50</td><td class="accent">35 – 45</td></tr>
+            </tbody>
+        </table>
+
+        <p>Higher speed → robot has less time to react → needs higher Kp. Re-tune every time you change <code>base_speed</code>.</p>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────── SLIDE 8: D Term ─────────────────────────────────── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Step 2 — Add the D Term (Derivative)</h2>
+
+        <p>The D term reacts to <span class="highlight">how fast</span> the error is changing. It damps oscillation — if the robot is swinging toward center quickly, D reduces the correction before it overshoots.</p>
+
+        <div class="formula">correction = Kp × error + Kd × (error − prev_error)</div>
+
+        <div class="code-block">Kp <span class="op">=</span> <span class="num">25</span>
+Kd <span class="op">=</span> <span class="num">10</span>          <span class="cm"># start at ~0.4 × Kp</span>
+base_speed <span class="op">=</span> <span class="num">40</span>
+prev_error <span class="op">=</span> <span class="num">0</span>
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    sensors <span class="op">=</span> <span class="fn">read_sensors</span>()
+    error <span class="op">=</span> <span class="fn">compute_error</span>(sensors)
+
+    <span class="kw">if</span> error <span class="kw">is</span> <span class="kw">None</span>:
+        <span class="fn">motor.drive</span>(<span class="num">0</span>, <span class="num">0</span>)
+        prev_error <span class="op">=</span> <span class="num">0</span>
+        <span class="kw">continue</span>
+
+    correction <span class="op">=</span> Kp <span class="op">*</span> error <span class="op">+</span> Kd <span class="op">*</span> (error <span class="op">-</span> prev_error)
+    prev_error <span class="op">=</span> error          <span class="cm"># always update before next loop</span>
+
+    left  <span class="op">=</span> base_speed <span class="op">+</span> correction
+    right <span class="op">=</span> base_speed <span class="op">-</span> correction
+    <span class="fn">motor.drive</span>(left, right)
+    <span class="cls">time</span>.<span class="fn">sleep</span>(<span class="num">0.01</span>)</div>
+
+        <div class="box-green" style="margin-top:12px;">
+            <h3>Tuning Kd</h3>
+            <p style="margin:0;">Start with <code>Kd ≈ 0.3–0.5 × Kp</code>. Increase if oscillation persists; decrease if the robot responds sluggishly to curves. <strong>Always tune Kp first</strong> before adding Kd.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────── SLIDE 9: I Term ─────────────────────────────────── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Step 3 — The I Term (Optional / Advanced)</h2>
+
+        <p>The I term corrects <span class="highlight">persistent steady-state error</span> — e.g., one motor is slightly weaker, so the robot always drifts right even when centered. It accumulates error over time to push back.</p>
+
+        <div class="formula">correction = Kp·error + Kd·(error − prev_error) + Ki·integral</div>
+
+        <div class="code-block">Ki <span class="op">=</span> <span class="num">0.05</span>         <span class="cm"># keep very small!</span>
+integral <span class="op">=</span> <span class="num">0</span>
+MAX_INTEGRAL <span class="op">=</span> <span class="num">30</span>  <span class="cm"># anti-windup clamp</span>
+
+<span class="cm"># inside the loop, before computing correction:</span>
+integral <span class="op">+=</span> error
+integral <span class="op">=</span> <span class="fn">max</span>(<span class="op">-</span>MAX_INTEGRAL, <span class="fn">min</span>(MAX_INTEGRAL, integral))
+
+correction <span class="op">=</span> (Kp <span class="op">*</span> error
+             <span class="op">+</span> Kd <span class="op">*</span> (error <span class="op">-</span> prev_error)
+             <span class="op">+</span> Ki <span class="op">*</span> integral)</div>
+
+        <div class="grid-2" style="margin-top:16px;">
+            <div class="box-orange">
+                <h3>⚠️ Integral Windup</h3>
+                <p style="margin:0;">Without the <code>MAX_INTEGRAL</code> clamp, the integral grows without bound and causes massive overcorrection. Always clamp it.</p>
+            </div>
+            <div class="box-orange">
+                <h3>⚠️ Most Robots Don't Need Ki</h3>
+                <p style="margin:0;">Start with P. Add D. Only add I if there is a persistent drift that D doesn't fix. An unnecessary I term usually makes things worse.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────────────────────────────── SLIDE 10: Debug Challenge ─────────────────────────────────── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Debug Challenge</h2>
+        <p>This PD controller has two bugs. Find and fix them before running on the robot.</p>
+
+        <div class="code-block">Kp <span class="op">=</span> <span class="num">25</span>
+Kd <span class="op">=</span> <span class="num">10</span>
+prev_error <span class="op">=</span> <span class="num">0</span>
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    sensors <span class="op">=</span> <span class="fn">read_sensors</span>()
+    error <span class="op">=</span> <span class="fn">compute_error</span>(sensors)
+
+    correction <span class="op">=</span> Kp <span class="op">*</span> error <span class="op">+</span> Kd <span class="op">*</span> (error <span class="op">-</span> prev_error)  <span class="cm"># BUG 1</span>
+
+    left  <span class="op">=</span> base_speed <span class="op">+</span> correction   <span class="cm"># BUG 2</span>
+    right <span class="op">=</span> base_speed <span class="op">-</span> correction
+    <span class="fn">motor.drive</span>(left, right)
+    <span class="cls">time</span>.<span class="fn">sleep</span>(<span class="num">0.01</span>)</div>
+
+        <div class="box-orange" style="margin-top:16px;">
+            <h3>What are the bugs?</h3>
+            <ul class="bullet-list">
+                <li><span class="warning">Bug 1:</span> <code>prev_error</code> is never updated after the correction is calculated. The D term always computes <code>error − 0</code>, so derivative control never works. Fix: add <code>prev_error = error</code> at the end of the loop.</li>
+                <li><span class="warning">Bug 2:</span> <code>base_speed</code> is used but never defined. The robot will crash with a <code>NameError</code>. Fix: add <code>base_speed = 40</code> before the loop.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+    </div><!-- end .presentation -->
+
+    <div class="slide-number" id="slideNum">1 / 10</div>
+    <div class="controls">
+        <button id="prevBtn" onclick="changeSlide(-1)" disabled>&#9664; Prev</button>
+        <button id="nextBtn" onclick="changeSlide(1)">Next &#9654;</button>
+    </div>
+    <div class="ref-link"><a href="Activity_11_PID.html">&#8594; Activity 4.11</a></div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        let current = 0;
+        const total = slides.length;
+        document.getElementById('slideNum').textContent = `1 / ${total}`;
+        function changeSlide(dir) {
+            slides[current].classList.remove('active');
+            slides[current].style.display = 'none';
+            current = Math.max(0, Math.min(total - 1, current + dir));
+            slides[current].style.display = 'flex';
+            setTimeout(() => slides[current].classList.add('active'), 10);
+            document.getElementById('prevBtn').disabled = current === 0;
+            document.getElementById('nextBtn').disabled = current === total - 1;
+            document.getElementById('slideNum').textContent = `${current + 1} / ${total}`;
+            window.scrollTo(0, 0);
+        }
+        slides[0].style.display = 'flex';
+    </script>
+</body>
+</html>

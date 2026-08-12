@@ -33,9 +33,9 @@
 
 | Week | Dates | Days | Unit | Notes | Content | Deliverable / Quiz |
 |------|-------|------|------|-------|---------|--------------------|
-| 17 | Jan 4–8 | 5 | Robot Tuning | | Motor control on physical robot; drive + turn functions; encoder wiring and pulse counting | |
-| 18 | Jan 11–15 | 5 | Robot Tuning | ⚡ Jan 13 (20-min period) | Drive-straight with encoder feedback; IMU intro — Qwiic plug-in, read yaw angle | |
-| 19 | Jan 18–21 | 3 | Robot Tuning / Midterm | 🔴 MLK Day Jan 18 · Last student day Thu Jan 21 · Records Day Jan 22 (no students) | IMU heading hold; catch-up; **Q5: Midterm Exam** (covers EDP, CAD, Safety, Programming Basics) | **Q5: Midterm Exam** |
+| 17 | Jan 4–8 | 5 | 4 — Robot Motion | | L4.6 motor.py on physical robot: drive() calibration, straight-line practice, timed turns; L4.7 IMU intro — GY-521 MPU6050 wired to I2C mux, wake sensor, read raw gyro Z | |
+| 18 | Jan 11–15 | 5 | 4 — Robot Motion | ⚡ Jan 13 (20-min period) | L4.7 IMU heading hold: integrate gyro Z for yaw, implement tank_turn(deg); A4.7 IMU Navigation Challenge (scaffolded: heading hold → straight → turns → full challenge) | **D4.3 — IMU Navigation** |
+| 19 | Jan 18–21 | 3 | Catch-up / Midterm | 🔴 MLK Day Jan 18 · Last student day Thu Jan 21 · Records Day Jan 22 (no students) | Catch-up + D4.3 makeups; **Q5: Midterm Exam** (covers EDP, CAD, Safety, Programming Basics) | **Q5: Midterm Exam** |
 
 ---
 
@@ -43,10 +43,10 @@
 
 | Week | Dates | Days | Unit | Notes | Content | Deliverable / Quiz |
 |------|-------|------|------|-------|---------|--------------------|
-| 20 | Jan 25–29 | 5 | Ultrasonic | S2 begins Jan 25 | I2C ultrasonic via TCA9548A mux (3 sensors); distance measurement; obstacle detection logic | |
-| 21 | Feb 1–5 | 5 | Wall Following | | Maintain fixed distance from a wall using ultrasonic sensors; proportional correction | |
-| 22 | Feb 8–12 | 5 | Line Following | | 5-sensor IR array; per-sensor threshold calibration; binary line following | |
-| 23 | Feb 15–19 | 4 | Line Following | 🔴 Presidents Day Feb 15 | Weighted-sensor error; PID control; tune + course practical | D5.2 — Line Following Practical |
+| 20 | Jan 25–29 | 5 | 4 — Ultrasonic | S2 begins Jan 25 | L4.8 HC-SR04 I2C via TCA9548A mux — distance reading from 3 sensors; L4.9 Obstacle Avoidance — stop/turn logic; A4.8 Obstacle Detection (scaffolded) | |
+| 21 | Feb 1–5 | 5 | 4 — Ultrasonic | | L4.9 Wall Following — proportional correction to maintain fixed distance from wall; A4.9 Wall Following Challenge (scaffolded) | **D4.4 — Ultrasonic: Obstacle & Wall Following** |
+| 22 | Feb 8–12 | 5 | 4 — Line Following | | L4.10 OSOYOO 5-sensor IR array — wire, calibrate thresholds, binary line following; A4.10 Binary Line Following | |
+| 23 | Feb 15–19 | 4 | 4 — Line Following | 🔴 Presidents Day Feb 15 | L4.11 Weighted-sensor error; proportional control first, then full PID tuning; A4.11 PID Challenge (scaffolded) | **D5.2 — Line Following Practical** |
 | 24 | Feb 22–26 | 4 | 5 — AI & ML | 🔴 Feb 26 mid-winter break | L5.1 What Is AI; L5.2 Ethics in AI; L5.3 Teachable Machine | **Q6: AI Quiz** |
 | 25 | Mar 1–5 | 5 | 7 — Electrical Systems | | L7.1 Intro to Electricity (charge, voltage, current); L7.2 Ohm's Law + resistance; L7.3 Series vs. parallel circuits | |
 | 26 | Mar 8–12 | 5 | 7 — Electrical Systems | ⚡ Mar 10 (20-min period) | L7.4 Using a Multimeter; L7.5 Breadboarding basics; L7.6 LED Circuits; L7.7 Circuit Troubleshooting | **Q7: Electrical Systems Quiz** |
@@ -99,6 +99,8 @@
 | D3.1 | Tool Safety Certifications | 10 |
 | D4.1 | Programming Basics: Lessons 4.1–4.3 | 13 |
 | D4.2 | Programming Basics: Lessons 4.4–4.6 | 15 |
+| D4.3 | IMU Navigation | 18 |
+| D4.4 | Ultrasonic: Obstacle Detection & Wall Following | 21 |
 | D5.2 | Line Following Practical | 23 |
 | D5.3 | Servo Build Project | 33 |
 

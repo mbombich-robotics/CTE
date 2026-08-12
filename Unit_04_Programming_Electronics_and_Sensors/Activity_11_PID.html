@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Activity 4.11: PID Line Following — L.E.O. Robotics</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: #0a0e27;
+            color: #e0e6f0;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: sticky; top: 0; height: 100vh;
+            background: #0d1117;
+            border-right: 1px solid rgba(0,212,255,0.15);
+            overflow-y: auto; padding: 24px 0;
+            display: flex; flex-direction: column; gap: 0;
+        }
+        .sidebar-title {
+            font-family: 'Orbitron', sans-serif; font-size: 0.7rem;
+            font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+            color: #6272a4; padding: 0 20px 16px; border-bottom: 1px solid rgba(0,212,255,0.1);
+            margin-bottom: 8px;
+        }
+        .nav-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 20px; text-decoration: none;
+            color: #6272a4; font-size: 0.88rem; font-weight: 500;
+            transition: color 0.15s, background 0.15s;
+            border-left: 3px solid transparent;
+        }
+        .nav-item:hover { color: #b8c5d6; background: rgba(0,212,255,0.04); }
+        .nav-item.active { color: #00d4ff; border-left-color: #00d4ff; background: rgba(0,212,255,0.07); }
+        .nav-num {
+            flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+            background: rgba(0,212,255,0.12); border: 1px solid rgba(0,212,255,0.3);
+            color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.72rem;
+            font-weight: 700; display: flex; align-items: center; justify-content: center;
+        }
+        .nav-item.active .nav-num { background: #00d4ff; color: #0a0e27; }
+        .nav-divider { height: 1px; background: rgba(0,212,255,0.08); margin: 8px 20px; }
+        .sidebar-links { margin-top: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; }
+        .sidebar-links a {
+            font-size: 0.8rem; color: #6272a4; text-decoration: none;
+            padding: 6px 10px; border: 1px solid rgba(0,212,255,0.15);
+            border-radius: 6px; text-align: center; transition: color 0.15s, border-color 0.15s;
+        }
+        .sidebar-links a:hover { color: #00d4ff; border-color: rgba(0,212,255,0.4); }
+
+        main { padding: 40px 48px 80px; max-width: 860px; }
+
+        .activity-header { margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid rgba(0,212,255,0.15); }
+        .activity-header h1 {
+            font-family: 'Orbitron', sans-serif; font-size: 1.6rem; font-weight: 700;
+            color: #00d4ff; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .header-meta { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px; }
+        .meta-tag {
+            font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+            padding: 3px 10px; border-radius: 4px;
+        }
+        .meta-time { background: rgba(0,212,255,0.12); color: #00d4ff; border: 1px solid rgba(0,212,255,0.3); }
+        .meta-level { background: rgba(80,250,123,0.12); color: #50fa7b; border: 1px solid rgba(80,250,123,0.3); }
+
+        section { margin-bottom: 56px; scroll-margin-top: 24px; }
+
+        .section-header {
+            display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
+            padding-bottom: 12px; border-bottom: 2px solid rgba(0,212,255,0.2);
+        }
+        .section-num {
+            flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #0a0e27; font-family: 'Orbitron', sans-serif; font-weight: 900;
+            font-size: 1rem; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 16px rgba(0,212,255,0.4);
+        }
+        .section-title {
+            font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 700;
+            color: #00d4ff; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .section-time { font-size: 0.8rem; color: #6272a4; margin-left: auto; font-family: 'Space Mono', monospace; }
+
+        p { color: #b8c5d6; margin-bottom: 12px; }
+
+        .steps { display: flex; flex-direction: column; gap: 16px; margin: 16px 0; }
+        .step {
+            display: flex; gap: 16px; align-items: flex-start;
+            background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.15);
+            border-radius: 10px; padding: 16px 18px;
+        }
+        .step-n {
+            flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
+            background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.4);
+            color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.82rem;
+            font-weight: 700; display: flex; align-items: center; justify-content: center;
+        }
+        .step-body { flex: 1; }
+        .step-body strong { display: block; color: #e0e6f0; font-size: 1rem; margin-bottom: 5px; }
+        .step-body p { font-size: 0.95rem; margin-bottom: 0; }
+
+        .code-wrap { position: relative; margin: 14px 0; }
+        .code-label {
+            position: absolute; top: -10px; left: 14px; z-index: 1;
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+            padding: 2px 8px; border-radius: 4px;
+            background: #0a0e27; color: #6272a4; border: 1px solid rgba(0,212,255,0.2);
+        }
+        pre {
+            background: #0d1117; border: 1.5px solid rgba(0,212,255,0.25); border-radius: 10px;
+            padding: 18px 20px; overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; line-height: 1.75;
+            color: #e0e6f0;
+        }
+        .copy-btn {
+            position: absolute; top: 8px; right: 10px;
+            background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.25);
+            color: #6272a4; font-family: 'Space Mono', monospace; font-size: 0.7rem;
+            padding: 3px 8px; border-radius: 4px; cursor: pointer;
+            transition: color 0.15s, background 0.15s;
+        }
+        .copy-btn:hover { color: #00d4ff; background: rgba(0,212,255,0.2); }
+        .copy-btn.copied { color: #50fa7b; border-color: rgba(80,250,123,0.4); }
+
+        .kw  { color: #ff79c6; }
+        .cls { color: #ffb86c; font-weight: 700; }
+        .fn  { color: #8be9fd; }
+        .str { color: #f1fa8c; }
+        .num { color: #bd93f9; }
+        .cm  { color: #6272a4; font-style: italic; }
+        .op  { color: #b8c5d6; }
+
+        .callout {
+            border-radius: 10px; padding: 16px 18px; margin: 16px 0;
+            display: flex; gap: 14px; align-items: flex-start;
+        }
+        .callout-icon { font-size: 1.3rem; flex-shrink: 0; line-height: 1.4; }
+        .callout-body p { margin-bottom: 0; font-size: 0.95rem; }
+        .callout-body strong { display: block; margin-bottom: 4px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .callout-warn {
+            background: rgba(255,149,0,0.08); border: 1px solid rgba(255,149,0,0.35);
+        }
+        .callout-warn strong { color: #ff9500; }
+        .callout-info {
+            background: rgba(0,212,255,0.07); border: 1px solid rgba(0,212,255,0.25);
+        }
+        .callout-info strong { color: #00d4ff; }
+
+        .checkpoint {
+            background: linear-gradient(135deg, rgba(80,250,123,0.1), rgba(80,250,123,0.04));
+            border: 2px solid #50fa7b; border-radius: 10px; padding: 16px 20px;
+            margin: 24px 0; display: flex; gap: 14px; align-items: center;
+        }
+        .checkpoint-icon { font-size: 1.5rem; flex-shrink: 0; }
+        .checkpoint-body strong { color: #50fa7b; display: block; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 3px; }
+        .checkpoint-body p { color: #b8c5d6; font-size: 0.95rem; margin: 0; }
+
+        .challenge-set { display: flex; flex-direction: column; gap: 14px; margin: 16px 0; }
+        .challenge {
+            background: rgba(80,250,123,0.05); border: 1.5px solid rgba(80,250,123,0.3);
+            border-radius: 10px; padding: 16px 18px;
+        }
+        .challenge-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+        .challenge-num {
+            font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700;
+            color: #50fa7b; background: rgba(80,250,123,0.12);
+            padding: 2px 7px; border-radius: 4px;
+        }
+        .challenge-title { font-weight: 700; color: #e0e6f0; font-size: 1rem; }
+        .challenge p { font-size: 0.95rem; margin-bottom: 6px; }
+        .challenge p:last-child { margin-bottom: 0; }
+
+        /* Orange extension challenge box */
+        .challenge-ext {
+            background: rgba(255,149,0,0.07); border: 1.5px solid rgba(255,149,0,0.4);
+            border-radius: 10px; padding: 16px 18px; margin: 16px 0;
+        }
+        .challenge-ext .challenge-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+        .challenge-ext .challenge-num {
+            font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700;
+            color: #ff9500; background: rgba(255,149,0,0.15); padding: 2px 7px; border-radius: 4px;
+        }
+        .challenge-ext .challenge-title { font-weight: 700; color: #ff9500; font-size: 1rem; }
+        .challenge-ext p { font-size: 0.95rem; margin-bottom: 6px; color: #b8c5d6; }
+        .challenge-ext p:last-child { margin-bottom: 0; }
+
+        .question-set { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
+        .question {
+            background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.2);
+            border-radius: 10px; padding: 16px 18px;
+        }
+        .question-num {
+            font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700;
+            color: #00d4ff; margin-bottom: 6px; display: block;
+        }
+        .question p { font-size: 0.95rem; margin-bottom: 0; }
+        .q-warn {
+            background: rgba(255,149,0,0.06); border-color: rgba(255,149,0,0.3);
+        }
+        .q-warn .question-num { color: #ff9500; }
+
+        /* Tuning / reference table */
+        .tune-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; margin: 14px 0; }
+        .tune-table th {
+            background: rgba(0,212,255,0.12); color: #00d4ff;
+            padding: 8px 12px; border: 1.5px solid rgba(0,212,255,0.3);
+            font-family: 'Space Mono', monospace; font-size: 0.78rem; text-align: left;
+        }
+        .tune-table td { padding: 8px 12px; border: 1px solid rgba(0,212,255,0.12); color: #b8c5d6; }
+        .tune-table tr:nth-child(even) td { background: rgba(0,212,255,0.03); }
+
+        code {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.88em;
+            color: #00d4ff; background: rgba(0,212,255,0.1);
+            padding: 1px 5px; border-radius: 4px; white-space: nowrap;
+            font-variant-ligatures: none;
+        }
+
+        ul.supply-list {
+            color: #b8c5d6; margin: 8px 0 16px 20px; line-height: 2;
+        }
+
+        @media (max-width: 720px) {
+            .layout { grid-template-columns: 1fr; }
+            .sidebar { position: static; height: auto; flex-direction: row; flex-wrap: wrap; padding: 12px; }
+            .sidebar-title { display: none; }
+            .nav-item { padding: 6px 12px; border-left: none; border-bottom: 2px solid transparent; }
+            .nav-item.active { border-bottom-color: #00d4ff; border-left-color: transparent; }
+            .sidebar-links { display: none; }
+            main { padding: 24px 20px 60px; }
+        }
+        .back-link {
+            position: fixed;
+            top: 18px;
+            right: 24px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #67e3ff;
+            text-decoration: none;
+            background: rgba(0,212,255,0.15);
+            border: 1px solid rgba(0,212,255,0.35);
+            padding: 5px 12px;
+            border-radius: 20px;
+            z-index: 100;
+            transition: background 0.2s;
+        }
+        .back-link:hover { background: rgba(0,212,255,0.3); }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← Unit 4</a>
+<div class="layout">
+
+<!-- ── SIDEBAR ── -->
+<nav class="sidebar">
+    <div class="sidebar-title">Activity 4.11</div>
+    <a href="#get-ready" class="nav-item active"><span class="nav-num">1</span> Get Ready</a>
+    <a href="#part1"     class="nav-item"><span class="nav-num">2</span> Part 1: Error</a>
+    <a href="#part2"     class="nav-item"><span class="nav-num">3</span> Part 2: P Control</a>
+    <a href="#part3"     class="nav-item"><span class="nav-num">4</span> Part 3: PD Control</a>
+    <div class="nav-divider"></div>
+    <a href="#part4"     class="nav-item"><span class="nav-num">5</span> Part 4: Challenge</a>
+    <div class="sidebar-links">
+        <a href="Lesson_11_PID.html">← Lesson 4.11</a>
+        <a href="../resources/pico2w-reference.html" target="_blank">Pico 2W Ref ↗</a>
+    </div>
+</nav>
+
+<!-- ── MAIN ── -->
+<main>
+    <div class="activity-header">
+        <h1>Activity 4.11: PID Line Following</h1>
+        <p style="color:#6272a4; margin-bottom:0;">Work through each part in order. Record your Kp and Kd values — you'll carry them from part to part.</p>
+        <div class="header-meta">
+            <span class="meta-tag meta-time">~50 minutes</span>
+            <a href="Lesson_11_PID.html" class="meta-tag meta-level" style="text-decoration:none;">← Lesson 4.11</a>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════ SECTION 1: GET READY -->
+    <section id="get-ready">
+        <div class="section-header">
+            <div class="section-num">1</div>
+            <div class="section-title">Get Ready</div>
+        </div>
+
+        <p><strong style="color:#e0e6f0;">What you'll need:</strong></p>
+        <ul class="supply-list">
+            <li>L.E.O. robot with OSOYOO 5-sensor IR array wired to GPIO pins</li>
+            <li>Line-following course: black electrical tape on white poster board (or similar)</li>
+            <li><code>motor.py</code> already installed on Pico</li>
+        </ul>
+
+        <div class="callout callout-info">
+            <div class="callout-icon">🔌</div>
+            <div class="callout-body">
+                <strong>Wiring Reminder</strong>
+<pre style="background:transparent; border:none; padding:4px 0; margin:8px 0; font-size:0.88rem; line-height:1.8;">OSOYOO Sensor → Pico GPIO
+S0 (leftmost)  → GP6
+S1             → GP7
+S2 (center)    → GP8
+S3             → GP9
+S4 (rightmost) → GP10</pre>
+                <p style="margin-top:4px;">(Match the wiring from Activity 4.10)</p>
+            </div>
+        </div>
+
+        <p>Add this starter code to the top of your file. Both functions are used throughout all four parts — define them once and keep them.</p>
+
+        <div class="code-wrap">
+            <div class="code-label">starter code — add to top of file</div>
+            <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="kw">from</span> machine <span class="kw">import</span> <span class="cls">Pin</span>
+<span class="kw">import</span> time
+<span class="kw">import</span> motor
+
+<span class="cm"># IR sensor pins (left to right: S0–S4)</span>
+ir_pins <span class="op">=</span> [<span class="cls">Pin</span>(p, <span class="cls">Pin</span>.IN) <span class="kw">for</span> p <span class="kw">in</span> [<span class="num">6</span>, <span class="num">7</span>, <span class="num">8</span>, <span class="num">9</span>, <span class="num">10</span>]]
+
+<span class="kw">def</span> <span class="fn">read_sensors</span>():
+    <span class="str">"""Read all 5 IR sensors. Returns list of ints: 0=line, 1=no line."""</span>
+    <span class="kw">return</span> [p.<span class="fn">value</span>() <span class="kw">for</span> p <span class="kw">in</span> ir_pins]
+
+<span class="kw">def</span> <span class="fn">compute_error</span>(sensors):
+    <span class="str">"""Weighted position error. Returns float or None if no sensors see line."""</span>
+    weights <span class="op">=</span> [<span class="op">-</span><span class="num">2</span>, <span class="op">-</span><span class="num">1</span>, <span class="num">0</span>, <span class="num">1</span>, <span class="num">2</span>]
+    total_weight <span class="op">=</span> <span class="num">0</span>
+    count <span class="op">=</span> <span class="num">0</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>):
+        detected <span class="op">=</span> <span class="num">1</span> <span class="op">-</span> sensors[i]   <span class="cm"># invert: 0→line</span>
+        total_weight <span class="op">+=</span> weights[i] <span class="op">*</span> detected
+        count <span class="op">+=</span> detected
+    <span class="kw">if</span> count <span class="op">==</span> <span class="num">0</span>:
+        <span class="kw">return</span> <span class="kw">None</span>
+    <span class="kw">return</span> total_weight <span class="op">/</span> count</pre>
+        </div>
+
+        <div class="checkpoint">
+            <div class="checkpoint-icon">✅</div>
+            <div class="checkpoint-body">
+                <strong>Checkpoint</strong>
+                <p>Print a test — <code>print(read_sensors())</code> — place the robot over the line and verify at least one sensor reads <code>0</code>.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════ SECTION 2: PART 1 — COMPUTE THE ERROR -->
+    <section id="part1">
+        <div class="section-header">
+            <div class="section-num">2</div>
+            <div class="section-title">Part 1: Compute the Error</div>
+            <div class="section-time">~10 min</div>
+        </div>
+
+        <p><strong style="color:#e0e6f0;">Goal:</strong> Verify the weighted error formula before adding any motor control. You'll move the robot by hand and check that the numbers make sense.</p>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-n">1</div>
+                <div class="step-body">
+                    <strong>Place the robot over the line in different positions and print the error</strong>
+                    <p>Run this loop and slide the robot left and right across the tape while watching the output.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="code-wrap">
+            <div class="code-label">part1_error.py</div>
+            <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="kw">while</span> <span class="kw">True</span>:
+    s <span class="op">=</span> <span class="fn">read_sensors</span>()
+    e <span class="op">=</span> <span class="fn">compute_error</span>(s)
+    <span class="fn">print</span>(<span class="str">"sensors:"</span>, s, <span class="str">"  error:"</span>, e)
+    time.<span class="fn">sleep</span>(<span class="num">0.2</span>)</pre>
+        </div>
+
+        <div class="callout callout-warn">
+            <div class="callout-icon">⚠</div>
+            <div class="callout-body">
+                <strong>Verify the error direction</strong>
+                <p>When the line is to the <strong>LEFT</strong> of center, error should be <strong>negative</strong>. When the line is to the <strong>RIGHT</strong>, error should be <strong>positive</strong>. If your output is reversed, swap the signs on the weights array.</p>
+            </div>
+        </div>
+
+        <p style="margin-top: 16px;"><strong style="color:#e0e6f0;">Questions</strong> — answer these in your portfolio before moving to Part 2:</p>
+
+        <div class="question-set">
+            <div class="question">
+                <span class="question-num">Q1</span>
+                <p>What error value do you get when the center sensor (S2) is perfectly on the line?</p>
+            </div>
+            <div class="question">
+                <span class="question-num">Q2</span>
+                <p>What error value do you get when only the far-right sensor (S4) sees the line?</p>
+            </div>
+            <div class="question">
+                <span class="question-num">Q3</span>
+                <p>What does <code>None</code> mean in the output? When does it appear?</p>
+            </div>
+            <div class="question">
+                <span class="question-num">Q4</span>
+                <p>Move the robot slowly across the line. Does the error go from negative to zero to positive as expected? Describe what you observed.</p>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            <div class="checkpoint-icon">✅</div>
+            <div class="checkpoint-body">
+                <strong>Checkpoint</strong>
+                <p>All four questions answered, error values make sense, and the direction (negative = line left, positive = line right) is confirmed.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════ SECTION 3: PART 2 — P CONTROL -->
+    <section id="part2">
+        <div class="section-header">
+            <div class="section-num">3</div>
+            <div class="section-title">Part 2: P Control</div>
+            <div class="section-time">~15 min</div>
+        </div>
+
+        <p><strong style="color:#e0e6f0;">Goal:</strong> Implement proportional control to follow the line. The correction is directly proportional to the error — bigger error, bigger correction.</p>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-n">1</div>
+                <div class="step-body">
+                    <strong>Add the P control loop below your starter functions</strong>
+                    <p>Start with Kp = 25 and base_speed = 40. Place the robot on the line, then run.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="code-wrap">
+            <div class="code-label">part2_p_control.py</div>
+            <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre>Kp <span class="op">=</span> <span class="num">25</span>          <span class="cm"># starting value — tune this</span>
+base_speed <span class="op">=</span> <span class="num">40</span>  <span class="cm"># % duty cycle</span>
+
+prev_error <span class="op">=</span> <span class="num">0</span>
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    s <span class="op">=</span> <span class="fn">read_sensors</span>()
+    error <span class="op">=</span> <span class="fn">compute_error</span>(s)
+
+    <span class="kw">if</span> error <span class="kw">is</span> <span class="kw">None</span>:
+        motor.<span class="fn">drive</span>(<span class="num">0</span>, <span class="num">0</span>)   <span class="cm"># lost the line — stop</span>
+        <span class="kw">continue</span>
+
+    correction <span class="op">=</span> Kp <span class="op">*</span> error
+    left  <span class="op">=</span> base_speed <span class="op">+</span> correction
+    right <span class="op">=</span> base_speed <span class="op">-</span> correction
+    motor.<span class="fn">drive</span>(left, right)
+    time.<span class="fn">sleep</span>(<span class="num">0.01</span>)</pre>
+        </div>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-n">2</div>
+                <div class="step-body">
+                    <strong>Tune Kp using this table</strong>
+                    <p>Change only the <code>Kp</code> value at the top. Save and run after each adjustment.</p>
+                </div>
+            </div>
+        </div>
+
+        <table class="tune-table">
+            <thead>
+                <tr><th>Observation</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Robot drifts off line slowly</td><td>Increase Kp by 5</td></tr>
+                <tr><td>Robot oscillates wildly left-right</td><td>Decrease Kp by 5</td></tr>
+                <tr><td>Robot tracks smoothly</td><td>Done with P control!</td></tr>
+            </tbody>
+        </table>
+
+        <p style="margin-top: 16px;"><strong style="color:#e0e6f0;">Questions</strong> — record in your portfolio:</p>
+
+        <div class="question-set">
+            <div class="question">
+                <span class="question-num">Q1</span>
+                <p>What Kp value worked best? Record it — you'll use it in Part 3.</p>
+            </div>
+            <div class="question">
+                <span class="question-num">Q2</span>
+                <p>What happened when Kp was too high? Describe the robot's behavior in detail.</p>
+            </div>
+            <div class="question">
+                <span class="question-num">Q3</span>
+                <p>What happened when Kp was too low?</p>
+            </div>
+            <div class="question">
+                <span class="question-num">Q4</span>
+                <p>Does P control alone handle sharp curves well? Explain what you observed.</p>
+            </div>
+        </div>
+
+        <div class="challenge-ext">
+            <div class="challenge-header">
+                <span class="challenge-num">Extension</span>
+                <span class="challenge-title">Speed Challenge</span>
+            </div>
+            <p>Try increasing <code>base_speed</code> to 50 or 60. Does your Kp value still work, or do you need to re-tune? Record your observations.</p>
+        </div>
+
+        <div class="checkpoint">
+            <div class="checkpoint-icon">✅</div>
+            <div class="checkpoint-body">
+                <strong>Checkpoint</strong>
+                <p>Robot follows a straight line and gentle curves with P control. Kp value recorded in your portfolio.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════ SECTION 4: PART 3 — PD CONTROL -->
+    <section id="part3">
+        <div class="section-header">
+            <div class="section-num">4</div>
+            <div class="section-title">Part 3: PD Control</div>
+            <div class="section-time">~15 min</div>
+        </div>
+
+        <p><strong style="color:#e0e6f0;">Goal:</strong> Add the derivative term to reduce oscillation. The D term reacts to how fast the error is changing — it acts like a brake when the robot is swinging back toward center too aggressively.</p>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-n">1</div>
+                <div class="step-body">
+                    <strong>Update your control loop with the derivative term</strong>
+                    <p>Replace your Part 2 loop with this version. Start with your Kp from Part 2 and Kd = 0.4 × Kp (so if Kp = 25, start Kd = 10).</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="code-wrap">
+            <div class="code-label">part3_pd_control.py</div>
+            <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre>Kp <span class="op">=</span> <span class="num">25</span>          <span class="cm"># your tuned value from Part 2</span>
+Kd <span class="op">=</span> <span class="num">10</span>          <span class="cm"># start at ~0.4 × Kp</span>
+base_speed <span class="op">=</span> <span class="num">40</span>
+prev_error <span class="op">=</span> <span class="num">0</span>
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    s <span class="op">=</span> <span class="fn">read_sensors</span>()
+    error <span class="op">=</span> <span class="fn">compute_error</span>(s)
+
+    <span class="kw">if</span> error <span class="kw">is</span> <span class="kw">None</span>:
+        motor.<span class="fn">drive</span>(<span class="num">0</span>, <span class="num">0</span>)
+        prev_error <span class="op">=</span> <span class="num">0</span>
+        <span class="kw">continue</span>
+
+    correction <span class="op">=</span> Kp <span class="op">*</span> error <span class="op">+</span> Kd <span class="op">*</span> (error <span class="op">-</span> prev_error)
+    prev_error <span class="op">=</span> error
+
+    left  <span class="op">=</span> base_speed <span class="op">+</span> correction
+    right <span class="op">=</span> base_speed <span class="op">-</span> correction
+    motor.<span class="fn">drive</span>(left, right)
+    time.<span class="fn">sleep</span>(<span class="num">0.01</span>)</pre>
+        </div>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-n">2</div>
+                <div class="step-body">
+                    <strong>Tune Kd using this table</strong>
+                    <p>Keep Kp at your Part 2 value. Only adjust Kd.</p>
+                </div>
+            </div>
+        </div>
+
+        <table class="tune-table">
+            <thead>
+                <tr><th>Observation</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Oscillation still present</td><td>Increase Kd by 5</td></tr>
+                <tr><td>Robot responds sluggishly to curves</td><td>Decrease Kd by 5</td></tr>
+                <tr><td>Smooth, quick tracking</td><td>Done!</td></tr>
+            </tbody>
+        </table>
+
+        <p style="margin-top: 16px;"><strong style="color:#e0e6f0;">Questions</strong> — record in your portfolio:</p>
+
+        <div class="question-set">
+            <div class="question">
+                <span class="question-num">Q1</span>
+                <p>What Kd value worked best? Record both Kp and Kd — you'll use them in Part 4.</p>
+            </div>
+            <div class="question">
+                <span class="question-num">Q2</span>
+                <p>How did the robot's behavior change compared to P-only control?</p>
+            </div>
+            <div class="question">
+                <span class="question-num">Q3</span>
+                <p>Why does Kd reduce oscillation? Explain in your own words what <code>(error - prev_error)</code> represents.</p>
+            </div>
+            <div class="question">
+                <span class="question-num">Q4</span>
+                <p>What happens if you set Kd very high (e.g., Kd = 200)? Try it and describe the result.</p>
+            </div>
+        </div>
+
+        <div class="callout callout-info">
+            <div class="callout-icon">💡</div>
+            <div class="callout-body">
+                <strong>PD is usually enough</strong>
+                <p>PD control handles most line-following courses well. You may not need the I term unless the robot has a persistent drift to one side even on a perfectly straight line — that's the sign of a systematic error the P term alone can't correct.</p>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            <div class="checkpoint-icon">✅</div>
+            <div class="checkpoint-body">
+                <strong>Checkpoint</strong>
+                <p>Robot follows the line with reduced oscillation compared to Part 2. Both Kp and Kd values recorded in your portfolio.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════ SECTION 5: PART 4 — CHALLENGE -->
+    <section id="part4">
+        <div class="section-header">
+            <div class="section-num">5</div>
+            <div class="section-title">Part 4: Challenge</div>
+            <div class="section-time">finish early?</div>
+        </div>
+
+        <p>Pick the level that matches where you are. Each level builds on the previous one — you do not need to complete all four.</p>
+
+        <div class="challenge-set">
+
+            <div class="challenge">
+                <div class="challenge-header">
+                    <span class="challenge-num">🔵 Level 1</span>
+                    <span class="challenge-title">Sharp Corners</span>
+                </div>
+                <p>Using your current Kp and Kd at <code>base_speed = 40</code>, find the sharpest corner your robot can handle without losing the line. What happens if you make the corner sharper than that? Describe and explain.</p>
+            </div>
+
+            <div class="challenge">
+                <div class="challenge-header">
+                    <span class="challenge-num">🟡 Level 2</span>
+                    <span class="challenge-title">Speed Challenge</span>
+                </div>
+                <p>Increase <code>base_speed</code> to 55 and re-tune both Kp and Kd. How do your new values compare to the slower-speed values? Can you explain why the gains need to change when speed changes?</p>
+            </div>
+
+            <div class="challenge">
+                <div class="challenge-header">
+                    <span class="challenge-num">🔴 Level 3</span>
+                    <span class="challenge-title">Add the I Term</span>
+                </div>
+                <p>Implement the full PID controller by adding the integral term. Add the lines below inside your loop, just before computing <code>correction</code>. Use very small Ki — start at 0.05.</p>
+                <div class="code-wrap" style="margin-top:12px;">
+                    <div class="code-label">add inside the loop</div>
+                    <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre>Ki <span class="op">=</span> <span class="num">0.05</span>        <span class="cm"># keep very small!</span>
+integral <span class="op">=</span> <span class="num">0</span>
+<span class="cls">MAX_INTEGRAL</span> <span class="op">=</span> <span class="num">30</span>
+
+<span class="cm"># inside the loop, before computing correction:</span>
+integral <span class="op">+=</span> error
+integral <span class="op">=</span> <span class="fn">max</span>(<span class="op">-</span><span class="cls">MAX_INTEGRAL</span>, <span class="fn">min</span>(<span class="cls">MAX_INTEGRAL</span>, integral))
+correction <span class="op">=</span> Kp <span class="op">*</span> error <span class="op">+</span> Kd <span class="op">*</span> (error <span class="op">-</span> prev_error) <span class="op">+</span> Ki <span class="op">*</span> integral</pre>
+                </div>
+                <p style="margin-top: 10px;">Does the I term help on your course? Explain when the I term would and would not be useful.</p>
+            </div>
+
+            <div class="challenge">
+                <div class="challenge-header">
+                    <span class="challenge-num">🔴 Level 4</span>
+                    <span class="challenge-title">Lost-Line Recovery</span>
+                </div>
+                <p>Instead of stopping when <code>compute_error()</code> returns <code>None</code>, implement a recovery behavior:</p>
+                <ul style="color:#b8c5d6; margin: 8px 0 8px 20px; line-height:2; font-size:0.95rem;">
+                    <li>If the robot was last turning left (negative error), spin left to search for the line.</li>
+                    <li>If it was last turning right (positive error), spin right.</li>
+                    <li>After 0.5 seconds of searching, stop.</li>
+                </ul>
+                <p>Add this recovery logic to your code and test it by lifting the robot off the line, then setting it back down.</p>
+            </div>
+
+        </div>
+
+        <p style="margin-top: 24px;"><strong style="color:#e0e6f0;">Final Questions</strong> — all levels answer these in their portfolio:</p>
+
+        <div class="question-set">
+            <div class="question">
+                <span class="question-num">Final Q1</span>
+                <p>What are your final Kp and Kd values? What base_speed did you use?</p>
+            </div>
+            <div class="question">
+                <span class="question-num">Final Q2</span>
+                <p>What was the hardest part of tuning PID? What would you do differently if you started over?</p>
+            </div>
+            <div class="question">
+                <span class="question-num">Final Q3</span>
+                <p>How does PID control compare to the binary on/off line following from Activity 4.10? What are the trade-offs of each approach?</p>
+            </div>
+            <div class="question">
+                <span class="question-num">Final Q4</span>
+                <p>What real-world systems use PID controllers? List at least three examples (think about cruise control, thermostats, drones, manufacturing, etc.) and explain what the error signal represents in each.</p>
+            </div>
+        </div>
+
+    </section>
+
+</main>
+</div><!-- /layout -->
+
+<script>
+    function copyCode(btn) {
+        const pre = btn.closest('.code-wrap').querySelector('pre');
+        const text = pre.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            btn.textContent = 'copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1800);
+        });
+    }
+
+    const sections = document.querySelectorAll('section[id]');
+    const navItems = document.querySelectorAll('.nav-item[href^="#"]');
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                navItems.forEach(n => n.classList.remove('active'));
+                const active = document.querySelector(`.nav-item[href="#${e.target.id}"]`);
+                if (active) active.classList.add('active');
+            }
+        });
+    }, { threshold: 0.3 });
+    sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

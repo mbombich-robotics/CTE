@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.41',
+    VERSION: 'v2.9.42',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -22,7 +22,7 @@ const CONFIG = {
         hsaer: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-            currentAppVersion: 'v2.14.13',
+            currentAppVersion: 'v2.14.14',
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
@@ -36,7 +36,7 @@ const CONFIG = {
         '8aer': {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
-            currentAppVersion: 'v2.14.13',
+            currentAppVersion: 'v2.14.14',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
@@ -50,7 +50,7 @@ const CONFIG = {
         dbl: {
             name: 'Design & Build Lab',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
-            currentAppVersion: 'v2.14.13',
+            currentAppVersion: 'v2.14.14',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
@@ -89,6 +89,8 @@ const TRACK_DELIVERABLES = {
         // Unit 4 / 5: Programming & ML
         { id: 41, label: 'D4.1 — Programming Basics: Lessons 4.1–4.3', week: 13 },
         { id: 42, label: 'D4.2 — Programming Basics: Lessons 4.4–4.6', week: 15 },
+        { id: 43, label: 'D4.3 — IMU Navigation',                  week: 18 },
+        { id: 44, label: 'D4.4 — Ultrasonic: Obstacle & Wall Following', week: 21 },
         { id: 52, label: 'D52 — Line Following Practical',         week: 23 },
         { id: 53, label: 'D53 — Servo Mechanism Project',          week: 32 },
         { id: 54, label: 'D54 — Teachable Machine Project',        week: null },

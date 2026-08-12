@@ -554,7 +554,7 @@
                 <div class="lesson-section">
                     <div class="section-header">
                         <h2 class="section-title">Pico 2W &amp; MicroPython</h2>
-                        <span class="section-badge">Lessons 4.1–4.6</span>
+                        <span class="section-badge">Lessons &amp; Activities 4.1–4.6</span>
                     </div>
                     <div class="lessons-grid">
 
@@ -641,6 +641,155 @@
                             <li>PWM speed control</li>
                             <li>motor.py helper module</li>
                             <li>Activity: Drive a square</li>
+                        </ul>
+                        <div class="lesson-meta">
+                            <div class="lesson-duration"><span>⏱️</span><span>50 min</span></div>
+                            <div class="lesson-status status-ready">Ready</div>
+                        </div>
+                    </a>
+
+                    </div>
+                </div>
+
+                <!-- ─── Robot Motion & IMU ─── -->
+                <div class="lesson-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Robot Motion &amp; IMU</h2>
+                        <span class="section-badge">Lessons 4.7 · Weeks 17–18</span>
+                    </div>
+                    <div class="lessons-grid">
+
+                    <a href="Lesson_07_IMU.html" class="lesson-card">
+                        <div class="lesson-number">Lesson 4.7</div>
+                        <h3 class="lesson-title">IMU Heading Hold</h3>
+                        <ul class="lesson-topics">
+                            <li>GY-521 MPU6050 — 6-axis IMU over I2C</li>
+                            <li>Wake sensor, read raw gyro Z registers</li>
+                            <li>Integrate gyro Z → yaw (degrees)</li>
+                            <li>drive_straight_imu() &amp; tank_turn(deg)</li>
+                        </ul>
+                        <div class="lesson-meta">
+                            <div class="lesson-duration"><span>⏱️</span><span>50 min</span></div>
+                            <div class="lesson-status status-ready">Ready</div>
+                        </div>
+                    </a>
+
+                    <a href="Activity_07_IMU.html" class="lesson-card">
+                        <div class="lesson-number">Activity 4.7</div>
+                        <h3 class="lesson-title">IMU Navigation Challenge</h3>
+                        <ul class="lesson-topics">
+                            <li>Wire MPU6050, wake sensor, print gyro Z</li>
+                            <li>Integrate yaw — drive straight with heading hold</li>
+                            <li>tank_turn(deg) — drive a square precisely</li>
+                            <li>Scaffolded: basics → heading → turns → full challenge</li>
+                        </ul>
+                        <div class="lesson-meta">
+                            <div class="lesson-duration"><span>⏱️</span><span>50 min</span></div>
+                            <div class="lesson-status status-ready">Ready</div>
+                        </div>
+                    </a>
+
+                    </div>
+                </div>
+
+                <!-- ─── Ultrasonic Sensors (coming soon — files pending HC-SR04 I2C protocol) ─── -->
+                <div class="lesson-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Ultrasonic Sensors</h2>
+                        <span class="section-badge">Lessons 4.8–4.9 · Weeks 20–21</span>
+                    </div>
+                    <div class="lessons-grid">
+
+                    <a href="#" class="lesson-card" style="opacity:0.45; cursor:not-allowed; pointer-events:none;">
+                        <div class="lesson-number">Lesson 4.8</div>
+                        <h3 class="lesson-title">HC-SR04 I2C — Distance Sensing</h3>
+                        <ul class="lesson-topics">
+                            <li>HC-SR04 I2C module via TCA9548A mux</li>
+                            <li>Read distance from 3 sensors</li>
+                        </ul>
+                        <div class="lesson-meta">
+                            <div class="lesson-duration"><span>⏱️</span><span>50 min</span></div>
+                            <span class="coming-soon-badge">Coming Soon</span>
+                        </div>
+                    </a>
+
+                    <a href="#" class="lesson-card" style="opacity:0.45; cursor:not-allowed; pointer-events:none;">
+                        <div class="lesson-number">Lesson 4.9</div>
+                        <h3 class="lesson-title">Obstacle Detection &amp; Wall Following</h3>
+                        <ul class="lesson-topics">
+                            <li>Stop/turn logic for obstacle avoidance</li>
+                            <li>Proportional wall-following correction</li>
+                        </ul>
+                        <div class="lesson-meta">
+                            <div class="lesson-duration"><span>⏱️</span><span>50 min</span></div>
+                            <span class="coming-soon-badge">Coming Soon</span>
+                        </div>
+                    </a>
+
+                    </div>
+                </div>
+
+                <!-- ─── Line Following ─── -->
+                <div class="lesson-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Line Following</h2>
+                        <span class="section-badge">Lessons 4.10–4.11 · Weeks 22–23</span>
+                    </div>
+                    <div class="lessons-grid">
+
+                    <a href="Lesson_10_Line_Following.html" class="lesson-card">
+                        <div class="lesson-number">Lesson 4.10</div>
+                        <h3 class="lesson-title">IR Array &amp; Binary Line Following</h3>
+                        <ul class="lesson-topics">
+                            <li>OSOYOO 5-sensor IR array — wire &amp; calibrate</li>
+                            <li>Inverted logic: 0 = line detected</li>
+                            <li>Sensor patterns → steering decisions</li>
+                            <li>Binary if/elif line-following function</li>
+                        </ul>
+                        <div class="lesson-meta">
+                            <div class="lesson-duration"><span>⏱️</span><span>50 min</span></div>
+                            <div class="lesson-status status-ready">Ready</div>
+                        </div>
+                    </a>
+
+                    <a href="Activity_10_Line_Following.html" class="lesson-card">
+                        <div class="lesson-number">Activity 4.10</div>
+                        <h3 class="lesson-title">Binary Line Following</h3>
+                        <ul class="lesson-topics">
+                            <li>Wire &amp; calibrate sensor array</li>
+                            <li>Test sensor readings over line and floor</li>
+                            <li>Implement follow_line_binary()</li>
+                            <li>Challenges: speed, curves, figure-8</li>
+                        </ul>
+                        <div class="lesson-meta">
+                            <div class="lesson-duration"><span>⏱️</span><span>50 min</span></div>
+                            <div class="lesson-status status-ready">Ready</div>
+                        </div>
+                    </a>
+
+                    <a href="Lesson_11_PID.html" class="lesson-card">
+                        <div class="lesson-number">Lesson 4.11</div>
+                        <h3 class="lesson-title">PID Line Following</h3>
+                        <ul class="lesson-topics">
+                            <li>Weighted sensor error: Σ(weight × detected) / count</li>
+                            <li>P control — correction proportional to error</li>
+                            <li>D term — damp oscillation with error rate</li>
+                            <li>I term (advanced) — correct steady-state drift</li>
+                        </ul>
+                        <div class="lesson-meta">
+                            <div class="lesson-duration"><span>⏱️</span><span>50 min</span></div>
+                            <div class="lesson-status status-ready">Ready</div>
+                        </div>
+                    </a>
+
+                    <a href="Activity_11_PID.html" class="lesson-card">
+                        <div class="lesson-number">Activity 4.11</div>
+                        <h3 class="lesson-title">PID Challenge</h3>
+                        <ul class="lesson-topics">
+                            <li>Verify weighted error formula</li>
+                            <li>Tune Kp for P-only control</li>
+                            <li>Add Kd to reduce oscillation</li>
+                            <li>Challenges: speed, sharp corners, lost-line recovery</li>
                         </ul>
                         <div class="lesson-meta">
                             <div class="lesson-duration"><span>⏱️</span><span>50 min</span></div>
