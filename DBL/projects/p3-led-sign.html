@@ -410,6 +410,59 @@
             .deliverable-card { grid-template-columns: 1fr; gap: 16px; }
             .d-left { text-align: left; }
             .requirements-grid { grid-template-columns: 1fr; }
+            .examples-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ── Examples / inspiration gallery ── */
+        .examples-section {
+            margin: 32px 0;
+        }
+
+        .examples-eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #c41e3a;
+            margin-bottom: 8px;
+        }
+
+        .examples-heading {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .examples-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .example-item {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: #0a0a12;
+        }
+
+        .example-item img,
+        .example-item video {
+            width: 100%;
+            display: block;
+            max-height: 380px;
+            object-fit: cover;
+        }
+
+        .example-caption {
+            padding: 10px 14px;
+            font-size: 0.82rem;
+            color: #64748b;
+            font-family: 'JetBrains Mono', monospace;
         }
     </style>
 </head>
@@ -490,6 +543,25 @@
                     <span class="meta-chip">CAD + Design</span>
                     <span class="meta-chip">3 Deliverables</span>
                     <span class="meta-chip">Individual</span>
+                </div>
+            </div>
+
+            <!-- Examples / inspiration gallery -->
+            <div class="examples-section">
+                <div class="examples-eyebrow">// class examples</div>
+                <h2 class="examples-heading">See What's Possible</h2>
+                <div class="examples-grid">
+                    <div class="example-item">
+                        <video controls preload="metadata">
+                            <source src="LED Signs/IMG_2368.MOV" type="video/mp4">
+                            Your browser doesn't support this video.
+                        </video>
+                        <div class="example-caption">Student LED sign — live demo</div>
+                    </div>
+                    <div class="example-item">
+                        <img src="LED Signs/IMG_5694.jpg" alt="Completed LED sign project" loading="lazy">
+                        <div class="example-caption">Finished LED wall art — mounted display</div>
+                    </div>
                 </div>
             </div>
 
