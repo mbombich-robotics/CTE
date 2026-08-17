@@ -95,13 +95,28 @@
         .spec-val   { font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; font-weight: 700; color: #00d084; }
         .spec-label { font-size: 0.85rem; color: #6272a4; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
 
-        /* Video placeholder */
-        .video-box {
-            border: 3px dashed #00d084; border-radius: 16px; padding: 40px 30px;
-            text-align: center; margin: 16px 0;
-            background: rgba(0,208,132,0.03);
+        /* Video section */
+        .video-section {
+            border: 2px solid #00d084; border-radius: 16px;
+            background: rgba(0,208,132,0.05);
+            padding: 48px 40px; text-align: center; margin: 24px 0;
+            box-shadow: 0 0 28px rgba(0,208,132,0.12);
         }
-        .video-icon { font-size: 4rem; line-height: 1; margin-bottom: 16px; }
+        .video-section .vid-icon { font-size: 4rem; line-height: 1; margin-bottom: 16px; }
+        .video-section h2 { font-size: 2rem; margin-bottom: 10px; }
+        .video-section .vid-sub { font-size: 1.05rem; color: #ffd166; font-weight: 600; margin-bottom: 16px; }
+        .video-section p { color: #b8c5d6; max-width: 680px; margin: 0 auto 20px; }
+        .video-section h3 { color: #ffd166; text-align: left; max-width: 600px; margin: 0 auto 10px; }
+        .video-section .watch-list { list-style: none; padding: 0; max-width: 600px; margin: 0 auto; text-align: left; }
+        .video-section .watch-list li {
+            padding: 8px 0 8px 32px; position: relative; color: #b8c5d6; font-size: 1.05rem; line-height: 1.4;
+            border-bottom: 1px solid rgba(0,208,132,0.1);
+        }
+        .video-section .watch-list li:last-child { border-bottom: none; }
+        .video-section .watch-list li::before {
+            content: '▸'; position: absolute; left: 0;
+            color: #ffd166; font-size: 1.3rem; line-height: 1.3;
+        }
 
         /* Submission checklist */
         .checklist { list-style: none; padding: 0; }
@@ -269,25 +284,22 @@
     </div>
 </div>
 
-<!-- ─────────────────────────────────────────── SLIDE 4: Video Placeholder -->
+<!-- ─────────────────────────────────────────── SLIDE 4: Video -->
 <div class="slide">
     <div class="slide-content">
-        <h2>Video Walkthrough</h2>
-
-        <div class="video-box">
-            <div class="video-icon">&#127916;</div>
-            <h3 style="color:#00d084; font-size:1.8rem; margin-bottom:10px;">VIDEO: C2 Drive Wheel Hub Walkthrough</h3>
-            <p style="color:#ffd166; font-weight:600; font-size:1.1rem; margin-bottom:18px;">~10&ndash;12 min &nbsp;&middot;&nbsp; Watch full video before opening Fusion 360</p>
-            <p style="max-width:700px; margin:0 auto;">Mr. B walks through the hex bore, outer rim, and builds 3 spokes using Circular Pattern.
-               Watch it all the way through first, then restart and build alongside him.</p>
-        </div>
-
-        <div class="box">
-            <h3>What to watch for</h3>
-            <ul class="bullet-list">
-                <li>How the Polygon tool sets the hex bore &mdash; <strong style="color:#00d084;">flat-to-flat</strong> vs. point-to-point</li>
-                <li>The <strong style="color:#00d084;">Extrude-Cut</strong> step that opens the spoke voids</li>
-                <li>When to apply <strong style="color:#00d084;">Circular Pattern</strong> vs drawing the second spoke manually</li>
+        <div class="video-section">
+            <div class="vid-icon">🎬</div>
+            <h2>C2 — Drive Wheel Hub</h2>
+            <p class="vid-sub">Watch before opening Fusion 360</p>
+            <p>Mr. B designs the drive wheel hub from a single sketch — hex bore, shoulder geometry, spoke lightening pattern, and four extrusions. The assembly section shows Section Analysis and Edit in Place to lock in the retaining cap depth.</p>
+            <p class="vid-sub">20 min 50 sec</p>
+            <a href="https://www.youtube.com/watch?v=fJOg-h7goc8" target="_blank" style="display:inline-block; margin: 20px auto 24px; padding: 14px 36px; background:#00d084; color:#0a0f1e; font-family:'Orbitron',sans-serif; font-size:1rem; font-weight:700; text-decoration:none; border-radius:8px; letter-spacing:1px;">▶ Watch Video</a>
+            <h3>What to watch for:</h3>
+            <ul class="watch-list">
+                <li>Circumscribed polygon for the hex bore — and the mixed-unit dimension trick</li>
+                <li>Four extrusions from one sketch — why the operation (Cut vs. Join) matters each time</li>
+                <li>Section Analysis and Edit in Place — using the assembly to set the retaining cap depth</li>
+                <li>Fillet vs. chamfer — why chamfer wins on the hex bore entry</li>
             </ul>
         </div>
     </div>

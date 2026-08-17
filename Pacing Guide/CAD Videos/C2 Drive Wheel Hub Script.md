@@ -9,152 +9,170 @@
 [TITLE CARD — 3 sec]
 C2 — Drive Wheel Hub
 Autodesk Fusion · HS Applied Engineering & Robotics
+20:50 · https://www.youtube.com/watch?v=fJOg-h7goc8
 
 [VERBAL — TTS]
-"C2, the drive wheel hub. [pause] This one connects the motor to the wheel — and it's the first component where the design decisions are partly yours. [pause] Let's go."
+"C2. The drive wheel hub. [breath] This one connects the motor to the wheel — and it's the first component where the design decisions are partly yours. [excited] Let's go."
 
 ---
 
 ## BODY
 
-[SCENE 1 — Full robot assembly in Fusion, Animation workspace. Hub and wheel pulled away from motor to reveal hex shaft and retention screw.]
+[SCENE 1 — Full robot assembly in Fusion Three-Sixty, Animation workspace. Hub and wheel pulled away from motor to reveal hex shaft and retention screw.]
 
-"We'll start where the requirements come from. [pause] I've switched to the Animation workspace to pull the wheel and hub off the motor — the same way we did for C1."
+"We'll start where the requirements come from. [breath] I've switched over to the Animation workspace to pull the wheel and hub off the motor — same as we did for C1."
 
-"What you're looking at is the [emphasis] 3/8-inch hex shaft protruding from the motor, and a [emphasis] retention screw threaded into the end of it. The hub has to fit on that hex shaft, grip the squishy wheel on the outside, and be locked down by that screw."
+"What you're looking at is the three-eighths-inch hex shaft protruding from the motor, and a retention screw threaded into the end. The hub has to fit onto that hex shaft, grip the squishy wheel on the outside, and be locked down by that screw."
 
-"Unlike C1, this component has [emphasis] three constraints you can't change: the hex bore size, the wheel bore size, and the shaft depth. Everything else — spoke count, spoke shape, overall style — is yours. [pause] This is the first component where you can copy and improve my design, or start over completely."
+"Unlike C1, this component has [confident] three constraints you can't change: the hex bore size, the wheel bore size, and the shaft depth. Everything else — spoke count, spoke shape, overall style — is yours. [breath] This is the first component where you can copy and improve my design... or start completely from scratch."
+
+"One key detail will be the standoff between the wheel and the robot. [breath] We'll accomplish that space by adding a shoulder to the inside of the hub — we'll determine its exact dimension later."
 
 ---
 
-[SCENE 2 — Fusion 360, NeverRest motor and Squishy wheel files open. Measure tool active (I on keyboard).]
+[SCENE 2 — Fusion Three-Sixty, NeverRest motor and Squishy wheel files open. Measure tool active.]
 
-"I have the motor and wheel CAD files open. These will be made available to you so that you can take your own measurements or verify mine. [pause] Press [emphasis] I to open the Measure tool."
+"I have the motor and wheel CAD files open in Fusion Three-Sixty. These will be made available to you so you can take your own measurements — or just verify mine. [breath] Press I on your keyboard to open the Measure tool."
 
-"Starting with the wheel. The inside diameter is [emphasis] 53.975 millimeters. The depth of that bore — how far the hub has to reach inside — is [emphasis] 25.4 millimeters, exactly one inch. The overall width of the wheel is [emphasis] 38 millimeters — that number matters when we figure out the standoff."
+"Starting with the wheel. The inside diameter is fifty-three point nine seven five millimeters. [breath] I like to have a scratchpad on my desk to jot numbers like this down.[breath] The depth of that bore — how far the hub has to reach inside — is twenty-five point four millimeters... exactly one inch. The overall width of the wheel is thirty-eight millimeters — that number matters when we size the standoff."
 
-"Now the motor. The shaft is a [emphasis] 3/8-inch hex. In the Measure tool, switch the secondary units field to millimeters — now I can see that flat to flat is [emphasis] 0.374 inches, or [emphasis] 9.5 millimeters. The shaft length from the shoulder is [emphasis] one inch — 25.4 millimeters. [pause] The retention screw in the end is a [emphasis] 10-32 — I'm getting that from the manufacturer, not from the model."
+"Now the motor. The shaft is a three-eighths-inch hex. In the Measure tool, switch the secondary units field to millimeters... [breath] ...and flat to flat reads zero point three seven four inches — nine point five millimeters. Shaft length from the shoulder: one inch, twenty-five point four millimeters. [sharp intake of breath] The retention screw in the end is a ten-thirty-two — I'm getting that from the manufacturer, not from the model."
 
 ---
 
 [SCENE 3 — New part design open, saved. Sketch started on XY plane. Construction circle at 53.975mm being drawn.]
 
-"New part design — and the first thing I do is [emphasis] save. The file is called [emphasis] Drive Wheel Hub, saved to my project folder. [long pause] I'm starting a sketch on the XY plane."
+"New part design — and the first thing I do is save it. The file is called Drive Wheel Hub, saved to my project folder... [breath] Starting a sketch on the XY plane."
 
-"My first circle is a reference — the inside diameter of the wheel, [emphasis] 53.975 millimeters, constrained to the origin. Before I do anything else, I switch it to a [emphasis] construction line in the Sketch Palette. [pause] This circle is geometry only. I will not extrude from it."
+"My first circle is a reference — the inside diameter of the wheel, fifty-three point nine seven five millimeters, [breath] constrained to the origin. [breath] Notice that before I click to make the circle, I can switch the line type to a construction line in the Sketch Palette. [breath] I could also make the line, select it, and change the line type later. [breath]This circle is reference geometry only, that means I can't extrude a solid from it."
 
-"[emphasis] Here's why that matters — by keeping my reference geometry as a construction line, I keep my sketch clean. When I go to extrude, only the lines I actually want to build from will be available to select."
+"[sharp intake of breath] Here's why that matters — keeping reference geometry as a construction line keeps the sketch clean. When I go to extrude, only the lines I actually want to build from will be available to select."
 
 ---
 
-[SCENE 4 — Offset tool applied twice: +2mm for hub OD, then +1mm for shoulder. Both as normal lines.]
+[SCENE 4 — Offset tool applied: +2mm for hub OD. Then second offset +1mm for shoulder. Both as normal lines.]
 
-"From the Modify menu, select [emphasis] Offset. Click the construction circle and drag the arrow outward. Type [emphasis] 2 and hit Enter. [long pause] This is the outside diameter of the hub — [emphasis] 2 millimeters larger than the wheel bore."
+"From the Modify menu, grab the Offset tool. Click the construction circle, drag the arrow outward... type two and hit Enter. [breath] This is the outside diameter of the hub — two millimeters larger than the wheel bore."
 
-"That 2-millimeter interference is intentional. The wheel is soft silicone, so a moderate amount of compression is what keeps it from spinning on the hub. [pause] This is the same concept as the bearing pocket from C1 — different material, much larger cushion."
+"That two-millimeter interference is intentional. The wheel is soft silicone, and a moderate amount of compression is what keeps it from spinning on the hub. [confident] Same concept as the bearing pocket cushion from C1 — different material, much larger gap."
 
-"One more offset from that same outer circle — [emphasis] 1 millimeter. [pause] This thinner ring becomes the shoulder that the squishy wheel wraps over. Without a shoulder on both sides, the wheel slides off under load."
+"One more offset from that same outer circle — one millimeter. [breath] This thinner ring becomes the shoulder that the squishy wheel wraps over and sits between. Without a shoulder on both sides, the wheel slides right off under load."
 
 ---
 
 [SCENE 5 — Circumscribed polygon drawn from origin. H/V constraint applied to one flat. Dimension tool with mixed-unit math.]
 
-"Now the hex bore. Go to Create → Polygon → [emphasis] Circumscribed Polygon, constrain it to the origin, and draw it out. [pause] Before I enter a dimension, I apply the [emphasis] Horizontal/Vertical constraint to one flat — that pins the rotation so the polygon doesn't spin freely."
+"Now the hex bore. Go to Create, Polygon — select Circumscribed Polygon. Constrain it to the origin and draw it out... [breath] Before I enter a dimension, I apply the Horizontal-Vertical constraint to one of the flats. That pins the rotation so the polygon can't spin freely on the sketch."
 
-"Press [emphasis] D for dimension and click flat to flat. Here's a trick: the dimension tool can mix units and do math. I type [emphasis] 0.374 inches plus 0.25 and hit Enter. [long pause] Fusion converts the inches and adds the cushion in one step — the result is [emphasis] 9.75 millimeters, flat to flat."
+"Press D on your keyboard for dimension, then click flat to flat. [sharp intake of breath] Here's a trick — the dimension tool can mix units and do math in one shot. I type zero point three seven four inches plus zero point two five... and hit Enter. Fusion Three-Sixty converts the inches and adds the cushion in a single step. The result is nine point seven five millimeters, flat to flat."
 
-"Why the cushion? The shaft is 9.5mm. If I model the bore at exactly 9.5mm and print it, the bore comes out smaller — same reason we added cushion to the bearing pocket in C1. [pause] 0.25mm is a starting point. You may need to adjust after your first print."
+"Why the cushion? The shaft is nine point five millimeters. If I model the bore at exactly nine point five and print it, [chuckle] the bore comes out smaller — same shrinkage we saw in C1's bearing pocket. Zero point two five is the starting estimate. You'll adjust after your first test fit."
 
 ---
 
-[SCENE 6 — Standoff circle drawn from origin at ~20mm. Slot tool used. Slot dimensioned and constrained. Circular pattern applied.]
+[SCENE 6 — Standoff circle drawn from origin at ~20mm. Slot tool used at 12 o'clock position. Slot drawn without dimensions first.]
 
-"One more circle from the origin — about [emphasis] 20 millimeters in radius. This becomes the shoulder that positions the hub at the right depth on the shaft. [soft] We'll dial in the exact dimension later in the assembly."
+"One more circle from the origin[breath] about twenty millimeters in diameter. [breath]This becomes the shoulder that provides standoff between the wheel and the rest of the robot."[breath]
 
-"I said that was the last piece of geometry. [pause] It isn't — this is a solid hub without spoke cutouts, and that means unnecessary weight and a longer print. From the Create menu: Slot → [emphasis] Center to Center Slot. Place one slot near the 12 o'clock position and draw it without dimensions first."
+"Now [embarrassed to say][breath] — I said that was the last piece of geometry. [chuckle chuckle] It wasn't. [breath]This is a solid hub, and solid means unnecessary mass and a longer print. [breath]Let's remove some material by adding slots. [breath]It'll make our hub look more interesting as well.[breath] From the Create menu: [breath]pick the Slot tool —[breath] Center to Center Slot. [breath]Start the slot near the twelve o'clock position and draw it down without dimensions first."[breath]
 
-"Dimension the slot: a width for the slot ends, and a distance from the slot center to the origin. [pause] To lock the slot's rotation, I need the [emphasis] Coincident constraint between the slot centerline and the origin — [soft] not Horizontal/Vertical, which constrains position. If the wrong constraint doesn't work, that's your signal to try the other one."
+"Press D on your keyboard to dimension: Since these dimensions are all made up, I'm going to use whole numbers. [breath]make a width dimension for the end circles, [breath] a length dimension for the construction line in the middle of the slot, and a distance from the slot end to the origin. [sharp intake of breath] [breath]To lock the rotation, [breath]use the Coincident constraint between the slot's centerline and the origin. 
 
-[SCENE 7 — Circular Pattern applied to slot. Quantity being adjusted. Pattern complete. Finish Sketch clicked.]
+"Now use the circular pattern tool to turn this slot into some spokes. [breath] You can make as many as you want [chuckle][daringly] I mean, [pause for dramatic effect] maybe."
 
-"With one slot fully constrained, go to Sketch → [emphasis] Circular Pattern. Select all the slot geometry, set the center to the origin, and adjust the quantity. [pause] This is where you make a design choice."
+Go ahead and change some of the dimensions and pattern variables until you like how it looks.
 
-"More spokes means more wall segments for the printer to build, which means longer print time. [pause] I'm using [emphasis] six — but this is your call. Whatever you pick, be deliberate: too few and the hub looks unfinished, too many and you're adding print time without adding strength."
-
-"Click OK and [emphasis] Finish Sketch. Every line should be black — fully constrained. If anything is still blue, find it and constrain it before moving on."
+Double clicking on the pattern glyph will open the tool dialogue for edits.
 
 ---
 
 [SCENE 8 — Extrude tool. Four separate extrusions shown in sequence. Body builds up on screen.]
 
-"We're making [emphasis] four extrusions from this one sketch. I'll take them in order."
+"We're making four extrusions from this one sketch. [breath] I'll take them in order."
 
-"[emphasis] Extrusion one — the outer shell and shoulder. Click and drag to select all geometry, then deselect the lightening slots and the standoff circle. Only the outer ring remains. Set the thickness to [emphasis] 1 millimeter. [long pause]"
+"Extrusion one — the outer shell and shoulder. Click and drag to select all geometry, then deselect the lightening slots and the standoff circle. Only the outer ring stays selected. Set the thickness to one millimeter and click OK..."
 
-"[emphasis] Extrusion two — the hub body. Make the sketch visible, select the two rings that form the inner surface — the ones the wheel grips. This one goes in the [emphasis] opposite direction from the first. Type [emphasis] negative 25.4 and hit Enter. [long pause] That depth matches the inside bore of the wheel exactly."
+"Extrusion two — the hub body. Make the sketch visible again. Select the two rings that form the inner surface — the ones the wheel grips. This one goes in the opposite direction from the first. Type negative twenty-five point four and hit Enter. That depth matches the inside bore of the wheel exactly."
 
-[SCENE 9 — Extrusions 3 and 4 continued. Object start demonstrated. Join operation shown.]
+[SCENE 9 — Extrusions 3 and 4. Object start demonstrated. Join operation shown for standoff.]
 
-"[emphasis] Extrusion three — the inside shoulder. Same geometry as the outer shoulder, but I start it from a [emphasis] different face. Set Start to Object, click the far end face of the hub body, then select the shoulder ring. Extrude [emphasis] negative 1 millimeter. [long pause] Now both shoulders are in place."
+"[clearing throat] Extrusion three — the inside shoulder. [breath]Same circle geometry as the outer shoulder, [breath]but starting from a different face. [breath]Set Start to ɑːb.dʒekt, [breath]click the far end face of the hub body, [breath]and extrude negative one millimeter... [breath]Both shoulders are now in place."[breath]
 
-"[emphasis] Extrusion four — the standoff. Select the center circle, start dragging, and Fusion thinks it should cut — change Operation to [emphasis] Join. Now it adds material. Set the distance to [emphasis] 14 millimeters for now. [pause] The exact depth gets confirmed in the assembly — this is our starting estimate."
+"Extrusion four — [breath]the standoff. [breath]Select the center circle and start dragging... [breath] Fusion Three-Sixty thinks it should cut. [breath]Change the Operation to Join. [breath]Now it adds material. [breath]Set the distance to fourteen millimeters for now —[breath] the exact depth gets confirmed in the assembly. [breath]This is our starting estimate."
+---
+
+[SCENE 10 — Back to base sketch. Two circles added at origin. Extrusion from inner face of standoff.]
+
+"One thing I missed — [laughing nervously] the hub slides onto the shaft, but nothing holds it there. [breath] The retention screw needs material to clamp against. [breath] Back into the base sketch."[breath]
+
+"Add two circles, both constrained to the origin: [breath] ten millimeters for the screw head counterbore, [breath] and five point six millimeters for the clearance hole. [confident] The ten-thirty-two screw is close to an M5 — five point six is the correct clearance diameter. [breath] If you want to verify that, look it up. [breath] That's a habit worth building."[breath]
+
+"Finish Sketch. [breath] Create one more extrusion from the inner face of the standoff, [breath] dragging outward to fill in the end. [breath] Change Operation to Join. [breath] The exact depth gets set in the assembly — which is the next scene."
 
 ---
 
-[SCENE 10 — Fillet tool on outer edges. Face selection demonstrated. Chamfer tool on hex bore.]
+[SCENE 11 — Part design file. Hub body complete in browser. No finishing touches yet.]
 
-"Now we smooth the shape. Modify → [emphasis] Fillet. Click the edge of the outer shoulder — [emphasis] 1 millimeter. [pause] Click the plus icon to add a selection, then click a [emphasis] face on the end of the hub body — Fusion fillets every edge on that face at once. Set it to [emphasis] 0.5 millimeters. Repeat for the other shoulder face."
+"Before we add anything else, let's talk about where we are and what comes next."[breath]
 
-"For the hex bore, I'm switching to [emphasis] Chamfer — Modify → Chamfer. A chamfer makes a flat angled face, which acts as a [emphasis] funnel when you're pressing the hub onto the shaft. A fillet rounds the edge, which is less effective as a lead-in. [pause] Half a millimeter is enough. Click OK and inspect."
+"The hub body is built. [breath] We know we need a retaining cap to give the ten-thirty-two screw something to clamp against — [breath] but we don't know the exact depth yet. [breath] That measurement comes from the assembly — not from the part file in isolation."[breath]
 
----
+"Here's the plan. [breath] We'll bring this hub into an assembly with the motor, the wheel, and the screw. [breath] Section Analysis will let us see inside and measure exactly where the screw head lands. [breath] Then we'll use Edit in Place to add the retaining cap at the correct depth — [breath] with the screw right there as a reference. [confident] No guessing."[breath]
 
-[SCENE 11 — Back to base sketch. Two circles added (10mm, 5.6mm). Extrusion added from standoff face. Clip shows cap of material filling in end of hub.]
+"After that we come back here, [breath] add the fillets and chamfer, [breath] and send the file to the printer. [breath] That's the sequence."[breath]
 
-"One thing I missed: the hub slides onto the shaft, but nothing [emphasis] holds it there. The retention screw needs material to clamp against — between the screw head and the end of the shaft."
-
-"Go back to the base sketch. Add two circles, both constrained to the origin: [emphasis] 10 millimeters for the screw head counterbore, and [emphasis] 5.6 millimeters for the screw clearance hole. [pause] The 10-32 screw is close to an M5 — 5.6mm is the correct clearance diameter. If you want to verify that, look it up. That's a habit worth building."
-
-"Finish sketch and create one more extrusion — from the inner face of the standoff, dragging outward to fill in the end. [long pause] Change Operation to Join. The exact depth will be set once you can see the assembly — we'll cover that in the next scene. [pause] For now, let the extrusion go past the end and we'll trim it in context."
+"[confident] Save the model before we move on."
 
 ---
 
-[SCENE 12 — Assembly file. Motor, hub, squishy wheel, and 10-32 screw inserted and constrained. Section analysis shown. Edit-in-place used to adjust retaining cap depth.]
+[SCENE 12 — Assembly file. Motor, hub, squishy wheel, and 10-32 screw inserted and constrained. Section analysis active.]
 
-"Now we validate the design. If you haven't worked through the Assembly Introduction video, do that first — this scene uses those skills directly."
+"Now we validate. [sharp intake of breath] If you haven't watched the Assembly Basics video yet, do that first — this scene uses those skills directly."[breath]
 
-"Create a new Assembly Design, insert the motor, and apply three constraints to ground it. [long pause] Insert the hub, constrain its center bore to the shaft, and add an angular constraint to align the hex flats. [long pause] Insert the squishy wheel and constrain it to the hub shoulder. [long pause] Finally, bring in a [emphasis] 10-32 by 3/4-inch screw from Common Components → Fasteners."
+"Create a new Assembly Design in Fusion Three-Sixty. [breath] Insert the motor and apply three constraints to ground it... [breath] Insert the hub, [breath] apply a con-centric constraint on the shaft, [breath] and add an angular constraint to align the hex flats... [breath] Insert the squishy wheel and constrain it to the hub shoulder... [breath] Finally, bring in a ten-thirty-two by three-quarter-inch screw from Common Components — Fasteners."[breath] Add a con-centric constraint between the screw and the motor shaft.[breath]
 
-"Go to Inspect → [emphasis] Section Analysis. Click a flat face on the motor and drag the plane to the center of the assembly. [long pause] You can now see the screw, the hub bore, the shaft, and the wheel — all at once. Move the screw in until it's about halfway into the shaft threading. [pause] From this view, you can see exactly how much hub material sits between the screw head and the end of the shaft — and whether the squishy wheel clears the deck."
+"Go to Inspect — [breath]Section Analysis. [breath] Click a flat face on the motor and drag the plane to the center of the assembly... [breath] You can now see the screw, [pause] the hub bore, [pause]the shaft, [pause]and the wheel all at once. [breath] 
 
-[SCENE 13 — Edit in Place. Pencil icon on hub in browser tree. Construction plane offset to align with shaft end. Retaining cap extrusion to base of screw head.]
-
-"To finalize the retaining cap depth, hover over the hub in the browser tree and click the [emphasis] pencil icon — that puts you in Edit in Place. Everything else grays out; only your hub is active."
-
-"Go to Construct → [emphasis] Offset Plane, click the outer face of the hub, and drag the plane inward until it lines up with the [emphasis] end of the motor shaft. Click OK. [long pause] Now create an extrusion: select the hex geometry, set Start to [emphasis] Object and select that construction plane, and drag outward to the [emphasis] base of the screw head. Operation: Join. Click OK. [long pause]"
-
-"The material now fills exactly the right space — the screw will seat against it and clamp the hub to the shaft. [pause] Click Finish Edit."
-
-"[emphasis] Save the assembly file — this is important. When you edit a component inside an assembly and save the assembly, Fusion saves those component changes too. [pause] If you only save the component file and not the assembly, the assembly won't reflect your changes."
-
-"Once the assembly is saved, right-click the hub in the browser and open it in its own file."
+You might be wondering, [pause, intrigued]how much thread engagement is enough? [breath]A minimum of 3 fully engaged threads is required to reach basic holding strength, [pause]but a safe rule of thumb is to engage a length equal to one to one and a half times the screw's diameter in steel[breath] even more for softer materials. [breath]This ensures the screw breaks instead of stripping the threads.  [breath]Move the screw in until it's about halfway into the shaft threading. [breath] From this view you can see exactly how much hub material sits between the screw head and the end of the shaft."
 
 ---
 
-[SCENE 14 — Final hub rotating in Fusion, clean view. No UI other than the 3D model.]
+[SCENE 13 — Edit in Place. Pencil icon on hub in Browser tree. Offset Plane to shaft end. Retaining cap extrusion to base of screw head.]
 
-"Spin it. Look at every face. [pause] Check that your fillets and chamfer are clean, your slots look the way you want them, and the proportions feel right. [pause] This is your design. Make sure it's one you're proud of."
+"To finalize the retaining cap depth, [breath] hover over the hub in the Browser tree and click the pencil icon — that puts you in Edit in Place. [breath] Everything else grays out. [breath] Only your hub is active."[breath]
+
+"Go to Construct — Offset Plane. [breath] Click the outer face of the hub and drag the plane inward until it aligns with the end of the motor shaft. [breath] Click OK... [breath] Press E on your keyboard to extrude. [breath] Select the hex geometry, [breath] set Start to ɑːb.dʒekt — [breath] select that construction plane — [breath] and drag outward to the base of the screw head. [breath] Operation: Join. [breath] Click OK."[breath]
+
+"The material now fills exactly the right space. [breath] The screw seats against it and clamps the hub to the shaft. [breath] Click Finish Edit. [sharp intake of breath] Save the assembly file — this is critical. [breath] When you edit a component inside an assembly and save the assembly, Fusion Three-Sixty saves those component changes too. [breath] If you only save the component file, the assembly will not reflect your changes."[breath]
+
+"Once the assembly is saved, [breath] right-click the hub in the Browser tree and open it in its own file."
+
+---
+
+[SCENE 14 — Part design file reopened. Retaining cap confirmed. Fillet and chamfer tools.]
+
+"The assembly told us what we needed. [breath] The retaining cap is in, the depth is confirmed — [breath] now we can finish the part."[breath]
+
+"Modify — Fillet. [breath] Click the edge of the outer shoulder — one millimeter. [breath] Click the plus icon to add a selection, [breath] then click a face on the end of the hub body. [breath] Fusion Three-Sixty fillets every edge on that face at once — set those to half a millimeter. [breath] Repeat for the other shoulder face."[breath]
+
+"For the hex bore opening, I'm switching tools. [breath] Modify — Chamfer. [confident] A chamfer creates a flat, angled face — it acts as a funnel, guiding the shaft into the bore. [breath] A fillet rounds the edge, and that's far less effective as a lead-in. [breath] Half a millimeter is enough. [breath] Click OK and inspect your work."
+
+---
+
+[SCENE 15 — Final hub rotating in Fusion Three-Sixty, clean view. No UI visible.]
+
+"Spin it. [breath] Look at every face. [breath] Check that your fillets and chamfer are clean, [breath] your slots look the way you want them, [breath] and the proportions feel right. [breath] This is your design. [breath] Make sure it's one you're proud of."
 
 ---
 
 ## OUTRO
 
 [VERBAL — TTS]
-"[excited] C2 is done. One sketch, four extrusions, and the first component where the design was partly yours."
+"[excited] C2 is done. [breath] One sketch, four extrusions, and the first component where the design was partly yours."[breath]
 
-"Before the next video, your hub should be printed and test-fitted on the motor shaft. Screenshot your model and start your iteration log — that goes in your portfolio."
+"Before the next video, your hub should be printed and test-fitted on the motor shaft. [breath] Screenshot your model and start your iteration log — that goes in your portfolio."[breath]
 
-"Next up — [emphasis] C3, the motor mount sleeve. Press fit, bore tolerance, and why a tenth of a millimeter changes everything. [pause] Let's go."
+"Next up — [confident] C3, the motor mount sleeve. [breath] Press fit, bore tolerance, and why a tenth of a millimeter changes everything. [breath] Let's build some robots!"
 
 [TITLE CARD — 5 sec]
 C2 — Drive Wheel Hub · Complete
@@ -188,10 +206,10 @@ We build the hub from a single sketch — using construction lines, the Offset t
 - [0:00] Sketch — circumscribed polygon with mixed-unit dimension
 - [0:00] Sketch — standoff circle, Slot tool, and Circular Pattern
 - [0:00] Four extrusions from one sketch
-- [0:00] Fillets and chamfer — and why chamfer wins on the hex bore
-- [0:00] Retention screw feature — the thing I almost forgot
+- [0:00] Retention screw — the problem and the plan
 - [0:00] Assembly — motor, hub, wheel, and screw
 - [0:00] Section Analysis and Edit in Place
+- [0:00] Finishing touches — fillets and chamfer
 - [0:00] Final inspection
 
 *Part of the HS Applied Engineering & Robotics curriculum at Vicksburg Community Schools.*
