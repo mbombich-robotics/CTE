@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Ultrasonic Distance Sensing — Lesson 4.8</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Exo 2', sans-serif; background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); color: #e0e6f0; height: 100vh; }
+        .presentation { width: 100%; height: 100vh; position: relative; }
+        .slide { position: absolute; width: 100%; min-height: 100%; display: none; flex-direction: column; justify-content: flex-start; align-items: center; padding: 55px 60px 120px 60px; opacity: 0; transition: opacity 0.5s ease; overflow-y: auto; overflow-x: hidden; }
+        .slide.active { display: flex; opacity: 1; }
+        .slide-content { max-width: 1200px; width: 100%; }
+        h1 { font-family: 'Orbitron', sans-serif; font-size: 3.5rem; font-weight: 900; color: #00d4ff; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 20px rgba(0,212,255,0.5); animation: glow 2s ease-in-out infinite alternate; }
+        @keyframes glow { from { text-shadow: 0 0 20px rgba(0,212,255,0.5); } to { text-shadow: 0 0 35px rgba(0,212,255,0.9); } }
+        h2 { font-family: 'Orbitron', sans-serif; font-size: 2.4rem; font-weight: 700; color: #00d4ff; margin-bottom: 18px; text-transform: uppercase; }
+        h3 { font-family: 'Exo 2', sans-serif; font-size: 1.5rem; font-weight: 600; color: #ff9500; margin-bottom: 12px; }
+        p { font-size: 1.15rem; line-height: 1.6; margin-bottom: 12px; color: #b8c5d6; }
+        .subtitle { font-size: 1.3rem; color: #ff9500; font-weight: 600; margin-bottom: 30px; }
+        .objective-box { background: linear-gradient(135deg, rgba(0,212,255,0.1) 0%, rgba(0,212,255,0.04) 100%); border: 3px solid #00d4ff; border-radius: 12px; padding: 20px; margin: 20px 0; box-shadow: 0 0 30px rgba(0,212,255,0.15); }
+        .objective-box h3 { color: #00d4ff; }
+        .bullet-list { list-style: none; padding-left: 0; }
+        .bullet-list li { font-size: 1.15rem; margin: 12px 0; padding-left: 35px; position: relative; color: #b8c5d6; line-height: 1.5; }
+        .bullet-list li::before { content: '▸'; position: absolute; left: 0; color: #ff9500; font-size: 1.5rem; line-height: 1; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .box { background: rgba(0,212,255,0.05); border: 2px solid #00d4ff; border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(0,212,255,0.1); }
+        .box-orange { background: rgba(255,149,0,0.07); border: 2px solid #ff9500; border-radius: 12px; padding: 20px; }
+        .box-green { background: rgba(80,250,123,0.07); border: 2px solid #50fa7b; border-radius: 12px; padding: 20px; }
+        .highlight { color: #00d4ff; font-weight: 700; }
+        .warning { color: #ff9500; font-weight: 700; }
+        .success { color: #50fa7b; font-weight: 700; }
+        code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: #00d4ff; background: rgba(0,212,255,0.1); padding: 1px 5px; border-radius: 4px; white-space: nowrap; font-variant-ligatures: none; }
+        .code-block { background: #0d1117; border: 2px solid #00d4ff; border-radius: 10px; padding: 20px 24px; margin: 16px 0; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; line-height: 1.75; white-space: pre; font-variant-ligatures: none; }
+        .kw { color: #ff79c6; } .cls { color: #ffb86c; font-weight: 700; } .fn { color: #8be9fd; } .str { color: #f1fa8c; } .num { color: #bd93f9; } .cm { color: #6272a4; font-style: italic; } .op { color: #b8c5d6; }
+        .controls { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 1000; }
+        button { background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%); border: none; color: #0a0e27; padding: 15px 30px; font-size: 1rem; font-weight: 700; border-radius: 8px; cursor: pointer; font-family: 'Exo 2', sans-serif; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,212,255,0.3); }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,212,255,0.5); }
+        button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+        .slide-number { position: fixed; bottom: 30px; left: 30px; font-family: 'Space Mono', monospace; font-size: 1rem; color: #00d4ff; z-index: 1000; }
+        .callout { border-radius: 10px; padding: 14px 18px; margin: 14px 0; font-size: 1.05rem; line-height: 1.6; }
+        .callout-info { background: rgba(0,212,255,0.08); border-left: 4px solid #00d4ff; color: #b8c5d6; }
+        .callout-warn { background: rgba(255,149,0,0.08); border-left: 4px solid #ff9500; color: #b8c5d6; }
+        .callout-success { background: rgba(80,250,123,0.08); border-left: 4px solid #50fa7b; color: #b8c5d6; }
+        .table-wrapper { overflow-x: auto; margin: 16px 0; }
+        table { width: 100%; border-collapse: collapse; font-size: 1.05rem; }
+        th { background: rgba(0,212,255,0.15); color: #00d4ff; font-family: 'Exo 2', sans-serif; font-weight: 700; padding: 10px 14px; text-align: left; border: 1px solid rgba(0,212,255,0.3); }
+        td { padding: 9px 14px; border: 1px solid rgba(0,212,255,0.15); color: #b8c5d6; vertical-align: top; }
+        tr:nth-child(even) td { background: rgba(0,212,255,0.03); }
+        .footnote { margin-top: 30px; font-size: 0.95rem; color: #4a5568; font-family: 'Space Mono', monospace; }
+        .back-link { position: fixed; top: 18px; right: 24px; font-size: 0.78rem; font-weight: 700; color: #67e3ff; text-decoration: none; background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.35); padding: 5px 12px; border-radius: 20px; z-index: 100; transition: background 0.2s; }
+        .back-link:hover { background: rgba(0,212,255,0.3); }
+        @media (max-width: 768px) { h1 { font-size: 2.5rem; } h2 { font-size: 1.8rem; } .slide { padding: 30px 20px 100px; } .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← Unit 4</a>
+    <div class="presentation">
+
+        <!-- SLIDE 1: Title -->
+        <div class="slide active" style="display:flex;">
+            <div class="slide-content" style="text-align:center;">
+                <div style="margin-bottom:24px;">
+                    <!-- Top-down robot with 3 ultrasonic sensor cones at -45°, 0°, +45° -->
+                    <svg width="420" height="300" viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+                        <!-- Sensor cone LEFT (-45°) -->
+                        <polygon points="130,90  50,20  20,80" fill="rgba(0,212,255,0.12)" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="5,3"/>
+                        <!-- Sensor cone CENTER (0°) -->
+                        <polygon points="210,72  160,0  260,0" fill="rgba(0,212,255,0.18)" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="5,3"/>
+                        <!-- Sensor cone RIGHT (+45°) -->
+                        <polygon points="290,90  390,20  400,80" fill="rgba(0,212,255,0.12)" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="5,3"/>
+                        <!-- Floor surface -->
+                        <rect x="0" y="0" width="420" height="300" fill="#111827" rx="0"/>
+                        <!-- Sensor cones (redrawn on top of floor) -->
+                        <polygon points="130,90  50,20  20,80" fill="rgba(0,212,255,0.10)" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="5,3"/>
+                        <polygon points="210,88  165,5  255,5" fill="rgba(0,212,255,0.16)" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="5,3"/>
+                        <polygon points="290,90  400,20  398,80" fill="rgba(0,212,255,0.10)" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="5,3"/>
+                        <!-- Distance echo lines -->
+                        <line x1="130" y1="90" x2="50" y2="50" stroke="#00d4ff" stroke-width="1" opacity="0.4"/>
+                        <line x1="210" y1="88" x2="210" y2="5" stroke="#00d4ff" stroke-width="1" opacity="0.4"/>
+                        <line x1="290" y1="90" x2="370" y2="50" stroke="#00d4ff" stroke-width="1" opacity="0.4"/>
+                        <!-- Robot body (top-down) -->
+                        <rect x="110" y="80" width="200" height="160" rx="18" fill="#1a2040" stroke="#00d4ff" stroke-width="2.5"/>
+                        <!-- Wheels -->
+                        <rect x="88" y="100" width="24" height="120" rx="8" fill="#2a3560" stroke="#00d4ff" stroke-width="1.5"/>
+                        <rect x="308" y="100" width="24" height="120" rx="8" fill="#2a3560" stroke="#00d4ff" stroke-width="1.5"/>
+                        <!-- Direction arrow -->
+                        <polygon points="210,88 200,105 220,105" fill="#ff9500" opacity="0.9"/>
+                        <!-- L.E.O. label -->
+                        <text x="210" y="172" text-anchor="middle" font-family="Orbitron,sans-serif" font-size="22" font-weight="900" fill="#00d4ff" opacity="0.9">L.E.O.</text>
+                        <!-- Sensor dots on robot front -->
+                        <circle cx="145" cy="88" r="7" fill="#00d4ff" opacity="0.9"/>
+                        <circle cx="210" cy="83" r="7" fill="#00d4ff" opacity="0.9"/>
+                        <circle cx="275" cy="88" r="7" fill="#00d4ff" opacity="0.9"/>
+                        <!-- Labels -->
+                        <text x="68" y="18" text-anchor="middle" font-family="Space Mono,monospace" font-size="11" fill="#00d4ff">LEFT</text>
+                        <text x="210" y="18" text-anchor="middle" font-family="Space Mono,monospace" font-size="11" fill="#00d4ff">CENTER</text>
+                        <text x="352" y="18" text-anchor="middle" font-family="Space Mono,monospace" font-size="11" fill="#00d4ff">RIGHT</text>
+                        <!-- Angle labels -->
+                        <text x="90" y="110" text-anchor="middle" font-family="Space Mono,monospace" font-size="10" fill="#6272a4">−45°</text>
+                        <text x="330" y="110" text-anchor="middle" font-family="Space Mono,monospace" font-size="10" fill="#6272a4">+45°</text>
+                        <!-- Ground grid lines -->
+                        <line x1="0" y1="50" x2="420" y2="50" stroke="#1a2040" stroke-width="1"/>
+                        <line x1="0" y1="25" x2="420" y2="25" stroke="#1a2040" stroke-width="1"/>
+                    </svg>
+                </div>
+                <h1>Ultrasonic Sensing</h1>
+                <p class="subtitle">Unit 4 · Programming, Electronics &amp; Sensors · Lesson 4.8</p>
+                <p style="color:#6272a4; font-size:1.05rem;">Reading distance from three sensors to understand L.E.O.'s surroundings</p>
+                <p class="footnote">Lesson 4.8 · Week 20</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: Learning Objectives -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Learning Objectives</h2>
+                <div class="objective-box">
+                    <h3>By the end of this lesson you will be able to:</h3>
+                    <ul class="bullet-list" style="margin-top:10px;">
+                        <li><strong>Explain</strong> how an ultrasonic sensor measures distance using sound pulses and timing</li>
+                        <li><strong>Describe</strong> how the I2C mux lets three sensors share one two-wire bus</li>
+                        <li><strong>Read</strong> distance values from L.E.O.'s left, center, and right sensors using provided code</li>
+                    </ul>
+                </div>
+                <div class="grid-2" style="margin-top:28px;">
+                    <div class="box-orange">
+                        <h3>You Will Need</h3>
+                        <ul class="bullet-list">
+                            <li>L.E.O. with sensors mounted at −45°, 0°, and +45°</li>
+                            <li>USB cable and Thonny IDE</li>
+                            <li>Provided <code>leo.py</code> library (already loaded)</li>
+                            <li>A wall or box to reflect against</li>
+                        </ul>
+                    </div>
+                    <div class="box-green">
+                        <h3>You Will Produce</h3>
+                        <ul class="bullet-list">
+                            <li>Understanding of pulse-echo ranging</li>
+                            <li>Working sensor read loop printing L / C / R distances</li>
+                            <li>Verified: all three sensors respond correctly</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: How Ultrasonic Ranging Works -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>How Ultrasonic Ranging Works</h2>
+                <p>Ultrasonic sensors measure distance the same way a bat does — by sending out a sound pulse and timing how long the echo takes to come back.</p>
+                <div class="grid-2" style="margin-top:20px; align-items:start;">
+                    <div>
+                        <!-- Pulse-echo SVG diagram -->
+                        <svg width="100%" height="220" viewBox="0 0 360 220" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Sensor -->
+                            <rect x="10" y="85" width="60" height="50" rx="8" fill="#1a2040" stroke="#00d4ff" stroke-width="2"/>
+                            <circle cx="30" cy="110" r="10" fill="#ff79c6" opacity="0.7"/>
+                            <circle cx="50" cy="110" r="10" fill="#8be9fd" opacity="0.7"/>
+                            <text x="40" y="150" text-anchor="middle" font-family="Exo 2,sans-serif" font-size="10" fill="#6272a4">SENSOR</text>
+                            <!-- Wall -->
+                            <rect x="300" y="40" width="14" height="140" rx="3" fill="#2a3560" stroke="#ff9500" stroke-width="1.5"/>
+                            <text x="307" y="200" text-anchor="middle" font-family="Exo 2,sans-serif" font-size="10" fill="#ff9500">WALL</text>
+                            <!-- Outgoing pulse waves -->
+                            <path d="M 80 110 Q 140 90 200 110" fill="none" stroke="#ff79c6" stroke-width="2" stroke-dasharray="6,3"/>
+                            <path d="M 80 110 Q 140 110 200 110" fill="none" stroke="#ff79c6" stroke-width="1.5" stroke-dasharray="6,3"/>
+                            <path d="M 80 110 Q 140 130 200 110" fill="none" stroke="#ff79c6" stroke-width="2" stroke-dasharray="6,3"/>
+                            <text x="140" y="78" text-anchor="middle" font-family="Space Mono,monospace" font-size="11" fill="#ff79c6">PULSE (40 kHz)</text>
+                            <!-- Arrow going right -->
+                            <line x1="200" y1="110" x2="295" y2="110" stroke="#ff79c6" stroke-width="2"/>
+                            <polygon points="295,106 295,114 304,110" fill="#ff79c6"/>
+                            <!-- Return echo -->
+                            <path d="M 300 110 Q 240 90 180 110" fill="none" stroke="#00d4ff" stroke-width="2" stroke-dasharray="5,3" opacity="0.8"/>
+                            <path d="M 300 110 Q 240 130 180 110" fill="none" stroke="#00d4ff" stroke-width="2" stroke-dasharray="5,3" opacity="0.8"/>
+                            <text x="240" y="158" text-anchor="middle" font-family="Space Mono,monospace" font-size="11" fill="#00d4ff">ECHO</text>
+                            <!-- Arrow going left -->
+                            <line x1="180" y1="130" x2="85" y2="130" stroke="#00d4ff" stroke-width="2"/>
+                            <polygon points="85,126 85,134 76,130" fill="#00d4ff"/>
+                            <!-- Timer annotation -->
+                            <rect x="60" y="20" width="220" height="30" rx="6" fill="rgba(80,250,123,0.1)" stroke="#50fa7b" stroke-width="1"/>
+                            <text x="170" y="40" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#50fa7b">⏱  measure echo time → distance</text>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="box" style="margin-bottom:16px;">
+                            <h3>The Math</h3>
+                            <p>Sound travels at about <span class="highlight">343 m/s</span> (0.0343 cm/μs) in air.</p>
+                            <p style="margin-top:8px;">The pulse travels <em>out</em> and the echo travels <em>back</em> — so the distance is half the total travel time:</p>
+                            <div class="code-block" style="font-size:0.95rem; text-align:center; padding:12px;">distance = echo_time × 0.0343 / 2</div>
+                        </div>
+                        <div class="callout callout-info">
+                            <strong class="highlight">The I2C version handles all of this internally.</strong> You call <code>sensor.distance_cm()</code> and get back a number — no pulse timing in your code.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: Why I2C? -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Why I2C?</h2>
+                <p>A traditional HC-SR04 uses four wires per sensor: VCC, GND, TRIG, and ECHO. That works fine for one sensor — but L.E.O. has three.</p>
+                <div class="grid-2" style="margin-top:20px; align-items:start;">
+                    <div class="box-orange">
+                        <h3>GPIO Trigger/Echo</h3>
+                        <ul class="bullet-list">
+                            <li>4 wires per sensor</li>
+                            <li>3 sensors = <span class="warning">12 wires total</span> (6 GPIO pins)</li>
+                            <li>Your code must manually send the pulse, time the echo, and do the math</li>
+                            <li>Sensors cannot share any pins</li>
+                        </ul>
+                    </div>
+                    <div class="box-green">
+                        <h3>I2C Version</h3>
+                        <ul class="bullet-list">
+                            <li>Only 2 signal wires: SDA and SCL</li>
+                            <li>3 sensors share the <span class="success">same two wires</span></li>
+                            <li>Pulse timing and math done inside the sensor chip</li>
+                            <li>You just ask: "how far?"</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="callout callout-warn" style="margin-top:24px;">
+                    <strong class="warning">Trade-off:</strong> All three I2C sensors have the same fixed address. You can only talk to one at a time — which is why L.E.O. uses a <strong>mux chip</strong> to switch between them.
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: The I2C Mux -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>The I2C Mux</h2>
+                <p>The <span class="highlight">TCA9548A</span> is a switch chip between the Pico 2W and the three sensors. At any moment, only one sensor is connected to the bus.</p>
+                <div class="grid-2" style="margin-top:20px; align-items:start;">
+                    <div>
+                        <!-- Mux diagram SVG -->
+                        <svg width="100%" height="260" viewBox="0 0 360 260" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Pico -->
+                            <rect x="10" y="95" width="80" height="70" rx="8" fill="#1a2040" stroke="#00d4ff" stroke-width="2"/>
+                            <text x="50" y="126" text-anchor="middle" font-family="Orbitron,sans-serif" font-size="11" fill="#00d4ff" font-weight="700">PICO</text>
+                            <text x="50" y="142" text-anchor="middle" font-family="Space Mono,monospace" font-size="9" fill="#6272a4">GP4/GP5</text>
+                            <!-- Mux chip -->
+                            <rect x="145" y="80" width="70" height="100" rx="8" fill="#1a2040" stroke="#ff9500" stroke-width="2"/>
+                            <text x="180" y="125" text-anchor="middle" font-family="Orbitron,sans-serif" font-size="9" fill="#ff9500" font-weight="700">TCA</text>
+                            <text x="180" y="140" text-anchor="middle" font-family="Orbitron,sans-serif" font-size="9" fill="#ff9500" font-weight="700">9548A</text>
+                            <text x="180" y="160" text-anchor="middle" font-family="Space Mono,monospace" font-size="9" fill="#6272a4">0x77</text>
+                            <!-- Upstream bus line -->
+                            <line x1="90" y1="130" x2="145" y2="130" stroke="#00d4ff" stroke-width="2"/>
+                            <text x="117" y="122" text-anchor="middle" font-family="Space Mono,monospace" font-size="9" fill="#6272a4">SDA/SCL</text>
+                            <!-- Downstream channel 2 (LEFT) - active -->
+                            <line x1="215" y1="100" x2="265" y2="55" stroke="#50fa7b" stroke-width="2.5"/>
+                            <rect x="265" y="34" width="80" height="40" rx="6" fill="#1a2040" stroke="#50fa7b" stroke-width="1.5"/>
+                            <text x="305" y="51" text-anchor="middle" font-family="Space Mono,monospace" font-size="10" fill="#50fa7b" font-weight="700">CH 2</text>
+                            <text x="305" y="65" text-anchor="middle" font-family="Exo 2,sans-serif" font-size="9" fill="#6272a4">LEFT sensor</text>
+                            <!-- Downstream channel 3 (CENTER) -->
+                            <line x1="215" y1="130" x2="265" y2="130" stroke="#6272a4" stroke-width="1.5" stroke-dasharray="4,3"/>
+                            <rect x="265" y="111" width="80" height="38" rx="6" fill="#1a2040" stroke="#6272a4" stroke-width="1" stroke-dasharray="3,3"/>
+                            <text x="305" y="127" text-anchor="middle" font-family="Space Mono,monospace" font-size="10" fill="#6272a4">CH 3</text>
+                            <text x="305" y="141" text-anchor="middle" font-family="Exo 2,sans-serif" font-size="9" fill="#6272a4">CENTER sensor</text>
+                            <!-- Downstream channel 4 (RIGHT) -->
+                            <line x1="215" y1="160" x2="265" y2="205" stroke="#6272a4" stroke-width="1.5" stroke-dasharray="4,3"/>
+                            <rect x="265" y="186" width="80" height="38" rx="6" fill="#1a2040" stroke="#6272a4" stroke-width="1" stroke-dasharray="3,3"/>
+                            <text x="305" y="202" text-anchor="middle" font-family="Space Mono,monospace" font-size="10" fill="#6272a4">CH 4</text>
+                            <text x="305" y="216" text-anchor="middle" font-family="Exo 2,sans-serif" font-size="9" fill="#6272a4">RIGHT sensor</text>
+                            <!-- Active indicator -->
+                            <text x="240" y="42" text-anchor="middle" font-family="Space Mono,monospace" font-size="9" fill="#50fa7b">▶ ACTIVE</text>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="box" style="margin-bottom:16px;">
+                            <h3>How It Works in Code</h3>
+                            <p style="font-size:1.05rem;">To read a sensor, you first <em>select the channel</em>, then <em>request the reading</em>:</p>
+                            <div class="code-block" style="font-size:0.95rem; padding:14px;">
+<span class="cm"># Switch mux to LEFT sensor</span>
+<span class="op">mux.</span><span class="fn">select_channel</span>(<span class="num">2</span>)
+<span class="op">left_cm</span> <span class="kw">=</span> <span class="op">sensor.</span><span class="fn">distance_cm</span>()
+
+<span class="cm"># Switch to CENTER sensor</span>
+<span class="op">mux.</span><span class="fn">select_channel</span>(<span class="num">3</span>)
+<span class="op">center_cm</span> <span class="kw">=</span> <span class="op">sensor.</span><span class="fn">distance_cm</span>()</div>
+                        </div>
+                        <div class="callout callout-info">
+                            The mux is transparent to the sensors — they all think they are the only device on the bus.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: Three-Sensor Layout -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Three-Sensor Layout</h2>
+                <p>L.E.O.'s sensors are mounted at <span class="highlight">−45°</span>, <span class="highlight">0°</span>, and <span class="highlight">+45°</span> relative to the robot's forward direction. Together they give a wide field of view.</p>
+                <div class="grid-2" style="margin-top:20px; align-items:start;">
+                    <div>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr><th>Sensor</th><th>Angle</th><th>Mux Channel</th><th>Detects</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td><span class="success">LEFT</span></td><td>−45°</td><td>CH 2</td><td>Obstacles to the left</td></tr>
+                                    <tr><td><span class="highlight">CENTER</span></td><td>0°</td><td>CH 3</td><td>Direct obstacles ahead</td></tr>
+                                    <tr><td><span class="warning">RIGHT</span></td><td>+45°</td><td>CH 4</td><td>Obstacles to the right</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="callout callout-warn" style="margin-top:16px;">
+                            <strong class="warning">Practical range:</strong> These sensors work reliably from about <strong>5 cm to 300 cm</strong>. Readings beyond that may be unreliable. Very close objects (&lt;5 cm) may return <code>None</code>.
+                        </div>
+                    </div>
+                    <div class="box">
+                        <h3>Why These Angles?</h3>
+                        <ul class="bullet-list">
+                            <li>Center catches anything straight ahead — the most critical direction for avoidance</li>
+                            <li>±45° gives early warning for obstacles approaching from the sides</li>
+                            <li>Together they cover roughly <span class="highlight">90° of detection arc</span> in front of the robot</li>
+                            <li>The robot's own body is behind the sensors — rear detection not needed for basic navigation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: Reading the Code -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Reading the Sensors</h2>
+                <p>The provided library handles all the setup. In your program, you only need these three steps for each sensor read:</p>
+                <div class="grid-2" style="margin-top:16px; align-items:start;">
+                    <div>
+                        <div class="code-block" style="font-size:0.95rem; padding:16px 20px;">
+<span class="kw">from</span> <span class="cls">leo</span> <span class="kw">import</span> <span class="op">mux, sensor</span>
+<span class="kw">import</span> <span class="cls">time</span>
+
+<span class="kw">while</span> <span class="op">True:</span>
+    <span class="cm"># LEFT sensor (ch 2)</span>
+    <span class="op">mux.</span><span class="fn">select_channel</span>(<span class="num">2</span>)
+    <span class="op">left</span> <span class="kw">=</span> <span class="op">sensor.</span><span class="fn">distance_cm</span>()
+
+    <span class="cm"># CENTER sensor (ch 3)</span>
+    <span class="op">mux.</span><span class="fn">select_channel</span>(<span class="num">3</span>)
+    <span class="op">center</span> <span class="kw">=</span> <span class="op">sensor.</span><span class="fn">distance_cm</span>()
+
+    <span class="cm"># RIGHT sensor (ch 4)</span>
+    <span class="op">mux.</span><span class="fn">select_channel</span>(<span class="num">4</span>)
+    <span class="op">right</span> <span class="kw">=</span> <span class="op">sensor.</span><span class="fn">distance_cm</span>()
+
+    <span class="fn">print</span>(<span class="str">f"L: </span><span class="op">{</span><span class="op">left</span><span class="op">:.1f}</span><span class="str">  C: </span><span class="op">{</span><span class="op">center</span><span class="op">:.1f}</span><span class="str">  R: </span><span class="op">{</span><span class="op">right</span><span class="op">:.1f}</span><span class="str">"</span>)
+    <span class="cls">time</span>.<span class="fn">sleep_ms</span>(<span class="num">200</span>)
+                        </div>
+                    </div>
+                    <div>
+                        <div class="box" style="margin-bottom:16px;">
+                            <h3>What Each Line Does</h3>
+                            <ul class="bullet-list">
+                                <li><code>select_channel(2)</code> — switches mux to the LEFT sensor</li>
+                                <li><code>distance_cm()</code> — sends pulse, waits for echo, returns cm (or <code>None</code> if out of range)</li>
+                                <li><code>sleep_ms(200)</code> — wait 200 ms between full scans so sensors don't interfere</li>
+                            </ul>
+                        </div>
+                        <div class="callout callout-warn">
+                            <strong class="warning">Always check for None.</strong> If a sensor gets no echo (nothing in range, or something too close), it returns <code>None</code> instead of a number. Using <code>None</code> in math will crash your program.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: Handling None + Next Steps -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Handling <code>None</code> &amp; Next Steps</h2>
+                <p>A sensor returns <code>None</code> when no echo arrives in time — the object is either too far away or the sensor is uncovered. A simple guard keeps your program safe:</p>
+                <div class="code-block" style="font-size:1rem; padding:16px 20px; margin-bottom:24px;">
+<span class="op">mux.</span><span class="fn">select_channel</span>(<span class="num">3</span>)
+<span class="op">center</span> <span class="kw">=</span> <span class="op">sensor.</span><span class="fn">distance_cm</span>()
+
+<span class="kw">if</span> <span class="op">center</span> <span class="kw">is None:</span>
+    <span class="fn">print</span>(<span class="str">"CENTER: out of range"</span>)
+<span class="kw">elif</span> <span class="op">center</span> <span class="kw">&lt;</span> <span class="num">30</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"WARNING — only </span><span class="op">{</span><span class="op">center</span><span class="op">:.1f}</span><span class="str"> cm ahead!"</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"Clear — </span><span class="op">{</span><span class="op">center</span><span class="op">:.1f}</span><span class="str"> cm"</span>)
+                </div>
+                <div class="grid-2">
+                    <div class="box-green">
+                        <h3>✓ Activity 4.8</h3>
+                        <ul class="bullet-list">
+                            <li>Load the sensor read loop on L.E.O.</li>
+                            <li>Verify all three sensors respond</li>
+                            <li>Move your hand toward each sensor and watch the reading drop</li>
+                            <li>Add a <code>None</code> guard and test it</li>
+                        </ul>
+                    </div>
+                    <div class="box-orange">
+                        <h3>Coming Up: Lesson 4.9</h3>
+                        <ul class="bullet-list">
+                            <li>Use distance readings to make decisions</li>
+                            <li>Stop when an obstacle is detected ahead</li>
+                            <li>Steer away using left/right sensor data</li>
+                            <li>Proportional wall following</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- end presentation -->
+
+    <!-- Controls -->
+    <div class="controls">
+        <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+        <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+    </div>
+    <div class="slide-number" id="slideNum">1 / 8</div>
+
+    <script>
+        let current = 0;
+        const slides = document.querySelectorAll('.slide');
+        const total = slides.length;
+
+        function changeSlide(dir) {
+            slides[current].classList.remove('active');
+            slides[current].style.display = 'none';
+            current = Math.max(0, Math.min(total - 1, current + dir));
+            slides[current].style.display = 'flex';
+            setTimeout(() => slides[current].classList.add('active'), 10);
+            document.getElementById('slideNum').textContent = (current + 1) + ' / ' + total;
+            document.getElementById('prevBtn').disabled = current === 0;
+            document.getElementById('nextBtn').disabled = current === total - 1;
+            window.scrollTo(0, 0);
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changeSlide(-1);
+        });
+    </script>
+</body>
+</html>

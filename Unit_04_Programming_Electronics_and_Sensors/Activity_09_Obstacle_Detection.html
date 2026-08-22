@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activity 4.9 — Obstacle Detection</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Exo 2', sans-serif; background: #0a0e27; color: #e0e6f0; font-size: 15px; line-height: 1.6; }
+.layout { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+.sidebar { position: sticky; top: 0; height: 100vh; background: #0d1117; border-right: 1px solid rgba(0,212,255,0.15); overflow-y: auto; padding: 24px 0; display: flex; flex-direction: column; }
+.sidebar-title { font-family: 'Orbitron', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #6272a4; padding: 0 20px 16px; border-bottom: 1px solid rgba(0,212,255,0.1); margin-bottom: 8px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; text-decoration: none; color: #6272a4; font-size: 0.88rem; font-weight: 500; transition: color 0.15s, background 0.15s; border-left: 3px solid transparent; cursor: pointer; }
+.nav-item:hover { color: #b8c5d6; background: rgba(0,212,255,0.04); }
+.nav-item.active { color: #00d4ff; border-left-color: #00d4ff; background: rgba(0,212,255,0.07); }
+.nav-num { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: rgba(0,212,255,0.12); border: 1px solid rgba(0,212,255,0.3); color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.72rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.nav-item.active .nav-num { background: #00d4ff; color: #0a0e27; }
+.sidebar-links { margin-top: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; }
+.sidebar-links a { font-size: 0.8rem; color: #6272a4; text-decoration: none; padding: 6px 10px; border: 1px solid rgba(0,212,255,0.15); border-radius: 6px; text-align: center; transition: color 0.15s, border-color 0.15s; }
+.sidebar-links a:hover { color: #00d4ff; border-color: rgba(0,212,255,0.4); }
+main { padding: 40px 48px 80px; max-width: 860px; }
+.activity-header { margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid rgba(0,212,255,0.15); }
+.activity-header h1 { font-family: 'Orbitron', sans-serif; font-size: 1.6rem; font-weight: 700; color: #00d4ff; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+.header-meta { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px; }
+.meta-tag { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 10px; border-radius: 4px; }
+.meta-time { background: rgba(0,212,255,0.12); color: #00d4ff; border: 1px solid rgba(0,212,255,0.3); }
+.meta-level { background: rgba(80,250,123,0.12); color: #50fa7b; border: 1px solid rgba(80,250,123,0.3); }
+.meta-adv { background: rgba(255,149,0,0.12); color: #ff9500; border: 1px solid rgba(255,149,0,0.3); }
+section { margin-bottom: 56px; scroll-margin-top: 24px; }
+.section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid rgba(0,212,255,0.2); }
+.section-num { flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #00d4ff, #0099cc); color: #0a0e27; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 16px rgba(0,212,255,0.4); }
+.section-title { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 700; color: #00d4ff; text-transform: uppercase; letter-spacing: 0.05em; }
+.section-time { font-size: 0.8rem; color: #6272a4; margin-left: auto; font-family: 'Space Mono', monospace; }
+p { color: #b8c5d6; margin-bottom: 12px; }
+.steps { display: flex; flex-direction: column; gap: 16px; margin: 16px 0; }
+.step { display: flex; gap: 16px; align-items: flex-start; background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.15); border-radius: 10px; padding: 16px 18px; }
+.step-n { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.4); color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.82rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.step-body { flex: 1; }
+.step-body strong { display: block; color: #e0e6f0; font-size: 1rem; margin-bottom: 5px; }
+.step-body p { font-size: 0.95rem; margin-bottom: 0; }
+.code-wrap { position: relative; margin: 14px 0; }
+.code-label { position: absolute; top: -10px; left: 14px; z-index: 1; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; background: #0a0e27; color: #6272a4; border: 1px solid rgba(0,212,255,0.2); }
+pre { background: #0d1117; border: 1.5px solid rgba(0,212,255,0.25); border-radius: 10px; padding: 18px 20px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; line-height: 1.75; color: #e0e6f0; }
+.copy-btn { position: absolute; top: 8px; right: 10px; background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.25); color: #6272a4; font-family: 'Space Mono', monospace; font-size: 0.7rem; padding: 3px 8px; border-radius: 4px; cursor: pointer; transition: color 0.15s, background 0.15s; }
+.copy-btn:hover { color: #00d4ff; background: rgba(0,212,255,0.2); }
+.copy-btn.copied { color: #50fa7b; border-color: rgba(80,250,123,0.4); }
+.kw { color: #ff79c6; } .cls { color: #ffb86c; font-weight: 700; } .fn { color: #8be9fd; } .str { color: #f1fa8c; } .num { color: #bd93f9; } .cm { color: #6272a4; font-style: italic; } .op { color: #b8c5d6; }
+.callout { border-radius: 10px; padding: 16px 18px; margin: 16px 0; display: flex; gap: 14px; align-items: flex-start; }
+.callout-icon { font-size: 1.3rem; flex-shrink: 0; line-height: 1.4; }
+.callout-body p { margin-bottom: 0; font-size: 0.95rem; }
+.callout-body strong { display: block; margin-bottom: 4px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.callout-warn { background: rgba(255,149,0,0.08); border: 1px solid rgba(255,149,0,0.35); }
+.callout-warn strong { color: #ff9500; }
+.callout-info { background: rgba(0,212,255,0.07); border: 1px solid rgba(0,212,255,0.25); }
+.callout-info strong { color: #00d4ff; }
+.callout-success { background: rgba(80,250,123,0.07); border: 1px solid rgba(80,250,123,0.25); }
+.callout-success strong { color: #50fa7b; }
+.checkpoint { background: linear-gradient(135deg, rgba(80,250,123,0.1), rgba(80,250,123,0.04)); border: 2px solid #50fa7b; border-radius: 10px; padding: 16px 20px; margin: 24px 0; display: flex; gap: 14px; align-items: center; }
+.checkpoint-icon { font-size: 1.5rem; flex-shrink: 0; }
+.checkpoint-body strong { color: #50fa7b; display: block; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 3px; }
+.checkpoint-body p { color: #b8c5d6; font-size: 0.95rem; margin: 0; }
+.challenge-set { display: flex; flex-direction: column; gap: 14px; margin: 16px 0; }
+.challenge { background: rgba(80,250,123,0.05); border: 1.5px solid rgba(80,250,123,0.3); border-radius: 10px; padding: 16px 18px; }
+.challenge-adv { background: rgba(255,149,0,0.05); border: 1.5px solid rgba(255,149,0,0.3); }
+.challenge-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+.challenge-num { font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; color: #50fa7b; background: rgba(80,250,123,0.12); padding: 2px 7px; border-radius: 4px; }
+.challenge-num-adv { color: #ff9500; background: rgba(255,149,0,0.12); }
+.challenge-title { font-weight: 700; color: #e0e6f0; font-size: 1rem; }
+.challenge p { font-size: 0.95rem; margin-bottom: 6px; }
+.question-set { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
+.question { background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.2); border-radius: 10px; padding: 16px 18px; }
+.question-num { font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; color: #00d4ff; margin-bottom: 6px; display: block; }
+.question p { font-size: 0.95rem; margin-bottom: 0; }
+code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; color: #00d4ff; background: rgba(0,212,255,0.1); padding: 1px 5px; border-radius: 4px; white-space: nowrap; font-variant-ligatures: none; }
+@media (max-width: 720px) { .layout { grid-template-columns: 1fr; } .sidebar { position: static; height: auto; } main { padding: 24px 20px 60px; } }
+.back-link { position: fixed; top: 18px; right: 24px; font-size: 0.78rem; font-weight: 700; color: #67e3ff; text-decoration: none; background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.35); padding: 5px 12px; border-radius: 20px; z-index: 100; transition: background 0.2s; }
+.back-link:hover { background: rgba(0,212,255,0.3); }
+</style>
+</head>
+<body>
+<a href="index.html" class="back-link">← Unit 4</a>
+<div class="layout">
+    <nav class="sidebar">
+        <div class="sidebar-title">Activity 4.9</div>
+        <a class="nav-item active" href="#stop" onclick="setActive(this)">
+            <span class="nav-num">1</span>Stop on Detection
+        </a>
+        <a class="nav-item" href="#turn" onclick="setActive(this)">
+            <span class="nav-num">2</span>Stop &amp; Turn
+        </a>
+        <a class="nav-item" href="#avoidance" onclick="setActive(this)">
+            <span class="nav-num">3</span>Full Avoidance
+        </a>
+        <a class="nav-item" href="#challenge" onclick="setActive(this)">
+            <span class="nav-num">4</span>Challenges
+        </a>
+        <a class="nav-item" href="#reflect" onclick="setActive(this)">
+            <span class="nav-num">5</span>Reflect
+        </a>
+        <div class="sidebar-links">
+            <a href="Activity_08_Ultrasonic_Distance.html">← Activity 4.8</a>
+            <a href="Lesson_10_Line_Following.html">Lesson 4.10 →</a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="activity-header">
+            <h1>Obstacle Detection</h1>
+            <p style="color:#6272a4; font-size:0.95rem;">Use sensor readings to stop before walls, choose a turn direction, and optionally follow a wall using proportional correction.</p>
+            <div class="header-meta">
+                <span class="meta-tag meta-time">~35 min</span>
+                <span class="meta-tag meta-level">HS AER</span>
+                <span class="meta-tag meta-adv">Challenge: Wall Follow</span>
+            </div>
+        </div>
+
+        <!-- SECTION 1: Stop on Detection -->
+        <section id="stop">
+            <div class="section-header">
+                <div class="section-num">1</div>
+                <div class="section-title">Stop on Detection</div>
+                <span class="section-time">8 min</span>
+            </div>
+            <p>The simplest useful behavior: drive forward until the center sensor reads below a threshold, then stop. This alone prevents L.E.O. from crashing into walls.</p>
+
+            <div class="code-wrap">
+                <div class="code-label">stop_on_detect.py</div>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre><span class="kw">from</span> <span class="cls">leo</span> <span class="kw">import</span> <span class="op">mux, sensor, drive_forward, stop</span>
+<span class="kw">import</span> <span class="cls">time</span>
+
+<span class="op">STOP_CM</span> <span class="kw">=</span> <span class="num">25</span>   <span class="cm"># stop when closer than this</span>
+
+<span class="kw">while</span> <span class="op">True:</span>
+    <span class="op">mux.</span><span class="fn">select_channel</span>(<span class="num">3</span>)            <span class="cm"># center sensor</span>
+    <span class="op">center</span> <span class="kw">=</span> <span class="op">sensor.</span><span class="fn">distance_cm</span>()
+
+    <span class="kw">if</span> <span class="op">center</span> <span class="kw">is None or</span> <span class="op">center</span> <span class="kw">&gt;</span> <span class="op">STOP_CM</span><span class="op">:</span>
+        <span class="fn">drive_forward</span>()
+    <span class="kw">else:</span>
+        <span class="fn">stop</span>()
+
+    <span class="cls">time</span>.<span class="fn">sleep_ms</span>(<span class="num">50</span>)</pre>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-n">1</div>
+                    <div class="step-body">
+                        <strong>Place L.E.O. about 1 meter from a wall and run the program</strong>
+                        <p>It should drive forward and stop before reaching the wall. If it stops too early or too late, adjust <code>STOP_CM</code>.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-n">2</div>
+                    <div class="step-body">
+                        <strong>Test the threshold</strong>
+                        <p>Try values of 15, 25, and 40. Notice how the stopping distance changes. Find a value that stops the robot cleanly without bumping.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="checkpoint">
+                <div class="checkpoint-icon">✓</div>
+                <div class="checkpoint-body">
+                    <strong>Checkpoint 1</strong>
+                    <p>L.E.O. drives forward and stops before touching the wall. Threshold is tuned so it stops with a consistent gap.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Stop and Turn -->
+        <section id="turn">
+            <div class="section-header">
+                <div class="section-num">2</div>
+                <div class="section-title">Stop &amp; Turn</div>
+                <span class="section-time">8 min</span>
+            </div>
+            <p>After stopping, L.E.O. needs to choose a direction. Read the left and right sensors and turn toward the more open side.</p>
+
+            <div class="code-wrap">
+                <div class="code-label">stop_and_turn.py</div>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre><span class="kw">from</span> <span class="cls">leo</span> <span class="kw">import</span> <span class="op">mux, sensor, drive_forward, stop, turn_left, turn_right</span>
+<span class="kw">import</span> <span class="cls">time</span>
+
+<span class="op">STOP_CM</span>   <span class="kw">=</span> <span class="num">25</span>
+<span class="op">TURN_MS</span>   <span class="kw">=</span> <span class="num">400</span>   <span class="cm"># duration of each turn burst (ms)</span>
+
+<span class="kw">while</span> <span class="op">True:</span>
+    <span class="cm"># Read all three sensors</span>
+    <span class="op">mux.</span><span class="fn">select_channel</span>(<span class="num">2</span>)
+    <span class="op">left</span>   <span class="kw">=</span> <span class="op">sensor.</span><span class="fn">distance_cm</span>() <span class="kw">or</span> <span class="num">999</span>
+    <span class="op">mux.</span><span class="fn">select_channel</span>(<span class="num">3</span>)
+    <span class="op">center</span> <span class="kw">=</span> <span class="op">sensor.</span><span class="fn">distance_cm</span>() <span class="kw">or</span> <span class="num">999</span>
+    <span class="op">mux.</span><span class="fn">select_channel</span>(<span class="num">4</span>)
+    <span class="op">right</span>  <span class="kw">=</span> <span class="op">sensor.</span><span class="fn">distance_cm</span>() <span class="kw">or</span> <span class="num">999</span>
+
+    <span class="kw">if</span> <span class="op">center</span> <span class="kw">&gt;</span> <span class="op">STOP_CM</span><span class="op">:</span>
+        <span class="fn">drive_forward</span>()
+    <span class="kw">elif</span> <span class="op">left</span> <span class="kw">&gt;=</span> <span class="op">right</span><span class="op">:</span>
+        <span class="fn">stop</span>()
+        <span class="fn">turn_left</span>()
+        <span class="cls">time</span>.<span class="fn">sleep_ms</span>(<span class="op">TURN_MS</span>)
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="fn">stop</span>()
+        <span class="fn">turn_right</span>()
+        <span class="cls">time</span>.<span class="fn">sleep_ms</span>(<span class="op">TURN_MS</span>)
+
+    <span class="cls">time</span>.<span class="fn">sleep_ms</span>(<span class="num">50</span>)</pre>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-n">1</div>
+                    <div class="step-body">
+                        <strong>Run in an open space</strong>
+                        <p>Drive toward a wall. When it stops, check that it turns toward the side with more clearance. Use your hand to block the left or right sensor before a stop — does it change the turn direction?</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-n">2</div>
+                    <div class="step-body">
+                        <strong>Tune TURN_MS</strong>
+                        <p>If the robot over-turns (goes past the obstacle) reduce this value. If it under-turns (still facing the wall), increase it. You want roughly a 90° turn per burst.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="callout callout-warn">
+                <div class="callout-icon">⚠</div>
+                <div class="callout-body">
+                    <strong>Watch for stuck states</strong>
+                    <p>If L.E.O. gets cornered (all three sensors blocked), this code loops between stopping and tiny turns. Section 3 adds a recovery for this.</p>
+                </div>
+            </div>
+
+            <div class="checkpoint">
+                <div class="checkpoint-icon">✓</div>
+                <div class="checkpoint-body">
+                    <strong>Checkpoint 2</strong>
+                    <p>L.E.O. stops before walls and turns toward the more open side. You can verify the turn direction by blocking sensors by hand.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: Full Avoidance Loop -->
+        <section id="avoidance">
+            <div class="section-header">
+                <div class="section-num">3</div>
+                <div class="section-title">Full Avoidance Loop</div>
+                <span class="section-time">10 min</span>
+            </div>
+            <p>Add a cornered recovery and tighten the logic into a clean avoidance program. This is a complete obstacle-avoiding robot.</p>
+
+            <div class="code-wrap">
+                <div class="code-label">avoidance.py</div>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre><span class="kw">from</span> <span class="cls">leo</span> <span class="kw">import</span> <span class="op">mux, sensor, drive_forward, reverse, stop, turn_left, turn_right</span>
+<span class="kw">import</span> <span class="cls">time</span>
+
+<span class="op">STOP_CM</span>   <span class="kw">=</span> <span class="num">25</span>
+<span class="op">SIDE_CM</span>   <span class="kw">=</span> <span class="num">15</span>   <span class="cm"># also stop if side sensors get this close</span>
+<span class="op">TURN_MS</span>   <span class="kw">=</span> <span class="num">400</span>
+<span class="op">REVERSE_MS</span> <span class="kw">=</span> <span class="num">500</span>
+
+<span class="kw">def</span> <span class="fn">read_sensors</span>()<span class="op">:</span>
+    <span class="op">mux.</span><span class="fn">select_channel</span>(<span class="num">2</span>)
+    <span class="op">L</span> <span class="kw">=</span> <span class="op">sensor.</span><span class="fn">distance_cm</span>() <span class="kw">or</span> <span class="num">999</span>
+    <span class="op">mux.</span><span class="fn">select_channel</span>(<span class="num">3</span>)
+    <span class="op">C</span> <span class="kw">=</span> <span class="op">sensor.</span><span class="fn">distance_cm</span>() <span class="kw">or</span> <span class="num">999</span>
+    <span class="op">mux.</span><span class="fn">select_channel</span>(<span class="num">4</span>)
+    <span class="op">R</span> <span class="kw">=</span> <span class="op">sensor.</span><span class="fn">distance_cm</span>() <span class="kw">or</span> <span class="num">999</span>
+    <span class="kw">return</span> <span class="op">L, C, R</span>
+
+<span class="kw">while</span> <span class="op">True:</span>
+    <span class="op">L, C, R</span> <span class="kw">=</span> <span class="fn">read_sensors</span>()
+
+    <span class="kw">if</span> <span class="op">C</span> <span class="kw">&gt;</span> <span class="op">STOP_CM</span> <span class="kw">and</span> <span class="op">L</span> <span class="kw">&gt;</span> <span class="op">SIDE_CM</span> <span class="kw">and</span> <span class="op">R</span> <span class="kw">&gt;</span> <span class="op">SIDE_CM</span><span class="op">:</span>
+        <span class="fn">drive_forward</span>()                     <span class="cm"># all clear</span>
+    <span class="kw">elif</span> <span class="op">L</span> <span class="kw">&lt;</span> <span class="op">SIDE_CM</span> <span class="kw">and</span> <span class="op">C</span> <span class="kw">&lt;</span> <span class="op">STOP_CM</span> <span class="kw">and</span> <span class="op">R</span> <span class="kw">&lt;</span> <span class="op">SIDE_CM</span><span class="op">:</span>
+        <span class="fn">stop</span>()                               <span class="cm"># cornered — back up</span>
+        <span class="fn">reverse</span>()
+        <span class="cls">time</span>.<span class="fn">sleep_ms</span>(<span class="op">REVERSE_MS</span>)
+        <span class="fn">turn_right</span>()
+        <span class="cls">time</span>.<span class="fn">sleep_ms</span>(<span class="op">TURN_MS</span>)
+    <span class="kw">elif</span> <span class="op">L</span> <span class="kw">&lt;</span> <span class="op">SIDE_CM</span><span class="op">:</span>
+        <span class="fn">stop</span>()
+        <span class="fn">turn_right</span>()                         <span class="cm"># wall on left → turn right</span>
+        <span class="cls">time</span>.<span class="fn">sleep_ms</span>(<span class="op">TURN_MS</span>)
+    <span class="kw">elif</span> <span class="op">R</span> <span class="kw">&lt;</span> <span class="op">SIDE_CM</span><span class="op">:</span>
+        <span class="fn">stop</span>()
+        <span class="fn">turn_left</span>()                          <span class="cm"># wall on right → turn left</span>
+        <span class="cls">time</span>.<span class="fn">sleep_ms</span>(<span class="op">TURN_MS</span>)
+    <span class="kw">elif</span> <span class="op">L</span> <span class="kw">&gt;=</span> <span class="op">R</span><span class="op">:</span>
+        <span class="fn">stop</span>()
+        <span class="fn">turn_left</span>()                          <span class="cm"># center blocked, left is more open</span>
+        <span class="cls">time</span>.<span class="fn">sleep_ms</span>(<span class="op">TURN_MS</span>)
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="fn">stop</span>()
+        <span class="fn">turn_right</span>()
+        <span class="cls">time</span>.<span class="fn">sleep_ms</span>(<span class="op">TURN_MS</span>)
+
+    <span class="cls">time</span>.<span class="fn">sleep_ms</span>(<span class="num">50</span>)</pre>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-n">1</div>
+                    <div class="step-body">
+                        <strong>Test in a confined space</strong>
+                        <p>Set up a simple arena — four walls or boxes. Run the avoidance program and let L.E.O. navigate on its own for 2 minutes. It should not get permanently stuck.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-n">2</div>
+                    <div class="step-body">
+                        <strong>Adjust SIDE_CM and TURN_MS as needed</strong>
+                        <p>Wider arenas can use a smaller <code>SIDE_CM</code>. Tighter spaces may need a larger one. If turns undershoot, increase <code>TURN_MS</code>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="checkpoint">
+                <div class="checkpoint-icon">✓</div>
+                <div class="checkpoint-body">
+                    <strong>Checkpoint 3</strong>
+                    <p>L.E.O. navigates a confined space for at least 2 minutes without getting permanently stuck against a wall.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: Challenges -->
+        <section id="challenge">
+            <div class="section-header">
+                <div class="section-num">4</div>
+                <div class="section-title">Challenges</div>
+                <span class="section-time">varies</span>
+            </div>
+
+            <div class="challenge-set">
+                <div class="challenge">
+                    <div class="challenge-header">
+                        <span class="challenge-num">C1</span>
+                        <span class="challenge-title">Course Navigation</span>
+                    </div>
+                    <p>Set up a simple obstacle course — three boxes in a row with gaps between them. Can L.E.O. navigate through all the gaps without touching any box?</p>
+                </div>
+
+                <div class="challenge">
+                    <div class="challenge-header">
+                        <span class="challenge-num">C2</span>
+                        <span class="challenge-title">Speed Tuning</span>
+                    </div>
+                    <p>Increase the drive speed (or motor duty cycle) by 25%. Does the robot still stop cleanly? You may need to increase <code>STOP_CM</code> to compensate for the added momentum. Document the relationship between speed and required stopping distance.</p>
+                </div>
+
+                <div class="challenge challenge-adv">
+                    <div class="challenge-header">
+                        <span class="challenge-num challenge-num-adv">ADV</span>
+                        <span class="challenge-title">Proportional Wall Following</span>
+                    </div>
+                    <p>Use the right sensor to follow a wall at a constant distance. Replace the fixed turns with proportional correction:</p>
+                    <ul style="color:#b8c5d6; font-size:0.93rem; margin: 8px 0 8px 20px; line-height:1.8;">
+                        <li>Set a target distance (e.g., 20 cm from the right wall)</li>
+                        <li>Calculate <code>error = right_cm - target</code></li>
+                        <li>Calculate <code>correction = Kp × error</code> where Kp ≈ 2–5</li>
+                        <li>Apply correction to the left/right motor balance while driving forward</li>
+                    </ul>
+                    <p>Start with a long straight wall. Add a corner once it's tracking smoothly.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: Reflect -->
+        <section id="reflect">
+            <div class="section-header">
+                <div class="section-num">5</div>
+                <div class="section-title">Reflect</div>
+                <span class="section-time">5 min</span>
+            </div>
+
+            <div class="question-set">
+                <div class="question">
+                    <span class="question-num">Q1</span>
+                    <p>Why might a higher drive speed require a larger stopping threshold? What physical factor is responsible?</p>
+                </div>
+                <div class="question">
+                    <span class="question-num">Q2</span>
+                    <p>The code reads sensors sequentially (one at a time via the mux). Each full scan takes about 200 ms. How would the robot behave differently if you only read the center sensor? What would you gain and what would you lose?</p>
+                </div>
+                <div class="question">
+                    <span class="question-num">Q3</span>
+                    <p>Compare the bang-bang avoidance (stop and turn) to proportional wall following. In what situations is each approach better?</p>
+                </div>
+            </div>
+
+            <div class="callout callout-success" style="margin-top:24px;">
+                <div class="callout-icon">🎯</div>
+                <div class="callout-body">
+                    <strong>Unit 4 Complete</strong>
+                    <p>L.E.O. can now sense its environment with IR, ultrasonic, and IMU sensors, and respond with motor control, PID correction, line following, and obstacle avoidance. That's a capable autonomous robot.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+function setActive(el) {
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+}
+
+function copyCode(btn) {
+    const pre = btn.parentElement.querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+    });
+}
+
+const sections = document.querySelectorAll('section[id]');
+const navItems = document.querySelectorAll('.nav-item');
+window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 60) current = s.id; });
+    navItems.forEach(n => {
+        n.classList.toggle('active', n.getAttribute('href') === '#' + current);
+    });
+}, { passive: true });
+</script>
+</body>
+</html>

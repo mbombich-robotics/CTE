@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activity 4.8 — Ultrasonic Distance Sensing</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Exo 2', sans-serif; background: #0a0e27; color: #e0e6f0; font-size: 15px; line-height: 1.6; }
+.layout { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+.sidebar { position: sticky; top: 0; height: 100vh; background: #0d1117; border-right: 1px solid rgba(0,212,255,0.15); overflow-y: auto; padding: 24px 0; display: flex; flex-direction: column; }
+.sidebar-title { font-family: 'Orbitron', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #6272a4; padding: 0 20px 16px; border-bottom: 1px solid rgba(0,212,255,0.1); margin-bottom: 8px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; text-decoration: none; color: #6272a4; font-size: 0.88rem; font-weight: 500; transition: color 0.15s, background 0.15s; border-left: 3px solid transparent; cursor: pointer; }
+.nav-item:hover { color: #b8c5d6; background: rgba(0,212,255,0.04); }
+.nav-item.active { color: #00d4ff; border-left-color: #00d4ff; background: rgba(0,212,255,0.07); }
+.nav-num { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: rgba(0,212,255,0.12); border: 1px solid rgba(0,212,255,0.3); color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.72rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.nav-item.active .nav-num { background: #00d4ff; color: #0a0e27; }
+.nav-divider { height: 1px; background: rgba(0,212,255,0.08); margin: 8px 20px; }
+.sidebar-links { margin-top: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; }
+.sidebar-links a { font-size: 0.8rem; color: #6272a4; text-decoration: none; padding: 6px 10px; border: 1px solid rgba(0,212,255,0.15); border-radius: 6px; text-align: center; transition: color 0.15s, border-color 0.15s; }
+.sidebar-links a:hover { color: #00d4ff; border-color: rgba(0,212,255,0.4); }
+main { padding: 40px 48px 80px; max-width: 860px; }
+.activity-header { margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid rgba(0,212,255,0.15); }
+.activity-header h1 { font-family: 'Orbitron', sans-serif; font-size: 1.6rem; font-weight: 700; color: #00d4ff; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+.header-meta { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px; }
+.meta-tag { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 10px; border-radius: 4px; }
+.meta-time { background: rgba(0,212,255,0.12); color: #00d4ff; border: 1px solid rgba(0,212,255,0.3); }
+.meta-level { background: rgba(80,250,123,0.12); color: #50fa7b; border: 1px solid rgba(80,250,123,0.3); }
+section { margin-bottom: 56px; scroll-margin-top: 24px; }
+.section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid rgba(0,212,255,0.2); }
+.section-num { flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #00d4ff, #0099cc); color: #0a0e27; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 16px rgba(0,212,255,0.4); }
+.section-title { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 700; color: #00d4ff; text-transform: uppercase; letter-spacing: 0.05em; }
+.section-time { font-size: 0.8rem; color: #6272a4; margin-left: auto; font-family: 'Space Mono', monospace; }
+p { color: #b8c5d6; margin-bottom: 12px; }
+.steps { display: flex; flex-direction: column; gap: 16px; margin: 16px 0; }
+.step { display: flex; gap: 16px; align-items: flex-start; background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.15); border-radius: 10px; padding: 16px 18px; }
+.step-n { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.4); color: #00d4ff; font-family: 'Space Mono', monospace; font-size: 0.82rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.step-body { flex: 1; }
+.step-body strong { display: block; color: #e0e6f0; font-size: 1rem; margin-bottom: 5px; }
+.step-body p { font-size: 0.95rem; margin-bottom: 0; }
+.code-wrap { position: relative; margin: 14px 0; }
+.code-label { position: absolute; top: -10px; left: 14px; z-index: 1; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; background: #0a0e27; color: #6272a4; border: 1px solid rgba(0,212,255,0.2); }
+pre { background: #0d1117; border: 1.5px solid rgba(0,212,255,0.25); border-radius: 10px; padding: 18px 20px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; line-height: 1.75; color: #e0e6f0; }
+.copy-btn { position: absolute; top: 8px; right: 10px; background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.25); color: #6272a4; font-family: 'Space Mono', monospace; font-size: 0.7rem; padding: 3px 8px; border-radius: 4px; cursor: pointer; transition: color 0.15s, background 0.15s; }
+.copy-btn:hover { color: #00d4ff; background: rgba(0,212,255,0.2); }
+.copy-btn.copied { color: #50fa7b; border-color: rgba(80,250,123,0.4); }
+.kw { color: #ff79c6; } .cls { color: #ffb86c; font-weight: 700; } .fn { color: #8be9fd; } .str { color: #f1fa8c; } .num { color: #bd93f9; } .cm { color: #6272a4; font-style: italic; } .op { color: #b8c5d6; }
+.callout { border-radius: 10px; padding: 16px 18px; margin: 16px 0; display: flex; gap: 14px; align-items: flex-start; }
+.callout-icon { font-size: 1.3rem; flex-shrink: 0; line-height: 1.4; }
+.callout-body p { margin-bottom: 0; font-size: 0.95rem; }
+.callout-body strong { display: block; margin-bottom: 4px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.callout-warn { background: rgba(255,149,0,0.08); border: 1px solid rgba(255,149,0,0.35); }
+.callout-warn strong { color: #ff9500; }
+.callout-info { background: rgba(0,212,255,0.07); border: 1px solid rgba(0,212,255,0.25); }
+.callout-info strong { color: #00d4ff; }
+.checkpoint { background: linear-gradient(135deg, rgba(80,250,123,0.1), rgba(80,250,123,0.04)); border: 2px solid #50fa7b; border-radius: 10px; padding: 16px 20px; margin: 24px 0; display: flex; gap: 14px; align-items: center; }
+.checkpoint-icon { font-size: 1.5rem; flex-shrink: 0; }
+.checkpoint-body strong { color: #50fa7b; display: block; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 3px; }
+.checkpoint-body p { color: #b8c5d6; font-size: 0.95rem; margin: 0; }
+.challenge-set { display: flex; flex-direction: column; gap: 14px; margin: 16px 0; }
+.challenge { background: rgba(80,250,123,0.05); border: 1.5px solid rgba(80,250,123,0.3); border-radius: 10px; padding: 16px 18px; }
+.challenge-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+.challenge-num { font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; color: #50fa7b; background: rgba(80,250,123,0.12); padding: 2px 7px; border-radius: 4px; }
+.challenge-title { font-weight: 700; color: #e0e6f0; font-size: 1rem; }
+.challenge p { font-size: 0.95rem; margin-bottom: 6px; }
+.question-set { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
+.question { background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.2); border-radius: 10px; padding: 16px 18px; }
+.question-num { font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; color: #00d4ff; margin-bottom: 6px; display: block; }
+.question p { font-size: 0.95rem; margin-bottom: 0; }
+code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; color: #00d4ff; background: rgba(0,212,255,0.1); padding: 1px 5px; border-radius: 4px; white-space: nowrap; font-variant-ligatures: none; }
+@media (max-width: 720px) { .layout { grid-template-columns: 1fr; } .sidebar { position: static; height: auto; } main { padding: 24px 20px 60px; } }
+.back-link { position: fixed; top: 18px; right: 24px; font-size: 0.78rem; font-weight: 700; color: #67e3ff; text-decoration: none; background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.35); padding: 5px 12px; border-radius: 20px; z-index: 100; transition: background 0.2s; }
+.back-link:hover { background: rgba(0,212,255,0.3); }
+</style>
+</head>
+<body>
+<a href="index.html" class="back-link">← Unit 4</a>
+<div class="layout">
+    <nav class="sidebar">
+        <div class="sidebar-title">Activity 4.8</div>
+        <a class="nav-item active" href="#setup" onclick="setActive(this)">
+            <span class="nav-num">1</span>Verify Setup
+        </a>
+        <a class="nav-item" href="#read" onclick="setActive(this)">
+            <span class="nav-num">2</span>Read All Three
+        </a>
+        <a class="nav-item" href="#interpret" onclick="setActive(this)">
+            <span class="nav-num">3</span>Interpret Readings
+        </a>
+        <a class="nav-item" href="#guard" onclick="setActive(this)">
+            <span class="nav-num">4</span>None Guard
+        </a>
+        <a class="nav-item" href="#reflect" onclick="setActive(this)">
+            <span class="nav-num">5</span>Reflect
+        </a>
+        <div class="sidebar-links">
+            <a href="Lesson_08_Ultrasonic_Distance.html">← Lesson 4.8</a>
+            <a href="Activity_09_Obstacle_Detection.html">Activity 4.9 →</a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="activity-header">
+            <h1>Ultrasonic Distance Sensing</h1>
+            <p style="color:#6272a4; font-size:0.95rem;">Verify all three sensors, read distances, and understand what the numbers mean.</p>
+            <div class="header-meta">
+                <span class="meta-tag meta-time">~25 min</span>
+                <span class="meta-tag meta-level">HS AER</span>
+            </div>
+        </div>
+
+        <!-- SECTION 1: Verify Setup -->
+        <section id="setup">
+            <div class="section-header">
+                <div class="section-num">1</div>
+                <div class="section-title">Verify Setup</div>
+                <span class="section-time">5 min</span>
+            </div>
+            <p>Before reading any distances, confirm that the mux and all three sensors are responding. Load the test script below in Thonny and run it.</p>
+
+            <div class="code-wrap">
+                <div class="code-label">sensor_check.py</div>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre><span class="kw">from</span> <span class="cls">machine</span> <span class="kw">import</span> <span class="op">I2C, Pin</span>
+<span class="kw">import</span> <span class="cls">time</span>
+<span class="kw">from</span> <span class="cls">leo</span> <span class="kw">import</span> <span class="op">i2c, mux, sensor</span>
+
+<span class="cm"># Scan the I2C bus — mux (0x77) and sensor (I2C address) should appear</span>
+<span class="op">devices</span> <span class="kw">=</span> <span class="op">i2c.</span><span class="fn">scan</span>()
+<span class="fn">print</span>(<span class="str">"I2C devices found:"</span>, [<span class="fn">hex</span>(<span class="op">d</span>) <span class="kw">for</span> <span class="op">d</span> <span class="kw">in</span> <span class="op">devices</span>])
+
+<span class="cm"># Test each mux channel — sensor should respond on channels 2, 3, 4</span>
+<span class="kw">for</span> <span class="op">ch</span> <span class="kw">in</span> [<span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>]<span class="op">:</span>
+    <span class="op">mux.</span><span class="fn">select_channel</span>(<span class="op">ch</span>)
+    <span class="op">d</span> <span class="kw">=</span> <span class="op">sensor.</span><span class="fn">distance_cm</span>()
+    <span class="kw">if</span> <span class="op">d</span> <span class="kw">is</span> <span class="op">None:</span>
+        <span class="fn">print</span>(<span class="str">f"CH </span><span class="op">{ch}</span><span class="str">: no response — check wiring"</span>)
+    <span class="kw">else:</span>
+        <span class="fn">print</span>(<span class="str">f"CH </span><span class="op">{ch}</span><span class="str">: OK — </span><span class="op">{d:.1f}</span><span class="str"> cm"</span>)</pre>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-n">1</div>
+                    <div class="step-body">
+                        <strong>Open and run sensor_check.py</strong>
+                        <p>The Shell panel should print a device list and a reading for each channel. You expect to see at least two hex addresses (the mux and the sensor).</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-n">2</div>
+                    <div class="step-body">
+                        <strong>Check all three channels respond</strong>
+                        <p>Each channel should print "OK" with a distance. If one says "no response," check the sensor's connector on the mux board before continuing.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="checkpoint">
+                <div class="checkpoint-icon">✓</div>
+                <div class="checkpoint-body">
+                    <strong>Checkpoint 1</strong>
+                    <p>All three channels print "OK" with a distance reading. You may continue.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Read All Three Sensors -->
+        <section id="read">
+            <div class="section-header">
+                <div class="section-num">2</div>
+                <div class="section-title">Read All Three Sensors</div>
+                <span class="section-time">8 min</span>
+            </div>
+            <p>Now run a continuous read loop that prints all three sensors together. This is the pattern your robot programs will use.</p>
+
+            <div class="code-wrap">
+                <div class="code-label">read_all.py</div>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre><span class="kw">from</span> <span class="cls">leo</span> <span class="kw">import</span> <span class="op">mux, sensor</span>
+<span class="kw">import</span> <span class="cls">time</span>
+
+<span class="kw">while</span> <span class="op">True:</span>
+    <span class="cm"># LEFT sensor — mux channel 2</span>
+    <span class="op">mux.</span><span class="fn">select_channel</span>(<span class="num">2</span>)
+    <span class="op">left</span>   <span class="kw">=</span> <span class="op">sensor.</span><span class="fn">distance_cm</span>()
+
+    <span class="cm"># CENTER sensor — mux channel 3</span>
+    <span class="op">mux.</span><span class="fn">select_channel</span>(<span class="num">3</span>)
+    <span class="op">center</span> <span class="kw">=</span> <span class="op">sensor.</span><span class="fn">distance_cm</span>()
+
+    <span class="cm"># RIGHT sensor — mux channel 4</span>
+    <span class="op">mux.</span><span class="fn">select_channel</span>(<span class="num">4</span>)
+    <span class="op">right</span>  <span class="kw">=</span> <span class="op">sensor.</span><span class="fn">distance_cm</span>()
+
+    <span class="fn">print</span>(<span class="str">f"L: {left}  C: {center}  R: {right}"</span>)
+    <span class="cls">time</span>.<span class="fn">sleep_ms</span>(<span class="num">200</span>)</pre>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-n">1</div>
+                    <div class="step-body">
+                        <strong>Run the loop and watch the Shell output</strong>
+                        <p>You should see three values updating about 5 times per second. Numbers will vary based on what's in front of each sensor.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-n">2</div>
+                    <div class="step-body">
+                        <strong>Move your hand in front of each sensor</strong>
+                        <p>Slowly bring your hand toward the LEFT sensor — only the L value should drop. Repeat for CENTER and RIGHT. Verify each sensor reads independently.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-n">3</div>
+                    <div class="step-body">
+                        <strong>Note the maximum reliable range</strong>
+                        <p>Point each sensor across the room and observe the maximum value before it returns <code>None</code>. Record this — you'll use it to set thresholds later.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="checkpoint">
+                <div class="checkpoint-icon">✓</div>
+                <div class="checkpoint-body">
+                    <strong>Checkpoint 2</strong>
+                    <p>Moving your hand in front of each sensor changes only that sensor's reading. All three are independent.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: Interpret Readings -->
+        <section id="interpret">
+            <div class="section-header">
+                <div class="section-num">3</div>
+                <div class="section-title">Interpret the Readings</div>
+                <span class="section-time">7 min</span>
+            </div>
+            <p>Raw numbers are useful, but labeled output is easier to reason about. Modify the print statement to add context.</p>
+
+            <div class="code-wrap">
+                <div class="code-label">labeled_output.py</div>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre><span class="kw">from</span> <span class="cls">leo</span> <span class="kw">import</span> <span class="op">mux, sensor</span>
+<span class="kw">import</span> <span class="cls">time</span>
+
+<span class="kw">def</span> <span class="fn">fmt</span>(<span class="op">d</span>)<span class="op">:</span>
+    <span class="str">"""Format a reading: show cm or 'OPEN' if None."""</span>
+    <span class="kw">return</span> <span class="str">f"{d:.0f} cm"</span> <span class="kw">if</span> <span class="op">d</span> <span class="kw">is not</span> <span class="op">None</span> <span class="kw">else</span> <span class="str">"OPEN"</span>
+
+<span class="kw">while</span> <span class="op">True:</span>
+    <span class="op">mux.</span><span class="fn">select_channel</span>(<span class="num">2</span>)
+    <span class="op">left</span>   <span class="kw">=</span> <span class="op">sensor.</span><span class="fn">distance_cm</span>()
+    <span class="op">mux.</span><span class="fn">select_channel</span>(<span class="num">3</span>)
+    <span class="op">center</span> <span class="kw">=</span> <span class="op">sensor.</span><span class="fn">distance_cm</span>()
+    <span class="op">mux.</span><span class="fn">select_channel</span>(<span class="num">4</span>)
+    <span class="op">right</span>  <span class="kw">=</span> <span class="op">sensor.</span><span class="fn">distance_cm</span>()
+
+    <span class="fn">print</span>(<span class="str">f"LEFT: {fmt(left):>8}  CENTER: {fmt(center):>8}  RIGHT: {fmt(right):>8}"</span>)
+    <span class="cls">time</span>.<span class="fn">sleep_ms</span>(<span class="num">200</span>)</pre>
+            </div>
+
+            <div class="callout callout-info">
+                <div class="callout-icon">💡</div>
+                <div class="callout-body">
+                    <strong>What does OPEN mean?</strong>
+                    <p>When the sensor returns <code>None</code>, no echo came back in time. That means either nothing is in range, or the sensor is pointed at something that absorbs sound (like thick foam). <code>None</code> = "I don't see anything" — not an error.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: None Guard -->
+        <section id="guard">
+            <div class="section-header">
+                <div class="section-num">4</div>
+                <div class="section-title">Add a None Guard</div>
+                <span class="section-time">5 min</span>
+            </div>
+            <p>Using a <code>None</code> value in math causes a <code>TypeError</code> crash. Add a guard before any comparison or calculation.</p>
+
+            <div class="code-wrap">
+                <div class="code-label">none_guard.py</div>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre><span class="op">mux.</span><span class="fn">select_channel</span>(<span class="num">3</span>)
+<span class="op">center</span> <span class="kw">=</span> <span class="op">sensor.</span><span class="fn">distance_cm</span>()
+
+<span class="cm"># Method 1: explicit check</span>
+<span class="kw">if</span> <span class="op">center</span> <span class="kw">is None:</span>
+    <span class="fn">print</span>(<span class="str">"Center: nothing detected"</span>)
+<span class="kw">elif</span> <span class="op">center</span> <span class="kw">&lt;</span> <span class="num">30</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"CLOSE: {center:.1f} cm"</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"Clear: {center:.1f} cm"</span>)
+
+<span class="cm"># Method 2: or-substitution (compact)</span>
+<span class="op">center_safe</span> <span class="kw">=</span> <span class="op">center</span> <span class="kw">or</span> <span class="num">999</span>   <span class="cm"># None becomes 999 (very far away)</span>
+<span class="kw">if</span> <span class="op">center_safe</span> <span class="kw">&lt;</span> <span class="num">30</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Close!"</span>)</pre>
+            </div>
+
+            <div class="challenge-set">
+                <div class="challenge">
+                    <div class="challenge-header">
+                        <span class="challenge-num">TRY IT</span>
+                        <span class="challenge-title">Trigger the None crash intentionally</span>
+                    </div>
+                    <p>Remove the guard and write <code>if center &lt; 30:</code> directly. Point the sensor at the ceiling (nothing in range) and run it. You should see a <code>TypeError</code>. Then add the guard back and confirm the crash goes away.</p>
+                </div>
+            </div>
+
+            <div class="checkpoint">
+                <div class="checkpoint-icon">✓</div>
+                <div class="checkpoint-body">
+                    <strong>Checkpoint 3</strong>
+                    <p>Your labeled read loop runs without crashing even when a sensor returns <code>None</code>.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: Reflect -->
+        <section id="reflect">
+            <div class="section-header">
+                <div class="section-num">5</div>
+                <div class="section-title">Reflect</div>
+                <span class="section-time">5 min</span>
+            </div>
+
+            <div class="question-set">
+                <div class="question">
+                    <span class="question-num">Q1</span>
+                    <p>Why must you call <code>mux.select_channel()</code> before each <code>sensor.distance_cm()</code>? What would happen if you skipped it?</p>
+                </div>
+                <div class="question">
+                    <span class="question-num">Q2</span>
+                    <p>The sensor returns <code>None</code> when nothing is in range. Why is it better to treat <code>None</code> as "far away" rather than as zero when making navigation decisions?</p>
+                </div>
+                <div class="question">
+                    <span class="question-num">Q3</span>
+                    <p>You noticed the loop takes about 200 ms per full scan (three sensors × ~60 ms each + delays). If L.E.O. drives at 20 cm/s, how far could it travel between scans? Is that a concern?</p>
+                </div>
+            </div>
+
+            <div class="callout callout-info" style="margin-top:24px;">
+                <div class="callout-icon">→</div>
+                <div class="callout-body">
+                    <strong>Next: Activity 4.9</strong>
+                    <p>You know how to read the sensors. Now you'll use those readings to make L.E.O. react — stopping before walls and steering around obstacles.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+function setActive(el) {
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+}
+
+function copyCode(btn) {
+    const pre = btn.parentElement.querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+    });
+}
+
+// Highlight active nav on scroll
+const sections = document.querySelectorAll('section[id]');
+const navItems = document.querySelectorAll('.nav-item');
+window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 60) current = s.id; });
+    navItems.forEach(n => {
+        n.classList.toggle('active', n.getAttribute('href') === '#' + current);
+    });
+}, { passive: true });
+</script>
+</body>
+</html>
