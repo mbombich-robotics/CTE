@@ -13,7 +13,7 @@
 
 Applied Engineering & Robotics (8th Grade) is a one-semester, hands-on course where you experience engineering the way professionals do it. You will use the Engineering Design Process to design, model, and build parts for L.E.O. (Logic, Electronics, and Operations) — a real autonomous robot — using professional CAD software, 3D printers, and programming tools.
 
-This course gives you a strong foundation in engineering thinking and technology skills before high school. Students who complete this course are prepared to enter HS AER at Level 2 (B-track) the following year.
+This course gives you a strong foundation in engineering thinking and technology skills before high school.
 
 ---
 
@@ -95,4 +95,4 @@ IEPs and 504 plans are fully supported. Please discuss your needs early.
 | **Portfolio** | [mbombich-robotics.github.io/CTE](https://mbombich-robotics.github.io/CTE/) |
 | **Google Classroom** | All assignments, rubrics, pacing, and announcements |
 | **Email** | mbombich@vicksburgschools.org — replies within 24 hours on school days |
-| **Open Lab** | TBD |
+| **Tutorial** | Tuesdays & Thursdays — request your assignment by end of day Monday or Wednesday. Students with missing work are assigned automatically. |

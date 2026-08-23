@@ -5,7 +5,8 @@
 **Email:** mbombich@vicksburgschools.org  
 **Room:** 70  
 **Office Hours:** Monday–Thursday, 2:45–3:15 pm  
-**Prerequisites:** None — open to all students.
+**Prerequisites:** None — open to all students.  
+**College Credit:** Pending KVCC articulation agreement
 
 ---
 
@@ -100,4 +101,4 @@ IEPs and 504 plans are fully supported. Please discuss your needs early — acco
 | **Portfolio** | [mbombich-robotics.github.io/CTE](https://mbombich-robotics.github.io/CTE/) |
 | **Google Classroom** | All assignments, rubrics, pacing, and announcements |
 | **Email** | mbombich@vicksburgschools.org — replies within 24 hours on school days |
-| **Open Lab** | TBD |
+| **Tutorial** | Tuesdays & Thursdays — request your assignment by end of day Monday or Wednesday. Students with missing work are assigned automatically. |
