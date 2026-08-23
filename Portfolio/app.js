@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.17',
+    VERSION: 'v2.14.18',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -153,6 +153,7 @@ const DELIVERABLES = [
         week: 1,
         phase: 'edp',
         type: 'googleDoc',
+        points: 24,
         description: 'Create a formal design brief in Google Docs. Your document lives in your Google Drive and serves as the official record of your design requirements.',
         // requirements removed — rubric shown in portfolio; section instructions live in the doc template
     },
@@ -795,6 +796,40 @@ speed = motor.get_speed('left')  # returns current %
 // GRADING RUBRICS
 // ============================================
 const RUBRICS = {
+    11: {
+        categories: [
+            { name: 'Client & End User', points: 4, criteria: [
+                'Clearly identifies who the client is (person, group, or organization)',
+                'Describes who will actually use the product (end user)',
+                'Client and end user are distinct and specific — not vague or generic'
+            ]},
+            { name: 'Criteria (quantity)', points: 4, criteria: [
+                'Lists at least 5 design criteria',
+                'Each criterion is written as a specific, measurable requirement',
+                'Criteria are numbered and formatted consistently'
+            ]},
+            { name: 'Criteria (quality)', points: 4, criteria: [
+                'Criteria describe what the product must do or how it must perform',
+                'Criteria are testable — you could verify each one with a test or measurement',
+                'Criteria are distinct from constraints (they are goals, not limitations)'
+            ]},
+            { name: 'Constraints', points: 4, criteria: [
+                'Lists real limitations on the design (time, budget, materials, size, etc.)',
+                'Constraints are specific enough to actually limit design choices',
+                'At least 3 constraints are identified'
+            ]},
+            { name: 'Design Statement', points: 4, criteria: [
+                'Written as a single clear sentence or short paragraph',
+                'Names the client/end user, the problem, and the general solution direction',
+                'Specific enough to guide design decisions — not a generic mission statement'
+            ]},
+            { name: 'Decision Matrix', points: 4, criteria: [
+                'Compares at least 3 design options against weighted criteria',
+                'Criteria weights reflect the priorities in the design brief',
+                'Shows the reasoning for the chosen design, not just the scores'
+            ]}
+        ]
+    },
     4: {
         categories: [
             { name: 'Customized CAD Model', points: 20, criteria: [
