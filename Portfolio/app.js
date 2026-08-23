@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.18',
+    VERSION: 'v2.14.19',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -166,13 +166,9 @@ const DELIVERABLES = [
         week: 3,
         phase: 'cad',
         type: 'googleDoc',
+        points: 20,
         description: 'Document your completed Wheel Hub. Identify the key dimensions (M3 clearance holes, M3 tap hole, M8 bore, counterbore depth, assembled width), log every print version with caliper measurements, and submit a labeled CAD screenshot.',
-        requirements: [
-            'Section 1: 3–5 key dimensions with target values — include bore diameters, clearance holes, and counterbore depth',
-            'Section 2: Version log with caliper measurements after every print and specific notes on what changed',
-            'Section 3: CAD screenshot with all key dimensions labeled + photo of final print with calipers',
-            'Section 4: Reflection referencing specific measured values from your log',
-        ]
+        // requirements removed — rubric shown in portfolio; section instructions live in the doc template
     },
     {
         id: 22,
@@ -181,13 +177,9 @@ const DELIVERABLES = [
         week: 4,
         phase: 'cad',
         type: 'googleDoc',
+        points: 20,
         description: 'Document your completed Drive Wheel. Track the key dimensions that control fit and function — hex bore, outer diameter (interference fit with silicone tire), and spoke geometry.',
-        requirements: [
-            'Section 1: 3–5 key dimensions with target values — include hex bore width, outer diameter, and spoke count/spacing',
-            'Section 2: Version log with caliper measurements after every print and specific notes on what changed',
-            'Section 3: CAD screenshot with all key dimensions labeled + photo of final print with tire pressed on',
-            'Section 4: Reflection referencing specific measured values from your log',
-        ]
+        // requirements removed — rubric shown in portfolio; section instructions live in the doc template
     },
     {
         id: 23,
@@ -197,13 +189,9 @@ const DELIVERABLES = [
         tracks: ['hsaer'],
         phase: 'cad',
         type: 'googleDoc',
+        points: 20,
         description: 'Document your completed Motor Sleeve Mount. Track the dimensions that control the motor fit — sleeve bore diameter, T-slot channel dimensions, and face screw hole positions.',
-        requirements: [
-            'Section 1: 3–5 key dimensions with target values — include sleeve bore, T-slot width/depth, and hole spacing',
-            'Section 2: Version log with caliper measurements after every print and specific notes on what changed',
-            'Section 3: CAD screenshot with all key dimensions labeled + photo of motor seated in mount',
-            'Section 4: Reflection referencing specific measured values from your log',
-        ]
+        // requirements removed — rubric shown in portfolio; section instructions live in the doc template
     },
     {
         id: 24,
@@ -213,13 +201,9 @@ const DELIVERABLES = [
         tracks: ['hsaer'],
         phase: 'cad',
         type: 'googleDoc',
+        points: 20,
         description: 'Document your finalized Robot Deck. Track the key hole pattern dimensions and assembly evolution (v1-Base through v5-Final). Submit a full assembly screenshot with zero interference check collisions.',
-        requirements: [
-            'Section 1: Key dimensions — component hole patterns, fillet radii (≥ CNC bit radius), overall board dimensions',
-            'Section 2: Version log showing how the deck evolved as each component was added (v1-Base → v5-Final)',
-            'Section 3: Final assembly CAD screenshot (all 5 components constrained) + photo of assembled robot frame',
-            'Section 4: Reflection referencing at least one change made after finding an issue in the assembly',
-        ]
+        // requirements removed — rubric shown in portfolio; section instructions live in the doc template
     },
     {
         id: 25,
@@ -229,13 +213,9 @@ const DELIVERABLES = [
         tracks: ['hsaer'],
         phase: 'cad',
         type: 'googleDoc',
+        points: 20,
         description: 'Document your completed Omni Wheel Mount. Track the dimensions that control axle fit and arm spacing, and submit the mount constrained to the deck in your assembly.',
-        requirements: [
-            'Section 1: 3–5 key dimensions with target values — include axle bore diameter, arm spacing, and mount hole positions',
-            'Section 2: Version log with caliper measurements after every print and specific notes on what changed',
-            'Section 3: CAD screenshot with dimensions labeled + assembly screenshot showing C5 constrained on deck',
-            'Section 4: Reflection referencing specific measured values from your log',
-        ]
+        // requirements removed — rubric shown in portfolio; section instructions live in the doc template
     },
     {
         id: 26,
@@ -245,13 +225,9 @@ const DELIVERABLES = [
         tracks: ['hsaer'],
         phase: 'cad',
         type: 'googleDoc',
+        points: 20,
         description: 'Document your completed IR Sensor Mount. Track the dimensions that control sensor ground clearance and bracket geometry.',
-        requirements: [
-            'Section 1: 3–5 key dimensions — include slot dimensions, arm thickness, sensor clearance height, and mount hole positions',
-            'Section 2: Version log with caliper measurements after every print and specific notes on what changed',
-            'Section 3: CAD screenshot with dimensions labeled + assembly screenshot showing C6 in position on deck underside',
-            'Section 4: Reflection referencing specific measured values from your log',
-        ]
+        // requirements removed — rubric shown in portfolio; section instructions live in the doc template
     },
     {
         id: 27,
@@ -261,13 +237,9 @@ const DELIVERABLES = [
         tracks: ['hsaer'],
         phase: 'cad',
         type: 'googleDoc',
+        points: 20,
         description: 'Document your completed Ultrasonic Sensor Mount — the final component before the deck is locked. Track the sensor bore dimensions and L-bracket geometry.',
-        requirements: [
-            'Section 1: 3–5 key dimensions — include sensor bore diameters (HC-SR04 OD), L-bracket arm dimensions, and mount hole positions',
-            'Section 2: Version log with caliper measurements after every print and specific notes on what changed',
-            'Section 3: CAD screenshot with dimensions labeled + full assembly screenshot (all 5 components) with zero interference',
-            'Section 4: Reflection referencing specific measured values from your log',
-        ]
+        // requirements removed — rubric shown in portfolio; section instructions live in the doc template
     },
     // ── Unit 3: Safety Certification ────────────────────────────────────
     {
@@ -795,6 +767,37 @@ speed = motor.get_speed('left')  # returns current %
 // ============================================
 // GRADING RUBRICS
 // ============================================
+// Shared display rubric for D21–D27 (all Completed Component deliverables)
+const COMPONENT_RUBRIC_DISPLAY = {
+    categories: [
+        { name: 'Key Dimensions', points: 4, criteria: [
+            'Lists 3–5 critical dimensions with specific target values',
+            'Dimensions are specific to this component\'s fit and function (not generic)',
+            'Target values match what\'s modeled in CAD'
+        ]},
+        { name: 'Version Log', points: 4, criteria: [
+            'Records caliper measurements after each print attempt',
+            'Notes what specifically changed between versions — not just dates',
+            'Enough detail to show a real iteration process'
+        ]},
+        { name: 'Iteration Logic', points: 4, criteria: [
+            'Explains WHY changes were made, not just what changed',
+            'At least one design decision is justified with data from the version log',
+            'Shows a logical connection between measurement results and next version'
+        ]},
+        { name: 'CAD Evidence', points: 4, criteria: [
+            'CAD screenshot includes labeled key dimensions (not just a plain view)',
+            'Photo of the printed part — ideally with calipers on a key dimension',
+            'Both images are clear, in focus, and easy to identify'
+        ]},
+        { name: 'Reflection', points: 4, criteria: [
+            'References specific values from the version log — not vague or generic',
+            'Identifies what was learned from the iteration process',
+            'Connects to broader design or engineering thinking'
+        ]}
+    ]
+};
+
 const RUBRICS = {
     11: {
         categories: [
@@ -830,6 +833,13 @@ const RUBRICS = {
             ]}
         ]
     },
+    21: COMPONENT_RUBRIC_DISPLAY,
+    22: COMPONENT_RUBRIC_DISPLAY,
+    23: COMPONENT_RUBRIC_DISPLAY,
+    24: COMPONENT_RUBRIC_DISPLAY,
+    25: COMPONENT_RUBRIC_DISPLAY,
+    26: COMPONENT_RUBRIC_DISPLAY,
+    27: COMPONENT_RUBRIC_DISPLAY,
     4: {
         categories: [
             { name: 'Customized CAD Model', points: 20, criteria: [
