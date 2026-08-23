@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.16',
+    VERSION: 'v2.14.17',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -154,14 +154,7 @@ const DELIVERABLES = [
         phase: 'edp',
         type: 'googleDoc',
         description: 'Create a formal design brief in Google Docs. Your document lives in your Google Drive and serves as the official record of your design requirements.',
-        requirements: [
-            'Client & End User — specifically named, not vague',
-            'Problem Statement — describes the problem, not the solution',
-            'At least 3 measurable criteria ("The solution must…")',
-            'At least 2 realistic constraints ("The solution must not…")',
-            'Design Statement — 2–3 sentences synthesizing all four sections',
-            'Three distinct concept sketches with your name visible on each'
-        ]
+        // requirements removed — rubric shown in portfolio; section instructions live in the doc template
     },
     // ── Unit 2: CAD — Component-Based (D21–D27) ─────────────────────────
     // All use the Completed Component Google Doc template (DELIVERABLE_DOC_TEMPLATE_COMPONENT)
@@ -2454,12 +2447,13 @@ function openDeliverableForm(id) {
             </span>
         </div>
 
+        ${deliverable.requirements?.length ? `
         <div class="card" style="background: var(--gray-50);">
             <h4 style="margin-bottom: 12px;">Requirements</h4>
             <ul style="margin-left: 20px;">
                 ${deliverable.requirements.map(r => `<li style="margin-bottom: 8px;">${r}</li>`).join('')}
             </ul>
-        </div>
+        </div>` : ''}
 
         ${renderRubricCard(id)}
 
@@ -3145,7 +3139,7 @@ function renderDocDeliverableUI(id, deliverable, existing) {
     const feedbackSection = hasDoc && !isSubmitted
         ? `<div style="margin-bottom:16px;">
                <button type="button" class="btn btn-secondary" onclick="requestDocFeedback(${id})" id="docFeedbackBtn">
-                   <i class="fas fa-comments"></i> Get AI Feedback
+                   <i class="fas fa-comments"></i> Get Immediate Feedback
                </button>
                <div id="docFeedbackResult" style="margin-top:16px;"></div>
            </div>`
@@ -3172,7 +3166,7 @@ function renderDocDeliverableUI(id, deliverable, existing) {
                 <li>Click <strong>Create My ${deliverable.title}</strong> — your personal copy opens in Google Docs.</li>
                 <li>Read the yellow instruction boxes, then <strong>delete them</strong> as you complete each section.</li>
                 <li>Fill in all sections. Photos go directly into the doc.</li>
-                <li>Click <strong>Get AI Feedback</strong> to check your work before submitting.</li>
+                <li>Click <strong>Get immediate feedback</strong> to check your work before submitting.</li>
                 <li>When you're satisfied, click <strong>Submit</strong>.</li>
             </ol>
         </div>`;
@@ -3252,7 +3246,7 @@ async function requestDocFeedback(id) {
     } catch (err) {
         if (panel) panel.innerHTML = `<p style="color:var(--danger,#c62828);font-size:14px;">${err.message}</p>`;
     } finally {
-        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-comments"></i> Get AI Feedback'; }
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-comments"></i> Get Immediate Feedback'; }
     }
 }
 
