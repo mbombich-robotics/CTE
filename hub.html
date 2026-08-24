@@ -269,7 +269,7 @@ const U4 = 'Unit_04_Programming_Electronics_and_Sensors/';
 
 const LESSONS = {
   hsaer: {
-    1:  { lesson:   { label:'L1.1 — Intro to Engineering Design', url:BASE+U1+'Lesson_01_Intro_to_Engineering_Design.html?track='+track },
+    1:  { lesson:   { label:'L1.1 — Intro to Engineering Design', url:BASE+U1+'Lesson_01_Intro_to_Engineering_Design.html' },
           due: [
             { label:'Signed Syllabus & Safety Contract (D1.0) — due Thu 9/3', type:'deliverable' },
           ] },
@@ -315,7 +315,7 @@ const LESSONS = {
           ] },
   },
   aer8th: {
-    1:  { lesson:   { label:'L1.1 — Intro to Engineering Design', url:BASE+U1+'Lesson_01_Intro_to_Engineering_Design.html?track='+track } },
+    1:  { lesson:   { label:'L1.1 — Intro to Engineering Design', url:BASE+U1+'Lesson_01_Intro_to_Engineering_Design.html' } },
     2:  { lesson:   { label:'L1.2 — Spaghetti Tower Challenge',   url:BASE+U1+'Lesson_02_Spaghetti_Tower_Challenge.html' },
           activity: { label:'L1.5 — Design Brief Workshop',       url:BASE+U1+'Lesson_05_Design_Brief_Workshop.html' } },
     3:  { lesson:   { label:'C1 — Wheel Hub',                     url:BASE+U2+'index.html' } },
@@ -324,7 +324,7 @@ const LESSONS = {
     10: { lesson:   { label:'L4.1 — Intro to MicroPython',        url:BASE+U4+'Lesson_01_Intro_to_MicroPython.html' } },
   },
   dbl: {
-    1:  { lesson:   { label:'L1.1 — Intro to Engineering Design', url:BASE+U1+'Lesson_01_Intro_to_Engineering_Design.html?track='+track } },
+    1:  { lesson:   { label:'L1.1 — Intro to Engineering Design', url:BASE+U1+'Lesson_01_Intro_to_Engineering_Design.html' } },
     2:  { lesson:   { label:'L1.2 — Spaghetti Tower Challenge',   url:BASE+U1+'Lesson_02_Spaghetti_Tower_Challenge.html' },
           activity: { label:'L1.5 — Design Brief Workshop',       url:BASE+U1+'Lesson_05_Design_Brief_Workshop.html' } },
     3:  { lesson:   { label:'P1 — Fidget Spinner: CAD Design',    url:BASE+U2+'index.html' } },
@@ -537,11 +537,11 @@ function renderTabs(active) {
 function renderThisWeek(track, week, meta) {
   const entry = LESSONS[track][week] || null;
   const rows = entry ? [
-    entry.lesson && `<a class="lesson-row" href="${h(entry.lesson.url)}" target="_blank" rel="noopener">
+    entry.lesson && `<a class="lesson-row" href="${h(appendTrack(entry.lesson.url, track))}" target="_blank" rel="noopener">
       <div class="l-icon">📐</div>
       <div class="l-info"><div class="l-type">Lesson</div><div class="l-name">${h(entry.lesson.label)}</div></div>
       <span class="l-arr">›</span></a>`,
-    entry.activity && `<a class="lesson-row" href="${h(entry.activity.url)}" target="_blank" rel="noopener">
+    entry.activity && `<a class="lesson-row" href="${h(appendTrack(entry.activity.url, track))}" target="_blank" rel="noopener">
       <div class="l-icon">🔧</div>
       <div class="l-info"><div class="l-type">Activity</div><div class="l-name">${h(entry.activity.label)}</div></div>
       <span class="l-arr">›</span></a>`,
@@ -602,6 +602,10 @@ function renderQuote(week) {
 }
 
 // ── INIT + TICK ───────────────────────────────────────────
+function appendTrack(url, track) {
+  return url + (url.includes('?') ? '&' : '?') + 'track=' + track;
+}
+
 function isDark() {
   const t = document.documentElement.getAttribute('data-theme');
   if (t === 'dark') return true;
