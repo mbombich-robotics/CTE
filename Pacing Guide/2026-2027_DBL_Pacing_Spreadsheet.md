@@ -21,12 +21,12 @@
 |------|-------|------|------|-------|---------|--------------------|
 | 1 | Aug 31–Sep 4 | 4 | 1 — EDP | ⚡ Aug 31 (20-min half day) · 🔴 Sep 4 no school | **Aug 31 (20 min):** Join Google Classroom, bookmark hub page, teacher + aide intro. **Sep 1–3:** Intro to DBL; course overview + expectations; EDP framework; client interview — fidget spinner design challenge; write design statement | **D1.0 — Signed Syllabus & Safety Contract** (due Thu Sep 3) |
 | 2 | Sep 7–11 | 4 | 1 — EDP | 🔴 Labor Day Sep 7 | Concept sketching + decision matrix; cardboard prototype build + peer test; revise; write design brief | **Q1: EDP Quiz**; **D1.1 — Design Brief** |
-| 3 | Sep 14–18 | 5 | 2 — CAD | | F360 orientation + CAD hygiene; measurement fundamentals; sketch tool intro; begin fidget spinner body cross-section | |
-| 4 | Sep 21–25 | 5 | 2 — CAD | | Revolve/extrude features; bearing pocket dimensions (MR128: 12mm OD × 3.5mm deep); apply parametric constraints | **D2.1 — Spinner Body CAD File** |
-| 5 | Sep 28–Oct 2 | 5 | 2 — CAD | ⚡ Sep 30 (20-min period) | Add arm/grip features; model bearing cap; assemble body + cap; render; export for print | **Q2: CAD Quiz**; **D2.2 — Spinner Assembly** |
+| 3 | Sep 14–18 | 5 | 2 — CAD | | Kevin Kennedy F360 orientation video (watch twice, orientation check); measurement fundamentals — calipers (OD/ID/depth); **C1: Bearing** — measure MR128 bearing with calipers; sketch, revolve/extrude to match measurements; export + print | **D2.1 — C1: Bearing Model + Key Dimensions** |
+| 4 | Sep 21–25 | 5 | 2 — CAD | | Spinner body design: revolve main body; bore bearing pocket using C1 dimensions (12mm OD × 3.5mm deep); apply parametric constraints; arm/grip features; model bearing cap | **D2.2 — Spinner Body CAD File** |
+| 5 | Sep 28–Oct 2 | 5 | 2 — CAD | ⚡ Sep 30 (20-min period) | Assemble spinner body + cap + bearing in F360; render; export; slice and verify; submit to print queue | **Q2: CAD Quiz**; **D2.3 — Spinner Assembly** |
 | 6 | Oct 5–9 | 5 | 3 — Safety | | 3D printer safety + operator cert; hand tools (files, calipers, drill press); CNC router awareness; xTool laser awareness; fire extinguisher + first aid | **Q3: Safety Quiz**; **D3.1 — Tool Cert Card** |
 | 7 | Oct 12–16 | 5 | P1 — Fidget Spinner | | Slice spinner files; load print queue; manage active prints; post-process (remove supports, sand, finish) | |
-| 8 | Oct 19–23 | 5 | P1 — Fidget Spinner | | Bearing press-fit + assembly; spin test + caliper check; photography for portfolio; class showcase | **D2.3 — Completed Spinner + Portfolio Photo** |
+| 8 | Oct 19–23 | 5 | P1 — Fidget Spinner | | Bearing press-fit + assembly; spin test + caliper check; photography for portfolio; class showcase | **D2.4 — Completed Spinner + Portfolio Photo** |
 | 9 | Oct 26–30 | 4 | 7 — Electrical | 🟡 🔴 Records Day Oct 30 | L7.1 Multimeter: DMM parts, measuring V/I/R, safety; L7.2 Breadboards: internal connections, power rails, schematic symbols; L7.3 LED Circuits: polarity, V_f, current-limiting resistor | |
 | 10 | Nov 2–6 | 5 | 7 — Electrical | | L7.4 Ohm's Law: V=IR, triangle, units, worked examples; L7.5 Series & Parallel: concepts, math, comparison table; breadboard lab — build and measure circuits | |
 | 11 | Nov 9–13 | 5 | 7 — Electrical | ⚡ Nov 11 (20-min period) | L7.6 Equivalent Resistance: combination circuits, 4-resistor worked example; L7.7 Kirchhoff's Laws: KCL, KVL, 5-resistor circuit lab; unit wrap-up | **Q4: Unit 7 Quiz**; **D7.1 — Lab Results** |
@@ -80,9 +80,10 @@
 |---|------|------|
 | D1.0 | Signed Syllabus & Safety Contract | 1 |
 | D1.1 | Design Brief | 2 |
-| D2.1 | Spinner Body CAD File | 4 |
-| D2.2 | Spinner Assembly | 5 |
-| D2.3 | Completed Spinner + Portfolio Photo | 8 |
+| D2.1 | C1 — Bearing Model + Key Dimensions | 3 |
+| D2.2 | Spinner Body CAD File | 4 |
+| D2.3 | Spinner Assembly | 5 |
+| D2.4 | Completed Spinner + Portfolio Photo | 8 |
 | D3.1 | Tool Cert Card | 6 |
 | D7.1 | Unit 7 Lab Results | 11 |
 | D8.1 | Fix Fran's Farm | 29 |
