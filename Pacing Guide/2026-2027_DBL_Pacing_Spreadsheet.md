@@ -19,9 +19,9 @@
 
 | Week | Dates | Days | Unit | Notes | Content | Deliverable / Quiz |
 |------|-------|------|------|-------|---------|--------------------|
-| 1 | Aug 31–Sep 4 | 4 | 1 — EDP | ⚡ Aug 31 (20-min half day) · 🔴 Sep 4 no school | **Aug 31 (20 min):** Join Google Classroom, bookmark hub page, teacher + aide intro. **Sep 1–3:** Intro to DBL; course overview + expectations; EDP framework; client interview — fidget spinner design challenge; write design statement | **D1.0 — Signed Syllabus & Safety Contract** (due Thu Sep 3) |
-| 2 | Sep 7–11 | 4 | 1 — EDP | 🔴 Labor Day Sep 7 | Concept sketching + decision matrix; cardboard prototype build + peer test; revise; write design brief | **Q1: EDP Quiz**; **D1.1 — Design Brief** |
-| 3 | Sep 14–18 | 5 | 2 — CAD | | Kevin Kennedy F360 orientation video (watch twice, orientation check); measurement fundamentals — calipers (OD/ID/depth); **C1: Bearing** — measure MR128 bearing with calipers; sketch, revolve/extrude to match measurements; export + print | **D2.1 — C1: Bearing Model + Key Dimensions** |
+| 1 | Aug 31–Sep 4 | 4 | 1 — EDP | ⚡ Aug 31 (20-min half day) · 🔴 Sep 4 no school | **Aug 31 (20 min):** Join Google Classroom, bookmark hub page, teacher + aide intro. **Sep 1:** L1.1 Intro to DBL + course overview. **Sep 2:** L1.2 Spaghetti Tower (no framework, 18 min). **Sep 3:** L1.3 EDP Framework + Week Ahead preview | **D1.0 — Signed Syllabus & Safety Contract** (due Thu Sep 3) |
+| 2 | Sep 7–11 | 4 | 1 — EDP | 🔴 Labor Day Sep 7 | **Sep 8:** L1.4 Paper Glider (EDP applied, 18 min build). **Sep 9:** L1.5 Design Brief Workshop — fidget spinner criteria, constraints, design statement (portfolio D1.1). **Sep 10:** L1.6 Client Interview + Design Statement. **Sep 11:** L1.7 Concept Sketching + Decision Matrix | **D1.1 — Design Brief** |
+| 3 | Sep 14–18 | 5 | 1 → 2 | | **Sep 14:** Kevin Kennedy F360 orientation video (watch twice, orientation check). **Sep 15–18:** Measurement fundamentals — calipers (OD/ID/depth); **C1: Bearing** — measure MR128 bearing with calipers; sketch, revolve/extrude to match measurements; export + print | **Q1: EDP Quiz**; **D2.1 — C1: Bearing Model + Key Dimensions** |
 | 4 | Sep 21–25 | 5 | 2 — CAD | | Spinner body design: revolve main body; bore bearing pocket using C1 dimensions (12mm OD × 3.5mm deep); apply parametric constraints; arm/grip features; model bearing cap | **D2.2 — Spinner Body CAD File** |
 | 5 | Sep 28–Oct 2 | 5 | 2 — CAD | ⚡ Sep 30 (20-min period) | Assemble spinner body + cap + bearing in F360; render; export; slice and verify; submit to print queue | **Q2: CAD Quiz**; **D2.3 — Spinner Assembly** |
 | 6 | Oct 5–9 | 5 | 3 — Safety | | 3D printer safety + operator cert; hand tools (files, calipers, drill press); CNC router awareness; xTool laser awareness; fire extinguisher + first aid | **Q3: Safety Quiz**; **D3.1 — Tool Cert Card** |
@@ -66,7 +66,7 @@
 
 | # | Name | Week | Scope |
 |---|------|------|-------|
-| Q1 | EDP Quiz | 2 | Unit 1 — Engineering Design Process |
+| Q1 | EDP Quiz | 3 | Unit 1 — Engineering Design Process |
 | Q2 | CAD Quiz | 5 | Unit 2 — Fundamentals of CAD |
 | Q3 | Safety Quiz | 6 | Unit 3 — Shop Safety |
 | Q4 | Unit 7 Quiz | 11 | Unit 7 — Electrical Systems |
