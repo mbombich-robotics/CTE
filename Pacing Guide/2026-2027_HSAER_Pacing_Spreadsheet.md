@@ -47,21 +47,21 @@
 | 21 | Feb 1–5 | 5 | 4 — Ultrasonic | | L4.9 Wall Following — proportional correction to maintain fixed distance from wall; A4.9 Wall Following Challenge (scaffolded) | **D4.4 — Ultrasonic: Obstacle & Wall Following** |
 | 22 | Feb 8–12 | 5 | 4 — Line Following | | L4.10 OSOYOO 5-sensor IR array — wire, calibrate thresholds, binary line following; A4.10 Binary Line Following | |
 | 23 | Feb 15–19 | 4 | 4 — Line Following | 🔴 Presidents Day Feb 15 | L4.11 Weighted-sensor error; proportional control first, then full PID tuning; A4.11 PID Challenge (scaffolded) | **D4.5 — Line Following Practical** |
-| 24 | Feb 22–26 | 4 | 5 — AI & ML | 🔴 Feb 26 mid-winter break | L5.1 What Is AI; L5.2 Ethics in AI; L5.3 Teachable Machine | **Q6: AI Quiz** |
-| 25 | Mar 1–5 | 5 | 7 — Electrical Systems | | L7.1 Using a Multimeter — meter modes, reading voltage/resistance/continuity; L7.2 Breadboards — layout, power rails, jumper wiring; L7.3 LED Circuits — current-limiting resistor, forward voltage | |
-| 26 | Mar 8–12 | 5 | 7 — Electrical Systems | ⚡ Mar 10 (20-min period) | L7.4 Ohm's Law — V=IR, solving for V/I/R; L7.5 Series vs. Parallel Circuits — voltage/current rules; L7.6 Equivalent Resistance — series/parallel simplification; L7.7 Kirchhoff's Laws — KVL and KCL | **Q7: Electrical Systems Quiz** |
+| 24 | Feb 22–26 | 4 | 5 — AI & ML | 🔴 Feb 26 mid-winter break | L5.1 What Is AI; L5.2 Ethics in AI; L5.3 Teachable Machine | **Q6: AI Quiz**; **D5.1 — Teachable Machine Project** |
+| 25 | Mar 1–5 | 5 | 7 — Electrical Systems | | L7.1 Using a Multimeter — meter modes, reading voltage/resistance/continuity; L7.2 Breadboards — layout, power rails, jumper wiring; L7.3 LED Circuits — current-limiting resistor, forward voltage | **D7.1 — Multimeter Lab** |
+| 26 | Mar 8–12 | 5 | 7 — Electrical Systems | ⚡ Mar 10 (20-min period) | L7.4 Ohm's Law — V=IR, solving for V/I/R; L7.5 Series vs. Parallel Circuits — voltage/current rules; L7.6 Equivalent Resistance — series/parallel simplification; L7.7 Kirchhoff's Laws — KVL and KCL | **Q7: Electrical Systems Quiz**; **D7.2 — LED Circuit: Schematic + Built Circuit + Calculations** |
 | 27 | Mar 15–19 | 5 | 8 — Mechanisms | | L8.1 Simple Machines & Engineering Design — 6 simple machines, IMA; L8.2 Mechanical Advantage — IMA vs AMA, lever classes; L8.3 Work, Power & Efficiency | |
-| 28 | Mar 22–25 | ~3.5 | 8 — Mechanisms | 🟡 🔴 Mar 25 ½-day Records Day · Mar 26 spring break begins | L8.4 Pulley Systems — fixed, movable, compound; L8.5 Gears & Gear Ratios — gear ratios, multi-stage trains | |
+| 28 | Mar 22–25 | ~3.5 | 8 — Mechanisms | 🟡 🔴 Mar 25 ½-day Records Day · Mar 26 spring break begins | L8.4 Pulley Systems — fixed, movable, compound; L8.5 Gears & Gear Ratios — gear ratios, multi-stage trains | **D8.1 — Simple Machines + Pulleys: IMA Calculations** |
 | — | Mar 26–Apr 4 | — | — | 🌿 Spring Break | | |
-| 29 | Apr 5–9 | 5 | 8 — Mechanisms | | L8.6 Maximizing Power Output — motor curves, stall torque; L8.7 Tug of War Challenge — design-build-test; L8.8 Linkages — four-bar linkage, DOF | |
-| 30 | Apr 12–16 | ~2 | 8 — Mechanisms | 🧪 State testing Tue–Thu | L8.9 Types of Motion & Motion Conversion; L8.10 Fix Fran's Farm! — capstone challenge | |
-| 31 | Apr 19–23 | 5 | 8 → Servo Build | | **Q8: Unit 8 Mechanisms Quiz**; Project intro + design brief; servo control review; begin build | **Q8: Unit 8 Mechanisms Quiz**; **D8.1 — Servo Design Brief** |
+| 29 | Apr 5–9 | 5 | 8 — Mechanisms | | L8.6 Maximizing Power Output — motor curves, stall torque; L8.7 Tug of War Challenge — design-build-test; L8.8 Linkages — four-bar linkage, DOF | **D8.2 — Tug of War: Design Sketch + Test Results + Reflection** |
+| 30 | Apr 12–16 | ~2 | 8 — Mechanisms | 🧪 State testing Tue–Thu | L8.9 Types of Motion & Motion Conversion; L8.10 Fix Fran's Farm! — capstone challenge | **D8.3 — Fix Fran's Farm: Problem Selection + Pitch** |
+| 31 | Apr 19–23 | 5 | 8 → Servo Build | | **Q8: Unit 8 Mechanisms Quiz**; Project intro + design brief; servo control review; begin build | **Q8: Unit 8 Mechanisms Quiz**; **D8.4 — Servo Design Brief** |
 | 32 | Apr 26–30 | 5 | Servo Build | | Build + test + iterate | |
-| 33 | May 3–7 | 5 | Servo Build | ⚡ May 5 (20-min period) | Final demo + portfolio submission | **D8.2 — Servo Build Project** |
-| 34 | May 10–14 | 5 | Capstone | | Open-ended challenge or improvement project | |
-| 35 | May 17–21 | 5 | Portfolio / Review | 🎓 May 20 last day for seniors | Portfolio completion push; all deliverables finalized; review for non-seniors | **Q9: Final Exam (seniors — before May 20)** |
-| 36 | May 24–28 | 5 | Review | | EDP, CAD, Safety, Programming review for non-seniors | |
-| 37 | May 31–Jun 4 | 4 | Wrap-up | 🔴 Memorial Day May 31 | Return exams; wrap-up projects; demos | |
+| 33 | May 3–7 | 5 | Servo Build | ⚡ May 5 (20-min period) | Final demo + portfolio submission | **D8.5 — Servo Build Project** |
+| 34 | May 10–14 | 5 | Capstone | | Client interview; problem selection; design brief; teacher feasibility check | **D9.1 — Capstone Design Brief** |
+| 35 | May 17–21 | 5 | Capstone | 🎓 May 20 last day for seniors | Build phase 1 — fabrication begins; seniors: **Q9 Final Exam before May 20** | **Q9: Final Exam (seniors — before May 20)** |
+| 36 | May 24–28 | 5 | Capstone | | Build phase 2 — assembly, wiring (if applicable); test + iterate; mid-project check | **D9.2 — Capstone Progress Check** |
+| 37 | May 31–Jun 4 | 4 | Capstone | 🔴 Memorial Day May 31 | Capstone presentations to class + invited audience; portfolio finalization; all reflections written; self-grade review | **D9.3 — Capstone Presentation + Final Portfolio** |
 | 38 | Jun 7–11 | 4.5 | Wrap-up / Final | Half day Jun 11 (last day) | **Q9: Final Exam (non-seniors)**; end-of-year reflection; equipment return | **Q9: Final Exam (non-seniors)** |
 
 ---
@@ -102,8 +102,17 @@
 | D4.3 | IMU Navigation | 18 |
 | D4.4 | Ultrasonic: Obstacle Detection & Wall Following | 21 |
 | D4.5 | Line Following Practical | 23 |
-| D8.1 | Servo Design Brief | 31 |
-| D8.2 | Servo Build Project | 33 |
+| D5.1 | Teachable Machine Project | 24 |
+| D7.1 | Multimeter Lab | 25 |
+| D7.2 | LED Circuit: Schematic + Built Circuit + Calculations | 26 |
+| D8.1 | Simple Machines + Pulleys: IMA Calculations | 28 |
+| D8.2 | Tug of War: Design Sketch + Test Results + Reflection | 29 |
+| D8.3 | Fix Fran's Farm: Problem Selection + Pitch | 30 |
+| D8.4 | Servo Design Brief | 31 |
+| D8.5 | Servo Build Project | 33 |
+| D9.1 | Capstone Design Brief | 34 |
+| D9.2 | Capstone Progress Check | 36 |
+| D9.3 | Capstone Presentation + Final Portfolio | 37 |
 
 ---
 
