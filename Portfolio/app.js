@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.21',
+    VERSION: 'v2.14.22',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -763,6 +763,7 @@ const DELIVERABLES = [
     // ── DBL: Project 2 — Christmas Ornament / Gift ────────────────────────
     {
         id: 482,
+        shortLabel: 'P2.1',
         title: 'P2.1 — Design Brief + LED Model Screenshot',
         unit: 'p2',
         week: 12,
@@ -780,6 +781,7 @@ const DELIVERABLES = [
     },
     {
         id: 483,
+        shortLabel: 'P2.2',
         title: 'P2.2 — F360 Model + Bambu Studio Screenshot',
         unit: 'p2',
         week: 14,
@@ -797,6 +799,7 @@ const DELIVERABLES = [
     },
     {
         id: 484,
+        shortLabel: 'P2.3',
         title: 'P2.3 — Completed Ornament + S1 Portfolio',
         unit: 'p2',
         week: 16,
@@ -815,6 +818,7 @@ const DELIVERABLES = [
     // ── DBL: Project 3 — LED Sign / Wall Art ─────────────────────────────
     {
         id: 491,
+        shortLabel: 'P3.1',
         title: 'P3.1 — Design Brief',
         unit: 'p3',
         week: 17,
@@ -832,6 +836,7 @@ const DELIVERABLES = [
     },
     {
         id: 492,
+        shortLabel: 'P3.2',
         title: 'P3.2 — Design File Approved',
         unit: 'p3',
         week: 18,
@@ -849,6 +854,7 @@ const DELIVERABLES = [
     },
     {
         id: 493,
+        shortLabel: 'P3.3',
         title: 'P3.3 — Wired LED Strip Demo',
         unit: 'p3',
         week: 20,
@@ -866,6 +872,7 @@ const DELIVERABLES = [
     },
     {
         id: 494,
+        shortLabel: 'P3.4',
         title: 'P3.4 — Completed Sign + Portfolio Photo',
         unit: 'p3',
         week: 21,
@@ -884,6 +891,7 @@ const DELIVERABLES = [
     // ── DBL: Project 4 — Silicone Mold Making ────────────────────────────
     {
         id: 501,
+        shortLabel: 'P4.1',
         title: 'P4.1 — Design Brief + Partner Review',
         unit: 'p4',
         week: 22,
@@ -901,6 +909,7 @@ const DELIVERABLES = [
     },
     {
         id: 502,
+        shortLabel: 'P4.2',
         title: 'P4.2 — F360 Model + Cavity Volume Screenshot',
         unit: 'p4',
         week: 23,
@@ -918,6 +927,7 @@ const DELIVERABLES = [
     },
     {
         id: 503,
+        shortLabel: 'P4.3',
         title: 'P4.3 — Mold + Cast Product + Reflection',
         unit: 'p4',
         week: 25,
@@ -936,6 +946,7 @@ const DELIVERABLES = [
     // ── DBL: Project 5 — Useless Box ─────────────────────────────────────
     {
         id: 511,
+        shortLabel: 'P5.1',
         title: 'P5.1 — Design Brief + Concept Sketch',
         unit: 'p5',
         week: 30,
@@ -953,6 +964,7 @@ const DELIVERABLES = [
     },
     {
         id: 512,
+        shortLabel: 'P5.2',
         title: 'P5.2 — CAD Files Approved',
         unit: 'p5',
         week: 31,
@@ -970,6 +982,7 @@ const DELIVERABLES = [
     },
     {
         id: 513,
+        shortLabel: 'P5.3',
         title: 'P5.3 — Working Useless Box + Portfolio Photo',
         unit: 'p5',
         week: 32,
@@ -988,6 +1001,7 @@ const DELIVERABLES = [
     // ── DBL: Project 6 — Capstone ────────────────────────────────────────
     {
         id: 521,
+        shortLabel: 'P6.1',
         title: 'P6.1 — Project Idea Pitch',
         unit: 'p6',
         week: 33,
@@ -1005,6 +1019,7 @@ const DELIVERABLES = [
     },
     {
         id: 522,
+        shortLabel: 'P6.2',
         title: 'P6.2 — Design Brief + CAD Approved',
         unit: 'p6',
         week: 34,
@@ -1022,6 +1037,7 @@ const DELIVERABLES = [
     },
     {
         id: 523,
+        shortLabel: 'P6.3',
         title: 'P6.3 — Progress Check',
         unit: 'p6',
         week: 35,
@@ -1039,6 +1055,7 @@ const DELIVERABLES = [
     },
     {
         id: 524,
+        shortLabel: 'P6.4',
         title: 'P6.4 — Capstone Complete',
         unit: 'p6',
         week: 36,
@@ -1056,6 +1073,7 @@ const DELIVERABLES = [
     },
     {
         id: 525,
+        shortLabel: 'P6.5',
         title: 'P6.5 — Capstone Presentation + Final Portfolio',
         unit: 'p6',
         week: 37,
@@ -1542,7 +1560,8 @@ window.onload = function () {
     // Set portfolio title based on track param
     const TRACK_TITLES = { hsaer: 'HS AE&R Portfolio', '8aer': '8th Grade Portfolio', dbl: 'D&B Lab Portfolio' };
     const titleEl = document.getElementById('portfolioTitle');
-    if (titleEl && URL_TRACK) titleEl.textContent = TRACK_TITLES[URL_TRACK] || 'AE&R Portfolio';
+    const effectiveTrack = URL_TRACK || state.student?.course;
+    if (titleEl && effectiveTrack) titleEl.textContent = TRACK_TITLES[effectiveTrack] || 'AE&R Portfolio';
 
     // Display version on sign-in modal
     const signinVersionEl = document.getElementById('signinVersion');
@@ -2493,7 +2512,7 @@ function renderDeliverableCard(d) {
     const isAssigned = d.alwaysOpen || status === 'completed' || !!state.config.deliverableDueDates[d.id];
     return `
         <div class="deliverable-card ${status} ${isCurrent ? 'current' : ''} ${!isAssigned ? 'not-assigned' : ''}" data-id="${d.id}">
-            <div class="deliverable-number">${status === 'completed' ? '<i class="fas fa-check"></i>' : formatDeliverableLabel(d.id)}</div>
+            <div class="deliverable-number">${status === 'completed' ? '<i class="fas fa-check"></i>' : formatDeliverableLabel(d)}</div>
             <div class="deliverable-info">
                 <div class="deliverable-title">${d.title}</div>
                 <div class="deliverable-meta">
@@ -2522,7 +2541,14 @@ function updateDeliverablesList() {
             { key: '04', label: 'Unit 4 — Programming, Electronics & Sensors' },
             { key: '05', label: 'Unit 5 — AI & Machine Learning' },
             { key: '06', label: 'Unit 6 — Career Readiness' },
+            { key: '07', label: 'Unit 7 — Electrical Systems' },
             { key: '08', label: 'Unit 8 — Mechanisms' },
+            { key: '09', label: 'Unit 9 — Capstone Project' },
+            { key: 'p2', label: 'Project 2 — Christmas Ornament / Gift' },
+            { key: 'p3', label: 'Project 3 — LED Sign / Wall Art' },
+            { key: 'p4', label: 'Project 4 — Silicone Mold Making' },
+            { key: 'p5', label: 'Project 5 — Useless Box' },
+            { key: 'p6', label: 'Project 6 — Capstone' },
         ];
         list.innerHTML = unitGroups.map(u => {
             const unitDeliverables = filtered.filter(d => d.unit === u.key);
@@ -4033,9 +4059,16 @@ function formatStatus(status) {
     return labels[status] || status;
 }
 
-function formatDeliverableLabel(id) {
+function formatDeliverableLabel(d) {
+    // Accept either a deliverable object or a bare id number (backward compat)
+    const id = (typeof d === 'object') ? d.id : d;
     if (id === 0) return '0';
-    return `${Math.floor(id / 10)}.${id % 10}`;
+    // Deliverable objects may carry an explicit shortLabel (e.g. 'P2.1', 'P3.4')
+    if (typeof d === 'object' && d.shortLabel) return d.shortLabel;
+    // DBL deliverables use ids in the 400–599 range: strip the leading 4 to get the display id
+    // e.g. 421 → 21 → "2.1",  431 → 31 → "3.1",  471 → 71 → "7.1"
+    const n = (id >= 400 && id < 600) ? id - 400 : id;
+    return `${Math.floor(n / 10)}.${n % 10}`;
 }
 
 function formatCategory(cat) {
