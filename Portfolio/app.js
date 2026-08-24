@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.19',
+    VERSION: 'v2.14.20',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -369,6 +369,93 @@ const DELIVERABLES = [
             'Describe one specific iteration you made to your code or hardware during tuning and what improved'
         ]
     },
+    // ── Unit 7: Electrical Systems ───────────────────────────────────────
+    {
+        id: 71,
+        title: 'D7.1 — Multimeter Lab',
+        unit: '07',
+        week: 25,
+        points: 25,
+        phase: 'electrical',
+        tracks: ['hsaer'],
+        description: 'Complete the multimeter lab: measure voltage, current, and resistance in two circuits, and record all data with correct units.',
+        requirements: [
+            'Measure DC voltage across a 9V battery — record V reading',
+            'Measure resistance of two resistors — record Ω readings before and after connecting to circuit',
+            'Measure current through an LED circuit — record mA reading',
+            'Completed data table with measured values, expected values, and percent error for each measurement',
+            'Answer: why must you change the meter mode (V / A / Ω) between measurements instead of using one setting for all?'
+        ]
+    },
+    {
+        id: 72,
+        title: 'D7.2 — LED Circuit: Schematic + Build + Calculations',
+        unit: '07',
+        week: 26,
+        points: 30,
+        phase: 'electrical',
+        tracks: ['hsaer'],
+        description: 'Design and build an LED circuit on a breadboard, draw the schematic, and show the current-limiting resistor calculation.',
+        requirements: [
+            'Resistor calculation: show the formula R = (Vs − Vf) / If and your substituted values',
+            'Hand-drawn schematic with correct symbols for battery, resistor, and LED — labeled with values',
+            'Photo of completed breadboard circuit with LED lit',
+            'Parallel extension (if completed): calculate equivalent resistance for two LEDs in parallel and confirm with the multimeter',
+            'Reflection: what happens to LED brightness and current when you reduce the resistor value? Why?'
+        ]
+    },
+    // ── Unit 8: Mechanisms (HSAER — Weeks 27–30) ────────────────────────
+    {
+        id: 86,
+        title: 'D8.1 — Simple Machines + Pulleys: IMA Calculations',
+        unit: '08',
+        week: 28,
+        points: 30,
+        phase: 'mechanisms',
+        tracks: ['hsaer'],
+        description: 'Calculate the Ideal Mechanical Advantage for simple machines and pulley systems from lessons 8.1–8.5.',
+        requirements: [
+            'IMA calculation for a class-2 lever: label effort, fulcrum, and load positions; show IMA = d_effort / d_load',
+            'IMA calculation for a wheel and axle: identify the wheel radius and axle radius; show IMA = R_wheel / R_axle',
+            'IMA for a fixed pulley system: draw the rope-segment diagram and state IMA',
+            'IMA for a compound pulley (movable + fixed): draw the diagram and show IMA = rope segments supporting the load',
+            'Gear ratio for a 2-stage gear train: identify tooth counts; calculate ratio for each stage and overall ratio'
+        ]
+    },
+    {
+        id: 87,
+        title: 'D8.2 — Tug of War: Design Sketch + Test Results + Reflection',
+        unit: '08',
+        week: 29,
+        points: 30,
+        phase: 'mechanisms',
+        tracks: ['hsaer'],
+        description: 'Design a gear train for the Tug of War challenge, build and test it, and document results.',
+        requirements: [
+            'Labeled design sketch showing gear train layout with tooth counts',
+            'Calculated gear ratio and predicted output torque',
+            'Test result: did your robot win, lose, or draw? Record the match outcome',
+            'Reflection: how did your actual performance compare to your prediction? What would you change?',
+            'Identify one tradeoff: if you had increased the gear ratio further, what would have improved and what would have suffered?'
+        ]
+    },
+    {
+        id: 88,
+        title: 'D8.3 — Fix Fran\'s Farm: Problem Selection + Pitch',
+        unit: '08',
+        week: 30,
+        points: 25,
+        phase: 'mechanisms',
+        tracks: ['hsaer'],
+        description: 'Select one Fix Fran\'s Farm challenge, apply a simple machine or mechanism to solve it, and present your solution.',
+        requirements: [
+            'State the problem you chose (hay pulley / mill gear train / gate latch) and why',
+            'Identify the simple machine(s) or mechanism type used in your solution',
+            'Labeled sketch or CAD screenshot of your solution',
+            'Calculate the IMA or gear ratio your solution provides',
+            'Pitch: 2–3 sentence "investor pitch" explaining how your solution benefits Fran'
+        ]
+    },
     // ── Unit 8: Servo Design Brief ───────────────────────────────────────
     {
         id: 55,
@@ -410,7 +497,7 @@ const DELIVERABLES = [
         id: 54,
         title: 'Teachable Machine Project',
         unit: '05',
-        week: null,
+        week: 24,
         points: 50,
         phase: 'ai',
         tracks: ['hsaer'],
@@ -423,9 +510,59 @@ const DELIVERABLES = [
             'What would you do differently in a production model compared to this 5-minute classroom activity?'
         ]
     },
+    // ── Unit 9: Capstone Project (HSAER — Weeks 34–37) ──────────────────
+    {
+        id: 91,
+        title: 'D9.1 — Capstone Design Brief',
+        unit: '09',
+        week: 34,
+        points: 25,
+        phase: 'capstone',
+        tracks: ['hsaer'],
+        description: 'Identify a real problem to solve, interview your "client," and write a formal design brief before any building begins.',
+        requirements: [
+            'Problem statement: 2–3 sentences describing what you are designing and for whom',
+            'At least 3 measurable criteria (specific, testable — e.g., must lift 500g, must fit on a standard desk)',
+            'At least 2 constraints (budget, materials available, time, size)',
+            'Client/user interview notes — at least 3 questions asked and answers recorded',
+            'Teacher feasibility check signed before starting build'
+        ]
+    },
+    {
+        id: 92,
+        title: 'D9.2 — Capstone Progress Check',
+        unit: '09',
+        week: 36,
+        points: 20,
+        phase: 'capstone',
+        tracks: ['hsaer'],
+        description: 'Mid-project checkpoint: show your current build state and document what remains.',
+        requirements: [
+            'Photo of current build showing measurable progress (not just materials laid out)',
+            'Progress log: what is complete, what is in progress, what still needs to be done',
+            'Identify the biggest risk or unknown remaining in your project',
+            'Updated timeline: what will you complete in the remaining week?',
+            'Teacher sign-off that project is on track for completion'
+        ]
+    },
+    {
+        id: 93,
+        title: 'D9.3 — Capstone Presentation + Final Portfolio',
+        unit: '09',
+        week: 37,
+        points: 50,
+        phase: 'capstone',
+        tracks: ['hsaer'],
+        description: 'Present your completed capstone project and submit your finalized portfolio.',
+        requirements: [
+            'Live demonstration or working prototype shown to class + invited audience',
+            'Presentation covers: problem, design brief, process, challenges overcome, and final result',
+            'All portfolio deliverables complete and reflections written',
+            'Self-grade review completed',
+            'Photo or short video of the completed project submitted to portfolio'
+        ]
+    },
     // ── Unit 8: Mechanisms (8AER — Weeks 14–18) ─────────────────────────
-    // HSAER Unit 8 deliverables TBD; use skipDeliverableWeeks in teacher portal
-    // to hide 8AER-only entries from HSAER students.
     {
         id: 81,
         title: 'Gear Ratio Calculation Sheet',

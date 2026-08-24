@@ -22,7 +22,7 @@ const CONFIG = {
         hsaer: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-            currentAppVersion: 'v2.14.19',
+            currentAppVersion: 'v2.14.20',
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
@@ -36,7 +36,7 @@ const CONFIG = {
         '8aer': {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
-            currentAppVersion: 'v2.14.19',
+            currentAppVersion: 'v2.14.20',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
@@ -50,7 +50,7 @@ const CONFIG = {
         dbl: {
             name: 'Design & Build Lab',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
-            currentAppVersion: 'v2.14.19',
+            currentAppVersion: 'v2.14.20',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
@@ -73,28 +73,41 @@ const CONFIG = {
 const TRACK_DELIVERABLES = {
     // ── HS AE&R ─────────────────────────────────────────────────────────
     hsaer: [
-        { id:  0, label: 'D0  — Career Ready Practices',          week: null },
-        { id: 10, label: 'D10 — Signed Syllabus & Safety Contract', week: 1  },
-        { id: 11, label: 'D11 — Design Brief',                     week: 1  },
+        { id:  0, label: 'D0  — Career Ready Practices',               week: null },
+        { id: 10, label: 'D10 — Signed Syllabus & Safety Contract',    week: 1  },
+        { id: 11, label: 'D11 — Design Brief',                         week: 1  },
         // Unit 2: Component deliverables (Google Doc template)
-        { id: 21, label: 'D21 — C1: Wheel Hub',                    week: 3  },
-        { id: 22, label: 'D22 — C2: Drive Wheel',                  week: 4  },
-        { id: 23, label: 'D23 — C3: Motor Sleeve Mount',           week: 4  },
-        { id: 25, label: 'D25 — C5: Omni Wheel Mount',             week: 6  },
-        { id: 26, label: 'D26 — C6: IR Sensor Mount',              week: 7  },
-        { id: 27, label: 'D27 — C7: Ultrasonic Sensor Mount',      week: 7  },
-        { id: 24, label: 'D24 — C4: Robot Deck (Final)',            week: 8  },
+        { id: 21, label: 'D21 — C1: Wheel Hub',                        week: 3  },
+        { id: 22, label: 'D22 — C2: Drive Wheel',                      week: 4  },
+        { id: 23, label: 'D23 — C3: Motor Sleeve Mount',               week: 4  },
+        { id: 25, label: 'D25 — C5: Omni Wheel Mount',                 week: 6  },
+        { id: 26, label: 'D26 — C6: IR Sensor Mount',                  week: 7  },
+        { id: 27, label: 'D27 — C7: Ultrasonic Sensor Mount',          week: 7  },
+        { id: 24, label: 'D24 — C4: Robot Deck (Final)',                week: 8  },
         // Unit 3
-        { id: 31, label: 'D31 — Tool Safety Certifications',       week: 10 },
-        // Unit 4 / 5: Programming & ML
+        { id: 31, label: 'D31 — Tool Safety Certifications',           week: 10 },
+        // Unit 4: Programming & sensors
         { id: 41, label: 'D4.1 — Programming Basics: Lessons 4.1–4.3', week: 13 },
         { id: 42, label: 'D4.2 — Programming Basics: Lessons 4.4–4.6', week: 15 },
-        { id: 43, label: 'D4.3 — IMU Navigation',                  week: 18 },
+        { id: 43, label: 'D4.3 — IMU Navigation',                      week: 18 },
         { id: 44, label: 'D4.4 — Ultrasonic: Obstacle & Wall Following', week: 21 },
-        { id: 52, label: 'D4.5 — Line Following Practical',         week: 23 },
-        { id: 55, label: 'D8.1 — Servo Design Brief',              week: 31 },
-        { id: 53, label: 'D8.2 — Servo Mechanism Project',         week: 33 },
-        { id: 54, label: 'D54 — Teachable Machine Project',        week: null },
+        { id: 52, label: 'D4.5 — Line Following Practical',             week: 23 },
+        // Unit 5: AI & ML
+        { id: 54, label: 'D5.1 — Teachable Machine Project',           week: 24 },
+        // Unit 7: Electrical Systems
+        { id: 71, label: 'D7.1 — Multimeter Lab',                      week: 25 },
+        { id: 72, label: 'D7.2 — LED Circuit: Schematic + Build + Calculations', week: 26 },
+        // Unit 8: Mechanisms
+        { id: 86, label: 'D8.1 — Simple Machines + Pulleys: IMA Calculations', week: 28 },
+        { id: 87, label: 'D8.2 — Tug of War: Design + Results + Reflection',   week: 29 },
+        { id: 88, label: 'D8.3 — Fix Fran\'s Farm: Problem + Pitch',           week: 30 },
+        // Unit 8: Servo Build
+        { id: 55, label: 'D8.4 — Servo Design Brief',                  week: 31 },
+        { id: 53, label: 'D8.5 — Servo Mechanism Project',             week: 33 },
+        // Unit 9: Capstone
+        { id: 91, label: 'D9.1 — Capstone Design Brief',               week: 34 },
+        { id: 92, label: 'D9.2 — Capstone Progress Check',             week: 36 },
+        { id: 93, label: 'D9.3 — Capstone Presentation + Final Portfolio', week: 37 },
     ],
     // ── 8th Grade AE&R ──────────────────────────────────────────────────
     '8aer': [
