@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.20',
+    VERSION: 'v2.14.21',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -634,6 +634,441 @@ const DELIVERABLES = [
             'Photo: mechanism mounted to robot frame or stand (clear shot of gears/pulleys)',
             'Caption: identify the mechanism type, state the overall ratio, and describe what the mechanism does to motor output',
             'Peer review: one classmate signs off on your caption accuracy',
+        ]
+    },
+    // ── DBL: Unit 2 CAD — Fidget Spinner (P1) ────────────────────────────
+    // D1.0 (id:10) and D1.1 (id:11) are shared with other tracks — no duplicate entries needed.
+    {
+        id: 421,
+        title: 'D2.1 — C1: Bearing Model + Key Dimensions',
+        unit: '02',
+        week: 3,
+        points: 20,
+        phase: 'cad',
+        tracks: ['dbl'],
+        description: 'Model the MR128 bearing from caliper measurements and document key dimensions.',
+        requirements: [
+            'Caliper measurements recorded: OD, ID, and width of MR128 bearing',
+            'F360 sketch: correct OD and ID with revolve or extrude',
+            'Key dimensions labeled: 12 mm OD, 4 mm ID, 3.5 mm width',
+            'Screenshot: isometric view of completed model',
+            'Reflection: how close were your model dimensions to the actual bearing?'
+        ]
+    },
+    {
+        id: 422,
+        title: 'D2.2 — Spinner Body CAD File',
+        unit: '02',
+        week: 4,
+        points: 25,
+        phase: 'cad',
+        tracks: ['dbl'],
+        description: 'Design the spinner body in Fusion 360 with a bearing pocket using C1 dimensions.',
+        requirements: [
+            'Spinner body revolved from sketch — symmetrical arm/grip features',
+            'Bearing pocket: 12 mm OD × 3.5 mm deep — bored using C1 dimensions',
+            'Parametric constraints applied (sketch fully constrained)',
+            'Screenshot: isometric view of completed spinner body',
+            'Screenshot: parameter table showing bearing pocket dimensions as named parameters'
+        ]
+    },
+    {
+        id: 423,
+        title: 'D2.3 — Spinner Assembly',
+        unit: '02',
+        week: 5,
+        points: 25,
+        phase: 'cad',
+        tracks: ['dbl'],
+        description: 'Assemble spinner body, bearing cap, and bearing in Fusion 360, then slice and submit to print queue.',
+        requirements: [
+            'F360 assembly: spinner body + cap + bearing — all three components constrained',
+            'Screenshot: assembled cross-section or exploded view showing bearing seated in pocket',
+            'Bambu Studio slice: < 30 g and < 2 hr print time — screenshot showing both',
+            'Print submitted to queue — file name and date recorded',
+            'Reflection: what did you check in the slice before submitting?'
+        ]
+    },
+    {
+        id: 424,
+        title: 'D2.4 — Completed Spinner + Portfolio Photo',
+        unit: '02',
+        week: 8,
+        points: 30,
+        phase: 'spinner',
+        tracks: ['dbl'],
+        description: 'Post-process, assemble, and photograph your completed fidget spinner.',
+        requirements: [
+            'Bearing press-fit into pocket — no wobble, spins freely for ≥ 5 seconds',
+            'Post-processing complete: supports removed, surfaces sanded',
+            'Caliper check: bearing pocket OD within ± 0.3 mm of target',
+            'Portfolio photo: clear shot of assembled spinner on a clean background',
+            'Reflection: what would you change about the design if you printed it again?'
+        ]
+    },
+    // ── DBL: Unit 3 Safety ────────────────────────────────────────────────
+    {
+        id: 431,
+        title: 'D3.1 — Tool Cert Card',
+        unit: '03',
+        week: 6,
+        points: 50,
+        phase: 'safety',
+        tracks: ['dbl'],
+        description: 'Complete all required shop safety certifications before using any fabrication equipment.',
+        requirements: [
+            '3D printer safety + operator cert — supervised demonstration',
+            'Hand tools cert: files, calipers, drill press — safety rules + observed use',
+            'CNC router awareness: safety rules, what the machine does, toolpath concepts',
+            'xTool laser awareness: safety rules, fire extinguisher location, emergency stop',
+            'Signed certification card on file before Week 7 fabrication begins'
+        ]
+    },
+    // ── DBL: Unit 7 Electrical Systems ───────────────────────────────────
+    {
+        id: 471,
+        title: 'D7.1 — Unit 7 Lab Results',
+        unit: '07',
+        week: 11,
+        points: 40,
+        phase: 'electrical',
+        tracks: ['dbl'],
+        description: 'Submit completed lab data tables and reflection questions from Unit 7 (L7.1–L7.7).',
+        requirements: [
+            'Multimeter lab (L7.1): measured V, I, R values — data table with correct units',
+            'Breadboard diagram (L7.2): sketch of your completed LED breadboard circuit',
+            'LED circuit calculation (L7.3): R = (Vs − Vf) / If — show all work',
+            'Ohm\'s law lab (L7.4): measured vs. calculated current — percent error for two circuits',
+            'Series/parallel comparison (L7.5–L7.6): completed comparison table + KCL/KVL check'
+        ]
+    },
+    // ── DBL: Unit 8 Mechanisms — Fix Fran's Farm ─────────────────────────
+    {
+        id: 481,
+        title: 'D8.1 — Fix Fran\'s Farm',
+        unit: '08',
+        week: 29,
+        points: 30,
+        phase: 'mechanisms',
+        tracks: ['dbl'],
+        description: 'Choose a Fix Fran\'s Farm challenge, apply a mechanism, and pitch your solution.',
+        requirements: [
+            'Challenge selected (hay pulley / mill gear train / gate latch) — reason stated',
+            'Mechanism type identified and IMA or gear ratio calculated',
+            'Labeled sketch or CAD screenshot of your solution',
+            'EDP sprint: brief, design, build, and test steps documented',
+            'Investor pitch: 2–3 sentences explaining how your solution benefits Fran'
+        ]
+    },
+    // ── DBL: Project 2 — Christmas Ornament / Gift ────────────────────────
+    {
+        id: 482,
+        title: 'P2.1 — Design Brief + LED Model Screenshot',
+        unit: 'p2',
+        week: 12,
+        points: 25,
+        phase: 'ornament',
+        tracks: ['dbl'],
+        description: 'Write a design brief for your ornament/gift and reverse-engineer the LED from a data sheet.',
+        requirements: [
+            'Design brief: recipient, intent, and LED placement described in 2–3 sentences',
+            'At least 2 measurable criteria (size, LED count, print time, etc.)',
+            'LED data sheet: V_f and I_f recorded for your chosen LED',
+            'F360 LED model: matches caliper measurements — screenshot of completed model',
+            'Reflection: why must the LED model exist before the ornament design begins?'
+        ]
+    },
+    {
+        id: 483,
+        title: 'P2.2 — F360 Model + Bambu Studio Screenshot',
+        unit: 'p2',
+        week: 14,
+        points: 30,
+        phase: 'ornament',
+        tracks: ['dbl'],
+        description: 'Complete the ornament/gift model in Fusion 360 and prepare for multi-color printing.',
+        requirements: [
+            'F360 ornament body: LED pocket(s) incorporated from P2.1 model',
+            'Screenshot: isometric view of completed ornament model',
+            'Bambu Studio: multi-color paint applied — screenshot showing color layers',
+            'Slice verified: < 200 g filament and < 8 hr print time',
+            'Print submitted to queue — file name and date recorded'
+        ]
+    },
+    {
+        id: 484,
+        title: 'P2.3 — Completed Ornament + S1 Portfolio',
+        unit: 'p2',
+        week: 16,
+        points: 50,
+        phase: 'ornament',
+        tracks: ['dbl'],
+        description: 'Finish, photograph, and light your ornament/gift, and submit your complete S1 portfolio.',
+        requirements: [
+            'Post-processing complete: supports removed, any touch-up done',
+            '2 LEDs installed and tested — circuit works, LED lights up',
+            'Portfolio photo: ornament lit on a clean or festive background',
+            'All P1–P2 reflections written and submitted',
+            'S1 portfolio self-grade review completed'
+        ]
+    },
+    // ── DBL: Project 3 — LED Sign / Wall Art ─────────────────────────────
+    {
+        id: 491,
+        title: 'P3.1 — Design Brief',
+        unit: 'p3',
+        week: 17,
+        points: 20,
+        phase: 'sign',
+        tracks: ['dbl'],
+        description: 'Write a design brief for your LED sign or wall art project.',
+        requirements: [
+            'Project description: name sign, wall art, or logo — purpose and intended location',
+            'Substrate choice: plywood, acrylic, or steel — with reason',
+            'At least 2 measurable criteria (size, LED count, animation type)',
+            'At least 1 constraint (material available, time, or budget)',
+            'Concept sketch: labeled layout showing LED placement'
+        ]
+    },
+    {
+        id: 492,
+        title: 'P3.2 — Design File Approved',
+        unit: 'p3',
+        week: 18,
+        points: 20,
+        phase: 'sign',
+        tracks: ['dbl'],
+        description: 'Prepare and submit the xTool toolpath or CNC file for teacher approval before cutting.',
+        requirements: [
+            'Design finalized in F360 sketch or vector art software',
+            'xTool toolpath or CNC file prepared — correct material, power, and speed settings',
+            'Teacher approval signature before cutting begins',
+            'Material dimensions and quantity noted',
+            'Safety check: ventilation on, area clear, fire extinguisher accessible'
+        ]
+    },
+    {
+        id: 493,
+        title: 'P3.3 — Wired LED Strip Demo',
+        unit: 'p3',
+        week: 20,
+        points: 25,
+        phase: 'sign',
+        tracks: ['dbl'],
+        description: 'Wire the ATtiny85 and WS2812B LED strip, upload a custom animation, and demonstrate to Mr. Bombich.',
+        requirements: [
+            'ATtiny85 + WS2812B wired: power, ground, and data line identified',
+            'FastLED sketch uploaded: custom animation (not just the starter example)',
+            'Demo to Mr. Bombich: LEDs light and animate on command',
+            'Code submitted: CRGB array, FastLED.show(), at least one custom color or pattern',
+            'Reflection: what does the FastLED library handle that you would otherwise have to write yourself?'
+        ]
+    },
+    {
+        id: 494,
+        title: 'P3.4 — Completed Sign + Portfolio Photo',
+        unit: 'p3',
+        week: 21,
+        points: 50,
+        phase: 'sign',
+        tracks: ['dbl'],
+        description: 'Mount LEDs to the finished substrate, finalize wiring, test, and photograph.',
+        requirements: [
+            'Substrate cut and finished: deburred, sanded, primed or painted',
+            'LEDs mounted and wired to substrate — connections secure and tidy',
+            'Full assembly test: LEDs animate correctly when powered',
+            'Portfolio photo: sign lit, clean shot showing the full design',
+            'Reflection: what would you change about your design or fabrication process?'
+        ]
+    },
+    // ── DBL: Project 4 — Silicone Mold Making ────────────────────────────
+    {
+        id: 501,
+        title: 'P4.1 — Design Brief + Partner Review',
+        unit: 'p4',
+        week: 22,
+        points: 20,
+        phase: 'mold',
+        tracks: ['dbl'],
+        description: 'Write a design brief for your silicone mold project and have a partner review it.',
+        requirements: [
+            'Object to cast: dimensions and purpose described',
+            'Mold design plan: positive shape, wall thickness ≥ 10 mm, draft angles noted',
+            'At least 2 measurable criteria for the final cast product',
+            'At least 1 constraint (cavity volume ≥ 30 mL, cure time, material compatibility)',
+            'Partner review sign-off: classmate confirms draft angles and wall thickness are addressed'
+        ]
+    },
+    {
+        id: 502,
+        title: 'P4.2 — F360 Model + Cavity Volume Screenshot',
+        unit: 'p4',
+        week: 23,
+        points: 25,
+        phase: 'mold',
+        tracks: ['dbl'],
+        description: 'Complete the mold assembly in Fusion 360 and verify cavity volume ≥ 30 mL.',
+        requirements: [
+            'F360 positive model: draft angles 2–3° applied to all vertical faces',
+            'F360 mold assembly: positive inside mold box, walls ≥ 10 mm',
+            'Inspect → Measure: cavity volume ≥ 30 mL — screenshot showing measurement',
+            'Screenshot: isometric view of complete mold assembly',
+            'Print submitted to queue — PLA mold box, file name and date recorded'
+        ]
+    },
+    {
+        id: 503,
+        title: 'P4.3 — Mold + Cast Product + Reflection',
+        unit: 'p4',
+        week: 25,
+        points: 50,
+        phase: 'mold',
+        tracks: ['dbl'],
+        description: 'Pour silicone, demold, cast your product, and document the full process.',
+        requirements: [
+            'Silicone poured and cured: Mold Star 15A mixed 1:1, 24-hr cure documented',
+            'Demold photo: silicone mold removed cleanly from PLA box',
+            'Cast product: soap pour (or wax) completed — photo of finished product',
+            'Fast-mover extension (if completed): two-part PETG rigid mold with alignment pins',
+            'Reflection: what worked, what failed, and what would you change about the mold design?'
+        ]
+    },
+    // ── DBL: Project 5 — Useless Box ─────────────────────────────────────
+    {
+        id: 511,
+        title: 'P5.1 — Design Brief + Concept Sketch',
+        unit: 'p5',
+        week: 30,
+        points: 20,
+        phase: 'useless-box',
+        tracks: ['dbl'],
+        description: 'Write a design brief and sketch your servo linkage or cam mechanism for the Useless Box.',
+        requirements: [
+            'Design brief: how does the arm flip the switch? Describe the mechanism in 2–3 sentences',
+            'At least 2 measurable criteria (arm sweep angle, cycle time, clearance)',
+            'At least 1 constraint (must use provided servo, must fit inside box dimensions)',
+            'Concept sketch: labeled diagram of servo + arm + switch layout',
+            'Mechanism choice justified: linkage vs. cam — which did you choose and why?'
+        ]
+    },
+    {
+        id: 512,
+        title: 'P5.2 — CAD Files Approved',
+        unit: 'p5',
+        week: 31,
+        points: 25,
+        phase: 'useless-box',
+        tracks: ['dbl'],
+        description: 'Complete the Useless Box CAD in Fusion 360 and get teacher approval before printing.',
+        requirements: [
+            'F360: box body and lid modeled with correct interior dimensions',
+            'F360: servo mount and arm mechanism — arm sweep clearance verified in assembly',
+            'Assembly: all components assembled, no interference conflicts',
+            'Screenshot: assembled isometric view',
+            'Teacher approval signature — print submitted to queue'
+        ]
+    },
+    {
+        id: 513,
+        title: 'P5.3 — Working Useless Box + Portfolio Photo',
+        unit: 'p5',
+        week: 32,
+        points: 75,
+        phase: 'useless-box',
+        tracks: ['dbl'],
+        description: 'Wire, program, assemble, and demonstrate your completed Useless Box.',
+        requirements: [
+            'Wiring: toggle switch + servo connected to Pico 2W — correct pin assignments',
+            'MicroPython code: servo triggers on switch flip, arm returns after delay — no dead code',
+            'Demo to Mr. Bombich: switch flipped → arm extends → switch flipped back',
+            'Portfolio photo: box assembled and closed, clean shot',
+            'Reflection: what geometry change most improved your arm\'s ability to flip the switch?'
+        ]
+    },
+    // ── DBL: Project 6 — Capstone ────────────────────────────────────────
+    {
+        id: 521,
+        title: 'P6.1 — Project Idea Pitch',
+        unit: 'p6',
+        week: 33,
+        points: 20,
+        phase: 'capstone-dbl',
+        tracks: ['dbl'],
+        description: 'Pitch your capstone project idea to the class and teacher for feasibility review.',
+        requirements: [
+            'Problem statement: what real problem does your project solve, and for whom?',
+            '2–3 sentence description of your proposed solution',
+            'Skills or processes you plan to use (CAD, laser, 3D print, electronics, etc.)',
+            'Teacher feasibility check: project achievable in remaining weeks?',
+            'Pitch delivered verbally to class — questions answered'
+        ]
+    },
+    {
+        id: 522,
+        title: 'P6.2 — Design Brief + CAD Approved',
+        unit: 'p6',
+        week: 34,
+        points: 25,
+        phase: 'capstone-dbl',
+        tracks: ['dbl'],
+        description: 'Write a formal design brief and get your CAD or fabrication plan approved before building.',
+        requirements: [
+            'Design brief: problem statement, at least 3 measurable criteria, at least 2 constraints',
+            'CAD files or detailed fabrication plan submitted',
+            'Fabrication methods identified (3D print, laser, CNC, soldering) with rationale',
+            'Teacher approval gate passed before fabrication begins',
+            'Material list with quantities noted'
+        ]
+    },
+    {
+        id: 523,
+        title: 'P6.3 — Progress Check',
+        unit: 'p6',
+        week: 35,
+        points: 20,
+        phase: 'capstone-dbl',
+        tracks: ['dbl'],
+        description: 'Mid-build checkpoint: show current progress and document what remains.',
+        requirements: [
+            'Photo of current build showing measurable progress (not just materials laid out)',
+            'Progress log: what is complete, in progress, and still needed',
+            'Biggest risk or unknown remaining — plan to address it',
+            'Updated timeline for the final week',
+            'Teacher sign-off that project is on track'
+        ]
+    },
+    {
+        id: 524,
+        title: 'P6.4 — Capstone Complete',
+        unit: 'p6',
+        week: 36,
+        points: 50,
+        phase: 'capstone-dbl',
+        tracks: ['dbl'],
+        description: 'Completed capstone project ready for presentation — all fabrication and wiring done.',
+        requirements: [
+            'Project fully assembled and functional',
+            'Photo documentation: multiple angles, detail shots of key features',
+            'Any wiring or code submitted and labeled',
+            'Meets at least 2 of 3 measurable criteria from design brief',
+            'Iteration log: at least one change documented based on testing'
+        ]
+    },
+    {
+        id: 525,
+        title: 'P6.5 — Capstone Presentation + Final Portfolio',
+        unit: 'p6',
+        week: 37,
+        points: 100,
+        phase: 'capstone-dbl',
+        tracks: ['dbl'],
+        description: 'Present your completed capstone project and submit your finalized portfolio.',
+        requirements: [
+            'Live demo or working prototype shown to class + invited audience',
+            'Presentation covers: problem, design brief, process, challenges, and final result',
+            'All portfolio deliverables (P1–P5) complete with reflections written',
+            'Self-grade review completed for all deliverables',
+            'Final photo or short video of completed capstone submitted to portfolio'
         ]
     },
 ];

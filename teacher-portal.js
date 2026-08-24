@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.42',
+    VERSION: 'v2.9.43',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -22,7 +22,7 @@ const CONFIG = {
         hsaer: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-            currentAppVersion: 'v2.14.20',
+            currentAppVersion: 'v2.14.21',
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
@@ -36,7 +36,7 @@ const CONFIG = {
         '8aer': {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
-            currentAppVersion: 'v2.14.20',
+            currentAppVersion: 'v2.14.21',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
@@ -50,7 +50,7 @@ const CONFIG = {
         dbl: {
             name: 'Design & Build Lab',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
-            currentAppVersion: 'v2.14.20',
+            currentAppVersion: 'v2.14.21',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
@@ -125,8 +125,43 @@ const TRACK_DELIVERABLES = {
         { id: 85, label: 'D85 — Mechanism Showcase — Portfolio Evidence', week: 18 },
     ],
     // ── Design & Build Lab ───────────────────────────────────────────────
-    // P1–P6 project deliverables TBD (app.js not yet updated for DBL)
-    dbl:  [],
+    dbl: [
+        { id:  10, label: 'D1.0 — Signed Syllabus & Safety Contract',     week: 1  },
+        { id:  11, label: 'D1.1 — Design Brief',                           week: 2  },
+        // Unit 2: CAD — Fidget Spinner (P1)
+        { id: 421, label: 'D2.1 — C1: Bearing Model + Key Dimensions',    week: 3  },
+        { id: 422, label: 'D2.2 — Spinner Body CAD File',                  week: 4  },
+        { id: 423, label: 'D2.3 — Spinner Assembly',                       week: 5  },
+        { id: 431, label: 'D3.1 — Tool Cert Card',                         week: 6  },
+        { id: 424, label: 'D2.4 — Completed Spinner + Portfolio Photo',    week: 8  },
+        // Unit 7: Electrical Systems
+        { id: 471, label: 'D7.1 — Unit 7 Lab Results',                     week: 11 },
+        // Project 2: Christmas Ornament / Gift
+        { id: 482, label: 'P2.1 — Design Brief + LED Model Screenshot',    week: 12 },
+        { id: 483, label: 'P2.2 — F360 Model + Bambu Studio Screenshot',  week: 14 },
+        { id: 484, label: 'P2.3 — Completed Ornament + S1 Portfolio',      week: 16 },
+        // Project 3: LED Sign / Wall Art
+        { id: 491, label: 'P3.1 — P3 Design Brief',                        week: 17 },
+        { id: 492, label: 'P3.2 — Design File Approved',                   week: 18 },
+        { id: 493, label: 'P3.3 — Wired LED Strip Demo',                   week: 20 },
+        { id: 494, label: 'P3.4 — Completed Sign + Portfolio Photo',       week: 21 },
+        // Project 4: Silicone Mold Making
+        { id: 501, label: 'P4.1 — Design Brief + Partner Review',          week: 22 },
+        { id: 502, label: 'P4.2 — F360 Model + Cavity Volume Screenshot',  week: 23 },
+        { id: 503, label: 'P4.3 — Mold + Cast Product + Reflection',       week: 25 },
+        // Unit 8: Mechanisms
+        { id: 481, label: 'D8.1 — Fix Fran\'s Farm',                       week: 29 },
+        // Project 5: Useless Box
+        { id: 511, label: 'P5.1 — Design Brief + Concept Sketch',          week: 30 },
+        { id: 512, label: 'P5.2 — CAD Files Approved',                     week: 31 },
+        { id: 513, label: 'P5.3 — Working Useless Box + Portfolio Photo',  week: 32 },
+        // Project 6: Capstone
+        { id: 521, label: 'P6.1 — Project Idea Pitch',                     week: 33 },
+        { id: 522, label: 'P6.2 — Design Brief + CAD Approved',            week: 34 },
+        { id: 523, label: 'P6.3 — Progress Check',                         week: 35 },
+        { id: 524, label: 'P6.4 — Capstone Complete',                      week: 36 },
+        { id: 525, label: 'P6.5 — Capstone Presentation + Final Portfolio', week: 37 },
+    ],
 };
 
 // ============================================
