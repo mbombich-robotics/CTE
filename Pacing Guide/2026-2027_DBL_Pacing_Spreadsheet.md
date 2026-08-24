@@ -19,7 +19,7 @@
 
 | Week | Dates | Days | Unit | Notes | Content | Deliverable / Quiz |
 |------|-------|------|------|-------|---------|--------------------|
-| 1 | Aug 31–Sep 4 | 4 | 1 — EDP | 🔴 Sep 4 no school | Intro to DBL; course overview + expectations; EDP framework; client interview — fidget spinner design challenge; write design statement | **D1.0 — Signed Syllabus & Safety Contract** |
+| 1 | Aug 31–Sep 4 | 4 | 1 — EDP | ⚡ Aug 31 (20-min half day) · 🔴 Sep 4 no school | **Aug 31 (20 min):** Join Google Classroom, bookmark hub page, teacher + aide intro. **Sep 1–3:** Intro to DBL; course overview + expectations; EDP framework; client interview — fidget spinner design challenge; write design statement | **D1.0 — Signed Syllabus & Safety Contract** (due Thu Sep 3) |
 | 2 | Sep 7–11 | 4 | 1 — EDP | 🔴 Labor Day Sep 7 | Concept sketching + decision matrix; cardboard prototype build + peer test; revise; write design brief | **Q1: EDP Quiz**; **D1.1 — Design Brief** |
 | 3 | Sep 14–18 | 5 | 2 — CAD | | F360 orientation + CAD hygiene; measurement fundamentals; sketch tool intro; begin fidget spinner body cross-section | |
 | 4 | Sep 21–25 | 5 | 2 — CAD | | Revolve/extrude features; bearing pocket dimensions (MR128: 12mm OD × 3.5mm deep); apply parametric constraints | **D2.1 — Spinner Body CAD File** |

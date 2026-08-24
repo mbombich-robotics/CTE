@@ -9,7 +9,7 @@
 
 | Week | Dates | Days | Unit | Notes | Content | Deliverable / Quiz |
 |------|-------|------|------|-------|---------|--------------------|
-| 1 | Aug 31–Sep 4 | 4 | 1 — EDP | 🔴 Sep 4 no school | Lessons 1.1–1.5: Intro to AE&R → Spaghetti Tower (no framework) → EDP Framework → Paper Glider (EDP applied) → Writing a Design Brief | **D1.0 — Signed Syllabus & Safety Contract** |
+| 1 | Aug 31–Sep 4 | 4 | 1 — EDP | ⚡ Aug 31 (20-min half day) · 🔴 Sep 4 no school | **Aug 31 (20 min):** Join Google Classroom, bookmark hub page, teacher + aide intro. **Sep 1–3:** L1.1 Intro to AE&R; L1.2 Spaghetti Tower (no framework); L1.3 EDP Framework; L1.4 Paper Glider (EDP applied); L1.5 Writing a Design Brief | **D1.0 — Signed Syllabus & Safety Contract** (due Thu Sep 3) |
 | 2 | Sep 7–11 | 4 | 1 → 2 | 🔴 Labor Day Sep 7 | **L1.6** Client Interview + Design Statement; **L1.7** Concept Sketching + Decision Matrix; **L2.1** Kevin Kennedy F360 orientation video (Fri) | **D1.1 — Design Brief + Concept Sketches** |
 | 3 | Sep 14–18 | 5 | 2 — CAD | | **L2.2** C1 modeling video — sketch, extrude, bore, export + print; **L2.3** Measurement Tools Workshop — measure printed C1; **L2.4** 3D Printing — slicer settings, iterate C1 v2; **EDP Quiz** after iteration | **Q1: EDP Quiz**; **D2.1 — C1: Key Dimensions + Iteration Log** |
 | 4 | Sep 21–25 | 5 | 2 — CAD | | **L2.5: C2 Drive Wheel** — hex bore, Circular Pattern spokes, student design choice; print + iterate | **D2.2 — C2: Key Dimensions + Iteration Log** |

@@ -1,0 +1,217 @@
+<title>Day 1 Setup</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap">
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+:root{
+  --bg:    #0d1117;
+  --surf:  #161b22;
+  --hi:    #1f2733;
+  --bdr:   #30363d;
+  --txt:   #e2e8f0;
+  --muted: #7d8590;
+  --acc:   #00d4ff;
+  --grn:   #50fa7b;
+  --org:   #ff9500;
+  --mono: 'JetBrains Mono','Fira Code',monospace;
+  --sans: 'DM Sans',system-ui,sans-serif;
+  --orb:  'Orbitron',monospace;
+}
+
+body{
+  font-family:var(--sans);
+  background:var(--bg);
+  color:var(--txt);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:32px 24px;
+}
+
+.pg-head{text-align:center;margin-bottom:36px;}
+.eyebrow{
+  font-family:var(--orb);font-size:11px;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;
+  color:var(--acc);margin-bottom:10px;
+}
+.pg-title{
+  font-family:var(--orb);
+  font-size:clamp(24px,3.5vw,40px);font-weight:900;
+  color:var(--txt);letter-spacing:.04em;line-height:1.1;
+}
+.pg-sub{
+  font-size:clamp(13px,1.6vw,17px);color:var(--muted);
+  margin-top:10px;font-weight:400;
+}
+
+/* Steps */
+.steps{display:flex;flex-direction:column;gap:12px;width:100%;max-width:760px;}
+
+.step{
+  display:flex;align-items:flex-start;gap:20px;
+  background:var(--surf);border:1px solid var(--bdr);
+  border-radius:14px;padding:18px 24px;
+}
+.step-num{
+  font-family:var(--orb);font-size:26px;font-weight:900;
+  color:var(--acc);line-height:1;flex-shrink:0;min-width:30px;margin-top:3px;
+}
+.step-body{flex:1;}
+.step-title{
+  font-size:clamp(16px,2vw,21px);font-weight:700;
+  color:var(--txt);margin-bottom:6px;line-height:1.2;
+}
+.step-desc{
+  font-size:clamp(13px,1.5vw,16px);color:var(--muted);line-height:1.65;
+}
+.step-desc b{color:var(--txt);font-weight:600;}
+
+/* Path pill trail */
+.path{
+  display:flex;flex-wrap:wrap;align-items:center;
+  gap:4px;margin-top:10px;
+}
+.pill{
+  font-family:var(--mono);font-size:12px;font-weight:700;
+  background:var(--hi);border:1px solid var(--bdr);
+  border-radius:6px;padding:3px 10px;color:var(--txt);
+  white-space:nowrap;
+}
+.arr{color:var(--muted);font-size:13px;padding:0 1px;}
+
+/* URL table */
+.url-block{
+  width:100%;max-width:760px;margin-top:20px;
+  background:var(--surf);border:1px solid var(--bdr);
+  border-radius:14px;overflow:hidden;
+}
+.url-head{
+  font-family:var(--mono);font-size:10px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
+  padding:11px 24px;border-bottom:1px solid var(--bdr);background:var(--hi);
+}
+.url-row{
+  display:flex;align-items:center;gap:16px;
+  padding:12px 20px;border-bottom:1px solid var(--bdr);
+}
+.url-row:last-child{border-bottom:none;}
+.url-label{
+  font-family:var(--mono);font-size:11px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;flex-shrink:0;width:126px;
+}
+.url-label.hsaer{color:var(--acc);}
+.url-label.aer8th{color:var(--grn);}
+.url-label.dbl{color:var(--org);}
+.url-val{
+  font-family:var(--mono);font-size:clamp(11px,1.3vw,14px);
+  color:var(--txt);flex:1;word-break:break-all;
+}
+.copy-btn{
+  flex-shrink:0;
+  font-family:var(--mono);font-size:10px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;
+  background:var(--hi);border:1px solid var(--bdr);
+  border-radius:6px;padding:5px 12px;color:var(--muted);
+  cursor:pointer;transition:color .15s,border-color .15s;white-space:nowrap;
+}
+.copy-btn:hover{color:var(--acc);border-color:var(--acc);}
+.copy-btn.copied{color:var(--grn);border-color:var(--grn);}
+
+.pg-note{
+  margin-top:20px;font-family:var(--mono);
+  font-size:12px;color:var(--muted);letter-spacing:.04em;text-align:center;
+}
+</style>
+
+<div class="pg-head">
+  <div class="eyebrow">Room 70 · Aug 31, 2026 · Step 2 of 2</div>
+  <h1 class="pg-title">Set Your Homepage</h1>
+  <p class="pg-sub">You've joined Google Classroom. Now let's set up Chrome so your hub opens every day automatically.</p>
+</div>
+
+<div class="steps">
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <div class="step-title">Copy your class URL</div>
+      <div class="step-desc">
+        Find your class in the table below and click <b>Copy</b>.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <div class="step-title">Open Chrome Settings</div>
+      <div class="step-desc">Click the three dots in the top-right corner of Chrome, then click <b>Settings</b>.</div>
+      <div class="path">
+        <span class="pill">⋮ (three dots)</span>
+        <span class="arr">›</span>
+        <span class="pill">Settings</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <div class="step-title">Set your startup page</div>
+      <div class="step-desc">Navigate to <b>On startup</b>, select <b>Open a specific page or set of pages</b>, click <b>Add a new page</b>, paste your URL, then click <b>Add</b>.</div>
+      <div class="path">
+        <span class="pill">On startup</span>
+        <span class="arr">›</span>
+        <span class="pill">Open a specific page or set of pages</span>
+        <span class="arr">›</span>
+        <span class="pill">Add a new page</span>
+        <span class="arr">›</span>
+        <span class="pill">Paste → Add</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="url-block">
+  <div class="url-head">Step 1 — click Copy for your class</div>
+  <div class="url-row">
+    <div class="url-label hsaer">HS AER</div>
+    <div class="url-val" id="url-hsaer">mbombich-robotics.github.io/CTE/hub.html?track=hsaer</div>
+    <button class="copy-btn" onclick="copyUrl('hsaer')">Copy</button>
+  </div>
+  <div class="url-row">
+    <div class="url-label aer8th">8th Grade AER</div>
+    <div class="url-val" id="url-aer8th">mbombich-robotics.github.io/CTE/hub.html?track=aer8th</div>
+    <button class="copy-btn" onclick="copyUrl('aer8th')">Copy</button>
+  </div>
+  <div class="url-row">
+    <div class="url-label dbl">D&amp;B Lab</div>
+    <div class="url-val" id="url-dbl">mbombich-robotics.github.io/CTE/hub.html?track=dbl</div>
+    <button class="copy-btn" onclick="copyUrl('dbl')">Copy</button>
+  </div>
+</div>
+
+<p class="pg-note">Once Chrome is set — sit back. We'll take the last few minutes to introduce ourselves.</p>
+
+<script>
+function copyUrl(track) {
+  const el = document.getElementById('url-' + track);
+  const url = 'https://' + el.textContent.trim();
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = el.parentElement.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  }).catch(() => {
+    // Fallback: select the text
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+  });
+}
+</script>
