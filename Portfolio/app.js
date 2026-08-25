@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.24',
+    VERSION: 'v2.14.25',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -164,6 +164,7 @@ const DELIVERABLES = [
         title: 'C1 — Wheel Hub',
         unit: '02',
         week: 3,
+        tracks: ['hsaer'],
         phase: 'cad',
         type: 'googleDoc',
         points: 20,
@@ -175,6 +176,7 @@ const DELIVERABLES = [
         title: 'C2 — Drive Wheel',
         unit: '02',
         week: 4,
+        tracks: ['hsaer'],
         phase: 'cad',
         type: 'googleDoc',
         points: 20,
