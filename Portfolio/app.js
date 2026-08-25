@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.22',
+    VERSION: 'v2.14.23',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -1562,6 +1562,10 @@ window.onload = function () {
     const titleEl = document.getElementById('portfolioTitle');
     const effectiveTrack = URL_TRACK || state.student?.course;
     if (titleEl && effectiveTrack) titleEl.textContent = TRACK_TITLES[effectiveTrack] || 'AE&R Portfolio';
+    // Update sign-in modal title and browser tab title from URL track param (known before sign-in)
+    const signinTextEl = document.getElementById('signinTitleText');
+    if (signinTextEl && URL_TRACK) signinTextEl.textContent = TRACK_TITLES[URL_TRACK] || 'AE&R Portfolio';
+    if (URL_TRACK && TRACK_TITLES[URL_TRACK]) document.title = TRACK_TITLES[URL_TRACK];
 
     // Display version on sign-in modal
     const signinVersionEl = document.getElementById('signinVersion');
@@ -1671,9 +1675,18 @@ async function handleTokenResponse(tokenResponse) {
         // Dismiss sign-in modal
         document.getElementById('signinModal').classList.remove('active');
 
-        // If a track param is present, point to the right backend before loading —
-        // otherwise a returning DBL/8AER student would hit the default HS AER sheet.
-        if (URL_TRACK) setBackendForCourse(URL_TRACK);
+        // Determine backend before cloud load:
+        //   1. URL track param (set when opening from hub) — most reliable
+        //   2. localStorage fallback — persisted on last successful login (survives hard refresh)
+        //   3. Default to HSAER
+        // Without this, a returning DBL/8AER student opening the portfolio directly
+        // (no ?track= param) would hit the HSAER sheet, not find their record, and
+        // be prompted to set up again.
+        const storedTrack = (() => {
+            try { return localStorage.getItem('portfolio_track_' + email); } catch(e) { return null; }
+        })();
+        const preloadTrack = URL_TRACK || storedTrack;
+        if (preloadTrack) setBackendForCourse(preloadTrack);
 
         // Attempt cloud load
         const cloudData = await loadStudentFromCloud(email);
@@ -1693,7 +1706,11 @@ async function handleTokenResponse(tokenResponse) {
             state.quiz = { loaded: false, submitted: false, grades: null, aiTotal: null };
             // URL_TRACK overrides stored course — lets a student in two classes
             // open each class hub and land in the correct portfolio for that session.
-            setBackendForCourse(URL_TRACK || state.student.course || 'hsaer');
+            const resolvedCourse = URL_TRACK || state.student.course || 'hsaer';
+            setBackendForCourse(resolvedCourse);
+            // Persist the resolved course so the correct backend is used on future
+            // hard-reloads even when the URL has no ?track= param.
+            try { localStorage.setItem('portfolio_track_' + email, resolvedCourse); } catch(e) {}
             restoreEvidenceLocal();
             calculateCurrentWeek();
             hideAllModals();
