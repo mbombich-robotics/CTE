@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.23',
+    VERSION: 'v2.14.24',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -2096,6 +2096,8 @@ function initProfileForm() {
             createdAt: new Date().toISOString()
         };
         setBackendForCourse(course);
+        // Persist resolved course so hard-refresh without ?track= still hits the right backend
+        try { localStorage.setItem('portfolio_track_' + state.student.email, course); } catch(e) {}
         document.getElementById('profileModal').classList.remove('active');
         onAuthenticated();
         showToast('Welcome! Your portfolio is ready.', 'success');
@@ -2218,6 +2220,11 @@ function updateUI() {
     const COURSE_DISPLAY = { hsaer: 'HS AE&R', '8aer': '8th Grade AE&R', dbl: 'Design & Build Lab' };
     const course = URL_TRACK || state.student.course || 'hsaer';
     document.getElementById('projectBadge').textContent = COURSE_DISPLAY[course] || course;
+
+    // Update sidebar portfolio title to match the signed-in student's track
+    const TRACK_TITLES_UI = { hsaer: 'HS AE&R Portfolio', '8aer': '8th Grade Portfolio', dbl: 'D&B Lab Portfolio' };
+    const titleEl = document.getElementById('portfolioTitle');
+    if (titleEl) titleEl.textContent = TRACK_TITLES_UI[course] || 'AE&R Portfolio';
 
     const completedDeliverables = Object.values(state.deliverables).filter(d => d.status === 'completed').length;
     document.getElementById('completedCount').textContent = completedDeliverables;
