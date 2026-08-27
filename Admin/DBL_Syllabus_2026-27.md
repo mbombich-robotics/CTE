@@ -38,7 +38,7 @@ All materials are provided for class projects. Personal project materials may re
 | Category | Items |
 |----------|-------|
 | **Software** | Autodesk Fusion 360, Google Workspace |
-| **Fabrication** | Bambu 3D printers (PLA, PETG), CNC router, laser cutter/engraver, plasma cutter (teacher-operated), drill press, hand tools, calipers |
+| **Fabrication** | Bambu 3D printers (PLA, PETG), CNC router, laser cutter/engraver, plasma CNC, drill press, hand tools, calipers |
 | **Electronics** | Soldering irons, LEDs, resistors, power supplies, Arduino (P5 only) |
 | **Materials** | Acrylic, MDF, polycarbonate, silicone casting compound, misc. hardware |
 | **Safety** | Safety glasses, gloves, hearing protection (provided) |
@@ -48,13 +48,20 @@ All materials are provided for class projects. Personal project materials may re
 
 ## Grading
 
-Weights are finalized in Google Classroom at the start of the year. Check there for the current breakdown.
+| Category | Weight |
+|---|---|
+| Portfolio Deliverables | 50% |
+| Quizzes | 20% |
+| Midterm & Final Exam | 20% |
+| Safety, 5S & Participation | 10% |
 
-**Portfolio Deliverables** are the core of your grade. Project milestones — design documents, fabrication logs, photos of finished work, and reflections — are submitted through your digital portfolio. Each deliverable has a rubric visible before you submit.
+**Portfolio Deliverables (50%)** are the core of your grade. Project milestones — design documents, fabrication logs, photos of finished work, and reflections — are submitted through your digital portfolio. Each deliverable has a rubric visible before you submit. Point values reflect the complexity of the work.
 
-**Participation, Safety, & 5S** is assessed daily. This includes engagement, lab behavior, tool care, and weekly shop cleanup (5S Fridays).
+**Quizzes (20%)** are given at the end of major skill units to assess understanding of content and skills covered.
 
-**Quizzes & Assessments** are given at the end of major skill units.
+**Midterm & Final Exam (20%)** are cumulative assessments given at the end of each semester.
+
+**Safety, 5S & Participation (10%)** — You begin each semester with 50 points. Ten points are deducted per incident, including: not wearing required PPE, leaving tools or materials out after use, failing to participate in 5S cleanup, or other unsafe behaviors. Serious or repeated violations are referred to administration regardless of remaining points.
 
 ---
 
@@ -78,7 +85,7 @@ Projects are completed roughly in sequence. Earlier projects build skills used i
 ## Classroom Policies
 
 **Safety — Non-Negotiable**  
-PPE is required whenever shop tools or electronics are in use. A safety violation results in a zero for that day's participation grade and removal from the work area. Repeated violations will be referred to administration.
+PPE is required whenever shop tools or electronics are in use. A safety violation results in a 10-point deduction from your Safety, 5S & Participation grade and immediate removal from the work area. Repeated violations will be referred to administration.
 
 **Attendance**  
 This class is hands-on — you cannot make up fabrication time from home. Excused absences receive full make-up opportunities; unexcused absences result in a zero for that day.

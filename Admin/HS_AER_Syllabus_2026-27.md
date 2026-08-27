@@ -50,13 +50,20 @@ All materials and tools are provided by the school. You do not need to purchase 
 
 ## Grading
 
-Weights are finalized in Google Classroom at the start of the year. Check there for the current breakdown.
+| Category | Weight |
+|---|---|
+| Portfolio Deliverables | 50% |
+| Quizzes | 20% |
+| Midterm & Final Exam | 20% |
+| Safety, 5S & Participation | 10% |
 
-**Portfolio Deliverables** are the core of your grade. Every major project milestone — your Design Brief, each CAD component, safety certifications, programming assignments, and reflections — is submitted through your digital portfolio at [mbombich-robotics.github.io/CTE](https://mbombich-robotics.github.io/CTE/). Each deliverable has a rubric visible in the portfolio before you submit.
+**Portfolio Deliverables (50%)** are the core of your grade. Every major project milestone — your Design Brief, each CAD component, safety certifications, programming assignments, and reflections — is submitted through your digital portfolio at [mbombich-robotics.github.io/CTE](https://mbombich-robotics.github.io/CTE/). Each deliverable has a rubric visible in the portfolio before you submit. Point values reflect the complexity of the work.
 
-**Participation, Safety, & 5S** is assessed daily. This includes engagement in lessons, lab behavior, tool care, weekly shop cleanup (5S Fridays), and adherence to all safety rules.
+**Quizzes (20%)** are given at the end of major units to assess understanding of content and skills covered.
 
-**Quizzes & Assessments** are given at the end of major units, plus a midterm and final.
+**Midterm & Final Exam (20%)** are cumulative assessments given at the end of each semester.
+
+**Safety, 5S & Participation (10%)** — You begin each semester with 50 points. Ten points are deducted per incident, including: not wearing required PPE, leaving tools or materials out after use, failing to participate in 5S cleanup, or other unsafe behaviors. Serious or repeated violations are referred to administration regardless of remaining points.
 
 ---
 
@@ -82,7 +89,7 @@ Students returning for a second year work at Level 2 (B-track) or Level 3 (A-tra
 ## Classroom Policies
 
 **Safety — Non-Negotiable**  
-PPE is required whenever shop tools or electronics are in use. A safety violation results in a zero for that day's participation grade and removal from the work area. Repeated violations will be referred to administration.
+PPE is required whenever shop tools or electronics are in use. A safety violation results in a 10-point deduction from your Safety, 5S & Participation grade and immediate removal from the work area. Repeated violations will be referred to administration.
 
 **Attendance**  
 This class is hands-on — you cannot make up lab time from home. Excused absences receive full make-up opportunities; unexcused absences result in a zero for that day.
