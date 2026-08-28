@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.26',
+    VERSION: 'v2.14.27',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -2118,13 +2118,14 @@ async function onAuthenticated() {
     // Load correct skip-week config before first render so the upcoming list
     // doesn't flash stale items. Fall through to updateUI() regardless.
     await fetchConfig();
+    await loadScheduleDueDates();
     updateUI();
 
     startAutoSave();
     markDirty(); // ensure first state is persisted
 
     // Continue polling every 5 min
-    setInterval(fetchConfig, 5 * 60 * 1000);
+    setInterval(async () => { await fetchConfig(); await loadScheduleDueDates(); }, 5 * 60 * 1000);
 }
 
 async function fetchConfig() {
@@ -2138,7 +2139,7 @@ async function fetchConfig() {
         state.config.quizEnabled          = cfg.quizEnabled === true || cfg.quizEnabled === 'true';
         state.config.quizKey              = cfg.quizKey || 'claw';
         state.config.reflectionDueDates   = cfg.reflectionDueDates  || {};
-        state.config.deliverableDueDates  = cfg.deliverableDueDates || {};
+        // deliverableDueDates come from schedule-data.json (loadScheduleDueDates) — not from backend
 
         const expected = cfg.expectedVersion;
         if (expected && expected !== CONFIG.VERSION) {
@@ -2149,6 +2150,42 @@ async function fetchConfig() {
         }
 
         updateUI();
+    } catch(e) { /* silent — keep existing config */ }
+}
+
+// Reads schedule-data.json from GitHub Pages and computes which deliverables are
+// open based on whether their week's start date has passed. Overwrites
+// state.config.deliverableDueDates so the teacher only needs to push the JSON.
+async function loadScheduleDueDates() {
+    const SCHEDULE_URL = 'https://mbombich-robotics.github.io/CTE/schedule-data.json';
+    try {
+        const res = await fetch(SCHEDULE_URL + '?_t=' + Date.now());
+        if (!res.ok) return;
+        const data = await res.json();
+
+        // Map portfolio course key → schedule-data.json track key
+        const trackKey = state.course === '8aer' ? 'aer8th' : state.course;
+        const trackData = data.tracks[trackKey];
+        if (!trackData) return;
+
+        // Flatten weeks — handle g1/g2 sub-groups (8th grade uses separate date ranges)
+        let weeks = [];
+        if (Array.isArray(trackData.weeks)) {
+            weeks = trackData.weeks;
+        } else {
+            if (trackData.g1?.weeks) weeks = weeks.concat(trackData.g1.weeks);
+            if (trackData.g2?.weeks) weeks = weeks.concat(trackData.g2.weeks);
+        }
+
+        const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+        const dueDates = {};
+        for (const week of weeks) {
+            if (week.start <= today && week.deliverable?.portfolioId != null) {
+                dueDates[week.deliverable.portfolioId] = week.deliverable.due || true;
+            }
+        }
+
+        state.config.deliverableDueDates = dueDates;
     } catch(e) { /* silent — keep existing config */ }
 }
 

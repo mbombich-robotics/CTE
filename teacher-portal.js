@@ -22,7 +22,7 @@ const CONFIG = {
         hsaer: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-            currentAppVersion: 'v2.14.26',
+            currentAppVersion: 'v2.14.27',
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
@@ -36,7 +36,7 @@ const CONFIG = {
         '8aer': {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
-            currentAppVersion: 'v2.14.26',
+            currentAppVersion: 'v2.14.27',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
@@ -50,7 +50,7 @@ const CONFIG = {
         dbl: {
             name: 'Design & Build Lab',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
-            currentAppVersion: 'v2.14.26',
+            currentAppVersion: 'v2.14.27',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
@@ -2301,19 +2301,14 @@ async function openWeekSettings() {
         const delTbody = document.getElementById(courseId + 'DeliverableSettingsBody');
         delTbody.innerHTML = '';
         if (deliverables.length === 0) {
-            delTbody.innerHTML = `<tr><td colspan="3" style="padding: 10px; color: var(--gray-400); font-style: italic; font-size: 13px; text-align: center;">Not yet configured</td></tr>`;
+            delTbody.innerHTML = `<tr><td colspan="2" style="padding: 10px; color: var(--gray-400); font-style: italic; font-size: 13px; text-align: center;">Not yet configured</td></tr>`;
         } else {
             for (const d of deliverables) {
                 const skipDel = (weekSettings[courseId].skipDeliverables || []).includes(d.id);
-                const delDate  = (weekSettings[courseId].deliverableDueDates || {})[d.id] || '';
                 delTbody.innerHTML += `<tr>
                     <td style="padding: 8px 10px; font-weight: 600; white-space: nowrap;">${d.label}</td>
                     <td style="padding: 8px 10px; text-align: center;">
                         <input type="checkbox" id="skipDel_${courseId}_${d.id}" ${skipDel ? 'checked' : ''}>
-                    </td>
-                    <td style="padding: 4px 8px;">
-                        <input type="date" id="delDate_${courseId}_${d.id}" value="${delDate}"
-                               style="font-size:12px;padding:3px 5px;border:1px solid var(--gray-300);border-radius:4px;width:130px;">
                     </td>
                 </tr>`;
             }
@@ -2376,11 +2371,8 @@ async function applyWeekSettings() {
     for (const courseId of ['hsaer', '8aer', 'dbl']) {
         // Deliverables (keyed by deliverable ID)
         weekSettings[courseId].skipDeliverables = [];
-        weekSettings[courseId].deliverableDueDates = {};
         for (const d of (TRACK_DELIVERABLES[courseId] || [])) {
             if (document.getElementById(`skipDel_${courseId}_${d.id}`)?.checked) weekSettings[courseId].skipDeliverables.push(d.id);
-            const delDate = document.getElementById(`delDate_${courseId}_${d.id}`)?.value || '';
-            if (delDate) weekSettings[courseId].deliverableDueDates[d.id] = delDate;
         }
 
         weekSettings[courseId].expectedVersion = document.getElementById(`expectedVersion_${courseId}`)?.value.trim() || '';
@@ -2407,8 +2399,8 @@ async function applyWeekSettings() {
                 action: 'setConfig',
                 token: CONFIG.TEACHER_TOKEN,
                 skipDeliverableWeeks: weekSettings[courseId].skipDeliverables,
-                expectedVersion:      weekSettings[courseId].expectedVersion,
-                deliverableDueDates:  weekSettings[courseId].deliverableDueDates || {}
+                expectedVersion:      weekSettings[courseId].expectedVersion
+                // deliverableDueDates removed — now driven by schedule-data.json
             };
             if (courseId === 'hsaer' || courseId === '8aer') {
                 body.quizEnabled = weekSettings[courseId].quizEnabled;
