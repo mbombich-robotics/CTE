@@ -525,6 +525,16 @@
                     a.href = url.toString();
                 } catch (e) {}
             }
+            // Propagate track to lesson/activity links within this unit
+            if (rel && rel.indexOf('../') !== 0 && rel.indexOf('#') !== 0 &&
+                    rel.indexOf('http') !== 0 && rel.indexOf('mailto') !== 0 &&
+                    rel.match(/\.html/)) {
+                try {
+                    var url = new URL(a.href);
+                    url.searchParams.set('track', track);
+                    a.href = url.toString();
+                } catch (e) {}
+            }
         });
     }());
     (function() {
