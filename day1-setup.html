@@ -14,6 +14,7 @@
   --acc:   #00d4ff;
   --grn:   #50fa7b;
   --org:   #ff9500;
+  --warn:  #ffd166;
   --mono: 'JetBrains Mono','Fira Code',monospace;
   --sans: 'DM Sans',system-ui,sans-serif;
   --orb:  'Orbitron',monospace;
@@ -124,6 +125,100 @@ body{
   margin-top:20px;font-family:var(--mono);
   font-size:12px;color:var(--muted);letter-spacing:.04em;text-align:center;
 }
+
+/* ── Section divider ── */
+.section-divider{
+  width:100%;max-width:760px;
+  display:flex;align-items:center;gap:16px;
+  margin:44px 0 28px;
+}
+.section-divider::before,.section-divider::after{
+  content:'';flex:1;height:1px;background:var(--bdr);
+}
+.section-label{
+  font-family:var(--mono);font-size:10px;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;
+  color:var(--muted);white-space:nowrap;
+}
+
+/* ── Slide deck ── */
+.slide-deck{
+  width:100%;max-width:760px;
+  background:var(--surf);border:1px solid var(--bdr);
+  border-radius:16px;overflow:hidden;margin-bottom:32px;
+}
+.deck-head{
+  padding:22px 28px 18px;border-bottom:1px solid var(--bdr);
+  background:var(--hi);text-align:center;
+}
+.deck-title{
+  font-family:var(--orb);font-size:clamp(17px,2.4vw,24px);font-weight:900;
+  color:var(--txt);letter-spacing:.04em;margin-top:6px;
+}
+.deck-sub{font-size:13px;color:var(--muted);margin-top:6px;}
+
+.slide{display:none;padding:26px 28px 24px;}
+.slide.active{display:block;}
+.slide-step{
+  font-family:var(--orb);font-size:10px;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:12px;
+}
+.slide-title{
+  font-size:clamp(16px,2.1vw,21px);font-weight:700;
+  color:var(--txt);margin-bottom:10px;line-height:1.25;
+}
+.slide-see{
+  font-size:clamp(13px,1.5vw,15px);color:var(--muted);
+  line-height:1.75;margin-bottom:18px;
+}
+.slide-see b{color:var(--txt);font-weight:600;}
+.action-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.action-label{
+  font-family:var(--orb);font-size:9px;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:var(--acc);flex-shrink:0;
+}
+.ap{
+  font-family:var(--mono);font-size:13px;font-weight:700;
+  background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.3);
+  border-radius:7px;padding:4px 12px;color:var(--acc);white-space:nowrap;
+}
+.ap.warn{
+  background:rgba(255,209,102,.1);border-color:rgba(255,209,102,.3);
+  color:var(--warn);
+}
+.ap.grn{
+  background:rgba(80,250,123,.1);border-color:rgba(80,250,123,.3);
+  color:var(--grn);
+}
+.sarr{color:var(--muted);font-size:14px;padding:0 2px;}
+
+.slide.is-warn{background:rgba(255,209,102,.04);}
+.slide.is-done{background:rgba(80,250,123,.04);}
+
+.slide-nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:13px 22px;border-top:1px solid var(--bdr);background:var(--hi);
+}
+.nav-btn{
+  font-family:var(--orb);font-size:10px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;background:var(--surf);
+  border:1px solid var(--bdr);border-radius:8px;
+  padding:7px 16px;color:var(--muted);cursor:pointer;
+  transition:color .15s,border-color .15s;
+}
+.nav-btn:hover:not(:disabled){color:var(--acc);border-color:var(--acc);}
+.nav-btn:disabled{opacity:.3;cursor:default;}
+.slide-ctr{font-family:var(--mono);font-size:13px;color:var(--muted);}
+.slide-ctr b{color:var(--txt);}
+
+.slide-img{
+  display:block;width:100%;height:auto;
+  max-height:320px;object-fit:contain;object-position:top center;
+  border:1px solid var(--bdr);border-radius:8px;
+  margin-bottom:18px;background:#fff;
+}
 </style>
 
 <div class="pg-head">
@@ -207,11 +302,233 @@ function copyUrl(track) {
     btn.classList.add('copied');
     setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
   }).catch(() => {
-    // Fallback: select the text
     const range = document.createRange();
     range.selectNodeContents(el);
     window.getSelection().removeAllRanges();
     window.getSelection().addRange(range);
   });
 }
+</script>
+
+<!-- ─── BAMBU STUDIO SETUP SLIDES ─── -->
+<div class="section-divider">
+  <span class="section-label">Next Activity — Bambu Studio Setup</span>
+</div>
+
+<div class="slide-deck">
+  <div class="deck-head">
+    <div class="eyebrow">Software Setup · First-Time Only</div>
+    <div class="deck-title">Bambu Studio Setup Wizard</div>
+    <p class="deck-sub">Follow each slide — raise your hand if you get stuck</p>
+  </div>
+
+  <!-- Slide 1 -->
+  <div class="slide active">
+    <div class="slide-step">Step 1 of 11</div>
+    <div class="slide-title">Welcome Screen</div>
+    <img class="slide-img" src="Assets/bambu-setup-imgs/p1_img1.png" alt="Bambu Studio welcome screen">
+    <div class="slide-see">
+      The Setup Wizard opens automatically. You'll see the green Bambu logo and <b>"Welcome to Bambu Studio."</b>
+    </div>
+    <div class="action-row">
+      <span class="action-label">Click</span>
+      <span class="ap">Get Started</span>
+    </div>
+  </div>
+
+  <!-- Slide 2 -->
+  <div class="slide">
+    <div class="slide-step">Step 2 of 11</div>
+    <div class="slide-title">Select Your Login Region</div>
+    <img class="slide-img" src="Assets/bambu-setup-imgs/p2_img1.png" alt="Region selection screen">
+    <div class="slide-see">
+      A list of regions appears with <b>Asia-Pacific</b> highlighted by default.
+    </div>
+    <div class="action-row">
+      <span class="action-label">Select</span>
+      <span class="ap">North America</span>
+      <span class="sarr">→</span>
+      <span class="action-label">Click</span>
+      <span class="ap">Next</span>
+    </div>
+  </div>
+
+  <!-- Slide 3 -->
+  <div class="slide">
+    <div class="slide-step">Step 3 of 11</div>
+    <div class="slide-title">User Experience Program</div>
+    <img class="slide-img" src="Assets/bambu-setup-imgs/p2_img2.png" alt="User Experience Improvement Program screen">
+    <div class="slide-see">
+      A screen asks if you want to join Bambu's <b>User Experience Improvement Program</b>.
+      It's optional — you can change it later in Settings.
+    </div>
+    <div class="action-row">
+      <span class="action-label">Click</span>
+      <span class="ap">Skip</span>
+    </div>
+  </div>
+
+  <!-- Slide 4 -->
+  <div class="slide">
+    <div class="slide-step">Step 4 of 11</div>
+    <div class="slide-title">Printer Selection — Clear All</div>
+    <img class="slide-img" src="Assets/bambu-setup-imgs/p3_img1.png" alt="Printer selection with all printers checked by default">
+    <div class="slide-see">
+      A grid of Bambu Lab printers appears — they're <b>all checked by default</b>.
+      We only want the printers in our shop, so start by clearing everything.
+    </div>
+    <div class="action-row">
+      <span class="action-label">Click</span>
+      <span class="ap">Clear All</span>
+    </div>
+  </div>
+
+  <!-- Slide 5 -->
+  <div class="slide">
+    <div class="slide-step">Step 5 of 11</div>
+    <div class="slide-title">Select Class Printers — Bambu Lab</div>
+    <img class="slide-img" src="Assets/bambu-setup-imgs/p4_img1.png" alt="Printer selection with P1S, H2S, and P2S checked">
+    <div class="slide-see">
+      <b>Scroll down</b> to find these three printers and check them.
+      Your screen should match this image when done. Don't click Next yet.
+    </div>
+    <div class="action-row">
+      <span class="action-label">Check</span>
+      <span class="ap">Bambu Lab P1S</span>
+      <span class="ap">Bambu Lab H2S</span>
+      <span class="ap">Bambu Lab P2S</span>
+    </div>
+  </div>
+
+  <!-- Slide 6 -->
+  <div class="slide">
+    <div class="slide-step">Step 6 of 11</div>
+    <div class="slide-title">Select Class Printers — Creality</div>
+    <img class="slide-img" src="Assets/bambu-setup-imgs/p4_img2.png" alt="Creality printer section showing Ender-3 V3 KE">
+    <div class="slide-see">
+      Keep <b>scrolling down</b> past the Bambu printers until you reach the
+      <b>Creality</b> section (the Creality tab will appear highlighted).
+      Find <b>Ender-3 V3 KE</b> in the grid.
+    </div>
+    <div class="action-row">
+      <span class="action-label">Check</span>
+      <span class="ap">Creality Ender-3 V3 KE</span>
+      <span class="sarr">→</span>
+      <span class="action-label">Click</span>
+      <span class="ap">Next</span>
+    </div>
+  </div>
+
+  <!-- Slide 7 -->
+  <div class="slide">
+    <div class="slide-step">Step 7 of 11</div>
+    <div class="slide-title">Filament Selection</div>
+    <img class="slide-img" src="Assets/bambu-setup-imgs/p6_img1.png" alt="Filament selection screen">
+    <div class="slide-see">
+      A long list of filament types appears with many options already selected.
+      The defaults are fine — no changes needed here.
+    </div>
+    <div class="action-row">
+      <span class="action-label">Click</span>
+      <span class="ap">Next</span>
+      <span style="font-size:12px;color:var(--muted);font-family:var(--mono);">(keep all defaults)</span>
+    </div>
+  </div>
+
+  <!-- Slide 8 -->
+  <div class="slide">
+    <div class="slide-step">Step 8 of 11</div>
+    <div class="slide-title">Bambu Network Plug-in</div>
+    <img class="slide-img" src="Assets/bambu-setup-imgs/p6_img2.png" alt="Bambu Network plug-in screen">
+    <div class="slide-see">
+      A screen describes the <b>Bambu Network plug-in</b> — it enables remote control,
+      live streaming, and cloud sync. The install checkbox is already checked.
+    </div>
+    <div class="action-row">
+      <span class="action-label">Click</span>
+      <span class="ap">Finish</span>
+    </div>
+  </div>
+
+  <!-- Slide 9 — Admin step, no screenshot available -->
+  <div class="slide is-warn">
+    <div class="slide-step">Step 9 of 11</div>
+    <div class="slide-title">⚠️ Stop — Admin Approval Needed</div>
+    <div class="slide-see" style="margin-top:16px;">
+      A <b>network access dialog</b> will appear asking for permission to connect.
+      This requires admin approval — you can't click past this screen on your own.
+    </div>
+    <div class="action-row">
+      <span class="action-label">Action</span>
+      <span class="ap warn">Raise your hand</span>
+      <span style="font-size:12px;color:var(--muted);font-family:var(--mono);">— wait for your teacher</span>
+    </div>
+  </div>
+
+  <!-- Slide 10 -->
+  <div class="slide">
+    <div class="slide-step">Step 10 of 11</div>
+    <div class="slide-title">Configuration Update</div>
+    <img class="slide-img" src="Assets/bambu-setup-imgs/p7_img1.png" alt="Configuration update dialog">
+    <div class="slide-see">
+      A dialog appears: <b>"A new configuration package available. Do you want to install it?"</b>
+      Accept it to get the latest print profiles.
+    </div>
+    <div class="action-row">
+      <span class="action-label">Click</span>
+      <span class="ap">OK</span>
+    </div>
+  </div>
+
+  <!-- Slide 11 -->
+  <div class="slide is-done">
+    <div class="slide-step">Step 11 of 11</div>
+    <div class="slide-title">Pin Bambu Studio to Your Taskbar</div>
+    <img class="slide-img" src="Assets/bambu-setup-imgs/p7_img2.png" alt="Taskbar context menu with Pin to taskbar option">
+    <div class="slide-see">
+      Bambu Studio is now set up. To make it easy to find every day,
+      pin it to your taskbar — <b>right-click</b> the Bambu Studio icon at the bottom of your screen.
+    </div>
+    <div class="action-row">
+      <span class="action-label">Right-click</span>
+      <span class="ap grn">Bambu Studio icon</span>
+      <span class="sarr">→</span>
+      <span class="action-label">Click</span>
+      <span class="ap grn">Pin to taskbar</span>
+    </div>
+  </div>
+
+  <div class="slide-nav">
+    <button class="nav-btn" id="prev-btn" onclick="prevSlide()" disabled>← Prev</button>
+    <span class="slide-ctr" id="slide-ctr"><b>1</b> / 11</span>
+    <button class="nav-btn" id="next-btn" onclick="nextSlide()">Next →</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  let cur = 0;
+  const slides = document.querySelectorAll('.slide');
+  const ctr    = document.getElementById('slide-ctr');
+  const prev   = document.getElementById('prev-btn');
+  const next   = document.getElementById('next-btn');
+  const total  = slides.length;
+
+  function show(n) {
+    slides[cur].classList.remove('active');
+    cur = Math.max(0, Math.min(n, total - 1));
+    slides[cur].classList.add('active');
+    ctr.innerHTML = '<b>' + (cur + 1) + '</b> / ' + total;
+    prev.disabled = cur === 0;
+    next.disabled = cur === total - 1;
+  }
+
+  window.prevSlide = function(){ show(cur - 1); };
+  window.nextSlide = function(){ show(cur + 1); };
+
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowRight') show(cur + 1);
+    if (e.key === 'ArrowLeft')  show(cur - 1);
+  });
+})();
 </script>
