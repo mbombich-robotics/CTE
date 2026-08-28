@@ -41,7 +41,7 @@ Autodesk Fusion · Bambu Studio · HS Applied Engineering & Robotics
 
 "Next is the [emphasis] filament dropdown. Select the profile that matches the material loaded in that printer. [long pause] If you're not sure what filament is loaded, check the spool or ask before you print — wrong filament settings can ruin a print or damage the printer."
 
-"The [emphasis] process profile is on the right. This is the class profile for this type of print. Select the one labeled for this class. [long pause] It already has layer height, infill, and support settings dialed in — [soft] don't change them unless you have a specific reason and you've checked with me first."
+"The [emphasis] process profile is on the right. This is the class profile for this type of print. Select the one labeled for this class. [long pause] It already has layer height, infill, and support settings dialed in — [soft] don't change them unless you have a specific reason and you've checked with one of your instructors first."
 
 "With all three set, click [emphasis] Slice. [long pause] Review the preview — you're looking for clean layers and no unexpected support material inside the bearing pocket or counterbores. If something looks wrong, check your orientation first."
 
@@ -51,13 +51,15 @@ Autodesk Fusion · Bambu Studio · HS Applied Engineering & Robotics
 
 [SCENE 4 — Physical bearing, M3 screw, and calipers on desk]
 
-"When the print comes off the bed, you have [emphasis] three tests and a measurement log to complete."
+"When the print comes off the bed, you have [emphasis] four tests and a measurement log to complete."
 
 "[emphasis] Test one — bearing fit. Press your bearing into the pocket. Does it go in with light pressure and stay put? That's your target. If it won't go in, your pocket is too small — increase the cushion dimension. If it falls out, it's too large — decrease it."
 
-"[emphasis] Test two — axle clearance. Pass an M8 bolt through the center bore. It should spin freely with no wobble. [pause] 9.3mm is your slip fit target."
+"[emphasis] Test two — axle clearance. Pass an M8 bolt through the center bore. It should spin freely."
 
 "[emphasis] Test three — screw clearance. Drop an M3 screw through the clearance holes. It should pass through with no resistance. [pause] If it threads in, your hole is too small."
+
+"[emphasis] Test four — tap screw fit. Try threading an M3 screw into one of the tap holes. Moderate pressure should start threading the screw into the hole. If it won't start, the hole is too small. If it took nearly zero effort, the hole is too big."
 
 [SCENE 5 — Deliverable table shown on screen]
 
