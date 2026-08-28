@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.25',
+    VERSION: 'v2.14.26',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -135,16 +135,13 @@ const DELIVERABLES = [
     // ── Unit 1: Engineering Design Process ──────────────────────────────
     {
         id: 10,
-        title: 'Signed Syllabus & Safety Contract',
+        title: 'D1.0 — Start-of-Year Checklist',
         unit: '01',
         week: 1,
         phase: 'edp',
         alwaysOpen: true,
-        description: 'Return your signed syllabus and safety contract to Mr. Bombich. Both must be signed by you and a parent/guardian.',
-        requirements: [
-            'Syllabus signed by student and parent/guardian — returned to Mr. Bombich',
-            'Safety contract signed by student and parent/guardian — returned to Mr. Bombich',
-        ]
+        points: 0,
+        description: 'Three items to complete in the first week: the entry questionnaire, your signed syllabus, and your signed safety contract.',
     },
     {
         id: 11,
@@ -3335,13 +3332,60 @@ function openDeliverableForm(id) {
             ${deliverable.type === 'googleDoc'
                 ? renderDocDeliverableUI(id, deliverable, existing)
                 : `
-            ${id !== 0 && !deliverable.questions?.length ? `
+            ${id === 10 ? `
+            <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px;">
+              <div class="card" style="border-left:3px solid var(--primary);padding:16px;">
+                <h4 style="margin-bottom:8px;">1 — Entry Questionnaire</h4>
+                <p style="font-size:14px;color:var(--gray-600);margin-bottom:14px;">Complete this short questionnaire — about 5 minutes. It helps your teacher build groups for upcoming projects.</p>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSftmOTsF7X4vMNm3xeYE-xb9V40L6eR2HulF0SB5L90l8I2mA/viewform" target="_blank"
+                   style="display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:white;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;margin-bottom:14px;">
+                  <i class="fas fa-external-link-alt"></i> Open Questionnaire
+                </a>
+                <label style="display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer;">
+                  <input type="checkbox" id="d10QuizDone" ${existing.quizDone ? 'checked' : ''} style="width:18px;height:18px;accent-color:var(--primary);">
+                  I've submitted the questionnaire
+                </label>
+              </div>
+              <div class="card" style="border-left:3px solid var(--success);padding:16px;">
+                <h4 style="margin-bottom:8px;">2 &amp; 3 — Signed Syllabus &amp; Safety Contract</h4>
+                <p style="font-size:14px;color:var(--gray-600);margin-bottom:14px;">Both must be signed by you <em>and</em> a parent/guardian. Upload a photo of each, then return the paper copies to Mr. Bombich.</p>
+                <div id="deliverablePhotoZone"
+                    style="border: 2px dashed var(--gray-300); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; color: var(--gray-500); font-size: 14px;"
+                    onclick="document.getElementById('deliverablePhotoInput').click()"
+                    ondragover="event.preventDefault(); this.style.borderColor='var(--primary)';"
+                    ondragleave="this.style.borderColor='var(--gray-300)';"
+                    ondrop="event.preventDefault(); this.style.borderColor='var(--gray-300)'; handleDeliverablePhotos(event.dataTransfer.files, ${id});">
+                    <i class="fas fa-camera" style="font-size: 20px; margin-bottom: 6px; display: block;"></i>
+                    Click or drag photos here — one per document
+                </div>
+                <input type="file" id="deliverablePhotoInput" accept="image/*" multiple style="display: none;"
+                    onchange="handleDeliverablePhotos(this.files, ${id}); this.value='';">
+                <div id="deliverablePhotoPreview" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
+                    ${(existing.photos || []).map(p => `
+                        <div class="evidence-thumb" style="position: relative; width: 80px; height: 80px; border-radius: 6px; overflow: hidden;">
+                            <img src="${p.thumbnailLink}" alt="${p.filename}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='${PLACEHOLDER_IMG}'">
+                            <a href="${p.webViewLink}" target="_blank" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); opacity: 0; transition: opacity 0.2s; color: white; font-size: 18px; text-decoration: none;"
+                               onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0">
+                                <i class="fas fa-expand"></i>
+                            </a>
+                            <button type="button" onclick="removeDeliverablePhoto('${p.driveId}', ${id}, this.closest('.evidence-thumb'))"
+                                style="position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+              </div>
+            </div>
+            ` : ''}
+
+            ${id !== 0 && id !== 10 && !deliverable.questions?.length ? `
             <div class="form-group">
                 <label for="deliverableContent">Your Submission</label>
                 <textarea id="deliverableContent" rows="8" placeholder="Describe what you did, paste your code, explain your process...">${existing.content || ''}</textarea>
             </div>` : ''}
 
-            ${id !== 0 ? `
+            ${(id !== 0 && id !== 10) ? `
             <div class="form-group">
                 <label>
                     Photos / Screenshots
@@ -3375,10 +3419,11 @@ function openDeliverableForm(id) {
                 </div>
             </div>` : ''}
 
+            ${id !== 10 ? `
             <div class="form-group">
                 <label for="deliverableLinks">Supporting Documentation</label>
                 <textarea id="deliverableLinks" rows="3" placeholder="Links, notes, or brief code snippets">${existing.links || ''}</textarea>
-            </div>
+            </div>` : ''}
 
             <div class="form-actions">
                 <button type="button" class="btn btn-secondary" onclick="saveDeliverableDraft(${id})">
@@ -3634,6 +3679,15 @@ function submitDeliverable(id) {
         const prompts = [d0.prompt1, d0.prompt2, d0.prompt3, d0.prompt4, d0.prompt5];
         const short = prompts.findIndex(p => !p || p.length < 50);
         if (short >= 0) { showToast(`Prompt ${short + 1} needs more detail (at least 50 characters)`, 'error'); return; }
+    } else if (id === 10) {
+        if (!document.getElementById('d10QuizDone')?.checked) {
+            showToast('Please confirm you completed the entry questionnaire', 'error');
+            return;
+        }
+        if (photos.length === 0) {
+            showToast('Please upload photos of your signed syllabus and safety contract', 'error');
+            return;
+        }
     } else if (CAD_DELIVERABLE_IDS.includes(id)) {
         const cadData = collectCadDeliverableData();
         if (!cadData.level) {
@@ -3655,8 +3709,8 @@ function submitDeliverable(id) {
         }
     }
 
-    const customData = id === 0 ? collectDeliverable0CustomData() : CAD_DELIVERABLE_IDS.includes(id) ? collectCadDeliverableData() : {};
-    let finalContent = id === 0 ? formatDeliverable0Content(customData) : CAD_DELIVERABLE_IDS.includes(id) ? formatCadDeliverableContent(id, customData) : content;
+    const customData = id === 0 ? collectDeliverable0CustomData() : id === 10 ? { quizDone: document.getElementById('d10QuizDone')?.checked || false } : CAD_DELIVERABLE_IDS.includes(id) ? collectCadDeliverableData() : {};
+    let finalContent = id === 0 ? formatDeliverable0Content(customData) : id === 10 ? 'Entry questionnaire completed. Signed syllabus and safety contract photos uploaded.' : CAD_DELIVERABLE_IDS.includes(id) ? formatCadDeliverableContent(id, customData) : content;
 
     // Append photo links to content for Sheets storage
     if (photos.length > 0) {
