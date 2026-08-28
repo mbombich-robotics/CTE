@@ -118,6 +118,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--txt);min-height:10
 .l-arr{color:var(--muted);font-size:18px;}
 .no-lesson{padding:28px 18px;color:var(--muted);font-size:14px;text-align:center;line-height:1.7;}
 .no-lesson small{font-family:var(--mono);font-size:11px;display:block;margin-top:6px;}
+.no-lesson a{color:var(--acc);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s;}
+.no-lesson a:hover{border-color:var(--acc);}
 
 /* ── SIDE COLUMN ──────────────────────────────────── */
 .side-col{display:flex;flex-direction:column;gap:var(--gap);}
@@ -562,7 +564,8 @@ function renderThisWeek(track, weekData, meta, week) {
     ${lessonRows
       ? `<div class="lesson-list">${lessonRows}</div>`
       : `<div class="no-lesson">No new lesson this week.<br>
-           <small>Continue your current project &mdash; check Google Classroom.</small></div>`
+           <small>Continue your current project &mdash;
+           <a href="${BASE}Portfolio/?track=${track}" target="_blank" rel="noopener">check your deliverables in your portfolio</a>.</small></div>`
     }
     ${dueSection}`;
 }
