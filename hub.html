@@ -202,6 +202,13 @@ body{font-family:var(--sans);background:var(--bg);color:var(--txt);min-height:10
 .due-badge.quiz{background:rgba(255,149,0,.15);color:#ff9500;}
 .due-name{font-size:13px;font-weight:500;color:var(--txt);}
 
+/* Non-linked lesson row (days without a URL) */
+.lesson-row.no-link{cursor:default;pointer-events:none;opacity:.62;}
+.lesson-row.no-link:hover{transform:none;box-shadow:none;}
+
+/* Week notes line */
+.wk-notes{font-size:11px;color:var(--muted);margin-top:3px;font-style:italic;}
+
 /* Responsive */
 @media(max-width:720px){
   .hub-grid{grid-template-columns:1fr;}
@@ -262,79 +269,34 @@ const CD_CONFIG = {
   ]
 };
 
-// ── LESSON DATA ───────────────────────────────────────────
-const U1 = 'Unit_01_Engineering_Design_Process/';
-const U2 = 'Unit_02_CAD/';
-const U4 = 'Unit_04_Programming_Electronics_and_Sensors/';
+// ── SCHEDULE DATA (fetched from schedule-data.json) ───────
+let scheduleData = null;
 
-const LESSONS = {
-  hsaer: {
-    1:  { lesson:   { label:'L1.1 — Intro to Engineering Design', url:BASE+U1+'Lesson_01_Intro_to_Engineering_Design.html' },
-          due: [
-            { label:'Signed Syllabus & Safety Contract (D1.0) — due Thu 9/3', type:'deliverable' },
-          ] },
-    2:  { lesson:   { label:'L1.2 — Spaghetti Tower Challenge',   url:BASE+U1+'Lesson_02_Spaghetti_Tower_Challenge.html' },
-          activity: { label:'L1.5 — Design Brief Workshop',       url:BASE+U1+'Lesson_05_Design_Brief_Workshop.html' },
-          due: [
-            { label:'Design Brief (D11)', type:'deliverable' },
-          ] },
-    3:  { lesson:   { label:'C1 — Wheel Hub',                     url:BASE+U2+'index.html' } },
-    4:  { lesson:   { label:'C2 — Drive Wheel',                   url:BASE+U2+'index.html' },
-          due: [
-            { label:'C1 — Wheel Hub (D21)', type:'deliverable' },
-          ] },
-    5:  { lesson:   { label:'C3 — Motor Sleeve Mount',            url:BASE+U2+'Lesson_06_C3_Motor_Mount.html' },
-          due: [
-            { label:'C2 — Drive Wheel (D22)', type:'deliverable' },
-          ] },
-    6:  { lesson:   { label:'C5 — Omni Wheel Mount',              url:BASE+U2+'index.html' },
-          due: [
-            { label:'C3 — Motor Sleeve Mount (D23)', type:'deliverable' },
-          ] },
-    7:  { lesson:   { label:'C6 & C7 — Sensor Mounts',           url:BASE+U2+'index.html' } },
-    8:  { lesson:   { label:'C4 — Robot Deck (Final)',            url:BASE+U2+'index.html' },
-          due: [
-            { label:'C5 — Omni Wheel Mount (D25)', type:'deliverable' },
-            { label:'C6 — IR Sensor Mount (D26)',  type:'deliverable' },
-            { label:'C7 — Ultrasonic Mount (D27)', type:'deliverable' },
-          ] },
-    9:  { due: [
-            { label:'C4 — Robot Deck Final (D24)', type:'deliverable' },
-          ] },
-    10: { lesson:   { label:'Shop Safety Certifications',          url:BASE+'Unit_03_Safety/index.html' } },
-    11: { lesson:   { label:'L4.1 — Intro to MicroPython',        url:BASE+U4+'Lesson_01_Intro_to_MicroPython.html' },
-          activity: { label:'A4.1 — Blink & REPL',                url:BASE+U4+'Activity_01_Blink_and_REPL.html' } },
-    13: { due: [
-            { label:'D4.1 Quiz — Activities 4.1–4.3', type:'quiz' },
-          ] },
-    23: { due: [
-            { label:'D52 — Line Following Practical', type:'deliverable' },
-          ] },
-    32: { due: [
-            { label:'D53 — Servo Build Project', type:'deliverable' },
-          ] },
-  },
-  aer8th: {
-    1:  { lesson:   { label:'L1.1 — Intro to Engineering Design', url:BASE+U1+'Lesson_01_Intro_to_Engineering_Design.html' } },
-    2:  { lesson:   { label:'L1.2 — Spaghetti Tower Challenge',   url:BASE+U1+'Lesson_02_Spaghetti_Tower_Challenge.html' },
-          activity: { label:'L1.5 — Design Brief Workshop',       url:BASE+U1+'Lesson_05_Design_Brief_Workshop.html' } },
-    3:  { lesson:   { label:'C1 — Wheel Hub',                     url:BASE+U2+'index.html' } },
-    4:  { lesson:   { label:'C2 — Drive Wheel',                   url:BASE+U2+'index.html' } },
-    9:  { lesson:   { label:'Shop Safety Certifications',          url:BASE+'Unit_03_Safety/index.html' } },
-    10: { lesson:   { label:'L4.1 — Intro to MicroPython',        url:BASE+U4+'Lesson_01_Intro_to_MicroPython.html' } },
-  },
-  dbl: {
-    1:  { lesson:   { label:'L1.1 — Intro to Engineering Design', url:BASE+U1+'Lesson_01_Intro_to_Engineering_Design.html' } },
-    2:  { lesson:   { label:'L1.2 — Spaghetti Tower Challenge',   url:BASE+U1+'Lesson_02_Spaghetti_Tower_Challenge.html' },
-          activity: { label:'L1.5 — Design Brief Workshop',       url:BASE+U1+'Lesson_05_Design_Brief_Workshop.html' } },
-    3:  { lesson:   { label:'P1 — Fidget Spinner: CAD Design',    url:BASE+U2+'index.html' } },
-    6:  { lesson:   { label:'P2 — LED Sign: CNC & Circuits',      url:BASE+U2+'index.html' } },
-    10: { lesson:   { label:'P3 — Acrylic Ornament',              url:BASE+U2+'index.html' } },
-    14: { lesson:   { label:'P4 — Silicone Molds',                url:BASE+U2+'index.html' } },
-    18: { lesson:   { label:'P5 — Automated Plant Watering',      url:BASE+U2+'index.html' } },
-    24: { lesson:   { label:'P6 — Capstone Project',              url:BASE+U2+'index.html' } },
-  },
-};
+async function loadSchedule() {
+  if (scheduleData) return;
+  try {
+    const resp = await fetch('schedule-data.json');
+    scheduleData = await resp.json();
+  } catch(e) {
+    console.warn('schedule-data.json unavailable:', e);
+  }
+}
+
+// Returns the week object whose start/end straddles today, or null.
+// For aer8th checks G1 then G2 (date ranges don't overlap).
+function getWeekData(track) {
+  if (!scheduleData) return null;
+  const today = new Date().toISOString().slice(0, 10); // 'YYYY-MM-DD'
+  if (track === 'aer8th') {
+    const g1 = scheduleData.tracks.aer8th?.g1?.weeks || [];
+    const g2 = scheduleData.tracks.aer8th?.g2?.weeks || [];
+    return g1.find(w => today >= w.start && today <= w.end)
+        || g2.find(w => today >= w.start && today <= w.end)
+        || null;
+  }
+  const weeks = scheduleData.tracks[track]?.weeks || [];
+  return weeks.find(w => today >= w.start && today <= w.end) || null;
+}
 
 // ── CAREER CONNECTIONS ────────────────────────────────────
 const CAREER_BASE = BASE + 'PLTW%20Unit%202%20Resources/Career%20Training/Careers%20in%20Engineering_files/';
@@ -534,64 +496,106 @@ function renderTabs(active) {
   ).join('');
 }
 
-function renderThisWeek(track, week, meta) {
-  const entry = LESSONS[track][week] || null;
-  const rows = entry ? [
-    entry.lesson && `<a class="lesson-row" href="${h(appendTrack(entry.lesson.url, track))}" target="_blank" rel="noopener">
-      <div class="l-icon">📐</div>
-      <div class="l-info"><div class="l-type">Lesson</div><div class="l-name">${h(entry.lesson.label)}</div></div>
-      <span class="l-arr">›</span></a>`,
-    entry.activity && `<a class="lesson-row" href="${h(appendTrack(entry.activity.url, track))}" target="_blank" rel="noopener">
-      <div class="l-icon">🔧</div>
-      <div class="l-info"><div class="l-type">Activity</div><div class="l-name">${h(entry.activity.label)}</div></div>
-      <span class="l-arr">›</span></a>`,
-  ].filter(Boolean).join('') : '';
+function renderThisWeek(track, weekData, meta, week) {
+  // Build lesson rows from daily schedule entries
+  const days = (weekData?.daily || []).filter(d => !d.content.startsWith('No School'));
+  const lessonRows = days.map(d => {
+    if (d.url) {
+      return `<a class="lesson-row" href="${h(appendTrack(d.url, track))}" target="_blank" rel="noopener">
+        <div class="l-icon">📐</div>
+        <div class="l-info">
+          <div class="l-type">${h(d.day)}</div>
+          <div class="l-name">${h(d.content)}</div>
+        </div>
+        <span class="l-arr">›</span></a>`;
+    } else {
+      return `<div class="lesson-row no-link">
+        <div class="l-icon">📋</div>
+        <div class="l-info">
+          <div class="l-type">${h(d.day)}</div>
+          <div class="l-name">${h(d.content)}</div>
+        </div></div>`;
+    }
+  }).join('');
 
-  const due = entry?.due || [];
-  const dueSection = due.length ? `
+  // Build "Due This Week" section — deliverable links to portfolio, quiz as non-linked chip
+  const del  = weekData?.deliverable;
+  const quiz = weekData?.quiz;
+  let dueRows = '';
+  if (del) {
+    const portfolioUrl = BASE + 'Portfolio/?track=' + track;
+    dueRows += `<a class="lesson-row" href="${h(portfolioUrl)}" target="_blank" rel="noopener">
+      <div class="l-icon">📋</div>
+      <div class="l-info">
+        <div class="l-type">Due ${h(del.due || 'This Week')}</div>
+        <div class="l-name">${h(del.label)} — ${h(del.title)}</div>
+      </div>
+      <span class="l-arr">›</span></a>`;
+  }
+  if (quiz) {
+    dueRows += `<div class="lesson-row no-link">
+      <div class="l-icon">📝</div>
+      <div class="l-info">
+        <div class="l-type">Quiz &mdash; ${h(quiz.day)}</div>
+        <div class="l-name">${h(quiz.id)} &mdash; ${h(quiz.title)}</div>
+      </div></div>`;
+  }
+  const dueSection = dueRows ? `
     <div class="due-section">
       <div class="due-divider">Due This Week</div>
-      <div class="due-list">${due.map(d =>
-        `<div class="due-item">
-           <span class="due-badge ${h(d.type)}">${d.type === 'quiz' ? 'Quiz' : 'Submit'}</span>
-           <span class="due-name">${h(d.label)}</span>
-         </div>`
-      ).join('')}</div>
+      <div class="due-list">${dueRows}</div>
     </div>` : '';
+
+  const weekTitle = weekData?.title || (meta.label + ' · Week ' + week);
+  const weekNotes = weekData?.notes ? `<div class="wk-notes">${h(weekData.notes)}</div>` : '';
 
   document.getElementById('this-week').innerHTML = `
     <div class="eyebrow">This Week</div>
     <div class="wk-head">
       <div class="wk-num">${week}</div>
       <div class="wk-meta">
-        <div class="wk-title">${h(meta.label)} &middot; Week ${week}</div>
+        <div class="wk-title">${h(weekTitle)}</div>
         <div class="wk-sub">2026&ndash;27 &nbsp;&bull;&nbsp; ${TOTAL_WEEKS - week} weeks remaining</div>
+        ${weekNotes}
       </div>
     </div>
-    ${entry?.lesson || entry?.activity
-      ? `<div class="lesson-list">${rows}</div>`
+    ${lessonRows
+      ? `<div class="lesson-list">${lessonRows}</div>`
       : `<div class="no-lesson">No new lesson this week.<br>
            <small>Continue your current project &mdash; check Google Classroom.</small></div>`
     }
     ${dueSection}`;
 }
 
-function renderCareer(week) {
-  const c = cycle(CAREERS, week);
+function renderCareer(weekData, fallbackWeek) {
+  let name, role, link, quote;
+  if (weekData?.careerConnection) {
+    const c = weekData.careerConnection;
+    name  = c.name;
+    role  = c.role;
+    link  = c.link;
+    quote = null; // quotes added per-week when ready
+  } else {
+    const c = cycle(CAREERS, fallbackWeek);
+    name  = c.name;
+    role  = c.title + ' · ' + c.org;
+    link  = CAREER_BASE + c.pdf;
+    quote = c.quote;
+  }
   document.getElementById('career-card').innerHTML = `
     <div class="eyebrow">Career Connection</div>
     <div class="car-body">
-      <div class="car-name">${h(c.name)}</div>
-      <div class="car-role">${h(c.title)} &middot; ${h(c.org)}</div>
-      <blockquote class="car-quote">&ldquo;${h(c.quote)}&rdquo;</blockquote>
-      <a class="car-link" href="${CAREER_BASE}${h(c.pdf)}" target="_blank" rel="noopener">
-        View ${h(c.name.split(' ')[0])}'s full profile ›
+      <div class="car-name">${h(name)}</div>
+      <div class="car-role">${h(role)}</div>
+      ${quote ? `<blockquote class="car-quote">&ldquo;${h(quote)}&rdquo;</blockquote>` : ''}
+      <a class="car-link" href="${h(link)}" target="_blank" rel="noopener">
+        View ${h(name.split(' ')[0])}'s full profile ›
       </a>
     </div>`;
 }
 
-function renderQuote(week) {
-  const q = cycle(QUOTES, week);
+function renderQuote(weekData, fallbackWeek) {
+  const q = (weekData?.quote) || cycle(QUOTES, fallbackWeek);
   document.getElementById('quote-card').innerHTML = `
     <div class="eyebrow">Quote of the Week</div>
     <div class="qt-body">
@@ -618,10 +622,16 @@ function setBackground(bg) {
     : 'linear-gradient(rgba(248,250,253,0.30),rgba(248,250,253,0.30))';
   document.body.style.cssText += `;background-image:${overlay},url('${bg}');background-size:cover;background-position:center;background-repeat:no-repeat;background-attachment:fixed;`;
 }
-function render() {
+
+async function render() {
   const track = getTrack();
-  const week  = getWeek();
   const meta  = TRACKS[track];
+
+  // Load schedule once; all subsequent calls use the cached copy
+  await loadSchedule();
+
+  const weekData = getWeekData(track);
+  const week = weekData?.week || getWeek(); // getWeek() is fallback if JSON not loaded or no match
 
   document.documentElement.style.setProperty('--acc',  meta.acc);
   document.documentElement.style.setProperty('--accd', meta.accd);
@@ -631,21 +641,21 @@ function render() {
   document.getElementById('wkChip').innerHTML = `WEEK <b>${week}</b> &middot; 2026&ndash;27`;
   document.getElementById('portBtn').href = BASE + 'Portfolio/?track=' + track;
 
-  renderThisWeek(track, week, meta);
-  renderCareer(week);
-  renderQuote(week);
+  renderThisWeek(track, weekData, meta, week);
+  renderCareer(weekData, week);
+  renderQuote(weekData, week);
 }
 
 function sw(t) {
   const u = new URL(location.href);
   u.searchParams.set('track', t);
   history.pushState({}, '', u);
-  render();
+  render(); // schedule already cached; instant re-render
 }
 
 function tick() { renderCountdown(); checkConfetti(); }
 
-render();
+render(); // returns a Promise — fire-and-forget is fine
 tick();
 setInterval(tick, 1000);
 </script>

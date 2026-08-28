@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Daily Schedule</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root {
+  --bg:       #0d1117;
+  --surface:  #161b27;
+  --surface2: #1e2535;
+  --border:   #252d3e;
+  --txt:      #c9d1d9;
+  --muted:    #8b949e;
+  --dim:      #3d4659;
+  --hsaer:    #00d4ff;
+  --aer8th:   #50fa7b;
+  --dbl:      #ff9500;
+  --warn:     #ffd166;
+  --mono: 'IBM Plex Mono', 'Cascadia Code', 'Fira Code', monospace;
+  --sans: 'IBM Plex Sans', system-ui, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--txt);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ── NAV BAR ─────────────────────────────────────── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 20px;
+  height: 48px;
+}
+.topbar-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.topbar-title span { color: var(--txt); }
+.week-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--txt);
+  font-family: var(--mono);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px 12px;
+  border-radius: 4px;
+  transition: background .15s, border-color .15s;
+  line-height: 1;
+}
+.nav-btn:hover { background: var(--border); }
+.nav-btn:focus-visible { outline: 2px solid var(--hsaer); outline-offset: 2px; }
+.week-label {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--txt);
+  min-width: 220px;
+  text-align: center;
+  letter-spacing: .04em;
+}
+.week-label em { color: var(--muted); font-style: normal; }
+.today-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 3px 9px;
+  border-radius: 4px;
+  transition: color .15s, border-color .15s;
+}
+.today-btn:hover { color: var(--txt); border-color: var(--muted); }
+
+/* ── MAIN GRID ───────────────────────────────────── */
+.main {
+  padding: 16px 16px 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+}
+
+/* ── TRACK COLUMN ────────────────────────────────── */
+.track-col {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.track-col[data-track="hsaer"] { --accent: var(--hsaer); }
+.track-col[data-track="aer8th"] { --accent: var(--aer8th); }
+.track-col[data-track="dbl"] { --accent: var(--dbl); }
+
+.track-head {
+  padding: 10px 14px 8px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.track-name {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.track-week-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+.track-week-title {
+  font-size: 11px;
+  color: var(--muted);
+  padding: 4px 14px 8px;
+  border-bottom: 1px solid var(--border);
+  font-style: italic;
+}
+
+/* ── DAY ROWS ────────────────────────────────────── */
+.day-rows { flex: 1; }
+
+.day-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+  min-height: 44px;
+  text-decoration: none;
+  color: inherit;
+  transition: background .12s;
+}
+.day-row:last-child { border-bottom: none; }
+.day-row.linked:hover { background: var(--surface2); }
+.day-row.no-school { opacity: .35; }
+
+.day-chip {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  min-width: 32px;
+  padding-top: 2px;
+  flex-shrink: 0;
+}
+.day-content {
+  flex: 1;
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--txt);
+}
+.day-row.no-school .day-content { color: var(--dim); }
+.day-arr {
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--accent);
+  opacity: 0;
+  transition: opacity .12s;
+  flex-shrink: 0;
+  padding-top: 1px;
+}
+.day-row.linked:hover .day-arr { opacity: 1; }
+
+/* ── COLUMN FOOTER (deliverable / quiz) ──────────── */
+.col-footer {
+  border-top: 1px solid var(--border);
+  padding: 8px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.col-footer:empty { display: none; }
+.col-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: color .12s;
+}
+.col-item:hover { color: var(--accent); }
+.col-badge {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--accent);
+}
+.col-badge.quiz {
+  background: rgba(255,209,102,.14);
+  color: var(--warn);
+}
+.col-item-text { font-size: 11px; color: var(--muted); flex: 1; }
+.col-item:hover .col-item-text { color: var(--txt); }
+.col-due { font-family: var(--mono); font-size: 10px; color: var(--dim); margin-left: auto; }
+
+/* ── NO DATA STATE ───────────────────────────────── */
+.no-data {
+  padding: 32px 14px;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--dim);
+  letter-spacing: .06em;
+}
+
+/* ── CAREER + NOTES STRIP ────────────────────────── */
+.bottom-strip {
+  padding: 0 16px 32px;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 14px;
+}
+.bottom-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+}
+.bottom-eyebrow {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.career-name { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+.career-role { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+.career-link {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .06em;
+  color: var(--hsaer);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color .15s;
+}
+.career-link:hover { border-color: var(--hsaer); }
+
+.notes-list { display: flex; flex-direction: column; gap: 6px; }
+.note-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  padding: 6px 8px;
+  border-radius: 4px;
+}
+.note-item.warn {
+  background: rgba(255,209,102,.08);
+  color: var(--warn);
+}
+.note-dot {
+  font-family: var(--mono);
+  font-size: 10px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+.no-notes { font-size: 12px; color: var(--dim); font-style: italic; }
+
+/* ── RESPONSIVE ──────────────────────────────────── */
+@media (max-width: 800px) {
+  .main { grid-template-columns: 1fr; }
+  .bottom-strip { grid-template-columns: 1fr; }
+  .week-label { min-width: 150px; font-size: 11px; }
+  .topbar-title { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-title"><span>Mr. Bombich</span> · Daily Schedule · 2026–27</div>
+  <nav class="week-nav">
+    <button class="nav-btn" id="prevBtn" title="Previous week">‹</button>
+    <div class="week-label" id="weekLabel">Loading…</div>
+    <button class="nav-btn" id="nextBtn" title="Next week">›</button>
+    <button class="today-btn" id="todayBtn">Today</button>
+  </nav>
+</header>
+
+<main class="main" id="grid">
+  <div class="track-col" data-track="hsaer" id="col-hsaer"></div>
+  <div class="track-col" data-track="aer8th" id="col-aer8th"></div>
+  <div class="track-col" data-track="dbl" id="col-dbl"></div>
+</main>
+
+<section class="bottom-strip" id="bottomStrip">
+  <div class="bottom-card" id="careerCard"></div>
+  <div class="bottom-card" id="notesCard"></div>
+</section>
+
+<script>
+// ── EMBEDDED FALLBACK DATA ───────────────────────────────
+// Mirrors schedule-data.json — update here when you update the JSON.
+const EMBEDDED = {"meta":{"schoolYear":"2026-27","updated":"2026-08-28"},"tracks":{"hsaer":{"weeks":[{"week":1,"start":"2026-08-31","end":"2026-09-04","dates":"Aug 31–Sep 4","days":4,"title":"Classroom Orientation & Intro to EDP","notes":"⚡ Aug 31 20-min half day · 🔴 Sep 4 no school","careerConnection":{"name":"Serena Auñón-Chancellor","role":"NASA Astronaut & Physician-Engineer","link":"https://mbombich-robotics.github.io/CTE/PLTW%20Unit%202%20Resources/Career%20Training/Careers%20in%20Engineering_files/FS_CareerProfile_SerenaChancellor.pdf"},"quote":null,"quiz":null,"deliverable":{"portfolioId":10,"label":"D1.0","title":"Signed Syllabus & Safety Contract","due":"Thu Sep 3","note":null},"daily":[{"date":"2026-08-31","day":"Mon","content":"Join Google Classroom, bookmark hub, teacher intro (20 min)","url":null},{"date":"2026-09-01","day":"Tue","content":"L1.1 — Intro to Engineering Design","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_01_Intro_to_Engineering_Design.html"},{"date":"2026-09-02","day":"Wed","content":"L1.2 — Spaghetti Tower Challenge","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_02_Spaghetti_Tower_Challenge.html"},{"date":"2026-09-03","day":"Thu","content":"L1.3 — EDP Framework","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_03_EDP_Framework.html"},{"date":"2026-09-04","day":"Fri","content":"No School","url":null}]},{"week":2,"start":"2026-09-07","end":"2026-09-11","dates":"Sep 7–11","days":4,"title":"EDP in Action — Design Brief","notes":"🔴 Labor Day Sep 7","careerConnection":{"name":"Meg Studer","role":"Infographic Designer & Architect · Siteations Studio","link":"https://mbombich-robotics.github.io/CTE/PLTW%20Unit%202%20Resources/Career%20Training/Careers%20in%20Engineering_files/Meg_Studer_CP.pdf"},"quote":null,"quiz":null,"deliverable":{"portfolioId":11,"label":"D1.1","title":"Design Brief + Concept Sketches","due":"Fri Sep 11","note":null},"daily":[{"date":"2026-09-07","day":"Mon","content":"No School — Labor Day","url":null},{"date":"2026-09-08","day":"Tue","content":"L1.4 — Paper Glider Challenge","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_04_Paper_Glider_Challenge.html"},{"date":"2026-09-09","day":"Wed","content":"L1.5 — Design Brief Workshop","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_05_Design_Brief_Workshop.html"},{"date":"2026-09-10","day":"Thu","content":"L1.6 — Client Interview","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_06_Client_Interview.html"},{"date":"2026-09-11","day":"Fri","content":"L1.7 — Concept Sketching & Decision Matrix","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_07_Concept_Sketching.html"}]},{"week":3,"start":"2026-09-14","end":"2026-09-18","dates":"Sep 14–18","days":5,"title":"CAD Begins — C1 Wheel Hub","notes":"⚠️ i-Ready Math Sep 14–15 — Q1 quiz Wed or later","careerConnection":{"name":"Dan Waldorf","role":"Professor of Manufacturing · Cal Poly","link":"https://mbombich-robotics.github.io/CTE/PLTW%20Unit%202%20Resources/Career%20Training/Careers%20in%20Engineering_files/Dan_Waldorf_CP.pdf"},"quote":null,"quiz":{"id":"Q1","title":"EDP Quiz","day":"Wed Sep 16"},"deliverable":{"portfolioId":21,"label":"D2.1","title":"C1 — Wheel Hub: Key Dimensions + Iteration Log","due":"Fri Sep 18","note":null},"daily":[{"date":"2026-09-14","day":"Mon","content":"L2.1 — F360 Orientation (Kennedy)","url":"https://mbombich-robotics.github.io/CTE/Unit_02_CAD/Lesson_01_F360_Orientation_Kennedy.html"},{"date":"2026-09-15","day":"Tue","content":"L2.2 — C1 Wheel Hub modeling","url":"https://mbombich-robotics.github.io/CTE/Unit_02_CAD/Lesson_02_C1_Wheel_Hub.html"},{"date":"2026-09-16","day":"Wed","content":"Q1 EDP Quiz + L2.3 Measurement Tools","url":"https://mbombich-robotics.github.io/CTE/Unit_02_CAD/Lesson_03_Measurement_Tools_Workshop.html"},{"date":"2026-09-17","day":"Thu","content":"L2.4 — 3D Printing: slicer settings + print queue","url":"https://mbombich-robotics.github.io/CTE/Unit_02_CAD/Lesson_04_3D_Printing.html"},{"date":"2026-09-18","day":"Fri","content":"C1 iteration — caliper check, D2.1 due","url":null}]},{"week":4,"start":"2026-09-21","end":"2026-09-25","dates":"Sep 21–25","days":5,"title":"C2 Drive Wheel","notes":"","careerConnection":{"name":"Dominic Martinez","role":"Mechanical Engineer, R&D · CONMED","link":"https://mbombich-robotics.github.io/CTE/PLTW%20Unit%202%20Resources/Career%20Training/Careers%20in%20Engineering_files/Dominic_Martinez_CP.pdf"},"quote":null,"quiz":null,"deliverable":{"portfolioId":22,"label":"D2.2","title":"C2 — Drive Wheel: Key Dimensions + Iteration Log","due":"Fri Sep 25","note":null},"daily":[{"date":"2026-09-21","day":"Mon","content":"L2.5 — C2 Drive Wheel: hex bore + circular pattern","url":"https://mbombich-robotics.github.io/CTE/Unit_02_CAD/Lesson_05_C2_Drive_Wheel.html"},{"date":"2026-09-22","day":"Tue","content":"C2 — student design choice (spokes, grip features); export + queue print","url":null},{"date":"2026-09-23","day":"Wed","content":"C2 — first print; caliper check; plan iteration","url":null},{"date":"2026-09-24","day":"Thu","content":"C2 — iterate v2; silicone tire test fit","url":null},{"date":"2026-09-25","day":"Fri","content":"C2 final; D2.2 due","url":null}]}]},"aer8th":{"g1":{"weeks":[{"week":1,"start":"2026-08-31","end":"2026-09-04","dates":"Aug 31–Sep 4","days":4,"title":"Classroom Orientation & Intro to EDP","notes":"⚡ Aug 31 20-min half day · 🔴 Sep 4 no school","careerConnection":{"name":"Serena Auñón-Chancellor","role":"NASA Astronaut & Physician-Engineer","link":"https://mbombich-robotics.github.io/CTE/PLTW%20Unit%202%20Resources/Career%20Training/Careers%20in%20Engineering_files/FS_CareerProfile_SerenaChancellor.pdf"},"quote":null,"quiz":null,"deliverable":{"portfolioId":10,"label":"D1.0","title":"Signed Syllabus & Safety Contract","due":"Thu Sep 3","note":null},"daily":[{"date":"2026-08-31","day":"Mon","content":"Join Google Classroom, bookmark hub, teacher intro (20 min)","url":null},{"date":"2026-09-01","day":"Tue","content":"L1.1 — Intro to Engineering Design","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_01_Intro_to_Engineering_Design.html"},{"date":"2026-09-02","day":"Wed","content":"L1.2 — Spaghetti Tower Challenge","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_02_Spaghetti_Tower_Challenge.html"},{"date":"2026-09-03","day":"Thu","content":"L1.3 — EDP Framework","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_03_EDP_Framework.html"},{"date":"2026-09-04","day":"Fri","content":"No School","url":null}]},{"week":2,"start":"2026-09-07","end":"2026-09-11","dates":"Sep 7–11","days":4,"title":"EDP in Action — Design Brief","notes":"🔴 Labor Day Sep 7","careerConnection":{"name":"Meg Studer","role":"Infographic Designer & Architect · Siteations Studio","link":"https://mbombich-robotics.github.io/CTE/PLTW%20Unit%202%20Resources/Career%20Training/Careers%20in%20Engineering_files/Meg_Studer_CP.pdf"},"quote":null,"quiz":null,"deliverable":{"portfolioId":11,"label":"D1.1","title":"Design Brief + Concept Sketches","due":"Fri Sep 11","note":null},"daily":[{"date":"2026-09-07","day":"Mon","content":"No School — Labor Day","url":null},{"date":"2026-09-08","day":"Tue","content":"L1.4 — Paper Glider Challenge","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_04_Paper_Glider_Challenge.html"},{"date":"2026-09-09","day":"Wed","content":"L1.5 — Design Brief Workshop","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_05_Design_Brief_Workshop.html"},{"date":"2026-09-10","day":"Thu","content":"L1.6 — Client Interview","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_06_Client_Interview.html"},{"date":"2026-09-11","day":"Fri","content":"L1.7 — Concept Sketching & Decision Matrix","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_07_Concept_Sketching.html"}]},{"week":3,"start":"2026-09-14","end":"2026-09-18","dates":"Sep 14–18","days":5,"title":"CAD Begins — C1 Wheel Hub","notes":"⚠️ i-Ready Math Sep 14–15 — Q1 quiz Wed or later","careerConnection":{"name":"Dan Waldorf","role":"Professor of Manufacturing · Cal Poly","link":"https://mbombich-robotics.github.io/CTE/PLTW%20Unit%202%20Resources/Career%20Training/Careers%20in%20Engineering_files/Dan_Waldorf_CP.pdf"},"quote":null,"quiz":{"id":"Q1","title":"EDP Quiz","day":"Wed Sep 16"},"deliverable":{"portfolioId":null,"label":"D2.1","title":"C1 — Wheel Hub: Key Dimensions + Iteration Log","due":"Fri Sep 18","note":null},"daily":[{"date":"2026-09-14","day":"Mon","content":"L2.1 — F360 Orientation (Kennedy)","url":"https://mbombich-robotics.github.io/CTE/Unit_02_CAD/Lesson_01_F360_Orientation_Kennedy.html"},{"date":"2026-09-15","day":"Tue","content":"L2.2 — C1 Wheel Hub modeling","url":"https://mbombich-robotics.github.io/CTE/Unit_02_CAD/Lesson_02_C1_Wheel_Hub.html"},{"date":"2026-09-16","day":"Wed","content":"Q1 EDP Quiz + L2.3 Measurement Tools","url":"https://mbombich-robotics.github.io/CTE/Unit_02_CAD/Lesson_03_Measurement_Tools_Workshop.html"},{"date":"2026-09-17","day":"Thu","content":"L2.4 — 3D Printing: slicer settings + print queue","url":"https://mbombich-robotics.github.io/CTE/Unit_02_CAD/Lesson_04_3D_Printing.html"},{"date":"2026-09-18","day":"Fri","content":"C1 iteration — caliper check, D2.1 due","url":null}]},{"week":4,"start":"2026-09-21","end":"2026-09-25","dates":"Sep 21–25","days":5,"title":"C2 Drive Wheel","notes":"","careerConnection":{"name":"Dominic Martinez","role":"Mechanical Engineer, R&D · CONMED","link":"https://mbombich-robotics.github.io/CTE/PLTW%20Unit%202%20Resources/Career%20Training/Careers%20in%20Engineering_files/Dominic_Martinez_CP.pdf"},"quote":null,"quiz":null,"deliverable":{"portfolioId":null,"label":"D2.2","title":"C2 — Drive Wheel: Key Dimensions + Iteration Log","due":"Fri Sep 25","note":null},"daily":[{"date":"2026-09-21","day":"Mon","content":"L2.5 — C2 Drive Wheel: hex bore + circular pattern","url":"https://mbombich-robotics.github.io/CTE/Unit_02_CAD/Lesson_05_C2_Drive_Wheel.html"},{"date":"2026-09-22","day":"Tue","content":"C2 — student design choice; export + queue print","url":null},{"date":"2026-09-23","day":"Wed","content":"C2 — first print; caliper check","url":null},{"date":"2026-09-24","day":"Thu","content":"C2 — iterate v2; test fit","url":null},{"date":"2026-09-25","day":"Fri","content":"C2 final; D2.2 due","url":null}]}]},"g2":{"weeks":[{"week":1,"start":"2027-01-25","end":"2027-01-29","dates":"Jan 25–29","days":5,"title":"Classroom Orientation & Intro to EDP","notes":"S2 begins Jan 25","careerConnection":{"name":"Serena Auñón-Chancellor","role":"NASA Astronaut & Physician-Engineer","link":"https://mbombich-robotics.github.io/CTE/PLTW%20Unit%202%20Resources/Career%20Training/Careers%20in%20Engineering_files/FS_CareerProfile_SerenaChancellor.pdf"},"quote":null,"quiz":null,"deliverable":{"portfolioId":10,"label":"D1.0","title":"Signed Syllabus & Safety Contract","due":"Thu Jan 29","note":null},"daily":[{"date":"2027-01-25","day":"Mon","content":"Join Google Classroom, bookmark hub, teacher intro","url":null},{"date":"2027-01-26","day":"Tue","content":"L1.1 — Intro to Engineering Design","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_01_Intro_to_Engineering_Design.html"},{"date":"2027-01-27","day":"Wed","content":"L1.2 — Spaghetti Tower Challenge","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_02_Spaghetti_Tower_Challenge.html"},{"date":"2027-01-28","day":"Thu","content":"L1.3 — EDP Framework","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_03_EDP_Framework.html"},{"date":"2027-01-29","day":"Fri","content":"D1.0 due — begin discussing C1 project","url":null}]},{"week":2,"start":"2027-02-01","end":"2027-02-05","dates":"Feb 1–5","days":5,"title":"EDP in Action — Design Brief","notes":"","careerConnection":{"name":"Meg Studer","role":"Infographic Designer & Architect · Siteations Studio","link":"https://mbombich-robotics.github.io/CTE/PLTW%20Unit%202%20Resources/Career%20Training/Careers%20in%20Engineering_files/Meg_Studer_CP.pdf"},"quote":null,"quiz":null,"deliverable":{"portfolioId":11,"label":"D1.1","title":"Design Brief + Concept Sketches","due":"Fri Feb 5","note":null},"daily":[{"date":"2027-02-01","day":"Mon","content":"L1.4 — Paper Glider Challenge","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_04_Paper_Glider_Challenge.html"},{"date":"2027-02-02","day":"Tue","content":"L1.5 — Design Brief Workshop","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_05_Design_Brief_Workshop.html"},{"date":"2027-02-03","day":"Wed","content":"L1.6 — Client Interview","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_06_Client_Interview.html"},{"date":"2027-02-04","day":"Thu","content":"L1.7 — Concept Sketching & Decision Matrix","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_07_Concept_Sketching.html"},{"date":"2027-02-05","day":"Fri","content":"D1.1 due; preview C1 Wheel Hub project","url":null}]},{"week":3,"start":"2027-02-08","end":"2027-02-12","dates":"Feb 8–12","days":5,"title":"CAD Begins — C1 Wheel Hub","notes":"","careerConnection":{"name":"Dan Waldorf","role":"Professor of Manufacturing · Cal Poly","link":"https://mbombich-robotics.github.io/CTE/PLTW%20Unit%202%20Resources/Career%20Training/Careers%20in%20Engineering_files/Dan_Waldorf_CP.pdf"},"quote":null,"quiz":{"id":"Q1","title":"EDP Quiz","day":"Wed Feb 10"},"deliverable":{"portfolioId":null,"label":"D2.1","title":"C1 — Wheel Hub: Key Dimensions + Iteration Log","due":"Fri Feb 12","note":null},"daily":[{"date":"2027-02-08","day":"Mon","content":"L2.1 — F360 Orientation (Kennedy)","url":"https://mbombich-robotics.github.io/CTE/Unit_02_CAD/Lesson_01_F360_Orientation_Kennedy.html"},{"date":"2027-02-09","day":"Tue","content":"L2.2 — C1 Wheel Hub modeling","url":"https://mbombich-robotics.github.io/CTE/Unit_02_CAD/Lesson_02_C1_Wheel_Hub.html"},{"date":"2027-02-10","day":"Wed","content":"Q1 EDP Quiz + L2.3 Measurement Tools","url":"https://mbombich-robotics.github.io/CTE/Unit_02_CAD/Lesson_03_Measurement_Tools_Workshop.html"},{"date":"2027-02-11","day":"Thu","content":"L2.4 — 3D Printing: slicer settings + print queue","url":"https://mbombich-robotics.github.io/CTE/Unit_02_CAD/Lesson_04_3D_Printing.html"},{"date":"2027-02-12","day":"Fri","content":"C1 iteration — caliper check, D2.1 due","url":null}]},{"week":4,"start":"2027-02-15","end":"2027-02-19","dates":"Feb 15–19","days":4,"title":"C2 Drive Wheel","notes":"🔴 Presidents Day Feb 15","careerConnection":{"name":"Dominic Martinez","role":"Mechanical Engineer, R&D · CONMED","link":"https://mbombich-robotics.github.io/CTE/PLTW%20Unit%202%20Resources/Career%20Training/Careers%20in%20Engineering_files/Dominic_Martinez_CP.pdf"},"quote":null,"quiz":null,"deliverable":{"portfolioId":null,"label":"D2.2","title":"C2 — Drive Wheel: Key Dimensions + Iteration Log","due":"Thu Feb 19","note":null},"daily":[{"date":"2027-02-15","day":"Mon","content":"No School — Presidents Day","url":null},{"date":"2027-02-16","day":"Tue","content":"L2.5 — C2 Drive Wheel: hex bore + circular pattern","url":"https://mbombich-robotics.github.io/CTE/Unit_02_CAD/Lesson_05_C2_Drive_Wheel.html"},{"date":"2027-02-17","day":"Wed","content":"C2 — student design choice; export + queue print","url":null},{"date":"2027-02-18","day":"Thu","content":"C2 — first print; caliper check; iterate","url":null},{"date":"2027-02-19","day":"Fri","content":"C2 final; D2.2 due","url":null}]}]}},"dbl":{"weeks":[{"week":1,"start":"2026-08-31","end":"2026-09-04","dates":"Aug 31–Sep 4","days":4,"title":"Classroom Orientation & Intro to EDP","notes":"⚡ Aug 31 20-min half day · 🔴 Sep 4 no school","careerConnection":{"name":"Serena Auñón-Chancellor","role":"NASA Astronaut & Physician-Engineer","link":"https://mbombich-robotics.github.io/CTE/PLTW%20Unit%202%20Resources/Career%20Training/Careers%20in%20Engineering_files/FS_CareerProfile_SerenaChancellor.pdf"},"quote":null,"quiz":null,"deliverable":{"portfolioId":10,"label":"D1.0","title":"Signed Syllabus & Safety Contract","due":"Thu Sep 3","note":null},"daily":[{"date":"2026-08-31","day":"Mon","content":"Join Google Classroom, bookmark hub, teacher intro (20 min)","url":null},{"date":"2026-09-01","day":"Tue","content":"L1.1 — Intro to Design & Build Lab","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_01_Intro_to_Engineering_Design.html"},{"date":"2026-09-02","day":"Wed","content":"L1.2 — Spaghetti Tower Challenge","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_02_Spaghetti_Tower_Challenge.html"},{"date":"2026-09-03","day":"Thu","content":"L1.3 — EDP Framework","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_03_EDP_Framework.html"},{"date":"2026-09-04","day":"Fri","content":"No School","url":null}]},{"week":2,"start":"2026-09-07","end":"2026-09-11","dates":"Sep 7–11","days":4,"title":"EDP in Action — Design Brief","notes":"🔴 Labor Day Sep 7","careerConnection":{"name":"Meg Studer","role":"Infographic Designer & Architect · Siteations Studio","link":"https://mbombich-robotics.github.io/CTE/PLTW%20Unit%202%20Resources/Career%20Training/Careers%20in%20Engineering_files/Meg_Studer_CP.pdf"},"quote":null,"quiz":null,"deliverable":{"portfolioId":11,"label":"D1.1","title":"Design Brief (Fidget Spinner criteria)","due":"Fri Sep 11","note":null},"daily":[{"date":"2026-09-07","day":"Mon","content":"No School — Labor Day","url":null},{"date":"2026-09-08","day":"Tue","content":"L1.4 — Paper Glider Challenge","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_04_Paper_Glider_Challenge.html"},{"date":"2026-09-09","day":"Wed","content":"L1.5 — Design Brief Workshop (spinner focus)","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_05_Design_Brief_Workshop.html"},{"date":"2026-09-10","day":"Thu","content":"L1.6 — Client Interview","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_06_Client_Interview.html"},{"date":"2026-09-11","day":"Fri","content":"L1.7 — Concept Sketching & Decision Matrix","url":"https://mbombich-robotics.github.io/CTE/Unit_01_Engineering_Design_Process/Lesson_07_Concept_Sketching.html"}]},{"week":3,"start":"2026-09-14","end":"2026-09-18","dates":"Sep 14–18","days":5,"title":"CAD Begins — C1 Bearing Model","notes":"⚠️ i-Ready Math Sep 14–15 — Q1 quiz Wed or later","careerConnection":{"name":"Dan Waldorf","role":"Professor of Manufacturing · Cal Poly","link":"https://mbombich-robotics.github.io/CTE/PLTW%20Unit%202%20Resources/Career%20Training/Careers%20in%20Engineering_files/Dan_Waldorf_CP.pdf"},"quote":null,"quiz":{"id":"Q1","title":"EDP Quiz","day":"Wed Sep 16"},"deliverable":{"portfolioId":421,"label":"D2.1","title":"C1 — Bearing Model + Key Dimensions","due":"Fri Sep 18","note":null},"daily":[{"date":"2026-09-14","day":"Mon","content":"L2.1 — F360 Orientation (Kennedy)","url":"https://mbombich-robotics.github.io/CTE/Unit_02_CAD/Lesson_01_F360_Orientation_Kennedy.html"},{"date":"2026-09-15","day":"Tue","content":"L2.2 — C1 Bearing: measure MR128, sketch + revolve","url":"https://mbombich-robotics.github.io/CTE/Unit_02_CAD/Lesson_02_C1_Bearing_DBL.html"},{"date":"2026-09-16","day":"Wed","content":"Q1 EDP Quiz + L2.3 Measurement Tools","url":"https://mbombich-robotics.github.io/CTE/Unit_02_CAD/Lesson_03_Measurement_Tools_Workshop.html"},{"date":"2026-09-17","day":"Thu","content":"L2.4 — 3D Printing: slicer + print queue","url":"https://mbombich-robotics.github.io/CTE/Unit_02_CAD/Lesson_04_3D_Printing.html"},{"date":"2026-09-18","day":"Fri","content":"Bearing iteration — caliper check, D2.1 due","url":null}]},{"week":4,"start":"2026-09-21","end":"2026-09-25","dates":"Sep 21–25","days":5,"title":"P1 — Spinner Body Design","notes":"","careerConnection":{"name":"Dominic Martinez","role":"Mechanical Engineer, R&D · CONMED","link":"https://mbombich-robotics.github.io/CTE/PLTW%20Unit%202%20Resources/Career%20Training/Careers%20in%20Engineering_files/Dominic_Martinez_CP.pdf"},"quote":null,"quiz":null,"deliverable":{"portfolioId":422,"label":"D2.2","title":"Spinner Body CAD File","due":"Fri Sep 25","note":null},"daily":[{"date":"2026-09-21","day":"Mon","content":"L2.5 — Spinner Body: revolve, bearing pocket from C1 dims","url":"https://mbombich-robotics.github.io/CTE/Unit_02_CAD/Lesson_05_Spinner_Body_DBL.html"},{"date":"2026-09-22","day":"Tue","content":"Spinner — arm/grip features; parametric constraints; model bearing cap","url":null},{"date":"2026-09-23","day":"Wed","content":"Spinner — finalize model; export + check mass properties","url":null},{"date":"2026-09-24","day":"Thu","content":"Slice + queue print; verify bearing pocket clearance","url":null},{"date":"2026-09-25","day":"Fri","content":"D2.2 due — spinner body CAD file submitted","url":null}]}]}}};
+
+// ── CONFIG ──────────────────────────────────────────────────
+const TRACK_LABELS = {
+  hsaer:  'HS AE&R',
+  aer8th: '8th Grade AE&R',
+  dbl:    'D&B Lab',
+};
+
+// ── STATE ───────────────────────────────────────────────────
+let scheduleData = null;
+let currentMonday = getMondayOf(new Date().toISOString().slice(0,10));
+
+// ── DATE UTILS ──────────────────────────────────────────────
+function getMondayOf(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  const day = d.getDay(); // 0=Sun
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setDate(d.getDate() + diff);
+  return d.toISOString().slice(0,10);
+}
+
+function addDays(dateStr, n) {
+  const d = new Date(dateStr + 'T12:00:00');
+  d.setDate(d.getDate() + n);
+  return d.toISOString().slice(0,10);
+}
+
+function formatRange(monday) {
+  const fri = addDays(monday, 4);
+  const opts = { month:'short', day:'numeric' };
+  const m = new Date(monday + 'T12:00:00');
+  const f = new Date(fri + 'T12:00:00');
+  const mStr = m.toLocaleDateString('en-US', opts);
+  const fStr = f.toLocaleDateString('en-US', opts);
+  const year = m.getFullYear();
+  return `${mStr} – ${fStr}, ${year}`;
+}
+
+// ── DATA LOOKUP ─────────────────────────────────────────────
+function findWeek(weeks, monday) {
+  const friday = addDays(monday, 4);
+  return weeks.find(w => w.start <= friday && w.end >= monday) || null;
+}
+
+function getWeekForTrack(track, monday) {
+  const tracks = (scheduleData || EMBEDDED).tracks;
+  if (track === 'aer8th') {
+    const g1 = tracks.aer8th?.g1?.weeks || [];
+    const g2 = tracks.aer8th?.g2?.weeks || [];
+    const match = findWeek(g1, monday) || findWeek(g2, monday);
+    if (match) {
+      const group = findWeek(g1, monday) ? 'G1' : 'G2';
+      return { ...match, group };
+    }
+    return null;
+  }
+  return findWeek(tracks[track]?.weeks || [], monday) || null;
+}
+
+// ── RENDER HELPERS ──────────────────────────────────────────
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderColumn(track, monday) {
+  const col = document.getElementById('col-' + track);
+  const wd = getWeekForTrack(track, monday);
+  const label = TRACK_LABELS[track];
+  const groupTag = wd?.group ? ` <em style="opacity:.6;font-size:9px">· ${wd.group}</em>` : '';
+
+  if (!wd) {
+    col.innerHTML = `
+      <div class="track-head">
+        <div class="track-name">${label}</div>
+      </div>
+      <div class="no-data">No data for this week yet.</div>`;
+    return null;
+  }
+
+  // Day rows
+  const dayRows = (wd.daily || []).map(d => {
+    const noSchool = d.content.startsWith('No School');
+    const linked = !!d.url;
+    const tag = linked ? `<a class="day-row linked" href="${esc(d.url)}" target="_blank" rel="noopener">` : `<div class="day-row${noSchool?' no-school':''}">`;
+    const close = linked ? '</a>' : '</div>';
+    const arr = linked ? `<span class="day-arr">›</span>` : '';
+    return `${tag}
+      <span class="day-chip">${esc(d.day)}</span>
+      <span class="day-content">${esc(d.content)}</span>
+      ${arr}
+    ${close}`;
+  }).join('');
+
+  // Footer (deliverable + quiz)
+  let footer = '';
+  if (wd.deliverable) {
+    const d = wd.deliverable;
+    const portfolioUrl = 'https://mbombich-robotics.github.io/CTE/Portfolio/?track=' + track;
+    footer += `<a class="col-item" href="${portfolioUrl}" target="_blank" rel="noopener">
+      <span class="col-badge">Submit</span>
+      <span class="col-item-text">${esc(d.label)} — ${esc(d.title)}</span>
+      <span class="col-due">${esc(d.due)}</span>
+    </a>`;
+  }
+  if (wd.quiz) {
+    footer += `<div class="col-item">
+      <span class="col-badge quiz">Quiz</span>
+      <span class="col-item-text">${esc(wd.quiz.id)} — ${esc(wd.quiz.title)}</span>
+      <span class="col-due">${esc(wd.quiz.day)}</span>
+    </div>`;
+  }
+
+  col.innerHTML = `
+    <div class="track-head">
+      <div class="track-name">${label}${groupTag}</div>
+      <div class="track-week-num">WK ${wd.week}</div>
+    </div>
+    <div class="track-week-title">${esc(wd.title)}</div>
+    <div class="day-rows">${dayRows}</div>
+    ${footer ? `<div class="col-footer">${footer}</div>` : ''}`;
+
+  return wd;
+}
+
+function renderBottom(wds) {
+  // Career: use first non-null track's careerConnection (same across tracks for a given week)
+  const career = wds.find(w => w?.careerConnection)?.careerConnection;
+  const careerCard = document.getElementById('careerCard');
+  if (career) {
+    careerCard.innerHTML = `
+      <div class="bottom-eyebrow">Career Connection</div>
+      <div class="career-name">${esc(career.name)}</div>
+      <div class="career-role">${esc(career.role)}</div>
+      <a class="career-link" href="${esc(career.link)}" target="_blank" rel="noopener">View full profile →</a>`;
+  } else {
+    careerCard.innerHTML = `<div class="bottom-eyebrow">Career Connection</div><div class="no-notes">No career data for this week.</div>`;
+  }
+
+  // Notes: collect unique, non-empty notes from all tracks
+  const seen = new Set();
+  const notes = wds.flatMap(w => {
+    if (!w?.notes || seen.has(w.notes)) return [];
+    seen.add(w.notes);
+    return w.notes.split('·').map(n => n.trim()).filter(Boolean);
+  });
+
+  const notesCard = document.getElementById('notesCard');
+  notesCard.innerHTML = `<div class="bottom-eyebrow">Week Notes</div>` +
+    (notes.length
+      ? `<div class="notes-list">${notes.map(n => {
+          const isWarn = n.includes('⚠️') || n.includes('i-Ready') || n.includes('Records') || n.includes('testing');
+          return `<div class="note-item${isWarn?' warn':''}"><span class="note-dot">›</span><span>${esc(n)}</span></div>`;
+        }).join('')}</div>`
+      : `<div class="no-notes">Clean week — no conflicts or schedule notes.</div>`);
+}
+
+function render() {
+  const range = formatRange(currentMonday);
+  const todayMonday = getMondayOf(new Date().toISOString().slice(0,10));
+  const isToday = currentMonday === todayMonday;
+  document.getElementById('weekLabel').innerHTML =
+    `<em>Week of</em> ${range}${isToday ? ' <em>· now</em>' : ''}`;
+
+  const wds = ['hsaer','aer8th','dbl'].map(t => renderColumn(t, currentMonday));
+  renderBottom(wds);
+}
+
+// ── INIT ────────────────────────────────────────────────────
+async function init() {
+  try {
+    const r = await fetch('schedule-data.json');
+    scheduleData = await r.json();
+  } catch(e) {
+    // Fall back to embedded data (offline / artifact preview)
+    scheduleData = EMBEDDED;
+  }
+  render();
+}
+
+document.getElementById('prevBtn').addEventListener('click', () => {
+  currentMonday = addDays(currentMonday, -7);
+  render();
+});
+document.getElementById('nextBtn').addEventListener('click', () => {
+  currentMonday = addDays(currentMonday, 7);
+  render();
+});
+document.getElementById('todayBtn').addEventListener('click', () => {
+  currentMonday = getMondayOf(new Date().toISOString().slice(0,10));
+  render();
+});
+
+init();
+</script>
+</body>
+</html>

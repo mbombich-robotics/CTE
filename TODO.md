@@ -1,6 +1,6 @@
 # CTE Project — Todo List
 
-Last updated: 2026-08-28
+Last updated: 2026-08-28 (schedule system added)
 
 ---
 
@@ -16,10 +16,10 @@ Last updated: 2026-08-28
 - [ ] P1 deliverable renaming — rename D2.1–D2.4 → P1.1–P1.4 for DBL consistency (proposed, not decided)
 - [ ] Verify career connection PDF filenames are correct in portfolio resources
 
-### Hub Page
+### Hub Page / Schedule System
 - [ ] Hub page countdown clock — confirm calendar dates are accurate
-- [ ] Full week-by-week lesson data for 8AER track in hub.html LESSONS object
-- [ ] Full week-by-week lesson data for DBL track in hub.html LESSONS object
+- [ ] Add weeks 5+ to schedule-data.json as pacing progresses (and sync EMBEDDED in daily-schedule.html)
+- [ ] Verify career connection PDF filenames load correctly on GitHub Pages
 
 ### Curriculum / Content
 - [ ] D4.2 quiz questions — write Q1–Q5 for Activity 4.6 Motor Control (D51 in quiz content)
@@ -40,3 +40,4 @@ Last updated: 2026-08-28
 - [x] Gradebook category weights — updated all three syllabi (50/20/20/10 split)
 - [x] i-Ready schedule — saved to Admin folder, noted conflicts in 8AER pacing
 - [x] 8AER pacing — added Group 2 (S2) and i-Ready conflict notes
+- [x] Schedule system — created schedule-data.json (weeks 1-4 all tracks), updated hub.html to fetch from JSON, built daily-schedule.html teacher ops board
