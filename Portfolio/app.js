@@ -12,7 +12,7 @@ const URL_TRACK = new URLSearchParams(window.location.search).get('track') || nu
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.27',
+    VERSION: 'v2.14.28',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -458,6 +458,7 @@ const DELIVERABLES = [
     // ── Unit 8: Servo Design Brief ───────────────────────────────────────
     {
         id: 55,
+        shortLabel: 'D8.4',
         title: 'Servo Project Design Brief',
         unit: '08',
         week: 31,
@@ -476,6 +477,7 @@ const DELIVERABLES = [
     // ── Unit 8: Servo Build Project ──────────────────────────────────────
     {
         id: 53,
+        shortLabel: 'D8.5',
         title: 'Servo Mechanism Project',
         unit: '08',
         week: 33,
@@ -2139,7 +2141,7 @@ async function fetchConfig() {
         state.config.quizEnabled          = cfg.quizEnabled === true || cfg.quizEnabled === 'true';
         state.config.quizKey              = cfg.quizKey || 'claw';
         state.config.reflectionDueDates   = cfg.reflectionDueDates  || {};
-        // deliverableDueDates come from schedule-data.json (loadScheduleDueDates) — not from backend
+        state.config.deliverableDueDates  = cfg.deliverableDueDates || {}; // baseline; schedule-data.json merges on top
 
         const expected = cfg.expectedVersion;
         if (expected && expected !== CONFIG.VERSION) {
@@ -2185,7 +2187,8 @@ async function loadScheduleDueDates() {
             }
         }
 
-        state.config.deliverableDueDates = dueDates;
+        // Merge: backend dates remain as fallback; schedule-data.json adds/overrides as weeks start
+        state.config.deliverableDueDates = { ...state.config.deliverableDueDates, ...dueDates };
     } catch(e) { /* silent — keep existing config */ }
 }
 
@@ -2297,6 +2300,11 @@ function updateDashboardDeliverables() {
         { key: '05', label: 'Unit 5 — AI & Machine Learning' },
         { key: '06', label: 'Unit 6 — Career Readiness' },
         { key: '08', label: 'Unit 8 — Mechanisms' },
+        { key: 'p2', label: 'Project 2 — Christmas Ornament / Gift' },
+        { key: 'p3', label: 'Project 3 — LED Sign / Wall Art' },
+        { key: 'p4', label: 'Project 4 — Silicone Mold Making' },
+        { key: 'p5', label: 'Project 5 — Useless Box' },
+        { key: 'p6', label: 'Project 6 — Capstone' },
     ];
 
     const skipWeeks = state.config.skipDeliverableWeeks || [];
