@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack === 'aer8th' ? '8aer' : _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.30',
+    VERSION: 'v2.14.31',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -172,15 +172,25 @@ const DELIVERABLES = [
     },
     {
         id: 22,
-        title: 'C2 — Drive Wheel',
+        title: 'C2 — Wheel Hub Cap',
         unit: '02',
         week: 4,
         tracks: ['hsaer', '8aer'],
         phase: 'cad',
         type: 'googleDoc',
         points: 20,
-        description: 'Document your completed Drive Wheel. Track the key dimensions that control fit and function — hex bore, outer diameter (interference fit with silicone tire), and spoke geometry.',
-        // requirements removed — rubric shown in portfolio; section instructions live in the doc template
+        description: 'Design a hub cap for the AndyMark 4" wheel. Six alignment pins lock the wheel from rotating on the shaft; a center counterbore for a 10-32 screw retains the cap to the wheel and keeps the wheel on the motor shaft.',
+        requirements: [
+            '── BASELINE ──────────────────────────────────────',
+            '6 pins correctly sized and positioned to match the AndyMark 4" wheel hole pattern',
+            'Center counterbore correctly sized for a 10-32 socket head screw (check head diameter and depth)',
+            'Cap outer diameter fits flush within the wheel rim face',
+            'Iteration log: at least one printed version measured with calipers; record what you adjusted and why',
+            '── MINOR IMPROVEMENT (bonus) ─────────────────────',
+            'Any thoughtful aesthetic enhancement: chamfers or fillets, embossed name/initials, decorative face pattern, or lightening holes that maintain structural integrity',
+            '── SUBSTANTIAL IMPROVEMENT (full marks) ──────────',
+            'A functional design decision that improves the component beyond the baseline — modified pin geometry, a retention lip or snap feature, a recessed boss to reduce material while maintaining strength, or another engineering-justified change — with a written rationale explaining what you changed and why',
+        ]
     },
     {
         id: 23,

@@ -22,7 +22,7 @@ const CONFIG = {
         hsaer: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-            currentAppVersion: 'v2.14.30',
+            currentAppVersion: 'v2.14.31',
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
@@ -36,7 +36,7 @@ const CONFIG = {
         '8aer': {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
-            currentAppVersion: 'v2.14.30',
+            currentAppVersion: 'v2.14.31',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
@@ -50,7 +50,7 @@ const CONFIG = {
         dbl: {
             name: 'Design & Build Lab',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
-            currentAppVersion: 'v2.14.30',
+            currentAppVersion: 'v2.14.31',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
@@ -78,7 +78,7 @@ const TRACK_DELIVERABLES = {
         { id: 11, label: 'D11 — Design Brief',                         week: 1  },
         // Unit 2: Component deliverables (Google Doc template)
         { id: 21, label: 'D21 — C1: Wheel Hub',                        week: 3  },
-        { id: 22, label: 'D22 — C2: Drive Wheel',                      week: 4  },
+        { id: 22, label: 'D22 — C2: Wheel Hub Cap',                    week: 4  },
         { id: 23, label: 'D23 — C3: Motor Sleeve Mount',               week: 4  },
         { id: 25, label: 'D25 — C5: Omni Wheel Mount',                 week: 6  },
         { id: 26, label: 'D26 — C6: IR Sensor Mount',                  week: 7  },
@@ -116,7 +116,7 @@ const TRACK_DELIVERABLES = {
         { id: 11, label: 'D11 — Design Brief',                     week: 2  },
         // Unit 2: Component deliverables
         { id: 21, label: 'D21 — C1: Wheel Hub',                    week: 3  },
-        { id: 22, label: 'D22 — C2: Drive Wheel',                  week: 4  },
+        { id: 22, label: 'D22 — C2: Wheel Hub Cap',                 week: 4  },
         { id: 89, label: 'D2.3 — Robot Assembly',                  week: 5  },
         // Unit 3: Safety
         { id: 31, label: 'D3.1 — Tool Safety Certifications',      week: 6  },
