@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack === 'aer8th' ? '8aer' : _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.29',
+    VERSION: 'v2.14.30',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -163,7 +163,7 @@ const DELIVERABLES = [
         title: 'C1 — Wheel Hub',
         unit: '02',
         week: 3,
-        tracks: ['hsaer'],
+        tracks: ['hsaer', '8aer'],
         phase: 'cad',
         type: 'googleDoc',
         points: 20,
@@ -175,7 +175,7 @@ const DELIVERABLES = [
         title: 'C2 — Drive Wheel',
         unit: '02',
         week: 4,
-        tracks: ['hsaer'],
+        tracks: ['hsaer', '8aer'],
         phase: 'cad',
         type: 'googleDoc',
         points: 20,
@@ -248,7 +248,7 @@ const DELIVERABLES = [
         title: 'Tool Safety Certifications',
         unit: '03',
         week: 10,
-        tracks: ['hsaer'],
+        tracks: ['hsaer', '8aer'],
         points: 50,
         phase: 'safety',
         description: 'Complete all required shop safety certifications before the build phase. Each certification requires passing the safety rules check and an observed hands-on demonstration with Mr. Bombich.',
@@ -564,6 +564,62 @@ const DELIVERABLES = [
             'Self-grade review completed',
             'Photo or short video of the completed project submitted to portfolio'
         ]
+    },
+    // ── 8AER Units 2 / 3 / 4 (unique to 8AER pacing) ────────────────────
+    {
+        id: 89,
+        shortLabel: 'D2.3',
+        title: 'Robot Assembly',
+        unit: '02',
+        week: 5,
+        tracks: ['8aer'],
+        phase: 'cad',
+        points: 20,
+        description: 'Document your completed Fusion 360 robot assembly. Submit a full-assembly screenshot with all major components in place — Robot Deck, C1 Wheel Hubs, C2 Drive Wheels, caster, motor mounts, and electronics board mount. Include a brief log of any adjustments made to make components fit together.',
+    },
+    {
+        id: 90,
+        shortLabel: 'D4.1',
+        title: 'Blink (A4.1)',
+        unit: '04',
+        week: 9,
+        tracks: ['8aer'],
+        phase: 'programming',
+        points: 25,
+        description: 'Write and upload a MicroPython program that blinks the onboard LED on and off. Your code must run in a loop, use utime.sleep() to control timing, and include at least one comment explaining what each section does.',
+    },
+    {
+        id: 94,
+        shortLabel: 'D4.2',
+        title: 'SOS with Functions (A4.3)',
+        unit: '04',
+        week: 10,
+        tracks: ['8aer'],
+        phase: 'programming',
+        points: 25,
+        description: 'Write a MicroPython program that outputs the SOS Morse code pattern using named functions. Define separate functions for dot(), dash(), and letter_gap(), then call them in sequence to produce the full SOS pattern.',
+    },
+    {
+        id: 95,
+        shortLabel: 'D4.3',
+        title: 'Robot Drives a Square',
+        unit: '04',
+        week: 11,
+        tracks: ['8aer'],
+        phase: 'programming',
+        points: 30,
+        description: 'Program your physical robot to drive a square path. Write drive_forward(), turn_left(), and stop() functions using the H-bridge motor controller, then call them in sequence with utime.sleep_ms() for timing. Submit your code and a photo or short video of your robot completing the square.',
+    },
+    {
+        id: 96,
+        shortLabel: 'D4.4',
+        title: 'Robot Driving Challenge',
+        unit: '04',
+        week: 12,
+        tracks: ['8aer'],
+        phase: 'programming',
+        points: 40,
+        description: 'Complete the timed obstacle course with your robot. Submit your final drive program, a photo or video of a successful run, and a written reflection describing at least one iteration you made — what wasn\'t working, what you changed, and what improved.',
     },
     // ── Unit 8: Mechanisms (8AER — Weeks 14–18) ─────────────────────────
     {

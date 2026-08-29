@@ -22,7 +22,7 @@ const CONFIG = {
         hsaer: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-            currentAppVersion: 'v2.14.29',
+            currentAppVersion: 'v2.14.30',
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
@@ -36,7 +36,7 @@ const CONFIG = {
         '8aer': {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
-            currentAppVersion: 'v2.14.29',
+            currentAppVersion: 'v2.14.30',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
@@ -50,7 +50,7 @@ const CONFIG = {
         dbl: {
             name: 'Design & Build Lab',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
-            currentAppVersion: 'v2.14.29',
+            currentAppVersion: 'v2.14.30',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
@@ -117,6 +117,14 @@ const TRACK_DELIVERABLES = {
         // Unit 2: Component deliverables
         { id: 21, label: 'D21 — C1: Wheel Hub',                    week: 3  },
         { id: 22, label: 'D22 — C2: Drive Wheel',                  week: 4  },
+        { id: 89, label: 'D2.3 — Robot Assembly',                  week: 5  },
+        // Unit 3: Safety
+        { id: 31, label: 'D3.1 — Tool Safety Certifications',      week: 6  },
+        // Unit 4: Programming
+        { id: 90, label: 'D4.1 — Blink (A4.1)',                   week: 9  },
+        { id: 94, label: 'D4.2 — SOS with Functions',              week: 10 },
+        { id: 95, label: 'D4.3 — Robot Drives a Square',           week: 11 },
+        { id: 96, label: 'D4.4 — Robot Driving Challenge',         week: 12 },
         // Unit 8: Mechanisms (weeks 14–18)
         { id: 81, label: 'D81 — Gear Ratio Calculation Sheet',     week: 14 },
         { id: 82, label: 'D82 — Mechanism CAD Housing + Reflection', week: 15 },
