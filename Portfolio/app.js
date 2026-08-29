@@ -8,11 +8,13 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 // Track param from URL - set by class hub pages (?track=hsaer / 8aer / dbl)
 // Overrides stored course for returning students in multiple classes.
-const URL_TRACK = new URLSearchParams(window.location.search).get('track') || null;
+// Normalize hub key 'aer8th' → portfolio's canonical '8aer' (hub and portfolio use different keys).
+const _rawTrack = new URLSearchParams(window.location.search).get('track') || null;
+const URL_TRACK = _rawTrack === 'aer8th' ? '8aer' : _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.28',
+    VERSION: 'v2.14.29',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
