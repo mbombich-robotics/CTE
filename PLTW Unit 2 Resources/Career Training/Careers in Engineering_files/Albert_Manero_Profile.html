@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../../../../../favicon.svg">
+    <title>Albert Manero — Career Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@400;600;700&family=Exo+2:ital,wght@0,400;0,600;0,800;1,400&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --ground:   #0d1117;
+            --surface:  #161b22;
+            --surface2: #1c2333;
+            --border:   rgba(48, 54, 61, 0.8);
+            --cyan:     #06b6d4;
+            --cyan-dim: rgba(6, 182, 212, 0.15);
+            --indigo:   #6366f1;
+            --green:    #22c55e;
+            --green-dim:rgba(34, 197, 94, 0.10);
+            --text:     #f0f6fc;
+            --muted:    #8b949e;
+            --pltw-red: #c41e3a;
+        }
+
+        body {
+            font-family: 'Exo 2', 'Segoe UI', sans-serif;
+            background: var(--ground);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── NAV BAR ─────────────────────────────────── */
+        .nav {
+            background: linear-gradient(135deg, #06060f 0%, #6366f1 50%, #06060f 100%);
+            height: 72px;
+            border-bottom: 2px solid rgba(255,255,255,0.12);
+            box-shadow: 0 4px 24px rgba(99,102,241,0.4);
+            display: flex;
+            align-items: center;
+            padding: 0 28px;
+            gap: 16px;
+            flex-shrink: 0;
+        }
+
+        .nav-badge {
+            background: rgba(255,255,255,0.18);
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            border: 1.5px solid rgba(255,255,255,0.35);
+            color: #fff;
+            white-space: nowrap;
+        }
+
+        .nav-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .nav-back {
+            margin-left: auto;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: color 0.15s;
+            white-space: nowrap;
+        }
+        .nav-back:hover { color: #fff; }
+
+        /* ── HERO ────────────────────────────────────── */
+        .hero {
+            background: var(--surface);
+            border-bottom: 2px solid rgba(6,182,212,0.25);
+            padding: 56px 60px 52px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -80px; right: -80px;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-eyebrow {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--cyan);
+            margin-bottom: 14px;
+        }
+
+        .hero-name {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2rem, 4.5vw, 3.4rem);
+            font-weight: 900;
+            line-height: 1.05;
+            color: var(--text);
+            text-wrap: balance;
+            margin-bottom: 18px;
+        }
+
+        .hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .hero-title-pill {
+            background: var(--cyan-dim);
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .hero-org-pill {
+            background: rgba(99,102,241,0.12);
+            border: 1px solid var(--indigo);
+            color: #a5b4fc;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .hero-pltw {
+            background: rgba(196,30,58,0.15);
+            border: 1px solid var(--pltw-red);
+            color: #f87171;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* ── MAIN CONTENT ────────────────────────────── */
+        .main {
+            flex: 1;
+            padding: 52px 60px;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: start;
+        }
+
+        @media (max-width: 800px) {
+            .hero { padding: 40px 28px 36px; }
+            .main { padding: 36px 28px; }
+            .two-col { grid-template-columns: 1fr; gap: 36px; }
+        }
+
+        /* ── STORY ───────────────────────────────────── */
+        .section-eyebrow {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-eyebrow::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .story-block {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .story-block p {
+            font-size: 1rem;
+            line-height: 1.75;
+            color: #c9d1d9;
+            max-width: 58ch;
+        }
+
+        .story-block p strong {
+            color: var(--text);
+            font-weight: 800;
+        }
+
+        .highlight-org {
+            color: var(--cyan);
+            font-weight: 800;
+        }
+
+        /* ── VIDEO ───────────────────────────────────── */
+        .video-col {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .video-wrap {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid rgba(6,182,212,0.3);
+            background: #000;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+        .video-wrap iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: block;
+        }
+
+        .video-caption {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .org-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: var(--cyan-dim);
+            border: 1px solid rgba(6,182,212,0.4);
+            border-radius: 8px;
+            padding: 14px 20px;
+            text-decoration: none;
+            color: var(--cyan);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .org-link:hover {
+            background: rgba(6,182,212,0.22);
+            border-color: var(--cyan);
+        }
+        .org-link-arrow { font-size: 1.1em; }
+
+        /* ── THE PATTERN ─────────────────────────────── */
+        .pattern-strip {
+            margin-top: 52px;
+            background: var(--green-dim);
+            border: 1px solid rgba(34,197,94,0.3);
+            border-radius: 12px;
+            padding: 36px 40px;
+        }
+
+        .pattern-strip .section-eyebrow {
+            color: var(--green);
+            margin-bottom: 28px;
+        }
+        .pattern-strip .section-eyebrow::after { background: rgba(34,197,94,0.2); }
+
+        .pattern-tagline {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(1rem, 2.5vw, 1.4rem);
+            font-weight: 700;
+            color: var(--green);
+            margin-bottom: 28px;
+            text-wrap: balance;
+            line-height: 1.3;
+        }
+
+        .pattern-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .pattern-step {
+            background: rgba(34,197,94,0.06);
+            border: 1px solid rgba(34,197,94,0.2);
+            border-radius: 8px;
+            padding: 18px 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .step-num {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--green);
+            line-height: 1;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .step-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #c9d1d9;
+        }
+
+        /* ── FOOTER ──────────────────────────────────── */
+        footer {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 24px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        footer p {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.82rem;
+            color: var(--muted);
+            letter-spacing: 0.3px;
+        }
+
+        @media (max-width: 600px) {
+            footer { padding: 20px 28px; flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+    <span class="nav-badge">Career Connection</span>
+    <span class="nav-title">AE&amp;R</span>
+    <a class="nav-back" href="../../../../../../Unit_06_Career_Ready_Practices/career-connections.html">← All Profiles</a>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+    <div class="hero-eyebrow">Meet a Solutionary</div>
+    <h1 class="hero-name">Albert Manero</h1>
+    <div class="hero-meta">
+        <span class="hero-title-pill">Mechanical Engineer</span>
+        <span class="hero-org-pill">Limbitless Solutions</span>
+        <span class="hero-pltw">PLTW Alumni</span>
+    </div>
+</header>
+
+<!-- MAIN -->
+<main class="main">
+
+    <div class="two-col">
+
+        <!-- STORY -->
+        <section>
+            <div class="section-eyebrow">His Story</div>
+            <div class="story-block">
+                <p>As a high school student in PLTW, Albert Manero discovered 3D printing in his engineering class. He was captivated by what the technology could do — but he didn't know yet what <em>problem</em> he'd use it to solve.</p>
+                <p>That changed when he learned that prosthetic limbs for children cost <strong>tens of thousands of dollars</strong> — far beyond what most families could afford. Children who needed bionic arms were simply going without.</p>
+                <p>Albert saw a problem that engineering could fix. He founded <span class="highlight-org">Limbitless Solutions</span>, a nonprofit that designs and 3D prints free bionic arms for children in need. The arms are custom-fitted, functional — and they often look like something out of a superhero movie.</p>
+                <p>Limbitless has provided arms to hundreds of children, partnered with major studios (including Marvel and EA), and grown into a full research organization at the University of Central Florida. It started with one PLTW student and an idea.</p>
+            </div>
+        </section>
+
+        <!-- VIDEO + LINK -->
+        <section class="video-col">
+            <div class="section-eyebrow">Watch</div>
+            <div class="video-wrap">
+                <iframe
+                    src="https://www.youtube.com/embed/EErTIuxcTiI"
+                    title="Meet a Solutionary | The Technology Behind Bionic Limbs — Albert Manero"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <p class="video-caption">Meet a Solutionary — The Technology Behind Bionic Limbs</p>
+            <a class="org-link" href="https://limbitless-solutions.org" target="_blank" rel="noopener">
+                Visit Limbitless Solutions <span class="org-link-arrow">→</span>
+            </a>
+        </section>
+
+    </div>
+
+    <!-- THE PATTERN -->
+    <section class="pattern-strip">
+        <div class="section-eyebrow">The Pattern</div>
+        <p class="pattern-tagline">Engineers notice problems and do something about them.</p>
+        <div class="pattern-steps">
+            <div class="pattern-step">
+                <span class="step-num">01</span>
+                <span class="step-text">Noticed a real problem in his community — children without affordable prosthetics</span>
+            </div>
+            <div class="pattern-step">
+                <span class="step-num">02</span>
+                <span class="step-text">Had skills from his PLTW engineering class — CAD, 3D printing, design thinking</span>
+            </div>
+            <div class="pattern-step">
+                <span class="step-num">03</span>
+                <span class="step-text">Built a solution that helped real people — at no cost to the families who needed it</span>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <p>Vicksburg High School — Applied Engineering &amp; Robotics | Unit 6: Career Readiness</p>
+    <p>Profile content compiled for classroom use</p>
+</footer>
+
+</body>
+</html>
