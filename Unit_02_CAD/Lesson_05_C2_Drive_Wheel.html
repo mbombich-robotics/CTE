@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="../favicon.svg">
-    <title>C2 — Drive Wheel Hub · Unit 2 CAD</title>
+    <title>C2 — Wheel Hub Cap · Unit 2 CAD</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -75,10 +75,15 @@
             background: rgba(255,209,102,0.07); border: 2px solid #ffd166;
             border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(255,209,102,0.1);
         }
+        .box-purple {
+            background: rgba(180,140,255,0.07); border: 2px solid #b48cff;
+            border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(180,140,255,0.1);
+        }
 
         .highlight { color: #00d084; font-weight: 700; }
         .warning   { color: #ffd166; font-weight: 700; }
         .success   { color: #50fa7b; font-weight: 700; }
+        .purple    { color: #b48cff; font-weight: 700; }
 
         code {
             font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
@@ -94,6 +99,26 @@
         }
         .spec-val   { font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; font-weight: 700; color: #00d084; }
         .spec-label { font-size: 0.85rem; color: #6272a4; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        /* Tier grading */
+        .tier-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; margin-top: 24px; }
+        .tier { border-radius: 12px; padding: 22px; }
+        .tier-baseline  { background: rgba(0,208,132,0.06); border: 2px solid #00d084; }
+        .tier-minor     { background: rgba(255,209,102,0.07); border: 2px solid #ffd166; }
+        .tier-major     { background: rgba(180,140,255,0.08); border: 2px solid #b48cff; }
+        .tier-label {
+            font-family: 'Orbitron', sans-serif; font-size: 0.7rem; font-weight: 700;
+            letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;
+        }
+        .tier-baseline  .tier-label { color: #00d084; }
+        .tier-minor     .tier-label { color: #ffd166; }
+        .tier-major     .tier-label { color: #b48cff; }
+        .tier ul { list-style: none; padding: 0; }
+        .tier ul li {
+            font-size: 0.97rem; color: #b8c5d6; line-height: 1.5;
+            padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .tier ul li:last-child { border-bottom: none; }
 
         /* Video section */
         .video-section {
@@ -164,7 +189,7 @@
         @media (max-width: 768px) {
             h1 { font-size: 2.5rem; } h2 { font-size: 1.8rem; }
             .slide { padding: 30px 20px 100px; }
-            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .grid-2, .grid-3, .tier-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -174,42 +199,39 @@
 <!-- ─────────────────────────────────────────── SLIDE 1: Title -->
 <div class="slide active">
     <div class="slide-content" style="text-align:center;">
-        <h1>C2: Drive Wheel Hub</h1>
+        <h1>C2: Wheel Hub Cap</h1>
         <p class="subtitle">Unit 2 · CAD Component-Based Design · Lesson 2.5</p>
 
         <div style="margin: 40px auto; max-width: 320px;">
-            <svg viewBox="0 0 400 260" fill="none" xmlns="http://www.w3.org/2000/svg"
+            <!-- Hub cap diagram: disc + 6 pin holes on bolt circle + center counterbore -->
+            <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg"
                  style="width:100%; filter:drop-shadow(0 0 18px rgba(0,208,132,0.45));">
-                <!-- Outer rim -->
-                <circle cx="200" cy="130" r="100"
+                <!-- Outer cap disc -->
+                <circle cx="200" cy="200" r="150"
                         fill="rgba(0,208,132,0.06)" stroke="#00d084" stroke-width="2.5"/>
-                <!-- Inner rim ring (depth hint) -->
-                <circle cx="200" cy="130" r="88"
-                        fill="none" stroke="#00d084" stroke-width="1.2"
-                        stroke-dasharray="5 4" opacity="0.45"/>
-                <!-- Hub ring -->
-                <circle cx="200" cy="130" r="30"
-                        fill="rgba(0,208,132,0.12)" stroke="#00d084" stroke-width="2"/>
-                <!-- 3 spokes at 0°, 120°, 240° -->
-                <g transform="translate(200,130)">
-                    <rect x="30" y="-5" width="58" height="10"
-                          fill="rgba(0,208,132,0.35)" stroke="#00d084" stroke-width="1.5" rx="3"/>
-                    <rect x="30" y="-5" width="58" height="10"
-                          fill="rgba(0,208,132,0.35)" stroke="#00d084" stroke-width="1.5" rx="3"
-                          transform="rotate(120)"/>
-                    <rect x="30" y="-5" width="58" height="10"
-                          fill="rgba(0,208,132,0.35)" stroke="#00d084" stroke-width="1.5" rx="3"
-                          transform="rotate(240)"/>
-                </g>
-                <!-- Hex bore — flat-top, vertex radius 14 -->
-                <!-- vertices: 0°(214,130) 60°(207,118) 120°(193,118) 180°(186,130) 240°(193,142) 300°(207,142) -->
-                <polygon points="214,130 207,118 193,118 186,130 193,142 207,142"
-                         fill="rgba(0,208,132,0.15)" stroke="#ffd166" stroke-width="2"/>
+                <!-- Bolt circle (reference) -->
+                <circle cx="200" cy="200" r="100"
+                        fill="none" stroke="#00d084" stroke-width="1"
+                        stroke-dasharray="6 4" opacity="0.35"/>
+                <!-- 6 pin holes on bolt circle -->
+                <circle cx="300" cy="200" r="10" fill="rgba(0,208,132,0.2)" stroke="#00d084" stroke-width="2"/>
+                <circle cx="250" cy="113.4" r="10" fill="rgba(0,208,132,0.2)" stroke="#00d084" stroke-width="2"/>
+                <circle cx="150" cy="113.4" r="10" fill="rgba(0,208,132,0.2)" stroke="#00d084" stroke-width="2"/>
+                <circle cx="100" cy="200" r="10" fill="rgba(0,208,132,0.2)" stroke="#00d084" stroke-width="2"/>
+                <circle cx="150" cy="286.6" r="10" fill="rgba(0,208,132,0.2)" stroke="#00d084" stroke-width="2"/>
+                <circle cx="250" cy="286.6" r="10" fill="rgba(0,208,132,0.2)" stroke="#00d084" stroke-width="2"/>
+                <!-- Counterbore outer (socket head) -->
+                <circle cx="200" cy="200" r="22"
+                        fill="rgba(255,209,102,0.12)" stroke="#ffd166" stroke-width="2"/>
+                <!-- Through-hole (shaft) -->
+                <circle cx="200" cy="200" r="11"
+                        fill="rgba(255,209,102,0.08)" stroke="#ffd166" stroke-width="1.5"
+                        stroke-dasharray="4 3"/>
                 <!-- Center dot -->
-                <circle cx="200" cy="130" r="4" fill="#ffd166"/>
+                <circle cx="200" cy="200" r="3.5" fill="#ffd166"/>
                 <!-- Label -->
-                <text x="200" y="250" font-family="Orbitron" font-size="11" fill="#6272a4"
-                      text-anchor="middle">C2 — DRIVE WHEEL HUB</text>
+                <text x="200" y="382" font-family="Orbitron" font-size="11" fill="#6272a4"
+                      text-anchor="middle">C2 — WHEEL HUB CAP</text>
             </svg>
         </div>
 
@@ -228,21 +250,21 @@
                 <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900;
                              color:#00d084; flex-shrink:0; width:36px; line-height:1;">1</span>
                 <p style="margin:0; font-size:1.5rem; color:#e0e6f0; line-height:1.4;">
-                    <strong style="color:#00d084;">Create</strong> a hex bore using the Polygon tool to match the motor shaft
+                    <strong style="color:#00d084;">Model</strong> 6 alignment pins on a bolt circle using Circular Pattern
                 </p>
             </div>
             <div style="display:flex; gap:28px; align-items:baseline;">
                 <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900;
                              color:#00d084; flex-shrink:0; width:36px; line-height:1;">2</span>
                 <p style="margin:0; font-size:1.5rem; color:#e0e6f0; line-height:1.4;">
-                    <strong style="color:#00d084;">Apply</strong> Circular Pattern to build symmetric spokes — your choice of spoke count and style
+                    <strong style="color:#00d084;">Create</strong> a counterbore — two concentric extrude-cuts at different depths for the screw head and shaft
                 </p>
             </div>
             <div style="display:flex; gap:28px; align-items:baseline;">
                 <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900;
                              color:#00d084; flex-shrink:0; width:36px; line-height:1;">3</span>
                 <p style="margin:0; font-size:1.5rem; color:#e0e6f0; line-height:1.4;">
-                    <strong style="color:#00d084;">Verify</strong> outer diameter and hex bore against spec and document fit in the iteration log
+                    <strong style="color:#00d084;">Iterate</strong> — print, test fit on the AndyMark wheel, measure, and document what changed
                 </p>
             </div>
         </div>
@@ -254,32 +276,36 @@
     <div class="slide-content">
         <h2>Component Overview</h2>
 
-        <p>C2 builds directly on C1 skills. It is the inner structural wheel that presses into the soft silicone tire. The <span class="highlight">hex bore</span> locks onto the motor's flat-sided shaft — a round bore would spin freely. The spokes exist to reduce weight while keeping the wheel stiff.</p>
+        <p>The robot now uses a commercial <span class="highlight">AndyMark 4&Prime; wheel</span>. These are precision-manufactured, high-grip, and proven — better than a printed tire in almost every way. Your job is no longer to make the wheel itself. Instead, you design a <span class="highlight">hub cap</span> that does two things:</p>
 
-        <div class="spec-grid">
-            <div class="spec-item">
-                <div class="spec-val">~54 mm</div>
-                <div class="spec-label">Outer Diameter</div>
+        <div class="grid-2" style="margin-top:24px; margin-bottom:24px;">
+            <div class="box">
+                <h3 style="color:#00d084;">Anti-Rotation — 6 Pins</h3>
+                <p>Six pins press into the wheel's existing hole pattern. If the cap just sat flat with no pins, the motor torque could spin the cap around the wheel face. The pins transfer the torque from cap to wheel.</p>
             </div>
-            <div class="spec-item">
-                <div class="spec-val">3/8&Prime;</div>
-                <div class="spec-label">Hex Bore (flat-to-flat)</div>
-            </div>
-            <div class="spec-item">
-                <div class="spec-val">25.4 mm</div>
-                <div class="spec-label">Width / Thickness</div>
-            </div>
-            <div class="spec-item">
-                <div class="spec-val">Your choice</div>
-                <div class="spec-label">Spoke Count — 3, 5, or 6</div>
+            <div class="box-amber">
+                <h3 style="color:#ffd166;">Retention — 10-32 Screw</h3>
+                <p>A single socket-head cap screw through the center holds the cap on the wheel and holds the wheel on the motor shaft. The counterbore recesses the head so it sits flush with the cap face.</p>
             </div>
         </div>
 
-        <div class="box-amber">
-            <h3 style="color:#ffd166;">Creative Latitude</h3>
-            <p style="color:#e0e6f0; margin-bottom:0;">Spoke design is yours — 3, 5, or 6 spokes; straight or tapered. The only constraint: use
-                <strong style="color:#ffd166;">Circular Pattern</strong>, not individually drawn spokes.
-                This is the one component in the unit where you have real design freedom.</p>
+        <div class="spec-grid">
+            <div class="spec-item">
+                <div class="spec-val">4&Prime;</div>
+                <div class="spec-label">AndyMark Wheel OD</div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-val">6</div>
+                <div class="spec-label">Alignment Pins</div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-val">10-32</div>
+                <div class="spec-label">Retention Screw</div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-val">ref drawing</div>
+                <div class="spec-label">Bolt Circle &amp; Pin Ø</div>
+            </div>
         </div>
     </div>
 </div>
@@ -289,17 +315,16 @@
     <div class="slide-content">
         <div class="video-section">
             <div class="vid-icon">🎬</div>
-            <h2>C2 — Drive Wheel Hub</h2>
+            <h2>C2 — Wheel Hub Cap</h2>
             <p class="vid-sub">Watch before opening Fusion 360</p>
-            <p>Mr. B designs the drive wheel hub from a single sketch — hex bore, shoulder geometry, spoke lightening pattern, and four extrusions. The assembly section shows Section Analysis and Edit in Place to lock in the retaining cap depth.</p>
-            <p class="vid-sub">20 min 50 sec</p>
-            <a href="https://www.youtube.com/watch?v=fJOg-h7goc8" target="_blank" style="display:inline-block; margin: 20px auto 24px; padding: 14px 36px; background:#00d084; color:#0a0f1e; font-family:'Orbitron',sans-serif; font-size:1rem; font-weight:700; text-decoration:none; border-radius:8px; letter-spacing:1px;">▶ Watch Video</a>
+            <p>Mr. B models the hub cap from scratch — disc sketch, 6-pin bolt circle with Circular Pattern, two-step counterbore, and fit check against the AndyMark wheel in the assembly.</p>
+            <p class="vid-sub">Video coming soon — check back before Week 4</p>
             <h3>What to watch for:</h3>
             <ul class="watch-list">
-                <li>Circumscribed polygon for the hex bore — and the mixed-unit dimension trick</li>
-                <li>Four extrusions from one sketch — why the operation (Cut vs. Join) matters each time</li>
-                <li>Section Analysis and Edit in Place — using the assembly to set the retaining cap depth</li>
-                <li>Fillet vs. chamfer — why chamfer wins on the hex bore entry</li>
+                <li>Driving pin diameter and bolt circle from reference dimensions — never guess a fit-critical hole</li>
+                <li>Two concentric circles, two extrude-cut depths — that's all a counterbore is</li>
+                <li>Using Circular Pattern on a single pin body to produce all six at once</li>
+                <li>Assembly fit check: loading the AndyMark wheel model to verify pin engagement and screw reach</li>
             </ul>
         </div>
     </div>
@@ -313,84 +338,86 @@
 
         <div class="grid-2">
             <div class="box">
-                <h3 style="color:#00d084;">New Tools</h3>
+                <h3 style="color:#00d084;">New: Counterbore</h3>
+                <p style="margin-bottom:12px;">A counterbore is two concentric circles at two different cut depths — nothing more:</p>
                 <ul class="bullet-list">
-                    <li><strong style="color:#00d084;">Polygon tool</strong> &mdash; inscribed hexagon for the motor shaft bore; set flat-to-flat distance to 3/8&Prime;</li>
-                    <li><strong style="color:#00d084;">Circular Pattern</strong> &mdash; select one spoke body or feature, set axis to the central axis, choose count</li>
-                    <li><strong style="color:#00d084;">Extrude-Cut</strong> &mdash; cuts material away to create the open spaces between spokes</li>
+                    <li>Large circle = socket head diameter + 0.2 mm clearance; depth = head height + 0.5 mm</li>
+                    <li>Small circle = shaft clearance hole (#10 = ~4.8 mm); cut through the cap</li>
+                    <li>Draw both circles from the same center point in one sketch — one Extrude does both cuts if you set <strong style="color:#00d084;">Extent = To Object</strong> for each profile separately</li>
                 </ul>
             </div>
 
-            <div class="box-amber">
-                <h3 style="color:#ffd166;">Carry-Forward Rules (from C1)</h3>
+            <div class="box">
+                <h3 style="color:#00d084;">New: Bolt Circle for Pins</h3>
                 <ul class="bullet-list">
-                    <li>Sketch must be <strong style="color:#ffd166;">fully constrained</strong> (all black) before extruding</li>
-                    <li>File name: <code>Lastname_DriveWheel_v1-Base</code></li>
-                    <li>Version saves when you print and test fit: <code>v2-HexFit</code>, <code>v2-OD-Fix</code>, etc.</li>
-                    <li>Iteration log: record hex bore flat-to-flat as printed vs spec; record OD as printed vs spec; note if silicone tire fit required a reprint</li>
+                    <li>Sketch one pin (a circle) on the bolt circle radius from the reference drawing</li>
+                    <li>Extrude it to pin length (protrusion beyond cap face)</li>
+                    <li><strong style="color:#00d084;">Circular Pattern</strong> → select the pin body, set axis to center axis, count = 6</li>
+                    <li>Fusion distributes all 6 at equal 60° spacing automatically</li>
                 </ul>
             </div>
+        </div>
+
+        <div class="box-amber" style="margin-top:20px;">
+            <h3 style="color:#ffd166;">Carry-Forward Rules (from C1)</h3>
+            <ul class="bullet-list">
+                <li>Sketch fully constrained (all black) before extruding — no blue lines</li>
+                <li>File name: <code>Lastname_HubCap_v1-Base</code>; save new version on each print: <code>v2-PinFit</code>, <code>v3-CBore</code></li>
+                <li>All fit-critical dimensions driven by parameters or explicit dimension constraints — not by dragging</li>
+            </ul>
         </div>
     </div>
 </div>
 
-<!-- ─────────────────────────────────────────── SLIDE 6: Deliverable -->
+<!-- ─────────────────────────────────────────── SLIDE 6: Deliverable & Grading -->
 <div class="slide">
     <div class="slide-content">
-        <h2>Deliverable: C2 Drive Wheel Hub</h2>
-        <p class="subtitle">Due end of Week 4</p>
+        <h2>Deliverable: C2 Wheel Hub Cap</h2>
+        <p class="subtitle">Due end of Week 4 &mdash; tiered grading</p>
 
-        <div class="grid-2" style="align-items:start;">
-            <div class="box">
-                <h3 style="color:#00d084;">Submission Checklist</h3>
-                <ul class="checklist">
-                    <li>
-                        <span class="check-box">&#10003;</span>
-                        File named <code>Lastname_DriveWheel_v1-Base</code>
-                    </li>
-                    <li>
-                        <span class="check-box">&#10003;</span>
-                        Hex bore correct &mdash; 3/8&Prime; flat-to-flat (check against motor shaft via
-                        <strong style="color:#00d084;">Inspect &rarr; Measure</strong>)
-                    </li>
-                    <li>
-                        <span class="check-box">&#10003;</span>
-                        Outer diameter within &plusmn;0.5 mm of target (~54 mm)
-                    </li>
-                    <li>
-                        <span class="check-box">&#10003;</span>
-                        Spokes present and symmetric &mdash;
-                        <strong style="color:#00d084;">Circular Pattern used</strong> (not individually drawn)
-                    </li>
-                    <li>
-                        <span class="check-box">&#10003;</span>
-                        <strong>Screenshot 1:</strong> front view &mdash; hex bore and spokes clearly visible
-                    </li>
-                    <li>
-                        <span class="check-box">&#10003;</span>
-                        <strong>Screenshot 2:</strong> isometric view &mdash; depth/thickness visible
-                    </li>
+        <div class="tier-grid">
+
+            <div class="tier tier-baseline">
+                <div class="tier-label">Baseline</div>
+                <ul>
+                    <li>6 pins match AndyMark hole pattern — correct diameter and bolt circle</li>
+                    <li>Counterbore correctly sized for 10-32 socket head (head Ø + clearance; correct depth)</li>
+                    <li>Cap OD fits within the wheel rim face</li>
+                    <li>Iteration log: at least one printed version measured; record what you adjusted and why</li>
+                    <li>Screenshots: front view (pins visible) + isometric (cap depth/face visible)</li>
                 </ul>
             </div>
 
-            <div>
-                <div class="box-amber" style="margin-bottom:20px;">
-                    <h3 style="color:#ffd166;">Iteration Log</h3>
-                    <ul class="bullet-list">
-                        <li>Hex bore flat-to-flat &mdash; <strong>spec</strong> vs. <strong>actual print</strong></li>
-                        <li>Outer diameter &mdash; <strong>spec</strong> vs. <strong>actual print</strong></li>
-                        <li>Did the silicone tire seat correctly? Did it require a reprint?</li>
-                    </ul>
-                </div>
-
-                <div style="padding:18px 20px; background:rgba(0,208,132,0.07);
-                            border-left:4px solid #00d084; border-radius:8px;">
-                    <p style="margin:0; color:#b8c5d6; font-size:1.05rem;">
-                        Submit through the <strong style="color:#00d084;">Student Portfolio</strong>
-                        in the HS AE&amp;R course hub.
-                    </p>
-                </div>
+            <div class="tier tier-minor">
+                <div class="tier-label">Minor Improvement</div>
+                <ul>
+                    <li>Baseline requirements fully met, <em>plus</em> one of:</li>
+                    <li>Chamfers or fillets on pin tips (easier insertion) or cap edges</li>
+                    <li>Embossed name, initials, or design on the cap face</li>
+                    <li>Lightening holes or a decorative face pattern that doesn't compromise pin or counterbore geometry</li>
+                    <li>Any aesthetic or minor ergonomic addition — no written rationale required</li>
+                </ul>
             </div>
+
+            <div class="tier tier-major">
+                <div class="tier-label">Substantial Improvement</div>
+                <ul>
+                    <li>Baseline requirements fully met, <em>plus</em> a functional design change with <strong style="color:#b48cff;">written rationale</strong>:</li>
+                    <li>Modified pin geometry (tapered lead-in, longer engagement, press-fit vs. slip-fit reasoning)</li>
+                    <li>Recessed boss or material reduction that maintains structural integrity — show your reasoning</li>
+                    <li>A retention or alignment feature not in the baseline design</li>
+                    <li>Any change must be engineering-justified — explain what you changed and why it's better</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div style="margin-top:24px; padding:18px 20px; background:rgba(0,208,132,0.07);
+                    border-left:4px solid #00d084; border-radius:8px;">
+            <p style="margin:0; color:#b8c5d6; font-size:1.05rem;">
+                Submit through the <strong style="color:#00d084;">Student Portfolio</strong>
+                in the course hub. Attach your Fusion 360 file, screenshots, and iteration log.
+            </p>
         </div>
     </div>
 </div>
