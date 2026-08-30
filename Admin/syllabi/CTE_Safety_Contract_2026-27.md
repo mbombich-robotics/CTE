@@ -42,7 +42,7 @@ ___ When I am unsure how to safely complete a task, I will stop and ask the inst
 
 ## Part 3 — Emergency Procedures
 
-___ There are five red emergency stop buttons located throughout the lab. These cut power to the lab and are for emergencies only.
+___ There are five red emergency stop buttons located throughout the shop. These cut power to the machines and are for emergencies only.
 
 ___ If I press a stop button — for any reason, including by accident — I will immediately report it to the instructor. There is no penalty for an accidental press, but every press must be reported.
 
@@ -56,7 +56,7 @@ ___ I will use only district-provided devices and my single district-issued acco
 
 ___ I will not attempt to use additional accounts, share login credentials, or access another student's account.
 
-___ I will not use a VPN or any tool designed to circumvent district network security. Doing so will result in a referral to administration.
+___ I will not use a VPN or any tool or technique designed to circumvent district network security. Doing so will result in a referral to administration.
 
 ___ I understand that classroom work is not private. Switching desktops, closing tabs, or closing applications when the instructor approaches is not permitted.
 
