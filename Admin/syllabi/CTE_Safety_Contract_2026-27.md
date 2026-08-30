@@ -12,7 +12,7 @@
 
 ---
 
-Please read each item carefully. Write your initials on the line to confirm you understand and agree. Return the signed contract to Matt Bombich. A parent or guardian signature is required.
+Please read each item carefully. Write your initials on the line to confirm you understand and agree. Return the signed contract to Mr. Bombich. A parent or guardian signature is required.
 
 ---
 

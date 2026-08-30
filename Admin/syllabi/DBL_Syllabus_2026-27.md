@@ -91,7 +91,7 @@ PPE is required whenever shop tools or electronics are in use. A safety violatio
 This class is hands-on — you cannot make up fabrication time from home. Excused absences receive full make-up opportunities.
 
 **Late Work**  
-Portfolio deliverables are accepted up to 3 school days late with a 10% per day penalty. After 3 days, work is accepted for partial credit at the teacher's discretion. Talk to Matt Bombich before the deadline if you need an extension.
+Portfolio deliverables are accepted up to 3 school days late with a 10% per day penalty. After 3 days, work is accepted for partial credit at the teacher's discretion. Talk to Mr. Bombich before the deadline if you need an extension.
 
 **Academic Integrity**  
 AI tools may be used to understand concepts or generate design ideas — but submitted work must reflect your own thinking and decisions. Copying is handled per school policy.

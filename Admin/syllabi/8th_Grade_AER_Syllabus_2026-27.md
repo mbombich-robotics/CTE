@@ -87,7 +87,7 @@ PPE is required whenever shop tools or electronics are in use. A safety violatio
 Lab time cannot be recreated from home. Excused absences receive full make-up opportunities.
 
 **Late Work**  
-Portfolio deliverables are accepted up to 3 school days late with a 10% per day penalty. Talk to Matt Bombich before the deadline if you need an extension.
+Portfolio deliverables are accepted up to 3 school days late with a 10% per day penalty. Talk to Mr. Bombich before the deadline if you need an extension.
 
 **Academic Integrity**  
 AI tools may be used to understand concepts or get unstuck — but submitted work must reflect your own thinking. Copying is academic dishonesty and handled per school policy.
