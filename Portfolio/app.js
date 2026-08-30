@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack === 'aer8th' ? '8aer' : _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.31',
+    VERSION: 'v2.14.32',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -2367,6 +2367,7 @@ function updateDashboardDeliverables() {
         { key: '04', label: 'Unit 4 — Programming, Electronics & Sensors' },
         { key: '05', label: 'Unit 5 — AI & Machine Learning' },
         { key: '06', label: 'Unit 6 — Career Readiness' },
+        { key: '07', label: 'Unit 7 — Electrical Systems' },
         { key: '08', label: 'Unit 8 — Mechanisms' },
         { key: 'p2', label: 'Project 2 — Christmas Ornament / Gift' },
         { key: 'p3', label: 'Project 3 — LED Sign / Wall Art' },
