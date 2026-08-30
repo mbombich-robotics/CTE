@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>How IR Sensors See — Lesson 4.9B</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Exo 2', sans-serif; background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); color: #e0e6f0; height: 100vh; }
+        .presentation { width: 100%; height: 100vh; position: relative; }
+        .slide { position: absolute; width: 100%; min-height: 100%; display: none; flex-direction: column; justify-content: flex-start; align-items: center; padding: 55px 60px 120px 60px; opacity: 0; transition: opacity 0.5s ease; overflow-y: auto; overflow-x: hidden; }
+        .slide.active { display: flex; opacity: 1; }
+        .slide-content { max-width: 1200px; width: 100%; }
+        h1 { font-family: 'Orbitron', sans-serif; font-size: 3.2rem; font-weight: 900; color: #00d4ff; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 20px rgba(0,212,255,0.5); animation: glow 2s ease-in-out infinite alternate; }
+        @keyframes glow { from { text-shadow: 0 0 20px rgba(0,212,255,0.5); } to { text-shadow: 0 0 35px rgba(0,212,255,0.9); } }
+        h2 { font-family: 'Orbitron', sans-serif; font-size: 2.2rem; font-weight: 700; color: #00d4ff; margin-bottom: 18px; text-transform: uppercase; }
+        h3 { font-family: 'Exo 2', sans-serif; font-size: 1.45rem; font-weight: 600; color: #ff9500; margin-bottom: 12px; }
+        p { font-size: 1.15rem; line-height: 1.6; margin-bottom: 12px; color: #b8c5d6; }
+        .subtitle { font-size: 1.3rem; color: #ff9500; font-weight: 600; margin-bottom: 30px; }
+        .objective-box { background: linear-gradient(135deg, rgba(0,212,255,0.1) 0%, rgba(0,212,255,0.04) 100%); border: 3px solid #00d4ff; border-radius: 12px; padding: 20px; margin: 20px 0; box-shadow: 0 0 30px rgba(0,212,255,0.15); }
+        .objective-box h3 { color: #00d4ff; }
+        .bullet-list { list-style: none; padding-left: 0; }
+        .bullet-list li { font-size: 1.15rem; margin: 12px 0; padding-left: 35px; position: relative; color: #b8c5d6; line-height: 1.5; }
+        .bullet-list li::before { content: '▸'; position: absolute; left: 0; color: #ff9500; font-size: 1.5rem; line-height: 1; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px; }
+        .box { background: rgba(0,212,255,0.05); border: 2px solid #00d4ff; border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(0,212,255,0.1); }
+        .box-orange { background: rgba(255,149,0,0.07); border: 2px solid #ff9500; border-radius: 12px; padding: 20px; }
+        .box-green { background: rgba(80,250,123,0.07); border: 2px solid #50fa7b; border-radius: 12px; padding: 20px; }
+        .box-red { background: rgba(255,80,80,0.07); border: 2px solid #ff5050; border-radius: 12px; padding: 20px; }
+        .highlight { color: #00d4ff; font-weight: 700; }
+        .warning { color: #ff9500; font-weight: 700; }
+        .success { color: #50fa7b; font-weight: 700; }
+        .danger { color: #ff5050; font-weight: 700; }
+        code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: #00d4ff; background: rgba(0,212,255,0.1); padding: 1px 5px; border-radius: 4px; white-space: nowrap; }
+        .controls { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 1000; }
+        button { background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%); border: none; color: #0a0e27; padding: 15px 30px; font-size: 1rem; font-weight: 700; border-radius: 8px; cursor: pointer; font-family: 'Exo 2', sans-serif; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,212,255,0.3); }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,212,255,0.5); }
+        button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+        .slide-number { position: fixed; bottom: 30px; left: 30px; font-family: 'Space Mono', monospace; font-size: 1rem; color: #00d4ff; z-index: 1000; }
+        .callout { border-radius: 10px; padding: 14px 18px; margin: 14px 0; font-size: 1.05rem; line-height: 1.6; }
+        .callout-info { background: rgba(0,212,255,0.08); border-left: 4px solid #00d4ff; color: #b8c5d6; }
+        .callout-warn { background: rgba(255,149,0,0.08); border-left: 4px solid #ff9500; color: #b8c5d6; }
+        .callout-success { background: rgba(80,250,123,0.08); border-left: 4px solid #50fa7b; color: #b8c5d6; }
+        .back-link { position: fixed; top: 18px; right: 24px; font-size: 0.78rem; font-weight: 700; color: #67e3ff; text-decoration: none; background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.35); padding: 5px 12px; border-radius: 20px; z-index: 100; transition: background 0.2s; }
+        .back-link:hover { background: rgba(0,212,255,0.3); }
+        .num-badge { display: inline-block; background: rgba(0,212,255,0.15); border: 2px solid #00d4ff; border-radius: 50%; width: 36px; height: 36px; line-height: 32px; text-align: center; font-family: 'Orbitron', sans-serif; font-weight: 700; color: #00d4ff; font-size: 1rem; margin-right: 12px; flex-shrink: 0; }
+        .check-item { display: flex; align-items: flex-start; gap: 14px; margin: 16px 0; }
+        .check-item p { margin: 0; }
+        @media (max-width: 768px) { h1 { font-size: 2.2rem; } h2 { font-size: 1.7rem; } .slide { padding: 30px 20px 100px; } .grid-2 { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← Unit 4</a>
+    <div class="presentation">
+
+<!-- ── SLIDE 1: Title ── -->
+<div class="slide active" style="display:flex;">
+    <div class="slide-content" style="text-align:center; padding-top:40px;">
+
+        <!-- IR sensor diagram: emitter down, surface with dark stripe, reflected beam back up -->
+        <svg width="460" height="200" viewBox="0 0 460 200" xmlns="http://www.w3.org/2000/svg" style="max-width:100%; margin-bottom:30px;">
+            <!-- Surface -->
+            <rect x="0" y="155" width="460" height="45" rx="4" fill="#1e2a3a" stroke="rgba(0,212,255,0.3)" stroke-width="1.5"/>
+            <!-- Dark line on surface -->
+            <rect x="175" y="155" width="110" height="45" rx="0" fill="#0a0e18"/>
+            <!-- Surface label -->
+            <text x="60" y="187" fill="#4a5568" font-family="Space Mono,monospace" font-size="11">LIGHT SURFACE</text>
+            <text x="183" y="187" fill="#6272a4" font-family="Space Mono,monospace" font-size="11">DARK</text>
+            <text x="320" y="187" fill="#4a5568" font-family="Space Mono,monospace" font-size="11">LIGHT SURFACE</text>
+
+            <!-- LEFT sensor (over light surface) -->
+            <!-- IR emitter beam down -->
+            <line x1="90" y1="30" x2="90" y2="155" stroke="#c0392b" stroke-width="2.5" stroke-dasharray="6,3" opacity="0.8"/>
+            <!-- Reflected beam back up (strong) -->
+            <line x1="90" y1="155" x2="130" y2="30" stroke="#00d4ff" stroke-width="2.5" stroke-dasharray="6,3" opacity="0.9"/>
+            <!-- Sensor body -->
+            <rect x="60" y="8" width="60" height="26" rx="6" fill="#1e3a50" stroke="#00d4ff" stroke-width="2"/>
+            <text x="90" y="26" text-anchor="middle" fill="#00d4ff" font-family="Exo 2,sans-serif" font-size="11" font-weight="700">IR SENSOR</text>
+            <!-- Strong reflection label -->
+            <text x="135" y="25" fill="#50fa7b" font-family="Exo 2,sans-serif" font-size="12" font-weight="700">HIGH OUTPUT</text>
+            <text x="135" y="40" fill="#4a5568" font-family="Exo 2,sans-serif" font-size="11">lots of IR reflected</text>
+
+            <!-- RIGHT sensor (over dark surface) -->
+            <line x1="370" y1="30" x2="230" y2="155" stroke="#c0392b" stroke-width="2.5" stroke-dasharray="6,3" opacity="0.8"/>
+            <!-- Weak / no reflection -->
+            <line x1="230" y1="155" x2="235" y2="120" stroke="#00d4ff" stroke-width="1.2" stroke-dasharray="3,4" opacity="0.35"/>
+            <rect x="340" y="8" width="60" height="26" rx="6" fill="#1e3a50" stroke="#00d4ff" stroke-width="2"/>
+            <text x="370" y="26" text-anchor="middle" fill="#00d4ff" font-family="Exo 2,sans-serif" font-size="11" font-weight="700">IR SENSOR</text>
+            <text x="240" y="120" fill="#ff5050" font-family="Exo 2,sans-serif" font-size="12" font-weight="700">LOW OUTPUT</text>
+            <text x="240" y="135" fill="#4a5568" font-family="Exo 2,sans-serif" font-size="11">IR absorbed by dark surface</text>
+
+            <!-- Emitter beam labels -->
+            <text x="68" y="95" fill="#c0392b" font-family="Space Mono,monospace" font-size="10" opacity="0.8">IR out</text>
+            <text x="348" y="95" fill="#c0392b" font-family="Space Mono,monospace" font-size="10" opacity="0.8">IR out</text>
+        </svg>
+
+        <h1>How IR Sensors See</h1>
+        <p class="subtitle">Light, Reflection &amp; Line Detection — Lesson 4.9B</p>
+        <p style="color:#6272a4; font-family:'Space Mono',monospace; font-size:0.95rem;">Academic Standard 1E3 — Principles of Ray Optics</p>
+    </div>
+</div>
+
+<!-- ── SLIDE 2: Objectives ── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Learning Objectives</h2>
+        <p class="subtitle">By the end of this lesson you will be able to:</p>
+        <div class="objective-box">
+            <ul class="bullet-list">
+                <li>Identify infrared (IR) light on the electromagnetic spectrum and explain how it differs from visible light</li>
+                <li>Describe reflection of light using the law of reflection — and explain why dark and light surfaces reflect differently</li>
+                <li>Explain how an IR line sensor uses emitted and reflected IR light to detect a surface boundary</li>
+                <li>Predict sensor output (high or low) based on the surface color beneath it</li>
+            </ul>
+        </div>
+        <div class="callout callout-info" style="margin-top:24px;">
+            <strong class="highlight">Why this matters:</strong> You have already wired and coded an IR line sensor. This lesson explains the physics behind why it works — so you can debug it when it behaves unexpectedly, and so you understand that your robot is doing real optics, not magic.
+        </div>
+    </div>
+</div>
+
+<!-- ── SLIDE 3: The Electromagnetic Spectrum ── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>The Electromagnetic Spectrum</h2>
+        <p class="subtitle">Visible light is a tiny slice of a much larger picture</p>
+
+        <!-- EM Spectrum bar -->
+        <div style="margin: 24px 0 10px; border-radius: 10px; overflow: hidden; display:flex; height:54px; font-family:'Space Mono',monospace; font-size:0.78rem; font-weight:700;">
+            <div style="flex:1; background:#6a0dad; display:flex; align-items:center; justify-content:center; color:#e0e6f0;">Radio</div>
+            <div style="flex:0.8; background:#8b0000; display:flex; align-items:center; justify-content:center; color:#e0e6f0;">Micro</div>
+            <div style="flex:0.9; background:#b22222; display:flex; align-items:center; justify-content:center; color:#fff; border: 3px solid #ff9500;">
+                <span style="color:#ff9500;">▶ IR ◀</span>
+            </div>
+            <div style="flex:0.6; background:linear-gradient(to right,#ff0000,#ff7f00,#ffff00,#00ff00,#0000ff,#8b00ff); display:flex; align-items:center; justify-content:center; color:#000; font-size:0.7rem;">Visible</div>
+            <div style="flex:0.7; background:#4b0082; display:flex; align-items:center; justify-content:center; color:#e0e6f0;">UV</div>
+            <div style="flex:0.8; background:#2c003e; display:flex; align-items:center; justify-content:center; color:#e0e6f0;">X-ray</div>
+            <div style="flex:0.6; background:#1a001f; display:flex; align-items:center; justify-content:center; color:#e0e6f0;">γ</div>
+        </div>
+        <p style="font-size:0.9rem; color:#4a5568; margin-bottom:24px; font-family:'Space Mono',monospace;">← longer wavelength &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; shorter wavelength →</p>
+
+        <div class="grid-2">
+            <div class="box">
+                <h3>Infrared (IR) Light</h3>
+                <ul class="bullet-list">
+                    <li>Wavelength just <strong class="highlight">longer than red</strong> visible light — your eyes cannot see it</li>
+                    <li>You feel IR as <strong class="warning">heat</strong> — it is what a heat lamp radiates</li>
+                    <li>Your TV remote uses IR to send signals</li>
+                    <li>Night-vision cameras detect IR instead of visible light</li>
+                </ul>
+            </div>
+            <div class="box-orange">
+                <h3>Same Physics, Different Wavelength</h3>
+                <ul class="bullet-list">
+                    <li>IR obeys all the same laws as visible light: it travels in straight lines, reflects off surfaces, and can be absorbed or transmitted</li>
+                    <li>Because it follows the same rules, we can use it for <strong class="warning">sensing</strong> — emit a beam, measure what comes back</li>
+                    <li>Your L.E.O. line sensors emit IR at ~950 nm — just past the red edge of what you can see</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── SLIDE 4: Ray Optics — Reflection ── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Ray Optics: Reflection</h2>
+        <p class="subtitle">Light bounces — but how much depends on the surface</p>
+
+        <div class="grid-2" style="align-items:start;">
+            <div>
+                <!-- Reflection diagram -->
+                <svg width="100%" viewBox="0 0 380 220" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Surface -->
+                    <rect x="0" y="170" width="380" height="50" fill="#1e2a3a" stroke="rgba(0,212,255,0.3)" stroke-width="1.5"/>
+                    <!-- Normal line (dashed) -->
+                    <line x1="190" y1="170" x2="190" y2="20" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-dasharray="6,4"/>
+                    <text x="196" y="50" fill="rgba(255,255,255,0.4)" font-family="Space Mono,monospace" font-size="11">normal</text>
+                    <!-- Incident ray -->
+                    <line x1="60" y1="20" x2="190" y2="170" stroke="#ff9500" stroke-width="3"/>
+                    <polygon points="190,170 178,145 200,148" fill="#ff9500"/>
+                    <text x="62" y="42" fill="#ff9500" font-family="Exo 2,sans-serif" font-weight="700" font-size="13">incoming ray</text>
+                    <!-- Reflected ray -->
+                    <line x1="190" y1="170" x2="320" y2="20" stroke="#00d4ff" stroke-width="3"/>
+                    <polygon points="320,20 305,40 316,48" fill="#00d4ff"/>
+                    <text x="248" y="42" fill="#00d4ff" font-family="Exo 2,sans-serif" font-weight="700" font-size="13">reflected ray</text>
+                    <!-- Angle arcs -->
+                    <path d="M 155,170 A 40,40 0 0,1 190,130" fill="none" stroke="#ff9500" stroke-width="1.5"/>
+                    <text x="130" y="148" fill="#ff9500" font-family="Space Mono,monospace" font-size="12">θᵢ</text>
+                    <path d="M 190,130 A 40,40 0 0,1 225,170" fill="none" stroke="#00d4ff" stroke-width="1.5"/>
+                    <text x="222" y="148" fill="#00d4ff" font-family="Space Mono,monospace" font-size="12">θᵣ</text>
+                    <!-- Surface label -->
+                    <text x="155" y="200" fill="#4a5568" font-family="Space Mono,monospace" font-size="11">surface</text>
+                    <!-- Law label -->
+                    <text x="90" y="215" fill="rgba(0,212,255,0.6)" font-family="Space Mono,monospace" font-size="12">θᵢ = θᵣ</text>
+                </svg>
+                <div class="callout callout-info" style="margin-top:12px;">
+                    <strong class="highlight">Law of Reflection:</strong> The angle the incoming ray makes with the surface normal equals the angle the reflected ray makes. Every time, no exceptions.
+                </div>
+            </div>
+            <div>
+                <div class="box" style="margin-bottom:20px;">
+                    <h3>High Reflectivity — Light Surfaces</h3>
+                    <ul class="bullet-list">
+                        <li>White and light-colored surfaces reflect most of the incident IR back</li>
+                        <li>The detector receives a <strong class="success">strong return signal</strong></li>
+                        <li>Sensor output: <strong class="success">HIGH</strong></li>
+                    </ul>
+                </div>
+                <div class="box-red">
+                    <h3>Low Reflectivity — Dark Surfaces</h3>
+                    <ul class="bullet-list">
+                        <li>Dark surfaces <strong class="danger">absorb</strong> most of the incident IR — very little bounces back</li>
+                        <li>The detector receives a <strong class="danger">weak or no return signal</strong></li>
+                        <li>Sensor output: <strong class="danger">LOW</strong></li>
+                    </ul>
+                </div>
+                <div class="callout callout-warn" style="margin-top:16px;">
+                    This is not a design choice — it is physics. Dark pigments absorb more light across the spectrum, including IR.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── SLIDE 5: Inside an IR Line Sensor ── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Inside the IR Line Sensor</h2>
+        <p class="subtitle">Two components, one job: measure reflected IR</p>
+
+        <div style="text-align:center; margin-bottom:24px;">
+            <!-- Sensor internals diagram -->
+            <svg width="560" height="170" viewBox="0 0 560 170" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+                <!-- PCB body -->
+                <rect x="140" y="10" width="280" height="60" rx="8" fill="#1e3a50" stroke="#00d4ff" stroke-width="2"/>
+                <!-- Emitter (LED) -->
+                <rect x="175" y="20" width="40" height="40" rx="5" fill="#2d1b00" stroke="#ff9500" stroke-width="2"/>
+                <text x="195" y="38" text-anchor="middle" fill="#ff9500" font-family="Exo 2,sans-serif" font-size="10" font-weight="700">IR LED</text>
+                <text x="195" y="52" text-anchor="middle" fill="#ff9500" font-family="Exo 2,sans-serif" font-size="9">emitter</text>
+                <!-- Detector (phototransistor) -->
+                <rect x="345" y="20" width="40" height="40" rx="5" fill="#0d2a3a" stroke="#00d4ff" stroke-width="2"/>
+                <text x="365" y="36" text-anchor="middle" fill="#00d4ff" font-family="Exo 2,sans-serif" font-size="9" font-weight="700">PHOTO</text>
+                <text x="365" y="48" text-anchor="middle" fill="#00d4ff" font-family="Exo 2,sans-serif" font-size="9" font-weight="700">TRANSISTOR</text>
+                <text x="365" y="60" text-anchor="middle" fill="#00d4ff" font-family="Exo 2,sans-serif" font-size="9">detector</text>
+                <!-- Signal line out -->
+                <line x1="420" y1="40" x2="500" y2="40" stroke="#50fa7b" stroke-width="2"/>
+                <text x="505" y="37" fill="#50fa7b" font-family="Space Mono,monospace" font-size="10">signal out</text>
+                <text x="505" y="50" fill="#50fa7b" font-family="Space Mono,monospace" font-size="10">→ GPIO pin</text>
+                <!-- Power/GND -->
+                <line x1="140" y1="30" x2="70" y2="30" stroke="#ff9500" stroke-width="2"/>
+                <text x="5" y="33" fill="#ff9500" font-family="Space Mono,monospace" font-size="10">3.3V / 5V</text>
+                <line x1="140" y1="50" x2="70" y2="50" stroke="#4a5568" stroke-width="2"/>
+                <text x="18" y="53" fill="#4a5568" font-family="Space Mono,monospace" font-size="10">GND</text>
+
+                <!-- Surface - light -->
+                <rect x="0" y="130" width="230" height="40" rx="4" fill="#2a3a50" stroke="rgba(0,212,255,0.2)" stroke-width="1"/>
+                <text x="115" y="155" text-anchor="middle" fill="#b8c5d6" font-family="Space Mono,monospace" font-size="11">LIGHT SURFACE</text>
+                <!-- Surface - dark -->
+                <rect x="230" y="130" width="330" height="40" rx="4" fill="#0a0e18" stroke="rgba(255,80,80,0.3)" stroke-width="1"/>
+                <text x="395" y="155" text-anchor="middle" fill="#6272a4" font-family="Space Mono,monospace" font-size="11">DARK SURFACE (line)</text>
+
+                <!-- IR beam down (emitter) over light surface -->
+                <line x1="195" y1="70" x2="115" y2="130" stroke="#ff9500" stroke-width="2" stroke-dasharray="5,3" opacity="0.9"/>
+                <!-- Strong reflection back to detector -->
+                <line x1="115" y1="130" x2="365" y2="70" stroke="#00d4ff" stroke-width="2.5" stroke-dasharray="5,3" opacity="0.9"/>
+
+                <!-- IR beam down (emitter) over dark surface -->
+                <line x1="195" y1="70" x2="395" y2="130" stroke="#ff9500" stroke-width="2" stroke-dasharray="5,3" opacity="0.5"/>
+                <!-- Weak/no reflection -->
+                <line x1="395" y1="130" x2="400" y2="105" stroke="#00d4ff" stroke-width="1" stroke-dasharray="3,5" opacity="0.25"/>
+                <text x="410" y="108" fill="#ff5050" font-family="Exo 2,sans-serif" font-size="10">absorbed</text>
+            </svg>
+        </div>
+
+        <div class="grid-2">
+            <div class="box">
+                <h3 style="color:#ff9500;">IR LED — The Emitter</h3>
+                <ul class="bullet-list">
+                    <li>Continuously emits IR light downward toward the surface</li>
+                    <li>Always on while the sensor is powered — you cannot "turn off" the emitter in code</li>
+                    <li>Beam spreads slightly as it travels (not a perfect line)</li>
+                </ul>
+            </div>
+            <div class="box">
+                <h3>Phototransistor — The Detector</h3>
+                <ul class="bullet-list">
+                    <li>Measures the <strong class="highlight">intensity of reflected IR</strong> hitting it</li>
+                    <li>More IR reflected → transistor conducts more → <strong class="success">high voltage output</strong></li>
+                    <li>Less IR reflected → transistor conducts less → <strong class="danger">low voltage output</strong></li>
+                    <li>Your Pico reads this as a digital 1 or 0 on a GPIO pin</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── SLIDE 6: The Robot Reads the Line ── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>The Robot Reads the Line</h2>
+        <p class="subtitle">Putting it together — optics into code</p>
+
+        <div class="grid-2" style="margin-bottom:24px;">
+            <div class="box-green">
+                <h3 style="color:#50fa7b;">Sensor over LIGHT surface</h3>
+                <ul class="bullet-list">
+                    <li>Emitter fires IR downward</li>
+                    <li>Light surface <strong class="success">reflects most IR</strong> back</li>
+                    <li>Detector receives strong signal → <code>1</code></li>
+                    <li>Your code: <strong class="success">"I'm off the line"</strong></li>
+                </ul>
+            </div>
+            <div class="box-red">
+                <h3 style="color:#ff5050;">Sensor over DARK line</h3>
+                <ul class="bullet-list">
+                    <li>Emitter fires IR downward</li>
+                    <li>Dark line <strong class="danger">absorbs most IR</strong> — very little returns</li>
+                    <li>Detector receives weak signal → <code>0</code></li>
+                    <li>Your code: <strong class="danger">"I'm on the line"</strong></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="callout callout-warn">
+            <strong class="warning">Why your sensor sometimes behaves oddly:</strong> Ambient light (room lighting, sunlight through windows) adds IR to the environment. If the background IR is strong enough, it can swamp the detector and make even a dark line look "bright." This is why shiny floors or direct sunlight can confuse your line follower — it's not a code bug, it's physics.
+        </div>
+        <div class="callout callout-info" style="margin-top:12px;">
+            <strong class="highlight">Connection to Standard 1E3:</strong> "Use the principles of ray optics to describe reflection and refraction of light." Your IR line sensor is a direct application of reflection: the emitter produces a ray, the surface reflects it according to its optical properties, and the detector measures what returns. This is ray optics doing real work in an engineering system.
+        </div>
+    </div>
+</div>
+
+<!-- ── SLIDE 7: Check for Understanding ── -->
+<div class="slide">
+    <div class="slide-content">
+        <h2>Check for Understanding</h2>
+        <p class="subtitle">Think through each question before moving on</p>
+
+        <div style="margin-top:10px;">
+            <div class="check-item">
+                <span class="num-badge">1</span>
+                <p>Your line sensor is reading <code>1</code> consistently, even when you hold it over the dark line. What is one possible physical explanation?</p>
+            </div>
+            <div class="check-item">
+                <span class="num-badge">2</span>
+                <p>A classmate's robot works perfectly on a white mat with a black line, but fails when tested on a gray mat with a darker gray line. Explain using what you know about reflection and surface color.</p>
+            </div>
+            <div class="check-item">
+                <span class="num-badge">3</span>
+                <p>If you tilted the IR sensor at a steep angle (not pointing straight down), what would happen to the reflected beam relative to the detector? Would you expect the reading to change? Why?</p>
+            </div>
+            <div class="check-item">
+                <span class="num-badge">4</span>
+                <p>The IR your sensor emits is invisible to your eyes. How could you verify that the emitter LED is actually working without using the code?</p>
+            </div>
+        </div>
+
+        <div class="callout callout-success" style="margin-top:28px;">
+            <strong class="success">Next up:</strong> <strong>Lesson 4.10 — Line Following</strong> — you have the physics. Now write the algorithm.
+        </div>
+    </div>
+</div>
+
+    </div><!-- /presentation -->
+
+    <div class="slide-number" id="slideNum">1 / 7</div>
+    <div class="controls">
+        <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+        <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+    </div>
+
+    <script>
+        let current = 0;
+        const slides = document.querySelectorAll('.slide');
+        const total = slides.length;
+
+        function changeSlide(dir) {
+            slides[current].style.display = 'none';
+            slides[current].classList.remove('active');
+            current = Math.max(0, Math.min(total - 1, current + dir));
+            slides[current].style.display = 'flex';
+            slides[current].classList.add('active');
+            document.getElementById('slideNum').textContent = (current + 1) + ' / ' + total;
+            document.getElementById('prevBtn').disabled = current === 0;
+            document.getElementById('nextBtn').disabled = current === total - 1;
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changeSlide(-1);
+        });
+    </script>
+</body>
+</html>

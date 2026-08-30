@@ -84,6 +84,10 @@ All materials and tools are provided by the school. You do not need to purchase 
 
 Students returning for a second year work at Level 2 (B-track) or Level 3 (A-track). You will complete extension projects, advanced programming challenges, and additional independent work while your classmates cover foundational content. Specific expectations are discussed individually at the start of the year.
 
+### Student Leadership
+
+FIRST Robotics is available to students at all levels as an opportunity to apply engineering skills in a competitive team environment and develop teamwork, time management, and professional communication. The Capstone Project includes a formal presentation of your engineering work to a real audience.
+
 ---
 
 ## Classroom Policies
