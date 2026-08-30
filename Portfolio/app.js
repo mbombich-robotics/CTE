@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack === 'aer8th' ? '8aer' : _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.33',
+    VERSION: 'v2.14.34',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -53,7 +53,7 @@ const WEEK_TOPICS = {
     1:  { title: 'Engineering Design Process', phase: 'edp', unit: '01', focus: 'Intro, Spaghetti Tower challenge, EDP framework, Paper Glider, Design Brief workshop' },
     2:  { title: 'Cardboard Robot Deck Challenge', phase: 'edp', unit: '01', focus: 'Client interview, concept sketching, build, iterate — EDP quiz end of week. Labor Day Mon Sep 7.' },
     // Unit 2 — CAD: Component-Based (Sep 14 – Oct 23)
-    3:  { title: 'CAD: C1 Wheel Hub + C2 Drive Wheel', phase: 'cad', unit: '02', focus: 'F360 orientation; CAD hygiene rules; C1 Wheel Hub — concentric circles, multi-depth extrude; C2 Drive Wheel begin — hex bore, Circular Pattern spokes' },
+    3:  { title: 'CAD: C1 Wheel Hub + C2 Wheel Hub Cap', phase: 'cad', unit: '02', focus: 'F360 orientation; CAD hygiene rules; C1 Wheel Hub — concentric circles, multi-depth extrude; C2 Wheel Hub Cap — measure from AndyMark wheel, bolt circle + counterbore, hex bore' },
     4:  { title: 'CAD: C2 finish + C3 Motor Sleeve Mount', phase: 'cad', unit: '02', focus: 'C2 iterate + print; C3 Motor Sleeve Mount — sleeve bore, T-slot nut-capture rail, face screw holes; version naming. Mid-unit checkpoint quiz.' },
     5:  { title: 'CAD: C3 print + C4 Deck begin + Assembly', phase: 'cad', unit: '02', focus: 'C3 iterate + print; C4 Robot Deck — outer profile + motor mount holes only; start assembly file (deck + C3 linked + constrained). Sep 30 is a 20-min period day.' },
     6:  { title: 'CAD: C5 Omni Wheel Mount + Assembly', phase: 'cad', unit: '02', focus: 'C5 Omni Wheel Mount — multi-plane sketch, axle bore; insert into assembly, drag to position, edit deck sketch to add C5 holes, constrain C5' },
@@ -585,7 +585,7 @@ const DELIVERABLES = [
         tracks: ['8aer'],
         phase: 'cad',
         points: 20,
-        description: 'Document your completed Fusion 360 robot assembly. Submit a full-assembly screenshot with all major components in place — Robot Deck, C1 Wheel Hubs, C2 Drive Wheels, caster, motor mounts, and electronics board mount. Include a brief log of any adjustments made to make components fit together.',
+        description: 'Document your completed Fusion 360 robot assembly. Submit a full-assembly screenshot with all major components in place — Robot Deck, C1 Wheel Hubs, C2 Wheel Hub Caps, caster, motor mounts, and electronics board mount. Include a brief log of any adjustments made to make components fit together.',
     },
     {
         id: 90,
