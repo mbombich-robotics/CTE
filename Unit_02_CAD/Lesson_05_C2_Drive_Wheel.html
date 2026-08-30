@@ -338,22 +338,22 @@
 
         <div class="grid-2">
             <div class="box">
-                <h3 style="color:#00d084;">New: Counterbore</h3>
-                <p style="margin-bottom:12px;">A counterbore is two concentric circles at two different cut depths — nothing more:</p>
+                <h3 style="color:#00d084;">New: Measuring Reference Parts</h3>
                 <ul class="bullet-list">
-                    <li>Large circle = socket head diameter + 0.2 mm clearance; depth = head height + 0.5 mm</li>
-                    <li>Small circle = shaft clearance hole (#10 = ~4.8 mm); cut through the cap</li>
-                    <li>Draw both circles from the same center point in one sketch — one Extrude does both cuts if you set <strong style="color:#00d084;">Extent = To Object</strong> for each profile separately</li>
+                    <li><strong style="color:#00d084;">Measure tool (I)</strong> — click any edge or face in a manufacturer's model to read its exact dimension; never guess a fit-critical hole</li>
+                    <li>Mixed-unit math in the dimension field: <code>0.159in - 0.25mm</code> → Fusion converts and computes the result automatically</li>
+                    <li><strong style="color:#00d084;">Circumscribed Polygon</strong> — hex bore profile; add H/V constraint to fix rotation; set flat-to-flat to 3/8&Prime;; switch to construction line; then <strong style="color:#00d084;">Offset at −0.25 mm</strong> to get the actual extrudable hex (print clearance)</li>
+                    <li><strong style="color:#00d084;">Circular Pattern (sketch)</strong> → Create → Circular Pattern; select the single pin circle; center = origin; quantity = 6; Fusion spaces them 60° apart</li>
                 </ul>
             </div>
 
             <div class="box">
-                <h3 style="color:#00d084;">New: Bolt Circle for Pins</h3>
+                <h3 style="color:#00d084;">New: Three-Extrusion Sequence</h3>
                 <ul class="bullet-list">
-                    <li>Sketch one pin (a circle) on the bolt circle radius from the reference drawing</li>
-                    <li>Extrude it to pin length (protrusion beyond cap face)</li>
-                    <li><strong style="color:#00d084;">Circular Pattern</strong> → select the pin body, set axis to center axis, count = 6</li>
-                    <li>Fusion distributes all 6 at equal 60° spacing automatically</li>
+                    <li><strong>Extrusion 1 — Disc body:</strong> select all profiles except the center hole; +2 mm outward</li>
+                    <li><strong>Extrusion 2 — Pins + hex insert:</strong> make sketch visible; select 6 pin circles + offset hex polygon; −2 mm (back face, toward wheel). This also creates the standoff gap.</li>
+                    <li><strong>Extrusion 3 — Counterbore boss:</strong> Press E → set <strong style="color:#00d084;">Start = Object</strong>, click the outer disc face; hide bodies; select all profiles <em>except</em> the center hole and the 9.5 mm counterbore ring; +2.5 mm. Builds material around the recess so the screw head sits recessed flush.</li>
+                    <li>Finish: Fillet all pin faces + hex insert face at 0.5 mm for easy assembly fit</li>
                 </ul>
             </div>
         </div>
