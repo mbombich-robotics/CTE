@@ -11,9 +11,9 @@
 
 ## Course Description
 
-Applied Engineering & Robotics is a full-year, project-based course where you design, build, and program a real autonomous robot. You will use professional tools — Fusion 360 CAD software, a Raspberry Pi Pico 2W microcontroller, MicroPython, 3D printers, and CNC machines — to engineer L.E.O. (Logic, Electronics, and Operations), a custom three-wheeled robot built from the ground up.
+Applied Engineering & Robotics is a full-year, project-based course where you design, build, and program a real autonomous robot. You will use professional tools — Autodesk Fusion CAD software, a Raspberry Pi Pico 2W microcontroller, MicroPython, 3D printers, and CNC machines — to engineer L.E.O. (Logic, Electronics, and Operations), a custom  robotics platform built from the ground up.
 
-Work follows the Engineering Design Process: you do not just assemble kits. You model every component in CAD, iterate based on caliper measurements, write code that controls motors and sensors, and document your decisions in a digital portfolio. By the end of the year you will have a portfolio of engineering work you can use in future courses, job applications, and college admissions.
+Work follows the Engineering Design Process: you do not just assemble kits. You model every component in CAD, iterate based on testing and measurements, write code that controls motors and sensors, and document your decisions in a digital portfolio. By the end of the year you will have a portfolio of engineering work you can use in future courses, job applications, and college admissions.
 
 **Academic Credits:** 4th year related math / 3rd year science  
 **College Credit:** Pending KVCC articulation agreement
@@ -27,7 +27,7 @@ By the end of the year, you will be able to:
 - Apply the Engineering Design Process to define problems, generate solutions, and iterate based on evidence.
 - Model mechanical components in Autodesk Fusion 360, produce technical drawings, and manage a multi-part assembly.
 - Program a Raspberry Pi Pico 2W in MicroPython to control motors, read sensors, and implement autonomous behaviors.
-- Fabricate parts using 3D printers (Bambu), a CNC router, and hand tools — with precision verified by calipers.
+- Fabricate parts using 3D printers, a CNC router, and hand tools — with precision verified by calipers.
 - Wire and troubleshoot electronic circuits including motor drivers, IR sensors, and ultrasonic distance sensors.
 - Practice shop safety: PPE, 5S, lockout/tagout, and safety data sheets.
 - Reflect on your engineering decisions in a digital portfolio and connect your work to career pathways.
@@ -41,8 +41,8 @@ All materials and tools are provided by the school. You do not need to purchase 
 | Category | Items |
 |----------|-------|
 | **Electronics** | Raspberry Pi Pico 2W, L.E.O. interface board, IR sensors, HC-SR04 ultrasonic sensors, servo motor |
-| **Software** | Autodesk Fusion 360 (CAD), Thonny IDE (MicroPython), Google Workspace |
-| **Fabrication** | Bambu 3D printers (PLA), CNC router, drill press, hand tools, calipers |
+| **Software** | Autodesk Fusion (CAD), Thonny IDE (MicroPython), Google Workspace |
+| **Fabrication** | Bambu and Creality 3D printers, CNC router, drill press, hand tools, calipers |
 | **Safety** | Safety glasses, gloves, hearing protection (provided) |
 | **Resources** | Class portfolio site, Google Classroom, Pico 2W reference docs |
 
@@ -92,7 +92,7 @@ Students returning for a second year work at Level 2 (B-track) or Level 3 (A-tra
 PPE is required whenever shop tools or electronics are in use. A safety violation results in a 10-point deduction from your Safety, 5S & Participation grade and immediate removal from the work area. Repeated violations will be referred to administration.
 
 **Attendance**  
-This class is hands-on — you cannot make up lab time from home. Excused absences receive full make-up opportunities; unexcused absences result in a zero for that day.
+This class is hands-on — you cannot make up lab time from home. Excused absences receive full make-up opportunities.
 
 **Late Work**  
 Portfolio deliverables are accepted up to 3 school days late with a 10% per day penalty. After 3 days, work is accepted for partial credit at the teacher's discretion. Talk to Mr. Bombich before the deadline if you need an extension.
@@ -101,7 +101,7 @@ Portfolio deliverables are accepted up to 3 school days late with a 10% per day 
 You may use AI tools to help you understand concepts, debug code, or generate ideas — but the work you submit must reflect your own thinking. Copying another student's code, design, or written reflection is academic dishonesty and will be handled per school policy.
 
 **Accommodations**  
-IEPs and 504 plans are fully supported. Please discuss your needs privately and early — accommodations work best when we plan ahead together.
+Accommodation plans are fully supported. Please discuss your needs privately and early — accommodations work best when we plan ahead together.
 
 ---
 

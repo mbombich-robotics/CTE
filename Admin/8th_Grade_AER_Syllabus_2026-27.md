@@ -36,8 +36,8 @@ All materials and tools are provided. You do not need to purchase anything.
 | Category | Items |
 |----------|-------|
 | **Electronics** | Raspberry Pi Pico 2W, L.E.O. interface board, basic sensors |
-| **Software** | Autodesk Fusion 360, Thonny IDE (MicroPython), Google Workspace |
-| **Fabrication** | Bambu 3D printers (PLA), drill press, hand tools, calipers |
+| **Software** | Autodesk Fusion (CAD), Thonny IDE (MicroPython), Google Workspace |
+| **Fabrication** | Bambu and Creality 3D printers, drill press, hand tools, calipers |
 | **Safety** | Safety glasses, gloves (provided) |
 | **Resources** | Class portfolio site, Google Classroom |
 
@@ -82,7 +82,7 @@ All materials and tools are provided. You do not need to purchase anything.
 PPE is required whenever shop tools or electronics are in use. A safety violation results in a 10-point deduction from your Safety, 5S & Participation grade and removal from the work area. Repeated violations will be referred to administration.
 
 **Attendance**  
-Lab time cannot be recreated from home. Excused absences receive make-up opportunities; unexcused absences result in a zero for that day.
+Lab time cannot be recreated from home. Excused absences receive full make-up opportunities.
 
 **Late Work**  
 Portfolio deliverables are accepted up to 3 school days late with a 10% per day penalty. Talk to Mr. Bombich before the deadline if you need an extension.
@@ -91,7 +91,7 @@ Portfolio deliverables are accepted up to 3 school days late with a 10% per day 
 AI tools may be used to understand concepts or get unstuck — but submitted work must reflect your own thinking. Copying is academic dishonesty and handled per school policy.
 
 **Accommodations**  
-IEPs and 504 plans are fully supported. Please discuss your needs early.
+Accommodation plans are fully supported. Please discuss your needs privately and early — accommodations work best when we plan ahead together.
 
 ---
 
