@@ -70,9 +70,11 @@ All materials and tools are provided. You do not need to purchase anything.
 | 2 | CAD & 3D Printing | 3–8 | Fusion 360 modeling, caliper measurement, iterative printing (C1–C2) |
 | 3 | Shop Safety | 9 | Drill press, PPE, LOTO, SDS — certification before build phase |
 | 4 | Programming & Robotics | 10–16 | MicroPython basics, motor control, IR sensors, simple autonomous behaviors |
-| 6 | Career Readiness | ongoing | Career exploration, paycheck analysis, portfolio reflection |
+| 6* | Career Readiness | ongoing | Career exploration, paycheck analysis, portfolio reflection |
 
 *Exact pacing is posted in Google Classroom. Weeks are approximate.*
+
+*\* Unit 5 (AI & Machine Learning) is not included in the 8th grade course. The one-semester format requires a condensed scope; Unit 5 is covered in the full-year high school course.*
 
 ---
 
