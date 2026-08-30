@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack === 'aer8th' ? '8aer' : _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.32',
+    VERSION: 'v2.14.33',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -142,7 +142,7 @@ const DELIVERABLES = [
         week: 1,
         phase: 'edp',
         alwaysOpen: true,
-        points: 0,
+        points: 10,
         description: 'Three items to complete in the first week: the entry questionnaire, your signed syllabus, and your signed safety contract.',
     },
     {
