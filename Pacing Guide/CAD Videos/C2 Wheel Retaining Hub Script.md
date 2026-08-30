@@ -19,9 +19,9 @@ Autodesk Fusion · HS Applied Engineering & Robotics
 
 [SCENE 1 — Motor and AndyMark wheel in the assembly visible on screen. Hub position highlighted to show the 2mm standoff gap between wheel face and motor flange.]
 
-"Let's start with what this component actually does, because once you understand the three jobs, the sketch writes itself."
+"Let's start with what this component actually does, because it's a little bit more than just a decoration."
 
-"Job one: standoff. The wheel needs to sit about two millimeters away from the motor — so the hub has a hex protrusion on the back that spaces it out. Job two: anti-rotation. Six pins on the back of the hub drop into the AndyMark wheel's hole pattern and lock the hub from spinning. Job three: retention. A ten-thirty-two screw through the center holds the hub on — and holds the wheel on the shaft."
+"Job one: standoff. The wheel's shoulder needs to sit about two millimeters away from the motor shaft's shoulder — so the hub has a hex protrusion on the back that spaces it out. Job two: anti-rotation. Six pins on the back of the hub drop into the AndyMark wheel's hole pattern and lock the hub from spinning. Job three: retention. A ten-thirty-two screw through the center holds the hub on — and holds the wheel on the shaft."
 
 "That's it. Everything we draw is in service of those three things."
 
@@ -39,9 +39,9 @@ Autodesk Fusion · HS Applied Engineering & Robotics
 
 "Starting with the screw. Press I on your keyboard to open the Measure tool."
 
-"First measurement — the screw shaft. Outside diameter of the threads is four point nine nine eight millimeters. We need a clearance hole, so I'm using five point eight millimeters — that's a comfortable slip fit for something this close to an M5."
+"First measurement — the screw shaft. Outside diameter of the threads is 4.998 millimeters. We need a clearance hole, so I'm using 5.8 millimeters — that's a comfortable slip fit."
 
-"Second measurement — the screw head. Outside diameter is nine point one five three millimeters. For the counterbore, I'll go nine point five. Write those two numbers down: five point eight and nine point five."
+"Second measurement — the screw head. Outside diameter is 9.153 millimeters. Head depth is 2.75 mm. For the counterbore, I'll go 9.5 mm wide and 2.75 mm deep. Write those three numbers down: 5.8, 9.5, and 2.75."
 
 ---
 
@@ -49,9 +49,9 @@ Autodesk Fusion · HS Applied Engineering & Robotics
 
 "Back to our hub file. Start a new sketch on the XY plane. Using the circle tool, I'll draw two circles, both constrained to the origin."
 
-"First circle: five point eight millimeters. That's the clearance hole for the screw shank."
+"First circle: 5.8 millimeters. That's the clearance hole for the screw shank."
 
-"Second circle: nine point five millimeters. That's the counterbore — the recess the screw head will sit down into."
+"Second circle: 9.5 millimeters. That's the counterbore — the recess the screw head will sit down into."
 
 "Those two circles are our reference for the retention screw. Now we go measure the wheel."
 
@@ -61,41 +61,39 @@ Autodesk Fusion · HS Applied Engineering & Robotics
 
 "Over to the AndyMark wheel. Two things to measure here."
 
-"First — the bolt circle. That's the diameter of the circle the six holes sit on. Press I, measure across the pattern. The bolt circle diameter is one point eight seven five inches. Notice Fusion is showing inches — that's what AndyMark used when they built this model, and that's fine. We'll let Fusion handle the conversion."
+"First — the bolt circle. That's the diameter of the circle the six holes sit on. Press I, measure across the pattern. The bolt circle diameter is 1.875 inches. Notice Fusion is showing inches — that's what AndyMark used when they built this model, and that's fine. We'll let Fusion handle the conversion."
 
-"Second — the hole diameter. Click one of the six holes. Diameter is zero point one five nine inches. Our pins need to be slightly smaller than that — enough to slip in without forcing. I want about a quarter millimeter of clearance, so: zero point one five nine inches minus zero point two five millimeters. Type that directly into the dimension field and Fusion will do the math — it comes out to three point seven eight nine millimeters. That's our pin diameter."
+"Second — the hole diameter. Click one of the six holes. Diameter is 0.159 inches. Our pins need to be slightly smaller than that — enough to slip in without forcing. I want about a quarter millimeter of clearance, so: 0.159 inches minus 0.25 millimeters. Type that directly into the dimension field and Fusion will do the math — it comes out to 3.789 mm. That's our pin diameter."
 
-"Write down three numbers: one point eight seven five inches, zero point one five nine inches, and three point seven eight nine millimeters."
+"Write down three numbers: 1.875 inches, 0.159 inches, and 3.789 millimeters."
 
 ---
 
 [SCENE 6 — Back in hub sketch. Construction circle drawn at 1.875 inches diameter. One pin circle drawn on the construction circle.]
 
-"Back to our hub sketch. From the circle tool, draw a new circle from the origin and set it to one point eight seven five inches. Before you lock it in, switch it to a construction line in the Sketch Palette — this is a reference circle, not geometry we'll extrude."
+"Back to our hub sketch. From the circle tool, draw a new circle from the origin and set it to 1.875 inches. Before you lock it in, switch it to a construction line in the Sketch Palette — this is a reference circle, not geometry we'll extrude."
 
-"Now draw one non-construction circle, on the construction circle, anywhere on the circumference. Set its diameter to three point seven eight nine millimeters. This is one pin — we'll pattern the rest in a moment."
+"Now draw one non-construction circle, on the construction circle, anywhere on the circumference. Set its diameter to 3.789 millimeters. This is one pin — we'll pattern the rest in a moment."
 
 ---
 
 [SCENE 7 — Circumscribed Polygon drawn. Construction line applied. H/V constraint shown. Dimension applied at 3/8 inch. Offset tool applied at -0.25mm.]
 
-"Now the hex. Go to Create, Polygon, Circumscribed Polygon. Draw it out from the origin — make it slightly too large for now, we'll dimension it properly in a moment."
+"Now the hex. Go to Create, Polygon, Circumscribed Polygon. Draw it out from the origin — make it a construction line, and make it slightly too large for now, we'll dimension it properly in a moment."
 
-"Before adding the dimension, apply the Horizontal-Vertical constraint to one of the flats. This pins the polygon so it can't rotate freely in the sketch."
+"Before adding the dimension, apply the Horizontal-Vertical constraint to one of the flats. This constrains the polygon so it can't rotate freely in the sketch."
 
 "Here's a detail worth pausing on — I'm orienting the polygon so that one of its points faces straight up. That puts a point at twelve o'clock. And I'm aligning that twelve o'clock position with my pin circle from the last step. This matches the AndyMark wheel geometry, where one of the six holes lines up with a corner of the hex bore."
 
-"Now — make the polygon a construction line. Select it and change the line type in the Sketch Palette. We want the polygon to be a reference, not an extrudable profile. We'll offset it to get the actual geometry."
+"Press D to dimension flat-to-flat. The wheel's hex bore is 3/8 inch — type that directly. Hit Enter."
 
-"Press D to dimension flat-to-flat. The wheel's hex bore is three-eighths inch — type that directly. Hit Enter."
-
-"Now go to Modify, Offset. Click the construction polygon and type negative zero point two five. That's our three-D-print clearance. The finished hex feature will be a quarter millimeter smaller than the wheel's bore — enough to slide in cleanly without slop."
+"Now go to Modify, Offset. Click the construction polygon and type negative zero point two five. That's our 3-D-print clearance. The finished hex feature will be a quarter millimeter smaller than the wheel's bore — enough to slide in cleanly without slop. You'll check that when you're test fitting the parts.
 
 ---
 
 [SCENE 8 — Circular Pattern dialog open in sketch. Pin circle selected. Center point set. Quantity set to 6.]
 
-"Six pins. Go to Create, Circular Pattern. Select the pin circle, set the center point to the origin, and set the quantity to six. Fusion distributes them evenly at sixty degrees apart."
+"Next the six pins. Go to Create, Circular Pattern. Select the pin circle, set the center point to the origin, and set the quantity to six. Fusion distributes them evenly."
 
 "Take a look and confirm they're sitting on that construction circle — they should match the AndyMark hole pattern exactly."
 
@@ -109,9 +107,9 @@ Autodesk Fusion · HS Applied Engineering & Robotics
 
 "First extrusion — the main disc body. Press E on your keyboard for Extrude."
 
-"Click and drag to select all geometry, then deselect the five point eight millimeter center hole. That through-hole runs the full depth of the hub — we don't want any material there."
+"Click and drag to select all geometry, then deselect the 5.8 millimeter screw clearance hole. That through-hole runs the full depth of the hub — we don't want any material there."
 
-"Set the distance to two millimeters and hit OK. The disc is done."
+"Set the distance to 4 millimeters and hit OK. The disc is done."
 
 ---
 
@@ -119,9 +117,9 @@ Autodesk Fusion · HS Applied Engineering & Robotics
 
 "Make the sketch visible again. Second extrusion — the pins and the hex insert."
 
-"Press E and select the six pin circles and the offset hex polygon — these are the anti-rotation features that protrude into the back of the wheel. Set the distance to negative two millimeters. That sends them out the back face, toward the wheel."
+"Press E and select the six pin circles and the offset hex polygon — these are the anti-rotation features that protrude into the back of the wheel. Set the distance to negative 2 mm. That sends them out the back face, toward the wheel."
 
-"Hit OK. Those two millimeters of hex protrusion are also what creates the standoff — the wheel face sits two millimeters away from the motor."
+"Hit OK. Those 2 mm of hex protrusion are also what creates the standoff — the wheel face sits 2 mm away from the face of the motor shaft."
 
 "Save."
 
@@ -129,13 +127,15 @@ Autodesk Fusion · HS Applied Engineering & Robotics
 
 [SCENE 11 — Extrude dialog. Start set to Object, outer face of disc selected. Bodies hidden. All profiles selected except center hole and 9.5mm counterbore ring. Extruded 2.5mm outward.]
 
-"Third extrusion — the counterbore. Press E. This time, set Start to Object and click the outer face of the disc. That's where we're building from."
+"Third extrusion — the counterbore. Press E. This time, set Start to Object and click the outer face of the disc. That's where we're counterboring from."
 
-"Now click Profiles. Hide the bodies so you can see the sketch clearly. Click and drag to select everything, then deselect two profiles: the five point eight millimeter center hole and the nine point five millimeter counterbore ring."
+"Now click Profiles. Hide the bodies so you can see the sketch clearly. Select the 5.8 mm center hole and the 9.5 mm counterbore ring."
 
-"What's left selected is all the material around the counterbore — the outer ring and any area outside the screw head. Set the distance to two point five millimeters and hit OK."
+Make your bodies visible again. 
 
-"Make your bodies visible again. What you've built is a raised boss on the front face with a two-and-a-half-millimeter recess right where the screw head sits. The screw drops in flush, the shank passes through the five point eight hole, and the head is protected. Hide the sketch and inspect what you have."
+Set the distance to -2.75 mm and hit OK."
+
+"What you've built is raised bosses on the rear face with a 2.75 mm recess right where the screw head sits. The screw drops in flush, the shank passes through the 5.8 hole, and the head is protected. Hide the sketch and inspect what you have."
 
 ---
 
@@ -143,9 +143,9 @@ Autodesk Fusion · HS Applied Engineering & Robotics
 
 "Last step before the creative work — surface finishing. Go to Modify, Fillet."
 
-"Click on all of the pin cylinder faces. Add the hex bore insert face as well. Set the radius to zero point five millimeters. These chamfers ease the entry so the hub drops into the wheel without forcing — a small detail that makes a real difference when you're fitting it at the assembly table."
+"Click on all of the pin cylinder faces. Add the hex bore insert face as well. Set the radius to 0.5 mm. These chamfers ease the entry so the hub drops into the wheel without forcing — a small detail that makes a real difference when you're fitting it at the assembly table."
 
-"Click OK. Spin the model. Check that every face reads the way you want it to. Save."
+"Click OK. Spin the model. Check that everything looks the way you want it to. Hit Save."
 
 ---
 
@@ -155,7 +155,7 @@ Autodesk Fusion · HS Applied Engineering & Robotics
 
 "The functional design is complete. But this face —" [tap or indicate the front face] "— is yours."
 
-"Start a new sketch on the outer face. Draw any geometry you want: a ring pattern, cutouts, a name emboss, a design that means something to you. Then use Circular Pattern to repeat it around the center and give the whole face a cohesive look."
+"Start a new sketch on the outer face. Draw any geometry you want: a ring pattern, cutouts, flames, a robot name emboss, or a design that means something to you. If it makes sense, use the Circular Pattern to repeat it around the center and give the whole face a clean look."
 
 "That's one approach — there are plenty of others. Pockets, raised features, organic shapes. The constraint is simple: don't compromise the counterbore or the outer edge, and make sure it still prints. Everything inside those limits is your call."
 

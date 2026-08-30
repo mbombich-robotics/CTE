@@ -1,6 +1,6 @@
 # CTE Project — Todo List
 
-Last updated: 2026-08-28 (schedule system added)
+Last updated: 2026-08-30
 
 ---
 
@@ -21,10 +21,17 @@ Last updated: 2026-08-28 (schedule system added)
 - [ ] Add weeks 5+ to schedule-data.json as pacing progresses (and sync EMBEDDED in daily-schedule.html)
 - [ ] Verify career connection PDF filenames load correctly on GitHub Pages
 
+### Admin
+- [ ] CTE application — items TBD
+- [ ] Career-ready behavior discussion — lounging/feet-on-desks prompted this; roll into a career connection lesson
+- [ ] Perkins crosswalk: confirm C4 standard scope (civil only, structural only, or both) — look up in Michigan Perkins V instructional design framework; then design content to address it
+- [ ] Perkins crosswalk: add Wokwi simulation pre-lab to Unit 4 (before breadboard activities) — closes C7 gap
+- [ ] Perkins crosswalk: confirm PM1 coverage with school counselor — verify paycheck/budget work in Unit 0/6 satisfies PM1 on the Instructional Design Form, or if another dept already claims it
+
 ### Curriculum / Content
 - [ ] D4.2 quiz questions — write Q1–Q5 for Activity 4.6 Motor Control (D51 in quiz content)
 - [ ] Confirm `leo.py` API names with coworker before publishing robot programming lessons
-- [ ] Generate/update syllabi PDFs from the three .md syllabus files
+- [x] Generate/update syllabi PDFs from the three .md syllabus files
 
 ### Deferred (revisit later)
 - [ ] Iterative submission + AI feedback loop — Phase 1: deliverables D8/D9 (deferred)
