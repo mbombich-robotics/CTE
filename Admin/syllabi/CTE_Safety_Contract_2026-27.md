@@ -1,6 +1,6 @@
 # CTE Safety & Technology Contract
 **Vicksburg Community Schools — Room 70**  
-**Instructor: Mr. Bombich · mbombich@vicksburgschools.org**  
+**Instructor: Matt Bombich · mbombich@vicksburgschools.org**  
 **School Year: 2026–2027**
 
 **Courses:** Applied Engineering & Robotics (HS) · Applied Engineering & Robotics (8th Grade) · Design and Build Lab
@@ -12,7 +12,7 @@
 
 ---
 
-Please read each item carefully. Write your initials on the line to confirm you understand and agree. Return the signed contract to Mr. Bombich. A parent or guardian signature is required.
+Please read each item carefully. Write your initials on the line to confirm you understand and agree. Return the signed contract to Matt Bombich. A parent or guardian signature is required.
 
 ---
 

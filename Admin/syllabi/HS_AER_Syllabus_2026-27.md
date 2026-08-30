@@ -1,7 +1,7 @@
 # Applied Engineering & Robotics — Syllabus
 
 **School Year:** 2026–2027  
-**Instructor:** Mr. Bombich  
+**Instructor:** Matt Bombich  
 **Email:** mbombich@vicksburgschools.org  
 **Room:** 70  
 **Office Hours:** Monday–Thursday, 2:45–3:15 pm  
@@ -99,7 +99,7 @@ PPE is required whenever shop tools or electronics are in use. A safety violatio
 This class is hands-on — you cannot make up lab time from home. Excused absences receive full make-up opportunities.
 
 **Late Work**  
-Portfolio deliverables are accepted up to 3 school days late with a 10% per day penalty. After 3 days, work is accepted for partial credit at the teacher's discretion. Talk to Mr. Bombich before the deadline if you need an extension.
+Portfolio deliverables are accepted up to 3 school days late with a 10% per day penalty. After 3 days, work is accepted for partial credit at the teacher's discretion. Talk to Matt Bombich before the deadline if you need an extension.
 
 **Academic Integrity**  
 You may use AI tools to help you understand concepts, debug code, or generate ideas — but the work you submit must reflect your own thinking. Copying another student's code, design, or written reflection is academic dishonesty and will be handled per school policy.
