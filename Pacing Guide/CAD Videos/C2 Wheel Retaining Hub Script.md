@@ -6,12 +6,12 @@
 
 [COLD OPEN — 3–4 sec, finished hub cap rotating in Fusion, clean background, no UI]
 
-[TITLE CARD — 3 sec]
+[TITLE CARD — 5 sec]
 C2 — Wheel Retaining Hub
 Autodesk Fusion · HS Applied Engineering & Robotics
 
 [VERBAL]
-"C2. The wheel retaining hub. This is the piece that locks the AndyMark 4-inch wheel onto the motor shaft — and the front face is yours to design. Let's build it."
+"C2. The wheel retaining hub. This is the piece that locks the AndyMark 4-inch wheel onto the motor shaft — and the front face is a blank canvas for you to make your robot unique. Let's build it."
 
 ---
 
@@ -41,7 +41,7 @@ Autodesk Fusion · HS Applied Engineering & Robotics
 
 "First measurement — the screw shaft. Outside diameter of the threads is 4.998 millimeters. We need a clearance hole, so I'm using 5.8 millimeters — that's a comfortable slip fit."
 
-"Second measurement — the screw head. Outside diameter is 9.153 millimeters. Head depth is 2.75 mm. For the counterbore, I'll go 9.5 mm wide and 2.75 mm deep. Write those three numbers down: 5.8, 9.5, and 2.75."
+"Second measurement — the screw head. Outside diameter is 9.153 millimeters. Head depth is 2.565 mm. For the counterbore, I'll go 9.5 mm wide and 3 mm deep. Write those three numbers down: 5.8, 9.5, and 3."
 
 ---
 
@@ -73,7 +73,9 @@ Autodesk Fusion · HS Applied Engineering & Robotics
 
 "Back to our hub sketch. From the circle tool, draw a new circle from the origin and set it to 1.875 inches. Before you lock it in, switch it to a construction line in the Sketch Palette — this is a reference circle, not geometry we'll extrude."
 
-"Now draw one non-construction circle, on the construction circle, anywhere on the circumference. Set its diameter to 3.789 millimeters. This is one pin — we'll pattern the rest in a moment."
+"Now draw one non-construction circle, on the construction circle, anywhere on the circumference. Set its diameter to 3.789 millimeters. 
+
+This is one pin — we'll pattern the rest in a moment."
 
 ---
 
@@ -117,11 +119,7 @@ Autodesk Fusion · HS Applied Engineering & Robotics
 
 "Make the sketch visible again. Second extrusion — the pins and the hex insert."
 
-"Press E and select the six pin circles and the offset hex polygon — these are the anti-rotation features that protrude into the back of the wheel. Set the distance to negative 2 mm. That sends them out the back face, toward the wheel."
-
-"Hit OK. Those 2 mm of hex protrusion are also what creates the standoff — the wheel face sits 2 mm away from the face of the motor shaft."
-
-"Save."
+"Press E and select the six pin circles and the hex polygon — these are the anti-rotation features that protrude into the back of the wheel. Set the distance to negative 2 mm. That sends them out the back face, toward the wheel."
 
 ---
 
@@ -135,7 +133,7 @@ Make your bodies visible again.
 
 Set the distance to -2.75 mm and hit OK."
 
-"What you've built is raised bosses on the rear face with a 2.75 mm recess right where the screw head sits. The screw drops in flush, the shank passes through the 5.8 hole, and the head is protected. Hide the sketch and inspect what you have."
+"What you've built is raised bosses on the rear face and a 2.75 mm recess on the front face where the screw head sits. The screw drops in flush, the shank passes through the 5.8 hole, and the head is protected. Hide the sketch and inspect what you have."
 
 ---
 

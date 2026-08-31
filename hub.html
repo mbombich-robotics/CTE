@@ -248,12 +248,12 @@ const BASE         = 'https://mbombich-robotics.github.io/CTE/';
 // ── BACKGROUND IMAGES ────────────────────────────────
 const BG = {
   hsaer:  'Assets/Hub/HSAER%20Hub%20Background.jpg',
-  aer8th: 'Assets/Hub/8AER%20Hub%20Background.jpg',
+  '8aer': 'Assets/Hub/8AER%20Hub%20Background.jpg',
   dbl:    'Assets/Hub/DBL%20Hub%20Background.jpg',
 };
 const TRACKS = {
   hsaer:  { label:'HS AER',        acc:'#00d4ff', accd:'rgba(0,212,255,.12)', bg: BG.hsaer  },
-  aer8th: { label:'8th Grade AER', acc:'#50fa7b', accd:'rgba(80,250,123,.12)', bg: BG.aer8th },
+  '8aer': { label:'8th Grade AER', acc:'#50fa7b', accd:'rgba(80,250,123,.12)', bg: BG['8aer'] },
   dbl:    { label:'D&B Lab',       acc:'#ff9500', accd:'rgba(255,149,0,.12)', bg: BG.dbl    },
 };
 
@@ -285,13 +285,13 @@ async function loadSchedule() {
 }
 
 // Returns the week object whose start/end straddles today, or null.
-// For aer8th checks G1 then G2 (date ranges don't overlap).
+// For 8aer checks G1 then G2 (date ranges don't overlap).
 function getWeekData(track) {
   if (!scheduleData) return null;
   const today = new Date().toISOString().slice(0, 10); // 'YYYY-MM-DD'
-  if (track === 'aer8th') {
-    const g1 = scheduleData.tracks.aer8th?.g1?.weeks || [];
-    const g2 = scheduleData.tracks.aer8th?.g2?.weeks || [];
+  if (track === '8aer') {
+    const g1 = scheduleData.tracks['8aer']?.g1?.weeks || [];
+    const g2 = scheduleData.tracks['8aer']?.g2?.weeks || [];
     return g1.find(w => today >= w.start && today <= w.end)
         || g2.find(w => today >= w.start && today <= w.end)
         || null;

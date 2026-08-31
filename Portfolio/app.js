@@ -8,9 +8,9 @@ const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlna
 
 // Track param from URL - set by class hub pages (?track=hsaer / 8aer / dbl)
 // Overrides stored course for returning students in multiple classes.
-// Normalize hub key 'aer8th' → portfolio's canonical '8aer' (hub and portfolio use different keys).
+// Track key is now standardized to '8aer' everywhere — no normalization needed.
 const _rawTrack = new URLSearchParams(window.location.search).get('track') || null;
-const URL_TRACK = _rawTrack === 'aer8th' ? '8aer' : _rawTrack;
+const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
@@ -2233,8 +2233,8 @@ async function loadScheduleDueDates() {
         if (!res.ok) return;
         const data = await res.json();
 
-        // Map portfolio course key → schedule-data.json track key
-        const trackKey = state.course === '8aer' ? 'aer8th' : state.course;
+        // schedule-data.json now uses '8aer' key — matches portfolio key directly
+        const trackKey = state.course;
         const trackData = data.tracks[trackKey];
         if (!trackData) return;
 

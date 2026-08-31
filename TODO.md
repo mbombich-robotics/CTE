@@ -25,7 +25,6 @@ Last updated: 2026-08-30
 - [ ] CTE application — items TBD
 - [ ] Career-ready behavior discussion — lounging/feet-on-desks prompted this; roll into a career connection lesson
 - [ ] Perkins crosswalk: confirm C4 standard scope (civil only, structural only, or both) — look up in Michigan Perkins V instructional design framework; then design content to address it
-- [ ] Perkins crosswalk: add Wokwi simulation pre-lab to Unit 4 (before breadboard activities) — closes C7 gap
 - [ ] Perkins crosswalk: confirm PM1 coverage with school counselor — verify paycheck/budget work in Unit 0/6 satisfies PM1 on the Instructional Design Form, or if another dept already claims it
 
 ### Curriculum / Content
