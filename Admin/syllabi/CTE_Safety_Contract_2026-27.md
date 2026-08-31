@@ -56,7 +56,7 @@ ___ I will use only district-provided devices and my single district-issued acco
 
 ___ I will not attempt to use additional accounts, share login credentials, or access another student's account.
 
-___ I will not use a VPN or any tool or technique designed to circumvent district network security. Doing so will result in a referral to administration.
+___ I will not use a VPN, proxy site, or any other tool or technique designed to circumvent district network security. Doing so will result in a referral to administration.
 
 ___ I understand that classroom work is not private. Switching desktops, closing tabs, or closing applications when the instructor approaches is not permitted.
 
