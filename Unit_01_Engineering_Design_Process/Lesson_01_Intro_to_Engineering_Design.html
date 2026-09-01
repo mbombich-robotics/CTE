@@ -290,7 +290,45 @@
         </div>
     </div>
 
-    <!-- Slide 5: Career Connection -->
+    <!-- Slide 5: Safety Contract -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2 style="color:#ff5555;">Safety &amp; Technology Contract</h2>
+            <div class="objective-box" style="border-color:#ff5555; box-shadow:0 0 30px rgba(255,85,85,0.2); margin-bottom:20px;">
+                <h3 style="color:#ff5555; margin-bottom:14px;">Activity Instructions</h3>
+                <ul class="bullet-list">
+                    <li>You have a printed copy of the Safety &amp; Technology Contract</li>
+                    <li>We will read through every section <span class="highlight">together as a class</span></li>
+                    <li>After each item, write your <span class="highlight">initials on the line</span> to confirm you understand</li>
+                    <li>If you have a question about any item — <span class="warning">stop and ask before initialing</span></li>
+                </ul>
+            </div>
+            <div class="grid-2">
+                <div class="step-box" style="border-color:#e05a6a;">
+                    <h3 style="color:#e05a6a; margin-bottom:10px;">📋 Five Sections</h3>
+                    <ul class="bullet-list" style="font-size:1rem;">
+                        <li>Part 1 — Personal Protective Equipment</li>
+                        <li>Part 2 — Shop &amp; Workspace Safety</li>
+                        <li>Part 3 — Emergency Procedures</li>
+                        <li>Part 4 — Electronics &amp; Device Use</li>
+                        <li>Part 5 — Grading &amp; Consequences</li>
+                    </ul>
+                </div>
+                <div class="box" style="background:rgba(255,85,85,0.08); border-color:#ff5555; display:flex; flex-direction:column; justify-content:center; gap:16px; padding:24px;">
+                    <div>
+                        <p style="font-size:1.05rem; color:#ff5555; font-weight:700; margin-bottom:6px;">📬 Take it home tonight</p>
+                        <p style="font-size:0.95rem; margin:0;">A parent or guardian signature is required. Return it signed by <span class="highlight">Friday</span>.</p>
+                    </div>
+                    <div>
+                        <p style="font-size:1.05rem; color:#50fa7b; font-weight:700; margin-bottom:6px;">✅ No penalty for questions</p>
+                        <p style="font-size:0.95rem; margin:0;">Raise your hand anytime. That's what the contract is for — to make sure everyone understands before we start.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 6: Career Connection -->
     <div class="slide">
         <div class="slide-content">
             <h2>Career Connection <span class="pltw-tag">PLTW</span></h2>
@@ -347,44 +385,6 @@
                 <p style="font-size: 1.1rem; margin: 0;">Take 2 minutes. Write at least one problem in your notebook.<br>We'll hear a few answers before moving on.</p>
             </div>
             <p style="margin-top: 25px; font-size: 0.95rem; color: #888; font-style: italic;">There's no wrong answer. Engineers solve problems for people, society, and even animals.</p>
-        </div>
-    </div>
-
-    <!-- Slide 7: Safety Contract -->
-    <div class="slide">
-        <div class="slide-content">
-            <h2 style="color:#ff5555;">Safety &amp; Technology Contract</h2>
-            <div class="objective-box" style="border-color:#ff5555; box-shadow:0 0 30px rgba(255,85,85,0.2); margin-bottom:20px;">
-                <h3 style="color:#ff5555; margin-bottom:14px;">Activity Instructions</h3>
-                <ul class="bullet-list">
-                    <li>You have a printed copy of the Safety &amp; Technology Contract</li>
-                    <li>We will read through every section <span class="highlight">together as a class</span></li>
-                    <li>After each item, write your <span class="highlight">initials on the line</span> to confirm you understand</li>
-                    <li>If you have a question about any item — <span class="warning">stop and ask before initialing</span></li>
-                </ul>
-            </div>
-            <div class="grid-2">
-                <div class="step-box" style="border-color:#e05a6a;">
-                    <h3 style="color:#e05a6a; margin-bottom:10px;">📋 Five Sections</h3>
-                    <ul class="bullet-list" style="font-size:1rem;">
-                        <li>Part 1 — Personal Protective Equipment</li>
-                        <li>Part 2 — Shop &amp; Workspace Safety</li>
-                        <li>Part 3 — Emergency Procedures</li>
-                        <li>Part 4 — Electronics &amp; Device Use</li>
-                        <li>Part 5 — Grading &amp; Consequences</li>
-                    </ul>
-                </div>
-                <div class="box" style="background:rgba(255,85,85,0.08); border-color:#ff5555; display:flex; flex-direction:column; justify-content:center; gap:16px; padding:24px;">
-                    <div>
-                        <p style="font-size:1.05rem; color:#ff5555; font-weight:700; margin-bottom:6px;">📬 Take it home tonight</p>
-                        <p style="font-size:0.95rem; margin:0;">A parent or guardian signature is required. Return it signed by <span class="highlight">Friday</span>.</p>
-                    </div>
-                    <div>
-                        <p style="font-size:1.05rem; color:#50fa7b; font-weight:700; margin-bottom:6px;">✅ No penalty for questions</p>
-                        <p style="font-size:0.95rem; margin:0;">Raise your hand anytime. That's what the contract is for — to make sure everyone understands before we start.</p>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -756,7 +756,7 @@
 <!-- Navigation -->
 <nav class="nav">
     <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
-    <span class="slide-counter" id="counter">1 / 10</span>
+    <span class="slide-counter" id="counter"></span>
     <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
 </nav>
 
@@ -772,6 +772,9 @@
 
     var slides = document.querySelectorAll('.slide');
     var current = 0;
+
+    // Initialize counter from live slide count (avoids hardcoded mismatch)
+    document.getElementById('counter').textContent = '1 / ' + slides.length;
 
     function showSlide(n) {
         slides[current].classList.remove('active');
