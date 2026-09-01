@@ -24,17 +24,25 @@ function doPost(e) {
       throw new Error('No children included in submission');
     }
 
+    // Format additional contacts as "First Last | email | phone", one per line
+    const extraContacts = (data.additionalContacts || []).map(function(c) {
+      return [c.firstName, c.lastName].filter(Boolean).join(' ')
+        + (c.email ? ' | ' + c.email : '')
+        + (c.phone ? ' | ' + c.phone : '');
+    }).join('\n');
+
     // One row per child (parent info repeated for easy filtering)
     children.forEach(function(child) {
       sheet.appendRow([
         submittedAt,
         parent.firstName || '',
-        parent.lastName || '',
-        parent.email    || '',
-        parent.phone    || '',
-        child.name      || '',
-        child.grade     || '',
-        child.shirtSize || '',
+        parent.lastName  || '',
+        parent.email     || '',
+        parent.phone     || '',
+        extraContacts,
+        child.name       || '',
+        child.grade      || '',
+        child.shirtSize  || '',
         (child.roles || []).join(', ')
       ]);
     });
@@ -57,6 +65,7 @@ function getOrCreateSheet() {
     sheet = ss.insertSheet(SHEET_NAME);
     sheet.appendRow([
       'Submitted At', 'Parent First', 'Parent Last', 'Email', 'Phone',
+      'Additional Contacts',
       'Child Name', 'Grade', 'Shirt Size', 'Interested Roles'
     ]);
     sheet.setFrozenRows(1);

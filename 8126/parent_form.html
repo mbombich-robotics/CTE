@@ -128,11 +128,32 @@ const GRADES = ['6th','7th','8th','9th','10th','11th','12th'];
 
 const mode = new URLSearchParams(location.search).get('mode');
 let childCount = 0;
+let contactCount = 0;
 
 function el(html) {
   const t = document.createElement('template');
   t.innerHTML = html.trim();
   return t.content.firstElementChild;
+}
+
+function makeContactBlock(index) {
+  const ordinal = ['2nd','3rd','4th','5th'][index] || (index + 2) + 'th';
+  const block = el(`
+    <div class="child-block contact-block">
+      <button type="button" class="remove-child">Remove</button>
+      <div class="child-title">${ordinal} contact</div>
+      <div class="row2">
+        <div><label>First name</label><input type="text" class="c-first"></div>
+        <div><label>Last name</label><input type="text" class="c-last"></div>
+      </div>
+      <label>Email</label>
+      <input type="email" class="c-email" placeholder="optional">
+      <label>Phone</label>
+      <input type="tel" class="c-phone" placeholder="(269) 555-1234  optional">
+    </div>
+  `);
+  block.querySelector('.remove-child').addEventListener('click', () => block.remove());
+  return block;
 }
 
 function makeChildBlock(index) {
@@ -190,6 +211,8 @@ function renderForm() {
         <input type="email" id="p-email" required>
         <label>Phone *</label>
         <input type="tel" id="p-phone" required placeholder="(269) 555-1234">
+        <div id="extraContactsContainer"></div>
+        <button type="button" class="add-child-btn" id="addContactBtn" style="margin-top:14px;">+ Add another contact person</button>
       </div>
       <div class="card">
         <h2>Your child(ren)</h2>
@@ -200,6 +223,12 @@ function renderForm() {
       <button type="submit" class="submit-btn" id="submitBtn">Submit →</button>
     </form>
   `;
+
+  const extraContactsContainer = document.getElementById('extraContactsContainer');
+  contactCount = 0;
+  document.getElementById('addContactBtn').addEventListener('click', () => {
+    extraContactsContainer.appendChild(makeContactBlock(contactCount++));
+  });
 
   const container = document.getElementById('childrenContainer');
   childCount = 0;
@@ -218,6 +247,16 @@ function renderForm() {
     const last  = document.getElementById('p-last').value.trim();
     const email = document.getElementById('p-email').value.trim();
     const phone = document.getElementById('p-phone').value.trim();
+
+    // Collect additional contacts (all fields optional)
+    const additionalContacts = Array.from(
+      extraContactsContainer.querySelectorAll('.contact-block')
+    ).map(block => ({
+      firstName: block.querySelector('.c-first').value.trim(),
+      lastName:  block.querySelector('.c-last').value.trim(),
+      email:     block.querySelector('.c-email').value.trim(),
+      phone:     block.querySelector('.c-phone').value.trim(),
+    })).filter(c => c.firstName || c.lastName || c.email || c.phone);
 
     const childBlocks = Array.from(container.querySelectorAll('.child-block'));
     const children = [];
@@ -247,6 +286,7 @@ function renderForm() {
         method: 'POST',
         body: JSON.stringify({
           parent: { firstName: first, lastName: last, email, phone },
+          additionalContacts,
           children,
           submittedAt: new Date().toISOString()
         })
