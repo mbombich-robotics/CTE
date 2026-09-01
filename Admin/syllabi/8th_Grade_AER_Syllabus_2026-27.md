@@ -102,6 +102,6 @@ Accommodation plans are fully supported. Please discuss your needs privately and
 | | |
 |-|---|
 | **Portfolio** | [mbombich-robotics.github.io/CTE](https://mbombich-robotics.github.io/CTE/) |
-| **Google Classroom** | Hub access link and school announcements — all assignments, rubrics, and pacing are on the class hub |
+| **Class Website** | [mbombich-robotics.github.io/CTE/hub.html](https://mbombich-robotics.github.io/CTE/hub.html) — all assignments, rubrics, pacing, and announcements |
 | **Email** | mbombich@vicksburgschools.org — replies within 24 hours on school days |
 | **Tutorial** | Tuesdays & Thursdays — request your assignment by end of day Monday or Wednesday. Students with missing work are assigned automatically. |
