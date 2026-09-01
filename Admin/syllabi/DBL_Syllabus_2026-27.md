@@ -42,7 +42,7 @@ All materials are provided for class projects. Personal project materials may re
 | **Electronics** | Soldering irons, LEDs, resistors, power supplies, Arduino (P5 only) |
 | **Materials** | Acrylic, MDF, polycarbonate, silicone casting compound, misc. hardware |
 | **Safety** | Safety glasses, gloves, hearing protection (provided) |
-| **Resources** | Class portfolio site, Google Classroom |
+| **Resources** | Class portfolio site, class hub |
 
 ---
 
@@ -78,7 +78,11 @@ Projects are completed roughly in sequence. Earlier projects build skills used i
 | P5 | Automated Plant Watering | Arduino, sensors, relay control, enclosure design, team project |
 | P6 | Capstone | Student-driven; all skills; team project |
 
-*Pacing for each project is posted in Google Classroom.*
+*Pacing for each project is posted on the [Class Hub](https://mbombich-robotics.github.io/CTE/hub.html).*
+
+### Student Leadership
+
+FIRST Robotics is available to students at all levels as an opportunity to apply engineering skills in a competitive team environment and develop teamwork, time management, and professional communication. The Capstone Project includes a formal presentation of your engineering work to a real audience.
 
 ---
 

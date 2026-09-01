@@ -78,7 +78,7 @@ All materials and tools are provided by the school. You do not need to purchase 
 | 5 | AI & Machine Learning | 26–28 | Intro ML concepts, computer vision basics, ethical implications |
 | 6 | Career Readiness | ongoing | Career research, paycheck analysis, portfolio reflection |
 
-*Exact pacing is posted in Google Classroom. Weeks are approximate and may shift based on build and testing time.*
+*Exact pacing is posted on the [Class Hub](https://mbombich-robotics.github.io/CTE/hub.html). Weeks are approximate and may shift based on build and testing time.*
 
 ### Second-Year Students
 
