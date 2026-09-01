@@ -109,7 +109,9 @@ body{
 .url-val{
   font-family:var(--mono);font-size:clamp(11px,1.3vw,14px);
   color:var(--txt);flex:1;word-break:break-all;
+  text-decoration:none;
 }
+.url-val:hover{color:var(--acc);text-decoration:underline;}
 .copy-btn{
   flex-shrink:0;
   font-family:var(--mono);font-size:10px;font-weight:700;
@@ -223,8 +225,8 @@ body{
 
 <div class="pg-head">
   <div class="eyebrow">Room 70 · Aug 31, 2026 · Step 2 of 2</div>
-  <h1 class="pg-title">Set Your Homepage</h1>
-  <p class="pg-sub">You've joined Google Classroom. Now let's set up Chrome so your hub opens every day automatically.</p>
+  <h1 class="pg-title">Bookmark Your Class Hub</h1>
+  <p class="pg-sub">You've joined Google Classroom. Now let's bookmark your class hub so you can find it in one click every day.</p>
 </div>
 
 <div class="steps">
@@ -232,9 +234,9 @@ body{
   <div class="step">
     <div class="step-num">1</div>
     <div class="step-body">
-      <div class="step-title">Copy your class URL</div>
+      <div class="step-title">Open your class hub</div>
       <div class="step-desc">
-        Find your class in the table below and click <b>Copy</b>.
+        Find your class in the table below and <b>click the link</b> to open your hub in a new tab.
       </div>
     </div>
   </div>
@@ -242,12 +244,14 @@ body{
   <div class="step">
     <div class="step-num">2</div>
     <div class="step-body">
-      <div class="step-title">Open Chrome Settings</div>
-      <div class="step-desc">Click the three dots in the top-right corner of Chrome, then click <b>Settings</b>.</div>
+      <div class="step-title">Add a bookmark</div>
+      <div class="step-desc">With the hub open, press <b>Ctrl + D</b> (or click the ★ star in the address bar). A "Bookmark added" panel will appear.</div>
       <div class="path">
-        <span class="pill">⋮ (three dots)</span>
-        <span class="arr">›</span>
-        <span class="pill">Settings</span>
+        <span class="pill">Ctrl</span>
+        <span class="arr">+</span>
+        <span class="pill">D</span>
+        <span class="arr">or</span>
+        <span class="pill">★ in address bar</span>
       </div>
     </div>
   </div>
@@ -255,16 +259,14 @@ body{
   <div class="step">
     <div class="step-num">3</div>
     <div class="step-body">
-      <div class="step-title">Set your startup page</div>
-      <div class="step-desc">Navigate to <b>On startup</b>, select <b>Open a specific page or set of pages</b>, click <b>Add a new page</b>, paste your URL, then click <b>Add</b>.</div>
+      <div class="step-title">Save it to your Bookmarks bar</div>
+      <div class="step-desc">In the panel, change <b>Folder</b> to <b>Bookmarks bar</b>, then click <b>Done</b>. Your class name will show up in the strip just below the address bar — one click gets you to your hub anytime.</div>
       <div class="path">
-        <span class="pill">On startup</span>
+        <span class="pill">Folder</span>
         <span class="arr">›</span>
-        <span class="pill">Open a specific page or set of pages</span>
+        <span class="pill">Bookmarks bar</span>
         <span class="arr">›</span>
-        <span class="pill">Add a new page</span>
-        <span class="arr">›</span>
-        <span class="pill">Paste → Add</span>
+        <span class="pill">Done</span>
       </div>
     </div>
   </div>
@@ -272,25 +274,25 @@ body{
 </div>
 
 <div class="url-block">
-  <div class="url-head">Step 1 — click Copy for your class</div>
+  <div class="url-head">Step 1 — click your class link to open the hub</div>
   <div class="url-row">
     <div class="url-label hsaer">HS AER</div>
-    <div class="url-val" id="url-hsaer">mbombich-robotics.github.io/CTE/hub.html?track=hsaer</div>
+    <a class="url-val" id="url-hsaer" href="https://mbombich-robotics.github.io/CTE/hub.html?track=hsaer" target="_blank" rel="noopener">mbombich-robotics.github.io/CTE/hub.html?track=hsaer</a>
     <button class="copy-btn" onclick="copyUrl('hsaer')">Copy</button>
   </div>
   <div class="url-row">
     <div class="url-label aer8th">8th Grade AER</div>
-    <div class="url-val" id="url-8aer">mbombich-robotics.github.io/CTE/hub.html?track=8aer</div>
+    <a class="url-val" id="url-8aer" href="https://mbombich-robotics.github.io/CTE/hub.html?track=8aer" target="_blank" rel="noopener">mbombich-robotics.github.io/CTE/hub.html?track=8aer</a>
     <button class="copy-btn" onclick="copyUrl('8aer')">Copy</button>
   </div>
   <div class="url-row">
     <div class="url-label dbl">D&amp;B Lab</div>
-    <div class="url-val" id="url-dbl">mbombich-robotics.github.io/CTE/hub.html?track=dbl</div>
+    <a class="url-val" id="url-dbl" href="https://mbombich-robotics.github.io/CTE/hub.html?track=dbl" target="_blank" rel="noopener">mbombich-robotics.github.io/CTE/hub.html?track=dbl</a>
     <button class="copy-btn" onclick="copyUrl('dbl')">Copy</button>
   </div>
 </div>
 
-<p class="pg-note">Once Chrome is set — sit back. We'll take the last few minutes to introduce ourselves.</p>
+<p class="pg-note">Once it's bookmarked — sit back. We'll take the last few minutes to introduce ourselves.</p>
 
 <script>
 function copyUrl(track) {
