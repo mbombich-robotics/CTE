@@ -98,4 +98,3 @@ By signing below, we confirm that we have read, discussed, and understood every 
 
 &nbsp;
 
-**Parent / Guardian Email (optional):** __________________________________
