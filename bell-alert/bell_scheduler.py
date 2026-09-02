@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 bell_scheduler.py — VCS Classroom Bell Alert
-Turns two Tuya smart plugs ON 2 minutes before each bell, OFF at the bell.
-Runs continuously; designed to be managed by systemd.
+Turns two Tuya smart plugs ON before each bell, OFF at the bell.
+Runs continuously; designed to be managed by Windows Task Scheduler.
 """
 
 import os
@@ -14,7 +14,7 @@ from datetime import datetime, timedelta, date
 from dotenv import load_dotenv
 import tinytuya
 
-from config import LEAD_MINUTES, DAY_SCHEDULE, LOG_FILE
+from config import DAY_SCHEDULE, SCHEDULES, SPECIAL_DAYS, LOG_FILE
 
 # ── Load credentials ──────────────────────────────────────────────────────────
 load_dotenv()
@@ -54,17 +54,32 @@ def make_cloud():
 cloud = make_cloud()
 
 
-# ── Holiday / skip-day hook ───────────────────────────────────────────────────
-def is_skip_day(today: date) -> bool:
+# ── Schedule resolver ─────────────────────────────────────────────────────────
+def get_today_bells() -> list[tuple[str, str]] | None:
     """
-    Return True to skip all bells for `today`.
-    Plug in holiday logic here — e.g. load a list of dates from a file,
-    check a Google Calendar, etc.  Currently always returns False.
+    Return the (on_time, off_time) bell list for today, or None if no school.
+
+    Priority:
+      1. SPECIAL_DAYS override (half_day / assembly / skip / force a specific key)
+      2. Weekend → None
+      3. Default weekday key from DAY_SCHEDULE
     """
-    # EXAMPLE (uncomment and extend as needed):
-    # NO_SCHOOL = {date(2026, 9, 7), date(2026, 11, 26)}
-    # return today in NO_SCHOOL
-    return False
+    today = date.today()
+    dow   = today.weekday()  # 0=Mon … 6=Sun
+
+    special = SPECIAL_DAYS.get(today)
+
+    if special == "skip":
+        return None                            # no school / holiday
+
+    if special and special in SCHEDULES:
+        return SCHEDULES[special]              # half_day, assembly, etc.
+
+    if dow >= 5:
+        return None                            # Saturday / Sunday
+
+    key = DAY_SCHEDULE.get(dow)
+    return SCHEDULES.get(key)
 
 
 # ── Plug control ──────────────────────────────────────────────────────────────
@@ -91,45 +106,44 @@ def set_plugs(on: bool, retries: int = 2):
 
 
 # ── Schedule builder ──────────────────────────────────────────────────────────
-def build_events(bells: list[str], lead: int) -> list[tuple[datetime, bool]]:
+def build_events(bells: list[tuple[str, str]]) -> list[tuple[datetime, bool]]:
     """
-    Given bell times like ['08:00', '08:52', ...] and lead minutes,
+    Given bell pairs like [("08:22", "08:32"), ("09:20", "09:22"), ...],
     return a sorted list of (datetime, is_on) events for today.
     """
     today = date.today()
     events = []
-    for bell_str in bells:
-        hh, mm = map(int, bell_str.split(":"))
-        bell_dt = datetime(today.year, today.month, today.day, hh, mm)
-        on_dt   = bell_dt - timedelta(minutes=lead)
-        events.append((on_dt,  True))   # LEDs on
-        events.append((bell_dt, False))  # LEDs off
+    for on_str, off_str in bells:
+        on_h,  on_m  = map(int, on_str.split(":"))
+        off_h, off_m = map(int, off_str.split(":"))
+        on_dt  = datetime(today.year, today.month, today.day, on_h,  on_m)
+        off_dt = datetime(today.year, today.month, today.day, off_h, off_m)
+        events.append((on_dt,  True))    # LEDs on
+        events.append((off_dt, False))   # LEDs off
     events.sort(key=lambda e: e[0])
     return events
 
 
 # ── Main loop ─────────────────────────────────────────────────────────────────
 def run():
-    log.info("Bell alert scheduler started (region=%s, lead=%d min)", REGION, LEAD_MINUTES)
+    log.info("Bell alert scheduler started (region=%s)", REGION)
 
     while True:
         now   = datetime.now()
         today = now.date()
-        dow   = today.weekday()  # 0=Mon … 6=Sun
 
-        # Weekend or skip day — sleep until midnight and recheck
-        if dow >= 5 or is_skip_day(today):
-            reason = "weekend" if dow >= 5 else "skip day"
+        bells = get_today_bells()
+
+        if bells is None:
+            # No school today — sleep until midnight and recheck
             midnight = datetime(today.year, today.month, today.day) + timedelta(days=1)
             sleep_s  = (midnight - now).total_seconds() + 5
+            reason   = "weekend" if today.weekday() >= 5 else "skip / no school"
             log.info("No bells today (%s) — sleeping until %s", reason, midnight.date())
             time.sleep(sleep_s)
             continue
 
-        bells  = DAY_SCHEDULE[dow]
-        events = build_events(bells, LEAD_MINUTES)
-
-        # Filter to future events only
+        events  = build_events(bells)
         pending = [(dt, on) for dt, on in events if dt > now]
 
         if not pending:
@@ -160,4 +174,4 @@ if __name__ == "__main__":
         run()
     except KeyboardInterrupt:
         log.info("Scheduler stopped by user.")
-        set_plugs(False)  # safety: make sure plugs are off on exit
+        set_plugs(False)   # safety: make sure plugs are off on exit

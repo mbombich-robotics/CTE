@@ -104,32 +104,49 @@ python override.py off
 
 ---
 
-## Step 6 — Run as a background service (systemd)
+## Step 6 — Run as a background service (Windows Task Scheduler)
 
-Why systemd over cron?  
-- Survives reboots automatically  
-- Restarts itself if it crashes  
-- Logs to `journalctl` for easy debugging  
-- Handles "run continuously" cleanly (cron is designed for one-shot tasks)
+Task Scheduler starts the script automatically when you log in and keeps it
+running silently in the background — no terminal window needed.
 
-```bash
-# Edit the service file to match your username and path
-nano bell-alert.service
+### 6a. One-time setup
 
-# Install the service
-sudo cp bell-alert.service /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl enable bell-alert    # auto-start on boot
-sudo systemctl start bell-alert     # start now
+Open **Task Scheduler** (search the Start menu) and click
+**Create Task** (not "Create Basic Task").
+
+| Tab | Setting |
+|-----|---------|
+| **General** | Name: `Bell Alert` · Check *Run only when user is logged on* · Check *Run with highest privileges* |
+| **Triggers** | New → **At log on** → your user account |
+| **Actions** | New → **Start a program** |
+| **Settings** | Check *If the task is already running, do not start a new instance* |
+
+For the **Action**, fill in:
+- **Program/script:** `C:\path\to\bell-alert\venv\Scripts\pythonw.exe`
+  *(use `pythonw.exe`, not `python.exe` — hides the console window)*
+- **Add arguments:** `bell_scheduler.py`
+- **Start in:** `C:\path\to\bell-alert`
+
+Click **OK** and log off/on once — the scheduler starts automatically.
+
+### 6b. Check status / logs
+
+```powershell
+# See the log file (updates live)
+Get-Content C:\path\to\bell-alert\logs\bell_alert.log -Wait
+
+# Or open it in Notepad
+notepad C:\path\to\bell-alert\logs\bell_alert.log
 ```
 
-### Check status / logs
+To stop it: Task Scheduler → Task Scheduler Library → Bell Alert → **End**.  
+To restart: right-click → **Run**.
 
-```bash
-sudo systemctl status bell-alert
-journalctl -u bell-alert -f          # live log tail
-cat logs/bell_alert.log              # file log
-```
+### 6c. Kill and restart after config changes
+
+Any time you edit `config.py` or `.env`:
+1. Task Scheduler → Bell Alert → **End**
+2. Task Scheduler → Bell Alert → **Run**
 
 ---
 
