@@ -1,0 +1,19 @@
+[Unit]
+Description=VCS Classroom Bell Alert
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# ── EDIT THESE TWO LINES to match your setup ─────────────────────────────────
+User=pi
+WorkingDirectory=/home/pi/bell-alert
+# ─────────────────────────────────────────────────────────────────────────────
+ExecStart=/home/pi/bell-alert/venv/bin/python bell_scheduler.py
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
