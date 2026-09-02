@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.34',
+    VERSION: 'v2.14.35',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -143,7 +143,7 @@ const DELIVERABLES = [
         phase: 'edp',
         alwaysOpen: true,
         points: 10,
-        description: 'Three items to complete in the first week: the entry questionnaire, your signed syllabus, and your signed safety contract.',
+        description: 'Two items to complete in the first week: the entry questionnaire and your signed safety contract (turn in the paper copy to Mr. Bombich).',
     },
     {
         id: 11,
@@ -3461,34 +3461,12 @@ function openDeliverableForm(id) {
                 </label>
               </div>
               <div class="card" style="border-left:3px solid var(--success);padding:16px;">
-                <h4 style="margin-bottom:8px;">2 &amp; 3 — Signed Syllabus &amp; Safety Contract</h4>
-                <p style="font-size:14px;color:var(--gray-600);margin-bottom:14px;">Both must be signed by you <em>and</em> a parent/guardian. Upload a photo of each, then return the paper copies to Mr. Bombich.</p>
-                <div id="deliverablePhotoZone"
-                    style="border: 2px dashed var(--gray-300); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; color: var(--gray-500); font-size: 14px;"
-                    onclick="document.getElementById('deliverablePhotoInput').click()"
-                    ondragover="event.preventDefault(); this.style.borderColor='var(--primary)';"
-                    ondragleave="this.style.borderColor='var(--gray-300)';"
-                    ondrop="event.preventDefault(); this.style.borderColor='var(--gray-300)'; handleDeliverablePhotos(event.dataTransfer.files, ${id});">
-                    <i class="fas fa-camera" style="font-size: 20px; margin-bottom: 6px; display: block;"></i>
-                    Click or drag photos here — one per document
-                </div>
-                <input type="file" id="deliverablePhotoInput" accept="image/*" multiple style="display: none;"
-                    onchange="handleDeliverablePhotos(this.files, ${id}); this.value='';">
-                <div id="deliverablePhotoPreview" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
-                    ${(existing.photos || []).map(p => `
-                        <div class="evidence-thumb" style="position: relative; width: 80px; height: 80px; border-radius: 6px; overflow: hidden;">
-                            <img src="${p.thumbnailLink}" alt="${p.filename}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='${PLACEHOLDER_IMG}'">
-                            <a href="${p.webViewLink}" target="_blank" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); opacity: 0; transition: opacity 0.2s; color: white; font-size: 18px; text-decoration: none;"
-                               onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0">
-                                <i class="fas fa-expand"></i>
-                            </a>
-                            <button type="button" onclick="removeDeliverablePhoto('${p.driveId}', ${id}, this.closest('.evidence-thumb'))"
-                                style="position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    `).join('')}
-                </div>
+                <h4 style="margin-bottom:8px;">2 — Signed Safety Contract</h4>
+                <p style="font-size:14px;color:var(--gray-600);margin-bottom:14px;">The paper copy must be signed by you <em>and</em> a parent/guardian and returned to Mr. Bombich by Thursday, September 3.</p>
+                <label style="display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer;">
+                  <input type="checkbox" id="d10ContractTurnedIn" ${existing.contractTurnedIn ? 'checked' : ''} style="width:18px;height:18px;accent-color:var(--success);">
+                  I have turned in my signed safety contract to Mr. Bombich
+                </label>
               </div>
             </div>
             ` : ''}
@@ -3798,8 +3776,8 @@ function submitDeliverable(id) {
             showToast('Please confirm you completed the entry questionnaire', 'error');
             return;
         }
-        if (photos.length === 0) {
-            showToast('Please upload photos of your signed syllabus and safety contract', 'error');
+        if (!document.getElementById('d10ContractTurnedIn')?.checked) {
+            showToast('Please confirm you have turned in your signed safety contract', 'error');
             return;
         }
     } else if (CAD_DELIVERABLE_IDS.includes(id)) {
@@ -3823,8 +3801,8 @@ function submitDeliverable(id) {
         }
     }
 
-    const customData = id === 0 ? collectDeliverable0CustomData() : id === 10 ? { quizDone: document.getElementById('d10QuizDone')?.checked || false } : CAD_DELIVERABLE_IDS.includes(id) ? collectCadDeliverableData() : {};
-    let finalContent = id === 0 ? formatDeliverable0Content(customData) : id === 10 ? 'Entry questionnaire completed. Signed syllabus and safety contract photos uploaded.' : CAD_DELIVERABLE_IDS.includes(id) ? formatCadDeliverableContent(id, customData) : content;
+    const customData = id === 0 ? collectDeliverable0CustomData() : id === 10 ? { quizDone: document.getElementById('d10QuizDone')?.checked || false, contractTurnedIn: document.getElementById('d10ContractTurnedIn')?.checked || false } : CAD_DELIVERABLE_IDS.includes(id) ? collectCadDeliverableData() : {};
+    let finalContent = id === 0 ? formatDeliverable0Content(customData) : id === 10 ? 'Entry questionnaire completed. Signed safety contract turned in.' : CAD_DELIVERABLE_IDS.includes(id) ? formatCadDeliverableContent(id, customData) : content;
 
     // Append photo links to content for Sheets storage
     if (photos.length > 0) {
