@@ -537,10 +537,16 @@
                     <h3>Criteria</h3>
                     <p>What the solution <strong>should</strong> do — desired outcomes. Can be ranked by priority.</p>
                     <ul class="bullet-list" style="margin-top: 10px;">
-                        <li>Holds all 6 components securely</li>
-                        <li>Passes the drop test</li>
-                        <li>Fits within the 200×200mm footprint</li>
-                        <li>Components are accessible for wiring</li>
+                        <!-- AER tracks -->
+                        <li class="t-aer">Holds all 6 components securely</li>
+                        <li class="t-aer">Passes the drop test</li>
+                        <li class="t-aer">Fits within the 200×200mm footprint</li>
+                        <li class="t-aer">Components are accessible for wiring</li>
+                        <!-- DBL track -->
+                        <li class="t-dbl">Holds 6+ tools without contact between them</li>
+                        <li class="t-dbl">Items visible and grabbable one-handed</li>
+                        <li class="t-dbl">Fits within a 300mm-wide wall section</li>
+                        <li class="t-dbl">Looks finished — no visible fastener heads</li>
                     </ul>
                     <div style="margin-top: 14px;">
                         <span class="tag tag-c">GOALS</span>
@@ -552,10 +558,16 @@
                     <h3>Constraints</h3>
                     <p>What the solution <strong>must</strong> work within — limits. Non-negotiable.</p>
                     <ul class="bullet-list" style="margin-top: 10px;">
-                        <li>Cardboard and tape only</li>
-                        <li>Must be built in 45 minutes</li>
-                        <li>Cannot be taped to the table</li>
-                        <li>Only materials provided by Mr. B</li>
+                        <!-- AER tracks -->
+                        <li class="t-aer">Cardboard and tape only</li>
+                        <li class="t-aer">Must be built in 45 minutes</li>
+                        <li class="t-aer">Cannot be taped to the table</li>
+                        <li class="t-aer">Only materials provided by Mr. B</li>
+                        <!-- DBL track -->
+                        <li class="t-dbl">Hardwood or plywood from the materials bin only</li>
+                        <li class="t-dbl">Complete in one 50-minute class period</li>
+                        <li class="t-dbl">Only tools available in the shop</li>
+                        <li class="t-dbl">Max depth: 80mm off the wall</li>
                     </ul>
                     <div style="margin-top: 14px;">
                         <span class="tag tag-x">LIMITS</span>
@@ -707,6 +719,14 @@
 </nav>
 
 <script>
+    // Track detection — ?track=dbl shows DBL content; anything else shows AER content
+    (function() {
+        var track = new URLSearchParams(location.search).get('track') || 'hsaer';
+        var isDbl = track === 'dbl';
+        document.querySelectorAll('.t-dbl').forEach(function(el) { el.hidden = !isDbl; });
+        document.querySelectorAll('.t-aer').forEach(function(el) { el.hidden = isDbl; });
+    })();
+
     var slides = document.querySelectorAll('.slide');
     var current = 0;
 
