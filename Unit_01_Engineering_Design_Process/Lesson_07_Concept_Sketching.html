@@ -13,50 +13,37 @@
         .slide { position: absolute; width: 100%; min-height: 100%; display: none; flex-direction: column; justify-content: flex-start; align-items: center; padding: 55px 60px 120px 60px; opacity: 0; transition: opacity 0.5s ease; overflow-y: auto; overflow-x: hidden; }
         .slide.active { display: flex; opacity: 1; }
         .slide-content { max-width: 1200px; width: 100%; }
-
-        h1 { font-family: 'Orbitron', sans-serif; font-size: 3rem; font-weight: 900; color: #c41e3a; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 20px rgba(196,30,58,0.5); animation: glow 2s ease-in-out infinite alternate; }
+        h1 { font-family: 'Orbitron', sans-serif; font-size: 3.5rem; font-weight: 900; color: #c41e3a; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 20px rgba(196,30,58,0.5); animation: glow 2s ease-in-out infinite alternate; }
         @keyframes glow { from { text-shadow: 0 0 20px rgba(196,30,58,0.5); } to { text-shadow: 0 0 30px rgba(196,30,58,0.8); } }
-        h2 { font-family: 'Orbitron', sans-serif; font-size: 2.1rem; font-weight: 700; color: #c41e3a; margin-bottom: 18px; text-transform: uppercase; }
-        h3 { font-family: 'Exo 2', sans-serif; font-size: 1.4rem; font-weight: 600; color: #e05a6a; margin-bottom: 10px; }
-        p { font-size: 1.1rem; line-height: 1.6; margin-bottom: 12px; color: #b8c5d6; }
-        .subtitle { font-size: 1.2rem; color: #e05a6a; font-weight: 600; margin-bottom: 28px; }
-
+        h2 { font-family: 'Orbitron', sans-serif; font-size: 2.5rem; font-weight: 700; color: #c41e3a; margin-bottom: 18px; text-transform: uppercase; }
+        h3 { font-family: 'Exo 2', sans-serif; font-size: 1.5rem; font-weight: 600; color: #e05a6a; margin-bottom: 12px; }
+        p { font-size: 1.15rem; line-height: 1.6; margin-bottom: 12px; color: #b8c5d6; }
+        .subtitle { font-size: 1.3rem; color: #e05a6a; font-weight: 600; margin-bottom: 30px; }
         .objective-box { background: linear-gradient(135deg, rgba(196,30,58,0.1) 0%, rgba(196,30,58,0.05) 100%); border: 3px solid #c41e3a; border-radius: 12px; padding: 20px; margin: 20px 0; box-shadow: 0 0 30px rgba(196,30,58,0.2); }
         .objective-box h3 { color: #c41e3a; }
         .bullet-list { list-style: none; padding-left: 0; }
-        .bullet-list li { font-size: 1.1rem; margin: 10px 0; padding-left: 35px; position: relative; color: #b8c5d6; line-height: 1.5; }
-        .bullet-list li::before { content: '▸'; position: absolute; left: 0; color: #e05a6a; font-size: 1.4rem; line-height: 1; }
-
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 18px; }
-        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 18px; }
-
+        .bullet-list li { font-size: 1.15rem; margin: 12px 0; padding-left: 35px; position: relative; color: #b8c5d6; line-height: 1.5; }
+        .bullet-list li::before { content: '▸'; position: absolute; left: 0; color: #e05a6a; font-size: 1.5rem; line-height: 1; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px; }
         .box { background: rgba(196,30,58,0.05); border: 2px solid #c41e3a; border-radius: 12px; padding: 20px; }
-        .box-amber { background: rgba(255,165,0,0.07); border: 2px solid #e05a6a; border-radius: 12px; padding: 20px; }
-        .box-green { background: rgba(80,250,123,0.06); border: 2px solid #50fa7b; border-radius: 12px; padding: 20px; }
+        .box-green { background: rgba(80,250,123,0.07); border: 2px solid #50fa7b; border-radius: 12px; padding: 20px; }
         .box-green h3 { color: #50fa7b; }
-        .note-box { background: rgba(255,165,0,0.07); border: 2px solid #e05a6a; border-radius: 12px; padding: 16px 20px; margin: 16px 0; }
-        .note-box h3 { color: #e05a6a; }
-        .note-box p { color: #d4b870; margin: 0; }
-
+        .box-amber { background: rgba(255,184,108,0.07); border: 2px solid #ffb86c; border-radius: 12px; padding: 20px; }
+        .box-amber h3 { color: #ffb86c; }
         .highlight { color: #c41e3a; font-weight: 700; }
         .success { color: #50fa7b; font-weight: 700; }
+        .step-box { background: linear-gradient(135deg, rgba(255,165,0,0.15) 0%, rgba(255,165,0,0.05) 100%); border: 2px solid #e05a6a; border-radius: 12px; padding: 25px; margin: 20px 0; }
+        .note-box { background: rgba(80,250,123,0.07); border: 2px solid rgba(80,250,123,0.4); border-radius: 10px; padding: 16px 20px; margin-top: 16px; }
 
-        /* Rule cards */
-        .rule-card {
-            background: rgba(196,30,58,0.06); border: 2px solid rgba(196,30,58,0.35);
-            border-radius: 10px; padding: 16px 18px;
-        }
-        .rule-num { font-family: 'Orbitron', sans-serif; font-size: 2rem; font-weight: 900; color: rgba(196,30,58,0.3); float: right; line-height: 1; }
-        .rule-card h3 { color: #c41e3a; font-size: 1.1rem; margin-bottom: 6px; }
-        .rule-card p { font-size: 0.95rem; color: #9aabbf; margin: 0; }
-
-        /* Concept sketch placeholder */
-        .sketch-box {
-            border: 2px dashed rgba(196,30,58,0.4); border-radius: 12px;
-            padding: 24px 20px; text-align: center; background: rgba(196,30,58,0.03);
-        }
-        .sketch-box svg { display: block; margin: 0 auto; }
-        .sketch-label { font-family: 'Space Mono', monospace; font-size: 0.85rem; color: #555; margin-top: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+        /* Progress strip */
+        .progress-strip { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 28px 0; }
+        .ps-item { display: flex; flex-direction: column; align-items: center; padding: 10px 14px; border-radius: 10px; font-weight: 700; min-width: 88px; text-align: center; border: 2px solid; }
+        .ps-label { font-size: 0.65rem; margin-bottom: 4px; letter-spacing: 0.5px; opacity: 0.7; }
+        .ps-name { font-size: 0.82rem; }
+        .ps-done { background: rgba(80,250,123,0.1); border-color: #50fa7b; color: #50fa7b; }
+        .ps-active { background: rgba(196,30,58,0.15); border-color: #c41e3a; color: #e05a6a; box-shadow: 0 0 14px rgba(196,30,58,0.35); }
+        .ps-push { background: rgba(189,147,249,0.1); border-color: #bd93f9; color: #bd93f9; }
+        .ps-future { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.1); color: #475569; }
 
         /* Decision matrix table */
         .dm-table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 0.95rem; }
@@ -68,550 +55,289 @@
         .dm-table tr.total td { background: rgba(196,30,58,0.08); font-weight: 700; color: #c41e3a; border-top: 2px solid #c41e3a; }
 
         /* Approval gate */
-        .gate {
-            border: 3px solid #50fa7b; border-radius: 14px; padding: 28px 32px;
-            background: rgba(80,250,123,0.04); text-align: center; margin: 20px 0;
-        }
+        .gate { border: 3px solid #50fa7b; border-radius: 14px; padding: 28px 32px; background: rgba(80,250,123,0.04); text-align: center; margin: 20px 0; }
         .gate h3 { color: #50fa7b; font-size: 1.5rem; margin-bottom: 14px; }
-        .gate p { color: #b8c5d6; max-width: 600px; margin: 0 auto; }
 
-        /* Component hints */
-        .comp-aer { background: rgba(0,180,255,0.07); border: 2px solid #00b4ff; border-radius: 10px; padding: 16px 18px; }
-        .comp-aer h3 { color: #00b4ff; font-size: 1.1rem; }
-        .comp-dbl { background: rgba(189,147,249,0.07); border: 2px solid #bd93f9; border-radius: 10px; padding: 16px 18px; }
-        .comp-dbl h3 { color: #bd93f9; font-size: 1.1rem; }
+        /* Sketch rules */
+        .rule-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+        .rule-item { display: flex; align-items: flex-start; gap: 12px; background: rgba(196,30,58,0.05); border: 1px solid rgba(196,30,58,0.2); border-radius: 10px; padding: 12px 14px; }
+        .rule-num { font-family: 'Orbitron', sans-serif; font-size: 1rem; font-weight: 900; color: #c41e3a; min-width: 26px; }
+        .rule-text { font-size: 1rem; color: #b8c5d6; line-height: 1.4; }
 
-        .nav {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            background: rgba(10,2,4,0.85);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(196,30,58,0.2);
-            border-radius: 50px;
-            padding: 12px 24px;
-            z-index: 100;
-        }
-
-        .nav button {
-            background: rgba(196,30,58,0.15);
-            color: #e88a8a;
-            border: 1px solid rgba(196,30,58,0.3);
-            border-radius: 8px;
-            padding: 10px 24px;
-            font-family: 'Exo 2', sans-serif;
-            font-size: 1em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
+        .nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 20px; background: rgba(10,2,4,0.85); backdrop-filter: blur(10px); border: 1px solid rgba(196,30,58,0.2); border-radius: 50px; padding: 12px 24px; z-index: 100; }
+        .nav button { background: rgba(196,30,58,0.15); color: #e88a8a; border: 1px solid rgba(196,30,58,0.3); border-radius: 8px; padding: 10px 24px; font-family: 'Exo 2', sans-serif; font-size: 1em; font-weight: 700; cursor: pointer; transition: all 0.2s; }
         .nav button:hover { background: rgba(196,30,58,0.3); color: #e2e8f0; }
         .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
-
-        .slide-counter {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9em;
-            color: #475569;
-            min-width: 60px;
-            text-align: center;
-        }
-
-        .back-link {
-            position: fixed;
-            top: 18px;
-            right: 24px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: #e05a6a;
-            text-decoration: none;
-            background: rgba(196,30,58,0.15);
-            border: 1px solid rgba(196,30,58,0.35);
-            padding: 5px 12px;
-            border-radius: 20px;
-            z-index: 100;
-            transition: background 0.2s;
-        }
+        .slide-counter { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: #475569; min-width: 60px; text-align: center; }
+        .back-link { position: fixed; top: 18px; right: 24px; font-size: 0.78rem; font-weight: 700; color: #e05a6a; text-decoration: none; background: rgba(196,30,58,0.15); border: 1px solid rgba(196,30,58,0.35); padding: 5px 12px; border-radius: 20px; z-index: 100; transition: background 0.2s; }
         .back-link:hover { background: rgba(196,30,58,0.3); }
-
-        @media (max-width: 768px) { h1 { font-size: 2.2rem; } h2 { font-size: 1.8rem; } .slide { padding: 30px 20px 100px; } .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { h1 { font-size: 2.2rem; } h2 { font-size: 1.8rem; } .slide { padding: 30px 20px 100px; } .grid-2, .rule-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 <a href="index.html" class="back-link">← Unit 1</a>
 <div class="presentation">
 
-<!-- ─────────────────────────────────────── SLIDE 1: Title -->
-<div class="slide active">
-    <div class="slide-content" style="text-align:center; padding-top: 50px;">
-        <h1>Concept Sketching</h1>
-        <p class="subtitle">Unit 1 · Engineering Design Process · Lesson 1.7</p>
-        <p style="font-size: 1.25rem; max-width: 680px; margin: 20px auto; color: #b8c5d6;">
-            Three ideas. On paper. Before you touch Fusion 360. This step is what separates engineers from people who just start building random stuff.
-        </p>
-        <div style="display:flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 30px;">
-            <div style="padding: 10px 20px; border-radius: 8px; background: rgba(196,30,58,0.1); border: 2px solid #c41e3a; color: #c41e3a; font-weight: 700;">3 Concepts</div>
-            <div style="padding: 10px 20px; border-radius: 8px; background: rgba(255,165,0,0.1); border: 2px solid #e05a6a; color: #e05a6a; font-weight: 700;">Decision Matrix</div>
-            <div style="padding: 10px 20px; border-radius: 8px; background: rgba(80,250,123,0.1); border: 2px solid #50fa7b; color: #50fa7b; font-weight: 700;">Approval Gate</div>
-        </div>
-        <p style="margin-top: 40px; color: #555; font-size: 1rem;">Lesson 1.7</p>
-    </div>
-</div>
-
-<!-- ─────────────────────────────────────── SLIDE 2: Objectives -->
-<div class="slide">
-    <div class="slide-content">
-        <h2>Lesson Objectives</h2>
-        <div class="objective-box">
-            <ul class="bullet-list">
-                <li>Produce at least three concept sketches for your component design</li>
-                <li>Use a decision matrix to score and select your best concept</li>
-                <li>Explain why sketching before modeling saves time and improves results</li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-<!-- ─────────────────────────────────────── SLIDE 3: Why Sketch First? -->
-<div class="slide">
-    <div class="slide-content">
-        <h2>Why Sketch Before You Model?</h2>
-
-        <div class="grid-2" style="margin-top: 10px;">
-            <div class="box">
-                <h3>Sketching is free</h3>
-                <p style="font-size: 1rem; margin: 0;">A sketch takes 5 minutes to draw and 1 second to throw away. A bad Fusion 360 model costs 45 minutes. A printed part that doesn't fit costs a print slot that someone else could have used.</p>
-            </div>
-            <div class="box-amber">
-                <h3>Sketching forces thinking</h3>
-                <p style="font-size: 1rem; margin: 0;">You can't model something in 3D without understanding what it looks like from every angle. Drawing it by hand first forces you to think about all three dimensions before you touch a computer.</p>
-            </div>
-        </div>
-
-        <div class="grid-2" style="margin-top: 16px;">
-            <div class="box">
-                <h3>Three concepts, not variations</h3>
-                <p style="font-size: 1rem; margin: 0;">Your three sketches must be meaningfully different from each other — different geometry, different approach. Three versions of the same design with slightly different wall thickness does not count.</p>
-            </div>
-            <div class="box-amber">
-                <h3>What the decision matrix does</h3>
-                <p style="font-size: 1rem; margin: 0;">It prevents you from picking the design you <em>like</em> and ignoring the one that actually meets your criteria. The matrix makes the decision objective and justifiable.</p>
-            </div>
-        </div>
-
-        <div class="note-box" style="margin-top: 20px;">
-            <p>Professional engineers at every level sketch on paper before they model. The ones who skip this step spend more time fixing broken models than building new ones.</p>
-        </div>
-    </div>
-</div>
-
-<!-- ─────────────────────────────────────── SLIDE 3: Sketching Rules -->
-<div class="slide">
-    <div class="slide-content">
-        <h2>Rules of Concept Sketching</h2>
-        <p class="subtitle">All six rules apply. There are no exceptions.</p>
-
-        <div class="grid-3" style="margin-top: 10px;">
-            <div class="rule-card">
-                <div class="rule-num">1</div>
-                <h3>Hand-drawn only</h3>
-                <p>No screenshots from YouTube, no tracing, no printing. Your pen on paper.</p>
-            </div>
-            <div class="rule-card">
-                <div class="rule-num">2</div>
-                <h3>At least 2 views</h3>
-                <p>Show the component from the front AND top (or isometric). One view is never enough to understand a 3D part.</p>
-            </div>
-            <div class="rule-card">
-                <div class="rule-num">3</div>
-                <h3>Label every dimension</h3>
-                <p>Every critical dimension from your design brief must appear on the sketch. No unlabeled shapes.</p>
-            </div>
-            <div class="rule-card">
-                <div class="rule-num">4</div>
-                <h3>Label every feature</h3>
-                <p>Name what each part does: "bore for motor shaft," "spoke," "flange," "bearing pocket," etc.</p>
-            </div>
-            <div class="rule-card">
-                <div class="rule-num">5</div>
-                <h3>Three genuine concepts</h3>
-                <p>Each concept must differ in a meaningful way — geometry, approach, or feature arrangement. Not just different wall thickness.</p>
-            </div>
-            <div class="rule-card">
-                <div class="rule-num">6</div>
-                <h3>Neat enough to read</h3>
-                <p>A sketch does not have to be art. It has to be readable by someone other than you. Mr. B cannot approve something he can't interpret.</p>
+    <!-- Slide 1: Title -->
+    <div class="slide active">
+        <div class="slide-content" style="text-align:center; padding-top: 50px;">
+            <h1>Concept Sketching</h1>
+            <p class="subtitle">Unit 1 · Engineering Design Process · Lesson 1.7</p>
+            <div style="display:flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 30px;">
+                <div style="padding: 10px 20px; border-radius: 8px; background: rgba(189,147,249,0.1); border: 2px solid #bd93f9; color: #bd93f9; font-weight: 700;">Design Statement</div>
+                <div style="padding: 10px 20px; border-radius: 8px; background: rgba(196,30,58,0.1); border: 2px solid #c41e3a; color: #c41e3a; font-weight: 700;">Concept A Sketch</div>
+                <div style="padding: 10px 20px; border-radius: 8px; background: rgba(255,184,108,0.1); border: 2px solid #ffb86c; color: #ffb86c; font-weight: 700;">Decision Matrix</div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- ─────────────────────────────────────── SLIDE 4: Sketch Example -->
-<div class="slide">
-    <div class="slide-content">
-        <h2>What a Good Sketch Looks Like</h2>
-        <p class="subtitle">This is the actual project — front wheel assembly and hub detail</p>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; margin-top: 16px;">
-            <!-- The sketch image -->
-            <div style="text-align: center;">
-                <div style="border: 2px solid rgba(196,30,58,0.4); border-radius: 10px; padding: 10px; background: rgba(255,255,255,0.97); display: inline-block; width: 100%;">
-                    <img src="Concept%20Drawing.png"
-                         alt="Teacher concept sketch — front cross section, side view, and hub detail with labeled dimensions"
-                         style="display: block; width: 100%; height: auto;">
-                </div>
-                <p style="font-size: 0.75rem; color: #555; margin-top: 8px; font-style: italic;">Three views on one page: front cross section · side view · hub detail</p>
+    <!-- Slide 2: Objectives -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Lesson Objectives</h2>
+            <div class="objective-box">
+                <ul class="bullet-list">
+                    <li>Finalize your design statement (Section 5)</li>
+                    <li>Produce one annotated concept sketch — your Concept A</li>
+                    <li>Score all three group concepts in the decision matrix and select a design direction</li>
+                </ul>
             </div>
+        </div>
+    </div>
 
-            <!-- Annotations -->
-            <div>
-                <div class="rule-card" style="margin-bottom: 12px;">
-                    <div class="rule-num" style="font-size: 1.2rem;">✓</div>
-                    <h3>Three views on one sheet</h3>
-                    <p>Front cross section shows the mount and wheel relationship. Side view shows the omni wheel profile. Hub detail zooms in on the internal geometry — bearing, M8 bore, M3 tap.</p>
+    <!-- Slide 3: Where We Are -->
+    <div class="slide">
+        <div class="slide-content" style="text-align: center;">
+            <h2>Where We Are</h2>
+            <p style="color: #888; margin-bottom: 0;">D1.1 Design Brief — section by section</p>
+            <div class="progress-strip">
+                <div class="ps-item ps-done">
+                    <div class="ps-label">WEDNESDAY — S1</div>
+                    <div class="ps-name">Client &amp; End User</div>
                 </div>
-                <div class="rule-card" style="margin-bottom: 12px;">
-                    <div class="rule-num" style="font-size: 1.2rem;">✓</div>
-                    <h3>Every feature labeled with a name and dimension</h3>
-                    <p>"12×8×3.5mm bearing," "M8 clearance," "M3 counterbore," "M3 tap," "16mm" — nothing unnamed. If you can't name it, you don't understand it yet.</p>
+                <div class="ps-item ps-done">
+                    <div class="ps-label">WEDNESDAY — S2</div>
+                    <div class="ps-name">Problem Statement</div>
                 </div>
-                <div class="rule-card" style="margin-bottom: 12px;">
-                    <div class="rule-num" style="font-size: 1.2rem;">✓</div>
-                    <h3>Cross-section shows internal geometry</h3>
-                    <p>The hub detail (bottom right) shows both halves in cross-section: bearing pocket, M8 bolt path, M3 screw entering from one side and tapping into the other. This is exactly what your Step 1 sketch must show.</p>
+                <div class="ps-item ps-done">
+                    <div class="ps-label">THURSDAY — S3</div>
+                    <div class="ps-name">Criteria</div>
                 </div>
-                <div class="note-box" style="margin-top: 4px;">
-                    <p>This <em>is</em> a wheel hub concept sketch. Your sketch should look like the hub detail — both halves, all dimensions labeled, all fasteners shown.</p>
+                <div class="ps-item ps-done">
+                    <div class="ps-label">THURSDAY — S4</div>
+                    <div class="ps-name">Constraints</div>
+                </div>
+                <div class="ps-item ps-push">
+                    <div class="ps-label">FINISH — S5</div>
+                    <div class="ps-name">Design Statement</div>
+                </div>
+                <div class="ps-item ps-active">
+                    <div class="ps-label">TODAY — S6</div>
+                    <div class="ps-name">Concept Sketches</div>
+                </div>
+                <div class="ps-item ps-active">
+                    <div class="ps-label">TODAY — S7</div>
+                    <div class="ps-name">Decision Matrix</div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- ─────────────────────────────────────── SLIDE 5: What to Sketch -->
-<div class="slide">
-    <div class="slide-content">
-        <h2>What to Sketch — Your Component</h2>
-        <p class="subtitle">Three concepts that all satisfy your design brief criteria</p>
-
-        <!-- AER: Cross-section first, then outer profile concepts -->
-        <div class="comp-aer" style="margin-bottom: 20px;">
-            <h3>HS AER &amp; 8th Grade AER — C1 Wheel Hub</h3>
-            <p style="font-size: 0.9rem; color: #7ab8d4; margin: 6px 0 12px;">The hub geometry is fixed by the hardware. Sketch the cross-section <em>first</em> to resolve it on paper before touching Fusion 360.</p>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                <div>
-                    <p style="font-size: 0.85rem; font-weight: 700; color: #00b4ff; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 1px;">Step 1 — Cross-Section Sketch (required)</p>
-                    <ul class="bullet-list" style="font-size: 0.9rem;">
-                        <li>Draw both halves in cross-section with all key dimensions labeled</li>
-                        <li>Show: MR128 pocket (12 mm OD × 3.5 mm), hub shoulders, M8 bore, M3 screw path</li>
-                        <li>Show: counterbore on entry face; screw tip stopping short of far face</li>
-                        <li>Calculate and label: hub total width (both halves summed); M3 screw length</li>
-                        <li>Verify bolt path: hub width + mount walls + nut must fit within the <strong>45 mm M8 bolt</strong></li>
-                        <li><strong>Teacher approves cross-section before you sketch outer concepts</strong></li>
-                    </ul>
-                </div>
-                <div>
-                    <p style="font-size: 0.85rem; font-weight: 700; color: #00b4ff; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 1px;">Step 2 — Three Bearing Retention Concepts</p>
-                    <p style="font-size: 0.85rem; color: #7ab8d4; margin: 0 0 8px;">Each concept is a cross-section variation — same external shape, different strategy for holding the bearing:</p>
-                    <ul class="bullet-list" style="font-size: 0.9rem;">
-                        <li><strong>A — Press-fit:</strong> bore ~11.9 mm (0.1 mm undersize); bearing forced in and held by friction alone</li>
-                        <li><strong>B — Slip-fit + adhesive:</strong> bore 12.1 mm; bearing drops in, CA glue applied to outer race on assembly</li>
-                        <li><strong>C — Shoulder-captured:</strong> bore 12.05 mm; shoulder depths on each half calculated to sum to exactly 3.5 mm — two halves trap the bearing geometrically, no glue or press-fit needed</li>
-                    </ul>
-                    <p style="font-size: 0.85rem; margin: 10px 0 0; background: rgba(255,200,0,0.12); border-left: 3px solid rgba(255,200,0,0.6); padding: 8px 10px; border-radius: 0 6px 6px 0;">👥 <strong>Group task:</strong> each student sketches <strong>one</strong> concept. Put your name on your sketch. Collect all three from your group before submitting your design brief.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- DBL: three spinner concepts -->
-        <div class="comp-dbl" style="margin-bottom: 20px;">
-            <h3>D&amp;B Lab — Fidget Spinner Body</h3>
-            <ul class="bullet-list" style="font-size: 0.95rem; margin-top: 10px;">
-                <li>Center pocket: 22 mm diameter × 7 mm deep (608 bearing press-fit)</li>
-                <li>Must be symmetric — balance is everything</li>
-                <li>Vary: number of arms (2, 3, 4), arm shape, outer weight pockets</li>
-                <li>Your group covers all three concepts — each student sketches one; collect groupmates' drawings for your design brief</li>
-            </ul>
-        </div>
-
-        <!-- Group task callout -->
-        <div style="background: rgba(255,200,0,0.10); border: 2px solid rgba(255,200,0,0.45); border-radius: 10px; padding: 14px 18px; margin-bottom: 18px; display: flex; gap: 14px; align-items: flex-start;">
-            <div style="font-size: 1.5rem; line-height: 1;">👥</div>
-            <div>
-                <p style="font-size: 0.95rem; font-weight: 700; color: #c8a000; margin: 0 0 4px; text-transform: uppercase; letter-spacing: 0.06em;">Group Task — Divide the Concepts</p>
-                <p style="font-size: 0.9rem; margin: 0; color: var(--text);">Each student sketches <strong>one</strong> of the three concepts. Together, your group produces all three. <strong>Put your name on your own sketch.</strong> Before submitting your design brief, collect your groupmates' drawings — your brief must include all three.</p>
-            </div>
-        </div>
-
-        <div class="grid-3">
-            <div class="sketch-box">
-                <svg width="120" height="100" viewBox="0 0 120 100">
-                    <rect x="10" y="10" width="100" height="80" rx="4" fill="none" stroke="rgba(196,30,58,0.3)" stroke-width="1.5" stroke-dasharray="5 4"/>
-                    <text x="60" y="45" font-family="Space Mono" font-size="8" fill="#555" text-anchor="middle">AER: cross-section</text>
-                    <text x="60" y="58" font-family="Space Mono" font-size="8" fill="#555" text-anchor="middle">DBL: concept A</text>
-                </svg>
-                <div class="sketch-label">Sketch 1</div>
-            </div>
-            <div class="sketch-box">
-                <svg width="120" height="100" viewBox="0 0 120 100">
-                    <rect x="10" y="10" width="100" height="80" rx="4" fill="none" stroke="rgba(196,30,58,0.3)" stroke-width="1.5" stroke-dasharray="5 4"/>
-                    <text x="60" y="45" font-family="Space Mono" font-size="8" fill="#555" text-anchor="middle">AER: retention A</text>
-                    <text x="60" y="58" font-family="Space Mono" font-size="8" fill="#555" text-anchor="middle">DBL: concept B</text>
-                </svg>
-                <div class="sketch-label">Sketch 2</div>
-            </div>
-            <div class="sketch-box">
-                <svg width="120" height="100" viewBox="0 0 120 100">
-                    <rect x="10" y="10" width="100" height="80" rx="4" fill="none" stroke="rgba(196,30,58,0.3)" stroke-width="1.5" stroke-dasharray="5 4"/>
-                    <text x="60" y="45" font-family="Space Mono" font-size="8" fill="#555" text-anchor="middle">AER: retention B</text>
-                    <text x="60" y="58" font-family="Space Mono" font-size="8" fill="#555" text-anchor="middle">DBL: concept C</text>
-                </svg>
-                <div class="sketch-label">Sketch 3</div>
+            <div class="step-box" style="max-width: 700px; margin: 0 auto; text-align: left; padding: 14px;">
+                <p style="margin: 0; font-size: 1rem; color: #e05a6a; font-weight: 700;">D1.1 is due today. Everything you finish in class is done — the rest goes home.</p>
             </div>
         </div>
     </div>
-</div>
 
-<!-- ─────────────────────────────────────── SLIDE 5: Decision Matrix -->
-<div class="slide">
-    <div class="slide-content">
-        <h2>The Decision Matrix</h2>
-        <p class="subtitle">Evaluate each concept against your design criteria — no guessing</p>
-
-        <p style="margin-bottom: 12px;">A decision matrix scores each concept against the same criteria. You set the criteria, you score each concept. Then you add up the scores and let the data drive the decision.</p>
-
-        <table class="dm-table">
-            <thead>
-                <tr>
-                    <th class="criteria-col" style="width:35%">Criterion</th>
-                    <th>Weight<br><small style="font-weight:400; color:#888;">(1–3)</small></th>
-                    <th>Concept A<br><small style="font-weight:400; color:#888;">(1–5)</small></th>
-                    <th>Concept B<br><small style="font-weight:400; color:#888;">(1–5)</small></th>
-                    <th>Concept C<br><small style="font-weight:400; color:#888;">(1–5)</small></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="criteria-col">Bearing retention reliability (will it stay under load?)</td>
-                    <td>3</td><td>—</td><td>—</td><td>—</td>
-                </tr>
-                <tr>
-                    <td class="criteria-col">Print tolerance forgiveness (will first print work?)</td>
-                    <td>3</td><td>—</td><td>—</td><td>—</td>
-                </tr>
-                <tr>
-                    <td class="criteria-col">Serviceability (can you remove the bearing if it fails?)</td>
-                    <td>2</td><td>—</td><td>—</td><td>—</td>
-                </tr>
-                <tr>
-                    <td class="criteria-col">Assembly ease (how hard to put together in class?)</td>
-                    <td>2</td><td>—</td><td>—</td><td>—</td>
-                </tr>
-                <tr>
-                    <td class="criteria-col">Modeling complexity (can I design this in F360?)</td>
-                    <td>1</td><td>—</td><td>—</td><td>—</td>
-                </tr>
-                <tr class="total">
-                    <td class="criteria-col">Weighted Total</td>
-                    <td>—</td><td>—</td><td>—</td><td>—</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="note-box" style="margin-top: 16px;">
-            <p>Score × Weight for each cell. Sum the column. The highest score is your recommended concept. If two are close, pick the one that scored better on the highest-weight criteria.</p>
+    <!-- Slide 4: Design Statement — Finish Line -->
+    <div class="slide">
+        <div class="slide-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; text-align: center;">
+            <h2>Design Statement — Finish Line</h2>
+            <div class="objective-box" style="max-width: 750px; margin-top: 25px; text-align: left;">
+                <h3 style="text-align: center;">10 minutes</h3>
+                <ul class="bullet-list" style="margin-top: 12px;">
+                    <li>If it's done: check it against the rubric in your portfolio — does it name the user, address the problem, reference a criterion, and state a constraint?</li>
+                    <li>If it's not done: finish it now. You have everything you need from Thursday's interview.</li>
+                </ul>
+            </div>
+            <div style="background: rgba(189,147,249,0.07); border: 2px solid #bd93f9; border-radius: 10px; padding: 18px 22px; margin-top: 20px; max-width: 750px; font-size: 1.1rem; color: #b8c5d6; line-height: 1.9; text-align: left;">
+                "Design a <span style="color: #bd93f9; font-weight: 700;">[component]</span> for <span style="color: #bd93f9; font-weight: 700;">[user]</span> that <span style="color: #bd93f9; font-weight: 700;">[solves the problem]</span>, meets <span style="color: #bd93f9; font-weight: 700;">[key criterion]</span>, within <span style="color: #bd93f9; font-weight: 700;">[constraint]</span>."
+            </div>
         </div>
     </div>
-</div>
 
-<!-- ─────────────────────────────────────── SLIDE 7: Completed Matrix Example -->
-<div class="slide">
-    <div class="slide-content">
-        <h2>Example: Completed Matrix</h2>
-        <p class="subtitle">Wheel hub — three bearing retention strategies compared</p>
-
-        <table class="dm-table">
-            <thead>
-                <tr>
-                    <th class="criteria-col" style="width:38%">Criterion</th>
-                    <th>Weight<br><small style="font-weight:400; color:#888;">(1–3)</small></th>
-                    <th>A: Press-fit<br><small style="font-weight:400; color:#888;">score → weighted</small></th>
-                    <th>B: Slip-fit + glue<br><small style="font-weight:400; color:#888;">score → weighted</small></th>
-                    <th>C: Shoulder-captured<br><small style="font-weight:400; color:#888;">score → weighted</small></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="criteria-col">Bearing retention reliability</td>
-                    <td>3</td>
-                    <td>4 → <strong>12</strong></td>
-                    <td>3 → <strong>9</strong></td>
-                    <td>5 → <strong>15</strong></td>
-                </tr>
-                <tr>
-                    <td class="criteria-col">Print tolerance forgiveness</td>
-                    <td>3</td>
-                    <td>2 → <strong>6</strong></td>
-                    <td>4 → <strong>12</strong></td>
-                    <td>3 → <strong>9</strong></td>
-                </tr>
-                <tr>
-                    <td class="criteria-col">Serviceability</td>
-                    <td>2</td>
-                    <td>2 → <strong>4</strong></td>
-                    <td>1 → <strong>2</strong></td>
-                    <td>5 → <strong>10</strong></td>
-                </tr>
-                <tr>
-                    <td class="criteria-col">Assembly ease</td>
-                    <td>2</td>
-                    <td>3 → <strong>6</strong></td>
-                    <td>3 → <strong>6</strong></td>
-                    <td>4 → <strong>8</strong></td>
-                </tr>
-                <tr>
-                    <td class="criteria-col">Modeling complexity</td>
-                    <td>1</td>
-                    <td>4 → <strong>4</strong></td>
-                    <td>5 → <strong>5</strong></td>
-                    <td>3 → <strong>3</strong></td>
-                </tr>
-                <tr class="total">
-                    <td class="criteria-col">Weighted Total</td>
-                    <td>—</td>
-                    <td><span style="font-size: 1.2rem;">32</span></td>
-                    <td><span style="font-size: 1.2rem;">34</span></td>
-                    <td><span style="font-size: 1.3rem; color: #50fa7b;">45 ✓</span></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="note-box" style="margin-top: 14px;">
-            <p><strong>Concept C wins at 45.</strong> Its perfect serviceability score (5 × weight 2) and top reliability score (5 × weight 3) overcome a weaker tolerance-forgiveness score. Glued edges out press-fit because a forgiving bore matters more than easier modeling. Notice: the easiest option to model (glued, score 5) does <em>not</em> win — because modeling ease has the lowest weight.</p>
+    <!-- Slide 5: Concept Sketching Rules + Example -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Concept Sketching</h2>
+            <p>Your sketch is your Concept A — the idea you're contributing to your group. One sketch, your hand, your engineering notebook. These rules are not optional.</p>
+            <div class="rule-grid">
+                <div class="rule-item"><span class="rule-num">1</span><span class="rule-text"><strong style="color: #e0e6f0;">Pencil only.</strong> Mistakes get erased, not crossed out.</span></div>
+                <div class="rule-item"><span class="rule-num">2</span><span class="rule-text"><strong style="color: #e0e6f0;">Label everything.</strong> Every feature gets a name or a description.</span></div>
+                <div class="rule-item"><span class="rule-num">3</span><span class="rule-text"><strong style="color: #e0e6f0;">Dimension everything critical.</strong> Numbers, not "about this big."</span></div>
+                <div class="rule-item"><span class="rule-num">4</span><span class="rule-text"><strong style="color: #e0e6f0;">At least two views.</strong> Front and side (or top). One view hides information.</span></div>
+                <div class="rule-item"><span class="rule-num">5</span><span class="rule-text"><strong style="color: #e0e6f0;">One idea per sketch.</strong> This is Concept A — not A, B, and C combined.</span></div>
+                <div class="rule-item"><span class="rule-num">6</span><span class="rule-text"><strong style="color: #e0e6f0;">No CAD, no ruler required.</strong> Proportional and readable beats perfect.</span></div>
+            </div>
+            <div class="note-box">
+                <p style="margin: 0; font-size: 1rem; color: #50fa7b;">See the example on the next slide — that's the standard. Your hub detail should look like the hub detail shown there.</p>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- ─────────────────────────────────────── SLIDE 8: Complete the Matrix -->
-<div class="slide">
-    <div class="slide-content">
-        <h2>How to Complete the Matrix</h2>
+    <!-- Slide 6: What a Good Sketch Looks Like -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>What a Good Sketch Looks Like</h2>
+            <p class="subtitle">Teacher example — front cross section, side view, and hub detail with labeled dimensions</p>
+            <div style="background: rgba(196,30,58,0.04); border: 2px solid rgba(196,30,58,0.2); border-radius: 12px; padding: 16px; margin-top: 10px;">
+                <img src="Concept%20Drawing.png"
+                     alt="Teacher concept sketch — front cross section, side view, and hub detail with labeled dimensions"
+                     style="display: block; width: 100%; height: auto; border-radius: 8px;">
+            </div>
+            <div class="note-box" style="margin-top: 14px;">
+                <p style="margin: 0;">Your sketch should look like the hub detail — both halves, all dimensions labeled, all fasteners shown. The overall robot view gives context; the hub detail is the deliverable.</p>
+            </div>
+        </div>
+    </div>
 
-        <div class="grid-2" style="margin-top: 16px;">
-            <div>
-                <div class="box" style="margin-bottom: 16px;">
-                    <h3>Step 1 — Score each concept</h3>
-                    <p style="font-size: 1rem; margin-bottom: 8px;">For each criterion, score 1–5 for each concept:</p>
-                    <ul class="bullet-list" style="font-size: 0.95rem;">
-                        <li><span class="highlight">5</span> — fully meets this criterion</li>
-                        <li><span class="highlight">3</span> — partially meets it</li>
-                        <li><span class="highlight">1</span> — does not meet it</li>
+    <!-- Slide 7: Sketch Time — Concept A -->
+    <div class="slide">
+        <div class="slide-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; text-align: center;">
+            <h2>Sketch Time — Concept A</h2>
+            <div class="objective-box" style="max-width: 700px; margin-top: 25px; text-align: left;">
+                <h3 style="text-align: center;">15 minutes</h3>
+                <ul class="bullet-list" style="margin-top: 12px;">
+                    <li>Your idea, your hand, your notebook</li>
+                    <li>Apply all six rules — label, dimension, two views</li>
+                    <li>Your sketch becomes Concept A in your decision matrix</li>
+                </ul>
+            </div>
+            <div class="step-box" style="max-width: 700px; margin-top: 20px; text-align: center; padding: 14px;">
+                <p style="margin: 0; font-size: 1rem; color: #e05a6a; font-weight: 700;">When time is up: photograph your sketch and email it to both group partners.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 8: Group Exchange -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Group Exchange</h2>
+            <p>You now have three concepts — yours plus two from your group. You score all three against <strong style="color: #e0e6f0;">your own</strong> criteria and weights. Your group members score with their own too — matrices may differ.</p>
+            <div class="grid-2" style="margin-top: 20px;">
+                <div class="box-green">
+                    <h3>Getting the photos</h3>
+                    <ul class="bullet-list" style="font-size: 1rem; margin-top: 10px;">
+                        <li>Photo booth at the back of the room, or use your Chromebook camera</li>
+                        <li>Email your sketch to both group partners</li>
+                        <li>Confirm you have received both of theirs</li>
                     </ul>
                 </div>
                 <div class="box-amber">
-                    <h3>Step 2 — Multiply by weight</h3>
-                    <p style="font-size: 1rem; margin: 0;">Score × Weight = cell value. A criterion with weight 3 matters three times as much as one with weight 1. This is where the math does the work.</p>
+                    <h3>Setting up your matrix</h3>
+                    <ul class="bullet-list" style="font-size: 1rem; margin-top: 10px;">
+                        <li>Your sketch = Concept A (first column)</li>
+                        <li>Your partners' sketches = Concepts B and C</li>
+                        <li>Label each column with a brief description of the concept</li>
+                        <li>Your criteria and weights from Thursday are already in — just add the concept names across the top</li>
+                    </ul>
                 </div>
             </div>
-            <div>
-                <div class="box" style="margin-bottom: 16px;">
-                    <h3>Step 3 — Add up each column</h3>
-                    <p style="font-size: 1rem; margin: 0;">Total the weighted scores for each concept. The highest total is your matrix-recommended design choice.</p>
-                </div>
-                <div class="box-green">
-                    <h3>Step 4 — Write your rationale</h3>
-                    <p style="font-size: 1rem; margin: 0; color: #b8c5d6;">In 2–3 sentences: which concept did you choose, why does the matrix support that choice, and is there anything the matrix didn't capture that influenced your decision?</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="note-box" style="margin-top: 16px;">
-            <p>If the matrix recommends a different concept than you wanted to pick, you can still argue for your preference — but you have to explain what criterion the matrix undervalued and why. This is how engineering decisions work in real life.</p>
-        </div>
-    </div>
-</div>
-
-<!-- ─────────────────────────────────────── SLIDE 7: Approval Gate -->
-<div class="slide">
-    <div class="slide-content">
-        <h2>The Approval Gate</h2>
-
-        <div class="gate">
-            <h3>No F360 until your sketches are approved</h3>
-            <p style="margin-bottom: 16px;">Bring your three sketches and completed decision matrix to Mr. B. He will initial your brief if the sketches are ready. Opening Fusion 360 before approval = starting over.</p>
-        </div>
-
-        <div class="grid-2" style="margin-top: 16px;">
-            <div class="box">
-                <h3>Mr. B is checking for</h3>
-                <ul class="bullet-list" style="font-size: 1rem;">
-                    <li>Three meaningfully different concepts</li>
-                    <li>All critical dimensions labeled on each sketch</li>
-                    <li>At least 2 views per concept</li>
-                    <li>Sketches that satisfy the criteria from your design brief</li>
-                    <li>A filled-in decision matrix with a clear winner</li>
-                </ul>
-            </div>
-            <div class="box-amber">
-                <h3>Common reasons sketches are sent back</h3>
-                <ul class="bullet-list" style="font-size: 1rem;">
-                    <li>Three concepts that all look basically the same</li>
-                    <li>Missing dimensions — "I'll figure it out in F360"</li>
-                    <li>Only one view shown</li>
-                    <li>The design brief criteria don't match what's drawn</li>
-                    <li>Decision matrix is empty or has the same score for everything</li>
-                </ul>
+            <div class="note-box">
+                <p style="margin: 0; font-size: 1rem; color: #50fa7b;">You are not graded on the quality of Concepts B and C — only Concept A (yours) is evaluated for sketch quality. You are graded on whether your matrix is filled in correctly and completely.</p>
             </div>
         </div>
     </div>
-</div>
 
-<!-- ─────────────────────────────────────── SLIDE 8: What's Next -->
-<div class="slide">
-    <div class="slide-content" style="text-align: center; padding-top: 30px;">
-        <h2>You're Ready to Model</h2>
+    <!-- Slide 9: Example Completed Matrix -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Example: Completed Matrix</h2>
+            <p class="subtitle">Wheel hub — three bearing retention strategies compared</p>
 
-        <div class="objective-box" style="max-width: 700px; margin: 30px auto; text-align: left;">
-            <h3>What comes next — Unit 2</h3>
-            <ul class="bullet-list" style="margin-top: 10px;">
-                <li><span class="highlight">L2.1</span> — F360 orientation: watch the Kennedy video, get comfortable with the workspace</li>
-                <li><span class="highlight">L2.2</span> — Model your component from scratch using the approved concept from your decision matrix</li>
-                <li><span class="highlight">L2.3</span> — Measurement Tools Workshop: learn the tools you'll use to evaluate your print</li>
-                <li><span class="highlight">L2.4</span> — 3D Printing: how the print queue works, what happens from model to part</li>
-                <li>Then: test against your design brief, iterate, reflect, EDP quiz</li>
-            </ul>
-        </div>
+            <table class="dm-table">
+                <thead>
+                    <tr>
+                        <th class="criteria-col" style="width:38%">Criterion</th>
+                        <th>Weight<br><small style="font-weight:400; color:#888;">(1–3)</small></th>
+                        <th>A: Press-fit<br><small style="font-weight:400; color:#888;">score → weighted</small></th>
+                        <th>B: Slip-fit + glue<br><small style="font-weight:400; color:#888;">score → weighted</small></th>
+                        <th>C: Shoulder-captured<br><small style="font-weight:400; color:#888;">score → weighted</small></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="criteria-col">Bearing retention reliability</td>
+                        <td>3</td><td>4 → <strong>12</strong></td><td>3 → <strong>9</strong></td><td>5 → <strong>15</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="criteria-col">Print tolerance forgiveness</td>
+                        <td>3</td><td>2 → <strong>6</strong></td><td>4 → <strong>12</strong></td><td>3 → <strong>9</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="criteria-col">Serviceability</td>
+                        <td>2</td><td>2 → <strong>4</strong></td><td>1 → <strong>2</strong></td><td>5 → <strong>10</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="criteria-col">Assembly ease</td>
+                        <td>2</td><td>3 → <strong>6</strong></td><td>3 → <strong>6</strong></td><td>4 → <strong>8</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="criteria-col">Modeling complexity</td>
+                        <td>1</td><td>4 → <strong>4</strong></td><td>5 → <strong>5</strong></td><td>3 → <strong>3</strong></td>
+                    </tr>
+                    <tr class="total">
+                        <td class="criteria-col">Weighted Total</td>
+                        <td>—</td>
+                        <td><span style="font-size: 1.2rem;">32</span></td>
+                        <td><span style="font-size: 1.2rem;">34</span></td>
+                        <td><span style="font-size: 1.3rem; color: #50fa7b;">45 ✓</span></td>
+                    </tr>
+                </tbody>
+            </table>
 
-        <div class="grid-2" style="max-width: 700px; margin: 20px auto;">
-            <div class="box" style="text-align: left;">
-                <h3>Take with you to Unit 2</h3>
-                <ul class="bullet-list" style="font-size: 0.95rem;">
-                    <li>Your signed design brief</li>
-                    <li>Your three concept sketches</li>
-                    <li>Your completed decision matrix</li>
-                    <li>The chosen concept — circled or starred</li>
-                </ul>
-            </div>
-            <div class="box-green" style="text-align: left;">
-                <h3>Unit 1 is complete when</h3>
-                <ul class="bullet-list" style="font-size: 0.95rem;">
-                    <li>Design brief is signed by Mr. B</li>
-                    <li>Three sketches are approved</li>
-                    <li>Decision matrix shows a clear winner</li>
-                    <li>Portfolio evidence submitted</li>
-                </ul>
+            <div class="note-box" style="margin-top: 14px;">
+                <p><strong>Concept C wins at 45.</strong> Strong on the two weight-3 criteria is what matters most. If the matrix recommends something you don't want to pick — explain which criterion the matrix underweighted and why. That argument is worth writing.</p>
             </div>
         </div>
     </div>
+
+    <!-- Slide 10: Score Your Matrix + What's Due -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Score Your Matrix</h2>
+            <p>Your criteria and weights are already in from Thursday. Now fill in the scores.</p>
+            <div class="grid-2" style="margin-top: 16px;">
+                <div>
+                    <div class="box" style="margin-bottom: 16px;">
+                        <h3>Score each concept 1–5</h3>
+                        <ul class="bullet-list" style="font-size: 1rem; margin-top: 10px;">
+                            <li><span class="highlight">5</span> — fully meets this criterion</li>
+                            <li><span class="highlight">3</span> — partially meets it</li>
+                            <li><span class="highlight">1</span> — does not meet it</li>
+                        </ul>
+                    </div>
+                    <div class="box-amber">
+                        <h3>Multiply, then sum</h3>
+                        <p style="font-size: 1rem; margin: 0;">Score × Weight = cell value. Sum each concept's column. Highest total = recommended choice. Write 2–3 sentences explaining which concept you're going with and why.</p>
+                    </div>
+                </div>
+                <div class="gate">
+                    <h3>Approval Gate</h3>
+                    <p style="color: #b8c5d6; margin-bottom: 16px;">No Fusion 360 until your sketch is approved. Bring your notebook to Mr. B:</p>
+                    <ul class="bullet-list" style="text-align: left; font-size: 1rem;">
+                        <li>Concept A sketch with labels and dimensions</li>
+                        <li>At least two views</li>
+                        <li>Sketch clearly satisfies your brief criteria</li>
+                        <li>Completed decision matrix with totals and selection</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="step-box" style="margin-top: 20px; text-align: center; padding: 14px;">
+                <p style="margin: 0; font-size: 1rem; color: #e05a6a; font-weight: 700;">D1.1 due today. Whatever isn't done in class = homework. Matrix math and rationale are the most common unfinished sections.</p>
+            </div>
+        </div>
+    </div>
+
 </div>
 
-</div><!-- /presentation -->
-
-<!-- Navigation -->
 <nav class="nav">
     <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
     <span class="slide-counter" id="counter">1 / 10</span>
@@ -621,7 +347,6 @@
 <script>
     var slides = document.querySelectorAll('.slide');
     var current = 0;
-
     function showSlide(n) {
         slides[current].classList.remove('active');
         current = Math.max(0, Math.min(n, slides.length - 1));
@@ -630,9 +355,7 @@
         document.getElementById('prevBtn').disabled = current === 0;
         document.getElementById('nextBtn').disabled = current === slides.length - 1;
     }
-
     function changeSlide(dir) { showSlide(current + dir); }
-
     document.addEventListener('keydown', function(e) {
         if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
         if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);

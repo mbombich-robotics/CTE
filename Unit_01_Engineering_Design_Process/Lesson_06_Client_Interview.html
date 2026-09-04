@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="../favicon.svg">
-    <title>Lesson 1.6 — Client Interview &amp; Design Statement</title>
+    <title>Lesson 1.6 — Client Interview</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -13,438 +13,302 @@
         .slide { position: absolute; width: 100%; min-height: 100%; display: none; flex-direction: column; justify-content: flex-start; align-items: center; padding: 55px 60px 120px 60px; opacity: 0; transition: opacity 0.5s ease; overflow-y: auto; overflow-x: hidden; }
         .slide.active { display: flex; opacity: 1; }
         .slide-content { max-width: 1200px; width: 100%; }
-
-        h1 { font-family: 'Orbitron', sans-serif; font-size: 3.2rem; font-weight: 900; color: #c41e3a; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 20px rgba(196,30,58,0.5); animation: glow 2s ease-in-out infinite alternate; }
+        h1 { font-family: 'Orbitron', sans-serif; font-size: 3.5rem; font-weight: 900; color: #c41e3a; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 20px rgba(196,30,58,0.5); animation: glow 2s ease-in-out infinite alternate; }
         @keyframes glow { from { text-shadow: 0 0 20px rgba(196,30,58,0.5); } to { text-shadow: 0 0 30px rgba(196,30,58,0.8); } }
-        h2 { font-family: 'Orbitron', sans-serif; font-size: 2.2rem; font-weight: 700; color: #c41e3a; margin-bottom: 18px; text-transform: uppercase; }
-        h3 { font-family: 'Exo 2', sans-serif; font-size: 1.4rem; font-weight: 600; color: #e05a6a; margin-bottom: 10px; }
+        h2 { font-family: 'Orbitron', sans-serif; font-size: 2.5rem; font-weight: 700; color: #c41e3a; margin-bottom: 18px; text-transform: uppercase; }
+        h3 { font-family: 'Exo 2', sans-serif; font-size: 1.5rem; font-weight: 600; color: #e05a6a; margin-bottom: 12px; }
         p { font-size: 1.15rem; line-height: 1.6; margin-bottom: 12px; color: #b8c5d6; }
-        .subtitle { font-size: 1.2rem; color: #e05a6a; font-weight: 600; margin-bottom: 28px; }
-
+        .subtitle { font-size: 1.3rem; color: #e05a6a; font-weight: 600; margin-bottom: 30px; }
         .objective-box { background: linear-gradient(135deg, rgba(196,30,58,0.1) 0%, rgba(196,30,58,0.05) 100%); border: 3px solid #c41e3a; border-radius: 12px; padding: 20px; margin: 20px 0; box-shadow: 0 0 30px rgba(196,30,58,0.2); }
         .objective-box h3 { color: #c41e3a; }
         .bullet-list { list-style: none; padding-left: 0; }
-        .bullet-list li { font-size: 1.1rem; margin: 10px 0; padding-left: 35px; position: relative; color: #b8c5d6; line-height: 1.5; }
-        .bullet-list li::before { content: '▸'; position: absolute; left: 0; color: #e05a6a; font-size: 1.4rem; line-height: 1; }
-
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 18px; }
-        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; margin-top: 18px; }
-
+        .bullet-list li { font-size: 1.15rem; margin: 12px 0; padding-left: 35px; position: relative; color: #b8c5d6; line-height: 1.5; }
+        .bullet-list li::before { content: '▸'; position: absolute; left: 0; color: #e05a6a; font-size: 1.5rem; line-height: 1; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px; }
         .box { background: rgba(196,30,58,0.05); border: 2px solid #c41e3a; border-radius: 12px; padding: 20px; }
-        .box-amber { background: rgba(255,165,0,0.07); border: 2px solid #e05a6a; border-radius: 12px; padding: 20px; }
-        .box-green { background: rgba(80,250,123,0.06); border: 2px solid #50fa7b; border-radius: 12px; padding: 20px; }
+        .box-green { background: rgba(80,250,123,0.07); border: 2px solid #50fa7b; border-radius: 12px; padding: 20px; }
         .box-green h3 { color: #50fa7b; }
-
-        .note-box { background: rgba(255,165,0,0.07); border: 2px solid #e05a6a; border-radius: 12px; padding: 16px 20px; margin: 16px 0; }
-        .note-box h3 { color: #e05a6a; }
-        .note-box p { color: #d4b870; margin: 0; }
-
+        .box-amber { background: rgba(255,184,108,0.07); border: 2px solid #ffb86c; border-radius: 12px; padding: 20px; }
+        .box-amber h3 { color: #ffb86c; }
         .highlight { color: #c41e3a; font-weight: 700; }
         .success { color: #50fa7b; font-weight: 700; }
+        .step-box { background: linear-gradient(135deg, rgba(255,165,0,0.15) 0%, rgba(255,165,0,0.05) 100%); border: 2px solid #e05a6a; border-radius: 12px; padding: 25px; margin: 20px 0; }
+        .step-box h3 { color: #e05a6a; }
+        .note-box { background: rgba(80,250,123,0.07); border: 2px solid rgba(80,250,123,0.4); border-radius: 10px; padding: 16px 20px; margin-top: 16px; }
 
-        /* Component comparison cards */
-        .component-card {
-            border-radius: 14px; padding: 22px 24px;
-        }
-        .comp-aer { background: rgba(0,180,255,0.07); border: 2px solid #00b4ff; }
-        .comp-aer h3 { color: #00b4ff; }
-        .comp-dbl { background: rgba(189,147,249,0.07); border: 2px solid #bd93f9; }
-        .comp-dbl h3 { color: #bd93f9; }
-        .spec-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.07); font-size: 0.95rem; }
-        .spec-row:last-child { border-bottom: none; }
-        .spec-key { color: #888; }
-        .spec-val { font-family: 'JetBrains Mono', monospace; color: #e0e6f0; font-weight: 700; }
+        /* Progress strip */
+        .progress-strip { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 28px 0; }
+        .ps-item { display: flex; flex-direction: column; align-items: center; padding: 10px 14px; border-radius: 10px; font-weight: 700; min-width: 88px; text-align: center; border: 2px solid; }
+        .ps-label { font-size: 0.65rem; margin-bottom: 4px; letter-spacing: 0.5px; opacity: 0.7; }
+        .ps-name { font-size: 0.82rem; }
+        .ps-done { background: rgba(80,250,123,0.1); border-color: #50fa7b; color: #50fa7b; }
+        .ps-active { background: rgba(196,30,58,0.15); border-color: #c41e3a; color: #e05a6a; box-shadow: 0 0 14px rgba(196,30,58,0.35); }
+        .ps-push { background: rgba(189,147,249,0.1); border-color: #bd93f9; color: #bd93f9; }
+        .ps-future { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.1); color: #475569; }
 
-        /* Question cards */
+        /* Question list */
         .q-list { list-style: none; padding: 0; }
-        .q-list li {
-            background: rgba(196,30,58,0.05); border-left: 4px solid #c41e3a;
-            border-radius: 0 10px 10px 0; padding: 14px 18px; margin: 10px 0;
-            font-size: 1.1rem; color: #b8c5d6;
-        }
-        .q-num { font-family: 'Orbitron', sans-serif; color: #c41e3a; font-weight: 700; font-size: 0.9rem; display: block; margin-bottom: 4px; }
+        .q-list li { display: flex; align-items: flex-start; gap: 14px; padding: 11px 0; border-bottom: 1px solid rgba(196,30,58,0.12); font-size: 1.05rem; color: #b8c5d6; line-height: 1.5; }
+        .q-list li:last-child { border-bottom: none; }
+        .q-num { font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: 700; color: #c41e3a; background: rgba(196,30,58,0.12); border: 1px solid rgba(196,30,58,0.3); border-radius: 6px; padding: 3px 8px; min-width: 36px; text-align: center; margin-top: 2px; flex-shrink: 0; }
 
-        /* Statement template */
-        .statement-box {
-            background: rgba(80,250,123,0.05); border: 2px dashed #50fa7b;
-            border-radius: 12px; padding: 24px; margin: 20px 0;
-            font-size: 1.15rem; line-height: 2; color: #b8c5d6;
-        }
-        .blank { display: inline-block; border-bottom: 2px solid #50fa7b; min-width: 120px; color: #50fa7b; font-weight: 700; padding: 0 6px; }
+        /* Exchange / dialogue block */
+        .exchange { background: rgba(196,30,58,0.04); border: 1px solid rgba(196,30,58,0.2); border-radius: 12px; padding: 20px; margin-top: 20px; }
+        .ex-q { color: #e05a6a; font-weight: 700; margin-bottom: 8px; font-size: 1.05rem; }
+        .ex-a { color: #b8c5d6; font-style: italic; font-size: 1.05rem; margin-bottom: 0; }
+        .ex-note { color: #50fa7b; font-size: 0.95rem; margin-top: 10px; }
 
-        /* EDP progress strip */
-        .edp-strip { display: flex; gap: 0; margin: 20px 0; }
-        .edp-step {
-            flex: 1; text-align: center; padding: 10px 6px; font-size: 0.8rem;
-            font-weight: 700; border: 1px solid rgba(196,30,58,0.2);
-            color: #555; background: rgba(196,30,58,0.03);
-        }
-        .edp-step.active { background: rgba(196,30,58,0.15); border-color: #c41e3a; color: #c41e3a; }
-        .edp-step.done { background: rgba(80,250,123,0.1); border-color: #50fa7b; color: #50fa7b; }
-        .edp-step:first-child { border-radius: 8px 0 0 8px; }
-        .edp-step:last-child { border-radius: 0 8px 8px 0; }
+        /* Design statement formula */
+        .formula { font-size: 1.1rem; color: #b8c5d6; background: rgba(189,147,249,0.07); border: 2px solid #bd93f9; border-radius: 10px; padding: 18px 22px; margin: 20px 0; line-height: 1.9; }
+        .blank { color: #bd93f9; font-weight: 700; }
 
-        .nav {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            background: rgba(10,2,4,0.85);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(196,30,58,0.2);
-            border-radius: 50px;
-            padding: 12px 24px;
-            z-index: 100;
-        }
-
-        .nav button {
-            background: rgba(196,30,58,0.15);
-            color: #e88a8a;
-            border: 1px solid rgba(196,30,58,0.3);
-            border-radius: 8px;
-            padding: 10px 24px;
-            font-family: 'Exo 2', sans-serif;
-            font-size: 1em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
+        .nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 20px; background: rgba(10,2,4,0.85); backdrop-filter: blur(10px); border: 1px solid rgba(196,30,58,0.2); border-radius: 50px; padding: 12px 24px; z-index: 100; }
+        .nav button { background: rgba(196,30,58,0.15); color: #e88a8a; border: 1px solid rgba(196,30,58,0.3); border-radius: 8px; padding: 10px 24px; font-family: 'Exo 2', sans-serif; font-size: 1em; font-weight: 700; cursor: pointer; transition: all 0.2s; }
         .nav button:hover { background: rgba(196,30,58,0.3); color: #e2e8f0; }
         .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
-
-        .slide-counter {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9em;
-            color: #475569;
-            min-width: 60px;
-            text-align: center;
-        }
-
-        .back-link {
-            position: fixed;
-            top: 18px;
-            right: 24px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: #e05a6a;
-            text-decoration: none;
-            background: rgba(196,30,58,0.15);
-            border: 1px solid rgba(196,30,58,0.35);
-            padding: 5px 12px;
-            border-radius: 20px;
-            z-index: 100;
-            transition: background 0.2s;
-        }
+        .slide-counter { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: #475569; min-width: 60px; text-align: center; }
+        .back-link { position: fixed; top: 18px; right: 24px; font-size: 0.78rem; font-weight: 700; color: #e05a6a; text-decoration: none; background: rgba(196,30,58,0.15); border: 1px solid rgba(196,30,58,0.35); padding: 5px 12px; border-radius: 20px; z-index: 100; transition: background 0.2s; }
         .back-link:hover { background: rgba(196,30,58,0.3); }
-
-        @media (max-width: 768px) { h1 { font-size: 2.2rem; } h2 { font-size: 1.8rem; } .slide { padding: 30px 20px 100px; } .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { h1 { font-size: 2.5rem; } h2 { font-size: 2rem; } .slide { padding: 30px; } .grid-2 { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 <a href="index.html" class="back-link">← Unit 1</a>
 <div class="presentation">
 
-<!-- ─────────────────────────────────────── SLIDE 1: Title -->
-<div class="slide active">
-    <div class="slide-content" style="text-align:center; padding-top: 50px;">
-        <h1>Client Interview</h1>
-        <p class="subtitle">Unit 1 · Engineering Design Process · Lesson 1.6</p>
-        <p style="font-size: 1.3rem; max-width: 680px; margin: 20px auto; color: #b8c5d6;">
-            Before an engineer touches any material, they talk to the person who actually needs the thing built. Today, that's you.
-        </p>
-        <div style="display:flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 30px;">
-            <div style="padding: 10px 20px; border-radius: 8px; background: rgba(196,30,58,0.1); border: 2px solid #c41e3a; color: #c41e3a; font-weight: 700;">Client Interview</div>
-            <div style="padding: 10px 20px; border-radius: 8px; background: rgba(255,165,0,0.1); border: 2px solid #e05a6a; color: #e05a6a; font-weight: 700;">Problem Statement</div>
-            <div style="padding: 10px 20px; border-radius: 8px; background: rgba(80,250,123,0.1); border: 2px solid #50fa7b; color: #50fa7b; font-weight: 700;">Design Statement</div>
+    <!-- Slide 1: Title -->
+    <div class="slide active">
+        <div class="slide-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; text-align: center;">
+            <h1>Client Interview</h1>
+            <p class="subtitle">Unit 1 · Engineering Design Process · Lesson 1.6</p>
+            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 30px;">
+                <div style="padding: 10px 20px; border-radius: 8px; background: rgba(196,30,58,0.1); border: 2px solid #c41e3a; color: #c41e3a; font-weight: 700;">Interview</div>
+                <div style="padding: 10px 20px; border-radius: 8px; background: rgba(255,85,85,0.1); border: 2px solid #ff5555; color: #ff5555; font-weight: 700;">Criteria &amp; Constraints</div>
+                <div style="padding: 10px 20px; border-radius: 8px; background: rgba(189,147,249,0.1); border: 2px solid #bd93f9; color: #bd93f9; font-weight: 700;">Design Statement</div>
+            </div>
         </div>
-        <p style="margin-top: 40px; color: #555; font-size: 1rem;">Lesson 1.6</p>
     </div>
-</div>
 
-<!-- ─────────────────────────────────────── SLIDE 2: Objectives -->
-<div class="slide">
-    <div class="slide-content">
-        <h2>Lesson Objectives</h2>
-        <div class="objective-box">
-            <ul class="bullet-list">
-                <li>Conduct a structured client interview to gather design requirements</li>
-                <li>Convert interview notes into a written problem statement</li>
-                <li>Draft a design statement based on your client's stated needs</li>
+    <!-- Slide 2: Objectives -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Lesson Objectives</h2>
+            <div class="objective-box">
+                <ul class="bullet-list">
+                    <li>Conduct a structured client interview to gather real design requirements</li>
+                    <li>Fill Sections 3 &amp; 4 (criteria and constraints) and set up your decision matrix at the same time</li>
+                    <li>Draft your design statement — the synthesis of everything you've learned this week</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 3: Where We Are -->
+    <div class="slide">
+        <div class="slide-content" style="text-align: center;">
+            <h2>Where We Are</h2>
+            <p style="color: #888; margin-bottom: 0;">D1.1 Design Brief — section by section</p>
+            <div class="progress-strip">
+                <div class="ps-item ps-done">
+                    <div class="ps-label">WEDNESDAY — S1</div>
+                    <div class="ps-name">Client &amp; End User</div>
+                </div>
+                <div class="ps-item ps-done">
+                    <div class="ps-label">WEDNESDAY — S2</div>
+                    <div class="ps-name">Problem Statement</div>
+                </div>
+                <div class="ps-item ps-active">
+                    <div class="ps-label">TODAY — S3</div>
+                    <div class="ps-name">Criteria</div>
+                </div>
+                <div class="ps-item ps-active">
+                    <div class="ps-label">TODAY — S4</div>
+                    <div class="ps-name">Constraints</div>
+                </div>
+                <div class="ps-item ps-push">
+                    <div class="ps-label">PUSH — S5</div>
+                    <div class="ps-name">Design Statement</div>
+                </div>
+                <div class="ps-item ps-future">
+                    <div class="ps-label">FRIDAY — S6</div>
+                    <div class="ps-name">Concept Sketches</div>
+                </div>
+                <div class="ps-item ps-future">
+                    <div class="ps-label">FRIDAY — S7</div>
+                    <div class="ps-name">Decision Matrix</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 4: Good Questions vs. Bad Questions -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Good Questions vs. Bad Questions</h2>
+            <p>Closed questions produce yes/no answers. Open questions produce requirements you can write down. You want open questions.</p>
+            <div class="grid-2" style="margin-top: 20px;">
+                <div class="box" style="border-color: #ff5555; background: rgba(255,85,85,0.06);">
+                    <h3 style="color: #ff5555;">✗ Closed</h3>
+                    <p style="font-size: 1rem; font-style: italic; color: #e0e6f0;">"Does it need to be strong?"</p>
+                    <p style="font-size: 0.95rem; color: #888; margin-bottom: 16px;">Answer: "Yes." — tells you nothing measurable.</p>
+                    <p style="font-size: 1rem; font-style: italic; color: #e0e6f0;">"Is there a size limit?"</p>
+                    <p style="font-size: 0.95rem; color: #888; margin-bottom: 0;">Answer: "Yes." — still nothing you can design against.</p>
+                </div>
+                <div class="box-green">
+                    <h3>✓ Open</h3>
+                    <p style="font-size: 1rem; font-style: italic; color: #e0e6f0;">"What happens if this part fails during a match?"</p>
+                    <p style="font-size: 0.95rem; color: #888; margin-bottom: 16px;">Answer tells you consequences → you can write a testable criterion.</p>
+                    <p style="font-size: 1rem; font-style: italic; color: #e0e6f0;">"What are the maximum dimensions at each interface?"</p>
+                    <p style="font-size: 0.95rem; color: #888; margin-bottom: 0;">Answer gives you a specific number → that's a constraint.</p>
+                </div>
+            </div>
+            <div class="note-box">
+                <p style="margin: 0; font-size: 1rem; color: #50fa7b;">If an answer doesn't give you something to write in your brief, ask a follow-up: <strong>"Can you give me a specific number?"</strong> or <strong>"How would you test that?"</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 5: Watch First -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Watch First</h2>
+            <p>Before we start, one exchange — so you can see what note-taking looks like.</p>
+            <div class="exchange">
+                <p class="ex-q">Student: "What does this component physically connect to, and what are the dimensions at each interface?"</p>
+                <p class="ex-a">Mr. B: "It presses onto the wheel hub post — that post is 22mm in diameter. The cap needs to sit flush with the wheel face when installed, and it has to clear the 6 M3 bolts that stick out around the hub edge."</p>
+                <p class="ex-note">→ From this one answer, you can write: one dimension constraint (22mm press-fit bore), one geometry criterion (flush with wheel face), one clearance constraint (clears M3 bolt heads). Three brief entries from one question.</p>
+            </div>
+            <div class="step-box" style="margin-top: 20px; text-align: center; padding: 14px;">
+                <p style="margin: 0; font-size: 1rem; color: #e05a6a; font-weight: 700;">Notebook open. Write answers as you hear them — you cannot reconstruct this from memory.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 6: The Interview -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>The Interview</h2>
+            <p class="subtitle">Use your notebook questions. Ask them now.</p>
+            <ul class="q-list">
+                <li><span class="q-num">Q1</span>What does this component need to do? Describe the function in one or two sentences.</li>
+                <li><span class="q-num">Q2</span>What does it physically connect to, and what are the dimensions at each interface?</li>
+                <li><span class="q-num">Q3</span>What are the critical dimensions — the ones that absolutely must be correct for the part to work?</li>
+                <li><span class="q-num">Q4</span>Are there any geometry requirements? (No overhangs requiring supports, symmetry, specific wall thickness…)</li>
+                <li><span class="q-num">Q5</span>How will we test whether my design is successful? What do I measure or check?</li>
+                <li><span class="q-num">Q6</span>What constraints am I working within? (Material, print time, iteration budget…)</li>
+                <li><span class="q-num">Q7</span>Is there anything I should not do, or a common mistake to avoid?</li>
             </ul>
-        </div>
-    </div>
-</div>
-
-<!-- ─────────────────────────────────────── SLIDE 3: Where We Are in the EDP -->
-<div class="slide">
-    <div class="slide-content">
-        <h2>Where We Are</h2>
-        <p class="subtitle">You know the EDP. Now you use it for real.</p>
-
-        <div class="edp-strip">
-            <div class="edp-step done">Define<br>the Problem</div>
-            <div class="edp-step active">Research &amp;<br>Gather Info</div>
-            <div class="edp-step">Generate<br>Solutions</div>
-            <div class="edp-step">Select<br>Best Solution</div>
-            <div class="edp-step">Build<br>Prototype</div>
-            <div class="edp-step">Test &amp;<br>Evaluate</div>
-            <div class="edp-step">Communicate<br>Results</div>
-        </div>
-
-        <div class="grid-2" style="margin-top: 16px;">
-            <div class="box">
-                <h3>What you've done</h3>
-                <ul class="bullet-list" style="font-size: 1rem;">
-                    <li>Learned the EDP framework (L1.3)</li>
-                    <li>Applied it to the Paper Glider challenge (L1.4)</li>
-                    <li>Practiced writing design briefs (L1.5)</li>
-                </ul>
-            </div>
-            <div class="box-amber">
-                <h3>What this week delivers</h3>
-                <ul class="bullet-list" style="font-size: 1rem;">
-                    <li>L1.6 — Interview your client, write a real design brief</li>
-                    <li>L1.7 — Three concept sketches + decision matrix</li>
-                    <li>Unit 2 begins: model, print, test, iterate</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="note-box" style="margin-top: 20px;">
-            <p>This is not a drill. The design brief you write today drives what you actually build, print, and test.</p>
-        </div>
-    </div>
-</div>
-
-<!-- ─────────────────────────────────────── SLIDE 3: Your Component -->
-<div class="slide">
-    <div class="slide-content">
-        <h2>Your Component</h2>
-        <p class="subtitle">Different classes, different components — same process</p>
-
-        <div class="grid-2" style="margin-top: 20px;">
-            <div class="component-card comp-aer">
-                <h3>HS AER &amp; 8th Grade AER</h3>
-                <p style="font-size: 0.95rem; margin-bottom: 16px; color: #7ab8d4;">C1: Wheel Hub — supports the omni wheel on a fixed M8 bolt axle using MR128 bearings.</p>
-                <div class="spec-row"><span class="spec-key">Function</span><span class="spec-val">Axle / bearing support</span></div>
-                <div class="spec-row"><span class="spec-key">Assembly</span><span class="spec-val">Two halves, M3 self-tapping screws (counterbored)</span></div>
-                <div class="spec-row"><span class="spec-key">Axle bolt</span><span class="spec-val">M8 × 45 mm — total bolt path cannot exceed 45 mm</span></div>
-                <div class="spec-row"><span class="spec-key">Bearing</span><span class="spec-val">MR128 — 12 mm OD × 8 mm ID × 3.5 mm wide</span></div>
-                <div class="spec-row"><span class="spec-key">Width</span><span class="spec-val">Student-calculated from geometry; mount built to fit (0.5 mm clearance each side)</span></div>
-                <div class="spec-row"><span class="spec-key">Printed in</span><span class="spec-val">PLA</span></div>
-                <div class="spec-row"><span class="spec-key">Success test</span><span class="spec-val">Faces flush; fits mount; bearing retained; M8 bolt passes freely; wheel spins</span></div>
-            </div>
-            <div class="component-card comp-dbl">
-                <h3>D&amp;B Lab</h3>
-                <p style="font-size: 0.95rem; margin-bottom: 16px; color: #c4a0f5;">Fidget Spinner — spins freely around a standard 608 bearing.</p>
-                <div class="spec-row"><span class="spec-key">Function</span><span class="spec-val">Smooth spin, balanced</span></div>
-                <div class="spec-row"><span class="spec-key">Connects to</span><span class="spec-val">608 bearing (22 mm OD)</span></div>
-                <div class="spec-row"><span class="spec-key">Key dimension</span><span class="spec-val">22 mm center bore</span></div>
-                <div class="spec-row"><span class="spec-key">Printed in</span><span class="spec-val">PLA</span></div>
-                <div class="spec-row"><span class="spec-key">Success test</span><span class="spec-val">Bearing press-fits; spins ≥ 10 sec</span></div>
-            </div>
-        </div>
-
-        <div class="note-box" style="margin-top: 20px;">
-            <p>Your job today is to interview the teacher (your client) to confirm these requirements and gather any details not listed here. Engineers never assume — they ask.</p>
-        </div>
-    </div>
-</div>
-
-<!-- ─────────────────────────────────────── SLIDE 4: What Is a Client Interview? -->
-<div class="slide">
-    <div class="slide-content">
-        <h2>What Is a Client Interview?</h2>
-
-        <p>A client interview is a structured conversation between an engineer and the person who needs the solution built. Its purpose is to collect requirements that are specific, measurable, and testable — not just vague wishes.</p>
-
-        <div class="grid-2" style="margin-top: 16px;">
-            <div class="box">
-                <h3>What engineers ask about</h3>
-                <ul class="bullet-list" style="font-size: 1rem;">
-                    <li><span class="highlight">Function</span> — what must the part do?</li>
-                    <li><span class="highlight">Interfaces</span> — what does it connect to?</li>
-                    <li><span class="highlight">Dimensions</span> — what specific sizes matter?</li>
-                    <li><span class="highlight">Constraints</span> — material, time, cost, method?</li>
-                    <li><span class="highlight">Success criteria</span> — how will we know it works?</li>
-                </ul>
-            </div>
-            <div class="box-amber">
-                <h3>Active listening rules</h3>
-                <ul class="bullet-list" style="font-size: 1rem;">
-                    <li>Take notes on paper — you cannot remember this later</li>
-                    <li>Ask clarifying questions if anything is vague</li>
-                    <li>Never assume you know the answer before you ask</li>
-                    <li>Repeat back what you heard: "So you're saying…"</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="note-box" style="margin-top: 20px;">
-            <h3>Who is your client today?</h3>
-            <p>Mr. B. He designed the component you're going to build and knows exactly what it needs to do and how it needs to fit. He is the authority on the requirements.</p>
-        </div>
-    </div>
-</div>
-
-<!-- ─────────────────────────────────────── SLIDE 5: The Interview -->
-<div class="slide">
-    <div class="slide-content">
-        <h2>The Interview</h2>
-        <p class="subtitle">Ask these questions. Write the answers on your Design Brief template.</p>
-
-        <ul class="q-list">
-            <li>
-                <span class="q-num">Q1</span>
-                What does this component need to do? Describe the function in one or two sentences.
-            </li>
-            <li>
-                <span class="q-num">Q2</span>
-                What does it physically connect to, and what are the dimensions at each interface?
-            </li>
-            <li>
-                <span class="q-num">Q3</span>
-                What are the critical dimensions — the ones that absolutely must be correct for the part to work?
-            </li>
-            <li>
-                <span class="q-num">Q4</span>
-                Are there any geometry requirements? (For example: no overhangs that need supports, must be symmetric, specific wall thickness…)
-            </li>
-            <li>
-                <span class="q-num">Q5</span>
-                How will we test whether my design is successful? What do I measure or check?
-            </li>
-            <li>
-                <span class="q-num">Q6</span>
-                What constraints am I working within? (Material, print time, iteration budget…)
-            </li>
-            <li>
-                <span class="q-num">Q7</span>
-                Is there anything I should not do, or a common mistake to avoid?
-            </li>
-        </ul>
-    </div>
-</div>
-
-<!-- ─────────────────────────────────────── SLIDE 6: Notes → Problem Statement -->
-<div class="slide">
-    <div class="slide-content">
-        <h2>From Notes to Problem Statement</h2>
-        <p class="subtitle">Compress your interview notes into one focused sentence</p>
-
-        <p>A problem statement explains <span class="highlight">who</span> needs <span class="highlight">what</span> and <span class="highlight">why</span>. It does not describe the solution — it describes the gap.</p>
-
-        <div class="grid-2" style="margin-top: 16px;">
-            <div class="box">
-                <h3>Problem statement formula</h3>
-                <p style="font-size: 1rem; line-height: 1.8; margin: 0;">
-                    <span style="color:#c41e3a; font-weight:700;">[Who]</span> needs a way to
-                    <span style="color:#e05a6a; font-weight:700;">[do what]</span>
-                    because
-                    <span style="color:#50fa7b; font-weight:700;">[reason / current problem]</span>.
-                </p>
-            </div>
-            <div class="box-amber">
-                <h3>Examples by class</h3>
-                <p style="font-size: 0.95rem; color: #b8c5d6; margin-bottom: 10px;"><strong style="color:#00b4ff;">AER:</strong> The robot drive system needs a way to support the omni wheel on a fixed M8 axle bolt because no off-the-shelf hub fits this wheel and bearing combination.</p>
-                <p style="font-size: 0.95rem; color: #b8c5d6; margin: 0;"><strong style="color:#bd93f9;">DBL:</strong> A fidget spinner user needs a body that spins freely around a standard 608 bearing because existing designs either fail to press-fit correctly or are not balanced for smooth spin.</p>
-            </div>
-        </div>
-
-        <div class="note-box" style="margin-top: 20px;">
-            <p>Your problem statement does not mention PLA, dimensions, or Fusion 360. Those are part of the solution — they do not belong in the problem.</p>
-        </div>
-    </div>
-</div>
-
-<!-- ─────────────────────────────────────── SLIDE 7: Design Statement -->
-<div class="slide">
-    <div class="slide-content">
-        <h2>The Design Statement</h2>
-        <p class="subtitle">One sentence that binds criteria and constraints together</p>
-
-        <p>The design statement is the summary line of your design brief. It names what your solution will do and under what constraints it will do it.</p>
-
-        <div class="statement-box">
-            Design a <span class="blank">[component name]</span> that
-            <span class="blank">[primary function]</span>,
-            fits within <span class="blank">[key dimension]</span>,
-            and can be <span class="blank">[method / material constraint]</span>.
-        </div>
-
-        <div class="grid-2" style="margin-top: 16px;">
-            <div class="box">
-                <h3>Criteria (what it must do)</h3>
-                <ul class="bullet-list" style="font-size: 1rem;">
-                    <li>Come from your interview answers — not guessed</li>
-                    <li>Must be measurable ("fits a 3mm shaft" not "fits the shaft")</li>
-                    <li>At least three criteria</li>
-                </ul>
-            </div>
-            <div class="box-amber">
-                <h3>Constraints (what limits the design)</h3>
-                <ul class="bullet-list" style="font-size: 1rem;">
-                    <li>Material: PLA filament only</li>
-                    <li>Method: FDM 3D printing — no overhangs &gt; 45°</li>
-                    <li>Iterations: two prints per student</li>
-                    <li>Timeline: complete model by end of tomorrow</li>
-                </ul>
+            <div class="note-box">
+                <p style="margin: 0; font-size: 1rem; color: #50fa7b;">Ask any questions you added. If an answer is vague, ask: <strong>"Can you give me a specific number?"</strong> or <strong>"How would you test for that?"</strong></p>
             </div>
         </div>
     </div>
-</div>
 
-<!-- ─────────────────────────────────────── SLIDE 8: Your Turn -->
-<div class="slide">
-    <div class="slide-content">
-        <h2>Your Turn</h2>
-        <p class="subtitle">Write it, then get it signed off before L1.7</p>
-
-        <div class="objective-box">
-            <h3>Complete your Design Brief before you leave today</h3>
-            <ul class="bullet-list" style="margin-top: 10px;">
-                <li>Problem Statement — 1–2 sentences, no solution language</li>
-                <li>Criteria — at least 3, all measurable</li>
-                <li>Constraints — at least 3, all non-negotiable</li>
-                <li>Design Statement — 1 sentence using the formula</li>
-            </ul>
-        </div>
-
-        <div class="grid-2" style="margin-top: 16px;">
-            <div class="box-green">
-                <h3>Checkpoint: Mr. B reviews your brief</h3>
-                <p style="font-size: 1rem; margin: 0; color: #b8c5d6;">Before moving to sketching (L1.7), get your design brief initialed. If a criterion is vague or a constraint is missing, you'll fix it before the sketch phase begins — not after you've printed something that doesn't fit.</p>
-            </div>
-            <div class="box-amber">
-                <h3>What's next — L1.7</h3>
-                <ul class="bullet-list" style="font-size: 1rem;">
-                    <li>Three hand-drawn concept sketches</li>
-                    <li>Each with dimensions from your design brief</li>
-                    <li>Decision matrix to choose the best concept</li>
-                    <li>Approval before any F360 work begins</li>
-                </ul>
+    <!-- Slide 7: Notes → Criteria + Matrix -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Notes → Criteria + Matrix Setup</h2>
+            <p>Open your D1.1 doc to Section 3. For each criterion you write, do all three steps before moving to the next one.</p>
+            <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 14px;">
+                <div class="box-green" style="display: flex; align-items: flex-start; gap: 16px;">
+                    <div style="font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-weight: 900; color: #50fa7b; min-width: 36px; margin-top: 2px;">1</div>
+                    <div>
+                        <h3 style="margin-bottom: 6px;">Write the criterion in Section 3</h3>
+                        <p style="margin: 0; font-size: 1rem;">Must be specific and measurable — not "strong," but "survives a 10N pull-out force." Comes from your interview notes.</p>
+                    </div>
+                </div>
+                <div class="box-amber" style="display: flex; align-items: flex-start; gap: 16px;">
+                    <div style="font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-weight: 900; color: #ffb86c; min-width: 36px; margin-top: 2px;">2</div>
+                    <div>
+                        <h3 style="color: #ffb86c; margin-bottom: 6px;">Enter it in your decision matrix — criteria column</h3>
+                        <p style="margin: 0; font-size: 1rem;">Open Section 7 side-by-side or flip back and forth. Enter the same criterion text in the first column of the matrix row.</p>
+                    </div>
+                </div>
+                <div class="box" style="display: flex; align-items: flex-start; gap: 16px;">
+                    <div style="font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-weight: 900; color: #e05a6a; min-width: 36px; margin-top: 2px;">3</div>
+                    <div>
+                        <h3 style="margin-bottom: 6px;">Assign a weight (1, 2, or 3) right now</h3>
+                        <p style="margin: 0; font-size: 1rem;">1 = nice to have · 2 = important · 3 = must have. Set this while the interview is fresh — you'll use it Friday to score your concepts.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Slide 8: Notes → Constraints -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Notes → Constraints</h2>
+            <p>Fill Section 4. Constraints are the non-negotiable limits — things that are fixed regardless of which design concept you choose.</p>
+            <div class="grid-2" style="margin-top: 20px;">
+                <div class="box">
+                    <h3>How to spot a constraint</h3>
+                    <ul class="bullet-list" style="font-size: 1rem; margin-top: 10px;">
+                        <li>It's a hard limit — no workaround</li>
+                        <li>Breaking it makes the design fail outright</li>
+                        <li>It's binary: either you meet it or you don't</li>
+                        <li>Common sources: material, dimensions, time, method, rules</li>
+                    </ul>
+                </div>
+                <div class="box-amber">
+                    <h3>Constraint vs. Criterion</h3>
+                    <p style="font-size: 1rem; margin-bottom: 10px;">If you can score it on a scale of 1–5, it's a criterion. If it's pass/fail, it's a constraint.</p>
+                    <p style="font-size: 0.95rem; color: #888; margin-bottom: 8px;"><strong style="color: #e0e6f0;">Criterion:</strong> "Survives a 10N pull-out force" — you could score a 3N result vs. a 12N result.</p>
+                    <p style="font-size: 0.95rem; color: #888; margin-bottom: 0;"><strong style="color: #e0e6f0;">Constraint:</strong> "Must print in PLA" — it either does or it doesn't.</p>
+                </div>
+            </div>
+            <div class="step-box" style="margin-top: 20px; text-align: center; padding: 14px;">
+                <p style="margin: 0; font-size: 1rem; color: #e05a6a; font-weight: 700;">Aim for at least 3 specific constraints. "Must look good" is not a constraint — that's a criterion (if you can measure it at all).</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 9: Design Statement -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Design Statement</h2>
+            <p>You now have everything you need. The design statement is one sentence that ties it all together — user, problem, what success looks like, and the limits you're working within.</p>
+            <div class="formula">
+                "Design a <span class="blank">[component]</span> for <span class="blank">[client/end user]</span> that <span class="blank">[addresses the problem]</span>,<br>
+                meets <span class="blank">[key criterion]</span> and <span class="blank">[key criterion]</span>,<br>
+                within <span class="blank">[constraint]</span> and <span class="blank">[constraint]</span>."
+            </div>
+            <div class="grid-2">
+                <div class="box-green">
+                    <h3>It should include</h3>
+                    <ul class="bullet-list" style="font-size: 1rem; margin-top: 10px;">
+                        <li>Who it's for (from S1)</li>
+                        <li>What problem it solves (from S2)</li>
+                        <li>At least one criterion reference (from S3)</li>
+                        <li>At least one constraint reference (from S4)</li>
+                    </ul>
+                </div>
+                <div class="box" style="border-color: #ff5555; background: rgba(255,85,85,0.05);">
+                    <h3 style="color: #ff5555;">It should NOT include</h3>
+                    <ul class="bullet-list" style="font-size: 1rem; margin-top: 10px;">
+                        <li>A specific design solution ("I will use…")</li>
+                        <li>Vague language ("good quality," "as needed")</li>
+                        <li>Anything you haven't confirmed with your client</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="step-box" style="margin-top: 20px; text-align: center; padding: 14px;">
+                <p style="margin: 0; font-size: 1rem; color: #e05a6a; font-weight: 700;">10 minutes — draft it now. If you don't finish in class, it's the first thing tomorrow.</p>
+            </div>
+        </div>
+    </div>
+
 </div>
 
-</div><!-- /presentation -->
-
-<!-- Navigation -->
 <nav class="nav">
     <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
-    <span class="slide-counter" id="counter">1 / 8</span>
+    <span class="slide-counter" id="counter">1 / 9</span>
     <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
 </nav>
 
 <script>
     var slides = document.querySelectorAll('.slide');
     var current = 0;
-
     function showSlide(n) {
         slides[current].classList.remove('active');
         current = Math.max(0, Math.min(n, slides.length - 1));
@@ -453,9 +317,7 @@
         document.getElementById('prevBtn').disabled = current === 0;
         document.getElementById('nextBtn').disabled = current === slides.length - 1;
     }
-
     function changeSlide(dir) { showSlide(current + dir); }
-
     document.addEventListener('keydown', function(e) {
         if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
         if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="../favicon.svg">
-    <title>Writing a Design Brief</title>
+    <title>Lesson 1.5 — Design Brief Workshop</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -25,90 +25,55 @@
         .bullet-list li { font-size: 1.15rem; margin: 12px 0; padding-left: 35px; position: relative; color: #b8c5d6; line-height: 1.5; }
         .bullet-list li::before { content: '▸'; position: absolute; left: 0; color: #e05a6a; font-size: 1.5rem; line-height: 1; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px; }
-        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px; }
         .box { background: rgba(196,30,58,0.05); border: 2px solid #c41e3a; border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(196,30,58,0.1); }
         .highlight { color: #c41e3a; font-weight: 700; }
         .success { color: #50fa7b; font-weight: 700; }
-        .checkmark { color: #50fa7b; font-size: 1.5rem; margin-right: 10px; }
         .step-box { background: linear-gradient(135deg, rgba(255,165,0,0.15) 0%, rgba(255,165,0,0.05) 100%); border: 2px solid #e05a6a; border-radius: 12px; padding: 25px; margin: 20px 0; }
         .step-box h3 { color: #e05a6a; }
-        .pltw-tag { display: inline-block; background: rgba(80,250,123,0.15); color: #50fa7b; border: 1px solid #50fa7b; border-radius: 6px; padding: 3px 10px; font-size: 0.8rem; font-weight: 700; margin-left: 10px; vertical-align: middle; }
-        .criteria-card { background: rgba(80,250,123,0.08); border: 2px solid #50fa7b; border-radius: 12px; padding: 22px; }
-        .criteria-card h3 { color: #50fa7b; }
-        .constraint-card { background: rgba(255,85,85,0.08); border: 2px solid #ff5555; border-radius: 12px; padding: 22px; }
-        .constraint-card h3 { color: #ff5555; }
-        .tag { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 700; margin: 3px; }
-        .tag-c { background: rgba(80,250,123,0.2); color: #50fa7b; border: 1px solid #50fa7b; }
-        .tag-x { background: rgba(255,85,85,0.2); color: #ff5555; border: 1px solid #ff5555; }
-        .brief-section { border-radius: 10px; padding: 16px 20px; margin: 10px 0; }
+        .good-box { background: rgba(80,250,123,0.07); border: 2px solid #50fa7b; border-radius: 12px; padding: 18px; }
+        .good-box h3 { color: #50fa7b; }
+        .weak-box { background: rgba(255,85,85,0.07); border: 2px solid #ff5555; border-radius: 12px; padding: 18px; }
+        .weak-box h3 { color: #ff5555; }
+        .brief-section { border-radius: 10px; padding: 14px 18px; margin: 8px 0; display: flex; align-items: center; gap: 14px; }
+        .bs-num { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 900; min-width: 32px; }
         .bs1 { background: rgba(196,30,58,0.08); border-left: 4px solid #c41e3a; }
+        .bs1 .bs-num { color: #c41e3a; }
         .bs2 { background: rgba(80,250,123,0.08); border-left: 4px solid #50fa7b; }
+        .bs2 .bs-num { color: #50fa7b; }
         .bs3 { background: rgba(255,85,85,0.08); border-left: 4px solid #ff5555; }
+        .bs3 .bs-num { color: #ff5555; }
         .bs4 { background: rgba(255,215,0,0.08); border-left: 4px solid #ffd700; }
+        .bs4 .bs-num { color: #ffd700; }
         .bs5 { background: rgba(189,147,249,0.08); border-left: 4px solid #bd93f9; }
-        .resource-link { display: flex; align-items: center; gap: 15px; padding: 14px 18px; border: 2px solid rgba(80,250,123,0.4); border-radius: 10px; text-decoration: none; color: #50fa7b; font-weight: 700; font-size: 1rem; background: rgba(80,250,123,0.05); transition: all 0.2s; margin: 8px 0; }
-        .resource-link:hover { border-color: #50fa7b; background: rgba(80,250,123,0.12); }
-        .resource-link span { font-size: 1.5rem; }
-        .week2-item { display: flex; align-items: flex-start; gap: 16px; padding: 14px 0; border-bottom: 1px solid rgba(196,30,58,0.15); }
-        .week2-num { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 900; color: #c41e3a; min-width: 55px; }
-        @media (max-width: 768px) { h1 { font-size: 2.5rem; } h2 { font-size: 2rem; } .slide { padding: 30px; } .grid-2 { grid-template-columns: 1fr; } }
+        .bs5 .bs-num { color: #bd93f9; }
+        .bs6 { background: rgba(139,233,253,0.08); border-left: 4px solid #8be9fd; }
+        .bs6 .bs-num { color: #8be9fd; }
+        .bs7 { background: rgba(255,184,108,0.08); border-left: 4px solid #ffb86c; }
+        .bs7 .bs-num { color: #ffb86c; }
 
-        .nav {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            background: rgba(10,2,4,0.85);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(196,30,58,0.2);
-            border-radius: 50px;
-            padding: 12px 24px;
-            z-index: 100;
-        }
+        /* D1.1 progress strip */
+        .progress-strip { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 28px 0; }
+        .ps-item { display: flex; flex-direction: column; align-items: center; padding: 10px 14px; border-radius: 10px; font-weight: 700; min-width: 88px; text-align: center; border: 2px solid; }
+        .ps-label { font-size: 0.65rem; margin-bottom: 4px; letter-spacing: 0.5px; opacity: 0.7; }
+        .ps-name { font-size: 0.82rem; }
+        .ps-done { background: rgba(80,250,123,0.1); border-color: #50fa7b; color: #50fa7b; }
+        .ps-active { background: rgba(196,30,58,0.15); border-color: #c41e3a; color: #e05a6a; box-shadow: 0 0 14px rgba(196,30,58,0.35); }
+        .ps-future { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.1); color: #475569; }
 
-        .nav button {
-            background: rgba(196,30,58,0.15);
-            color: #e88a8a;
-            border: 1px solid rgba(196,30,58,0.3);
-            border-radius: 8px;
-            padding: 10px 24px;
-            font-family: 'Exo 2', sans-serif;
-            font-size: 1em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+        /* Question list */
+        .q-list { list-style: none; padding: 0; }
+        .q-list li { display: flex; align-items: flex-start; gap: 14px; padding: 12px 0; border-bottom: 1px solid rgba(196,30,58,0.12); font-size: 1.05rem; color: #b8c5d6; line-height: 1.5; }
+        .q-list li:last-child { border-bottom: none; }
+        .q-num { font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: 700; color: #c41e3a; background: rgba(196,30,58,0.12); border: 1px solid rgba(196,30,58,0.3); border-radius: 6px; padding: 3px 8px; min-width: 36px; text-align: center; margin-top: 2px; flex-shrink: 0; }
 
+        .nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 20px; background: rgba(10,2,4,0.85); backdrop-filter: blur(10px); border: 1px solid rgba(196,30,58,0.2); border-radius: 50px; padding: 12px 24px; z-index: 100; }
+        .nav button { background: rgba(196,30,58,0.15); color: #e88a8a; border: 1px solid rgba(196,30,58,0.3); border-radius: 8px; padding: 10px 24px; font-family: 'Exo 2', sans-serif; font-size: 1em; font-weight: 700; cursor: pointer; transition: all 0.2s; }
         .nav button:hover { background: rgba(196,30,58,0.3); color: #e2e8f0; }
         .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
-
-        .slide-counter {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9em;
-            color: #475569;
-            min-width: 60px;
-            text-align: center;
-        }
-
-        .back-link {
-            position: fixed;
-            top: 18px;
-            right: 24px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: #e05a6a;
-            text-decoration: none;
-            background: rgba(196,30,58,0.15);
-            border: 1px solid rgba(196,30,58,0.35);
-            padding: 5px 12px;
-            border-radius: 20px;
-            z-index: 100;
-            transition: background 0.2s;
-        }
+        .slide-counter { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: #475569; min-width: 60px; text-align: center; }
+        .back-link { position: fixed; top: 18px; right: 24px; font-size: 0.78rem; font-weight: 700; color: #e05a6a; text-decoration: none; background: rgba(196,30,58,0.15); border: 1px solid rgba(196,30,58,0.35); padding: 5px 12px; border-radius: 20px; z-index: 100; transition: background 0.2s; }
         .back-link:hover { background: rgba(196,30,58,0.3); }
+        @media (max-width: 768px) { h1 { font-size: 2.5rem; } h2 { font-size: 2rem; } .slide { padding: 30px; } .grid-2 { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -118,15 +83,13 @@
     <!-- Slide 1: Title -->
     <div class="slide active">
         <div class="slide-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; text-align: center;">
-            <h1>Writing a Design Brief</h1>
-            <p class="subtitle">Lesson 1.5 — The Real Challenge Starts Here</p>
-            <div style="margin-top: 30px; display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; max-width: 700px;">
-                <div style="padding: 10px 18px; border-radius: 8px; background: rgba(196,30,58,0.1); border: 2px solid #c41e3a; font-size: 1rem; color: #c41e3a; font-weight: 700;">Problem Statement</div>
-                <div style="padding: 10px 18px; border-radius: 8px; background: rgba(80,250,123,0.1); border: 2px solid #50fa7b; font-size: 1rem; color: #50fa7b; font-weight: 700;">Criteria</div>
-                <div style="padding: 10px 18px; border-radius: 8px; background: rgba(255,85,85,0.1); border: 2px solid #ff5555; font-size: 1rem; color: #ff5555; font-weight: 700;">Constraints</div>
-                <div style="padding: 10px 18px; border-radius: 8px; background: rgba(255,215,0,0.1); border: 2px solid #ffd700; font-size: 1rem; color: #ffd700; font-weight: 700;">Design Statement</div>
+            <h1>Design Brief Workshop</h1>
+            <p class="subtitle">Unit 1 · Engineering Design Process · Lesson 1.5</p>
+            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 30px;">
+                <div style="padding: 10px 20px; border-radius: 8px; background: rgba(196,30,58,0.1); border: 2px solid #c41e3a; color: #c41e3a; font-weight: 700;">D1.1 Overview</div>
+                <div style="padding: 10px 20px; border-radius: 8px; background: rgba(80,250,123,0.1); border: 2px solid #50fa7b; color: #50fa7b; font-weight: 700;">Client &amp; End User</div>
+                <div style="padding: 10px 20px; border-radius: 8px; background: rgba(189,147,249,0.1); border: 2px solid #bd93f9; color: #bd93f9; font-weight: 700;">Problem Statement</div>
             </div>
-            <p style="margin-top: 40px; font-size: 1rem; color: #888;">Lesson 1.5</p>
         </div>
     </div>
 
@@ -136,233 +99,183 @@
             <h2>Lesson Objectives</h2>
             <div class="objective-box">
                 <ul class="bullet-list">
-                    <li>Distinguish between criteria (what a design must do) and constraints (what limits it)</li>
-                    <li>Write a design statement for your component project</li>
-                    <li>Identify what information belongs in a complete design brief</li>
+                    <li>Understand what D1.1 asks for and how it's structured</li>
+                    <li>Write your client &amp; end user statement and problem statement (Sections 1 &amp; 2)</li>
+                    <li>Prepare your interview questions for tomorrow's client interview</li>
                 </ul>
             </div>
         </div>
     </div>
 
-    <!-- Slide 3: Your Component Design Project -->
+    <!-- Slide 3: Where We Are -->
+    <div class="slide">
+        <div class="slide-content" style="text-align: center;">
+            <h2>Where We Are</h2>
+            <p style="color: #888; margin-bottom: 0;">D1.1 Design Brief — section by section</p>
+            <div class="progress-strip">
+                <div class="ps-item ps-active">
+                    <div class="ps-label">TODAY — S1</div>
+                    <div class="ps-name">Client &amp; End User</div>
+                </div>
+                <div class="ps-item ps-active">
+                    <div class="ps-label">TODAY — S2</div>
+                    <div class="ps-name">Problem Statement</div>
+                </div>
+                <div class="ps-item ps-future">
+                    <div class="ps-label">THURSDAY — S3</div>
+                    <div class="ps-name">Criteria</div>
+                </div>
+                <div class="ps-item ps-future">
+                    <div class="ps-label">THURSDAY — S4</div>
+                    <div class="ps-name">Constraints</div>
+                </div>
+                <div class="ps-item ps-future">
+                    <div class="ps-label">THURSDAY — S5</div>
+                    <div class="ps-name">Design Statement</div>
+                </div>
+                <div class="ps-item ps-future">
+                    <div class="ps-label">FRIDAY — S6</div>
+                    <div class="ps-name">Concept Sketches</div>
+                </div>
+                <div class="ps-item ps-future">
+                    <div class="ps-label">FRIDAY — S7</div>
+                    <div class="ps-name">Decision Matrix</div>
+                </div>
+            </div>
+            <div class="step-box" style="max-width: 700px; margin: 0 auto; text-align: left;">
+                <p style="margin: 0; font-size: 1rem; color: #e05a6a; font-weight: 700;">One document. Built section by section over three days. Due Friday.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 4: What Is D1.1? -->
     <div class="slide">
         <div class="slide-content">
-            <h2>Your Component Design Project</h2>
-            <p style="margin-bottom: 5px;">This is the project you'll be designing for. Not a practice problem — the actual thing you'll 3D print and use on your robot (or take home spinning).</p>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 18px;">
-                <div style="background: rgba(0,180,255,0.08); border: 2px solid #00b4ff; border-radius: 12px; padding: 20px;">
-                    <p style="color: #00b4ff; font-weight: 700; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 8px;">HS &amp; 8th Grade AER</p>
-                    <h3 style="color: #00b4ff; margin-bottom: 10px;">C1 — Wheel Hub</h3>
+            <h2>What Is D1.1?</h2>
+            <p>A design brief is the official record of your design requirements before you build anything. Engineers write one before touching software, materials, or tools. Yours lives in Google Docs and connects to your portfolio.</p>
+            <div style="margin-top: 20px;">
+                <div class="brief-section bs1"><span class="bs-num">S1</span><span><strong style="color: #e0e6f0;">Client &amp; End User</strong> — who asked for this, and who will use it</span></div>
+                <div class="brief-section bs2"><span class="bs-num">S2</span><span><strong style="color: #e0e6f0;">Problem Statement</strong> — what's wrong or missing (not the solution)</span></div>
+                <div class="brief-section bs3"><span class="bs-num">S3</span><span><strong style="color: #e0e6f0;">Criteria</strong> — measurable goals your design must achieve</span></div>
+                <div class="brief-section bs4"><span class="bs-num">S4</span><span><strong style="color: #e0e6f0;">Constraints</strong> — non-negotiable limits on materials, time, dimensions</span></div>
+                <div class="brief-section bs5"><span class="bs-num">S5</span><span><strong style="color: #e0e6f0;">Design Statement</strong> — one sentence tying everything together</span></div>
+                <div class="brief-section bs6"><span class="bs-num">S6</span><span><strong style="color: #e0e6f0;">Concept Sketches</strong> — three different approaches, hand-drawn</span></div>
+                <div class="brief-section bs7"><span class="bs-num">S7</span><span><strong style="color: #e0e6f0;">Decision Matrix</strong> — scored comparison; data drives the choice</span></div>
+            </div>
+            <div class="step-box" style="margin-top: 20px; text-align: center; padding: 14px;">
+                <p style="margin: 0; font-size: 1rem; color: #e05a6a; font-weight: 700;">Open your portfolio → D1.1 → Create Doc to get started.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 5: Section 1 — Client & End User -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Section 1 — Client &amp; End User</h2>
+            <p><strong style="color: #e0e6f0;">Client:</strong> the person who commissioned the work. <strong style="color: #e0e6f0;">End user:</strong> the person who will actually use the result. They are often different people — knowing both shapes what you design.</p>
+            <div class="grid-2" style="margin-top: 20px;">
+                <div class="weak-box">
+                    <h3>✗ Weak</h3>
+                    <p style="font-style: italic; color: #e0e6f0; font-size: 1rem; margin-bottom: 12px;">"My client is students who need a better robot."</p>
                     <ul class="bullet-list" style="font-size: 0.95rem;">
-                        <li>Supports the omni wheel on a fixed M8 bolt axle</li>
-                        <li>Houses an MR128 bearing (12mm OD × 8mm ID × 3.5mm) — one per hub half</li>
-                        <li>PLA, printed in class, iterated if needed</li>
-                        <li>Both halves work together — similar but not identical</li>
+                        <li>Which students? No one specific is named</li>
+                        <li>Client and end user are collapsed into one vague group</li>
+                        <li>"Better robot" is a solution, not a client</li>
                     </ul>
                 </div>
-                <div style="background: rgba(189,147,249,0.08); border: 2px solid #bd93f9; border-radius: 12px; padding: 20px;">
-                    <p style="color: #bd93f9; font-weight: 700; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 8px;">Design &amp; Build Lab</p>
-                    <h3 style="color: #bd93f9; margin-bottom: 10px;">C1 — Fidget Spinner</h3>
+                <div class="good-box">
+                    <h3>✓ Strong</h3>
+                    <p style="font-style: italic; color: #e0e6f0; font-size: 1rem; margin-bottom: 12px;">"Client: Mr. B (project manager and technical lead). End users: the competition drive team — the three students who operate the robot on the field."</p>
                     <ul class="bullet-list" style="font-size: 0.95rem;">
-                        <li>Spins on a 608 bearing (22mm OD × 7mm deep)</li>
-                        <li>Symmetric geometry for balanced rotation</li>
-                        <li>PLA, printed in class — arm design is yours</li>
-                        <li>You design it; it must seat the bearing and spin freely</li>
+                        <li>Client is a named, specific person with a role</li>
+                        <li>End user is a distinct, specific group</li>
+                        <li>No solution language anywhere</li>
                     </ul>
                 </div>
             </div>
-            <div class="objective-box" style="margin-top: 16px;">
-                <p style="margin: 0; font-size: 1.1rem; color: #e05a6a;">Before you model anything in CAD, you write a design brief. That's what this lesson teaches you to do.</p>
-            </div>
         </div>
     </div>
 
-    <!-- Slide 3: What Is a Design Brief? -->
+    <!-- Slide 6: Section 2 — Problem Statement -->
     <div class="slide">
         <div class="slide-content">
-            <h2>What Is a Design Brief? <span class="pltw-tag">PLTW</span></h2>
-            <p style="margin-bottom: 5px;">The document that defines the project before building starts. It's the contract between your team and the problem.</p>
-            <div class="grid-2" style="margin-top: 15px;">
-                <div>
-                    <div class="brief-section bs1"><p style="font-weight: 700; color: #c41e3a; margin: 0;">1. Problem Statement</p><p style="font-size: 0.95rem; margin: 4px 0 0; color: #888;">Who needs what and why</p></div>
-                    <div class="brief-section bs2"><p style="font-weight: 700; color: #50fa7b; margin: 0;">2. Criteria</p><p style="font-size: 0.95rem; margin: 4px 0 0; color: #888;">What the solution should do (measurable goals)</p></div>
-                    <div class="brief-section bs3"><p style="font-weight: 700; color: #ff5555; margin: 0;">3. Constraints</p><p style="font-size: 0.95rem; margin: 4px 0 0; color: #888;">What the solution must work within (non-negotiable limits)</p></div>
-                    <div class="brief-section bs4"><p style="font-weight: 700; color: #ffd700; margin: 0;">4. Design Statement</p><p style="font-size: 0.95rem; margin: 4px 0 0; color: #888;">One sentence combining criteria + constraints</p></div>
-                    <div class="brief-section bs5"><p style="font-weight: 700; color: #bd93f9; margin: 0;">5. Concept Sketches</p><p style="font-size: 0.95rem; margin: 4px 0 0; color: #888;">3 different designs before committing to one</p></div>
-                </div>
-                <div>
-                    <div class="step-box">
-                        <h3>Why professionals use them</h3>
-                        <ul class="bullet-list" style="font-size: 1rem;">
-                            <li>Keeps everyone on the same goal</li>
-                            <li>Prevents scope creep mid-build</li>
-                            <li>Creates a record of every decision</li>
-                            <li>Lets you evaluate your outcome objectively</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Slide 4: Criteria for this challenge -->
-    <div class="slide">
-        <div class="slide-content">
-            <h2>Criteria — What It Should Do</h2>
-            <p style="margin-bottom: 5px;">Criteria are the goals. Measurable, rankable, and specific.</p>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 15px;">
-                <div class="criteria-card">
-                    <h3 style="color: #00b4ff;">Wheel Hub Criteria</h3>
-                    <ul class="bullet-list" style="margin-top: 10px; font-size: 0.95rem;">
-                        <li>Hub contains MR128 bearing — <span class="success">no axial play</span>; shoulder retains from each side</li>
-                        <li>M8 bolt passes freely through the bearing bore — no binding</li>
-                        <li>Both outer faces flush — M3 heads counterbored on entry; tips stop short of far face</li>
-                        <li>Hub total width is student-calculated from geometry; mount built to fit with <span class="success">0.5 mm clearance each side</span></li>
-                        <li>Left and right halves mate — M3 self-tap pilot holes align and hold without nuts</li>
+            <h2>Section 2 — Problem Statement</h2>
+            <p>The problem statement describes what is <strong style="color: #e0e6f0;">wrong, missing, or not working</strong> — not what you're going to build. One or two focused sentences. No solution language.</p>
+            <div class="grid-2" style="margin-top: 20px;">
+                <div class="weak-box">
+                    <h3>✗ Weak</h3>
+                    <p style="font-style: italic; color: #e0e6f0; font-size: 1rem; margin-bottom: 12px;">"I will design a hub cap for the robot wheel that covers the hardware and looks clean."</p>
+                    <ul class="bullet-list" style="font-size: 0.95rem;">
+                        <li>"I will design" — that's a solution, not a problem</li>
+                        <li>Skips over what's actually broken or missing</li>
+                        <li>"Looks clean" is subjective and untestable</li>
                     </ul>
                 </div>
-                <div class="criteria-card" style="border-color: #bd93f9; background: rgba(189,147,249,0.08);">
-                    <h3 style="color: #bd93f9;">Fidget Spinner Criteria</h3>
-                    <ul class="bullet-list" style="margin-top: 10px; font-size: 0.95rem;">
-                        <li>Center pocket seats 608 bearing — <span class="success">flush, no wobble</span></li>
-                        <li>Arms are symmetric — balanced rotation, no vibration</li>
-                        <li>Arm geometry is student-designed (3, 4, or 5 arms)</li>
-                        <li>Prints in one session — no more than 1 hr print time</li>
-                        <li>Spins freely and smoothly when flicked</li>
+                <div class="good-box">
+                    <h3>✓ Strong</h3>
+                    <p style="font-style: italic; color: #e0e6f0; font-size: 1rem; margin-bottom: 12px;">"The wheel hub hardware is exposed after assembly, creating a snagging hazard on field elements and leaving the robot with an unfinished appearance during inspection."</p>
+                    <ul class="bullet-list" style="font-size: 0.95rem;">
+                        <li>States exactly what's wrong — exposed hardware</li>
+                        <li>Two real consequences — snagging, appearance</li>
+                        <li>No mention of a solution</li>
                     </ul>
                 </div>
             </div>
-            <div class="box" style="margin-top: 16px; text-align: center; border-color: #e05a6a; background: rgba(255,165,0,0.05);">
-                <p style="font-size: 1rem; margin: 0; color: #e05a6a; font-weight: 700;">Your team can add criteria, clarify them, or rank them by priority. That's part of the brief.</p>
-            </div>
-            <div class="box" style="margin-top: 10px; text-align: center; border-color: #888; background: rgba(136,136,136,0.04);">
-                <p style="font-size: 0.95rem; margin: 0; color: #888; font-style: italic;">You'll get more specific criteria from the client interview in Lesson 1.6. For now, start with these.</p>
+            <div class="step-box" style="margin-top: 20px; text-align: center; padding: 14px;">
+                <p style="margin: 0; font-size: 1rem; color: #e05a6a; font-weight: 700;">Test: could someone read your problem statement and design a completely different solution? If yes, it's a problem statement. If no, it's a solution statement.</p>
             </div>
         </div>
     </div>
 
-    <!-- Slide 5: Constraints for this challenge -->
+    <!-- Slide 7: Demo + Work Time -->
     <div class="slide">
-        <div class="slide-content">
-            <h2>Constraints — What You Must Work Within</h2>
-            <p style="margin-bottom: 5px;">Constraints are the limits. Non-negotiable — they don't change regardless of design.</p>
-            <div class="constraint-card" style="margin-top: 15px;">
-                <h3>Component Design Constraints (both tracks)</h3>
-                <ul class="bullet-list" style="margin-top: 10px;">
-                    <li>Software: <span style="color: #ff5555; font-weight: 700;">Fusion 360 only</span> — parametric CAD, not freehand</li>
-                    <li>Material: <span style="color: #ff5555; font-weight: 700;">PLA filament only</span> — printed on the school's Bambu printers</li>
-                    <li>Print time: must complete in <span style="color: #ff5555; font-weight: 700;">one class session</span> — design accordingly</li>
-                    <li>Hardware is fixed — bearing and bolt sizes are not negotiable; no larger selection is feasible</li>
-                    <li>AER: M8 bolt = <span style="color: #ff5555; font-weight: 700;">45 mm</span> — total bolt path (mount walls + hub assembly + nut) cannot exceed this</li>
-                    <li>Arm/spoke/outer geometry is your design choice, but must be structurally sound</li>
+        <div class="slide-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; text-align: center;">
+            <h2>Watch, Then Write</h2>
+            <div class="objective-box" style="max-width: 750px; margin-top: 25px; text-align: left;">
+                <h3 style="text-align: center;">Mr. B demos Sections 1 &amp; 2</h3>
+                <ul class="bullet-list" style="margin-top: 12px;">
+                    <li>Write a weak response — see what immediate feedback says</li>
+                    <li>Revise based on the feedback — watch the score change</li>
+                    <li>Then you do the same in your own doc</li>
                 </ul>
             </div>
-            <div class="grid-2" style="margin-top: 15px;">
-                <div class="box" style="text-align: center;">
-                    <p style="font-size: 0.9rem; color: #888; margin-bottom: 8px;">Remember the shortcut:</p>
-                    <span class="tag tag-c">Criteria = Goals</span>
-                    <span class="tag tag-x">Constraints = Limits</span>
-                </div>
-                <div class="box" style="border-color: #888; background: rgba(136,136,136,0.04); text-align: center;">
-                    <p style="font-size: 0.95rem; margin: 0; color: #888; font-style: italic;">Later components (C2, C3…) will have different constraints, but the same mental model. Criteria = what success looks like. Constraints = what you can't change.</p>
-                </div>
+            <div class="step-box" style="max-width: 750px; margin-top: 20px; text-align: center; padding: 18px;">
+                <p style="font-size: 1.1rem; color: #50fa7b; font-weight: 700; margin: 0;">Open portfolio → D1.1 → write Sections 1 &amp; 2. Use the feedback before you move on.</p>
             </div>
         </div>
     </div>
 
-    <!-- Slide 6: Writing the Design Statement -->
+    <!-- Slide 8: Prepare for Tomorrow -->
     <div class="slide">
         <div class="slide-content">
-            <h2>The Design Statement</h2>
-            <p style="margin-bottom: 5px;">One sentence that packages the problem statement, criteria, and constraints together.</p>
-            <div class="objective-box" style="margin-top: 15px;">
-                <h3>Template</h3>
-                <p style="font-family: 'Space Mono', monospace; font-size: 1rem; color: #e05a6a; line-height: 2; margin: 0;">
-                    Design a [solution] that [criteria 1], [criteria 2], and [criteria 3],<br>
-                    using only [constraint 1], within [constraint 2].
-                </p>
-            </div>
-            <div class="grid-2" style="margin-top: 15px;">
-                <div>
-                    <div class="box" style="border-color: #ff5555; background: rgba(255,85,85,0.04);">
-                        <h3 style="color: #ff5555;">Too vague</h3>
-                        <p style="font-style: italic; font-size: 1rem; margin: 0; color: #b8c5d6;">"Design a wheel hub for the robot."</p>
-                        <p style="font-size: 0.9rem; color: #666; margin-top: 8px;">No measurable criteria. No way to know if you succeeded.</p>
-                    </div>
-                </div>
-                <div>
-                    <div class="box" style="border-color: #50fa7b; background: rgba(80,250,123,0.04);">
-                        <h3 style="color: #50fa7b;">Strong</h3>
-                        <p style="font-style: italic; font-size: 1rem; margin: 0; color: #b8c5d6;">"Design a PLA wheel hub that contains an MR128 bearing (12mm OD × 3.5mm) with no axial play, allows an M8 bolt to pass freely through the bearing bore, and mates with the opposite-side hub to support the omni wheel — modeled in Fusion 360 and printed within one class session."</p>
-                    </div>
-                </div>
-            </div>
-            <div class="step-box" style="margin-top: 16px; text-align: center; padding: 14px;">
-                <p style="margin: 0; font-size: 1rem; color: #e05a6a; font-weight: 700;">You'll write yours on the next slide.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Slide 7: Teams + Initial Draft -->
-    <div class="slide">
-        <div class="slide-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh;">
-            <h2 style="text-align: center;">Teams Assigned</h2>
-            <div class="objective-box" style="max-width: 800px; margin-top: 25px; text-align: center;">
-                <h3>Your first in-class deliverable</h3>
-                <p style="font-size: 1.2rem; line-height: 1.8; color: #b8c5d6; margin: 10px 0;">This is individual — talk it through with your team, but write your own draft design brief in your own notebook:</p>
-                <ul class="bullet-list" style="text-align: left; max-width: 500px; margin: 0 auto;">
-                    <li>One <span class="highlight">problem statement</span> sentence</li>
-                    <li>3 criteria you consider most important</li>
-                    <li>All constraints listed</li>
-                    <li>One <span class="highlight">design statement</span> sentence</li>
-                </ul>
-            </div>
-            <div class="step-box" style="max-width: 800px; margin-top: 20px; text-align: center;">
-                <p style="font-size: 1rem; color: #e05a6a; margin: 0;">10 minutes. Your own notebook, your own name on it. Be specific — vague criteria produce vague builds.</p>
-            </div>
-            <div class="step-box" style="max-width: 800px; margin-top: 20px; text-align: center; border-color: #50fa7b;">
-                <p style="font-size: 1rem; color: #50fa7b; margin: 0; font-weight: 700;">Open your portfolio → D1.1 Design Brief to start your draft.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Slide 8: Recap -->
-    <div class="slide">
-        <div class="slide-content">
-            <h2>Recap</h2>
-            <div class="objective-box">
-                <h3>What you have now</h3>
-                <ul class="bullet-list">
-                    <li><span class="checkmark">✓</span> Understand your component design project — what you'll model and why</li>
-                    <li><span class="checkmark">✓</span> Know the 5 sections of a design brief</li>
-                    <li><span class="checkmark">✓</span> Can distinguish criteria from constraints for this project</li>
-                    <li><span class="checkmark">✓</span> A draft design brief with problem statement + design statement</li>
-                    <li><span class="checkmark">✓</span> Your team assigned and working</li>
-                </ul>
-            </div>
-            <div class="box" style="margin-top: 18px; text-align: center; background: rgba(80,250,123,0.06); border-color: #50fa7b;">
-                <p style="color: #50fa7b; font-weight: 700; margin: 0;">Your design brief is in the portfolio — D1.1 Design Brief</p>
-            </div>
-            <div class="step-box" style="margin-top: 18px; text-align: center;">
-                <h3>Next: Lesson 1.6 — Client Interview</h3>
-                <p style="margin: 0; font-size: 1rem;">You'll interview Mr. B to sharpen your problem statement. Prepare 3–5 questions before next class.</p>
+            <h2>Prepare for Tomorrow</h2>
+            <p>Tomorrow you interview Mr. B to discover your criteria and constraints — the information you need to fill Sections 3 &amp; 4. Copy these questions into your engineering notebook and write the answers next to each one during the interview. Add any questions of your own at the bottom.</p>
+            <ul class="q-list" style="margin-top: 16px;">
+                <li><span class="q-num">Q1</span>What does this component need to do? Describe the function in one or two sentences.</li>
+                <li><span class="q-num">Q2</span>What does it physically connect to, and what are the dimensions at each interface?</li>
+                <li><span class="q-num">Q3</span>What are the critical dimensions — the ones that absolutely must be correct for the part to work?</li>
+                <li><span class="q-num">Q4</span>Are there any geometry requirements? (No overhangs that need supports, must be symmetric, specific wall thickness…)</li>
+                <li><span class="q-num">Q5</span>How will we test whether my design is successful? What do I measure or check?</li>
+                <li><span class="q-num">Q6</span>What constraints am I working within? (Material, print time, iteration budget…)</li>
+                <li><span class="q-num">Q7</span>Is there anything I should not do, or a common mistake to avoid?</li>
+            </ul>
+            <div class="step-box" style="margin-top: 20px; text-align: center; padding: 14px;">
+                <p style="margin: 0; font-size: 1rem; color: #e05a6a; font-weight: 700;">Your notebook = your notes during the interview. No notebook tomorrow = no answers.</p>
             </div>
         </div>
     </div>
 
 </div>
 
-<!-- Navigation -->
 <nav class="nav">
     <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
-    <span class="slide-counter" id="counter">1 / 9</span>
+    <span class="slide-counter" id="counter">1 / 8</span>
     <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
 </nav>
 
 <script>
     var slides = document.querySelectorAll('.slide');
     var current = 0;
-
     function showSlide(n) {
         slides[current].classList.remove('active');
         current = Math.max(0, Math.min(n, slides.length - 1));
@@ -371,9 +284,7 @@
         document.getElementById('prevBtn').disabled = current === 0;
         document.getElementById('nextBtn').disabled = current === slides.length - 1;
     }
-
     function changeSlide(dir) { showSlide(current + dir); }
-
     document.addEventListener('keydown', function(e) {
         if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
         if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
