@@ -435,9 +435,30 @@
           <span style="color:var(--muted);font-size:13px;">@vicksburgschools.org</span>
         </div>
       </div>
+
+      <div style="border:1px solid var(--border-light);border-radius:6px;padding:8px 10px;">
+        <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px;">
+          Group Members <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional — send to whole group)</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-size:11px;color:var(--muted);width:60px;flex-shrink:0;">Member 2</span>
+            <input id="inp-email2" type="text" inputmode="numeric" placeholder="123456" autocomplete="off"
+                   style="width:90px;flex-shrink:0;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:5px 8px;font-size:13px;">
+            <span style="color:var(--muted);font-size:12px;">@vicksburgschools.org</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-size:11px;color:var(--muted);width:60px;flex-shrink:0;">Member 3</span>
+            <input id="inp-email3" type="text" inputmode="numeric" placeholder="123456" autocomplete="off"
+                   style="width:90px;flex-shrink:0;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:5px 8px;font-size:13px;">
+            <span style="color:var(--muted);font-size:12px;">@vicksburgschools.org</span>
+          </div>
+        </div>
+      </div>
+
       <div class="field">
         <label>Subject / Component</label>
-        <input id="inp-subject" type="text" placeholder="e.g. Component 1 v2" autocomplete="off" spellcheck="false">
+        <input id="inp-subject" type="text" placeholder="e.g. Concept Sketches" autocomplete="off" spellcheck="false">
       </div>
 
       <div id="queue-section">
@@ -460,7 +481,8 @@
 <div id="success-screen">
   <div id="success-icon">✅</div>
   <h2>Photos Sent!</h2>
-  <p>Check your email at<br><span id="success-email-display"></span><br>for links to your photos.</p>
+  <p id="success-msg-single" style="display:none;">Check your email at<br><span id="success-email-display"></span><br>for links to your photos.</p>
+  <p id="success-msg-group" style="display:none;">Email sent to all group members:<br><span id="success-email-list" style="color:var(--text);font-weight:600;line-height:2;"></span></p>
   <button id="btn-reset">Next Student</button>
 </div>
 
@@ -489,11 +511,16 @@ const queueGrid     = document.getElementById('queue-grid');
 const queueLabel    = document.getElementById('queue-label');
 const inpName       = document.getElementById('inp-name');
 const inpEmail      = document.getElementById('inp-email');
+const inpEmail2     = document.getElementById('inp-email2');
+const inpEmail3     = document.getElementById('inp-email3');
 const inpSubject    = document.getElementById('inp-subject');
 const btnUpload     = document.getElementById('btn-upload');
 const statusMsg     = document.getElementById('status-msg');
 const successScreen = document.getElementById('success-screen');
 const successEmail  = document.getElementById('success-email-display');
+const successMsgSingle = document.getElementById('success-msg-single');
+const successMsgGroup  = document.getElementById('success-msg-group');
+const successEmailList = document.getElementById('success-email-list');
 const btnReset      = document.getElementById('btn-reset');
 
 // ── Camera init ───────────────────────────────────────────────────────────────
@@ -642,6 +669,14 @@ btnUpload.addEventListener('click', async () => {
   const email     = studentId ? studentId + '@vicksburgschools.org' : '';
   const subject   = inpSubject.value.trim();
 
+  // Collect optional group member emails
+  const id2 = inpEmail2.value.trim().replace(/@.*/, '');
+  const id3 = inpEmail3.value.trim().replace(/@.*/, '');
+  const additionalEmails = [id2, id3]
+    .filter(Boolean)
+    .map(id => id + '@vicksburgschools.org');
+  const allEmails = [email, ...additionalEmails];
+
   if (!name)      { setStatus('Enter your name.', 'error');           inpName.focus();    return; }
   if (!studentId) { setStatus('Enter your student number.', 'error'); inpEmail.focus();   return; }
   if (!subject)   { setStatus('Enter a subject.', 'error');           inpSubject.focus(); return; }
@@ -667,6 +702,7 @@ btnUpload.addEventListener('click', async () => {
       const data = await postToServer({
         action:    'uploadPhoto',
         name, subject, email,
+        additionalEmails,        // grant Drive viewer access to group members too
         imageData: queue[i].base64,
         index:     i + 1
       });
@@ -683,10 +719,10 @@ btnUpload.addEventListener('click', async () => {
     }
   }
 
-  // Send email
+  // Send email to all recipients
   setStatus('Sending email…');
   try {
-    const data = await postToServer({ action: 'sendEmail', name, email, subject, files: uploaded });
+    const data = await postToServer({ action: 'sendEmail', name, email, emails: allEmails, subject, files: uploaded });
     if (!data.success) throw new Error(data.error || 'Email failed');
   } catch (err) {
     setStatus('Photos uploaded but email failed: ' + err.message, 'error');
@@ -694,8 +730,16 @@ btnUpload.addEventListener('click', async () => {
     return;
   }
 
-  // Success
-  successEmail.textContent = email;
+  // Success — show appropriate message
+  if (allEmails.length > 1) {
+    successEmailList.innerHTML = allEmails.join('<br>');
+    successMsgSingle.style.display = 'none';
+    successMsgGroup.style.display  = 'block';
+  } else {
+    successEmail.textContent = email;
+    successMsgSingle.style.display = 'block';
+    successMsgGroup.style.display  = 'none';
+  }
   successScreen.classList.add('active');
 });
 
@@ -704,10 +748,14 @@ btnReset.addEventListener('click', () => {
   queue.length = 0;
   inpName.value    = '';
   inpEmail.value   = '';
+  inpEmail2.value  = '';
+  inpEmail3.value  = '';
   inpSubject.value = '';
   renderQueue();
   setStatus('');
   successScreen.classList.remove('active');
+  successMsgSingle.style.display = 'none';
+  successMsgGroup.style.display  = 'none';
   btnCapture.disabled = false;
   inpName.focus();
 });
