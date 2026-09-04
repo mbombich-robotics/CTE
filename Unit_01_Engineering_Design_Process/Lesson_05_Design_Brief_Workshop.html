@@ -60,6 +60,19 @@
         .ps-active { background: rgba(196,30,58,0.15); border-color: #c41e3a; color: #e05a6a; box-shadow: 0 0 14px rgba(196,30,58,0.35); }
         .ps-future { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.1); color: #475569; }
 
+        /* Brief tiles (slide 4) */
+        .brief-tile { border-radius: 12px; padding: 16px 14px; display: flex; flex-direction: column; gap: 5px; border: 2px solid; }
+        .bt-num { font-family: 'Orbitron', sans-serif; font-size: 1.6rem; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+        .bt-name { font-size: 0.9rem; font-weight: 700; color: #e0e6f0; }
+        .bt-desc { font-size: 0.78rem; color: #8894a8; line-height: 1.4; margin: 0; }
+        .bt1 { background: rgba(196,30,58,0.08);   border-color: #c41e3a; } .bt1 .bt-num { color: #c41e3a; }
+        .bt2 { background: rgba(80,250,123,0.08);   border-color: #50fa7b; } .bt2 .bt-num { color: #50fa7b; }
+        .bt3 { background: rgba(255,85,85,0.08);    border-color: #ff5555; } .bt3 .bt-num { color: #ff5555; }
+        .bt4 { background: rgba(255,215,0,0.08);    border-color: #ffd700; } .bt4 .bt-num { color: #ffd700; }
+        .bt5 { background: rgba(189,147,249,0.08);  border-color: #bd93f9; } .bt5 .bt-num { color: #bd93f9; }
+        .bt6 { background: rgba(139,233,253,0.08);  border-color: #8be9fd; } .bt6 .bt-num { color: #8be9fd; }
+        .bt7 { background: rgba(255,184,108,0.08);  border-color: #ffb86c; } .bt7 .bt-num { color: #ffb86c; }
+
         /* Question list */
         .q-list { list-style: none; padding: 0; }
         .q-list li { display: flex; align-items: flex-start; gap: 14px; padding: 12px 0; border-bottom: 1px solid rgba(196,30,58,0.12); font-size: 1.05rem; color: #b8c5d6; line-height: 1.5; }
@@ -152,17 +165,49 @@
     <div class="slide">
         <div class="slide-content">
             <h2>What Is D1.1?</h2>
-            <p>A design brief is the official record of your design requirements before you build anything. Engineers write one before touching software, materials, or tools. Yours lives in Google Docs and connects to your portfolio.</p>
-            <div style="margin-top: 20px;">
-                <div class="brief-section bs1"><span class="bs-num">S1</span><span><strong style="color: #e0e6f0;">Client &amp; End User</strong> — who asked for this, and who will use it</span></div>
-                <div class="brief-section bs2"><span class="bs-num">S2</span><span><strong style="color: #e0e6f0;">Problem Statement</strong> — what's wrong or missing (not the solution)</span></div>
-                <div class="brief-section bs3"><span class="bs-num">S3</span><span><strong style="color: #e0e6f0;">Criteria</strong> — measurable goals your design must achieve</span></div>
-                <div class="brief-section bs4"><span class="bs-num">S4</span><span><strong style="color: #e0e6f0;">Constraints</strong> — non-negotiable limits on materials, time, dimensions</span></div>
-                <div class="brief-section bs5"><span class="bs-num">S5</span><span><strong style="color: #e0e6f0;">Design Statement</strong> — one sentence tying everything together</span></div>
-                <div class="brief-section bs6"><span class="bs-num">S6</span><span><strong style="color: #e0e6f0;">Concept Sketches</strong> — three different approaches, hand-drawn</span></div>
-                <div class="brief-section bs7"><span class="bs-num">S7</span><span><strong style="color: #e0e6f0;">Decision Matrix</strong> — scored comparison; data drives the choice</span></div>
+            <p style="margin-bottom: 18px;">A design brief is the official record of your design requirements before you build anything. Engineers write one before touching software, materials, or tools. Yours lives in Google Docs and connects to your portfolio.</p>
+            <!-- Row 1: 4 tiles -->
+            <div style="display:flex; gap:12px; margin-bottom:12px;">
+                <div class="brief-tile bt1" style="flex:1;">
+                    <div class="bt-num">S1</div>
+                    <div class="bt-name">Client &amp; End User</div>
+                    <p class="bt-desc">Who asked for this, and who will actually use it</p>
+                </div>
+                <div class="brief-tile bt2" style="flex:1;">
+                    <div class="bt-num">S2</div>
+                    <div class="bt-name">Problem Statement</div>
+                    <p class="bt-desc">What's wrong or missing — not the solution</p>
+                </div>
+                <div class="brief-tile bt3" style="flex:1;">
+                    <div class="bt-num">S3</div>
+                    <div class="bt-name">Criteria</div>
+                    <p class="bt-desc">Measurable goals your design must achieve</p>
+                </div>
+                <div class="brief-tile bt4" style="flex:1;">
+                    <div class="bt-num">S4</div>
+                    <div class="bt-name">Constraints</div>
+                    <p class="bt-desc">Non-negotiable limits on materials, time, or dimensions</p>
+                </div>
             </div>
-            <div class="step-box" style="margin-top: 20px; text-align: center; padding: 14px;">
+            <!-- Row 2: 3 tiles centered at same width as row 1 -->
+            <div style="display:flex; gap:12px; justify-content:center;">
+                <div class="brief-tile bt5" style="flex:0 0 calc(25% - 9px);">
+                    <div class="bt-num">S5</div>
+                    <div class="bt-name">Design Statement</div>
+                    <p class="bt-desc">One sentence tying problem + criteria together</p>
+                </div>
+                <div class="brief-tile bt6" style="flex:0 0 calc(25% - 9px);">
+                    <div class="bt-num">S6</div>
+                    <div class="bt-name">Concept Sketches</div>
+                    <p class="bt-desc">Three different approaches, hand-drawn</p>
+                </div>
+                <div class="brief-tile bt7" style="flex:0 0 calc(25% - 9px);">
+                    <div class="bt-num">S7</div>
+                    <div class="bt-name">Decision Matrix</div>
+                    <p class="bt-desc">Scored comparison — data drives the choice</p>
+                </div>
+            </div>
+            <div class="step-box" style="margin-top: 18px; text-align: center; padding: 14px;">
                 <p style="margin: 0; font-size: 1rem; color: #e05a6a; font-weight: 700;">Open your portfolio → D1.1 → Create Doc to get started.</p>
             </div>
         </div>
