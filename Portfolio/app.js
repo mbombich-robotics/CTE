@@ -152,7 +152,7 @@ const DELIVERABLES = [
         week: 1,
         phase: 'edp',
         type: 'googleDoc',
-        points: 24,
+        points: 28,
         description: 'Create a formal design brief in Google Docs. Your document lives in your Google Drive and serves as the official record of your design requirements.',
         // requirements removed — rubric shown in portfolio; section instructions live in the doc template
     },
@@ -1464,6 +1464,11 @@ const RUBRICS = {
                 'Clearly identifies who the client is (person, group, or organization)',
                 'Describes who will actually use the product (end user)',
                 'Client and end user are distinct and specific — not vague or generic'
+            ]},
+            { name: 'Problem Statement', points: 4, criteria: [
+                'States the specific problem to be solved — not the solution',
+                'Describes what is missing, broken, inefficient, or not working (a need, not an "I will build…")',
+                'Specific enough that a finished design could be tested against it'
             ]},
             { name: 'Criteria (quantity)', points: 4, criteria: [
                 'Lists at least 5 design criteria',
@@ -3914,6 +3919,7 @@ const COMPONENT_RUBRIC_CRITERIA = [
 const DOC_RUBRIC_CRITERIA = {
     11: [
         { key: 'problem_id',             label: 'Client & End User',     max: 4 },
+        { key: 'problem_statement',      label: 'Problem Statement',     max: 4 },
         { key: 'criteria_completeness',  label: 'Criteria (quantity)',   max: 4 },
         { key: 'criteria_quality',       label: 'Criteria (quality)',    max: 4 },
         { key: 'constraints',            label: 'Constraints',           max: 4 },

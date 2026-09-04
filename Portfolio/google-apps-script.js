@@ -2409,6 +2409,30 @@ function getOrCreateTutorSheet() {
 // ============================================
 
 /**
+ * Returns (creating if needed) a folder to hold student copies, so they never
+ * land in the templates folder itself. Layout:
+ *   <templates folder>'s parent
+ *     └─ Student Submissions
+ *          └─ D<id> — <deliverable title>   (one subfolder per assignment)
+ * Anchored on the template file's own parent folder so this works no matter
+ * where the templates folder actually lives in Drive.
+ */
+function getOrCreateSubmissionsFolder(templateFile, deliverableId, deliverableTitle) {
+  var templateParents = templateFile.getParents();
+  var anchor = templateParents.hasNext() ? templateParents.next() : DriveApp.getRootFolder();
+
+  var submissionsRoot = getOrCreateNamedFolder(anchor, 'Student Submissions');
+  var subName = 'D' + deliverableId + (deliverableTitle ? ' — ' + deliverableTitle : '');
+  return getOrCreateNamedFolder(submissionsRoot, subName);
+}
+
+function getOrCreateNamedFolder(parent, name) {
+  var existing = parent.getFoldersByName(name);
+  if (existing.hasNext()) return existing.next();
+  return parent.createFolder(name);
+}
+
+/**
  * Creates a copy of a Google Doc template in the student's Drive.
  * Template IDs are stored in Script Properties as DELIVERABLE_DOC_TEMPLATE_<id>
  */
@@ -2436,7 +2460,8 @@ function handleCreateDeliverableDoc(data) {
     var title = deliverableTitle
         ? deliverableTitle + ' — ' + shortName
         : 'Deliverable ' + deliverableId + ' — ' + shortName;
-    var copy  = templateFile.makeCopy(title);
+    var destFolder = getOrCreateSubmissionsFolder(templateFile, deliverableId, deliverableTitle);
+    var copy  = templateFile.makeCopy(title, destFolder);
     var docId = copy.getId();
 
     // Pre-fill placeholder text
@@ -2507,9 +2532,11 @@ function gradeDocWithRubric(docText, deliverableId) {
 
   if (deliverableId === 11) {
     // ── D11: Design Brief ──────────────────────────────────────────────────
-    rubric = `RUBRIC — DESIGN BRIEF (5 criteria, 4 pts each):
+    rubric = `RUBRIC — DESIGN BRIEF (7 criteria, 4 pts each):
 
-problem_id (max 4): Student names a specific client or end user AND describes the actual problem — not the solution. 4=user specifically named, problem clearly stated, no solution language, specific enough to test against; 3=user named, problem clear but could be more specific; 2=user is vague ("people," "students") OR problem describes a solution instead of a need; 1=missing either the user or a clear problem statement; 0=blank.
+problem_id (max 4): Student names a specific client or end user. 4=client/end user is a specific, named person, group, or organization — not generic, and distinct from the problem statement; 3=named but could be more specific; 2=vague ("people," "students") or client and end user are conflated/unclear; 1=client or end user is missing or only implied; 0=blank.
+
+problem_statement (max 4): Student describes the actual problem to be solved — not the solution. 4=problem clearly stated, no solution language, specific enough to test a finished design against; 3=problem is clear but could be more specific; 2=leans toward describing a solution instead of a need, or is vague; 1=missing a clear problem statement; 0=blank.
 
 criteria_completeness (max 4): Number of criteria listed. 4=4 or more; 3=exactly 3; 2=2 criteria; 1=only 1 criterion; 0=none listed.
 
@@ -2521,7 +2548,7 @@ design_statement (max 4): How well the statement synthesizes user, problem, crit
 
 decision_matrix (max 4): Completeness and mathematical correctness of the Section 7 weighted decision matrix. 4=all criteria have a weight (1–3), every concept cell shows a weight×score product, weighted totals are correct (verify by spot-checking: weight × score = cell value, column sum = total), concept is selected and — if selection differs from highest total — a reason is given; 3=weights and scores present, totals calculated, concept selected, but one arithmetic error or missing reason; 2=matrix partially filled — weights or scores missing for one or more rows/concepts, or totals absent; 1=matrix started but mostly empty or weights ignored (raw scores only, no multiplication shown); 0=blank or section missing entirely.`;
 
-    criteriaKeys = ['problem_id', 'criteria_completeness', 'criteria_quality', 'constraints', 'design_statement', 'decision_matrix'];
+    criteriaKeys = ['problem_id', 'problem_statement', 'criteria_completeness', 'criteria_quality', 'constraints', 'design_statement', 'decision_matrix'];
 
   } else if (deliverableId === 13 || (deliverableId >= 21 && deliverableId <= 27)) {
     // ── D13 / D21–D27: Completed Component ────────────────────────────────
@@ -2625,73 +2652,10 @@ function createDesignBriefTemplate() {
 
   body.appendHorizontalRule();
 
-  // ── Rubric table ──────────────────────────────────────────────────────────
-  body.appendParagraph('GRADING RUBRIC — read before you begin')
-    .setBold(true).setFontSize(10).setForegroundColor('#444444');
-
-  var rubricData = [
-    ['Criterion', '4 — Exceeds', '3 — Meets', '2 — Approaching', '1 — Beginning', '0'],
-    ['Problem\nIdentification',
-     'User specifically named; problem clearly stated; no solution language; specific and testable',
-     'User named; problem clear but could be more specific',
-     'User vague ("people," "students") OR problem describes a solution',
-     'Missing either the user or a clear problem statement',
-     'Blank'],
-    ['Criteria —\nCompleteness', '4 or more criteria', 'Exactly 3 criteria', '2 criteria', '1 criterion', 'Blank'],
-    ['Criteria —\nQuality',
-     'All measurable with specific values or observable outcomes',
-     'Most measurable; one slightly vague',
-     'About half measurable; rest too vague to test',
-     'All vague ("must be strong," "must look good")',
-     'Blank'],
-    ['Constraints',
-     '3+ specific, realistic limits on materials, dimensions, time, or cost',
-     '2 clear, realistic constraints',
-     '1 specific constraint; others vague or missing',
-     'Constraints listed but all vague',
-     'Blank'],
-    ['Design\nStatement',
-     'Names user + problem; references criteria and constraints; clear goal without prescribing a specific design',
-     'Most elements present; clear goal stated',
-     'Partially synthesized; missing user, constraints, or goal',
-     'Generic restatement of the problem only; no goal',
-     'Blank']
-  ];
-
-  var rubricTable = body.appendTable(rubricData);
-  rubricTable.setBorderWidth(0.5);
-  rubricTable.setColumnWidth(0, 90);
-  rubricTable.setColumnWidth(1, 80);
-  rubricTable.setColumnWidth(2, 75);
-  rubricTable.setColumnWidth(3, 75);
-  rubricTable.setColumnWidth(4, 70);
-  rubricTable.setColumnWidth(5, 50);
-
-  // Style header row
-  var headerRow = rubricTable.getRow(0);
-  for (var c = 0; c < 6; c++) {
-    var hCell = headerRow.getCell(c);
-    hCell.setBackgroundColor('#e8f0fe');
-    var hStyle = {};
-    hStyle[DocumentApp.Attribute.BOLD]            = true;
-    hStyle[DocumentApp.Attribute.FONT_SIZE]        = 9;
-    hStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#1a3461';
-    hCell.getChild(0).setAttributes(hStyle);
-  }
-
-  // Style data rows
-  for (var r = 1; r < rubricTable.getNumRows(); r++) {
-    for (var c2 = 0; c2 < rubricTable.getRow(r).getNumCells(); c2++) {
-      var dCell = rubricTable.getRow(r).getCell(c2);
-      var dStyle = {};
-      dStyle[DocumentApp.Attribute.FONT_SIZE] = 9;
-      if (c2 === 0) dStyle[DocumentApp.Attribute.BOLD] = true;
-      dCell.getChild(0).setAttributes(dStyle);
-      if (r % 2 === 0) dCell.setBackgroundColor('#f8f9fa');
-    }
-  }
-
-  body.appendParagraph('AI feedback is available in the portfolio app before you submit.')
+  // ── Rubric pointer ────────────────────────────────────────────────────────
+  // Rubric lives in the portfolio app only (not duplicated here) — AI feedback
+  // there checks your draft against it before you submit.
+  body.appendParagraph('See the grading rubric in the portfolio app. AI feedback is available there before you submit.')
     .setFontSize(9).setItalic(true).setForegroundColor('#9aa0a6')
     .setAlignment(DocumentApp.HorizontalAlignment.RIGHT);
 
