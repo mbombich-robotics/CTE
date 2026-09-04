@@ -60,18 +60,19 @@
         .ps-active { background: rgba(196,30,58,0.15); border-color: #c41e3a; color: #e05a6a; box-shadow: 0 0 14px rgba(196,30,58,0.35); }
         .ps-future { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.1); color: #475569; }
 
-        /* Brief tiles (slide 4) */
-        .brief-tile { border-radius: 12px; padding: 16px 14px; display: flex; flex-direction: column; gap: 5px; border: 2px solid; }
-        .bt-num { font-family: 'Orbitron', sans-serif; font-size: 1.6rem; font-weight: 900; line-height: 1; margin-bottom: 4px; }
-        .bt-name { font-size: 0.9rem; font-weight: 700; color: #e0e6f0; }
-        .bt-desc { font-size: 0.78rem; color: #8894a8; line-height: 1.4; margin: 0; }
-        .bt1 { background: rgba(196,30,58,0.08);   border-color: #c41e3a; } .bt1 .bt-num { color: #c41e3a; }
-        .bt2 { background: rgba(80,250,123,0.08);   border-color: #50fa7b; } .bt2 .bt-num { color: #50fa7b; }
-        .bt3 { background: rgba(255,85,85,0.08);    border-color: #ff5555; } .bt3 .bt-num { color: #ff5555; }
-        .bt4 { background: rgba(255,215,0,0.08);    border-color: #ffd700; } .bt4 .bt-num { color: #ffd700; }
-        .bt5 { background: rgba(189,147,249,0.08);  border-color: #bd93f9; } .bt5 .bt-num { color: #bd93f9; }
-        .bt6 { background: rgba(139,233,253,0.08);  border-color: #8be9fd; } .bt6 .bt-num { color: #8be9fd; }
-        .bt7 { background: rgba(255,184,108,0.08);  border-color: #ffb86c; } .bt7 .bt-num { color: #ffb86c; }
+        /* Brief cards (slide 4) */
+        .brief-cards { display: flex; gap: 10px; margin: 18px 0; }
+        .brief-card { flex: 1; border-radius: 16px; border: 2px solid; padding: 22px 10px 18px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; }
+        .bc-circle { width: 54px; height: 54px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-weight: 900; color: #000; flex-shrink: 0; }
+        .bc-name { font-size: 0.88rem; font-weight: 700; color: #e0e6f0; line-height: 1.3; }
+        .bc-tag { font-size: 0.75rem; font-weight: 600; margin-top: auto; }
+        .bc1 { border-color: #c41e3a; background: rgba(196,30,58,0.06); }  .bc1 .bc-circle { background: #c41e3a; color:#fff; } .bc1 .bc-tag { color: #e05a6a; }
+        .bc2 { border-color: #50fa7b; background: rgba(80,250,123,0.06); } .bc2 .bc-circle { background: #50fa7b; }              .bc2 .bc-tag { color: #50fa7b; }
+        .bc3 { border-color: #ff5555; background: rgba(255,85,85,0.06); }  .bc3 .bc-circle { background: #ff5555; }              .bc3 .bc-tag { color: #ff5555; }
+        .bc4 { border-color: #ffd700; background: rgba(255,215,0,0.06); }  .bc4 .bc-circle { background: #ffd700; }              .bc4 .bc-tag { color: #ffd700; }
+        .bc5 { border-color: #bd93f9; background: rgba(189,147,249,0.06); }.bc5 .bc-circle { background: #bd93f9; }              .bc5 .bc-tag { color: #bd93f9; }
+        .bc6 { border-color: #8be9fd; background: rgba(139,233,253,0.06); }.bc6 .bc-circle { background: #8be9fd; }              .bc6 .bc-tag { color: #8be9fd; }
+        .bc7 { border-color: #ffb86c; background: rgba(255,184,108,0.06); }.bc7 .bc-circle { background: #ffb86c; }              .bc7 .bc-tag { color: #ffb86c; }
 
         /* Question list */
         .q-list { list-style: none; padding: 0; }
@@ -161,53 +162,49 @@
         </div>
     </div>
 
-    <!-- Slide 4: What Is D1.1? -->
+    <!-- Slide 4: 7 Sections overview -->
     <div class="slide">
         <div class="slide-content">
-            <h2>What Is D1.1?</h2>
-            <p style="margin-bottom: 18px;">A design brief is the official record of your design requirements before you build anything. Engineers write one before touching software, materials, or tools. Yours lives in Google Docs and connects to your portfolio.</p>
-            <!-- Row 1: 4 tiles -->
-            <div style="display:flex; gap:12px; margin-bottom:12px;">
-                <div class="brief-tile bt1" style="flex:1;">
-                    <div class="bt-num">S1</div>
-                    <div class="bt-name">Client &amp; End User</div>
-                    <p class="bt-desc">Who asked for this, and who will actually use it</p>
+            <h2 style="font-size:2rem; margin-bottom:4px;">7 SECTIONS. ONE BRIEF.</h2>
+            <p style="color:#8894a8; margin-bottom:0; font-size:1rem;">Each section answers a critical question before you start building.</p>
+            <div class="brief-cards">
+                <div class="brief-card bc1">
+                    <div class="bc-circle">1</div>
+                    <div class="bc-name">Client &amp;<br>End User</div>
+                    <div class="bc-tag">Who?</div>
                 </div>
-                <div class="brief-tile bt2" style="flex:1;">
-                    <div class="bt-num">S2</div>
-                    <div class="bt-name">Problem Statement</div>
-                    <p class="bt-desc">What's wrong or missing — not the solution</p>
+                <div class="brief-card bc2">
+                    <div class="bc-circle">2</div>
+                    <div class="bc-name">Problem Statement</div>
+                    <div class="bc-tag">What's wrong?</div>
                 </div>
-                <div class="brief-tile bt3" style="flex:1;">
-                    <div class="bt-num">S3</div>
-                    <div class="bt-name">Criteria</div>
-                    <p class="bt-desc">Measurable goals your design must achieve</p>
+                <div class="brief-card bc3">
+                    <div class="bc-circle">3</div>
+                    <div class="bc-name">Criteria</div>
+                    <div class="bc-tag">What success looks like</div>
                 </div>
-                <div class="brief-tile bt4" style="flex:1;">
-                    <div class="bt-num">S4</div>
-                    <div class="bt-name">Constraints</div>
-                    <p class="bt-desc">Non-negotiable limits on materials, time, or dimensions</p>
+                <div class="brief-card bc4">
+                    <div class="bc-circle">4</div>
+                    <div class="bc-name">Constraints</div>
+                    <div class="bc-tag">Hard limits</div>
                 </div>
-            </div>
-            <!-- Row 2: 3 tiles centered at same width as row 1 -->
-            <div style="display:flex; gap:12px; justify-content:center;">
-                <div class="brief-tile bt5" style="flex:0 0 calc(25% - 9px);">
-                    <div class="bt-num">S5</div>
-                    <div class="bt-name">Design Statement</div>
-                    <p class="bt-desc">One sentence tying problem + criteria together</p>
+                <div class="brief-card bc5">
+                    <div class="bc-circle">5</div>
+                    <div class="bc-name">Design Statement</div>
+                    <div class="bc-tag">The one-liner</div>
                 </div>
-                <div class="brief-tile bt6" style="flex:0 0 calc(25% - 9px);">
-                    <div class="bt-num">S6</div>
-                    <div class="bt-name">Concept Sketches</div>
-                    <p class="bt-desc">Three different approaches, hand-drawn</p>
+                <div class="brief-card bc6">
+                    <div class="bc-circle">6</div>
+                    <div class="bc-name">Concept Sketches</div>
+                    <div class="bc-tag">3 approaches</div>
                 </div>
-                <div class="brief-tile bt7" style="flex:0 0 calc(25% - 9px);">
-                    <div class="bt-num">S7</div>
-                    <div class="bt-name">Decision Matrix</div>
-                    <p class="bt-desc">Scored comparison — data drives the choice</p>
+                <div class="brief-card bc7">
+                    <div class="bc-circle">7</div>
+                    <div class="bc-name">Decision Matrix</div>
+                    <div class="bc-tag">Data decides</div>
                 </div>
             </div>
-            <div class="step-box" style="margin-top: 18px; text-align: center; padding: 14px;">
+            <div class="step-box" style="text-align: center; padding: 14px;">
                 <p style="margin: 0; font-size: 1rem; color: #e05a6a; font-weight: 700;">Open your portfolio → D1.1 → Create Doc to get started.</p>
             </div>
         </div>
