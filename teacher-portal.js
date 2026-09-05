@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.54',
+    VERSION: 'v2.9.55',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -73,19 +73,19 @@ const CONFIG = {
 const TRACK_DELIVERABLES = {
     // ── HS AE&R ─────────────────────────────────────────────────────────
     hsaer: [
-        { id:  0, label: 'D6.1 — Career Ready Practices',              week: null },
-        { id: 10, label: 'D10 — Signed Syllabus & Safety Contract',    week: 1  },
-        { id: 11, label: 'D11 — Design Brief',                         week: 1  },
+        // Unit 1: Orientation
+        { id: 10, label: 'D1.0 — Signed Syllabus & Safety Contract',    week: 1  },
+        { id: 11, label: 'D1.1 — Design Brief',                         week: 1  },
         // Unit 2: Component deliverables (Google Doc template)
-        { id: 21, label: 'D21 — C1: Wheel Hub',                        week: 3  },
-        { id: 22, label: 'D22 — C2: Wheel Hub Cap',                    week: 4  },
-        { id: 23, label: 'D23 — C3: Motor Sleeve Mount',               week: 4  },
-        { id: 25, label: 'D25 — C5: Omni Wheel Mount',                 week: 6  },
-        { id: 26, label: 'D26 — C6: IR Sensor Mount',                  week: 7  },
-        { id: 27, label: 'D27 — C7: Ultrasonic Sensor Mount',          week: 7  },
-        { id: 24, label: 'D24 — C4: Robot Deck (Final)',                week: 8  },
-        // Unit 3
-        { id: 31, label: 'D31 — Tool Safety Certifications',           week: 10 },
+        { id: 21, label: 'D2.1 — C1: Wheel Hub',                        week: 3  },
+        { id: 22, label: 'D2.2 — C2: Wheel Hub Cap',                    week: 4  },
+        { id: 23, label: 'D2.3 — C3: Motor Sleeve Mount',               week: 4  },
+        { id: 25, label: 'D2.4 — C5: Omni Wheel Mount',                 week: 6  },
+        { id: 26, label: 'D2.5 — C6: IR Sensor Mount',                  week: 7  },
+        { id: 27, label: 'D2.6 — C7: Ultrasonic Sensor Mount',          week: 7  },
+        { id: 24, label: 'D2.7 — C4: Robot Deck (Final)',                week: 8  },
+        // Unit 3: Shop Safety
+        { id: 31, label: 'D3.1 — Tool Safety Certifications',           week: 10 },
         // Unit 4: Programming & sensors
         { id: 41, label: 'D4.1 — Programming Basics: Lessons 4.1–4.3', week: 13 },
         { id: 42, label: 'D4.2 — Programming Basics: Lessons 4.4–4.6', week: 15 },
@@ -94,6 +94,8 @@ const TRACK_DELIVERABLES = {
         { id: 52, label: 'D4.5 — Line Following Practical',             week: 23 },
         // Unit 5: AI & ML
         { id: 54, label: 'D5.1 — Teachable Machine Project',           week: 24 },
+        // Unit 6: Career Readiness
+        { id:  0, label: 'D6.1 — Career Ready Practices',              week: null },
         // Unit 7: Electrical Systems
         { id: 71, label: 'D7.1 — Multimeter Lab',                      week: 25 },
         { id: 72, label: 'D7.2 — LED Circuit: Schematic + Build + Calculations', week: 26 },
@@ -101,7 +103,6 @@ const TRACK_DELIVERABLES = {
         { id: 86, label: 'D8.1 — Simple Machines + Pulleys: IMA Calculations', week: 28 },
         { id: 87, label: 'D8.2 — Tug of War: Design + Results + Reflection',   week: 29 },
         { id: 88, label: 'D8.3 — Fix Fran\'s Farm: Problem + Pitch',           week: 30 },
-        // Unit 8: Servo Build
         { id: 55, label: 'D8.4 — Servo Design Brief',                  week: 31 },
         { id: 53, label: 'D8.5 — Servo Mechanism Project',             week: 33 },
         // Unit 9: Capstone
@@ -115,8 +116,8 @@ const TRACK_DELIVERABLES = {
         { id: 10, label: 'D10 — Signed Syllabus & Safety Contract', week: 1  },
         { id: 11, label: 'D11 — Design Brief',                     week: 2  },
         // Unit 2: Component deliverables
-        { id: 21, label: 'D21 — C1: Wheel Hub',                    week: 3  },
-        { id: 22, label: 'D22 — C2: Wheel Hub Cap',                 week: 4  },
+        { id: 21, label: 'D2.1 — C1: Wheel Hub',                    week: 3  },
+        { id: 22, label: 'D2.2 — C2: Wheel Hub Cap',               week: 4  },
         { id: 89, label: 'D2.3 — Robot Assembly',                  week: 5  },
         // Unit 3: Safety
         { id: 31, label: 'D3.1 — Tool Safety Certifications',      week: 6  },
@@ -126,11 +127,11 @@ const TRACK_DELIVERABLES = {
         { id: 95, label: 'D4.3 — Robot Drives a Square',           week: 11 },
         { id: 96, label: 'D4.4 — Robot Driving Challenge',         week: 12 },
         // Unit 8: Mechanisms (weeks 14–18)
-        { id: 81, label: 'D81 — Gear Ratio Calculation Sheet',     week: 14 },
-        { id: 82, label: 'D82 — Mechanism CAD Housing + Reflection', week: 15 },
-        { id: 83, label: 'D83 — Holiday 3D Print',                 week: 16 },
-        { id: 84, label: 'D84 — Pulley System — Ratio & CAD',      week: 17 },
-        { id: 85, label: 'D85 — Mechanism Showcase — Portfolio Evidence', week: 18 },
+        { id: 81, label: 'D8.1 — Gear Ratio Calculation Sheet',     week: 14 },
+        { id: 82, label: 'D8.2 — Mechanism CAD Housing + Reflection', week: 15 },
+        { id: 83, label: 'D8.3 — Holiday 3D Print',                 week: 16 },
+        { id: 84, label: 'D8.4 — Pulley System — Ratio & CAD',      week: 17 },
+        { id: 85, label: 'D8.5 — Mechanism Showcase — Portfolio Evidence', week: 18 },
     ],
     // ── Design & Build Lab ───────────────────────────────────────────────
     dbl: [
