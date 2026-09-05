@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.53',
+    VERSION: 'v2.9.54',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -73,7 +73,7 @@ const CONFIG = {
 const TRACK_DELIVERABLES = {
     // ── HS AE&R ─────────────────────────────────────────────────────────
     hsaer: [
-        { id:  0, label: 'D0  — Career Ready Practices',               week: null },
+        { id:  0, label: 'D6.1 — Career Ready Practices',              week: null },
         { id: 10, label: 'D10 — Signed Syllabus & Safety Contract',    week: 1  },
         { id: 11, label: 'D11 — Design Brief',                         week: 1  },
         // Unit 2: Component deliverables (Google Doc template)
@@ -1916,13 +1916,6 @@ function loadGradeTable() {
 
         const submitted = state.rawData.deliverables?.find(d => d[0] === student.email && d[2] == assignmentId);
         const draft = student.fullState?.deliverables?.[assignmentId];
-        // Debug: list every deliverable ID this student has submitted (for diagnosing wrong-ID issues)
-        const allSubmittedIds = (state.rawData.deliverables || [])
-            .filter(d => d[0] === student.email && d[7] === 'completed')
-            .map(d => d[2]);
-        const allDraftIds = Object.keys(student.fullState?.deliverables || {})
-            .filter(k => student.fullState.deliverables[k]?.status === 'completed');
-        const debugInfo = `Sheet IDs: [${allSubmittedIds.join(',')}] | State IDs: [${allDraftIds.join(',')}]`;
 
         if (submitted && submitted[7] === 'completed') {
             isSubmitted = true;
@@ -1956,7 +1949,7 @@ function loadGradeTable() {
                     </div>
                 </td>
                 <td>${formatPeriod(student.period)}</td>
-                <td>${status}<br><small style="color:var(--gray-500);font-size:10px;">${debugInfo}</small></td>
+                <td>${status}</td>
                 <td style="text-align:center; color: var(--gray-600); font-weight:500;">${aiGrade !== '' ? aiGrade : '—'}</td>
                 <td>
                     <input type="number" class="adjustment-input" data-email="${student.email}"
