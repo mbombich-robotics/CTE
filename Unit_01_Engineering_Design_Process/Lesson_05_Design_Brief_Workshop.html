@@ -60,12 +60,29 @@
         .ps-active { background: rgba(196,30,58,0.15); border-color: #c41e3a; color: #e05a6a; box-shadow: 0 0 14px rgba(196,30,58,0.35); }
         .ps-future { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.1); color: #475569; }
 
-        /* Brief cards (slide 4) */
-        .brief-cards { display: flex; gap: 10px; margin: 18px 0; }
-        .brief-card { flex: 1; border-radius: 16px; border: 2px solid; padding: 22px 10px 18px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; }
-        .bc-circle { width: 54px; height: 54px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-weight: 900; color: #000; flex-shrink: 0; }
-        .bc-name { font-size: 0.88rem; font-weight: 700; color: #e0e6f0; line-height: 1.3; }
-        .bc-tag { font-size: 0.75rem; font-weight: 600; margin-top: auto; }
+        /* Brief cards (slide 4) — sized for 100% zoom */
+        .brief-cards { display: flex; gap: 18px; margin: 20px 0; }
+        .brief-card { flex: 1; border-radius: 20px; border: 2px solid; padding: 38px 18px 32px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; }
+        .bc-circle { width: 94px; height: 94px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron', sans-serif; font-size: 2.4rem; font-weight: 900; color: #000; flex-shrink: 0; }
+        .bc-name { font-size: 1.55rem; font-weight: 700; color: #e0e6f0; line-height: 1.3; }
+        .bc-tag { font-size: 1.3rem; font-weight: 600; margin-top: auto; }
+
+        /* Per-slide scaling — target 100% zoom for each slide */
+        /* Slide 5 & 6: ×1.25 */
+        #slide-5 h2, #slide-6 h2 { font-size: 3.1rem; }
+        #slide-5 h3, #slide-6 h3 { font-size: 1.9rem; }
+        #slide-5 p,  #slide-6 p  { font-size: 1.44rem !important; }
+        #slide-5 .bullet-list li, #slide-6 .bullet-list li { font-size: 1.3rem !important; }
+        /* Slide 7: ×1.5 */
+        #slide-7 h2 { font-size: 3.75rem; }
+        #slide-7 h3 { font-size: 2.25rem; }
+        #slide-7 p  { font-size: 1.72rem !important; }
+        #slide-7 .bullet-list li { font-size: 1.72rem !important; }
+        /* Slide 8: ×1.1 */
+        #slide-8 h2 { font-size: 2.75rem; }
+        #slide-8 p  { font-size: 1.27rem !important; }
+        #slide-8 .q-list li { font-size: 1.16rem; }
+        #slide-8 .q-num { font-size: 0.94rem; }
         .bc1 { border-color: #c41e3a; background: rgba(196,30,58,0.06); }  .bc1 .bc-circle { background: #c41e3a; color:#fff; } .bc1 .bc-tag { color: #e05a6a; }
         .bc2 { border-color: #50fa7b; background: rgba(80,250,123,0.06); } .bc2 .bc-circle { background: #50fa7b; }              .bc2 .bc-tag { color: #50fa7b; }
         .bc3 { border-color: #ff5555; background: rgba(255,85,85,0.06); }  .bc3 .bc-circle { background: #ff5555; }              .bc3 .bc-tag { color: #ff5555; }
@@ -134,8 +151,8 @@
     <!-- Slide 4: 7 Sections overview -->
     <div class="slide">
         <div class="slide-content">
-            <h2 style="font-size:2rem; margin-bottom:4px;">7 SECTIONS. ONE BRIEF.</h2>
-            <p style="color:#8894a8; margin-bottom:0; font-size:1rem;">Each section answers a critical question before you start building.</p>
+            <h2 style="font-size:3.5rem; margin-bottom:8px;">7 SECTIONS. ONE BRIEF.</h2>
+            <p style="color:#8894a8; margin-bottom:0; font-size:1.75rem;">Each section answers a critical question before you start building.</p>
             <div class="brief-cards">
                 <div class="brief-card bc1">
                     <div class="bc-circle">1</div>
@@ -174,13 +191,13 @@
                 </div>
             </div>
             <div class="step-box" style="text-align: center; padding: 14px;">
-                <p style="margin: 0; font-size: 1rem; color: #e05a6a; font-weight: 700;">One document. Built section by section over three days. Due Friday.</p>
+                <p style="margin: 0; font-size: 1.75rem; color: #e05a6a; font-weight: 700;">One document. Built section by section over three days. Due Friday.</p>
             </div>
         </div>
     </div>
 
     <!-- Slide 5: Section 1 — Client & End User -->
-    <div class="slide">
+    <div class="slide" id="slide-5">
         <div class="slide-content">
             <h2>Section 1 — Client &amp; End User</h2>
             <p><strong style="color: #e0e6f0;">Client:</strong> the person who commissioned the work. <strong style="color: #e0e6f0;">End user:</strong> the person who will actually use the result. They are often different people — knowing both shapes what you design.</p>
@@ -208,7 +225,7 @@
     </div>
 
     <!-- Slide 6: Section 2 — Problem Statement -->
-    <div class="slide">
+    <div class="slide" id="slide-6">
         <div class="slide-content">
             <h2>Section 2 — Problem Statement</h2>
             <p>The problem statement describes what is <strong style="color: #e0e6f0;">wrong, missing, or not working</strong> — not what you're going to build. One or two focused sentences. No solution language.</p>
@@ -238,8 +255,8 @@
         </div>
     </div>
 
-    <!-- Slide 7: Demo + Work Time -->
-    <div class="slide">
+    <!-- Slide 7: Watch, Then Write -->
+    <div class="slide" id="slide-7">
         <div class="slide-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; text-align: center;">
             <h2>Watch, Then Write</h2>
             <div class="objective-box" style="max-width: 750px; margin-top: 25px; text-align: left;">
@@ -257,7 +274,7 @@
     </div>
 
     <!-- Slide 8: Prepare for Tomorrow -->
-    <div class="slide">
+    <div class="slide" id="slide-8">
         <div class="slide-content">
             <h2>Prepare for Tomorrow</h2>
             <p>Tomorrow you interview Mr. B to discover your criteria and constraints — the information you need to fill Sections 3 &amp; 4. Copy these questions into your engineering notebook and write the answers next to each one during the interview. Add any questions of your own at the bottom.</p>
