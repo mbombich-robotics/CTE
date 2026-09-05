@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.49',
+    VERSION: 'v2.9.50',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -1569,18 +1569,19 @@ function updateGradeReport() {
     const showQuizzes = (typeFilter === 'quiz' || typeFilter === 'all') && course.quizzes?.length;
 
     // Build headers based on type filter
+    const reportDeliverables = (typeFilter === 'deliverables' || typeFilter === 'all')
+        ? (TRACK_DELIVERABLES[state.activeCourse] || []) : [];
+
     let headers = ['Name', 'Period'];
-    if (typeFilter === 'deliverables' || typeFilter === 'all') {
-        for (let d = 1; d <= course.totalDeliverables; d++) {
-            headers.push(`D${d}`);
-        }
-    }
+    reportDeliverables.forEach(del => {
+        headers.push(del.label.split(' — ')[0].trim()); // e.g. "D1.0"
+    });
     if (showQuizzes) {
         course.quizzes.forEach(q => headers.push(q.name));
     }
     headers.push('Total');
 
-    thead.innerHTML = `<tr>${headers.map(h => `<th style="position: sticky; top: 0; background: var(--gray-100); padding: 8px; text-align: left; font-size: 12px;">${h}</th>`).join('')}</tr>`;
+    thead.innerHTML = `<tr>${headers.map(h => `<th style="position: sticky; top: 0; background: var(--gray-100); padding: 8px; text-align: left; font-size: 12px; white-space: nowrap;">${h}</th>`).join('')}</tr>`;
 
     // Build rows
     tbody.innerHTML = students.map(student => {
@@ -1591,27 +1592,24 @@ function updateGradeReport() {
         let total = 0;
         let maxTotal = 0;
 
-        // (reflections removed)
-
         // Deliverable grades
-        if (typeFilter === 'deliverables' || typeFilter === 'all') {
-            for (let d = 1; d <= course.totalDeliverables; d++) {
-                const deliverable = student.fullState?.deliverables?.[d];
-                const submitted = state.rawData.deliverables?.find(del => del[0] === email && del[2] == d && del[7] === 'completed');
-                const grade = deliverable?.teacherGrade ?? submitted?.[9] ?? '';
-                const maxPts = course.deliverablePoints?.[d] || 50;
+        reportDeliverables.forEach(del => {
+            const d = del.id;
+            const deliverable = student.fullState?.deliverables?.[d];
+            const submitted = state.rawData.deliverables?.find(sub => sub[0] === email && sub[2] == d && sub[7] === 'completed');
+            const grade = deliverable?.teacherGrade ?? submitted?.[9] ?? '';
+            const maxPts = course.deliverablePoints?.[d];
 
-                if (grade !== '' && grade !== undefined) {
-                    total += parseFloat(grade) || 0;
-                }
-                if (submitted) {
-                    maxTotal += maxPts;
-                }
-
-                const cellStyle = grade !== '' ? '' : (submitted ? 'color: var(--warning);' : 'color: var(--gray-300);');
-                row.push(`<td style="padding: 6px 8px; text-align: center; ${cellStyle}">${grade !== '' && grade !== undefined ? grade : (submitted ? '-' : '')}</td>`);
+            if (grade !== '' && grade !== undefined) {
+                total += parseFloat(grade) || 0;
             }
-        }
+            if (submitted && maxPts !== undefined) {
+                maxTotal += maxPts;
+            }
+
+            const cellStyle = grade !== '' ? '' : (submitted ? 'color: var(--warning);' : 'color: var(--gray-300);');
+            row.push(`<td style="padding: 6px 8px; text-align: center; ${cellStyle}">${grade !== '' && grade !== undefined ? grade : (submitted ? '-' : '')}</td>`);
+        });
 
         // Quiz scores
         if (showQuizzes) {
@@ -1994,23 +1992,26 @@ async function saveAllGrades() {
 
         if (result.success) {
             btn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+            await loadCourseData();
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-save"></i> Save and Close';
+                btn.disabled = false;
+                closeGradeEntry();
+            }, 800);
         } else {
             btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error: ' + (result.error || 'Unknown');
+            await loadCourseData();
+            loadGradeTable();
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-save"></i> Save and Close';
+                btn.disabled = false;
+            }, 2500);
         }
-
-        setTimeout(() => {
-            btn.innerHTML = '<i class="fas fa-save"></i> Save All Grades';
-            btn.disabled = false;
-        }, 2000);
-
-        // Reload data to show updated grades
-        await loadCourseData();
-        loadGradeTable();
     } catch (error) {
         console.error('Failed to save grades:', error);
         btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error';
         setTimeout(() => {
-            btn.innerHTML = '<i class="fas fa-save"></i> Save All Grades';
+            btn.innerHTML = '<i class="fas fa-save"></i> Save and Close';
             btn.disabled = false;
         }, 2000);
     }
