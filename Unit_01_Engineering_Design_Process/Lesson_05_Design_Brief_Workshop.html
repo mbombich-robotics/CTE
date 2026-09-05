@@ -327,18 +327,22 @@
 
 <script>
     // Garage video — bottom-half crop, fills slide width
-    (function() {
+    // sizeGarage is exposed so showSlide can call it when slide 2 becomes visible
+    var sizeGarage = (function() {
         var v = document.getElementById('garage-video');
         var w = document.getElementById('garage-wrap');
-        if (!v || !w) return;
-        function sizeGarage() {
-            if (!v.videoWidth) return;
+        if (!v || !w) return function() {};
+        function doSize() {
+            if (!v.videoWidth || !w.offsetWidth) return;
             var natH = Math.round(w.offsetWidth * v.videoHeight / v.videoWidth);
             w.style.height = Math.round(natH / 2) + 'px';
             v.style.height = natH + 'px';
         }
-        v.addEventListener('loadedmetadata', sizeGarage);
-        window.addEventListener('resize', sizeGarage);
+        // loadedmetadata may fire while the slide is hidden (offsetWidth = 0);
+        // showSlide will re-call via rAF once the slide is visible.
+        v.addEventListener('loadedmetadata', function() { requestAnimationFrame(doSize); });
+        window.addEventListener('resize', doSize);
+        return doSize;
     })();
 
     var slides = document.querySelectorAll('.slide');
@@ -350,6 +354,8 @@
         document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
         document.getElementById('prevBtn').disabled = current === 0;
         document.getElementById('nextBtn').disabled = current === slides.length - 1;
+        // Re-measure garage video after the slide is visible (offsetWidth was 0 while hidden)
+        if (current === 2) requestAnimationFrame(sizeGarage);
     }
     function changeSlide(dir) { showSlide(current + dir); }
     document.addEventListener('keydown', function(e) {
