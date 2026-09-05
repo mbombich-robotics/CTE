@@ -429,7 +429,8 @@ function renderColumn(track, monday) {
   const dayRows = (wd.daily || []).map(d => {
     const noSchool = d.content.startsWith('No School');
     const linked = !!d.url;
-    const tag = linked ? `<a class="day-row linked" href="${esc(d.url)}" target="_blank" rel="noopener">` : `<div class="day-row${noSchool?' no-school':''}">`;
+    const linkedUrl = linked ? (d.url.includes('?track=') ? d.url : d.url + '?track=' + track) : '';
+    const tag = linked ? `<a class="day-row linked" href="${esc(linkedUrl)}" target="_blank" rel="noopener">` : `<div class="day-row${noSchool?' no-school':''}">`;
     const close = linked ? '</a>' : '</div>';
     const arr = linked ? `<span class="day-arr">›</span>` : '';
     return `${tag}
