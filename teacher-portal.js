@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.48',
+    VERSION: 'v2.9.49',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -1858,37 +1858,12 @@ function updateAssignmentSelect() {
     select.innerHTML = '';
 
     if (type === 'deliverable') {
-        // Deliverables
-        const deliverableNames = state.activeCourse === 'hsaer'
-            ? {
-                1: 'Line Following Practical #1',
-                2: 'Line Following Final Practical',
-                3: 'Ultrasonic Sensor Lab Report',
-                4: 'Scanner Assembly',
-                5: 'Scanning Practical',
-                6: 'Claw Design Document',
-                7: 'Claw Control Code',
-                8: 'Claw Practical',
-                9: 'Final Robot Demonstration'
-            }
-            : {
-                1: 'Game Analysis Report',
-                2: 'Subsystem Research Report',
-                3: 'Design Contribution',
-                4: 'Design Decision Matrix',
-                5: 'Prototype Documentation',
-                6: 'Testing & Iteration Log',
-                7: 'Integration Report',
-                8: 'Technical Contribution Summary',
-                9: 'Engineer Portfolio Entry',
-                10: 'Final Presentation'
-            };
-
-        for (let id = 1; id <= course.totalDeliverables; id++) {
+        const deliverables = TRACK_DELIVERABLES[state.activeCourse] || [];
+        for (const del of deliverables) {
             const option = document.createElement('option');
-            option.value = id;
-            const pts = course.deliverablePoints[id];
-            option.textContent = `${deliverableNames[id]} (${pts} pts)`;
+            option.value = del.id;
+            const pts = course.deliverablePoints?.[del.id];
+            option.textContent = `${del.label} (${pts !== undefined ? pts + ' pts' : 'ungraded'})`;
             select.appendChild(option);
         }
     }
@@ -1904,9 +1879,10 @@ function loadGradeTable() {
     const tbody = document.getElementById('gradeTableBody');
 
     // Update header info
-    const maxPoints = course.deliverablePoints[assignmentId];
-    document.getElementById('gradeAssignmentTitle').textContent = formatDeliverableLabel(assignmentId);
-    document.getElementById('gradeAssignmentPoints').textContent = `Max: ${maxPoints} pts`;
+    const maxPoints = course.deliverablePoints?.[assignmentId];
+    const delRecord = (TRACK_DELIVERABLES[state.activeCourse] || []).find(d => d.id === assignmentId);
+    document.getElementById('gradeAssignmentTitle').textContent = delRecord ? delRecord.label : formatDeliverableLabel(assignmentId);
+    document.getElementById('gradeAssignmentPoints').textContent = `Max: ${maxPoints !== undefined ? maxPoints : '—'} pts`;
 
     // Filter and sort students alphabetically
     let filteredStudents = [...state.students];
