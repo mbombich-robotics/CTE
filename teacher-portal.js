@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.51',
+    VERSION: 'v2.9.52',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -1595,20 +1595,30 @@ function updateGradeReport() {
         // Deliverable grades
         reportDeliverables.forEach(del => {
             const d = del.id;
-            const deliverable = student.fullState?.deliverables?.[d];
+            const draft = student.fullState?.deliverables?.[d];
             const submitted = state.rawData.deliverables?.find(sub => sub[0] === email && sub[2] == d && sub[7] === 'completed');
-            const grade = deliverable?.teacherGrade ?? submitted?.[9] ?? '';
+            // isCompleted: either in Deliverables sheet OR fullState-only (not yet synced)
+            const isCompleted = (submitted != null) || (draft?.status === 'completed');
+            // Grade: prefer sheet grade, then fullState teacherGrade, then auto-score D1.0
+            let grade = '';
+            if (submitted?.[9] !== '' && submitted?.[9] !== null && submitted?.[9] !== undefined) {
+                grade = submitted[9];
+            } else if (draft?.teacherGrade !== undefined && draft.teacherGrade !== '') {
+                grade = draft.teacherGrade;
+            } else if (isCompleted && d === 10) {
+                grade = course.deliverablePoints?.[10] ?? 10; // D1.0 pass/fail
+            }
             const maxPts = course.deliverablePoints?.[d];
 
             if (grade !== '' && grade !== undefined) {
                 total += parseFloat(grade) || 0;
             }
-            if (submitted && maxPts !== undefined) {
+            if (isCompleted && maxPts !== undefined) {
                 maxTotal += maxPts;
             }
 
-            const cellStyle = grade !== '' ? '' : (submitted ? 'color: var(--warning);' : 'color: var(--gray-300);');
-            row.push(`<td style="padding: 6px 8px; text-align: center; ${cellStyle}">${grade !== '' && grade !== undefined ? grade : (submitted ? '-' : '')}</td>`);
+            const cellStyle = grade !== '' ? '' : (isCompleted ? 'color: var(--warning);' : 'color: var(--gray-300);');
+            row.push(`<td style="padding: 6px 8px; text-align: center; ${cellStyle}">${grade !== '' && grade !== undefined ? grade : (isCompleted ? '-' : '')}</td>`);
         });
 
         // Quiz scores
