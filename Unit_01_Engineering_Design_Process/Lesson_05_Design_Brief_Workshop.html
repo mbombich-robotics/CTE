@@ -121,11 +121,11 @@
         </div>
     </div>
 
-    <!-- Slide 3: Garage Door Problem video -->
-    <div class="slide">
-        <div class="slide-content" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:70vh; text-align:center;">
-            <p style="font-size:0.85rem; color:#475569; text-transform:uppercase; letter-spacing:1px; margin-bottom:14px;">Before we start…</p>
-            <video controls style="max-width:100%; max-height:65vh; border-radius:12px; border:2px solid #30363d; box-shadow:0 0 30px rgba(0,0,0,0.5);">
+    <!-- Slide 3: Garage Door Problem video — bottom half, fill screen -->
+    <div class="slide" style="padding:0; overflow:hidden; background:#000;">
+        <div id="garage-wrap" style="width:100%; position:relative; overflow:hidden; background:#000; min-height:50vh;">
+            <video id="garage-video" controls preload="metadata" playsinline
+                   style="width:100%; display:block; position:absolute; bottom:0; left:0;">
                 <source src="Garage%20Door%20Problem.mp4" type="video/mp4">
             </video>
         </div>
@@ -326,6 +326,21 @@
 </nav>
 
 <script>
+    // Garage video — bottom-half crop, fills slide width
+    (function() {
+        var v = document.getElementById('garage-video');
+        var w = document.getElementById('garage-wrap');
+        if (!v || !w) return;
+        function sizeGarage() {
+            if (!v.videoWidth) return;
+            var natH = Math.round(w.offsetWidth * v.videoHeight / v.videoWidth);
+            w.style.height = Math.round(natH / 2) + 'px';
+            v.style.height = natH + 'px';
+        }
+        v.addEventListener('loadedmetadata', sizeGarage);
+        window.addEventListener('resize', sizeGarage);
+    })();
+
     var slides = document.querySelectorAll('.slide');
     var current = 0;
     function showSlide(n) {
