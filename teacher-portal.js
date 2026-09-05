@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.46',
+    VERSION: 'v2.9.47',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -687,7 +687,7 @@ function processStudentData() {
         if (totalBehind >= 4) status = 'very-behind';
         else if (totalBehind >= 1) status = 'behind';
 
-        const progress = Math.round((points / course.totalPoints) * 100);
+        const progress = course.totalPoints > 0 ? Math.round((points / course.totalPoints) * 100) : 0;
 
         return {
             email,
