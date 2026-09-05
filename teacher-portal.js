@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.47',
+    VERSION: 'v2.9.48',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -26,7 +26,7 @@ const CONFIG = {
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
-            deliverablePoints: { 0: 20, 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75 },
+            deliverablePoints: { 0: 20, 10: 10, 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75 },
             deliverableWeeks: { 8: 10, 9: 11 },
             quizzes: [
                 { id: 'claw',       name: 'Claw Quiz',  questionCount: 7,  maxPoints: 28 },
@@ -40,7 +40,7 @@ const CONFIG = {
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
-            deliverablePoints: { 0: 20, 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75 },
+            deliverablePoints: { 0: 20, 10: 10, 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75 },
             deliverableWeeks: { 8: 10, 9: 11 },
             quizzes: [
                 { id: 'claw',       name: 'Claw Quiz',  questionCount: 7,  maxPoints: 28 },
@@ -54,7 +54,7 @@ const CONFIG = {
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
-            deliverablePoints: {},
+            deliverablePoints: { 10: 10 },
             deliverableWeeks: {},
             quizzes: []
         }
@@ -945,7 +945,9 @@ function openStudentDetail(email) {
     const deliverablesPanel = document.getElementById('deliverablesPanel');
     deliverablesPanel.innerHTML = '';
 
-    for (let id = 0; id < course.totalDeliverables; id++) {
+    for (const del of (TRACK_DELIVERABLES[state.activeCourse] || [])) {
+        const id = del.id;
+        const delLabel = del.label;
         const submitted = state.rawData.deliverables?.find(d => d[0] === email && d[2] == id);
         const draft = student.fullState?.deliverables?.[id];
 
@@ -970,7 +972,7 @@ function openStudentDetail(email) {
             const dStatusClass = isResubmitted ? 'status-behind' : (isUngraded ? 'status-behind' : 'status-on-track');
             const dBorderStyle = isResubmitted ? 'border-left: 4px solid #e53935;' : (isUngraded ? 'border-left: 4px solid var(--warning);' : '');
             const docUrl = submitted[5] || draft?.links || '';
-            const isDesignBrief = (id === 8 || id === 9);
+            const isDesignBrief = delLabel.toLowerCase().includes('design brief');
             const briefInputId = `brief-url-${email.replace(/[^a-zA-Z0-9]/g,'-')}-${id}`;
             const aiBriefBtn = id === 0 ? `
                 <div style="margin-top:10px;">
@@ -991,7 +993,7 @@ function openStudentDetail(email) {
             deliverablesPanel.innerHTML += `
                 <div class="item-card" style="${dBorderStyle}">
                     <div class="item-header">
-                        <span class="item-title">${submitted[3] || formatDeliverableLabel(id)}</span>
+                        <span class="item-title">${delLabel}</span>
                         <span class="item-status status-badge ${dStatusClass}">${dStatusLabel}</span>
                     </div>
                     <div class="item-content" id="${contentId}" data-expanded="false">
@@ -1008,7 +1010,7 @@ function openStudentDetail(email) {
             deliverablesPanel.innerHTML += `
                 <div class="item-card" style="border-left: 4px solid var(--warning);">
                     <div class="item-header">
-                        <span class="item-title">${formatDeliverableLabel(id)}</span>
+                        <span class="item-title">${delLabel}</span>
                         <span class="item-status status-badge status-behind">Needs Grading</span>
                     </div>
                     <div class="item-content">
@@ -1023,7 +1025,7 @@ function openStudentDetail(email) {
             deliverablesPanel.innerHTML += `
                 <div class="item-card" style="border-left: 3px solid var(--warning);">
                     <div class="item-header">
-                        <span class="item-title">${formatDeliverableLabel(id)}</span>
+                        <span class="item-title">${delLabel}</span>
                         <span class="item-status status-badge status-behind">In Progress</span>
                     </div>
                     <div class="item-content">
@@ -1039,7 +1041,7 @@ function openStudentDetail(email) {
                 deliverablesPanel.innerHTML += `
                     <div class="item-card" style="opacity: 0.85; border-left: 3px dashed var(--gray-400);">
                         <div class="item-header">
-                            <span class="item-title">${formatDeliverableLabel(id)}</span>
+                            <span class="item-title">${delLabel}</span>
                             <span class="item-status status-badge status-very-behind">Not Submitted</span>
                         </div>
                         <div class="item-content"><em>Student has not submitted via the portfolio.</em></div>
