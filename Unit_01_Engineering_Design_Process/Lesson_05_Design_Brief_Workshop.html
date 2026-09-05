@@ -209,7 +209,8 @@
         <div class="slide-content">
             <h2>Section 1 — Client &amp; End User</h2>
             <p><strong style="color: #e0e6f0;">Client:</strong> the person who commissioned the work. <strong style="color: #e0e6f0;">End user:</strong> the person who will actually use the result. They are often different people — knowing both shapes what you design.</p>
-            <div class="grid-2" style="margin-top: 20px;">
+            <!-- AER examples -->
+            <div class="grid-2 t-aer" style="margin-top: 20px;">
                 <div class="weak-box">
                     <h3>✗ Weak</h3>
                     <p style="font-style: italic; color: #e0e6f0; font-size: 1rem; margin-bottom: 12px;">"My client is students who need a better robot."</p>
@@ -229,6 +230,27 @@
                     </ul>
                 </div>
             </div>
+            <!-- DBL examples -->
+            <div class="grid-2 t-dbl" style="margin-top: 20px;" hidden>
+                <div class="weak-box">
+                    <h3>✗ Weak</h3>
+                    <p style="font-style: italic; color: #e0e6f0; font-size: 1rem; margin-bottom: 12px;">"My client is anyone who uses the shop and needs better tool storage."</p>
+                    <ul class="bullet-list" style="font-size: 0.95rem;">
+                        <li>"Anyone who uses the shop" — no specific person named as client</li>
+                        <li>Client and end user collapsed into one vague group</li>
+                        <li>"Better tool storage" hints at a solution, not a client</li>
+                    </ul>
+                </div>
+                <div class="good-box">
+                    <h3>✓ Strong</h3>
+                    <p style="font-style: italic; color: #e0e6f0; font-size: 1rem; margin-bottom: 12px;">"Client: Mr. B (shop instructor and project lead). End users: all Design and Build Lab students — the people working at shop benches every class period."</p>
+                    <ul class="bullet-list" style="font-size: 0.95rem;">
+                        <li>Client is a named, specific person with a role</li>
+                        <li>End user is a distinct, named group</li>
+                        <li>No solution language anywhere</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -237,7 +259,8 @@
         <div class="slide-content">
             <h2>Section 2 — Problem Statement</h2>
             <p>The problem statement describes what is <strong style="color: #e0e6f0;">wrong, missing, or not working</strong> — not what you're going to build. One or two focused sentences. No solution language.</p>
-            <div class="grid-2" style="margin-top: 20px;">
+            <!-- AER examples -->
+            <div class="grid-2 t-aer" style="margin-top: 20px;">
                 <div class="weak-box">
                     <h3>✗ Weak</h3>
                     <p style="font-style: italic; color: #e0e6f0; font-size: 1rem; margin-bottom: 12px;">"I will design a hub cap for the robot wheel that covers the hardware and looks clean."</p>
@@ -253,6 +276,27 @@
                     <ul class="bullet-list" style="font-size: 0.95rem;">
                         <li>States exactly what's wrong — exposed hardware</li>
                         <li>Two real consequences — snagging, appearance</li>
+                        <li>No mention of a solution</li>
+                    </ul>
+                </div>
+            </div>
+            <!-- DBL examples -->
+            <div class="grid-2 t-dbl" style="margin-top: 20px;" hidden>
+                <div class="weak-box">
+                    <h3>✗ Weak</h3>
+                    <p style="font-style: italic; color: #e0e6f0; font-size: 1rem; margin-bottom: 12px;">"I will build a wall-mounted rack that holds tools in one place so they're easy to grab."</p>
+                    <ul class="bullet-list" style="font-size: 0.95rem;">
+                        <li>"I will build" — that's a solution, not a problem</li>
+                        <li>Skips what's actually wrong with the current situation</li>
+                        <li>"Easy to grab" is vague and untestable</li>
+                    </ul>
+                </div>
+                <div class="good-box">
+                    <h3>✓ Strong</h3>
+                    <p style="font-style: italic; color: #e0e6f0; font-size: 1rem; margin-bottom: 12px;">"Shop tools have no designated storage at the bench areas. During projects, tools scatter across benches, mix with materials, and get knocked to the floor — slowing down work and leaving sharp edges unprotected."</p>
+                    <ul class="bullet-list" style="font-size: 0.95rem;">
+                        <li>States what's wrong — no designated storage</li>
+                        <li>Two real consequences — slow work, safety hazard</li>
                         <li>No mention of a solution</li>
                     </ul>
                 </div>
@@ -327,6 +371,14 @@
         v.addEventListener('loadedmetadata', function() { requestAnimationFrame(doSize); });
         window.addEventListener('resize', doSize);
         return doSize;
+    })();
+
+    // Track switching — show .t-aer or .t-dbl content based on ?track= param
+    (function() {
+        var track = new URLSearchParams(location.search).get('track') || 'hsaer';
+        var isDbl = track === 'dbl';
+        document.querySelectorAll('.t-dbl').forEach(function(el) { el.hidden = !isDbl; });
+        document.querySelectorAll('.t-aer').forEach(function(el) { el.hidden = isDbl; });
     })();
 
     var slides = document.querySelectorAll('.slide');
