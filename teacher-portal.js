@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.52',
+    VERSION: 'v2.9.53',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -1916,6 +1916,13 @@ function loadGradeTable() {
 
         const submitted = state.rawData.deliverables?.find(d => d[0] === student.email && d[2] == assignmentId);
         const draft = student.fullState?.deliverables?.[assignmentId];
+        // Debug: list every deliverable ID this student has submitted (for diagnosing wrong-ID issues)
+        const allSubmittedIds = (state.rawData.deliverables || [])
+            .filter(d => d[0] === student.email && d[7] === 'completed')
+            .map(d => d[2]);
+        const allDraftIds = Object.keys(student.fullState?.deliverables || {})
+            .filter(k => student.fullState.deliverables[k]?.status === 'completed');
+        const debugInfo = `Sheet IDs: [${allSubmittedIds.join(',')}] | State IDs: [${allDraftIds.join(',')}]`;
 
         if (submitted && submitted[7] === 'completed') {
             isSubmitted = true;
@@ -1949,7 +1956,7 @@ function loadGradeTable() {
                     </div>
                 </td>
                 <td>${formatPeriod(student.period)}</td>
-                <td>${status}</td>
+                <td>${status}<br><small style="color:var(--gray-500);font-size:10px;">${debugInfo}</small></td>
                 <td style="text-align:center; color: var(--gray-600); font-weight:500;">${aiGrade !== '' ? aiGrade : '—'}</td>
                 <td>
                     <input type="number" class="adjustment-input" data-email="${student.email}"
