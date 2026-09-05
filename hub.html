@@ -1151,9 +1151,12 @@ function renderWeekView(track) {
   if (prevBtn) prevBtn.disabled = (dispIdx <= 0);
   if (nextBtn) nextBtn.disabled = (dispIdx >= maxFwd);
 
+  // Career, quote, and countdown are shared across all tracks — use HSAER week data
+  // so switching tabs never changes the sidebar cards.
+  const sharedWeekData = getWeekDataAt('hsaer', weekOffset);
   renderThisWeek(track, weekData, meta, week, weekOffset === 0);
-  renderCareer(weekData, week);
-  renderQuote(weekData, week);
+  renderCareer(sharedWeekData, week);
+  renderQuote(sharedWeekData, week);
 }
 
 async function render() {
