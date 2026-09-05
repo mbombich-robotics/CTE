@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.50',
+    VERSION: 'v2.9.51',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -1899,26 +1899,39 @@ function loadGradeTable() {
     }
 
     tbody.innerHTML = filteredStudents.map(student => {
-        let status = 'Not Submitted';
-        let selfScore = '-';
-        let existingGrade = '';
+        let status = '<span class="status-badge status-very-behind">Not Started</span>';
+        let aiGrade = '';        // read-only baseline (AI or auto-scored)
         let existingFeedback = '';
+        let isSubmitted = false;
 
         const submitted = state.rawData.deliverables?.find(d => d[0] === student.email && d[2] == assignmentId);
-            const draft = student.fullState?.deliverables?.[assignmentId];
+        const draft = student.fullState?.deliverables?.[assignmentId];
 
-            if (submitted && submitted[7] === 'completed') {
-                status = '<span class="status-badge status-on-track">Completed</span>';
-                existingGrade = submitted[9] || '';
-                existingFeedback = submitted[10] || '';
-            } else if (draft && draft.status === 'in-progress') {
-                status = '<span class="status-badge status-behind">In Progress</span>';
-            } else {
-                status = '<span class="status-badge status-very-behind">Not Started</span>';
-            }
+        if (submitted && submitted[7] === 'completed') {
+            isSubmitted = true;
+            status = '<span class="status-badge status-on-track">Completed</span>';
+            // D1.0 is pass/fail — auto-score maxPts; others use existing grade from sheet
+            aiGrade = (assignmentId === 10)
+                ? (maxPoints !== undefined ? maxPoints : 10)
+                : (submitted[9] !== '' && submitted[9] !== null && submitted[9] !== undefined ? submitted[9] : '');
+            existingFeedback = submitted[10] || '';
+        } else if (draft && draft.status === 'completed') {
+            // Completed in fullState but not yet synced to Deliverables sheet
+            isSubmitted = true;
+            status = '<span class="status-badge status-on-track">Completed</span>';
+            aiGrade = (assignmentId === 10)
+                ? (maxPoints !== undefined ? maxPoints : 10)
+                : (draft.teacherGrade !== undefined && draft.teacherGrade !== '' ? draft.teacherGrade : '');
+            existingFeedback = draft.teacherFeedback || '';
+        } else if (draft && draft.status === 'in-progress') {
+            status = '<span class="status-badge status-behind">In Progress</span>';
+        }
+
+        const aiNum = aiGrade !== '' ? parseFloat(aiGrade) : null;
+        const finalDisplay = aiNum !== null ? aiNum : '—';
 
         return `
-            <tr data-email="${student.email}">
+            <tr data-email="${student.email}" data-aigrade="${aiGrade}" data-submitted="${isSubmitted}">
                 <td>
                     <div class="student-name">
                         <div class="avatar">${getInitials(student.name)}</div>
@@ -1927,12 +1940,15 @@ function loadGradeTable() {
                 </td>
                 <td>${formatPeriod(student.period)}</td>
                 <td>${status}</td>
-                <td>${selfScore}</td>
+                <td style="text-align:center; color: var(--gray-600); font-weight:500;">${aiGrade !== '' ? aiGrade : '—'}</td>
                 <td>
-                    <input type="number" class="grade-input" data-email="${student.email}"
-                           value="${existingGrade}" min="0" max="${maxPoints}"
-                           style="width: 80px; padding: 6px 8px; border: 1px solid var(--gray-300); border-radius: 6px;">
+                    <input type="number" class="adjustment-input" data-email="${student.email}"
+                           value="0" step="1"
+                           style="width: 70px; padding: 6px 8px; border: 1px solid var(--gray-300); border-radius: 6px; text-align:center;"
+                           oninput="updateFinalScore(this)">
                 </td>
+                <td class="final-score-cell" data-base="${aiNum !== null ? aiNum : ''}"
+                    style="text-align:center; font-weight:600; color: var(--primary);">${finalDisplay}</td>
                 <td>
                     <input type="text" class="feedback-input" data-email="${student.email}"
                            value="${existingFeedback}" placeholder="Add feedback..."
@@ -1941,6 +1957,22 @@ function loadGradeTable() {
             </tr>
         `;
     }).join('');
+}
+
+function updateFinalScore(adjInput) {
+    const row = adjInput.closest('tr');
+    const cell = row.querySelector('.final-score-cell');
+    const base = cell.dataset.base !== '' ? parseFloat(cell.dataset.base) : null;
+    const adj = parseFloat(adjInput.value) || 0;
+    cell.textContent = base !== null ? base + adj : (adj !== 0 ? adj : '—');
+}
+
+function applyGlobalAdjustment() {
+    const val = document.getElementById('globalAdjustment').value;
+    document.querySelectorAll('#gradeTableBody .adjustment-input').forEach(input => {
+        input.value = val;
+        updateFinalScore(input);
+    });
 }
 
 async function saveAllGrades() {
@@ -1953,16 +1985,22 @@ async function saveAllGrades() {
         const email = row.dataset.email;
         if (!email) return;
 
-        const gradeInput = row.querySelector('.grade-input');
+        const aiGradeStr = row.dataset.aigrade;
+        const adjustmentInput = row.querySelector('.adjustment-input');
         const feedbackInput = row.querySelector('.feedback-input');
+        const feedback = feedbackInput?.value || '';
 
-        if (gradeInput.value !== '' || feedbackInput.value !== '') {
+        // Only save rows where the student has a grading basis (submitted) or has feedback
+        if (aiGradeStr !== '' || feedback) {
+            const aiGrade = aiGradeStr !== '' ? parseFloat(aiGradeStr) || 0 : 0;
+            const adjustment = parseFloat(adjustmentInput?.value) || 0;
+            const finalScore = aiGrade + adjustment;
             grades.push({
                 email,
                 type,
                 assignmentId,
-                grade: gradeInput.value,
-                feedback: feedbackInput.value
+                grade: finalScore,
+                feedback
             });
         }
     });
