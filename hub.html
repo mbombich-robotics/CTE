@@ -211,6 +211,17 @@ body{font-family:var(--sans);background:var(--bg);color:var(--txt);min-height:10
 /* Week notes line */
 .wk-notes{font-size:11px;color:var(--muted);margin-top:3px;font-style:italic;}
 
+/* Week nav arrows */
+.week-nav{display:flex;align-items:center;gap:2px;white-space:nowrap;}
+.wk-arrow{
+  font-size:16px;font-weight:700;font-family:var(--mono);
+  color:var(--muted);background:transparent;border:none;cursor:pointer;
+  padding:1px 5px;border-radius:4px;line-height:1;
+  transition:color .15s,background .15s;
+}
+.wk-arrow:hover:not(:disabled){color:var(--txt);background:var(--hi);}
+.wk-arrow:disabled{opacity:.2;cursor:default;}
+
 /* Responsive */
 @media(max-width:720px){
   .hub-grid{grid-template-columns:1fr;}
@@ -226,7 +237,11 @@ body{font-family:var(--sans);background:var(--bg);color:var(--txt);min-height:10
 
 <header class="hub-header">
   <div class="track-tabs" id="tabs"></div>
-  <div class="week-chip" id="wkChip"></div>
+  <div class="week-nav">
+    <button class="wk-arrow" id="wkPrev" onclick="stepWeek(-1)" aria-label="Previous week">&#8249;</button>
+    <div class="week-chip" id="wkChip"></div>
+    <button class="wk-arrow" id="wkNext" onclick="stepWeek(1)" aria-label="Next week">&#8250;</button>
+  </div>
   <a class="port-btn" id="portBtn" href="#" target="_blank">Portfolio →</a>
 </header>
 
@@ -734,21 +749,63 @@ async function loadSchedule() {
   }
 }
 
+// ── WEEK NAVIGATION ───────────────────────────────────────
+let weekOffset = 0; // 0 = current week; negative = past; positive = future (max +1)
+
+function localDate() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function getWeeksForTrack(track) {
+  if (!scheduleData) return [];
+  if (track === '8aer') {
+    return [...(scheduleData.tracks['8aer']?.g1?.weeks || []),
+            ...(scheduleData.tracks['8aer']?.g2?.weeks || [])];
+  }
+  return scheduleData.tracks[track]?.weeks || [];
+}
+
+// Index of the week containing today; if between weeks, returns the last past week (min 0).
+function currentWeekIdx(track) {
+  const weeks = getWeeksForTrack(track);
+  const today = localDate();
+  let idx = weeks.findIndex(w => today >= w.start && today <= w.end);
+  if (idx < 0) {
+    for (let i = weeks.length - 1; i >= 0; i--) {
+      if (weeks[i].end < today) { idx = i; break; }
+    }
+  }
+  return Math.max(0, idx);
+}
+
 // Returns the week object whose start/end straddles today, or null.
-// For 8aer checks G1 then G2 (date ranges don't overlap).
 function getWeekData(track) {
   if (!scheduleData) return null;
-  const _d = new Date();
-  const today = _d.getFullYear() + '-' + String(_d.getMonth()+1).padStart(2,'0') + '-' + String(_d.getDate()).padStart(2,'0'); // local date
-  if (track === '8aer') {
-    const g1 = scheduleData.tracks['8aer']?.g1?.weeks || [];
-    const g2 = scheduleData.tracks['8aer']?.g2?.weeks || [];
-    return g1.find(w => today >= w.start && today <= w.end)
-        || g2.find(w => today >= w.start && today <= w.end)
-        || null;
-  }
-  const weeks = scheduleData.tracks[track]?.weeks || [];
+  const today = localDate();
+  const weeks = getWeeksForTrack(track);
   return weeks.find(w => today >= w.start && today <= w.end) || null;
+}
+
+// Returns week data at offset relative to current week (clamped: week 1 … current+1).
+function getWeekDataAt(track, offset) {
+  const weeks  = getWeeksForTrack(track);
+  if (!weeks.length) return null;
+  const curIdx = currentWeekIdx(track);
+  const maxFwd = Math.min(curIdx + 1, weeks.length - 1);
+  const target = Math.max(0, Math.min(curIdx + offset, maxFwd));
+  return weeks[target] || null;
+}
+
+// Called by the ‹ › arrow buttons.
+function stepWeek(dir) {
+  const track   = getTrack();
+  const weeks   = getWeeksForTrack(track);
+  if (!weeks.length) return;
+  const curIdx  = currentWeekIdx(track);
+  const maxFwd  = Math.min(curIdx + 1, weeks.length - 1);
+  const newOff  = Math.max(-curIdx, Math.min(weekOffset + dir, maxFwd - curIdx));
+  if (newOff !== weekOffset) { weekOffset = newOff; renderWeekView(track); }
 }
 
 // ── CAREER CONNECTIONS ────────────────────────────────────
@@ -951,7 +1008,7 @@ function renderTabs(active) {
   ).join('');
 }
 
-function renderThisWeek(track, weekData, meta, week) {
+function renderThisWeek(track, weekData, meta, week, isCurrent) {
   // Build lesson rows from daily schedule entries
   const days = (weekData?.daily || []).filter(d => !d.content.startsWith('No School'));
   const lessonRows = days.map(d => {
@@ -1005,7 +1062,7 @@ function renderThisWeek(track, weekData, meta, week) {
   const weekNotes = weekData?.notes ? `<div class="wk-notes">${h(weekData.notes)}</div>` : '';
 
   document.getElementById('this-week').innerHTML = `
-    <div class="eyebrow">This Week</div>
+    <div class="eyebrow">${isCurrent ? 'This Week' : 'Week ' + week}</div>
     <div class="wk-head">
       <div class="wk-num">${week}</div>
       <div class="wk-meta">
@@ -1079,6 +1136,26 @@ function setBackground(bg) {
   document.body.style.cssText += `;background-image:${overlay},url('${bg}');background-size:cover;background-position:center;background-repeat:no-repeat;background-attachment:fixed;`;
 }
 
+function renderWeekView(track) {
+  const weeks   = getWeeksForTrack(track);
+  const curIdx  = currentWeekIdx(track);
+  const maxFwd  = Math.min(curIdx + 1, weeks.length - 1);
+  const weekData = getWeekDataAt(track, weekOffset);
+  const week     = weekData?.week || getWeek();
+  const dispIdx  = weekData ? weeks.indexOf(weekData) : curIdx;
+  const meta     = TRACKS[track];
+
+  document.getElementById('wkChip').innerHTML = `WEEK <b>${week}</b> &middot; 2026&ndash;27`;
+  const prevBtn = document.getElementById('wkPrev');
+  const nextBtn = document.getElementById('wkNext');
+  if (prevBtn) prevBtn.disabled = (dispIdx <= 0);
+  if (nextBtn) nextBtn.disabled = (dispIdx >= maxFwd);
+
+  renderThisWeek(track, weekData, meta, week, weekOffset === 0);
+  renderCareer(weekData, week);
+  renderQuote(weekData, week);
+}
+
 async function render() {
   const track = getTrack();
   const meta  = TRACKS[track];
@@ -1086,23 +1163,17 @@ async function render() {
   // Load schedule once; all subsequent calls use the cached copy
   await loadSchedule();
 
-  const weekData = getWeekData(track);
-  const week = weekData?.week || getWeek(); // getWeek() is fallback if JSON not loaded or no match
-
   document.documentElement.style.setProperty('--acc',  meta.acc);
   document.documentElement.style.setProperty('--accd', meta.accd);
   setBackground(meta.bg);
 
   renderTabs(track);
-  document.getElementById('wkChip').innerHTML = `WEEK <b>${week}</b> &middot; 2026&ndash;27`;
   document.getElementById('portBtn').href = BASE + 'Portfolio/?track=' + track;
-
-  renderThisWeek(track, weekData, meta, week);
-  renderCareer(weekData, week);
-  renderQuote(weekData, week);
+  renderWeekView(track);
 }
 
 function sw(t) {
+  weekOffset = 0; // reset to current week when switching tracks
   const u = new URL(location.href);
   u.searchParams.set('track', t);
   history.pushState({}, '', u);
