@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.44',
+    VERSION: 'v2.9.45',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -1904,7 +1904,11 @@ function loadGradeTable() {
     if (periodFilter !== 'all') {
         filteredStudents = filteredStudents.filter(s => s.period === periodFilter);
     }
-    filteredStudents.sort((a, b) => a.name.localeCompare(b.name));
+    filteredStudents.sort((a, b) => {
+        const aLast = a.name.split(' ').pop() || a.name;
+        const bLast = b.name.split(' ').pop() || b.name;
+        return aLast.localeCompare(bLast);
+    });
 
     if (filteredStudents.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No students found.</td></tr>';
