@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Engineer Profile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root {
+  --bg:        #07090f;
+  --surface:   #0d1220;
+  --surface-2: #131b2e;
+  --border:    #192840;
+  --gold:      #f0b429;
+  --gold-bg:   rgba(240,180,41,0.07);
+  --gold-b:    rgba(240,180,41,0.28);
+  --blue:      #38bdf8;
+  --blue-bg:   rgba(56,189,248,0.07);
+  --green:     #34d399;
+  --green-bg:  rgba(52,211,153,0.07);
+  --green-b:   rgba(52,211,153,0.28);
+  --text:      #e8edf5;
+  --text-2:    #8fa3bf;
+  --text-3:    #3d566e;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',system-ui,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* NAV BAR */
+.navbar {
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  padding:14px 40px; border-bottom:1px solid var(--border);
+  background:var(--surface); flex-wrap:wrap;
+}
+.back-link {
+  font-family:'JetBrains Mono',monospace; font-size:0.68rem; font-weight:600;
+  letter-spacing:0.12em; text-transform:uppercase; color:var(--text-3);
+  text-decoration:none; display:flex; align-items:center; gap:6px;
+  transition:color .15s; white-space:nowrap;
+}
+.back-link:hover { color:var(--blue); }
+.nav-arrows { display:flex; gap:8px; }
+.nav-btn {
+  font-family:'JetBrains Mono',monospace; font-size:0.62rem; font-weight:600;
+  letter-spacing:0.1em; text-transform:uppercase; padding:7px 14px;
+  border-radius:8px; border:1px solid var(--border); background:transparent;
+  color:var(--text-3); cursor:pointer; text-decoration:none; display:inline-flex;
+  align-items:center; gap:5px; transition:all .15s; white-space:nowrap;
+}
+.nav-btn:hover { border-color:var(--text-3); color:var(--text-2); }
+.nav-btn.disabled { opacity:0.3; pointer-events:none; }
+.nav-counter {
+  font-family:'JetBrains Mono',monospace; font-size:0.62rem;
+  color:var(--text-3); letter-spacing:0.06em; white-space:nowrap;
+}
+
+/* PROFILE LAYOUT */
+.profile {
+  max-width:960px; margin:0 auto; padding:56px 40px;
+  display:grid; grid-template-columns:280px 1fr; gap:48px; align-items:start;
+}
+
+/* LEFT COLUMN */
+.left-col { display:flex; flex-direction:column; gap:20px; }
+
+.photo-wrap {
+  width:100%; aspect-ratio:1; border-radius:16px; overflow:hidden;
+  position:relative; background:var(--surface-2);
+  border:1px solid var(--border);
+}
+.photo-wrap img {
+  width:100%; height:100%; object-fit:cover; object-position:top center;
+  display:block;
+}
+.photo-initials {
+  position:absolute; inset:0; display:flex; align-items:center;
+  justify-content:center;
+  font-family:'Bebas Neue',sans-serif; font-size:6rem; letter-spacing:0.02em;
+  color:rgba(255,255,255,0.18);
+}
+.photo-credit {
+  font-family:'JetBrains Mono',monospace; font-size:0.55rem;
+  color:var(--text-3); letter-spacing:0.06em; text-align:center;
+}
+
+.meta-block {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:10px;
+}
+.meta-row { display:flex; flex-direction:column; gap:2px; }
+.meta-label {
+  font-family:'JetBrains Mono',monospace; font-size:0.58rem;
+  letter-spacing:0.14em; text-transform:uppercase; color:var(--text-3);
+}
+.meta-val { font-size:0.85rem; color:var(--text-2); line-height:1.45; }
+.meta-divider { height:1px; background:var(--border); }
+
+.badge {
+  display:inline-flex; align-items:center; gap:5px;
+  font-family:'JetBrains Mono',monospace; font-size:0.6rem; font-weight:600;
+  letter-spacing:0.12em; text-transform:uppercase;
+  padding:5px 12px; border-radius:100px; border:1px solid; align-self:flex-start;
+}
+.badge-gold { color:var(--gold); border-color:var(--gold-b); background:var(--gold-bg); }
+.badge-green { color:var(--green); border-color:var(--green-b); background:var(--green-bg); }
+.badge-blue { color:var(--blue); border-color:rgba(56,189,248,0.28); background:var(--blue-bg); }
+
+/* RIGHT COLUMN */
+.right-col { display:flex; flex-direction:column; gap:32px; }
+
+.name-block { display:flex; flex-direction:column; gap:6px; }
+.prof-eyebrow {
+  font-family:'JetBrains Mono',monospace; font-size:0.65rem;
+  letter-spacing:0.18em; text-transform:uppercase; color:var(--text-3);
+}
+.prof-name {
+  font-family:'Bebas Neue',sans-serif; font-size:clamp(3rem,6vw,5rem);
+  line-height:0.9; letter-spacing:0.02em; color:var(--text);
+  text-wrap:balance;
+}
+.prof-field {
+  font-family:'JetBrains Mono',monospace; font-size:0.68rem;
+  letter-spacing:0.1em; text-transform:uppercase; color:var(--blue); margin-top:4px;
+}
+
+/* SECTIONS */
+.section { display:flex; flex-direction:column; gap:12px; }
+.section-head {
+  font-family:'JetBrains Mono',monospace; font-size:0.62rem; font-weight:600;
+  letter-spacing:0.18em; text-transform:uppercase; color:var(--text-3);
+  padding-bottom:8px; border-bottom:1px solid var(--border);
+}
+.accomplish-list { display:flex; flex-direction:column; gap:10px; }
+.accomplish-item {
+  display:flex; gap:12px; align-items:flex-start;
+}
+.accomplish-dot {
+  flex-shrink:0; width:6px; height:6px; border-radius:50%;
+  background:var(--gold); margin-top:7px;
+}
+.accomplish-text { font-size:0.92rem; color:var(--text-2); line-height:1.65; }
+
+/* FACT BLOCK */
+.fact-block {
+  background:var(--surface); border:1px solid var(--border);
+  border-left:3px solid var(--gold); border-radius:0 12px 12px 0;
+  padding:20px 20px 20px 22px; display:flex; flex-direction:column; gap:8px;
+}
+.fact-eyebrow {
+  font-family:'JetBrains Mono',monospace; font-size:0.6rem; font-weight:600;
+  letter-spacing:0.16em; text-transform:uppercase; color:var(--gold);
+}
+.fact-text { font-size:0.92rem; color:var(--text-2); line-height:1.7; }
+
+/* SOURCE */
+.source-block {
+  display:flex; flex-direction:column; gap:4px; padding-top:4px;
+}
+.source-label {
+  font-family:'JetBrains Mono',monospace; font-size:0.58rem;
+  letter-spacing:0.14em; text-transform:uppercase; color:var(--text-3);
+}
+.source-link {
+  font-size:0.85rem; color:var(--blue); text-decoration:none;
+  line-height:1.5;
+}
+.source-link:hover { text-decoration:underline; }
+.nominated-note {
+  font-family:'JetBrains Mono',monospace; font-size:0.6rem;
+  color:var(--text-3); letter-spacing:0.06em; margin-top:2px;
+}
+
+/* ERROR STATE */
+.error-state {
+  max-width:500px; margin:80px auto; text-align:center;
+  padding:40px;
+}
+.error-state h2 { font-family:'Bebas Neue',sans-serif; font-size:3rem; color:var(--text-3); }
+.error-state p { color:var(--text-3); margin-top:12px; }
+.error-state a { color:var(--blue); }
+
+/* RESPONSIVE */
+@media (max-width:750px) {
+  .profile { grid-template-columns:1fr; gap:32px; padding:32px 20px; }
+  .left-col { flex-direction:row; flex-wrap:wrap; align-items:flex-start; }
+  .photo-wrap { width:140px; flex-shrink:0; }
+  .meta-block { flex:1; min-width:160px; }
+  .navbar { padding:12px 20px; }
+}
+@media (max-width:500px) {
+  .left-col { flex-direction:column; }
+  .photo-wrap { width:100%; max-width:240px; margin:0 auto; }
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a class="back-link" href="index.html">← All Engineers</a>
+  <span class="nav-counter" id="nav-counter"></span>
+  <div class="nav-arrows">
+    <a class="nav-btn" id="btn-prev" href="#">← Prev</a>
+    <a class="nav-btn" id="btn-next" href="#">Next →</a>
+  </div>
+</nav>
+
+<div id="profile-root"></div>
+
+<script src="data.js"></script>
+<script>
+function h(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+const BG_PALETTE = [
+  '#1a2640','#1a2032','#0f2030','#1e1a2e','#0d2020',
+  '#1e2618','#1c1a10','#201010','#101e20','#18101e'
+];
+function initBg(id) {
+  let v=0; for(let i=0;i<id.length;i++) v=(v*31+id.charCodeAt(i))>>>0;
+  return BG_PALETTE[v % BG_PALETTE.length];
+}
+function initials(name) {
+  return name.split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+}
+function badgeHTML(eng) {
+  if (eng.badgeColor === 'gold')  return `<span class="badge badge-gold">🖨 3D Printing Pioneer</span>`;
+  if (eng.badgeColor === 'green') return `<span class="badge badge-green">🤖 Robotics Connection</span>`;
+  if (eng.nominationCount >= 3)   return `<span class="badge badge-blue">★ ×${eng.nominationCount} nominations</span>`;
+  return '';
+}
+
+function render(eng, idx, total) {
+  document.title = eng.name + ' — Named 23';
+
+  // nav counter
+  document.getElementById('nav-counter').textContent = `${idx + 1} of ${total}`;
+
+  // adjacent
+  const adj = getAdjacentEngineers(eng.id);
+  const btnPrev = document.getElementById('btn-prev');
+  const btnNext = document.getElementById('btn-next');
+  if (adj.prev) { btnPrev.href = `profile.html?id=${adj.prev.id}`; btnPrev.textContent = `← ${adj.prev.name.split(' ').slice(-1)[0]}`; }
+  else { btnPrev.classList.add('disabled'); btnPrev.removeAttribute('href'); }
+  if (adj.next) { btnNext.href = `profile.html?id=${adj.next.id}`; btnNext.textContent = `${adj.next.name.split(' ').slice(-1)[0]} →`; }
+  else { btnNext.classList.add('disabled'); btnNext.removeAttribute('href'); }
+
+  // photo
+  const photoHTML = eng.photo
+    ? `<img src="${h(eng.photo)}" alt="${h(eng.name)}" onerror="this.remove()">`
+    : '';
+
+  // accomplishments
+  const accomHTML = (eng.accomplishments || []).map(a =>
+    `<div class="accomplish-item">
+       <div class="accomplish-dot"></div>
+       <div class="accomplish-text">${h(a)}</div>
+     </div>`
+  ).join('');
+
+  // source link
+  const sourceHTML = eng.sourceUrl
+    ? `<a class="source-link" href="${h(eng.sourceUrl)}" target="_blank" rel="noopener">${h(eng.source)}</a>`
+    : `<span class="source-link">${h(eng.source)}</span>`;
+
+  document.getElementById('profile-root').innerHTML = `
+  <div class="profile">
+    <div class="left-col">
+      <div class="photo-wrap" style="background:${initBg(eng.id)}">
+        <div class="photo-initials">${initials(eng.name)}</div>
+        ${photoHTML}
+      </div>
+      ${eng.photoCredit ? `<div class="photo-credit">${h(eng.photoCredit)}</div>` : ''}
+
+      <div class="meta-block">
+        ${badgeHTML(eng) ? `${badgeHTML(eng)}<div class="meta-divider"></div>` : ''}
+        <div class="meta-row">
+          <div class="meta-label">Years</div>
+          <div class="meta-val">${h(eng.years)}</div>
+        </div>
+        <div class="meta-divider"></div>
+        <div class="meta-row">
+          <div class="meta-label">Field</div>
+          <div class="meta-val">${h(eng.field)}</div>
+        </div>
+        <div class="meta-divider"></div>
+        <div class="meta-row">
+          <div class="meta-label">Nomination</div>
+          <div class="meta-val">${h(eng.nominatedBy)}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-col">
+      <div class="name-block">
+        <div class="prof-eyebrow">Named 23 — Engineer Profile</div>
+        <div class="prof-name">${h(eng.name)}</div>
+        <div class="prof-field">${h(eng.field)}</div>
+      </div>
+
+      <div class="section">
+        <div class="section-head">Accomplishments &amp; Contributions</div>
+        <div class="accomplish-list">${accomHTML}</div>
+      </div>
+
+      <div class="fact-block">
+        <div class="fact-eyebrow">⚡ Did You Know</div>
+        <div class="fact-text">${h(eng.fact)}</div>
+      </div>
+
+      <div class="section">
+        <div class="section-head">Source</div>
+        <div class="source-block">
+          <div class="source-label">Learn more</div>
+          ${sourceHTML}
+          ${eng.nominatedBy ? `<div class="nominated-note">${h(eng.nominatedBy)}</div>` : ''}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// Load from URL param
+const params = new URLSearchParams(location.search);
+const id = params.get('id') || '';
+const eng = getEngineer(id);
+
+if (!eng) {
+  document.getElementById('profile-root').innerHTML = `
+    <div class="error-state">
+      <h2>Not Found</h2>
+      <p>No profile found for that ID.<br><a href="index.html">← Back to all engineers</a></p>
+    </div>`;
+  document.getElementById('nav-counter').textContent = '—';
+  document.getElementById('btn-prev').classList.add('disabled');
+  document.getElementById('btn-next').classList.add('disabled');
+} else {
+  const idx = ENGINEERS.findIndex(e => e.id === id);
+  render(eng, idx, ENGINEERS.length);
+}
+
+// keyboard navigation
+document.addEventListener('keydown', e => {
+  const btnPrev = document.getElementById('btn-prev');
+  const btnNext = document.getElementById('btn-next');
+  if (e.key === 'ArrowLeft' && !btnPrev.classList.contains('disabled'))
+    location.href = btnPrev.href;
+  if (e.key === 'ArrowRight' && !btnNext.classList.contains('disabled'))
+    location.href = btnNext.href;
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Named 23 — Engineer Profiles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root {
+  --bg:        #07090f;
+  --surface:   #0d1220;
+  --surface-2: #131b2e;
+  --border:    #192840;
+  --gold:      #f0b429;
+  --gold-bg:   rgba(240,180,41,0.07);
+  --gold-b:    rgba(240,180,41,0.28);
+  --blue:      #38bdf8;
+  --blue-bg:   rgba(56,189,248,0.07);
+  --green:     #34d399;
+  --green-bg:  rgba(52,211,153,0.07);
+  --green-b:   rgba(52,211,153,0.28);
+  --text:      #e8edf5;
+  --text-2:    #8fa3bf;
+  --text-3:    #3d566e;
+  --card-hover:#111827;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { font-family:'DM Sans',system-ui,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* TOPBAR */
+.topbar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 40px; border-bottom:1px solid var(--border);
+  background:var(--surface);
+}
+.back-link {
+  font-family:'JetBrains Mono',monospace; font-size:0.7rem; font-weight:600;
+  letter-spacing:0.12em; text-transform:uppercase; color:var(--text-3);
+  text-decoration:none; display:flex; align-items:center; gap:6px;
+  transition:color .15s;
+}
+.back-link:hover { color:var(--blue); }
+.topbar-id {
+  font-family:'JetBrains Mono',monospace; font-size:0.65rem;
+  letter-spacing:0.1em; color:var(--text-3); text-transform:uppercase;
+}
+
+/* HERO */
+.hero {
+  padding:60px 48px 48px;
+  border-bottom:1px solid var(--border);
+  background:radial-gradient(ellipse 60% 50% at 50% 0%, rgba(240,180,41,0.07) 0%, transparent 65%);
+  text-align:center;
+}
+.hero-eyebrow {
+  font-family:'JetBrains Mono',monospace; font-size:0.68rem; font-weight:600;
+  letter-spacing:0.22em; text-transform:uppercase; color:var(--gold);
+  margin-bottom:16px;
+}
+.hero-title {
+  font-family:'Bebas Neue',sans-serif; font-size:clamp(3.5rem,8vw,6.5rem);
+  line-height:0.9; letter-spacing:0.02em; color:var(--text); margin-bottom:20px;
+}
+.hero-title span { color:var(--gold); }
+.hero-sub {
+  font-size:1rem; color:var(--text-2); max-width:460px;
+  margin:0 auto 32px; line-height:1.65;
+}
+.filter-strip {
+  display:flex; gap:8px; justify-content:center; flex-wrap:wrap;
+}
+.filter-btn {
+  font-family:'JetBrains Mono',monospace; font-size:0.62rem; font-weight:600;
+  letter-spacing:0.1em; text-transform:uppercase; padding:7px 16px;
+  border-radius:100px; border:1px solid var(--border); background:transparent;
+  color:var(--text-3); cursor:pointer; transition:all .15s;
+}
+.filter-btn:hover { border-color:var(--text-3); color:var(--text-2); }
+.filter-btn.active { border-color:var(--gold-b); color:var(--gold); background:var(--gold-bg); }
+
+/* GRID */
+.grid-wrap { padding:48px; }
+.grid {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+
+/* CARD */
+.eng-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:12px; overflow:hidden;
+  display:flex; flex-direction:column;
+  cursor:pointer; transition:border-color .15s, background .15s;
+  text-decoration:none; color:inherit;
+}
+.eng-card:hover { border-color:var(--gold-b); background:var(--card-hover); }
+.eng-card.honor { border-color:var(--gold-b); }
+.eng-card.honor-green { border-color:var(--green-b); }
+
+.card-photo {
+  height:140px; overflow:hidden; position:relative; flex-shrink:0;
+  background:var(--surface-2);
+}
+.card-photo img {
+  width:100%; height:100%; object-fit:cover; object-position:top center;
+  display:block; transition:transform .3s;
+}
+.eng-card:hover .card-photo img { transform:scale(1.04); }
+.card-initials {
+  position:absolute; inset:0; display:flex; align-items:center;
+  justify-content:center;
+  font-family:'Bebas Neue',sans-serif; font-size:3.5rem;
+  letter-spacing:0.02em; color:rgba(255,255,255,0.25);
+}
+.card-stripe {
+  height:2px; flex-shrink:0;
+}
+.card-stripe-gold { background:var(--gold); }
+.card-stripe-green { background:var(--green); }
+.card-stripe-plain { background:var(--border); }
+
+.card-body { padding:16px; display:flex; flex-direction:column; gap:6px; flex:1; }
+.card-badge {
+  display:inline-flex; align-items:center; gap:4px;
+  font-family:'JetBrains Mono',monospace; font-size:0.55rem; font-weight:600;
+  letter-spacing:0.12em; text-transform:uppercase;
+  padding:3px 8px; border-radius:100px; border:1px solid; align-self:flex-start;
+  margin-bottom:2px;
+}
+.badge-gold { color:var(--gold); border-color:var(--gold-b); background:var(--gold-bg); }
+.badge-green { color:var(--green); border-color:var(--green-b); background:var(--green-bg); }
+.badge-blue { color:var(--blue); border-color:rgba(56,189,248,0.28); background:var(--blue-bg); }
+
+.card-name {
+  font-family:'Bebas Neue',sans-serif; font-size:1.55rem;
+  color:var(--text); line-height:0.95; letter-spacing:0.02em;
+}
+.card-field {
+  font-family:'JetBrains Mono',monospace; font-size:0.58rem;
+  letter-spacing:0.08em; text-transform:uppercase; color:var(--text-3);
+  line-height:1.5;
+}
+.card-years { font-size:0.75rem; color:var(--text-3); margin-top:auto; padding-top:8px; }
+.card-cta {
+  font-family:'JetBrains Mono',monospace; font-size:0.6rem; font-weight:600;
+  letter-spacing:0.1em; text-transform:uppercase; color:var(--gold);
+  margin-top:2px;
+}
+.eng-card:hover .card-cta { text-decoration:underline; }
+
+/* FOOT */
+.foot {
+  padding:24px 48px; border-top:1px solid var(--border);
+  font-family:'JetBrains Mono',monospace; font-size:0.62rem;
+  color:var(--text-3); letter-spacing:0.06em;
+  display:flex; gap:32px; flex-wrap:wrap;
+}
+
+/* HIDDEN */
+.eng-card[hidden] { display:none !important; }
+
+/* RESPONSIVE */
+@media (max-width:1100px) { .grid { grid-template-columns:repeat(3,1fr); } }
+@media (max-width:800px) {
+  .grid { grid-template-columns:repeat(2,1fr); }
+  .hero, .grid-wrap { padding-left:24px; padding-right:24px; }
+  .topbar { padding-left:20px; padding-right:20px; }
+}
+@media (max-width:500px) {
+  .grid { grid-template-columns:1fr; }
+  .topbar-id { display:none; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="back-link" href="https://mbombich-robotics.github.io/CTE/hub.html">← Hub</a>
+  <span class="topbar-id">Applied Engineering &amp; Robotics · 2026–27</span>
+</div>
+
+<div class="hero">
+  <div class="hero-eyebrow">The Named 23 · Engineer Profiles</div>
+  <div class="hero-title">23 <span>Engineers</span><br>&amp; Scientists</div>
+  <p class="hero-sub">Each 3D printer in the shop bears one of these names. Tap any card to read the full profile.</p>
+  <div class="filter-strip">
+    <button class="filter-btn active" data-filter="all">All 23</button>
+    <button class="filter-btn" data-filter="gold">3D Printing</button>
+    <button class="filter-btn" data-filter="green">Robotics</button>
+    <button class="filter-btn" data-filter="blue">Fan Favorites</button>
+  </div>
+</div>
+
+<div class="grid-wrap">
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="foot">
+  <span>Nominations collected in L1.1 · Winners selected by merit of person and quality of nomination</span>
+  <span>Photos from Wikimedia Commons · Public Domain</span>
+</div>
+
+<script src="data.js"></script>
+<script>
+// deterministic background colors for initials
+const BG_PALETTE = [
+  '#1a2640','#1a2032','#0f2030','#1e1a2e','#0d2020',
+  '#1e2618','#1c1a10','#201010','#101e20','#18101e'
+];
+function initBg(id) {
+  let h = 0; for (let i=0;i<id.length;i++) h=(h*31+id.charCodeAt(i))>>>0;
+  return BG_PALETTE[h % BG_PALETTE.length];
+}
+function initials(name) {
+  return name.split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+}
+function h(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function badgeHTML(eng) {
+  if (eng.badgeColor === 'gold') return `<span class="card-badge badge-gold">🖨 3D Printing Pioneer</span>`;
+  if (eng.badgeColor === 'green') return `<span class="card-badge badge-green">🤖 Robotics Connection</span>`;
+  if (eng.nominationCount >= 3)   return `<span class="card-badge badge-blue">★ ×${eng.nominationCount} votes</span>`;
+  return '';
+}
+function stripeClass(eng) {
+  if (eng.badgeColor === 'gold')  return 'card-stripe-gold';
+  if (eng.badgeColor === 'green') return 'card-stripe-green';
+  return 'card-stripe-plain';
+}
+function cardClass(eng) {
+  if (eng.badgeColor === 'gold')  return 'eng-card honor';
+  if (eng.badgeColor === 'green') return 'eng-card honor-green';
+  return 'eng-card';
+}
+function filterAttr(eng) {
+  const tags = ['all'];
+  if (eng.badgeColor === 'gold')  tags.push('gold');
+  if (eng.badgeColor === 'green') tags.push('green');
+  if (eng.nominationCount >= 3)   tags.push('blue');
+  return tags.join(' ');
+}
+
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = ENGINEERS.map(eng => {
+    const photoHTML = eng.photo
+      ? `<img src="${h(eng.photo)}" alt="${h(eng.name)}" loading="lazy" onerror="this.style.display='none'">`
+      : '';
+    return `
+    <a class="${cardClass(eng)}" href="profile.html?id=${h(eng.id)}" data-tags="${filterAttr(eng)}">
+      <div class="card-photo" style="background:${initBg(eng.id)}">
+        <div class="card-initials">${initials(eng.name)}</div>
+        ${photoHTML}
+      </div>
+      <div class="card-stripe ${stripeClass(eng)}"></div>
+      <div class="card-body">
+        ${badgeHTML(eng)}
+        <div class="card-name">${h(eng.name)}</div>
+        <div class="card-field">${h(eng.field)}</div>
+        <div class="card-years">${h(eng.years)}</div>
+        <div class="card-cta">View profile →</div>
+      </div>
+    </a>`;
+  }).join('');
+}
+
+function applyFilter(tag) {
+  document.querySelectorAll('.eng-card').forEach(card => {
+    const tags = card.dataset.tags.split(' ');
+    card.hidden = !tags.includes(tag);
+  });
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.filter === tag);
+  });
+}
+
+renderGrid();
+
+document.querySelector('.filter-strip').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (btn) applyFilter(btn.dataset.filter);
+});
+</script>
+</body>
+</html>

@@ -331,9 +331,11 @@ const EMBEDDED_SCHEDULE = {
           "title": "EDP in Action — Design Brief",
           "notes": "🔴 Labor Day Sep 7",
           "careerConnection": {
-            "name": "Jeremy James",
-            "role": "Airplane Pilot · Republic Airways",
-            "link": "https://mbombich-robotics.github.io/CTE/PLTW%20Unit%202%20Resources/Career%20Training/Careers%20in%20Engineering_files/FS_CareerProfile_JeremyJames.pdf"
+            "name": "The Named 23",
+            "role": "23 engineers & scientists — chosen by the class",
+            "link": "https://claude.ai/code/artifact/8b86d7ca-8d3b-40bb-9c81-d1bf1c26d37e",
+            "linkText": "See the announcement →",
+            "eyebrow": "Class Announcement"
           },
           "quote": null,
           "quiz": null,
@@ -659,9 +661,11 @@ const EMBEDDED_SCHEDULE = {
           "title": "EDP in Action — Design Brief",
           "notes": "🔴 Labor Day Sep 7",
           "careerConnection": {
-            "name": "Jeremy James",
-            "role": "Airplane Pilot · Republic Airways",
-            "link": "https://mbombich-robotics.github.io/CTE/PLTW%20Unit%202%20Resources/Career%20Training/Careers%20in%20Engineering_files/FS_CareerProfile_JeremyJames.pdf"
+            "name": "The Named 23",
+            "role": "23 engineers & scientists — chosen by the class",
+            "link": "https://claude.ai/code/artifact/8b86d7ca-8d3b-40bb-9c81-d1bf1c26d37e",
+            "linkText": "See the announcement →",
+            "eyebrow": "Class Announcement"
           },
           "quote": null,
           "quiz": null,
@@ -1081,28 +1085,32 @@ function renderThisWeek(track, weekData, meta, week, isCurrent) {
 }
 
 function renderCareer(weekData, fallbackWeek) {
-  let name, role, link, quote;
+  let name, role, link, linkText, eyebrow, quote;
   if (weekData?.careerConnection) {
     const c = weekData.careerConnection;
-    name  = c.name;
-    role  = c.role;
-    link  = c.link;
-    quote = null; // quotes added per-week when ready
+    name     = c.name;
+    role     = c.role;
+    link     = c.link;
+    linkText = c.linkText || null;
+    eyebrow  = c.eyebrow  || 'Career Connection';
+    quote    = null;
   } else {
     const c = cycle(CAREERS, fallbackWeek);
-    name  = c.name;
-    role  = c.title + ' · ' + c.org;
-    link  = CAREER_BASE + c.pdf;
-    quote = c.quote;
+    name     = c.name;
+    role     = c.title + ' · ' + c.org;
+    link     = CAREER_BASE + c.pdf;
+    linkText = null;
+    eyebrow  = 'Career Connection';
+    quote    = c.quote;
   }
   document.getElementById('career-card').innerHTML = `
-    <div class="eyebrow">Career Connection</div>
+    <div class="eyebrow">${h(eyebrow)}</div>
     <div class="car-body">
       <div class="car-name">${h(name)}</div>
       <div class="car-role">${h(role)}</div>
       ${quote ? `<blockquote class="car-quote">&ldquo;${h(quote)}&rdquo;</blockquote>` : ''}
       <a class="car-link" href="${h(link)}" target="_blank" rel="noopener">
-        View ${h(name.split(' ')[0])}'s full profile ›
+        ${linkText ? h(linkText) : `View ${h(name.split(' ')[0])}'s full profile ›`}
       </a>
     </div>`;
 }

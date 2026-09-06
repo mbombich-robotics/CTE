@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        [hidden] { display: none !important; }
         body { font-family: 'Exo 2', sans-serif; background: linear-gradient(135deg, #000000 0%, #0a0404 40%, #1a0d08 100%); color: #e0e6f0; height: 100vh; }
         .presentation { width: 100%; height: 100vh; position: relative; }
         .slide { position: absolute; width: 100%; min-height: 100%; display: none; flex-direction: column; justify-content: flex-start; align-items: center; padding: 55px 60px 120px 60px; opacity: 0; transition: opacity 0.5s ease; overflow-y: auto; overflow-x: hidden; }
@@ -46,6 +47,21 @@
         .ps-push { background: rgba(189,147,249,0.1); border-color: #bd93f9; color: #bd93f9; }
         .ps-future { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.1); color: #475569; }
 
+        /* Brief cards (slide 3) — identical CSS to L1.5 slide 4 */
+        .brief-cards { display: flex; gap: 18px; margin: 20px 0; }
+        .brief-card { flex: 1; border-radius: 20px; border: 2px solid; padding: 38px 18px 32px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; }
+        .bc-circle { width: 94px; height: 94px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron', sans-serif; font-size: 2.4rem; font-weight: 900; color: #000; flex-shrink: 0; }
+        .bc-name { font-size: 1.55rem; font-weight: 700; color: #e0e6f0; line-height: 1.3; }
+        .bc-tag { font-size: 1.3rem; font-weight: 600; margin-top: auto; }
+        .bc1 { border-color: #c41e3a; background: rgba(196,30,58,0.06); }  .bc1 .bc-circle { background: #c41e3a; color:#fff; } .bc1 .bc-tag { color: #e05a6a; }
+        .bc2 { border-color: #50fa7b; background: rgba(80,250,123,0.06); } .bc2 .bc-circle { background: #50fa7b; }              .bc2 .bc-tag { color: #50fa7b; }
+        .bc3 { border-color: #ff5555; background: rgba(255,85,85,0.06); }  .bc3 .bc-circle { background: #ff5555; }              .bc3 .bc-tag { color: #ff5555; }
+        .bc4 { border-color: #ffd700; background: rgba(255,215,0,0.06); }  .bc4 .bc-circle { background: #ffd700; }              .bc4 .bc-tag { color: #ffd700; }
+        .bc5 { border-color: #bd93f9; background: rgba(189,147,249,0.06); }.bc5 .bc-circle { background: #bd93f9; }              .bc5 .bc-tag { color: #bd93f9; }
+        .bc6 { border-color: #8be9fd; background: rgba(139,233,253,0.06); }.bc6 .bc-circle { background: #8be9fd; }              .bc6 .bc-tag { color: #8be9fd; }
+        .bc7 { border-color: #ffb86c; background: rgba(255,184,108,0.06); }.bc7 .bc-circle { background: #ffb86c; }              .bc7 .bc-tag { color: #ffb86c; }
+        .bc-today { box-shadow: 0 0 28px rgba(255,255,255,0.18), 0 0 56px rgba(255,255,255,0.07); }
+
         /* Question list */
         .q-list { list-style: none; padding: 0; }
         .q-list li { display: flex; align-items: flex-start; gap: 14px; padding: 11px 0; border-bottom: 1px solid rgba(196,30,58,0.12); font-size: 1.05rem; color: #b8c5d6; line-height: 1.5; }
@@ -62,6 +78,40 @@
         .formula { font-size: 1.1rem; color: #b8c5d6; background: rgba(189,147,249,0.07); border: 2px solid #bd93f9; border-radius: 10px; padding: 18px 22px; margin: 20px 0; line-height: 1.9; }
         .blank { color: #bd93f9; font-weight: 700; }
 
+        /* ── Per-slide scaling ──────────────────────────────────── */
+        /* Slides 1 & 2: ×1.75 — matches L1.5 */
+        #slide-1 h1 { font-size: 6.1rem; }
+        #slide-1 .subtitle { font-size: 2.3rem; }
+        #slide-1 .slide-content > div > div { padding: 18px 36px; font-size: 1.6rem; border-radius: 12px; }
+        #slide-2 h2 { font-size: 4.4rem; }
+        #slide-2 .objective-box { padding: 32px; margin: 32px 0; }
+        #slide-2 .bullet-list li { font-size: 2rem !important; margin: 20px 0; }
+        /* Slide 3: identical to L1.5 slide 4 */
+        #slide-3 h2 { font-size: 3.5rem; margin-bottom: 8px; }
+        /* Slides 4 & 5: ×1.25 */
+        #slide-4 h2, #slide-5 h2 { font-size: 3.1rem; }
+        #slide-4 h3, #slide-5 h3 { font-size: 1.9rem; }
+        #slide-4 p,  #slide-5 p  { font-size: 1.44rem !important; }
+        #slide-4 .bullet-list li, #slide-5 .bullet-list li { font-size: 1.44rem !important; }
+        #slide-5 .ex-q, #slide-5 .ex-a { font-size: 1.32rem !important; }
+        #slide-5 .ex-note { font-size: 1.2rem !important; }
+        /* Slide 6: ×1.10 */
+        #slide-6 h2 { font-size: 2.75rem; }
+        #slide-6 .subtitle { font-size: 1.43rem; }
+        #slide-6 p { font-size: 1.27rem !important; }
+        #slide-6 .q-list li { font-size: 1.16rem; }
+        #slide-6 .q-num { font-size: 0.94rem; }
+        /* Slides 7 & 8: ×1.25 */
+        #slide-7 h2, #slide-8 h2 { font-size: 3.1rem; }
+        #slide-7 h3, #slide-8 h3 { font-size: 1.9rem; }
+        #slide-7 p,  #slide-8 p  { font-size: 1.44rem !important; }
+        #slide-7 .bullet-list li, #slide-8 .bullet-list li { font-size: 1.44rem !important; }
+        /* Slide 9: ×1.10 */
+        #slide-9 h2 { font-size: 2.75rem; }
+        #slide-9 p { font-size: 1.27rem !important; }
+        #slide-9 .bullet-list li { font-size: 1.27rem !important; }
+        #slide-9 .formula { font-size: 1.21rem; }
+
         .nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 20px; background: rgba(10,2,4,0.85); backdrop-filter: blur(10px); border: 1px solid rgba(196,30,58,0.2); border-radius: 50px; padding: 12px 24px; z-index: 100; }
         .nav button { background: rgba(196,30,58,0.15); color: #e88a8a; border: 1px solid rgba(196,30,58,0.3); border-radius: 8px; padding: 10px 24px; font-family: 'Exo 2', sans-serif; font-size: 1em; font-weight: 700; cursor: pointer; transition: all 0.2s; }
         .nav button:hover { background: rgba(196,30,58,0.3); color: #e2e8f0; }
@@ -77,7 +127,7 @@
 <div class="presentation">
 
     <!-- Slide 1: Title -->
-    <div class="slide active">
+    <div class="slide active" id="slide-1">
         <div class="slide-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; text-align: center;">
             <h1>Client Interview</h1>
             <p class="subtitle">Unit 1 · Engineering Design Process · Lesson 1.6</p>
@@ -90,102 +140,130 @@
     </div>
 
     <!-- Slide 2: Objectives -->
-    <div class="slide">
+    <div class="slide" id="slide-2">
         <div class="slide-content">
             <h2>Lesson Objectives</h2>
             <div class="objective-box">
                 <ul class="bullet-list">
                     <li>Conduct a structured client interview to gather real design requirements</li>
-                    <li>Fill Sections 3 &amp; 4 (criteria and constraints) and set up your decision matrix at the same time</li>
+                    <li>Fill Sections 3 &amp; 4 (criteria and constraints) and set up your decision matrix</li>
                     <li>Draft your design statement — the synthesis of everything you've learned this week</li>
                 </ul>
             </div>
         </div>
     </div>
 
-    <!-- Slide 3: Where We Are -->
-    <div class="slide">
-        <div class="slide-content" style="text-align: center;">
-            <h2>Where We Are</h2>
-            <p style="color: #888; margin-bottom: 0;">D1.1 Design Brief — section by section</p>
-            <div class="progress-strip">
-                <div class="ps-item ps-done">
-                    <div class="ps-label">WEDNESDAY — S1</div>
-                    <div class="ps-name">Client &amp; End User</div>
+    <!-- Slide 3: 7 Sections overview — identical layout to L1.5 slide 4 -->
+    <div class="slide" id="slide-3">
+        <div class="slide-content">
+            <h2 style="font-size:3.5rem; margin-bottom:8px;">7 SECTIONS. ONE BRIEF.</h2>
+            <p style="color:#8894a8; margin-bottom:0; font-size:1.75rem;">Each section answers a critical question before you start building.</p>
+            <div class="brief-cards">
+                <!-- S1 & S2: done Wednesday — 80% (past), checkmark replaces number -->
+                <div class="brief-card bc1" style="filter:saturate(0.8) brightness(0.8);">
+                    <div class="bc-circle">✓</div>
+                    <div class="bc-name">Client &amp;<br>End User</div>
+                    <div class="bc-tag">Who?</div>
                 </div>
-                <div class="ps-item ps-done">
-                    <div class="ps-label">WEDNESDAY — S2</div>
-                    <div class="ps-name">Problem Statement</div>
+                <div class="brief-card bc2" style="filter:saturate(0.8) brightness(0.8);">
+                    <div class="bc-circle">✓</div>
+                    <div class="bc-name">Problem Statement</div>
+                    <div class="bc-tag">What's wrong?</div>
                 </div>
-                <div class="ps-item ps-active">
-                    <div class="ps-label">TODAY — S3</div>
-                    <div class="ps-name">Criteria</div>
+                <!-- S3, S4, S5: today — full color + glow -->
+                <div class="brief-card bc3 bc-today">
+                    <div class="bc-circle">3</div>
+                    <div class="bc-name">Criteria</div>
+                    <div class="bc-tag">What success looks like</div>
                 </div>
-                <div class="ps-item ps-active">
-                    <div class="ps-label">TODAY — S4</div>
-                    <div class="ps-name">Constraints</div>
+                <div class="brief-card bc4 bc-today">
+                    <div class="bc-circle">4</div>
+                    <div class="bc-name">Constraints</div>
+                    <div class="bc-tag">Hard limits</div>
                 </div>
-                <div class="ps-item ps-push">
-                    <div class="ps-label">PUSH — S5</div>
-                    <div class="ps-name">Design Statement</div>
+                <div class="brief-card bc5 bc-today">
+                    <div class="bc-circle">5</div>
+                    <div class="bc-name">Design Statement</div>
+                    <div class="bc-tag">The one-liner</div>
                 </div>
-                <div class="ps-item ps-future">
-                    <div class="ps-label">FRIDAY — S6</div>
-                    <div class="ps-name">Concept Sketches</div>
+                <!-- S6, S7: future — 20% subdued -->
+                <div class="brief-card bc6" style="filter:saturate(0.2) brightness(0.2);">
+                    <div class="bc-circle">6</div>
+                    <div class="bc-name">Concept Sketches</div>
+                    <div class="bc-tag">3 approaches</div>
                 </div>
-                <div class="ps-item ps-future">
-                    <div class="ps-label">FRIDAY — S7</div>
-                    <div class="ps-name">Decision Matrix</div>
+                <div class="brief-card bc7" style="filter:saturate(0.2) brightness(0.2);">
+                    <div class="bc-circle">7</div>
+                    <div class="bc-name">Decision Matrix</div>
+                    <div class="bc-tag">Data decides</div>
                 </div>
+            </div>
+            <div class="step-box" style="text-align: center; padding: 14px;">
+                <p style="margin: 0; font-size: 1.75rem; color: #e05a6a; font-weight: 700;">Interview today. Write as you listen. Due Friday.</p>
             </div>
         </div>
     </div>
 
     <!-- Slide 4: Good Questions vs. Bad Questions -->
-    <div class="slide">
+    <div class="slide" id="slide-4">
         <div class="slide-content">
             <h2>Good Questions vs. Bad Questions</h2>
             <p>Closed questions produce yes/no answers. Open questions produce requirements you can write down. You want open questions.</p>
             <div class="grid-2" style="margin-top: 20px;">
                 <div class="box" style="border-color: #ff5555; background: rgba(255,85,85,0.06);">
                     <h3 style="color: #ff5555;">✗ Closed</h3>
-                    <p style="font-size: 1rem; font-style: italic; color: #e0e6f0;">"Does it need to be strong?"</p>
-                    <p style="font-size: 0.95rem; color: #888; margin-bottom: 16px;">Answer: "Yes." — tells you nothing measurable.</p>
-                    <p style="font-size: 1rem; font-style: italic; color: #e0e6f0;">"Is there a size limit?"</p>
-                    <p style="font-size: 0.95rem; color: #888; margin-bottom: 0;">Answer: "Yes." — still nothing you can design against.</p>
+                    <p style="font-style: italic; color: #e0e6f0;">"Does it need to be strong?"</p>
+                    <p style="color: #888; margin-bottom: 16px;">Answer: "Yes." — tells you nothing measurable.</p>
+                    <p style="font-style: italic; color: #e0e6f0;">"Is there a size limit?"</p>
+                    <p style="color: #888; margin-bottom: 0;">Answer: "Yes." — still nothing you can design against.</p>
                 </div>
                 <div class="box-green">
                     <h3>✓ Open</h3>
-                    <p style="font-size: 1rem; font-style: italic; color: #e0e6f0;">"What happens if this part fails during a match?"</p>
-                    <p style="font-size: 0.95rem; color: #888; margin-bottom: 16px;">Answer tells you consequences → you can write a testable criterion.</p>
-                    <p style="font-size: 1rem; font-style: italic; color: #e0e6f0;">"What are the maximum dimensions at each interface?"</p>
-                    <p style="font-size: 0.95rem; color: #888; margin-bottom: 0;">Answer gives you a specific number → that's a constraint.</p>
+                    <p class="t-aer" style="font-style: italic; color: #e0e6f0;">"What happens if this part fails during a match?"</p>
+                    <p class="t-dbl" style="font-style: italic; color: #e0e6f0;" hidden>"What happens if this part fails during a demo or presentation?"</p>
+                    <p style="color: #888; margin-bottom: 16px;">Answer tells you consequences → you can write a testable criterion.</p>
+                    <p style="font-style: italic; color: #e0e6f0;">"What are the maximum dimensions at each interface?"</p>
+                    <p style="color: #888; margin-bottom: 0;">Answer gives you a specific number → that's a constraint.</p>
                 </div>
             </div>
             <div class="note-box">
-                <p style="margin: 0; font-size: 1rem; color: #50fa7b;">If an answer doesn't give you something to write in your brief, ask a follow-up: <strong>"Can you give me a specific number?"</strong> or <strong>"How would you test that?"</strong></p>
+                <p style="margin: 0; color: #50fa7b;">If an answer doesn't give you something to write in your brief, ask a follow-up: <strong>"Can you give me a specific number?"</strong> or <strong>"How would you test that?"</strong></p>
             </div>
         </div>
     </div>
 
     <!-- Slide 5: Watch First -->
-    <div class="slide">
+    <div class="slide" id="slide-5">
         <div class="slide-content">
             <h2>Watch First</h2>
             <p>Before we start, one exchange — so you can see what note-taking looks like.</p>
-            <div class="exchange">
-                <p class="ex-q">Student: "What does this component physically connect to, and what are the dimensions at each interface?"</p>
-                <p class="ex-a">Mr. B: "It presses onto the wheel hub post — that post is 22mm in diameter. The cap needs to sit flush with the wheel face when installed, and it has to clear the 6 M3 bolts that stick out around the hub edge."</p>
-                <p class="ex-note">→ From this one answer, you can write: one dimension constraint (22mm press-fit bore), one geometry criterion (flush with wheel face), one clearance constraint (clears M3 bolt heads). Three brief entries from one question.</p>
+
+            <!-- AER example -->
+            <div class="t-aer">
+                <div class="exchange">
+                    <p class="ex-q">Student: "What does the hub cap need to interface with, and what are the fixed dimensions at those interfaces?"</p>
+                    <p class="ex-a">Mr. B: "The bore has to press-fit onto the hub post — that post is 22mm diameter. The cap face needs to sit flush with the wheel face when it's installed, and you need clearance for the 6 M3 bolts around the hub edge. That's the fixed stuff. How the outside looks — the profile, any surface detail — that's completely up to you."</p>
+                    <p class="ex-note">→ Three brief entries from one answer: dimension constraint (22mm press-fit bore), geometry criterion (flush with wheel face), clearance constraint (clears M3 bolt heads). Everything outside those interfaces is designer-defined — the exterior profile is where your design lives.</p>
+                </div>
             </div>
+
+            <!-- DBL example -->
+            <div class="t-dbl" hidden>
+                <div class="exchange">
+                    <p class="ex-q">Student: "What does the bearing need to fit into, and what are the critical dimensions at that interface?"</p>
+                    <p class="ex-a">Mr. B: "The spinner body needs a press-fit pocket for the MR128 bearing — outer diameter is 12mm, width is 4mm. Design the pocket at 11.8mm diameter so it's a press fit. Depth should be exactly 4mm, and the bearing face needs to sit flush with the top surface of the spinner body."</p>
+                    <p class="ex-note">→ From this one answer: one dimension constraint (11.8mm pocket diameter), one depth constraint (4mm pocket), one geometry criterion (bearing flush with top face). Three brief entries from one question.</p>
+                </div>
+            </div>
+
             <div class="step-box" style="margin-top: 20px; text-align: center; padding: 14px;">
-                <p style="margin: 0; font-size: 1rem; color: #e05a6a; font-weight: 700;">Notebook open. Write answers as you hear them — you cannot reconstruct this from memory.</p>
+                <p style="margin: 0; color: #e05a6a; font-weight: 700;">Notebook open. Write answers as you hear them — you cannot reconstruct this from memory.</p>
             </div>
         </div>
     </div>
 
     <!-- Slide 6: The Interview -->
-    <div class="slide">
+    <div class="slide" id="slide-6">
         <div class="slide-content">
             <h2>The Interview</h2>
             <p class="subtitle">Use your notebook questions. Ask them now.</p>
@@ -199,13 +277,13 @@
                 <li><span class="q-num">Q7</span>Is there anything I should not do, or a common mistake to avoid?</li>
             </ul>
             <div class="note-box">
-                <p style="margin: 0; font-size: 1rem; color: #50fa7b;">Ask any questions you added. If an answer is vague, ask: <strong>"Can you give me a specific number?"</strong> or <strong>"How would you test for that?"</strong></p>
+                <p style="margin: 0; color: #50fa7b;">Ask any questions you added. If an answer is vague, ask: <strong>"Can you give me a specific number?"</strong> or <strong>"How would you test for that?"</strong></p>
             </div>
         </div>
     </div>
 
     <!-- Slide 7: Notes → Criteria + Matrix -->
-    <div class="slide">
+    <div class="slide" id="slide-7">
         <div class="slide-content">
             <h2>Notes → Criteria + Matrix Setup</h2>
             <p>Open your D1.1 doc to Section 3. For each criterion you write, do all three steps before moving to the next one.</p>
@@ -214,21 +292,22 @@
                     <div style="font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-weight: 900; color: #50fa7b; min-width: 36px; margin-top: 2px;">1</div>
                     <div>
                         <h3 style="margin-bottom: 6px;">Write the criterion in Section 3</h3>
-                        <p style="margin: 0; font-size: 1rem;">Must be specific and measurable — not "strong," but "survives a 10N pull-out force." Comes from your interview notes.</p>
+                        <p class="t-aer" style="margin: 0;">Must be specific and measurable — not "strong," but "survives a 10N pull-out force." Comes from your interview notes.</p>
+                        <p class="t-dbl" style="margin: 0;" hidden>Must be specific and measurable — not "spins well," but "spins freely for at least 30 seconds on a single flick." Comes from your interview notes.</p>
                     </div>
                 </div>
                 <div class="box-amber" style="display: flex; align-items: flex-start; gap: 16px;">
                     <div style="font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-weight: 900; color: #ffb86c; min-width: 36px; margin-top: 2px;">2</div>
                     <div>
                         <h3 style="color: #ffb86c; margin-bottom: 6px;">Enter it in your decision matrix — criteria column</h3>
-                        <p style="margin: 0; font-size: 1rem;">Open Section 7 side-by-side or flip back and forth. Enter the same criterion text in the first column of the matrix row.</p>
+                        <p style="margin: 0;">Open Section 7 side-by-side or flip back and forth. Enter the same criterion text in the first column of the matrix row.</p>
                     </div>
                 </div>
                 <div class="box" style="display: flex; align-items: flex-start; gap: 16px;">
                     <div style="font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-weight: 900; color: #e05a6a; min-width: 36px; margin-top: 2px;">3</div>
                     <div>
                         <h3 style="margin-bottom: 6px;">Assign a weight (1, 2, or 3) right now</h3>
-                        <p style="margin: 0; font-size: 1rem;">1 = nice to have · 2 = important · 3 = must have. Set this while the interview is fresh — you'll use it Friday to score your concepts.</p>
+                        <p style="margin: 0;">1 = nice to have · 2 = important · 3 = must have. Set this while the interview is fresh — you'll use it Friday to score your concepts.</p>
                     </div>
                 </div>
             </div>
@@ -236,14 +315,14 @@
     </div>
 
     <!-- Slide 8: Notes → Constraints -->
-    <div class="slide">
+    <div class="slide" id="slide-8">
         <div class="slide-content">
             <h2>Notes → Constraints</h2>
             <p>Fill Section 4. Constraints are the non-negotiable limits — things that are fixed regardless of which design concept you choose.</p>
             <div class="grid-2" style="margin-top: 20px;">
                 <div class="box">
                     <h3>How to spot a constraint</h3>
-                    <ul class="bullet-list" style="font-size: 1rem; margin-top: 10px;">
+                    <ul class="bullet-list" style="margin-top: 10px;">
                         <li>It's a hard limit — no workaround</li>
                         <li>Breaking it makes the design fail outright</li>
                         <li>It's binary: either you meet it or you don't</li>
@@ -252,19 +331,27 @@
                 </div>
                 <div class="box-amber">
                     <h3>Constraint vs. Criterion</h3>
-                    <p style="font-size: 1rem; margin-bottom: 10px;">If you can score it on a scale of 1–5, it's a criterion. If it's pass/fail, it's a constraint.</p>
-                    <p style="font-size: 0.95rem; color: #888; margin-bottom: 8px;"><strong style="color: #e0e6f0;">Criterion:</strong> "Survives a 10N pull-out force" — you could score a 3N result vs. a 12N result.</p>
-                    <p style="font-size: 0.95rem; color: #888; margin-bottom: 0;"><strong style="color: #e0e6f0;">Constraint:</strong> "Must print in PLA" — it either does or it doesn't.</p>
+                    <p style="margin-bottom: 10px;">If you can score it on a scale of 1–5, it's a criterion. If it's pass/fail, it's a constraint.</p>
+                    <!-- AER examples -->
+                    <div class="t-aer">
+                        <p style="color: #888; margin-bottom: 8px;"><strong style="color: #e0e6f0;">Criterion:</strong> "Survives a 10N pull-out force" — you could score a 3N result vs. a 12N result.</p>
+                        <p style="color: #888; margin-bottom: 0;"><strong style="color: #e0e6f0;">Constraint:</strong> "Must print in PLA" — it either does or it doesn't.</p>
+                    </div>
+                    <!-- DBL examples -->
+                    <div class="t-dbl" hidden>
+                        <p style="color: #888; margin-bottom: 8px;"><strong style="color: #e0e6f0;">Criterion:</strong> "Spins for at least 30 seconds" — you can compare 20 s vs. 45 s on a scale.</p>
+                        <p style="color: #888; margin-bottom: 0;"><strong style="color: #e0e6f0;">Constraint:</strong> "Bearing pocket must be 11.8mm diameter" — the bearing either fits or it doesn't.</p>
+                    </div>
                 </div>
             </div>
             <div class="step-box" style="margin-top: 20px; text-align: center; padding: 14px;">
-                <p style="margin: 0; font-size: 1rem; color: #e05a6a; font-weight: 700;">Aim for at least 3 specific constraints. "Must look good" is not a constraint — that's a criterion (if you can measure it at all).</p>
+                <p style="margin: 0; color: #e05a6a; font-weight: 700;">Aim for at least 3 specific constraints. "Must look good" is not a constraint — that's a criterion (if you can measure it at all).</p>
             </div>
         </div>
     </div>
 
     <!-- Slide 9: Design Statement -->
-    <div class="slide">
+    <div class="slide" id="slide-9">
         <div class="slide-content">
             <h2>Design Statement</h2>
             <p>You now have everything you need. The design statement is one sentence that ties it all together — user, problem, what success looks like, and the limits you're working within.</p>
@@ -276,7 +363,7 @@
             <div class="grid-2">
                 <div class="box-green">
                     <h3>It should include</h3>
-                    <ul class="bullet-list" style="font-size: 1rem; margin-top: 10px;">
+                    <ul class="bullet-list" style="margin-top: 10px;">
                         <li>Who it's for (from S1)</li>
                         <li>What problem it solves (from S2)</li>
                         <li>At least one criterion reference (from S3)</li>
@@ -285,7 +372,7 @@
                 </div>
                 <div class="box" style="border-color: #ff5555; background: rgba(255,85,85,0.05);">
                     <h3 style="color: #ff5555;">It should NOT include</h3>
-                    <ul class="bullet-list" style="font-size: 1rem; margin-top: 10px;">
+                    <ul class="bullet-list" style="margin-top: 10px;">
                         <li>A specific design solution ("I will use…")</li>
                         <li>Vague language ("good quality," "as needed")</li>
                         <li>Anything you haven't confirmed with your client</li>
@@ -293,7 +380,7 @@
                 </div>
             </div>
             <div class="step-box" style="margin-top: 20px; text-align: center; padding: 14px;">
-                <p style="margin: 0; font-size: 1rem; color: #e05a6a; font-weight: 700;">10 minutes — draft it now. If you don't finish in class, it's the first thing tomorrow.</p>
+                <p style="margin: 0; color: #e05a6a; font-weight: 700;">10 minutes — draft it now. If you don't finish in class, it's the first thing tomorrow.</p>
             </div>
         </div>
     </div>
@@ -307,6 +394,14 @@
 </nav>
 
 <script>
+    // Track switching — show .t-aer or .t-dbl content based on ?track= param
+    (function() {
+        var track = new URLSearchParams(location.search).get('track') || 'hsaer';
+        var isDbl = track === 'dbl';
+        document.querySelectorAll('.t-dbl').forEach(function(el) { el.hidden = !isDbl; });
+        document.querySelectorAll('.t-aer').forEach(function(el) { el.hidden = isDbl; });
+    })();
+
     var slides = document.querySelectorAll('.slide');
     var current = 0;
     function showSlide(n) {
@@ -319,8 +414,8 @@
     }
     function changeSlide(dir) { showSlide(current + dir); }
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
-        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp'   || e.key === 'PageUp')   changeSlide(-1);
     });
 </script>
 </body>
