@@ -405,7 +405,7 @@ const ENGINEERS = [
     specialty: null,
     badgeColor: null,
     wikiTitle: 'Luther_Haws',
-    photo: null,
+    photo: 'photos/Luther-Haws-unrestored.jpg',
     accomplishments: [
       'Invented the modern drinking fountain in 1906 and filed for U.S. patent in 1909 (Patent No. 1,036,756)',
       'Founded the Haws Drinking Faucet Company in Berkeley, California, which still manufactures drinking fountains and emergency eyewash stations',
@@ -468,7 +468,7 @@ const ENGINEERS = [
     specialty: null,
     badgeColor: null,
     wikiTitle: null, // no Wikipedia article with photo
-    photo: null,
+    photo: 'photos/Bernhard_Heine.jpg',
     accomplishments: [
       'Invented the osteotome in 1830 — a mechanical chain saw designed specifically for cutting through bone during surgical procedures',
       'His device used a chain of serrated links driven by a hand crank — the same mechanical principle as a modern chainsaw',
