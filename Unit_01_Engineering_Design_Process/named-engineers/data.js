@@ -522,7 +522,9 @@ function getAdjacentEngineers(id) {
 
 // Fetch a Wikipedia thumbnail and set it on imgEl.
 // Uses the Wikipedia REST summary API — CORS-safe, no key needed.
-// Uses the thumbnail URL exactly as Wikipedia returns it (no size transformation).
+// Requests a larger thumbnail (600px) so portrait photos have more pixels to
+// crop from and faces aren't lost at card height. Only applies the resize to
+// standard Wikimedia Commons thumbnail URLs (safe pattern); others used as-is.
 // Falls back silently on any error — initials remain visible.
 async function loadWikiPhoto(wikiTitle, imgEl) {
   if (!wikiTitle || !imgEl) return;
@@ -532,8 +534,14 @@ async function loadWikiPhoto(wikiTitle, imgEl) {
     );
     if (!resp.ok) return;
     const data = await resp.json();
-    const src = data.thumbnail?.source;
+    let src = data.thumbnail?.source;
     if (!src) return;
+    // Upscale standard Wikimedia thumbnails to 600px wide for better crop quality.
+    // Pattern: .../thumb/.../NNNpx-filename — safe to bump; SVG renders and unusual
+    // paths don't match so they pass through unchanged.
+    if (/\/thumb\/.+\/\d+px-[^/]+$/.test(src)) {
+      src = src.replace(/\/\d+px-/, '/600px-');
+    }
     imgEl.onerror = () => { imgEl.style.opacity = '0'; }; // broken image → hide
     imgEl.src = src;
     imgEl.style.opacity = '1';
