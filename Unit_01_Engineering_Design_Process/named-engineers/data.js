@@ -39,7 +39,7 @@ const ENGINEERS = [
     field: 'Mechanical Engineering · Fused Deposition Modeling',
     specialty: '3D Printing Pioneer',
     badgeColor: 'gold',
-    wikiTitle: 'Fused_deposition_modeling',
+    wikiTitle: null, // no Wikipedia portrait available for him
     photo: null,
     accomplishments: [
       'Invented Fused Deposition Modeling (FDM) in 1989 — the technology used inside every Bambu printer in this shop',
@@ -522,7 +522,8 @@ function getAdjacentEngineers(id) {
 
 // Fetch a Wikipedia thumbnail and set it on imgEl.
 // Uses the Wikipedia REST summary API — CORS-safe, no key needed.
-// Requests a 400px-wide thumbnail; falls back silently on any error.
+// Uses the thumbnail URL exactly as Wikipedia returns it (no size transformation).
+// Falls back silently on any error — initials remain visible.
 async function loadWikiPhoto(wikiTitle, imgEl) {
   if (!wikiTitle || !imgEl) return;
   try {
@@ -533,9 +534,8 @@ async function loadWikiPhoto(wikiTitle, imgEl) {
     const data = await resp.json();
     const src = data.thumbnail?.source;
     if (!src) return;
-    // Request a 400px version — replace whatever width Wikipedia gives
-    const hires = src.replace(/\/\d+px-/, '/400px-');
-    imgEl.src = hires;
+    imgEl.onerror = () => { imgEl.style.opacity = '0'; }; // broken image → hide
+    imgEl.src = src;
     imgEl.style.opacity = '1';
   } catch (e) {
     // Network error or no photo — keep initials, no console noise
