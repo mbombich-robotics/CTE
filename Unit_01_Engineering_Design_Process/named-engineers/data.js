@@ -1,11 +1,11 @@
 // Named 23 — Engineer & Scientist Profiles
 // 23 engineers and scientists selected by the AER class to name the 3D printers.
 //
-// Photos: loaded at runtime from Wikipedia's REST API using wikiTitle.
-//   Endpoint: https://en.wikipedia.org/api/rest_v1/page/summary/{wikiTitle}
-//   Returns thumbnail.source — reliable, CORS-safe, no key required.
-//   photo field: null = use Wikipedia; a local path = override (place in named-engineers/photos/)
-//   wikiTitle: null = no Wikipedia photo available; initials avatar shown instead.
+// Photos: stored locally in named-engineers/photos/ and referenced via the photo field.
+//   photo: 'photos/filename.jpg' = use this local file (served from GitHub Pages)
+//   photo: null = no photo; show colored initials avatar instead
+//   wikiTitle: kept for reference and as fallback; loadWikiPhoto() is still available
+//     but most engineers now use local photos for reliability.
 
 const ENGINEERS = [
 
@@ -19,7 +19,7 @@ const ENGINEERS = [
     specialty: '3D Printing Pioneer',
     badgeColor: 'gold',
     wikiTitle: 'Chuck_Hull',
-    photo: null,
+    photo: 'photos/chuck-hull.jpg',
     accomplishments: [
       'Invented stereolithography (SLA) in 1983 — the world\'s first 3D printing technology, which cures liquid photopolymer resin with UV light layer by layer',
       'Founded 3D Systems Corporation in 1986, the world\'s first 3D printing company',
@@ -40,7 +40,7 @@ const ENGINEERS = [
     specialty: '3D Printing Pioneer',
     badgeColor: 'gold',
     wikiTitle: null, // no Wikipedia portrait available for him
-    photo: null,
+    photo: 'photos/scott-crump.jpg',
     accomplishments: [
       'Invented Fused Deposition Modeling (FDM) in 1989 — the technology used inside every Bambu printer in this shop',
       'Co-founded Stratasys, Ltd., which became one of the world\'s largest 3D printing companies',
@@ -61,7 +61,7 @@ const ENGINEERS = [
     specialty: 'Robotics Connection',
     badgeColor: 'green',
     wikiTitle: 'Woodie_Flowers',
-    photo: null,
+    photo: 'photos/woodie-flowers.jpg',
     accomplishments: [
       'MIT mechanical engineering professor who redefined what hands-on engineering education could look like',
       'Co-founded FIRST Robotics Competition alongside Dean Kamen in 1989 — the competition driving the robot you\'re building this year',
@@ -85,7 +85,7 @@ const ENGINEERS = [
     badgeColor: 'blue',
     nominationCount: 5,
     wikiTitle: 'Gustave_Eiffel',
-    photo: null,
+    photo: 'photos/gustave-eiffel.jpg',
     accomplishments: [
       'Designed and engineered the Eiffel Tower in Paris (1889), at the time the world\'s tallest man-made structure at 330 meters',
       'Designed the internal wrought-iron skeletal framework that holds up the Statue of Liberty — the visible copper skin hangs on Eiffel\'s structure',
@@ -107,7 +107,7 @@ const ENGINEERS = [
     badgeColor: null,
     nominationCount: 3,
     wikiTitle: 'Nikola_Tesla',
-    photo: null,
+    photo: 'photos/nikola-tesla.jpg',
     accomplishments: [
       'Invented the alternating current (AC) induction motor and transformer, making long-distance electrical power transmission practical',
       'Developed the Tesla coil (1891), still used in radio, television, and high-voltage research',
@@ -129,7 +129,7 @@ const ENGINEERS = [
     badgeColor: null,
     nominationCount: 3,
     wikiTitle: 'Thomas_Edison',
-    photo: null,
+    photo: 'photos/thomas-edison.jpg',
     accomplishments: [
       'Developed the first practical incandescent light bulb (1879) and the infrastructure to power it — including the first commercial power station on Pearl Street in Manhattan',
       'Invented the phonograph (1877), the first device that could record and replay sound',
@@ -152,7 +152,7 @@ const ENGINEERS = [
     specialty: null,
     badgeColor: null,
     wikiTitle: 'Alan_Turing',
-    photo: null,
+    photo: 'photos/alan-turing.jpg',
     accomplishments: [
       'Invented the theoretical "Turing machine" in 1936 — a mathematical model that defines what any computer can compute, still the foundation of computer science',
       'Led the team at Bletchley Park that broke the Nazi Enigma cipher during WWII, providing intelligence that historians estimate shortened the war by two years and saved millions of lives',
@@ -174,7 +174,7 @@ const ENGINEERS = [
     badgeColor: null,
     nominationCount: 2,
     wikiTitle: 'Isaac_Newton',
-    photo: null,
+    photo: 'photos/isaac-newton.jpg',
     accomplishments: [
       'Formulated the universal law of gravitation and the three laws of motion — still the foundation of classical mechanics and engineering physics',
       'Invented calculus independently (simultaneously with Leibniz), a mathematical tool essential to every engineering discipline',
@@ -195,7 +195,7 @@ const ENGINEERS = [
     specialty: null,
     badgeColor: null,
     wikiTitle: 'Willis_Carrier',
-    photo: null,
+    photo: 'photos/willis-carrier.jpg',
     accomplishments: [
       'Invented the first modern electrical air conditioning system in 1902, solving a humidity problem at a Brooklyn printing plant',
       'Founded Carrier Corporation in 1915, which remains one of the world\'s largest HVAC companies',
@@ -216,7 +216,7 @@ const ENGINEERS = [
     specialty: null,
     badgeColor: null,
     wikiTitle: 'Mary_Anderson_(inventor)',
-    photo: null,
+    photo: 'photos/mary-anderson.jpg',
     accomplishments: [
       'Invented the windshield wiper in 1903, after observing a New York City trolley driver stopping in the rain to manually clear his window',
       'Designed a spring-loaded rubber blade mounted on a swinging arm, controlled by a lever inside the vehicle — the same fundamental design used today',
@@ -237,7 +237,7 @@ const ENGINEERS = [
     specialty: null,
     badgeColor: null,
     wikiTitle: 'Charles_Babbage',
-    photo: null,
+    photo: 'photos/charles-babbage.jpg',
     accomplishments: [
       'Designed the Difference Engine (1820s) — a mechanical calculator that could evaluate polynomial equations and print results, eliminating human arithmetic errors',
       'Conceived the Analytical Engine — a general-purpose mechanical computer with a "store" (memory), a "mill" (processor), and punch-card input, conceptually identical to a modern CPU',
@@ -258,7 +258,7 @@ const ENGINEERS = [
     specialty: null,
     badgeColor: null,
     wikiTitle: 'Burt_Rutan',
-    photo: null,
+    photo: 'photos/burt-rutan.jpg',
     accomplishments: [
       'Designed the Voyager aircraft, which completed the first nonstop, non-refueled flight around the world in 1986 — piloted by his brother Dick Rutan and Jeana Yeager',
       'Founded Scaled Composites, a pioneering aerospace design firm known for radical, unconventional aircraft geometries',
@@ -279,7 +279,7 @@ const ENGINEERS = [
     specialty: null,
     badgeColor: null,
     wikiTitle: 'Ralph_H._Baer',
-    photo: null,
+    photo: 'photos/ralph-baer.jpg',
     accomplishments: [
       'Invented "The Brown Box" in 1966 — the first home video game console prototype, which became the Magnavox Odyssey and launched the home gaming industry',
       'Held over 150 patents across military electronics, consumer products, and games',
@@ -300,7 +300,7 @@ const ENGINEERS = [
     specialty: null,
     badgeColor: null,
     wikiTitle: 'Heinrich_Hertz',
-    photo: null,
+    photo: 'photos/heinrich-hertz.jpg',
     accomplishments: [
       'Proved the existence of electromagnetic waves in 1887, conclusively validating James Clerk Maxwell\'s theoretical predictions from 1865',
       'His experimental apparatus — a spark gap transmitter and a loop receiver — was the world\'s first radio transmitter and receiver, though he didn\'t recognize the communication application',
@@ -321,7 +321,7 @@ const ENGINEERS = [
     specialty: null,
     badgeColor: null,
     wikiTitle: 'Karl_Benz',
-    photo: null,
+    photo: 'photos/karl-benz.jpg',
     accomplishments: [
       'Designed and built the Benz Patent-Motorwagen in 1885 — the first true gasoline-powered automobile, powered by a 954 cc single-cylinder engine producing 2/3 horsepower',
       'Received the first automobile patent (DRP 37435) on January 29, 1886 — a date celebrated as the birthday of the automobile',
@@ -342,7 +342,7 @@ const ENGINEERS = [
     specialty: null,
     badgeColor: null,
     wikiTitle: 'Benjamin_Franklin',
-    photo: null,
+    photo: 'photos/benjamin-franklin.jpg',
     accomplishments: [
       'Proved that lightning is electricity using a kite, a key, and a thunderstorm in 1752 — and immediately invented the lightning rod to protect buildings',
       'Invented bifocal eyeglasses, the Franklin stove, and the flexible urinary catheter — across wildly different fields',
@@ -363,7 +363,7 @@ const ENGINEERS = [
     specialty: null,
     badgeColor: null,
     wikiTitle: 'John_Logie_Baird',
-    photo: null,
+    photo: 'photos/john-baird.jpg',
     accomplishments: [
       'Demonstrated the first working television system to 40 members of the Royal Institution in London in January 1926',
       'Transmitted the first transatlantic television signal between London and New York in 1928',
@@ -384,7 +384,7 @@ const ENGINEERS = [
     specialty: null,
     badgeColor: null,
     wikiTitle: 'James_Watt',
-    photo: null,
+    photo: 'photos/james-watt.jpg',
     accomplishments: [
       'Dramatically improved the efficiency of the Newcomen steam engine by adding a separate condenser, reducing fuel consumption by roughly 75%',
       'Developed the concept of horsepower as a unit of measurement so customers could compare engine output to the horses his engines replaced',
@@ -426,7 +426,7 @@ const ENGINEERS = [
     specialty: null,
     badgeColor: null,
     wikiTitle: 'J._Robert_Oppenheimer',
-    photo: null,
+    photo: 'photos/oppenheimer.jpg',
     accomplishments: [
       'Led the Manhattan Project at Los Alamos, New Mexico as scientific director — the secret program that developed the world\'s first nuclear weapons during WWII',
       'Made foundational contributions to quantum mechanics, including the Born–Oppenheimer approximation, still used in computational chemistry',
@@ -447,7 +447,7 @@ const ENGINEERS = [
     specialty: null,
     badgeColor: null,
     wikiTitle: 'John_Harington_(writer)',
-    photo: null,
+    photo: 'photos/john-harington.jpg',
     accomplishments: [
       'Designed the first flush toilet — which he called "the Ajax" — in 1596, and described its construction in precise detail in a book called "A New Discourse of a Stale Subject: The Metamorphosis of Ajax"',
       'Installed a working Ajax flush toilet at Richmond Palace for Queen Elizabeth I, his godmother',
@@ -489,7 +489,7 @@ const ENGINEERS = [
     specialty: null,
     badgeColor: null,
     wikiTitle: 'Elisha_Otis',
-    photo: null,
+    photo: 'photos/elisha-otis.jpg',
     accomplishments: [
       'Invented the safety elevator in 1852 — equipped with an automatic brake that would catch the car if the hoisting cable broke, for the first time making passenger elevator travel truly safe',
       'Demonstrated his invention dramatically at the New York Crystal Palace Exhibition in 1854 by having his assistant cut the cable while he was riding the platform',
