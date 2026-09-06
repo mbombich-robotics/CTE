@@ -246,10 +246,8 @@ function render(eng, idx, total) {
   if (adj.next) { btnNext.href = `profile.html?id=${adj.next.id}`; btnNext.textContent = `${adj.next.name.split(' ').slice(-1)[0]} →`; }
   else { btnNext.classList.add('disabled'); btnNext.removeAttribute('href'); }
 
-  // photo
-  const photoHTML = eng.photo
-    ? `<img src="${h(eng.photo)}" alt="${h(eng.name)}" onerror="this.remove()">`
-    : '';
+  // photo — img starts invisible; loadWikiPhoto fades it in
+  const photoHTML = `<img id="prof-photo" alt="${h(eng.name)}" style="opacity:0;transition:opacity .4s;">`;
 
   // accomplishments
   const accomHTML = (eng.accomplishments || []).map(a =>
@@ -271,7 +269,7 @@ function render(eng, idx, total) {
         <div class="photo-initials">${initials(eng.name)}</div>
         ${photoHTML}
       </div>
-      ${eng.photoCredit ? `<div class="photo-credit">${h(eng.photoCredit)}</div>` : ''}
+      <div class="photo-credit" id="photo-credit" style="display:none">Wikipedia · Public Domain</div>
 
       <div class="meta-block">
         ${badgeHTML(eng) ? `${badgeHTML(eng)}<div class="meta-divider"></div>` : ''}
@@ -319,6 +317,20 @@ function render(eng, idx, total) {
       </div>
     </div>
   </div>`;
+
+  // Load photo after DOM is ready
+  const profImg = document.getElementById('prof-photo');
+  if (eng.photo) {
+    profImg.src = eng.photo;
+    profImg.style.opacity = '1';
+    document.getElementById('photo-credit').style.display = '';
+  } else if (eng.wikiTitle) {
+    loadWikiPhoto(eng.wikiTitle, profImg).then(() => {
+      if (profImg.src && profImg.style.opacity === '1') {
+        document.getElementById('photo-credit').style.display = '';
+      }
+    });
+  }
 }
 
 // Load from URL param

@@ -248,9 +248,9 @@ function filterAttr(eng) {
 function renderGrid() {
   const grid = document.getElementById('grid');
   grid.innerHTML = ENGINEERS.map(eng => {
-    const photoHTML = eng.photo
-      ? `<img src="${h(eng.photo)}" alt="${h(eng.name)}" loading="lazy" onerror="this.style.display='none'">`
-      : '';
+    // img starts invisible; loadWikiPhoto sets src and fades it in
+    const photoHTML = `<img data-wiki-id="${h(eng.id)}" alt="${h(eng.name)}"
+      style="opacity:0;transition:opacity .4s;" loading="lazy">`;
     return `
     <a class="${cardClass(eng)}" href="profile.html?id=${h(eng.id)}" data-tags="${filterAttr(eng)}">
       <div class="card-photo" style="background:${initBg(eng.id)}">
@@ -267,6 +267,18 @@ function renderGrid() {
       </div>
     </a>`;
   }).join('');
+
+  // Load all photos from Wikipedia in parallel
+  ENGINEERS.forEach(eng => {
+    const imgEl = grid.querySelector(`img[data-wiki-id="${eng.id}"]`);
+    if (eng.photo) {
+      // local override
+      imgEl.src = eng.photo;
+      imgEl.style.opacity = '1';
+    } else {
+      loadWikiPhoto(eng.wikiTitle, imgEl);
+    }
+  });
 }
 
 function applyFilter(tag) {

@@ -1,7 +1,11 @@
 // Named 23 — Engineer & Scientist Profiles
 // 23 engineers and scientists selected by the AER class to name the 3D printers.
-// Photos: Wikimedia Commons URLs where available; null shows colored initials fallback.
-// To use local photos: place files in named-engineers/photos/ and update the photo field.
+//
+// Photos: loaded at runtime from Wikipedia's REST API using wikiTitle.
+//   Endpoint: https://en.wikipedia.org/api/rest_v1/page/summary/{wikiTitle}
+//   Returns thumbnail.source — reliable, CORS-safe, no key required.
+//   photo field: null = use Wikipedia; a local path = override (place in named-engineers/photos/)
+//   wikiTitle: null = no Wikipedia photo available; initials avatar shown instead.
 
 const ENGINEERS = [
 
@@ -14,8 +18,8 @@ const ENGINEERS = [
     field: 'Engineering Physics · Additive Manufacturing',
     specialty: '3D Printing Pioneer',
     badgeColor: 'gold',
-    photo: null, // living person; drop a photo in photos/chuck-hull.jpg to enable
-    photoCredit: null,
+    wikiTitle: 'Chuck_Hull',
+    photo: null,
     accomplishments: [
       'Invented stereolithography (SLA) in 1983 — the world\'s first 3D printing technology, which cures liquid photopolymer resin with UV light layer by layer',
       'Founded 3D Systems Corporation in 1986, the world\'s first 3D printing company',
@@ -35,8 +39,8 @@ const ENGINEERS = [
     field: 'Mechanical Engineering · Fused Deposition Modeling',
     specialty: '3D Printing Pioneer',
     badgeColor: 'gold',
+    wikiTitle: 'Fused_deposition_modeling',
     photo: null,
-    photoCredit: null,
     accomplishments: [
       'Invented Fused Deposition Modeling (FDM) in 1989 — the technology used inside every Bambu printer in this shop',
       'Co-founded Stratasys, Ltd., which became one of the world\'s largest 3D printing companies',
@@ -56,8 +60,8 @@ const ENGINEERS = [
     field: 'Mechanical Engineering · Engineering Education',
     specialty: 'Robotics Connection',
     badgeColor: 'green',
+    wikiTitle: 'Woodie_Flowers',
     photo: null,
-    photoCredit: null,
     accomplishments: [
       'MIT mechanical engineering professor who redefined what hands-on engineering education could look like',
       'Co-founded FIRST Robotics Competition alongside Dean Kamen in 1989 — the competition driving the robot you\'re building this year',
@@ -80,8 +84,8 @@ const ENGINEERS = [
     specialty: null,
     badgeColor: 'blue',
     nominationCount: 5,
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Gustave_Eiffel.jpg/400px-Gustave_Eiffel.jpg',
-    photoCredit: 'Wikipedia / Public Domain',
+    wikiTitle: 'Gustave_Eiffel',
+    photo: null,
     accomplishments: [
       'Designed and engineered the Eiffel Tower in Paris (1889), at the time the world\'s tallest man-made structure at 330 meters',
       'Designed the internal wrought-iron skeletal framework that holds up the Statue of Liberty — the visible copper skin hangs on Eiffel\'s structure',
@@ -102,8 +106,8 @@ const ENGINEERS = [
     specialty: null,
     badgeColor: null,
     nominationCount: 3,
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/N.Tesla.JPG/400px-N.Tesla.JPG',
-    photoCredit: 'Napoleon Sarony / Wikipedia / Public Domain',
+    wikiTitle: 'Nikola_Tesla',
+    photo: null,
     accomplishments: [
       'Invented the alternating current (AC) induction motor and transformer, making long-distance electrical power transmission practical',
       'Developed the Tesla coil (1891), still used in radio, television, and high-voltage research',
@@ -124,8 +128,8 @@ const ENGINEERS = [
     specialty: null,
     badgeColor: null,
     nominationCount: 3,
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Thomas_Edison2.jpg/400px-Thomas_Edison2.jpg',
-    photoCredit: 'Wikipedia / Public Domain',
+    wikiTitle: 'Thomas_Edison',
+    photo: null,
     accomplishments: [
       'Developed the first practical incandescent light bulb (1879) and the infrastructure to power it — including the first commercial power station on Pearl Street in Manhattan',
       'Invented the phonograph (1877), the first device that could record and replay sound',
@@ -147,8 +151,8 @@ const ENGINEERS = [
     field: 'Mathematics & Computer Science',
     specialty: null,
     badgeColor: null,
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Alan_Turing_Aged_16.jpg/400px-Alan_Turing_Aged_16.jpg',
-    photoCredit: 'Wikipedia / Public Domain',
+    wikiTitle: 'Alan_Turing',
+    photo: null,
     accomplishments: [
       'Invented the theoretical "Turing machine" in 1936 — a mathematical model that defines what any computer can compute, still the foundation of computer science',
       'Led the team at Bletchley Park that broke the Nazi Enigma cipher during WWII, providing intelligence that historians estimate shortened the war by two years and saved millions of lives',
@@ -169,8 +173,8 @@ const ENGINEERS = [
     specialty: null,
     badgeColor: null,
     nominationCount: 2,
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/GodfreyKneller-IsaacNewton-1689.jpg/400px-GodfreyKneller-IsaacNewton-1689.jpg',
-    photoCredit: 'Godfrey Kneller / Wikipedia / Public Domain',
+    wikiTitle: 'Isaac_Newton',
+    photo: null,
     accomplishments: [
       'Formulated the universal law of gravitation and the three laws of motion — still the foundation of classical mechanics and engineering physics',
       'Invented calculus independently (simultaneously with Leibniz), a mathematical tool essential to every engineering discipline',
@@ -190,8 +194,8 @@ const ENGINEERS = [
     field: 'Mechanical Engineering · HVAC',
     specialty: null,
     badgeColor: null,
+    wikiTitle: 'Willis_Carrier',
     photo: null,
-    photoCredit: null,
     accomplishments: [
       'Invented the first modern electrical air conditioning system in 1902, solving a humidity problem at a Brooklyn printing plant',
       'Founded Carrier Corporation in 1915, which remains one of the world\'s largest HVAC companies',
@@ -211,8 +215,8 @@ const ENGINEERS = [
     field: 'American Inventor',
     specialty: null,
     badgeColor: null,
+    wikiTitle: 'Mary_Anderson_(inventor)',
     photo: null,
-    photoCredit: null,
     accomplishments: [
       'Invented the windshield wiper in 1903, after observing a New York City trolley driver stopping in the rain to manually clear his window',
       'Designed a spring-loaded rubber blade mounted on a swinging arm, controlled by a lever inside the vehicle — the same fundamental design used today',
@@ -232,8 +236,8 @@ const ENGINEERS = [
     field: 'Mechanical Engineering · Computing',
     specialty: null,
     badgeColor: null,
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Charles_Babbage_-_1860.jpg/400px-Charles_Babbage_-_1860.jpg',
-    photoCredit: 'Wikipedia / Public Domain',
+    wikiTitle: 'Charles_Babbage',
+    photo: null,
     accomplishments: [
       'Designed the Difference Engine (1820s) — a mechanical calculator that could evaluate polynomial equations and print results, eliminating human arithmetic errors',
       'Conceived the Analytical Engine — a general-purpose mechanical computer with a "store" (memory), a "mill" (processor), and punch-card input, conceptually identical to a modern CPU',
@@ -253,8 +257,8 @@ const ENGINEERS = [
     field: 'Aerospace Engineering',
     specialty: null,
     badgeColor: null,
+    wikiTitle: 'Burt_Rutan',
     photo: null,
-    photoCredit: null,
     accomplishments: [
       'Designed the Voyager aircraft, which completed the first nonstop, non-refueled flight around the world in 1986 — piloted by his brother Dick Rutan and Jeana Yeager',
       'Founded Scaled Composites, a pioneering aerospace design firm known for radical, unconventional aircraft geometries',
@@ -274,8 +278,8 @@ const ENGINEERS = [
     field: 'Electrical Engineering · Consumer Electronics',
     specialty: null,
     badgeColor: null,
+    wikiTitle: 'Ralph_H._Baer',
     photo: null,
-    photoCredit: null,
     accomplishments: [
       'Invented "The Brown Box" in 1966 — the first home video game console prototype, which became the Magnavox Odyssey and launched the home gaming industry',
       'Held over 150 patents across military electronics, consumer products, and games',
@@ -295,8 +299,8 @@ const ENGINEERS = [
     field: 'Physics · Electromagnetism',
     specialty: null,
     badgeColor: null,
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Heinrich_Rudolf_Hertz.jpg/400px-Heinrich_Rudolf_Hertz.jpg',
-    photoCredit: 'Wikipedia / Public Domain',
+    wikiTitle: 'Heinrich_Hertz',
+    photo: null,
     accomplishments: [
       'Proved the existence of electromagnetic waves in 1887, conclusively validating James Clerk Maxwell\'s theoretical predictions from 1865',
       'His experimental apparatus — a spark gap transmitter and a loop receiver — was the world\'s first radio transmitter and receiver, though he didn\'t recognize the communication application',
@@ -316,8 +320,8 @@ const ENGINEERS = [
     field: 'Mechanical Engineering · Automotive',
     specialty: null,
     badgeColor: null,
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Carl_Benz.jpg/400px-Carl_Benz.jpg',
-    photoCredit: 'Wikipedia / Public Domain',
+    wikiTitle: 'Karl_Benz',
+    photo: null,
     accomplishments: [
       'Designed and built the Benz Patent-Motorwagen in 1885 — the first true gasoline-powered automobile, powered by a 954 cc single-cylinder engine producing 2/3 horsepower',
       'Received the first automobile patent (DRP 37435) on January 29, 1886 — a date celebrated as the birthday of the automobile',
@@ -337,8 +341,8 @@ const ENGINEERS = [
     field: 'Natural Philosophy · Invention',
     specialty: null,
     badgeColor: null,
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/BenFranklinDuplessis.jpg/400px-BenFranklinDuplessis.jpg',
-    photoCredit: 'Joseph Duplessis / Wikipedia / Public Domain',
+    wikiTitle: 'Benjamin_Franklin',
+    photo: null,
     accomplishments: [
       'Proved that lightning is electricity using a kite, a key, and a thunderstorm in 1752 — and immediately invented the lightning rod to protect buildings',
       'Invented bifocal eyeglasses, the Franklin stove, and the flexible urinary catheter — across wildly different fields',
@@ -358,8 +362,8 @@ const ENGINEERS = [
     field: 'Electrical Engineering · Television',
     specialty: null,
     badgeColor: null,
+    wikiTitle: 'John_Logie_Baird',
     photo: null,
-    photoCredit: null,
     accomplishments: [
       'Demonstrated the first working television system to 40 members of the Royal Institution in London in January 1926',
       'Transmitted the first transatlantic television signal between London and New York in 1928',
@@ -379,8 +383,8 @@ const ENGINEERS = [
     field: 'Mechanical Engineering',
     specialty: null,
     badgeColor: null,
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/James_Watt_by_Henry_Howard.jpg/400px-James_Watt_by_Henry_Howard.jpg',
-    photoCredit: 'Henry Howard / Wikipedia / Public Domain',
+    wikiTitle: 'James_Watt',
+    photo: null,
     accomplishments: [
       'Dramatically improved the efficiency of the Newcomen steam engine by adding a separate condenser, reducing fuel consumption by roughly 75%',
       'Developed the concept of horsepower as a unit of measurement so customers could compare engine output to the horses his engines replaced',
@@ -400,8 +404,8 @@ const ENGINEERS = [
     field: 'Plumbing & Public Health Engineering',
     specialty: null,
     badgeColor: null,
+    wikiTitle: 'Luther_Haws',
     photo: null,
-    photoCredit: null,
     accomplishments: [
       'Invented the modern drinking fountain in 1906 and filed for U.S. patent in 1909 (Patent No. 1,036,756)',
       'Founded the Haws Drinking Faucet Company in Berkeley, California, which still manufactures drinking fountains and emergency eyewash stations',
@@ -421,8 +425,8 @@ const ENGINEERS = [
     field: 'Theoretical Physics',
     specialty: null,
     badgeColor: null,
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/JROppenheimer-LosAlamos.jpg/400px-JROppenheimer-LosAlamos.jpg',
-    photoCredit: 'Los Alamos National Laboratory / Wikipedia / Public Domain',
+    wikiTitle: 'J._Robert_Oppenheimer',
+    photo: null,
     accomplishments: [
       'Led the Manhattan Project at Los Alamos, New Mexico as scientific director — the secret program that developed the world\'s first nuclear weapons during WWII',
       'Made foundational contributions to quantum mechanics, including the Born–Oppenheimer approximation, still used in computational chemistry',
@@ -442,8 +446,8 @@ const ENGINEERS = [
     field: 'Technical Design · Elizabethan England',
     specialty: null,
     badgeColor: null,
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/John_Harington_by_Hieronimo_Custodis.jpg/400px-John_Harington_by_Hieronimo_Custodis.jpg',
-    photoCredit: 'Hieronimo Custodis / Wikipedia / Public Domain',
+    wikiTitle: 'John_Harington_(writer)',
+    photo: null,
     accomplishments: [
       'Designed the first flush toilet — which he called "the Ajax" — in 1596, and described its construction in precise detail in a book called "A New Discourse of a Stale Subject: The Metamorphosis of Ajax"',
       'Installed a working Ajax flush toilet at Richmond Palace for Queen Elizabeth I, his godmother',
@@ -463,8 +467,8 @@ const ENGINEERS = [
     field: 'Medical Engineering & Surgery',
     specialty: null,
     badgeColor: null,
+    wikiTitle: null, // no Wikipedia article with photo
     photo: null,
-    photoCredit: null,
     accomplishments: [
       'Invented the osteotome in 1830 — a mechanical chain saw designed specifically for cutting through bone during surgical procedures',
       'His device used a chain of serrated links driven by a hand crank — the same mechanical principle as a modern chainsaw',
@@ -484,8 +488,8 @@ const ENGINEERS = [
     field: 'Mechanical Engineering · Vertical Transport',
     specialty: null,
     badgeColor: null,
+    wikiTitle: 'Elisha_Otis',
     photo: null,
-    photoCredit: null,
     accomplishments: [
       'Invented the safety elevator in 1852 — equipped with an automatic brake that would catch the car if the hoisting cable broke, for the first time making passenger elevator travel truly safe',
       'Demonstrated his invention dramatically at the New York Crystal Palace Exhibition in 1854 by having his assistant cut the cable while he was riding the platform',
@@ -500,18 +504,40 @@ const ENGINEERS = [
 
 ];
 
-// Helper: find by id
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
 function getEngineer(id) {
   return ENGINEERS.find(e => e.id === id) || null;
 }
 
-// Helper: get prev/next
 function getAdjacentEngineers(id) {
   const idx = ENGINEERS.findIndex(e => e.id === id);
   return {
-    prev: idx > 0 ? ENGINEERS[idx - 1] : null,
-    next: idx < ENGINEERS.length - 1 ? ENGINEERS[idx + 1] : null,
+    prev:  idx > 0                    ? ENGINEERS[idx - 1] : null,
+    next:  idx < ENGINEERS.length - 1 ? ENGINEERS[idx + 1] : null,
     index: idx,
     total: ENGINEERS.length
   };
+}
+
+// Fetch a Wikipedia thumbnail and set it on imgEl.
+// Uses the Wikipedia REST summary API — CORS-safe, no key needed.
+// Requests a 400px-wide thumbnail; falls back silently on any error.
+async function loadWikiPhoto(wikiTitle, imgEl) {
+  if (!wikiTitle || !imgEl) return;
+  try {
+    const resp = await fetch(
+      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wikiTitle)}`
+    );
+    if (!resp.ok) return;
+    const data = await resp.json();
+    const src = data.thumbnail?.source;
+    if (!src) return;
+    // Request a 400px version — replace whatever width Wikipedia gives
+    const hires = src.replace(/\/\d+px-/, '/400px-');
+    imgEl.src = hires;
+    imgEl.style.opacity = '1';
+  } catch (e) {
+    // Network error or no photo — keep initials, no console noise
+  }
 }
