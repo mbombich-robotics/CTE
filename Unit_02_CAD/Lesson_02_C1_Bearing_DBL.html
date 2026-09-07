@@ -542,24 +542,7 @@
         </div>
     </div>
 
-    <!-- ── SLIDE 3: What is reverse engineering? ── -->
-    <div class="slide">
-        <div class="slide-content">
-            <h2>Reverse Engineering a Purchased Part</h2>
-            <div class="callout">
-                The 608 bearing already exists — you're <strong>not inventing it</strong>.<br>
-                You're capturing its geometry so you can design <em>around</em> it.
-            </div>
-            <ul class="bullet-list">
-                <li>Your <strong>C2 spinner body</strong> needs a pocket that fits the bearing's OD exactly — model the bearing first so the pocket dimension comes from a real number, not a guess.</li>
-                <li>Manufacturers publish <strong>engineering drawings</strong> (McMaster-Carr, SKF, etc.) with every dimension you need — OD, ID, width, chamfer angles, fillet radii.</li>
-                <li>The <strong>Revolve tool</strong> is the natural way to model anything that's rotationally symmetric: bearings, wheels, shafts, bottles. Draw the cross-section once and spin it.</li>
-                <li>In industry, engineers model <em>every</em> purchased component — fasteners, bearings, motors — so assemblies can be verified digitally before anything is printed or machined.</li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- ── SLIDE 4: 608 Specs ── -->
+    <!-- ── SLIDE 3: 608 Specs ── -->
     <div class="slide">
         <div class="slide-content">
             <h2>The 608 Bearing — What You're Working With</h2>
@@ -591,43 +574,17 @@
         </div>
     </div>
 
-    <!-- ── SLIDE 5: Workflow overview ── -->
-    <div class="slide">
-        <div class="slide-content">
-            <h2>What You'll Build — The Sequence</h2>
-            <div class="workflow-strip">
-                <div class="wf-step"><div class="wf-num">1</div><div class="wf-label">Read<br>McMaster<br>drawing</div></div>
-                <div class="wf-arrow">›</div>
-                <div class="wf-step"><div class="wf-num">2</div><div class="wf-label">New part,<br>sketch,<br>two rects</div></div>
-                <div class="wf-arrow">›</div>
-                <div class="wf-step"><div class="wf-num">3</div><div class="wf-label">Relief cut,<br>delete<br>constraint</div></div>
-                <div class="wf-arrow">›</div>
-                <div class="wf-step"><div class="wf-num">4</div><div class="wf-label">Mirror<br>with<br>centerline</div></div>
-                <div class="wf-arrow">›</div>
-                <div class="wf-step"><div class="wf-num">5</div><div class="wf-label">Ball circle,<br>dimension,<br>trim</div></div>
-                <div class="wf-arrow">›</div>
-                <div class="wf-step"><div class="wf-num">6</div><div class="wf-label">6 radii +<br>3 dims<br>from origin</div></div>
-                <div class="wf-arrow">›</div>
-                <div class="wf-step"><div class="wf-num">7</div><div class="wf-label">Revolve<br>360°</div></div>
-                <div class="wf-arrow">›</div>
-                <div class="wf-step"><div class="wf-num">8</div><div class="wf-label">Chamfers<br>&amp;<br>Fillets</div></div>
-            </div>
-            <p style="font-size:1.2em; color:#94a3b8; text-align:center;">
-                The sketch is the top half of the cross-section only. The Revolve tool creates the full 3D shape.<br>
-                <strong style="color:#6ee7b7;">You draw in 2D — Fusion makes it 3D.</strong>
-            </p>
-        </div>
-    </div>
-
-    <!-- ── SLIDE 6: Video ── -->
+    <!-- ── SLIDE 4: Video ── -->
     <div class="slide">
         <div class="slide-content">
             <h2>Instructor Walkthrough</h2>
-            <div style="position:relative; width:100%; padding-bottom:56.25%; margin:16px 0; border-radius:12px; overflow:hidden; border:1px solid rgba(0,208,132,0.2);">
-                <iframe src="https://www.youtube.com/embed/jgspRKjkanY"
-                    style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen title="C1 — 608 Bearing Reverse Engineering | Fusion 360 | DBL"></iframe>
+            <div style="width:80%; margin:16px auto;">
+                <div style="position:relative; width:100%; padding-bottom:56.25%; border-radius:12px; overflow:hidden; border:1px solid rgba(0,208,132,0.2);">
+                    <iframe src="https://www.youtube.com/embed/jgspRKjkanY"
+                        style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen title="C1 — 608 Bearing Reverse Engineering | Fusion 360 | DBL"></iframe>
+                </div>
             </div>
             <ul class="bullet-list" style="margin-top:6px;">
                 <li>Keep the <strong>McMaster-Carr drawing open</strong> in a second window — you'll read dimensions from it throughout</li>
@@ -637,152 +594,7 @@
         </div>
     </div>
 
-    <!-- ── SLIDE 7: Sketch phase ── -->
-    <div class="slide">
-        <div class="slide-content">
-            <h2>Phase 1 — Building the Sketch</h2>
-            <div class="two-col">
-                <div>
-                    <ol class="step-list">
-                        <li>New Component → <code>608_Bearing</code>. Activate it. Save.</li>
-                        <li><strong>Create Sketch</strong> → click the <strong>front plane</strong> (XZ). The horizontal axis is the revolve axis.</li>
-                        <li>Press <strong>R</strong> — draw two rectangles above the axis: one for the inner race, one for the outer race. Leave a gap for the ball groove.</li>
-                        <li>Press <strong>L</strong> — draw two angled lines on the inner face of the outer race to block out the ball groove relief cut.</li>
-                        <li>Press <strong>T</strong> (Trim) — try to trim the original edge. If Fusion resists: <strong>click the colinear constraint marker → Delete → retry Trim</strong>.</li>
-                    </ol>
-                </div>
-                <div>
-                    <ol class="step-list" style="counter-reset: step-counter 5;">
-                        <li>Press <strong>L</strong> → check <strong>Construction</strong> in the Sketch Palette → draw a <strong>horizontal centerline</strong> along the axis.</li>
-                        <li>Select the relief cut geometry → <strong>Sketch → Mirror</strong> → use the centerline as the mirror axis → Trim the overlap.</li>
-                        <li>Press <strong>C</strong> → draw a circle centered on the centerline between the two races (this is a bearing ball in cross-section). Press <strong>D</strong> → dimension it to the ball diameter from the drawing.</li>
-                        <li>Trim the portions of both rectangles that overlap the ball circle.</li>
-                    </ol>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ── SLIDE 8: Dimensioning ── -->
-    <div class="slide">
-        <div class="slide-content">
-            <h2>Phase 2 — Locking Down the Dimensions</h2>
-            <div class="callout">
-                The origin is your <strong>datum</strong> — the fixed reference point from which all other features are located. This is the same concept used in formal engineering drawing and GD&amp;T.
-            </div>
-            <div class="two-col" style="margin-top:10px;">
-                <div class="col-box">
-                    <h4>6 Radii from the McMaster Drawing</h4>
-                    <ul>
-                        <li>Inner bore edge radius</li>
-                        <li>Inner race ball groove (raceway) arc</li>
-                        <li>Inner race outer shoulder transition</li>
-                        <li>Outer race inner shoulder transition</li>
-                        <li>Outer race ball groove arc</li>
-                        <li>Outer race OD edge radius</li>
-                    </ul>
-                    <p style="margin-top:12px;">Press <strong>D</strong>, click each arc → type the radius. Confirm geometry stays black.</p>
-                </div>
-                <div class="col-box">
-                    <h4>3 Horizontal Dims from Origin</h4>
-                    <ul>
-                        <li>Inner bore radius — <code>4.0 mm</code> (= ID/2)</li>
-                        <li>Ball center radius — from drawing</li>
-                        <li>Outer OD radius — <code>11.0 mm</code> (= OD/2)</li>
-                    </ul>
-                    <p style="margin-top:12px;">Click a point → click the origin → type the distance. When all lines turn black and the status bar says <strong>Fully Constrained</strong>, finish the sketch.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ── SLIDE 9: Revolve ── -->
-    <div class="slide">
-        <div class="slide-content" style="text-align:center;">
-            <h2>Phase 3 — Revolve</h2>
-            <p class="subtitle">One click turns a 2D cross-section into a 3D bearing.</p>
-            <div style="max-width:760px; margin:28px auto 0; text-align:left;">
-                <ol class="step-list">
-                    <li><strong>Create → Revolve</strong></li>
-                    <li>Click the <strong>inner race profile</strong>, then hold Ctrl and click the <strong>outer race profile</strong> — two closed regions, selected separately.</li>
-                    <li>For <strong>Axis</strong>: click the horizontal centerline (or the X-axis). This is the center of the bearing.</li>
-                    <li>Set Type to <strong>Full (360°)</strong>. Operation: <strong>New Body</strong>.</li>
-                    <li>Click OK. The sketch rotates 360° — you get both races as 3D solids.</li>
-                </ol>
-                <div class="callout" style="margin-top:20px; font-size:1.3em;">
-                    Any shape that's <strong>rotationally symmetric</strong> — a bearing, a wheel, a bottle, a shaft — gets modeled this way. Draw the half-profile, revolve it, done.
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ── SLIDE 10: Chamfers & Fillets ── -->
-    <div class="slide">
-        <div class="slide-content">
-            <h2>Phase 4 — Chamfers &amp; Fillets</h2>
-            <div class="two-col">
-                <div class="col-box">
-                    <h4>Chamfers — 4 edges total</h4>
-                    <p style="margin-bottom:14px;">Angled cuts at the bore and OD edges. They prevent stress cracks and make pressing the bearing into its seat easier.</p>
-                    <ul>
-                        <li><strong>Bore edges (2):</strong> top &amp; bottom lip of the 8mm bore — read angle &amp; distance from the drawing</li>
-                        <li><strong>OD edges (2):</strong> top &amp; bottom of the 22mm OD — same source</li>
-                        <li>Modify → Chamfer → select edges → enter values → OK</li>
-                    </ul>
-                </div>
-                <div class="col-box">
-                    <h4>Fillets — 6 edges total</h4>
-                    <p style="margin-bottom:14px;">Rounded inside transitions where the ball grooves blend into the flat race faces. Three unique radii, each applied to two edges.</p>
-                    <ul>
-                        <li>Read each radius from the McMaster drawing</li>
-                        <li>Modify → Fillet → select 2 edges → enter radius → OK</li>
-                        <li>Repeat for all three groups</li>
-                    </ul>
-                    <p style="margin-top:10px; color:#6ee7b7; font-size:0.95em;"><strong>Order matters: chamfers before fillets.</strong> Reversing them can cause geometry conflicts.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ── SLIDE 11: Constraint check ── -->
-    <div class="slide">
-        <div class="slide-content">
-            <h2>The Fully-Constrained Check</h2>
-            <p style="font-size:1.3em; color:#94a3b8; text-align:center; margin-bottom:24px;">Before finishing the sketch (before Revolve), confirm all four conditions below.</p>
-            <div class="check-grid">
-                <div class="check-item">
-                    <div class="check-icon">⚫</div>
-                    <div class="check-text">
-                        <h4>All lines are black</h4>
-                        <p>Blue geometry is still free to move. Black = locked in place. No blue allowed before Revolve.</p>
-                    </div>
-                </div>
-                <div class="check-item">
-                    <div class="check-icon">🎯</div>
-                    <div class="check-text">
-                        <h4>Origin is your reference</h4>
-                        <p>Every horizontal dimension was measured from the origin (center axis). The origin is the datum — the fixed reference, not a floating point.</p>
-                    </div>
-                </div>
-                <div class="check-item">
-                    <div class="check-icon">📐</div>
-                    <div class="check-text">
-                        <h4>All 6 radii dimensioned</h4>
-                        <p>Each arc in the cross-section has its radius locked from the McMaster drawing. No arc left as "roughly right."</p>
-                    </div>
-                </div>
-                <div class="check-item">
-                    <div class="check-icon">✅</div>
-                    <div class="check-text">
-                        <h4>Status bar: "Fully Constrained"</h4>
-                        <p>Bottom-left of the sketch workspace shows this when every degree of freedom is resolved. Don't revolve until you see it.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ── SLIDE 12: C1 → C2 connection ── -->
+    <!-- ── SLIDE 5: C1 → C2 connection ── -->
     <div class="slide">
         <div class="slide-content">
             <h2>The Critical Link: C1 Drives C2</h2>
@@ -826,7 +638,7 @@
         </div>
     </div>
 
-    <!-- ── SLIDE 13: Measurement lab ── -->
+    <!-- ── SLIDE 6: Measurement lab ── -->
     <div class="slide">
         <div class="slide-content">
             <h2>Lab: Measure Before You Trust</h2>
@@ -869,7 +681,7 @@
         </div>
     </div>
 
-    <!-- ── SLIDE 14: Done ── -->
+    <!-- ── SLIDE 7: Done ── -->
     <div class="slide">
         <div class="slide-content" style="text-align:center;">
             <h2>C1 Complete ✓</h2>
@@ -909,7 +721,7 @@
 <!-- Navigation -->
 <nav class="nav">
     <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
-    <span class="slide-counter" id="counter">1 / 14</span>
+    <span class="slide-counter" id="counter">1 / 7</span>
     <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
 </nav>
 

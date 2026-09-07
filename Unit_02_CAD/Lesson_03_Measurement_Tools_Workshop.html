@@ -4,27 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="../favicon.svg">
-    <title>Lesson 2.3: Measurement Tools Workshop</title>
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <title>Lesson 2.3: Measurement Tools Workshop | Unit 2 — CAD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Exo 2', sans-serif;
-            background: linear-gradient(135deg, #000000 0%, #0a0404 40%, #1a0d08 100%);
-            color: #e0e6f0;
+            background: linear-gradient(135deg, #021008 0%, #041a10 40%, #061f14 100%);
+            color: #e2e8f0;
             height: 100vh;
+            overflow: hidden;
         }
 
-        .presentation {
-            width: 100%;
-            height: 100vh;
-            position: relative;
-        }
+        .presentation { width: 100%; height: 100vh; position: relative; }
 
         .slide {
             position: absolute;
@@ -33,7 +26,7 @@
             display: none;
             padding: 60px;
             opacity: 0;
-            transition: opacity 0.5s ease-in-out;
+            transition: opacity 0.4s ease-in-out;
         }
 
         .slide.active {
@@ -44,601 +37,577 @@
             opacity: 1;
         }
 
-        .slide-content {
-            max-width: 1200px;
-            width: 100%;
-        }
+        .slide-content { max-width: 1200px; width: 100%; }
 
         h1 {
-            font-size: 4em;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.2em;
             font-weight: 900;
             margin-bottom: 20px;
             text-align: center;
-            color: #ff6b35;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            color: #00d084;
+            text-shadow: 0 0 30px rgba(0,208,132,0.4);
+            line-height: 1.15;
         }
 
         h2 {
-            font-size: 3em;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2em;
             font-weight: 700;
             margin-bottom: 30px;
-            color: #ffa500;
+            color: #6ee7b7;
             text-align: center;
-        }
-
-        h3 {
-            font-size: 2em;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: #ff6b35;
         }
 
         .subtitle {
-            font-size: 1.8em;
+            font-size: 1.5em;
             text-align: center;
-            color: #b0b8c8;
+            color: #94a3b8;
             font-weight: 300;
             margin-top: 10px;
+            line-height: 1.5;
         }
 
-        .bullet-list {
-            list-style: none;
-            padding: 0;
-            margin: 30px 0;
+        .lesson-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #00d084;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
+
+        .bullet-list { list-style: none; padding: 0; margin: 24px 0; }
 
         .bullet-list li {
-            font-size: 1.6em;
-            padding: 15px 0;
-            padding-left: 50px;
+            font-size: 1.45em;
+            padding: 12px 0 12px 48px;
             position: relative;
-            line-height: 1.6;
+            line-height: 1.5;
+            color: #cbd5e1;
         }
 
         .bullet-list li::before {
             content: "▸";
             position: absolute;
             left: 0;
-            color: #ff6b35;
-            font-size: 1.2em;
+            color: #00d084;
+            font-size: 1.1em;
         }
 
-        .quote {
-            font-size: 2em;
-            font-style: italic;
-            text-align: center;
-            color: #ffa500;
-            margin: 40px 0;
-            padding: 30px;
-            border-left: 5px solid #ff6b35;
-            background: rgba(255, 107, 53, 0.1);
-        }
+        .bullet-list li strong { color: #e2e8f0; }
 
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 30px;
-            margin: 30px 0;
-        }
-
-        .category-item {
-            background: rgba(255, 107, 53, 0.1);
-            padding: 25px;
-            border-radius: 10px;
-            border-left: 4px solid #ff6b35;
-        }
-
-        .category-item h4 {
-            color: #ffa500;
+        .callout {
+            background: rgba(0,208,132,0.08);
+            border-left: 5px solid #00d084;
+            border-radius: 0 10px 10px 0;
+            padding: 24px 30px;
+            margin: 24px 0;
             font-size: 1.5em;
-            margin-bottom: 15px;
-        }
-
-        .category-item p {
-            font-size: 1.3em;
-            color: #b0b8c8;
+            font-style: italic;
+            color: #6ee7b7;
             line-height: 1.5;
         }
 
-        .focus-grid {
+        .callout strong { color: #e2e8f0; font-style: normal; }
+
+        /* Category grid */
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .cat-card {
+            background: rgba(0,208,132,0.06);
+            border: 1px solid rgba(0,208,132,0.2);
+            border-radius: 10px;
+            padding: 18px 16px;
+        }
+
+        .cat-card h4 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em;
+            font-weight: 700;
+            color: #00d084;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .cat-card p {
+            font-size: 1em;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+
+        /* Tools grid */
+        .tool-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 24px 0;
+        }
+
+        .tool-card {
+            background: rgba(0,208,132,0.06);
+            border: 1px solid rgba(0,208,132,0.2);
+            border-radius: 12px;
+            padding: 22px 24px;
+            display: flex;
+            gap: 18px;
+            align-items: flex-start;
+        }
+
+        .tool-icon { font-size: 2em; flex-shrink: 0; }
+
+        .tool-info h4 {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #6ee7b7;
+            margin-bottom: 6px;
+        }
+
+        .tool-info p { font-size: 1em; color: #94a3b8; line-height: 1.5; }
+
+        .tool-info .use {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82em;
+            color: #00d084;
+            margin-top: 6px;
+        }
+
+        /* Two-col */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 24px 0;
+        }
+
+        .col-box {
+            background: rgba(0,208,132,0.06);
+            border: 1px solid rgba(0,208,132,0.2);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .col-box h4 {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #00d084;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .col-box ul { list-style: none; padding: 0; }
+
+        .col-box ul li {
+            font-size: 1.05em;
+            color: #94a3b8;
+            padding: 6px 0 6px 24px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .col-box ul li::before { content: "▸"; position: absolute; left: 0; color: #00d084; }
+
+        /* Caliper diagram */
+        .caliper-parts {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin: 24px 0;
+        }
+
+        .cp-item {
+            background: rgba(0,208,132,0.07);
+            border: 1px solid rgba(0,208,132,0.25);
+            border-radius: 10px;
+            padding: 16px 14px;
+            text-align: center;
+        }
+
+        .cp-item .cp-num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6em;
+            font-weight: 900;
+            color: #00d084;
+            margin-bottom: 8px;
+        }
+
+        .cp-item .cp-name {
+            font-size: 0.95em;
+            font-weight: 700;
+            color: #6ee7b7;
+            margin-bottom: 6px;
+        }
+
+        .cp-item .cp-use {
+            font-size: 0.85em;
+            color: #64748b;
+            line-height: 1.4;
+        }
+
+        /* Activity list */
+        .activity-list { list-style: none; padding: 0; margin: 20px 0; counter-reset: act-counter; }
+
+        .activity-list li {
+            font-size: 1.3em;
+            padding: 16px 16px 16px 60px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+            margin-bottom: 12px;
+            background: rgba(0,208,132,0.04);
+            border-radius: 8px;
+        }
+
+        .activity-list li::before {
+            counter-increment: act-counter;
+            content: counter(act-counter);
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            background: rgba(0,208,132,0.2);
+            border: 2px solid #00d084;
+            border-radius: 50%;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.72em;
+            font-weight: 700;
+            color: #00d084;
+            text-align: center;
+            line-height: 26px;
+        }
+
+        .activity-list li strong { color: #6ee7b7; }
+
+        /* Done grid */
+        .done-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
             margin: 30px 0;
         }
 
-        .focus-box {
-            background: rgba(255, 165, 0, 0.2);
+        .done-card {
+            background: rgba(0,208,132,0.08);
+            border: 1px solid rgba(0,208,132,0.25);
+            border-radius: 10px;
             padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            border: 2px solid #ffa500;
-        }
-
-        .focus-box h4 {
-            color: #ff6b35;
-            font-size: 1.4em;
-            margin-bottom: 10px;
-        }
-
-        .focus-box.large {
-            grid-column: 1 / -1;
-        }
-
-        .tools-section {
-            margin: 30px 0;
-        }
-
-        .tool-category {
-            margin-bottom: 30px;
-            background: rgba(255, 107, 53, 0.08);
-            padding: 20px;
-            border-radius: 10px;
-        }
-
-        .tool-category h4 {
-            color: #ffa500;
-            font-size: 1.5em;
-            margin-bottom: 15px;
-        }
-
-        .goal-box {
-            background: rgba(255, 107, 53, 0.15);
-            padding: 25px;
-            border-radius: 10px;
-            margin: 20px 0;
-            border-left: 5px solid #ff6b35;
-        }
-
-        .goal-box h4 {
-            color: #ffa500;
-            font-size: 1.8em;
-            margin-bottom: 10px;
             text-align: center;
         }
 
-        .activity-list {
-            list-style: none;
-            padding: 0;
-            margin: 30px 0;
-        }
+        .done-card .icon { font-size: 2em; margin-bottom: 10px; }
+        .done-card p { font-size: 1em; color: #94a3b8; line-height: 1.5; }
+        .done-card strong { color: #6ee7b7; display: block; margin-bottom: 6px; font-size: 1.05em; }
 
-        .activity-list li {
-            font-size: 1.8em;
-            padding: 20px;
-            margin: 15px 0;
-            background: rgba(255, 107, 53, 0.1);
-            border-radius: 10px;
-            border-left: 5px solid #ffa500;
-        }
-
-        .activity-list strong {
-            color: #ff6b35;
-        }
-
-        .navigation {
+        /* Navigation */
+        .nav {
             position: fixed;
             bottom: 30px;
-            right: 30px;
-            display: flex;
-            gap: 15px;
-            z-index: 1000;
-        }
-
-        .nav-button {
-            background: rgba(255, 107, 53, 0.3);
-            border: 2px solid #ff6b35;
-            color: #e0e6f0;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.2em;
-            transition: all 0.3s ease;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 20px;
+            background: rgba(5,10,20,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0,208,132,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
         }
 
-        .nav-button:hover {
-            background: rgba(255, 107, 53, 0.6);
-            transform: scale(1.1);
+        .nav button {
+            background: rgba(0,208,132,0.15);
+            color: #6ee7b7;
+            border: 1px solid rgba(0,208,132,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
         }
+
+        .nav button:hover { background: rgba(0,208,132,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
 
         .slide-counter {
-            position: fixed;
-            bottom: 30px;
-            left: 30px;
-            background: rgba(255, 107, 53, 0.3);
-            padding: 10px 20px;
-            border-radius: 25px;
-            border: 2px solid #ff6b35;
-            font-size: 1.2em;
-        }
-
-        .header-box {
-            background: rgba(255, 107, 53, 0.2);
-            padding: 15px 30px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            border: 2px solid #ff6b35;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
             text-align: center;
         }
 
-        .header-box h3 {
-            margin: 0;
-            font-size: 1.8em;
+        .back-link {
+            position: fixed;
+            top: 18px;
+            right: 24px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #6ee7b7;
+            text-decoration: none;
+            background: rgba(0,208,132,0.15);
+            border: 1px solid rgba(0,208,132,0.35);
+            padding: 5px 12px;
+            border-radius: 20px;
+            z-index: 100;
+            transition: background 0.2s;
         }
-
-        .slide.align-top {
-            justify-content: flex-start;
-            padding-top: 50px;
-        }
-
-        @media (max-width: 768px) {
-            .slide {
-                padding: 30px;
-            }
-
-            h1 {
-                font-size: 2.5em;
-            }
-
-            h2 {
-                font-size: 2em;
-            }
-
-            .bullet-list li {
-                font-size: 1.2em;
-            }
-
-            .categories-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .focus-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .focus-box.large {
-                grid-column: 1;
-            }
-        }
+        .back-link:hover { background: rgba(0,208,132,0.3); }
     </style>
 </head>
 <body>
-    <div class="presentation">
-        <!-- Slide 1: Title -->
-        <div class="slide active">
-            <div class="slide-content">
-                <h1>Measurement Tools Workshop</h1>
-                <p class="subtitle">From measuring everything to mastering what matters in engineering</p>
+
+<a href="index.html" class="back-link">← Unit 2</a>
+
+<div class="presentation">
+
+    <!-- ── SLIDE 1: Title ── -->
+    <div class="slide active">
+        <div class="slide-content" style="text-align:center;">
+            <div class="lesson-tag">Unit 2 · Lesson 2.3 · Design &amp; Build Lab</div>
+            <h1>Measurement Tools<br>Workshop</h1>
+            <p class="subtitle">
+                You can't design around a part you haven't measured.<br>
+                You can't trust a print you haven't verified.
+            </p>
+            <div style="margin-top:40px; display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
+                <div style="background:rgba(0,208,132,0.1); border:1px solid rgba(0,208,132,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#00d084;">Calipers</div>
+                <div style="background:rgba(0,208,132,0.1); border:1px solid rgba(0,208,132,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#00d084;">~45 min</div>
+                <div style="background:rgba(0,208,132,0.1); border:1px solid rgba(0,208,132,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#00d084;">Week 1</div>
             </div>
         </div>
+    </div>
 
-        <!-- Slide 2: Learning Objectives -->
-        <div class="slide">
-            <div class="slide-content" style="text-align:center;">
-                <h2>Learning Objectives</h2>
-                <p class="subtitle">By the end of this lesson, you will be able to:</p>
-                <div style="display:flex; flex-direction:column; gap:32px; margin-top:40px; max-width:800px; text-align:left; margin-left:auto; margin-right:auto;">
-                    <div style="display:flex; gap:28px; align-items:baseline;">
-                        <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d084; flex-shrink:0; width:36px; line-height:1;">1</span>
-                        <p style="margin:0; font-size:1.5rem; color:#e2e8f0; line-height:1.4;"><strong style="color:#00d084;">Name</strong> the three categories of what engineers measure and give one example each</p>
-                    </div>
-                    <div style="display:flex; gap:28px; align-items:baseline;">
-                        <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d084; flex-shrink:0; width:36px; line-height:1;">2</span>
-                        <p style="margin:0; font-size:1.5rem; color:#e2e8f0; line-height:1.4;"><strong style="color:#00d084;">Select</strong> the right measurement tool for a given dimension type</p>
-                    </div>
-                    <div style="display:flex; gap:28px; align-items:baseline;">
-                        <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d084; flex-shrink:0; width:36px; line-height:1;">3</span>
-                        <p style="margin:0; font-size:1.5rem; color:#e2e8f0; line-height:1.4;"><strong style="color:#00d084;">Explain</strong> why measuring your print against the design brief criteria matters</p>
-                    </div>
+    <!-- ── SLIDE 2: Learning Objectives ── -->
+    <div class="slide">
+        <div class="slide-content" style="text-align:center;">
+            <h2>Learning Objectives</h2>
+            <p class="subtitle">By the end of this lesson, you will be able to:</p>
+            <div style="display:flex; flex-direction:column; gap:32px; margin-top:40px; max-width:840px; text-align:left; margin-left:auto; margin-right:auto;">
+                <div style="display:flex; gap:28px; align-items:baseline;">
+                    <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d084; flex-shrink:0; width:36px; line-height:1;">1</span>
+                    <p style="margin:0; font-size:1.5rem; color:#e2e8f0; line-height:1.4;"><strong style="color:#00d084;">Name</strong> what engineers measure and select the right tool for the task</p>
                 </div>
-            </div>
-        </div>
-
-        <!-- Slide 3: Why Measurement Matters -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Why Measurement Matters</h2>
-                <p style="font-size: 1.8em; text-align: center; margin-bottom: 30px;">Engineers rely on measurement for:</p>
-                <ul class="bullet-list">
-                    <li>Quality control</li>
-                    <li>Fit & function</li>
-                    <li>Performance verification</li>
-                    <li>Safety compliance</li>
-                </ul>
-                <div class="quote">
-                    "If you can't measure it, you can't improve it." — Lord Kelvin
+                <div style="display:flex; gap:28px; align-items:baseline;">
+                    <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d084; flex-shrink:0; width:36px; line-height:1;">2</span>
+                    <p style="margin:0; font-size:1.5rem; color:#e2e8f0; line-height:1.4;"><strong style="color:#00d084;">Use</strong> digital calipers to measure inside diameter, outside diameter, and depth</p>
+                </div>
+                <div style="display:flex; gap:28px; align-items:baseline;">
+                    <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d084; flex-shrink:0; width:36px; line-height:1;">3</span>
+                    <p style="margin:0; font-size:1.5rem; color:#e2e8f0; line-height:1.4;"><strong style="color:#00d084;">Compare</strong> your measured values to nominal specs and identify whether a part is in tolerance</p>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Slide 3: What Could We Measure? -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>What Could We Measure?</h2>
-                <p style="font-size: 2.5em; text-align: center; color: #ffa500; margin-top: 100px;">Think about it...</p>
-            </div>
-        </div>
-
-        <!-- Slide 4: Physical Dimensions -->
-        <div class="slide">
-            <div class="slide-content">
-                <div class="header-box">
-                    <h3>Measurement Categories</h3>
+    <!-- ── SLIDE 3: What engineers measure ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>What Engineers Measure</h2>
+            <div class="cat-grid">
+                <div class="cat-card">
+                    <h4>Physical Dimensions</h4>
+                    <p>Length, width, height, diameter, depth, thickness</p>
                 </div>
-                <div class="categories-grid">
-                    <div class="category-item">
-                        <h4>Physical Dimensions</h4>
-                        <p>length, width, height, diameter, thickness, circumference</p>
-                    </div>
-                    <div class="category-item">
-                        <h4>Shape Features</h4>
-                        <p>radius, chamfer angle, curvature, profile deviation</p>
-                    </div>
-                    <div class="category-item">
-                        <h4>Mass & Weight</h4>
-                        <p>total mass, distribution, center of gravity</p>
-                    </div>
-                    <div class="category-item">
-                        <h4>Position & Distance</h4>
-                        <p>spacing, clearances, offsets, depth</p>
-                    </div>
+                <div class="cat-card">
+                    <h4>Shape Features</h4>
+                    <p>Radius, chamfer angle, curvature, profile deviation</p>
+                </div>
+                <div class="cat-card">
+                    <h4>Position &amp; Fit</h4>
+                    <p>Clearances, offsets, spacing, alignment</p>
+                </div>
+                <div class="cat-card">
+                    <h4>Mass &amp; Weight</h4>
+                    <p>Total mass, center of gravity, weight distribution</p>
+                </div>
+                <div class="cat-card">
+                    <h4>Surface Quality</h4>
+                    <p>Roughness, flatness, texture, waviness</p>
+                </div>
+                <div class="cat-card">
+                    <h4>Material Properties</h4>
+                    <p>Hardness, density, tensile strength, elasticity</p>
                 </div>
             </div>
-        </div>
-
-        <!-- Slide 5: More Categories -->
-        <div class="slide">
-            <div class="slide-content">
-                <div class="header-box">
-                    <h3>More Measurement Categories</h3>
-                </div>
-                <div class="categories-grid">
-                    <div class="category-item">
-                        <h4>Angles</h4>
-                        <p>slope, bevel, rotation, tilt</p>
-                    </div>
-                    <div class="category-item">
-                        <h4>Volume</h4>
-                        <p>displacement, capacity, void volume</p>
-                    </div>
-                    <div class="category-item">
-                        <h4>Surface Qualities</h4>
-                        <p>roughness, texture, flatness, waviness</p>
-                    </div>
-                    <div class="category-item">
-                        <h4>Material Properties</h4>
-                        <p>density, hardness, elasticity, tensile strength</p>
-                    </div>
-                </div>
-                <div class="category-item" style="margin-top: 20px;">
-                    <h4>Environmental</h4>
-                    <p>temperature, humidity, pressure, vibration, noise level</p>
-                </div>
+            <div class="callout" style="margin-top:4px;">
+                In this class we focus on <strong>physical dimensions and fit</strong> — measuring parts to check they match their design and fit their mating components.
             </div>
         </div>
+    </div>
 
-        <!-- Slide 6: Even More Categories -->
-        <div class="slide">
-            <div class="slide-content">
-                <div class="header-box">
-                    <h3>Advanced Measurement Categories</h3>
-                </div>
-                <div class="categories-grid">
-                    <div class="category-item">
-                        <h4>Electrical</h4>
-                        <p>voltage, current, resistance, capacitance, inductance</p>
-                    </div>
-                    <div class="category-item">
-                        <h4>Time-based</h4>
-                        <p>speed, acceleration, frequency, cycle time</p>
-                    </div>
-                    <div class="category-item">
-                        <h4>Flow-related</h4>
-                        <p>fluid flow rate, air velocity, fuel consumption</p>
-                    </div>
-                    <div class="category-item">
-                        <h4>Optical</h4>
-                        <p>light intensity, color wavelength, reflectivity</p>
+    <!-- ── SLIDE 4: Tools in our lab ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Tools in Our Lab</h2>
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <div class="tool-icon">📏</div>
+                    <div class="tool-info">
+                        <h4>Digital Calipers</h4>
+                        <p>Outside diameter, inside diameter, depth, and step measurements. Reads to 0.01 mm. Your primary tool this year.</p>
+                        <div class="use">→ OD · ID · Depth</div>
                     </div>
                 </div>
-                <div class="category-item" style="margin-top: 20px;">
-                    <h4>Human Factors</h4>
-                    <p>grip force, reach distance, reaction time</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 7: What Engineers Focus On Most -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>What Engineers Focus On Most</h2>
-                <div class="focus-grid">
-                    <div class="focus-box">
-                        <h4>Dimensions & Geometry</h4>
-                    </div>
-                    <div class="focus-box">
-                        <h4>Mass & Weight</h4>
-                    </div>
-                    <div class="focus-box">
-                        <h4>Tolerances</h4>
-                    </div>
-                    <div class="focus-box">
-                        <h4>Surface Finish</h4>
-                    </div>
-                    <div class="focus-box">
-                        <h4>Material Thickness</h4>
-                    </div>
-                    <div class="focus-box">
-                        <h4>Fit & Clearance</h4>
-                    </div>
-                    <div class="focus-box large">
-                        <h4>Alignment</h4>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 8: The Tools Engineers Use - Part 1 -->
-        <div class="slide align-top">
-            <div class="slide-content">
-                <h2>The Tools Engineers Use</h2>
-                <div class="tools-section">
-                    <div class="tool-category">
-                        <h4>Dimensional Tools:</h4>
-                        <ul class="bullet-list">
-                            <li>Calipers (digital, dial, vernier)</li>
-                            <li>Micrometers (outside, inside, depth)</li>
-                            <li>Rulers & Measuring Tapes</li>
-                            <li>Height gauges</li>
-                        </ul>
-                    </div>
-                    <div class="tool-category">
-                        <h4>Mass/Weight Tools:</h4>
-                        <ul class="bullet-list">
-                            <li>Scales & balances</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 9: The Tools Engineers Use - Part 2 -->
-        <div class="slide align-top">
-            <div class="slide-content">
-                <h2>The Tools Engineers Use</h2>
-                <div class="tools-section">
-                    <div class="tool-category">
-                        <h4>Angle Tools:</h4>
-                        <ul class="bullet-list">
-                            <li>Protractors, bevel gauges, inclinometers</li>
-                        </ul>
-                    </div>
-                    <div class="tool-category">
-                        <h4>Surface Finish Tools:</h4>
-                        <ul class="bullet-list">
-                            <li>Surface roughness testers</li>
-                        </ul>
-                    </div>
-                    <div class="tool-category">
-                        <h4>Specialty Tools:</h4>
-                        <ul class="bullet-list">
-                            <li>Bore gauges, go/no-go gauges</li>
-                            <li>Coordinate measuring machines (CMM)</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 10: Tools We Have in Our Lab -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Tools We Have in Our Lab</h2>
-                <div class="tools-section">
-                    <div class="tool-category">
-                        <h4>Calipers</h4>
-                        <p style="font-size: 1.4em; color: #b0b8c8; padding-left: 20px;">Digital calipers for inside, outside, and depth measurements</p>
-                    </div>
-                    <div class="tool-category">
+                <div class="tool-card">
+                    <div class="tool-icon">📐</div>
+                    <div class="tool-info">
                         <h4>Rulers</h4>
-                        <p style="font-size: 1.4em; color: #b0b8c8; padding-left: 20px;">Quick and easy length checks</p>
+                        <p>Quick linear checks — length, width. Less precise than calipers. Good for rough verification or large dimensions.</p>
+                        <div class="use">→ Length · Width</div>
                     </div>
-                    <div class="tool-category">
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">📏</div>
+                    <div class="tool-info">
                         <h4>Measuring Tapes</h4>
-                        <p style="font-size: 1.4em; color: #b0b8c8; padding-left: 20px;">For larger objects or distances</p>
-                    </div>
-                    <div class="tool-category">
-                        <h4>Scales (Mass)</h4>
-                        <p style="font-size: 1.4em; color: #b0b8c8; padding-left: 20px;">For weighing parts and assemblies</p>
+                        <p>For larger objects or distances that don't fit calipers — robot dimensions, table spacing, material lengths.</p>
+                        <div class="use">→ Large distances</div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Slide 11: Hands-On Practice Goals -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Hands-On Practice Goals</h2>
-                <div class="goal-box">
-                    <h4>Select the right tool for the measurement task</h4>
+                <div class="tool-card">
+                    <div class="tool-icon">⚖️</div>
+                    <div class="tool-info">
+                        <h4>Digital Scale</h4>
+                        <p>Weighing printed parts and assemblies. Useful for checking material usage and comparing to Bambu estimates.</p>
+                        <div class="use">→ Mass · Weight</div>
+                    </div>
                 </div>
-                <div class="goal-box">
-                    <h4>Use each tool correctly and safely</h4>
-                </div>
-                <div class="goal-box">
-                    <h4>Record measurements with correct units and precision</h4>
-                </div>
-                <div class="goal-box">
-                    <h4>Compare measurements between tools for accuracy</h4>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 12: Today's Activities -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2>Today's Activities</h2>
-                <ul class="activity-list">
-                    <li><strong>Tool Demonstration</strong> – Instructor-led</li>
-                    <li><strong>Practice Stations</strong> – Rotate through measuring tasks</li>
-                    <li><strong>Measurement Challenge</strong> – Guess, measure, and compare results</li>
-                    <li><strong>Exit Ticket</strong> – "Tool I'll use most and why"</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Slide 13: Let's Get Started! -->
-        <div class="slide">
-            <div class="slide-content">
-                <h1 style="font-size: 5em;">Let's Get Started!</h1>
-                <p style="font-size: 2em; text-align: center; margin-top: 50px; color: #ffa500;">Time to master the tools of precision measurement</p>
             </div>
         </div>
     </div>
 
-    <div class="slide-counter">
-        <span id="current-slide">1</span> / <span id="total-slides">13</span>
+    <!-- ── SLIDE 5: Caliper anatomy ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Caliper — Four Measurements, One Tool</h2>
+            <div class="caliper-parts">
+                <div class="cp-item">
+                    <div class="cp-num">OD</div>
+                    <div class="cp-name">Outside Jaws</div>
+                    <div class="cp-use">Measure outer diameter or width. Close jaws on the outside of the part.</div>
+                </div>
+                <div class="cp-item">
+                    <div class="cp-num">ID</div>
+                    <div class="cp-name">Inside Jaws</div>
+                    <div class="cp-use">Measure inner diameter or gap. Open jaws inside a hole or slot.</div>
+                </div>
+                <div class="cp-item">
+                    <div class="cp-num">D</div>
+                    <div class="cp-name">Depth Rod</div>
+                    <div class="cp-use">Measure depth of a hole or slot. Extend the rod into the feature.</div>
+                </div>
+                <div class="cp-item">
+                    <div class="cp-num">Step</div>
+                    <div class="cp-name">Step Surface</div>
+                    <div class="cp-use">Measure height difference between two surfaces.</div>
+                </div>
+            </div>
+            <div class="two-col" style="margin-top:8px;">
+                <div class="col-box">
+                    <h4>Reading the Display</h4>
+                    <ul>
+                        <li>Zero the caliper before each measurement — press the zero button with jaws closed</li>
+                        <li>Read in mm (not inches) — confirm the unit shown on display</li>
+                        <li>Take 3 readings and average if precision matters</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Common Mistakes</h4>
+                    <ul>
+                        <li>Measuring at an angle — jaws must be perpendicular to the surface</li>
+                        <li>Not zeroing — stale zero gives a consistently wrong reading</li>
+                        <li>Too much closing force — deforms soft material, gives low reading</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="navigation">
-        <button class="nav-button" onclick="previousSlide()">←</button>
-        <button class="nav-button" onclick="nextSlide()">→</button>
+    <!-- ── SLIDE 6: Today's activities ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Today's Activities</h2>
+            <ol class="activity-list">
+                <li><strong>Tool Demonstration</strong> — Instructor-led caliper walkthrough. You follow along with your own caliper.</li>
+                <li><strong>Practice Stations</strong> — Rotate through measuring tasks. Record all results with units.</li>
+                <li><strong>Measurement Challenge</strong> — Guess first, measure second, compare. Closest estimate wins.</li>
+                <li><strong>608 Bearing Verification</strong> — Measure the real bearing. Compare OD, ID, and width to McMaster nominal specs.</li>
+                <li><strong>Exit Ticket</strong> — "One thing I measured today that was different from the spec, and why that matters."</li>
+            </ol>
+        </div>
     </div>
 
-    <script>
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.slide');
-        const totalSlides = slides.length;
+    <!-- ── SLIDE 7: Done ── -->
+    <div class="slide">
+        <div class="slide-content" style="text-align:center;">
+            <h2>Workshop Complete ✓</h2>
+            <div class="done-grid">
+                <div class="done-card">
+                    <div class="icon">🗂️</div>
+                    <strong>Categorized</strong>
+                    <p>Named the types of things engineers measure and matched tools to task.</p>
+                </div>
+                <div class="done-card">
+                    <div class="icon">📏</div>
+                    <strong>Measured</strong>
+                    <p>Used calipers for OD, ID, and depth. Zeroed correctly, read in mm, recorded with units.</p>
+                </div>
+                <div class="done-card">
+                    <div class="icon">✅</div>
+                    <strong>Verified</strong>
+                    <p>Compared your 608 bearing measurements to the McMaster nominal spec. In tolerance or not?</p>
+                </div>
+            </div>
+            <div style="margin-top:24px; display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
+                <a href="Lesson_04_3D_Printing.html"
+                   style="background:rgba(0,208,132,0.15); border:1px solid rgba(0,208,132,0.4); color:#6ee7b7; text-decoration:none; padding:12px 28px; border-radius:8px; font-weight:700; font-size:1.1em; transition:all 0.2s;">
+                    Next → Lesson 2.4: 3D Printing
+                </a>
+            </div>
+        </div>
+    </div>
 
-        document.getElementById('total-slides').textContent = totalSlides;
+</div><!-- /.presentation -->
 
-        function showSlide(n) {
-            slides[currentSlide].classList.remove('active');
-            currentSlide = (n + totalSlides) % totalSlides;
-            slides[currentSlide].classList.add('active');
-            document.getElementById('current-slide').textContent = currentSlide + 1;
-        }
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 7</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
 
-        function nextSlide() {
-            showSlide(currentSlide + 1);
-        }
+<script>
+    var slides = document.querySelectorAll('.slide');
+    var current = 0;
 
-        function previousSlide() {
-            showSlide(currentSlide - 1);
-        }
+    function showSlide(n) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(n, slides.length - 1));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    }
 
-        // Keyboard navigation
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'ArrowRight' || event.key === ' ') {
-                nextSlide();
-            } else if (event.key === 'ArrowLeft') {
-                previousSlide();
-            }
-        });
-    </script>
+    function changeSlide(dir) { showSlide(current + dir); }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+
 </body>
 </html>
