@@ -27,18 +27,13 @@ Each of the 23 3D printers in the shop is named after an engineer or scientist. 
 
 ## How photos work
 
-Photos load automatically from Wikipedia's REST API at page-load time:
-```
-https://en.wikipedia.org/api/rest_v1/page/summary/{wikiTitle}
-```
-Each engineer in `data.js` has a `wikiTitle` field. If Wikipedia has a photo for that article, it appears on the gallery tile and the profile page. No downloads needed — photos are fetched at runtime and degrade gracefully (shows colored initials) when unavailable.
+All 23 engineer photos are stored locally in `named-engineers/photos/`. Each engineer in `data.js` has a `photo: 'photos/filename.jpg'` field that loads the local file directly — no runtime API calls.
 
-**To use a local photo instead:** place the file in `named-engineers/photos/` and set `photo: 'photos/filename.jpg'` in `data.js`. The `photo` field overrides Wikipedia.
+The Wikipedia fallback (`loadWikiPhoto`) is still present in `index.html` and `profile.html` but is only reached if an engineer has `photo: null`. As of 2026-09-06, all 23 engineers have local photos and the fallback is not used.
 
-**Engineers currently without photos** (Wikipedia has no suitable image):
-- Bernhard Heine (obscure historical figure)
-- S. Scott Crump (living person, limited Wikipedia presence)
-- Others may load but not have a portrait-style image
+**To update a photo:** replace the file in `named-engineers/photos/` and update the `photo` field in `data.js`. Keep the same filename if you can — no code change needed.
+
+**To add a new engineer without a local photo:** set `photo: null` and provide a `wikiTitle`. The Wikipedia API will attempt to load a thumbnail at runtime. Be aware that Wikimedia `/thumb/` CDN URLs can fail to load cross-origin from GitHub Pages for some articles — if the photo doesn't appear, download it locally and set the `photo` field instead.
 
 ---
 
@@ -162,7 +157,7 @@ Pages deploys in ~1 minute.
 
 **Aesthetic:** Dark theme — `#07090f` background, `#f0b429` gold accent, `#38bdf8` blue, `#34d399` green. Fonts: Bebas Neue (display), DM Sans (body), JetBrains Mono (labels/data). Matches the Named 23 reveal artifact.
 
-**Photo system:** Wikipedia REST API (`/api/rest_v1/page/summary/{wikiTitle}`) → `thumbnail.source`. CORS-safe, no key, free. Photos load asynchronously and fade in. Initials avatar (deterministic background color) shown while loading or when no photo exists.
+**Photo system:** All 23 photos stored locally in `named-engineers/photos/`. Each engineer has `photo: 'photos/filename.jpg'` in `data.js`. Photos are served from the repo — no runtime API dependency. Wikipedia fallback (`loadWikiPhoto`) is still in the code for any future engineer added without a local photo, but is not active for any current entry. Initials avatar (deterministic background color) shows while the image loads or when no photo is available.
 
 **Badge system:** `badgeColor: 'gold'` = 3D Printing Pioneer, `badgeColor: 'green'` = Robotics Connection, `nominationCount >= 3` = Fan Favorite (blue badge), otherwise no badge.
 

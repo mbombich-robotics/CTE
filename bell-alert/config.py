@@ -15,7 +15,7 @@ from datetime import date
 
 # Monday / Wednesday / Friday  (7-Period Day, 50-min classes)
 MWF_BELLS = [
-    ("08:22", "08:32"),   # 1st  — 8AER   MS bell 8:32 · 10-min lead for 8th graders
+    ("08:22", "08:24"),   # 1st  — 8AER   MS bell 8:32 · 10-min lead for 8th graders
     ("09:20", "09:22"),   # 2nd  — DBL
   # ("10:15", "10:17"),   # 3rd  — PREP   (your planning period — no students)
     ("11:09", "11:11"),   # 4th  — DBL
@@ -27,7 +27,7 @@ MWF_BELLS = [
 
 # Tuesday / Thursday  (30-Min Tutorial Day, 43-min classes)
 TTH_BELLS = [
-    ("08:22", "08:32"),   # 1st  — 8AER   MS bell 8:32 · 10-min lead for 8th graders
+    ("08:22", "08:24"),   # 1st  — 8AER   MS bell 8:32 · 10-min lead for 8th graders
     ("09:08", "09:10"),   # 2nd  — DBL
   # ("09:56", "09:58"),   # 3rd  — PREP   (your planning period — no students)
     ("10:44", "10:46"),   # 4th  — DBL
@@ -44,9 +44,9 @@ TTH_BELLS = [
 # HS bells: 8:02 · 8:31 · 9:00 · 9:29 · 9:58 · 10:27 · 10:56
 # MS 8th-grade 1st hour ends 8:12 on half days → 10-min lead = ON at 8:02
 HALF_DAY_BELLS = [
-    ("08:02", "08:12"),   # 1st  — 8AER   MS half-day bell 8:12 · 10-min lead
+    ("08:02", "08:04"),   # 1st  — 8AER   MS half-day bell 8:12 · 10-min lead
     ("08:29", "08:31"),   # 2nd  — DBL
-  # ("08:58", "09:00"),   # 3rd  — PREP
+    ("08:58", "09:00"),   # 3rd  — PREP
     ("09:27", "09:29"),   # 4th  — DBL
     ("09:56", "09:58"),   # 5th  — DBL
     ("10:25", "10:27"),   # 6th  — HSAER
@@ -58,9 +58,9 @@ HALF_DAY_BELLS = [
 # Currently using HS bell (8:20) as the dismiss time for 8AER.
 # If 8th graders actually leave at 8:26, change ("08:10","08:20") → ("08:16","08:26").
 ASSEMBLY_BELLS = [
-    ("08:10", "08:20"),   # 1st  — 8AER   HS assembly bell 8:20 · 10-min lead
+    ("08:10", "08:12"),   # 1st  — 8AER   HS assembly bell 8:20 · 10-min lead
     ("09:04", "09:06"),   # 2nd  — DBL
-  # ("09:52", "09:54"),   # 3rd  — PREP
+    ("09:52", "09:54"),   # 3rd  — PREP
     ("10:38", "10:40"),   # 4th  — DBL
     ("11:37", "11:39"),   # 5th  — DBL
     ("12:07", "12:09"),   # Lunch end
@@ -72,9 +72,14 @@ ASSEMBLY_BELLS = [
 # Map specific dates → schedule key.
 # Valid keys: "mwf", "tth", "half_day", "assembly", "skip" (no bells at all)
 SPECIAL_DAYS: dict[date, str] = {
-    # date(2026,  9,  7): "skip",        # Labor Day
-    # date(2026, 11, 25): "skip",        # Thanksgiving break
-    # date(2026, 10, 21): "half_day",    # example half-day
+    date(2026,  9, 30): "half_day",    # 1/2 day students (a.m.) / PLC
+    date(2026, 11, 11): "half_day",    # 1/2 day students (a.m.) / PD
+    date(2027,  1, 13): "half_day",    # 1/2 day students (a.m.) / PLC
+    date(2027,  3, 10): "half_day",    # 1/2 day students (a.m.) / PD
+    date(2027,  3, 25): "half_day",    # 1/2 day students (a.m.) / Records
+    date(2027,  5,  5): "half_day",    # 1/2 day students (a.m.) / PLC
+    date(2027,  6, 11): "half_day",    # Last Day of School
+    # date(2026, 11, 25): "skip",        # Thanksgiving break (no students — no bells needed)
     # date(2026, 12,  9): "assembly",    # example assembly day
 }
 

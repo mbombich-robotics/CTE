@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Matt's Schedule — 3rd Lunch</title>
+<style>
+  :root {
+    --navy: #1b2a4a;
+    --navy-light: #2c4270;
+    --accent: #c9a227;
+    --bg: #f5f3ee;
+    --card: #ffffff;
+    --text: #22262f;
+    --muted: #6b7280;
+    --border: #e2e0d8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 32px 20px;
+    background: var(--bg);
+    font-family: 'Georgia', 'Times New Roman', serif;
+    color: var(--text);
+  }
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  header h1 {
+    font-size: 26px;
+    letter-spacing: 1px;
+    color: var(--navy);
+    margin: 0 0 4px;
+    text-transform: uppercase;
+  }
+  header p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .card-header {
+    background: var(--navy);
+    color: #fff;
+    padding: 12px 20px;
+    font-family: Arial, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .card-header span.badge {
+    background: var(--accent);
+    color: var(--navy);
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 700;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+  }
+  th {
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    padding: 10px 20px 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 10px 20px;
+    font-size: 15px;
+    border-bottom: 1px solid var(--border);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr.lunch-row td {
+    background: #fdf6e3;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  tr.tutorial-row td {
+    background: #eef1f7;
+    font-style: italic;
+    color: var(--navy-light);
+  }
+  tr.planning-row td {
+    background: #f0f7f0;
+  }
+  .period {
+    font-weight: 700;
+    color: var(--navy);
+    width: 30%;
+  }
+  .label {
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .time {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+  }
+  .tag {
+    display: inline-block;
+    margin-left: 8px;
+    font-size: 11px;
+    font-family: Arial, sans-serif;
+    font-weight: 700;
+    color: #fff;
+    background: var(--navy-light);
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.3px;
+  }
+  .tag.plan {
+    background: #4a7c59;
+  }
+  footer {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Room 70 — Daily Schedule</h1>
+    <p>Vicksburg High School · 2025–2026 · 3rd Lunch</p>
+  </header>
+
+  <div class="card">
+    <div class="card-header">
+      7-Period Day <span class="label" style="color:#cbd3e6;">Mon / Wed / Fri</span>
+      <span class="badge">3rd Lunch</span>
+    </div>
+    <table>
+      <tr><th>Hour</th><th>Assignment</th><th style="text-align:right;">Time</th></tr>
+      <tr><td class="period">1st</td><td>8AER</td><td class="time">7:38 – 8:28</td></tr>
+      <tr><td class="period">2nd</td><td>DBL</td><td class="time">8:33 – 9:22</td></tr>
+      <tr class="planning-row"><td class="period">3rd</td><td>Planning <span class="tag plan">PREP</span></td><td class="time">9:27 – 10:17</td></tr>
+      <tr><td class="period">4th</td><td>DBL</td><td class="time">10:22 – 11:11</td></tr>
+      <tr><td class="period">5th</td><td>DBL</td><td class="time">11:16 – 12:11</td></tr>
+      <tr class="lunch-row"><td class="period">Lunch</td><td>3rd Lunch</td><td class="time">12:11 – 12:41</td></tr>
+      <tr><td class="period">6th</td><td>HSAER</td><td class="time">12:46 – 1:35</td></tr>
+      <tr><td class="period">7th</td><td>HSAER</td><td class="time">1:40 – 2:29</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      30-Min Tutorial Day <span class="label" style="color:#cbd3e6;">Tue / Thu</span>
+      <span class="badge">3rd Lunch</span>
+    </div>
+    <table>
+      <tr><th>Hour</th><th>Assignment</th><th style="text-align:right;">Time</th></tr>
+      <tr><td class="period">1st</td><td>8AER</td><td class="time">7:38 – 8:22</td></tr>
+      <tr><td class="period">2nd</td><td>DBL</td><td class="time">8:27 – 9:10</td></tr>
+      <tr class="planning-row"><td class="period">3rd</td><td>Planning <span class="tag plan">PREP</span></td><td class="time">9:15 – 9:58</td></tr>
+      <tr><td class="period">4th</td><td>DBL</td><td class="time">10:03 – 10:46</td></tr>
+      <tr class="tutorial-row"><td class="period">Tutorial</td><td>Tutorial</td><td class="time">10:51 – 11:21</td></tr>
+      <tr><td class="period">5th</td><td>DBL</td><td class="time">11:26 – 12:21</td></tr>
+      <tr class="lunch-row"><td class="period">Lunch</td><td>3rd Lunch</td><td class="time">12:21 – 12:51</td></tr>
+      <tr><td class="period">6th</td><td>HSAER</td><td class="time">12:56 – 1:39</td></tr>
+      <tr><td class="period">7th</td><td>HSAER</td><td class="time">1:44 – 2:29</td></tr>
+    </table>
+  </div>
+
+  <footer>Vicksburg Community Schools · Room 70 · Applied Engineering & Robotics</footer>
+</div>
+</body>
+</html>
