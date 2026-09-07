@@ -71,6 +71,12 @@
         .slide-counter { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: #475569; min-width: 60px; text-align: center; }
         .back-link { position: fixed; top: 18px; right: 24px; font-size: 0.78rem; font-weight: 700; color: #e05a6a; text-decoration: none; background: rgba(196,30,58,0.15); border: 1px solid rgba(196,30,58,0.35); padding: 5px 12px; border-radius: 20px; z-index: 100; transition: background 0.2s; }
         .back-link:hover { background: rgba(196,30,58,0.3); }
+        /* Per-slide scaling — title and objectives */
+        #slide-1 h1 { font-size: 6.1rem; }
+        #slide-1 .subtitle { font-size: 2.3rem; }
+        #slide-2 h2 { font-size: 4.4rem; }
+        #slide-2 .objective-box { padding: 32px; margin: 32px 0; }
+        #slide-2 .bullet-list li { font-size: 2rem !important; margin: 20px 0; }
         @media (max-width: 768px) { h1 { font-size: 2.2rem; } h2 { font-size: 1.8rem; } .slide { padding: 30px 20px 100px; } .grid-2, .rule-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -79,8 +85,8 @@
 <div class="presentation">
 
     <!-- Slide 1: Title -->
-    <div class="slide active">
-        <div class="slide-content" style="text-align:center; padding-top: 50px;">
+    <div class="slide active" id="slide-1">
+        <div class="slide-content" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:70vh; text-align:center;">
             <h1>Concept Sketching</h1>
             <p class="subtitle">Unit 1 · Engineering Design Process · Lesson 1.7</p>
             <div style="display:flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 30px;">
@@ -92,7 +98,7 @@
     </div>
 
     <!-- Slide 2: Objectives -->
-    <div class="slide">
+    <div class="slide" id="slide-2">
         <div class="slide-content">
             <h2>Lesson Objectives</h2>
             <div class="objective-box">

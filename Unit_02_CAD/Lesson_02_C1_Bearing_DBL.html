@@ -378,23 +378,38 @@
         .done-card p { font-size: 0.95em; color: #94a3b8; line-height: 1.5; }
         .done-card strong { color: #6ee7b7; display: block; margin-bottom: 6px; font-size: 1.05em; }
 
-        /* Video placeholder */
+        /* Video placeholder — full button style */
         .video-placeholder {
-            background: rgba(0,208,132,0.05);
-            border: 2px dashed rgba(0,208,132,0.3);
-            border-radius: 12px;
-            padding: 28px;
+            background: rgba(0,208,132,0.06);
+            border: 2px solid rgba(0,208,132,0.35);
+            border-radius: 16px;
+            padding: 40px;
             text-align: center;
             margin: 16px 0;
+            box-shadow: 0 0 28px rgba(0,208,132,0.10);
         }
-
-        .video-placeholder p {
-            font-size: 1.15em;
-            color: #64748b;
-            margin-bottom: 8px;
+        .video-placeholder .vid-icon { font-size: 3.5rem; margin-bottom: 14px; }
+        .video-placeholder h2 { font-size: 2rem; color: #6ee7b7; margin-bottom: 8px; }
+        .video-placeholder .vid-sub { font-size: 1.05rem; color: #00d084; font-weight: 600; margin-bottom: 14px; }
+        .video-placeholder p { color: #94a3b8; max-width: 640px; margin: 0 auto 16px; font-size: 1.05rem; }
+        .video-placeholder h3 { color: #6ee7b7; text-align: left; max-width: 600px; margin: 0 auto 8px; font-size: 1.1rem; text-transform: none; font-family: 'Exo 2', sans-serif; }
+        .video-btn {
+            display: inline-block; margin: 16px auto 20px;
+            padding: 14px 36px;
+            background: #00d084; color: #021008;
+            font-family: 'Orbitron', sans-serif; font-size: 1rem; font-weight: 700;
+            text-decoration: none; border-radius: 8px; letter-spacing: 1px;
+            transition: background 0.2s;
         }
-
-        .video-placeholder .vid-icon { font-size: 2.5em; margin-bottom: 12px; }
+        .video-btn:hover { background: #6ee7b7; }
+        .watch-list { list-style: none; padding: 0; max-width: 600px; margin: 0 auto; text-align: left; }
+        .watch-list li {
+            padding: 8px 0 8px 32px; position: relative;
+            color: #94a3b8; font-size: 1.05rem; line-height: 1.4;
+            border-bottom: 1px solid rgba(0,208,132,0.1);
+        }
+        .watch-list li:last-child { border-bottom: none; }
+        .watch-list li::before { content: '▸'; position: absolute; left: 0; color: #00d084; font-size: 1.2rem; line-height: 1.3; }
 
         /* Workflow strip */
         .workflow-strip {
@@ -494,6 +509,12 @@
             transition: background 0.2s;
         }
         .back-link:hover { background: rgba(0,208,132,0.3); }
+
+        /* Per-slide scaling — title and objectives */
+        #slide-1 h1 { font-size: 5rem; }
+        #slide-1 .subtitle { font-size: 2rem; }
+        #slide-2 h2 { font-size: 3.5rem; }
+        #slide-2 .subtitle { font-size: 1.6rem; }
     </style>
 </head>
 <body>
@@ -503,7 +524,7 @@
 <div class="presentation">
 
     <!-- ── SLIDE 1: Title ── -->
-    <div class="slide active">
+    <div class="slide active" id="slide-1">
         <div class="slide-content" style="text-align:center;">
             <div class="lesson-tag">Unit 2 · Lesson 2.2 · Design &amp; Build Lab</div>
             <h1>C1 — Reverse Engineering<br>the 608 Bearing</h1>
@@ -521,7 +542,7 @@
     </div>
 
     <!-- ── SLIDE 2: Learning Objectives ── -->
-    <div class="slide">
+    <div class="slide" id="slide-2">
         <div class="slide-content" style="text-align:center;">
             <h2>Learning Objectives</h2>
             <p class="subtitle">By the end of this lesson, you will be able to:</p>
@@ -577,20 +598,20 @@
     <!-- ── SLIDE 4: Video ── -->
     <div class="slide">
         <div class="slide-content">
-            <h2>Instructor Walkthrough</h2>
-            <div style="width:80%; margin:16px auto;">
-                <div style="position:relative; width:100%; padding-bottom:56.25%; border-radius:12px; overflow:hidden; border:1px solid rgba(0,208,132,0.2);">
-                    <iframe src="https://www.youtube.com/embed/jgspRKjkanY"
-                        style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen title="C1 — 608 Bearing Reverse Engineering | Fusion 360 | DBL"></iframe>
-                </div>
+            <div class="video-placeholder">
+                <div class="vid-icon">🎬</div>
+                <h2>C1 — 608 Bearing Walkthrough</h2>
+                <p class="vid-sub">~35–40 min · Watch the full video before opening Fusion 360</p>
+                <p>Mr. B walks through the McMaster-Carr drawing, builds the revolve sketch, dimensions from the origin, and finishes with chamfers and fillets. Watch it all the way through first, then restart and build alongside.</p>
+                <a href="https://youtu.be/jgspRKjkanY" target="_blank" class="video-btn">▶ Watch Video</a>
+                <h3>What to watch for:</h3>
+                <ul class="watch-list">
+                    <li>When the sketch lines turn black — that means fully constrained</li>
+                    <li>How to delete an auto-added colinear constraint that blocks your trim</li>
+                    <li>Why all dimensions come from the origin (datum concept)</li>
+                    <li>Chamfers before fillets — the order matters in Fusion</li>
+                </ul>
             </div>
-            <ul class="bullet-list" style="margin-top:6px;">
-                <li>Keep the <strong>McMaster-Carr drawing open</strong> in a second window — you'll read dimensions from it throughout</li>
-                <li>The sketch must be <strong>fully constrained</strong> (all black) before you revolve</li>
-                <li>Total model time: about <strong>35–40 minutes</strong></li>
-            </ul>
         </div>
     </div>
 

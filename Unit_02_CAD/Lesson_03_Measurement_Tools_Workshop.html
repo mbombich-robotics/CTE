@@ -365,6 +365,13 @@
             transition: background 0.2s;
         }
         .back-link:hover { background: rgba(0,208,132,0.3); }
+
+        /* Per-slide scaling — title and objectives */
+        #slide-1 h1 { font-size: 5rem; }
+        #slide-1 .subtitle { font-size: 2rem; }
+        #slide-2 h2 { font-size: 3.5rem; }
+        #slide-2 > div > p { font-size: 1.6rem !important; }
+        #slide-2 > div > div > div > p { font-size: 1.8rem !important; }
     </style>
 </head>
 <body>
@@ -374,7 +381,7 @@
 <div class="presentation">
 
     <!-- ── SLIDE 1: Title ── -->
-    <div class="slide active">
+    <div class="slide active" id="slide-1">
         <div class="slide-content" style="text-align:center;">
             <div class="lesson-tag">Unit 2 · Lesson 2.3 · Design &amp; Build Lab</div>
             <h1>Measurement Tools<br>Workshop</h1>
@@ -391,7 +398,7 @@
     </div>
 
     <!-- ── SLIDE 2: Learning Objectives ── -->
-    <div class="slide">
+    <div class="slide" id="slide-2">
         <div class="slide-content" style="text-align:center;">
             <h2>Learning Objectives</h2>
             <p class="subtitle">By the end of this lesson, you will be able to:</p>

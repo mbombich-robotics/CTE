@@ -158,6 +158,11 @@
         }
         .ref-link a:hover { background: rgba(0,208,132,0.25); }
 
+        /* Per-slide scaling — title and objectives */
+        #slide-1 h1 { font-size: 6.1rem; }
+        #slide-1 .subtitle { font-size: 2.3rem; }
+        #slide-2 h2 { font-size: 3.5rem; }
+        #slide-2 .subtitle { font-size: 1.6rem; }
         @media (max-width: 768px) {
             h1 { font-size: 2.5rem; } h2 { font-size: 1.8rem; }
             .slide { padding: 30px 20px 100px; }
@@ -169,8 +174,8 @@
 <div class="presentation">
 
 <!-- ─────────────────────────────────────── SLIDE 1: Title -->
-<div class="slide active">
-    <div class="slide-content" style="text-align:center;">
+<div class="slide active" id="slide-1">
+    <div class="slide-content" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:70vh; text-align:center;">
         <h1>Fusion 360 &amp; C1: Wheel Hub</h1>
         <p class="subtitle">Unit 2 · CAD Component-Based Design · Lesson 2.2</p>
 
@@ -225,7 +230,7 @@
 </div>
 
 <!-- ─────────────────────────────────────── SLIDE 2: Learning Objectives -->
-<div class="slide">
+<div class="slide" id="slide-2">
     <div class="slide-content">
         <h2>Learning Objectives</h2>
         <p class="subtitle">By the end of this lesson, you will be able to:</p>

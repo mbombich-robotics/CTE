@@ -94,6 +94,12 @@
         }
         .back-link:hover { background: rgba(196,30,58,0.3); }
         .pltw-tag { display: inline-block; background: rgba(80,250,123,0.15); color: #50fa7b; border: 1px solid #50fa7b; border-radius: 6px; padding: 3px 10px; font-size: 0.8rem; font-weight: 700; margin-left: 10px; vertical-align: middle; }
+        /* Per-slide scaling — title and objectives */
+        #slide-1 h1 { font-size: 6.1rem; }
+        #slide-1 .subtitle { font-size: 2.3rem; }
+        #slide-2 h2 { font-size: 4.4rem; }
+        #slide-2 .objective-box { padding: 32px; margin: 32px 0; }
+        #slide-2 .bullet-list li { font-size: 2rem !important; margin: 20px 0; }
         @media (max-width: 768px) { h1 { font-size: 2.5rem; } h2 { font-size: 2rem; } .slide { padding: 30px; } .grid-2, .grid-3 { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -102,7 +108,7 @@
 <div class="presentation">
 
     <!-- Slide 1: Title -->
-    <div class="slide active">
+    <div class="slide active" id="slide-1">
         <div class="slide-content" style="text-align: center;">
             <div class="track-content" data-track="hsaer,8aer"><h1>Applied Engineering &amp; Robotics</h1></div>
             <div class="track-content" data-track="dbl"><h1>Design &amp; Build Lab</h1></div>
@@ -152,7 +158,7 @@
     </div>
 
     <!-- Slide 2: Objectives -->
-    <div class="slide">
+    <div class="slide" id="slide-2">
         <div class="slide-content">
             <h2>Lesson Objectives</h2>
             <div class="track-content" data-track="hsaer,8aer">

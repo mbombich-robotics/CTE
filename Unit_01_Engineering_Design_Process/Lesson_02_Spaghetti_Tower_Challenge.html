@@ -93,6 +93,12 @@
         .results-table th { font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: #e05a6a; text-transform: uppercase; padding: 12px 15px; border-bottom: 2px solid #c41e3a; text-align: left; }
         .results-table td { padding: 14px 15px; border-bottom: 1px solid rgba(196,30,58,0.2); color: #b8c5d6; font-size: 1.05rem; }
         .results-table tr:hover td { background: rgba(196,30,58,0.05); }
+        /* Per-slide scaling — title and objectives */
+        #slide-1 h1 { font-size: 6.1rem; }
+        #slide-1 .subtitle { font-size: 2.3rem; }
+        #slide-2 h2 { font-size: 4.4rem; }
+        #slide-2 .objective-box { padding: 32px; margin: 32px 0; }
+        #slide-2 .bullet-list li { font-size: 2rem !important; margin: 20px 0; }
         @media (max-width: 768px) { h1 { font-size: 2.5rem; } h2 { font-size: 2rem; } .slide { padding: 30px; } .grid-2, .grid-3 { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -101,7 +107,7 @@
 <div class="presentation">
 
     <!-- Slide 1: Title -->
-    <div class="slide active">
+    <div class="slide active" id="slide-1">
         <div class="slide-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; text-align: center;">
             <h1>Build the Tallest Tower</h1>
             <p class="subtitle">Lesson 1.2 — No framework. No process. Just build.</p>
@@ -120,7 +126,7 @@
     </div>
 
     <!-- Slide 2: Objectives -->
-    <div class="slide">
+    <div class="slide" id="slide-2">
         <div class="slide-content">
             <h2>Lesson Objectives</h2>
             <div class="objective-box">
