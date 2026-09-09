@@ -1518,8 +1518,12 @@ async function saveStudentGrades() {
         }
 
         if (result.success) {
-            showToast(`Saved ${grades.length} grade(s) - refreshing data...`, 'success');
-            // Refresh data to show updated grades
+            if (result.missed && result.missed.length > 0) {
+                const names = result.missed.map(m => `${m.email} (${m.type} ${m.assignmentId})`).join(', ');
+                showToast(`⚠️ ${result.missed.length} grade(s) had no matching sheet row — student may be on the wrong track: ${names}`, 'error', 8000);
+            } else {
+                showToast(`Saved ${result.rowsUpdated ?? grades.length} grade(s) - refreshing data...`, 'success');
+            }
             await loadCourseData();
             closeModal();
         } else {
@@ -2040,12 +2044,18 @@ async function saveAllGrades() {
         try { result = JSON.parse(text); } catch (e) { result = {}; }
 
         if (result.success) {
-            btn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+            if (result.missed && result.missed.length > 0) {
+                btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + result.missed.length + ' missed — wrong track?';
+                showToast(`⚠️ ${result.missed.length} grade(s) had no matching sheet row — student(s) may be on the wrong track`, 'error', 8000);
+            } else {
+                btn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+            }
             await loadCourseData();
+            loadGradeTable();
             setTimeout(() => {
                 btn.innerHTML = '<i class="fas fa-save"></i> Save and Close';
                 btn.disabled = false;
-                closeGradeEntry();
+                if (!result.missed || result.missed.length === 0) closeGradeEntry();
             }, 800);
         } else {
             btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error: ' + (result.error || 'Unknown');

@@ -1468,10 +1468,14 @@ function saveGrades(grades) {
   initializeSheets();
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
+  let rowsUpdated = 0;
+  const missed = [];
+
   grades.forEach(gradeData => {
     const { email, type, assignmentId, grade, feedback } = gradeData;
 
     const gradedAt = new Date().toISOString();
+    let found = false;
 
     if (type === 'reflection') {
       const sheet = ss.getSheetByName(SHEET_NAMES.REFLECTIONS);
@@ -1495,6 +1499,8 @@ function saveGrades(grades) {
           if (grade !== '') sheet.getRange(i + 1, 12).setValue(parseFloat(grade));
           if (feedback !== '') sheet.getRange(i + 1, 13).setValue(feedback);
           if (grade !== '' || feedback !== '') sheet.getRange(i + 1, 14).setValue(gradedAt);
+          found = true;
+          rowsUpdated++;
           break;
         }
       }
@@ -1517,13 +1523,17 @@ function saveGrades(grades) {
           if (grade !== '') sheet.getRange(i + 1, 10).setValue(parseFloat(grade));
           if (feedback !== '') sheet.getRange(i + 1, 11).setValue(feedback);
           if (grade !== '' || feedback !== '') sheet.getRange(i + 1, 12).setValue(gradedAt);
+          found = true;
+          rowsUpdated++;
         }
       }
     }
+
+    if (!found) missed.push({ email, type, assignmentId });
   });
 
-  logActivity('GRADES', 'teacher', `Saved ${grades.length} grades`);
-  return { success: true, count: grades.length };
+  logActivity('GRADES', 'teacher', `Saved ${grades.length} grades — ${rowsUpdated} rows updated, ${missed.length} missed`);
+  return { success: true, count: grades.length, rowsUpdated, missed };
 }
 
 /**
