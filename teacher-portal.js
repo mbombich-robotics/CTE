@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.55',
+    VERSION: 'v2.9.56',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -112,7 +112,6 @@ const TRACK_DELIVERABLES = {
     ],
     // ── 8th Grade AE&R ──────────────────────────────────────────────────
     '8aer': [
-        { id:  0, label: 'D0  — Career Ready Practices',          week: null },
         { id: 10, label: 'D10 — Signed Syllabus & Safety Contract', week: 1  },
         { id: 11, label: 'D11 — Design Brief',                     week: 2  },
         // Unit 2: Component deliverables
@@ -126,6 +125,8 @@ const TRACK_DELIVERABLES = {
         { id: 94, label: 'D4.2 — SOS with Functions',              week: 10 },
         { id: 95, label: 'D4.3 — Robot Drives a Square',           week: 11 },
         { id: 96, label: 'D4.4 — Robot Driving Challenge',         week: 12 },
+        // Unit 6: Career Readiness
+        { id:  0, label: 'D6.0 — Career Ready Practices',          week: null },
         // Unit 8: Mechanisms (weeks 14–18)
         { id: 81, label: 'D8.1 — Gear Ratio Calculation Sheet',     week: 14 },
         { id: 82, label: 'D8.2 — Mechanism CAD Housing + Reflection', week: 15 },
@@ -170,6 +171,8 @@ const TRACK_DELIVERABLES = {
         { id: 523, label: 'P6.3 — Progress Check',                         week: 35 },
         { id: 524, label: 'P6.4 — Capstone Complete',                      week: 36 },
         { id: 525, label: 'P6.5 — Capstone Presentation + Final Portfolio', week: 37 },
+        // Career Readiness
+        { id:   0, label: 'D6.0 — Career Ready Practices',                 week: null },
     ],
 };
 
@@ -1821,7 +1824,7 @@ function formatStatus(status) {
 }
 
 function formatDeliverableLabel(id) {
-    if (id === 0) return 'D0';
+    if (id === 0) return 'D6.0';
     const unit = Math.floor(id / 10);
     const num = id % 10;
     return `D${unit}.${num}`;
