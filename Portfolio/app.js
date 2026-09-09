@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.35',
+    VERSION: 'v2.14.36',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -4108,6 +4108,11 @@ async function submitGoogleDocDeliverable(id) {
         return;
     }
 
+    // Show confirmation checklist before finalising — once submitted only
+    // your teacher can undo it.
+    const confirmed = await confirmDocSubmit(deliverable);
+    if (!confirmed) return;
+
     state.deliverables[id] = {
         ...state.deliverables[id],
         docId,
@@ -4120,6 +4125,83 @@ async function submitGoogleDocDeliverable(id) {
     updateUI();
     document.getElementById('deliverableModal').classList.remove('active');
     showCelebration(`${deliverable.title} Submitted!`);
+}
+
+/**
+ * Show a modal asking the student to confirm their document is truly ready.
+ * Resolves true only when every checkbox is ticked and they click Confirm.
+ */
+function confirmDocSubmit(deliverable) {
+    return new Promise(resolve => {
+        // Remove any previous instance
+        document.getElementById('docSubmitConfirmModal')?.remove();
+
+        const modal = document.createElement('div');
+        modal.id = 'docSubmitConfirmModal';
+        modal.style.cssText = `
+            position:fixed;inset:0;background:rgba(0,0,0,0.55);
+            display:flex;align-items:center;justify-content:center;
+            z-index:10000;padding:16px;`;
+
+        modal.innerHTML = `
+            <div style="background:var(--surface,#fff);border-radius:12px;padding:28px 28px 24px;
+                        max-width:440px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,0.22);">
+                <h3 style="margin:0 0 6px;font-size:18px;color:var(--gray-900);">
+                    Ready to submit?
+                </h3>
+                <p style="margin:0 0 18px;font-size:13px;color:var(--gray-600);line-height:1.5;">
+                    <strong style="color:var(--warning,#b45309);">Submissions are final</strong>
+                    — only your teacher can undo this. Check off each item before continuing.
+                </p>
+                <div id="docSubmitChecklist" style="display:flex;flex-direction:column;gap:12px;margin-bottom:22px;">
+                    <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:14px;color:var(--gray-800);">
+                        <input type="checkbox" class="doc-confirm-check" style="margin-top:2px;width:16px;height:16px;accent-color:var(--primary,#0d47a1);flex-shrink:0;">
+                        My document has <strong style="margin-left:3px;">all required sections</strong> filled in — nothing is blank or still has placeholder text.
+                    </label>
+                    <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:14px;color:var(--gray-800);">
+                        <input type="checkbox" class="doc-confirm-check" style="margin-top:2px;width:16px;height:16px;accent-color:var(--primary,#0d47a1);flex-shrink:0;">
+                        I have re-read my work and it reflects my <strong style="margin-left:3px;">best effort</strong>.
+                    </label>
+                    <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:14px;color:var(--gray-800);">
+                        <input type="checkbox" class="doc-confirm-check" style="margin-top:2px;width:16px;height:16px;accent-color:var(--primary,#0d47a1);flex-shrink:0;">
+                        I understand my teacher will grade this document and the grade will count.
+                    </label>
+                </div>
+                <div style="display:flex;gap:10px;justify-content:flex-end;">
+                    <button id="docSubmitCancel"
+                            style="padding:9px 20px;background:var(--gray-100,#f3f4f6);border:1px solid var(--gray-300);
+                                   border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;color:var(--gray-700);">
+                        Cancel
+                    </button>
+                    <button id="docSubmitConfirm" disabled
+                            style="padding:9px 20px;background:var(--primary,#0d47a1);color:#fff;border:none;
+                                   border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;opacity:0.45;transition:opacity .2s;">
+                        <i class="fas fa-paper-plane"></i> Submit
+                    </button>
+                </div>
+            </div>`;
+
+        document.body.appendChild(modal);
+
+        const confirmBtn = modal.querySelector('#docSubmitConfirm');
+        const checks = modal.querySelectorAll('.doc-confirm-check');
+
+        function updateConfirmBtn() {
+            const allChecked = [...checks].every(c => c.checked);
+            confirmBtn.disabled = !allChecked;
+            confirmBtn.style.opacity = allChecked ? '1' : '0.45';
+        }
+        checks.forEach(c => c.addEventListener('change', updateConfirmBtn));
+
+        modal.querySelector('#docSubmitCancel').addEventListener('click', () => {
+            modal.remove();
+            resolve(false);
+        });
+        confirmBtn.addEventListener('click', () => {
+            modal.remove();
+            resolve(true);
+        });
+    });
 }
 
 // ============================================

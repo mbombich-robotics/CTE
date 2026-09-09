@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.56',
+    VERSION: 'v2.9.57',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -22,7 +22,7 @@ const CONFIG = {
         hsaer: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-            currentAppVersion: 'v2.14.35',
+            currentAppVersion: 'v2.14.36',
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
@@ -36,7 +36,7 @@ const CONFIG = {
         '8aer': {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
-            currentAppVersion: 'v2.14.35',
+            currentAppVersion: 'v2.14.36',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
@@ -50,7 +50,7 @@ const CONFIG = {
         dbl: {
             name: 'Design & Build Lab',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
-            currentAppVersion: 'v2.14.35',
+            currentAppVersion: 'v2.14.36',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
@@ -927,6 +927,40 @@ async function recordDeliverableUrl(email, deliverableId, url) {
     }
 }
 
+// Reset a submitted deliverable back to in-progress so the student can fix and resubmit.
+async function unsubmitDeliverable(email, deliverableId, delLabel, studentName) {
+    if (!confirm(`Unsubmit "${delLabel}" for ${studentName}?\n\nThis resets their submission to in-progress. They will need to resubmit once it's corrected.`)) return;
+
+    const course = CONFIG.COURSES?.[state.activeCourse];
+    if (!course?.apiUrl) {
+        showToast('No API URL for this course.', 'error');
+        return;
+    }
+
+    showToast('Resetting submission…', 'info', 2500);
+    try {
+        const res = await fetch(course.apiUrl, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'resetDeliverable',
+                token: CONFIG.TEACHER_TOKEN,
+                email,
+                deliverableId
+            })
+        });
+        const data = await res.json();
+        if (!data.success) {
+            showToast('Reset failed: ' + (data.error || 'unknown'), 'error', 6000);
+            return;
+        }
+        showToast(`${delLabel} unsubmitted — ${studentName} can now resubmit.`, 'success', 4000);
+        await loadCourseData();
+        openStudentDetail(email);
+    } catch (err) {
+        showToast('Error: ' + (err.message || err), 'error', 5000);
+    }
+}
+
 function openStudentDetail(email) {
     const student = state.students.find(s => s.email === email);
     if (!student) return;
@@ -994,6 +1028,11 @@ function openStudentDetail(email) {
                         <i class="fas fa-robot"></i> AI Grade Design Brief
                     </button>
                 </div>` : '';
+            const unsubmitBtn = `
+                <button onclick="unsubmitDeliverable('${email.replace(/'/g,"\\'")}', ${id}, '${delLabel.replace(/'/g,"\\'")}', '${(student.name||'').replace(/'/g,"\\'")}')"
+                        style="margin-top:8px; padding:4px 10px; background:transparent; border:1px solid var(--gray-400); border-radius:4px; cursor:pointer; font-size:11px; color:var(--gray-600); display:inline-flex; align-items:center; gap:5px;">
+                    <i class="fas fa-undo"></i> Unsubmit
+                </button>`;
             deliverablesPanel.innerHTML += `
                 <div class="item-card" style="${dBorderStyle}">
                     <div class="item-header">
@@ -1005,6 +1044,7 @@ function openStudentDetail(email) {
                     </div>
                     ${needsExpand ? `<button onclick="toggleDeliverableContent('${contentId}', ${id})" style="margin-top: 8px; padding: 4px 12px; background: var(--gray-100); border: 1px solid var(--gray-300); border-radius: 4px; cursor: pointer; font-size: 12px; color: var(--primary);">Show More</button>` : ''}
                     ${aiBriefBtn}
+                    ${unsubmitBtn}
                     ${renderGradeSection(state.activeCourse, id, maxPoints, existingGrade, existingFeedback, email)}
                 </div>
             `;

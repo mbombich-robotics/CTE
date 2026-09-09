@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.4';
+const BACKEND_VERSION = 'v2.14.5';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -460,6 +460,9 @@ function doPost(e) {
 
       case 'getDocAIFeedback':
         return jsonResponse(handleGetDocAIFeedback(data));
+
+      case 'resetDeliverable':
+        return jsonResponse(handleResetDeliverable(data));
 
       default:
         return jsonResponse({ error: 'Unknown action' });
@@ -2222,6 +2225,30 @@ function handleGetStudentAIFeedback(data) {
   } catch(e) {
     return { success: false, error: e.message };
   }
+}
+
+/**
+ * Teacher-only: reset a submitted deliverable back to in-progress
+ * so the student can correct and resubmit.
+ */
+function handleResetDeliverable(data) {
+  if (data.token !== TEACHER_TOKEN) return { error: 'Unauthorized' };
+  const email = data.email;
+  const id = Number(data.deliverableId);
+
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(SHEET_NAMES.DELIVERABLES);
+  const values = sheet.getDataRange().getValues();
+
+  for (let i = 1; i < values.length; i++) {
+    if (values[i][0] === email && Number(values[i][2]) === id) {
+      sheet.getRange(i + 1, 8).setValue('in-progress'); // col H — status
+      sheet.getRange(i + 1, 9).setValue('');            // col I — submittedAt
+      logActivity('RESET_DELIVERABLE', 'teacher', `Reset deliverable ${id} for ${email}`);
+      return { success: true };
+    }
+  }
+  return { success: false, error: 'No matching row found — may already be unsubmitted' };
 }
 
 function gradeWithRubric(docText, urlNote, deliverableId) {
