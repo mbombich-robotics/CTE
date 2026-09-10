@@ -2,7 +2,7 @@
 # Run this ONCE after the hotspot is on and the Shelly has connected.
 # Sets a permanent static IP on the Shelly so DHCP reassignment can never move it.
 
-$shellyIp = '192.168.137.22'   # current IP (from hotspot device list)
+$shellyIp = '192.168.137.126'  # current IP (from hotspot device list)
 
 Write-Host "Checking Shelly at $shellyIp ..." -ForegroundColor Cyan
 
