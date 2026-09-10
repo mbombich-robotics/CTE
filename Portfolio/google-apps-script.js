@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.5';
+const BACKEND_VERSION = 'v2.14.6';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2237,18 +2237,52 @@ function handleResetDeliverable(data) {
   const id = Number(data.deliverableId);
 
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const sheet = ss.getSheetByName(SHEET_NAMES.DELIVERABLES);
-  const values = sheet.getDataRange().getValues();
+  let delivRowReset = false;
 
-  for (let i = 1; i < values.length; i++) {
-    if (values[i][0] === email && Number(values[i][2]) === id) {
-      sheet.getRange(i + 1, 8).setValue('in-progress'); // col H — status
-      sheet.getRange(i + 1, 9).setValue('');            // col I — submittedAt
-      logActivity('RESET_DELIVERABLE', 'teacher', `Reset deliverable ${id} for ${email}`);
-      return { success: true };
+  // 1. Reset the Deliverables sheet row (if it exists)
+  const delSheet = ss.getSheetByName(SHEET_NAMES.DELIVERABLES);
+  const delValues = delSheet.getDataRange().getValues();
+  for (let i = 1; i < delValues.length; i++) {
+    if (delValues[i][0] === email && Number(delValues[i][2]) === id) {
+      delSheet.getRange(i + 1, 8).setValue('in-progress'); // col H — status
+      delSheet.getRange(i + 1, 9).setValue('');            // col I — submittedAt
+      delivRowReset = true;
+      break;
     }
   }
-  return { success: false, error: 'No matching row found — may already be unsubmitted' };
+
+  // 2. Patch the student's fullState JSON so the portfolio app also sees
+  //    in-progress (otherwise the portal keeps showing the draft as completed).
+  let fullStatePatched = false;
+  const studentsSheet = ss.getSheetByName(SHEET_NAMES.STUDENTS);
+  const studentsData = studentsSheet.getDataRange().getValues();
+  for (let i = 1; i < studentsData.length; i++) {
+    if (studentsData[i][0] === email) {
+      const raw = studentsData[i][8]; // col I — fullState JSON
+      if (raw && raw.trim()) {
+        try {
+          const state = JSON.parse(raw);
+          if (state.deliverables && state.deliverables[id]) {
+            state.deliverables[id].status = 'in-progress';
+            delete state.deliverables[id].submittedAt;
+            studentsSheet.getRange(i + 1, 9).setValue(JSON.stringify(state));
+            fullStatePatched = true;
+          }
+        } catch (e) {
+          logActivity('WARN', email, `resetDeliverable: could not patch fullState — ${e}`);
+        }
+      }
+      break;
+    }
+  }
+
+  if (!delivRowReset && !fullStatePatched) {
+    return { success: false, error: 'Deliverable not found in either sheet — may already be unsubmitted' };
+  }
+
+  logActivity('RESET_DELIVERABLE', 'teacher',
+    `Reset deliverable ${id} for ${email} — delRow:${delivRowReset} fullState:${fullStatePatched}`);
+  return { success: true, delivRowReset, fullStatePatched };
 }
 
 function gradeWithRubric(docText, urlNote, deliverableId) {

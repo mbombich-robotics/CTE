@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.57',
+    VERSION: 'v2.9.58',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -1051,6 +1051,11 @@ function openStudentDetail(email) {
         } else if (draft && draft.status === 'completed' && (draft.content || draft.criteria)) {
             // Completed in student state but missing from Deliverables sheet (sync issue)
             const maxPoints = course.deliverablePoints?.[id] || 50;
+            const draftUnsubmitBtn = `
+                <button onclick="unsubmitDeliverable('${email.replace(/'/g,"\\'")}', ${id}, '${delLabel.replace(/'/g,"\\'")}', '${(student.name||'').replace(/'/g,"\\'")}')"
+                        style="margin-top:8px; padding:4px 10px; background:transparent; border:1px solid var(--gray-400); border-radius:4px; cursor:pointer; font-size:11px; color:var(--gray-600); display:inline-flex; align-items:center; gap:5px;">
+                    <i class="fas fa-undo"></i> Unsubmit
+                </button>`;
             deliverablesPanel.innerHTML += `
                 <div class="item-card" style="border-left: 4px solid var(--warning);">
                     <div class="item-header">
@@ -1062,6 +1067,7 @@ function openStudentDetail(email) {
                         ${draft.selfAssessment ? `<br><br><strong>Self-Assessment:</strong> ${draft.selfAssessment}/10` : ''}
                         ${draft.links ? `<br><br><strong>Links:</strong> ${draft.links}` : ''}
                     </div>
+                    ${draftUnsubmitBtn}
                     ${renderGradeSection(state.activeCourse, id, maxPoints, '', '', email)}
                 </div>
             `;
