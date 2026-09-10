@@ -71,6 +71,20 @@
         .slide-counter { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: #475569; min-width: 60px; text-align: center; }
         .back-link { position: fixed; top: 18px; right: 24px; font-size: 0.78rem; font-weight: 700; color: #e05a6a; text-decoration: none; background: rgba(196,30,58,0.15); border: 1px solid rgba(196,30,58,0.35); padding: 5px 12px; border-radius: 20px; z-index: 100; transition: background 0.2s; }
         .back-link:hover { background: rgba(196,30,58,0.3); }
+        /* Brief-section cards (slide 3) */
+        .brief-cards { display: flex; gap: 14px; margin: 18px 0; flex-wrap: wrap; }
+        .brief-card { flex: 1; min-width: 110px; border-radius: 16px; border: 2px solid; padding: 28px 14px 22px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; }
+        .bc-circle { width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron', sans-serif; font-size: 1.8rem; font-weight: 900; color: #000; flex-shrink: 0; }
+        .bc-name { font-size: 1.1rem; font-weight: 700; color: #e0e6f0; line-height: 1.3; }
+        .bc-tag { font-size: 0.95rem; font-weight: 600; margin-top: auto; }
+        .bc1 { border-color: #c41e3a; background: rgba(196,30,58,0.06); }  .bc1 .bc-circle { background: #c41e3a; color:#fff; } .bc1 .bc-tag { color: #e05a6a; }
+        .bc2 { border-color: #50fa7b; background: rgba(80,250,123,0.06); } .bc2 .bc-circle { background: #50fa7b; }              .bc2 .bc-tag { color: #50fa7b; }
+        .bc3 { border-color: #ff5555; background: rgba(255,85,85,0.06); }  .bc3 .bc-circle { background: #ff5555; }              .bc3 .bc-tag { color: #ff5555; }
+        .bc4 { border-color: #ffd700; background: rgba(255,215,0,0.06); }  .bc4 .bc-circle { background: #ffd700; }              .bc4 .bc-tag { color: #ffd700; }
+        .bc5 { border-color: #bd93f9; background: rgba(189,147,249,0.06); }.bc5 .bc-circle { background: #bd93f9; }              .bc5 .bc-tag { color: #bd93f9; }
+        .bc6 { border-color: #8be9fd; background: rgba(139,233,253,0.06); }.bc6 .bc-circle { background: #8be9fd; }              .bc6 .bc-tag { color: #8be9fd; }
+        .bc7 { border-color: #ffb86c; background: rgba(255,184,108,0.06); }.bc7 .bc-circle { background: #ffb86c; }              .bc7 .bc-tag { color: #ffb86c; }
+
         /* Per-slide scaling — title and objectives */
         #slide-1 h1 { font-size: 6.1rem; }
         #slide-1 .subtitle { font-size: 2.3rem; }
@@ -115,27 +129,45 @@
     <div class="slide">
         <div class="slide-content">
             <h2>Where We Are</h2>
-            <p style="margin-bottom: 16px;">D1.1 Design Brief — section by section</p>
-            <div class="grid-2" style="margin-top: 0;">
-                <div class="box-green">
-                    <h3>✓ Done (Wed – Thu)</h3>
-                    <ul class="bullet-list" style="margin-top: 10px;">
-                        <li><strong style="color: #e0e6f0;">S1</strong> — Client &amp; End User</li>
-                        <li><strong style="color: #e0e6f0;">S2</strong> — Problem Statement</li>
-                        <li><strong style="color: #e0e6f0;">S3</strong> — Criteria</li>
-                        <li><strong style="color: #e0e6f0;">S4</strong> — Constraints</li>
-                    </ul>
+            <p style="font-size:1.75rem; margin-bottom: 18px;">D1.1 Design Brief — section by section</p>
+            <div class="brief-cards">
+                <div class="brief-card bc1" style="filter:saturate(0.15) brightness(0.55);">
+                    <div class="bc-circle">S1</div>
+                    <div class="bc-name">Client &amp; End User</div>
+                    <div class="bc-tag">✓ done</div>
                 </div>
-                <div class="box">
-                    <h3>Today</h3>
-                    <ul class="bullet-list" style="margin-top: 10px;">
-                        <li><strong style="color: #bd93f9;">S5</strong> — Finish your Design Statement <span style="color: #888; font-size: 0.9em;">(10 min)</span></li>
-                        <li><strong style="color: #e0e6f0;">S6</strong> — Concept Sketch (Concept A)</li>
-                        <li><strong style="color: #e0e6f0;">S7</strong> — Decision Matrix + rationale</li>
-                    </ul>
+                <div class="brief-card bc2" style="filter:saturate(0.15) brightness(0.55);">
+                    <div class="bc-circle">S2</div>
+                    <div class="bc-name">Problem Statement</div>
+                    <div class="bc-tag">✓ done</div>
+                </div>
+                <div class="brief-card bc3" style="filter:saturate(0.15) brightness(0.55);">
+                    <div class="bc-circle">S3</div>
+                    <div class="bc-name">Criteria</div>
+                    <div class="bc-tag">✓ done</div>
+                </div>
+                <div class="brief-card bc4" style="filter:saturate(0.15) brightness(0.55);">
+                    <div class="bc-circle">S4</div>
+                    <div class="bc-name">Constraints</div>
+                    <div class="bc-tag">✓ done</div>
+                </div>
+                <div class="brief-card bc5">
+                    <div class="bc-circle">S5</div>
+                    <div class="bc-name">Design Statement</div>
+                    <div class="bc-tag">finish — 10 min</div>
+                </div>
+                <div class="brief-card bc6">
+                    <div class="bc-circle">S6</div>
+                    <div class="bc-name">Concept Sketch</div>
+                    <div class="bc-tag">today</div>
+                </div>
+                <div class="brief-card bc7">
+                    <div class="bc-circle">S7</div>
+                    <div class="bc-name">Decision Matrix</div>
+                    <div class="bc-tag">today</div>
                 </div>
             </div>
-            <div class="step-box" style="margin-top: 20px; text-align: center; padding: 14px;">
+            <div class="step-box" style="margin-top: 18px; text-align: center; padding: 14px;">
                 <p style="margin: 0; font-size: 1rem; color: #e05a6a; font-weight: 700;">D1.1 is due today. Everything you finish in class is done — the rest goes home.</p>
             </div>
         </div>
