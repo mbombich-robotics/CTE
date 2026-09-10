@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.58',
+    VERSION: 'v2.9.59',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -556,18 +556,24 @@ async function loadCourseData() {
         </tr>
     `;
 
+    const controller = new AbortController();
+    const fetchTimeout = setTimeout(() => controller.abort(), 35000); // 35-second hard timeout
+
     try {
-        const response = await fetch(course.apiUrl + '?action=all&_t=' + Date.now());
+        const response = await fetch(course.apiUrl + '?action=all&_t=' + Date.now(), { signal: controller.signal });
+        clearTimeout(fetchTimeout);
         state.rawData = await response.json();
         processStudentData();
         applyFilters();
     } catch (error) {
+        clearTimeout(fetchTimeout);
+        const isTimeout = error.name === 'AbortError';
         console.error('Failed to load data:', error);
         tbody.innerHTML = `
             <tr>
                 <td colspan="8" class="empty-state">
                     <i class="fas fa-exclamation-triangle"></i>
-                    <p>Failed to load data. Please try again.</p>
+                    <p>${isTimeout ? 'Request timed out (>35s). The backend may be overloaded — try again in a moment.' : 'Failed to load data. Please try again.'}</p>
                 </td>
             </tr>
         `;
