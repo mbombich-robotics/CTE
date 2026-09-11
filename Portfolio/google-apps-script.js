@@ -19,10 +19,14 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.6';
+const BACKEND_VERSION = 'v2.14.7';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
+
+// Daily AI feedback limit per student (doc rubric feedback button).
+// Resets at midnight. Change this number to raise or lower the cap.
+const DAILY_AI_FEEDBACK_LIMIT = 3;
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
@@ -2567,12 +2571,27 @@ function handleCreateDeliverableDoc(data) {
 
 /**
  * Reads a student's Google Doc deliverable and returns AI rubric feedback.
+ * Enforces DAILY_AI_FEEDBACK_LIMIT per student; logs every call to Activity Log.
  */
 function handleGetDocAIFeedback(data) {
   var docId         = data.docId || '';
   var deliverableId = Number(data.deliverableId);
+  var email         = (data.email || '').toLowerCase().trim();
 
   if (!docId) return { success: false, error: 'No document ID provided.' };
+
+  // --- Rate limit check ---
+  var usedToday = countAIFeedbackToday(email);
+  if (usedToday >= DAILY_AI_FEEDBACK_LIMIT) {
+    logActivity('DOC_AI_BLOCKED', email, 'Daily limit reached (' + DAILY_AI_FEEDBACK_LIMIT + ')');
+    return {
+      success: false,
+      rateLimited: true,
+      error: 'You have used AI feedback ' + DAILY_AI_FEEDBACK_LIMIT + ' time' +
+             (DAILY_AI_FEEDBACK_LIMIT === 1 ? '' : 's') + ' today — that is your daily limit. ' +
+             'Revise your work based on the feedback you already received and try again tomorrow.'
+    };
+  }
 
   try {
     var doc  = DocumentApp.openById(docId);
@@ -2583,14 +2602,48 @@ function handleGetDocAIFeedback(data) {
     }
 
     var grades = gradeDocWithRubric(text, deliverableId);
-    return { success: true, grades: grades };
+
+    // Log successful call (count = usedToday + 1 after this one)
+    logActivity('DOC_AI_FEEDBACK', email, 'D' + deliverableId + ' | use ' + (usedToday + 1) + '/' + DAILY_AI_FEEDBACK_LIMIT + ' today');
+
+    return { success: true, grades: grades, usedToday: usedToday + 1, dailyLimit: DAILY_AI_FEEDBACK_LIMIT };
 
   } catch (e) {
     Logger.log('handleGetDocAIFeedback error: ' + e);
+    logActivity('DOC_AI_ERROR', email, e.toString());
     if (e.message && e.message.indexOf('does not exist') !== -1) {
       return { success: false, error: 'Document not found — it may have been deleted. Create a new copy from the portfolio.' };
     }
     return { success: false, error: 'Could not read your document: ' + e.message };
+  }
+}
+
+/**
+ * Count how many DOC_AI_FEEDBACK calls a student has made today (server local time).
+ */
+function countAIFeedbackToday(email) {
+  if (!email) return 0;
+  try {
+    var ss    = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName(SHEET_NAMES.LOG);
+    if (!sheet) return 0;
+
+    var today  = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd');
+    var values = sheet.getDataRange().getValues();
+    var count  = 0;
+
+    for (var i = 1; i < values.length; i++) {
+      var rowDate = values[i][0] ? values[i][0].toString().substring(0, 10) : '';
+      var rowType = values[i][1] || '';
+      var rowEmail = (values[i][2] || '').toString().toLowerCase().trim();
+      if (rowDate === today && rowType === 'DOC_AI_FEEDBACK' && rowEmail === email) {
+        count++;
+      }
+    }
+    return count;
+  } catch (e) {
+    Logger.log('countAIFeedbackToday error: ' + e);
+    return 0; // fail open so a log error does not block students
   }
 }
 
