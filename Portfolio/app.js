@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.36',
+    VERSION: 'v2.14.37',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -2239,7 +2239,7 @@ async function loadScheduleDueDates() {
         const data = await res.json();
 
         // schedule-data.json now uses '8aer' key — matches portfolio key directly
-        const trackKey = state.course;
+        const trackKey = URL_TRACK || state.student?.course || 'hsaer';
         const trackData = data.tracks[trackKey];
         if (!trackData) return;
 
