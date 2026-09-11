@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.9';
+const BACKEND_VERSION = 'v2.14.10';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2662,9 +2662,9 @@ problem_id (max 4): Student names a specific client or end user. 4=client/end us
 
 problem_statement (max 4): Student describes the actual problem to be solved — not the solution. 4=problem clearly stated, no solution language, specific enough to test a finished design against; 3=problem is clear but could be more specific; 2=leans toward describing a solution instead of a need, or is vague; 1=missing a clear problem statement; 0=blank.
 
-criteria_completeness (max 4): Number of criteria listed. 4=4 or more; 3=exactly 3; 2=2 criteria; 1=only 1 criterion; 0=none listed.
+criteria_completeness (max 4): Number of COMPLETED criteria the student actually wrote (placeholder lines with blanks or underscores count as 0). 4=4 or more real criteria; 3=exactly 3; 2=2 criteria; 1=only 1 criterion; 0=none written (blank lines, unfilled templates, or section missing entirely).
 
-criteria_quality (max 4): How measurable and testable the criteria are. 4=all criteria are objectively testable with specific values or observable outcomes ("must hold 500 g," "must fit within 30 cm"); 3=most measurable, one slightly vague; 2=about half measurable, rest too vague to test; 1=all vague ("must be strong," "must look nice"); 0=blank.
+criteria_quality (max 4): How measurable and testable the criteria the student wrote are (score 0 if no real criteria were written). 4=all criteria are objectively testable with specific values or observable outcomes ("must hold 500 g," "must fit within 30 cm"); 3=most measurable, one slightly vague; 2=about half measurable, rest too vague to test; 1=all vague ("must be strong," "must look nice"); 0=no real criteria written, or section is entirely blank/placeholder.
 
 constraints (max 4): Specificity of constraints. 4=3 or more specific, realistic limits on materials, dimensions, time, or cost; 3=2 clear, realistic constraints; 2=1 specific constraint, others vague or missing; 1=listed but all vague; 0=none.
 
@@ -2702,6 +2702,8 @@ reflection (max 4): Depth and specificity of the Section 4 reflection. 4=specifi
     'Award points generously when the student demonstrates genuine effort, even if imperfectly worded. Reserve 0-1 for sections that are truly absent or show no engagement. A hardworking student who has genuinely filled out all sections should score in the 85-95% range overall.\n\n' +
     'FEEDBACK TONE:\n' +
     'Write in an encouraging, specific voice. Speak directly to the student using "you." Lead with what they did well, then give one concrete, actionable suggestion. Keep each feedback to 1-2 sentences.\n\n' +
+    'BLANK PLACEHOLDER DETECTION (apply before scoring anything):\n' +
+    'Template documents contain sentence starters with blank lines, such as "The solution must ___", "The client is ___", or numbered lines with only underscores. These are unfilled placeholders -- they count as NO content, the same as if the section were left completely empty. Do not award any credit for a placeholder line, no matter how many appear. Only count lines where the student wrote actual words after the prompt.\n\n' +
     'IMPORTANT: The document may contain template instruction text in highlighted boxes, or lines starting with "INSTRUCTION" or "DELETE THIS BOX." Ignore all template/instruction text -- grade only what the student actually wrote.\n\n' +
     'INSTRUCTION BOX CHECK: After scoring, scan the document for any remaining text that starts with "INSTRUCTION" or contains "delete this box." If any instruction boxes are still present, prepend this exact sentence to your problem_id feedback: "Reminder: delete the yellow instruction boxes before submitting -- they should be gone before your teacher reviews your work. " (Then continue with your normal feedback for that criterion.)\n\n' +
     rubric + '\n\n' +
