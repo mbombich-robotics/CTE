@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.8';
+const BACKEND_VERSION = 'v2.14.9';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2721,8 +2721,9 @@ reflection (max 4): Depth and specificity of the Section 4 reflection. 4=specifi
       'content-type':         'application/json'
     },
     payload: JSON.stringify({
-      model:      'claude-haiku-4-5',
-      max_tokens: 1024,
+      model:       'claude-haiku-4-5',
+      max_tokens:  1024,
+      temperature: 0,   // deterministic — same document must produce the same score
       messages: [{
         role: 'user',
         content: [
