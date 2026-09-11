@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Robotics Lab Photo Booth</title>
+<link rel="manifest" href="/CTE/manifest.json">
+<meta name="theme-color" content="#1f6feb">
+<link rel="apple-touch-icon" href="/CTE/icons/icon-192.svg">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -763,6 +766,11 @@ btnReset.addEventListener('click', () => {
 // Init
 renderQueue();
 inpName.focus();
+
+// Register service worker (required for PWA installability)
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/CTE/sw.js').catch(() => {});
+}
 </script>
 </body>
 </html>
