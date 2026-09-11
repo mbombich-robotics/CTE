@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.10';
+const BACKEND_VERSION = 'v2.14.11';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2670,7 +2670,7 @@ constraints (max 4): Specificity of constraints. 4=3 or more specific, realistic
 
 design_statement (max 4): How well the statement synthesizes user, problem, criteria, and constraints into a goal. 4=names user and problem, references criteria and constraints, sets a clear goal without prescribing a specific design; 3=most elements present, clear goal stated; 2=partially synthesized, missing user, constraints, or goal; 1=generic restatement of the problem only; 0=blank.
 
-decision_matrix (max 4): Completeness and mathematical correctness of the Section 7 weighted decision matrix. 4=all criteria have a weight (1–3), every concept cell shows a weight×score product, weighted totals are correct (verify by spot-checking: weight × score = cell value, column sum = total), concept is selected and — if selection differs from highest total — a reason is given; 3=weights and scores present, totals calculated, concept selected, but one arithmetic error or missing reason; 2=matrix partially filled — weights or scores missing for one or more rows/concepts, or totals absent; 1=matrix started but mostly empty or weights ignored (raw scores only, no multiplication shown); 0=blank or section missing entirely.`;
+decision_matrix (max 4): Completeness and mathematical correctness of the Section 7 weighted decision matrix. Cells may show the full notation (e.g., "1×5=5") OR just the final product (e.g., "5") — accept either as long as the number is the correct product of that row's weight and score. 4=all criteria have a weight (1–3), every concept cell has a numeric value, weighted totals are correct (verify by spot-checking: cell value = weight × score for that row, column total = sum of cells), concept is selected and — if selection differs from highest total — a reason is given; 3=weights and products present, totals calculated, concept selected, but one arithmetic error or missing reason; 2=matrix partially filled — weights or values missing for one or more rows/concepts, or totals absent; 1=matrix started but mostly empty or weights ignored entirely; 0=blank or section missing entirely.`;
 
     criteriaKeys = ['problem_id', 'problem_statement', 'criteria_completeness', 'criteria_quality', 'constraints', 'design_statement', 'decision_matrix'];
 
@@ -2704,6 +2704,8 @@ reflection (max 4): Depth and specificity of the Section 4 reflection. 4=specifi
     'Write in an encouraging, specific voice. Speak directly to the student using "you." Lead with what they did well, then give one concrete, actionable suggestion. Keep each feedback to 1-2 sentences.\n\n' +
     'BLANK PLACEHOLDER DETECTION (apply before scoring anything):\n' +
     'Template documents contain sentence starters with blank lines, such as "The solution must ___", "The client is ___", or numbered lines with only underscores. These are unfilled placeholders -- they count as NO content, the same as if the section were left completely empty. Do not award any credit for a placeholder line, no matter how many appear. Only count lines where the student wrote actual words after the prompt.\n\n' +
+    'SECTION ISOLATION — score each section based only on what the student wrote in that section:\n' +
+    'criteria_completeness and criteria_quality must be scored from Section 3 only. The decision matrix in Section 7 has a "Criterion" column where the template instructs students to copy their criteria — do NOT use that column to infer what was written in Section 3. If Section 3 is blank or has only placeholders, score both criteria as 0 regardless of what appears in Section 7.\n\n' +
     'IMPORTANT: The document may contain template instruction text in highlighted boxes, or lines starting with "INSTRUCTION" or "DELETE THIS BOX." Ignore all template/instruction text -- grade only what the student actually wrote.\n\n' +
     'INSTRUCTION BOX CHECK: After scoring, scan the document for any remaining text that starts with "INSTRUCTION" or contains "delete this box." If any instruction boxes are still present, prepend this exact sentence to your problem_id feedback: "Reminder: delete the yellow instruction boxes before submitting -- they should be gone before your teacher reviews your work. " (Then continue with your normal feedback for that criterion.)\n\n' +
     rubric + '\n\n' +
