@@ -19,14 +19,14 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.7';
+const BACKEND_VERSION = 'v2.14.8';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
 
 // Daily AI feedback limit per student (doc rubric feedback button).
 // Resets at midnight. Change this number to raise or lower the cap.
-const DAILY_AI_FEEDBACK_LIMIT = 3;
+const DAILY_AI_FEEDBACK_LIMIT = 5;
 
 const SHEET_NAMES = {
   STUDENTS: 'Students',
@@ -2694,17 +2694,20 @@ reflection (max 4): Depth and specificity of the Section 4 reflection. 4=specifi
     throw new Error('No rubric configured for deliverable ' + deliverableId);
   }
 
-  var prompt = 'You are grading a high school student\'s deliverable for an Applied Engineering & Robotics course.\n\n' +
+  // Stable prefix (rubric + instructions) — same for every student on this deliverable.
+  // Marked for prompt caching so calls after the first are ~55% cheaper on the input side.
+  var stablePrefix =
+    'You are grading a high school student\'s deliverable for an Applied Engineering & Robotics course.\n\n' +
     'SCORING PHILOSOPHY:\n' +
-    'Award points generously when the student demonstrates genuine effort, even if imperfectly worded. Reserve 0–1 for sections that are truly absent or show no engagement. A hardworking student who has genuinely filled out all sections should score in the 85–95% range overall.\n\n' +
+    'Award points generously when the student demonstrates genuine effort, even if imperfectly worded. Reserve 0-1 for sections that are truly absent or show no engagement. A hardworking student who has genuinely filled out all sections should score in the 85-95% range overall.\n\n' +
     'FEEDBACK TONE:\n' +
-    'Write in an encouraging, specific voice. Speak directly to the student using "you." Lead with what they did well, then give one concrete, actionable suggestion. Keep each feedback to 1–2 sentences.\n\n' +
-    'IMPORTANT: The document may contain template instruction text in highlighted boxes, or lines starting with "📋 INSTRUCTION" or "DELETE THIS BOX." Ignore all template/instruction text — grade only what the student actually wrote.\n\n' +
-    'INSTRUCTION BOX CHECK: After scoring, scan the document for any remaining text that starts with "📋 INSTRUCTION" or contains "delete this box." If any instruction boxes are still present, prepend this exact sentence to your problem_id feedback: "Reminder: delete the yellow instruction boxes before submitting — they should be gone before your teacher reviews your work. " (Then continue with your normal feedback for that criterion.)\n\n' +
+    'Write in an encouraging, specific voice. Speak directly to the student using "you." Lead with what they did well, then give one concrete, actionable suggestion. Keep each feedback to 1-2 sentences.\n\n' +
+    'IMPORTANT: The document may contain template instruction text in highlighted boxes, or lines starting with "INSTRUCTION" or "DELETE THIS BOX." Ignore all template/instruction text -- grade only what the student actually wrote.\n\n' +
+    'INSTRUCTION BOX CHECK: After scoring, scan the document for any remaining text that starts with "INSTRUCTION" or contains "delete this box." If any instruction boxes are still present, prepend this exact sentence to your problem_id feedback: "Reminder: delete the yellow instruction boxes before submitting -- they should be gone before your teacher reviews your work. " (Then continue with your normal feedback for that criterion.)\n\n' +
     rubric + '\n\n' +
-    'Return ONLY a valid JSON object — no markdown fences, no explanation. One entry per criterion key.\n\n' +
+    'Return ONLY a valid JSON object -- no markdown fences, no explanation. One entry per criterion key.\n\n' +
     'Format: {"problem_id": {"score": 3, "max": 4, "feedback": "..."}, "criteria_completeness": {"score": 4, "max": 4, "feedback": "..."}, ...}\n\n' +
-    'STUDENT DOCUMENT:\n' + docText;
+    'STUDENT DOCUMENT:';
 
   var apiKey = PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY');
   if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set in Script Properties.');
@@ -2712,14 +2715,28 @@ reflection (max 4): Depth and specificity of the Section 4 reflection. 4=specifi
   var response = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
     method:  'post',
     headers: {
-      'x-api-key':         apiKey,
-      'anthropic-version': '2023-06-01',
-      'content-type':      'application/json'
+      'x-api-key':            apiKey,
+      'anthropic-version':    '2023-06-01',
+      'anthropic-beta':       'prompt-caching-2024-07-31',
+      'content-type':         'application/json'
     },
     payload: JSON.stringify({
-      model:      'claude-haiku-4-5-20251001',
+      model:      'claude-haiku-4-5',
       max_tokens: 1024,
-      messages:   [{ role: 'user', content: prompt }]
+      messages: [{
+        role: 'user',
+        content: [
+          {
+            type: 'text',
+            text: stablePrefix,
+            cache_control: { type: 'ephemeral' }   // cached — same rubric for every student
+          },
+          {
+            type: 'text',
+            text: '\n' + docText                   // uncached — unique per student
+          }
+        ]
+      }]
     }),
     muteHttpExceptions: true
   });
