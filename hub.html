@@ -267,9 +267,9 @@ const BG = {
   dbl:    'Assets/Hub/DBL%20Hub%20Background.jpg',
 };
 const TRACKS = {
-  hsaer:  { label:'HS AER',        acc:'#00d4ff', accd:'rgba(0,212,255,.12)', bg: BG.hsaer  },
   '8aer': { label:'8th Grade AER', acc:'#50fa7b', accd:'rgba(80,250,123,.12)', bg: BG['8aer'] },
   dbl:    { label:'D&B Lab',       acc:'#ff9500', accd:'rgba(255,149,0,.12)', bg: BG.dbl    },
+  hsaer:  { label:'HS AER',        acc:'#00d4ff', accd:'rgba(0,212,255,.12)', bg: BG.hsaer  },
 };
 
 // ── COUNTDOWN EVENTS  ─────────────────────────────────────
@@ -862,8 +862,8 @@ const QUOTES = [
 
 // ── UTILS ─────────────────────────────────────────────────
 function getTrack() {
-  const t = new URLSearchParams(location.search).get('track') || 'hsaer';
-  return TRACKS[t] ? t : 'hsaer';
+  const t = new URLSearchParams(location.search).get('track') || '8aer';
+  return TRACKS[t] ? t : '8aer';
 }
 function getWeek() {
   const now = new Date();

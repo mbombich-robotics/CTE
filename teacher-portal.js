@@ -333,7 +333,7 @@ function deliverableForWeek(courseId, week) {
 // ============================================
 let state = {
     teacherEmail: null,
-    activeCourse: 'hsaer',
+    activeCourse: '8aer',
     rawData: null,        // Raw data from API
     students: [],         // Processed student list
     filters: {
