@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.37',
+    VERSION: 'v2.14.38',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -3453,21 +3453,97 @@ function openDeliverableForm(id) {
                 : `
             ${id === 10 ? `
             <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px;">
+
               <div class="card" style="border-left:3px solid var(--primary);padding:16px;">
-                <h4 style="margin-bottom:8px;">1 — Entry Questionnaire</h4>
-                <p style="font-size:14px;color:var(--gray-600);margin-bottom:14px;">Complete this short questionnaire — about 5 minutes. It helps your teacher build groups for upcoming projects.</p>
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSftmOTsF7X4vMNm3xeYE-xb9V40L6eR2HulF0SB5L90l8I2mA/viewform" target="_blank"
-                   style="display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:white;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;margin-bottom:14px;">
-                  <i class="fas fa-external-link-alt"></i> Open Questionnaire
-                </a>
-                <label style="display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer;">
-                  <input type="checkbox" id="d10QuizDone" ${existing.quizDone ? 'checked' : ''} style="width:18px;height:18px;accent-color:var(--primary);">
-                  I've submitted the questionnaire
-                </label>
+                <h4 style="margin-bottom:4px;">1 — Entry Questionnaire</h4>
+                <p style="font-size:13px;color:var(--gray-500);margin-bottom:18px;">Helps your teacher plan project groups. Fill it out here — all fields required unless marked optional.</p>
+
+                <div class="form-group" style="margin-bottom:14px;">
+                  <label for="d10Period" style="font-size:14px;font-weight:600;">Class Period</label>
+                  <select id="d10Period" style="width:100%;padding:8px 10px;border:1px solid var(--gray-300);border-radius:6px;font-size:14px;background:var(--card-bg);color:var(--text);">
+                    <option value="">— select your period —</option>
+                    ${[1,2,3,4,5,6,7].map(n => `<option value="${n}" ${existing.period == n ? 'selected' : ''}>Period ${n}</option>`).join('')}
+                  </select>
+                </div>
+
+                <div style="margin-bottom:16px;">
+                  <div style="font-size:14px;font-weight:600;margin-bottom:10px;">Rate your experience <span style="font-weight:400;font-size:12px;color:var(--gray-500);">(1 = no experience · 4 = confident)</span></div>
+                  ${[
+                    ['Coding / programming', 'd10ExpCoding', 'expCoding'],
+                    ['3D modeling / CAD',    'd10ExpCAD',    'expCAD'],
+                    ['Electronics &amp; wiring', 'd10ExpElec', 'expElec'],
+                    ['Building with tools', 'd10ExpBuild',   'expBuild'],
+                  ].map(([label, selId, key]) => `
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap;">
+                      <span style="font-size:13px;min-width:170px;">${label}</span>
+                      <select id="${selId}" style="padding:6px 10px;border:1px solid var(--gray-300);border-radius:6px;font-size:13px;background:var(--card-bg);color:var(--text);">
+                        <option value="">—</option>
+                        <option value="1" ${existing[key]==='1'||existing[key]===1 ? 'selected':''}>1 — No experience</option>
+                        <option value="2" ${existing[key]==='2'||existing[key]===2 ? 'selected':''}>2 — Tried it once or twice</option>
+                        <option value="3" ${existing[key]==='3'||existing[key]===3 ? 'selected':''}>3 — Used it in class before</option>
+                        <option value="4" ${existing[key]==='4'||existing[key]===4 ? 'selected':''}>4 — Confident, I know what I'm doing</option>
+                      </select>
+                    </div>
+                  `).join('')}
+                </div>
+
+                <div class="form-group" style="margin-bottom:14px;">
+                  <label for="d10TeamRole" style="font-size:14px;font-weight:600;">Team Role: In a group, I'm usually…</label>
+                  <select id="d10TeamRole" style="width:100%;padding:8px 10px;border:1px solid var(--gray-300);border-radius:6px;font-size:14px;background:var(--card-bg);color:var(--text);">
+                    <option value="">— select one —</option>
+                    <option value="leader" ${existing.teamRole==='leader'?'selected':''}>The leader — I take charge and keep things moving</option>
+                    <option value="builder" ${existing.teamRole==='builder'?'selected':''}>The builder — I prefer hands-on making and assembly</option>
+                    <option value="planner" ${existing.teamRole==='planner'?'selected':''}>The planner — I map out steps before we dive in</option>
+                    <option value="troubleshooter" ${existing.teamRole==='troubleshooter'?'selected':''}>The troubleshooter — I fix what isn't working</option>
+                    <option value="flexible" ${existing.teamRole==='flexible'?'selected':''}>It depends on the project and team</option>
+                  </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom:14px;">
+                  <label for="d10WhenStuck" style="font-size:14px;font-weight:600;">When I'm stuck, I…</label>
+                  <select id="d10WhenStuck" style="width:100%;padding:8px 10px;border:1px solid var(--gray-300);border-radius:6px;font-size:14px;background:var(--card-bg);color:var(--text);">
+                    <option value="">— select one —</option>
+                    <option value="solo" ${existing.whenStuck==='solo'?'selected':''}>Keep trying on my own until I figure it out</option>
+                    <option value="teammate" ${existing.whenStuck==='teammate'?'selected':''}>Ask a teammate or classmate right away</option>
+                    <option value="lookup" ${existing.whenStuck==='lookup'?'selected':''}>Look it up online or in my notes first</option>
+                    <option value="teacher" ${existing.whenStuck==='teacher'?'selected':''}>Ask the teacher</option>
+                    <option value="break" ${existing.whenStuck==='break'?'selected':''}>Step away, then come back with fresh eyes</option>
+                  </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom:14px;">
+                  <label for="d10WorkPace" style="font-size:14px;font-weight:600;">My work pace: I…</label>
+                  <select id="d10WorkPace" style="width:100%;padding:8px 10px;border:1px solid var(--gray-300);border-radius:6px;font-size:14px;background:var(--card-bg);color:var(--text);">
+                    <option value="">— select one —</option>
+                    <option value="steady" ${existing.workPace==='steady'?'selected':''}>Work steadily from start to finish</option>
+                    <option value="slow-start" ${existing.workPace==='slow-start'?'selected':''}>Start slow, then pick up speed toward the end</option>
+                    <option value="bursts" ${existing.workPace==='bursts'?'selected':''}>Work in bursts of energy with short breaks</option>
+                    <option value="front-loaded" ${existing.workPace==='front-loaded'?'selected':''}>Plan everything carefully, then execute quickly</option>
+                  </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom:18px;">
+                  <label for="d10Excited" style="font-size:14px;font-weight:600;">I'm especially excited about…</label>
+                  <textarea id="d10Excited" rows="2" placeholder="What part of this course are you most looking forward to?" style="width:100%;padding:8px 10px;border:1px solid var(--gray-300);border-radius:6px;font-size:14px;background:var(--card-bg);color:var(--text);resize:vertical;">${existing.excited || ''}</textarea>
+                </div>
+
+                <div style="border-top:1px solid var(--gray-200);padding-top:14px;">
+                  <div style="font-size:14px;font-weight:600;margin-bottom:4px;">Partner preferences <span style="font-weight:400;color:var(--gray-500);font-size:12px;">— optional &amp; confidential</span></div>
+                  <p style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Include a first name and last initial (e.g., <em>Alex S</em>). This is one input among many — it doesn't guarantee a specific partner.</p>
+                  <div class="form-group" style="margin-bottom:10px;">
+                    <label for="d10PartnerGood" style="font-size:13px;color:var(--gray-600);">Someone you work really well with</label>
+                    <input type="text" id="d10PartnerGood" placeholder="First name + last initial  (e.g., Alex S)" value="${existing.partnerGoodWith || ''}" style="width:100%;padding:7px 10px;border:1px solid var(--gray-300);border-radius:6px;font-size:14px;background:var(--card-bg);color:var(--text);">
+                  </div>
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label for="d10PartnerStruggle" style="font-size:13px;color:var(--gray-600);">Someone you'd struggle to work with</label>
+                    <input type="text" id="d10PartnerStruggle" placeholder="First name + last initial  (e.g., Alex S)" value="${existing.partnerStruggles || ''}" style="width:100%;padding:7px 10px;border:1px solid var(--gray-300);border-radius:6px;font-size:14px;background:var(--card-bg);color:var(--text);">
+                  </div>
+                </div>
               </div>
+
               <div class="card" style="border-left:3px solid var(--success);padding:16px;">
                 <h4 style="margin-bottom:8px;">2 — Signed Safety Contract</h4>
-                <p style="font-size:14px;color:var(--gray-600);margin-bottom:14px;">The paper copy must be signed by you <em>and</em> a parent/guardian and returned to Mr. Bombich by Thursday, September 3.</p>
+                <p style="font-size:14px;color:var(--gray-600);margin-bottom:14px;">The paper copy must be signed by you <em>and</em> a parent/guardian and returned to Mr. Bombich.</p>
                 <label style="display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer;">
                   <input type="checkbox" id="d10ContractTurnedIn" ${existing.contractTurnedIn ? 'checked' : ''} style="width:18px;height:18px;accent-color:var(--success);">
                   I have turned in my signed safety contract to Mr. Bombich
@@ -3647,6 +3723,7 @@ function saveDeliverableDraft(id) {
         links: document.getElementById('deliverableLinks')?.value || '',
         completionTime: completionTimeEl ? parseInt(completionTimeEl.value) || null : null,
         ...(id === 0 ? collectDeliverable0CustomData() : {}),
+        ...(id === 10 ? collectD10Data() : {}),
         ...(CAD_DELIVERABLE_IDS.includes(id) ? collectCadDeliverableData() : {}),
         // photos are written to state live on upload, preserved here via spread
         status: 'in-progress',
@@ -3667,6 +3744,49 @@ function formatCadDeliverableContent(id, customData) {
         out += `A: ${customData['q'+(i+1)] || '(not answered)'}\n\n`;
     });
     return out.trim();
+}
+
+// ============================================
+// D1.0 — ENTRY QUESTIONNAIRE HELPERS
+// ============================================
+function collectD10Data() {
+    return {
+        quizDone: true, // completing the inline form = done
+        contractTurnedIn: document.getElementById('d10ContractTurnedIn')?.checked || false,
+        period:    document.getElementById('d10Period')?.value    || '',
+        expCoding: document.getElementById('d10ExpCoding')?.value || '',
+        expCAD:    document.getElementById('d10ExpCAD')?.value    || '',
+        expElec:   document.getElementById('d10ExpElec')?.value   || '',
+        expBuild:  document.getElementById('d10ExpBuild')?.value  || '',
+        teamRole:  document.getElementById('d10TeamRole')?.value  || '',
+        whenStuck: document.getElementById('d10WhenStuck')?.value || '',
+        workPace:  document.getElementById('d10WorkPace')?.value  || '',
+        excited:   (document.getElementById('d10Excited')?.value  || '').trim(),
+        partnerGoodWith:   (document.getElementById('d10PartnerGood')?.value     || '').trim(),
+        partnerStruggles:  (document.getElementById('d10PartnerStruggle')?.value || '').trim(),
+    };
+}
+
+function formatD10Content(d) {
+    const expLabel = v => ({ '1':'1 — No experience','2':'2 — Tried it once or twice','3':'3 — Used it in class before','4':'4 — Confident' }[v] || v || '—');
+    const roleLabel = { leader:'The leader', builder:'The builder', planner:'The planner', troubleshooter:'The troubleshooter', flexible:'Depends on situation' };
+    const stuckLabel = { solo:'Try on my own', teammate:'Ask a teammate', lookup:'Look it up first', teacher:'Ask the teacher', break:'Step away and return' };
+    const paceLabel  = { steady:'Steady from start to finish', 'slow-start':'Slow start, fast finish', bursts:'Work in bursts', 'front-loaded':'Plan carefully, execute fast' };
+    let out = '=== Entry Questionnaire ===\n';
+    out += `Period: ${d.period || '—'}\n`;
+    out += '\nExperience Ratings:\n';
+    out += `  Coding/Programming: ${expLabel(d.expCoding)}\n`;
+    out += `  3D Modeling/CAD:    ${expLabel(d.expCAD)}\n`;
+    out += `  Electronics/Wiring: ${expLabel(d.expElec)}\n`;
+    out += `  Building with Tools:${expLabel(d.expBuild)}\n`;
+    out += `\nTeam Role:  ${roleLabel[d.teamRole]  || d.teamRole  || '—'}\n`;
+    out += `When Stuck: ${stuckLabel[d.whenStuck] || d.whenStuck || '—'}\n`;
+    out += `Work Pace:  ${paceLabel[d.workPace]   || d.workPace  || '—'}\n`;
+    out += `\nExcited About: ${d.excited || '—'}\n`;
+    if (d.partnerGoodWith)  out += `\nWorks Well With: ${d.partnerGoodWith} (confidential)\n`;
+    if (d.partnerStruggles) out += `Struggles With:  ${d.partnerStruggles} (confidential)\n`;
+    out += `\nSafety Contract Turned In: ${d.contractTurnedIn ? 'Yes' : 'No'}`;
+    return out;
 }
 
 function collectDeliverable0CustomData() {
@@ -3777,13 +3897,33 @@ function submitDeliverable(id) {
         const short = prompts.findIndex(p => !p || p.length < 50);
         if (short >= 0) { showToast(`Prompt ${short + 1} needs more detail (at least 50 characters)`, 'error'); return; }
     } else if (id === 10) {
-        if (!document.getElementById('d10QuizDone')?.checked) {
-            showToast('Please confirm you completed the entry questionnaire', 'error');
-            return;
+        // Required selects
+        const d10Required = [
+            ['d10Period',    'Please select your class period'],
+            ['d10ExpCoding', 'Please rate your coding / programming experience'],
+            ['d10ExpCAD',    'Please rate your 3D modeling / CAD experience'],
+            ['d10ExpElec',   'Please rate your electronics & wiring experience'],
+            ['d10ExpBuild',  'Please rate your building with tools experience'],
+            ['d10TeamRole',  'Please select your team role'],
+            ['d10WhenStuck', 'Please select what you do when stuck'],
+            ['d10WorkPace',  'Please select your work pace'],
+        ];
+        for (const [fid, msg] of d10Required) {
+            if (!document.getElementById(fid)?.value) { showToast(msg, 'error'); return; }
+        }
+        if ((document.getElementById('d10Excited')?.value.trim() || '').length < 10) {
+            showToast("Please tell us what you're excited about (at least a sentence)", 'error'); return;
+        }
+        // Partner names: optional, but if provided must be at least "First Last-or-Initial"
+        const validPartnerName = s => !s || /^\s*[A-Za-z'-]+\s+[A-Za-z'-]/.test(s);
+        if (!validPartnerName(document.getElementById('d10PartnerGood')?.value || '')) {
+            showToast('Partner name needs a first name and last initial — e.g., "Alex S"', 'error'); return;
+        }
+        if (!validPartnerName(document.getElementById('d10PartnerStruggle')?.value || '')) {
+            showToast('Partner name needs a first name and last initial — e.g., "Alex S"', 'error'); return;
         }
         if (!document.getElementById('d10ContractTurnedIn')?.checked) {
-            showToast('Please confirm you have turned in your signed safety contract', 'error');
-            return;
+            showToast('Please confirm you have turned in your signed safety contract', 'error'); return;
         }
     } else if (CAD_DELIVERABLE_IDS.includes(id)) {
         const cadData = collectCadDeliverableData();
@@ -3806,8 +3946,8 @@ function submitDeliverable(id) {
         }
     }
 
-    const customData = id === 0 ? collectDeliverable0CustomData() : id === 10 ? { quizDone: document.getElementById('d10QuizDone')?.checked || false, contractTurnedIn: document.getElementById('d10ContractTurnedIn')?.checked || false } : CAD_DELIVERABLE_IDS.includes(id) ? collectCadDeliverableData() : {};
-    let finalContent = id === 0 ? formatDeliverable0Content(customData) : id === 10 ? 'Entry questionnaire completed. Signed safety contract turned in.' : CAD_DELIVERABLE_IDS.includes(id) ? formatCadDeliverableContent(id, customData) : content;
+    const customData = id === 0 ? collectDeliverable0CustomData() : id === 10 ? collectD10Data() : CAD_DELIVERABLE_IDS.includes(id) ? collectCadDeliverableData() : {};
+    let finalContent = id === 0 ? formatDeliverable0Content(customData) : id === 10 ? formatD10Content(customData) : CAD_DELIVERABLE_IDS.includes(id) ? formatCadDeliverableContent(id, customData) : content;
 
     // Append photo links to content for Sheets storage
     if (photos.length > 0) {
