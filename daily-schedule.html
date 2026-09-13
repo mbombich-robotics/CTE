@@ -243,6 +243,40 @@ body {
 .col-item:hover .col-item-text { color: var(--txt); }
 .col-due { font-family: var(--mono); font-size: 10px; color: var(--dim); margin-left: auto; }
 
+/* ── TUTORIAL BADGE ─────────────────────────────── */
+.tutorial-badge {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--warn);
+  background: rgba(255,209,102,.10);
+  border: 1px solid rgba(255,209,102,.22);
+  padding: 1px 5px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  align-self: center;
+  white-space: nowrap;
+}
+
+/* ── HUB LINK ────────────────────────────────────── */
+.hub-link {
+  display: block;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-decoration: none;
+  padding: 5px 14px;
+  border-bottom: 1px solid var(--border);
+  opacity: .65;
+  transition: opacity .12s;
+}
+.hub-link:hover { opacity: 1; }
+
 /* ── NO DATA STATE ───────────────────────────────── */
 .no-data {
   padding: 32px 14px;
@@ -433,10 +467,12 @@ function renderColumn(track, monday) {
     const tag = linked ? `<a class="day-row linked" href="${esc(linkedUrl)}" target="_blank" rel="noopener">` : `<div class="day-row${noSchool?' no-school':''}">`;
     const close = linked ? '</a>' : '</div>';
     const arr = linked ? `<span class="day-arr">›</span>` : '';
+    const isTutorial = !noSchool && (d.day === 'Tue' || d.day === 'Thu');
+    const tutorialBadge = isTutorial ? `<span class="tutorial-badge">tutorial</span>` : '';
     return `${tag}
       <span class="day-chip">${esc(d.day)}</span>
       <span class="day-content">${esc(d.content)}</span>
-      ${arr}
+      ${tutorialBadge}${arr}
     ${close}`;
   }).join('');
 
@@ -459,12 +495,14 @@ function renderColumn(track, monday) {
     </div>`;
   }
 
+  const hubUrl = `hub.html?track=${track}`;
   col.innerHTML = `
     <div class="track-head">
       <div class="track-name">${label}${groupTag}</div>
       <div class="track-week-num">WK ${wd.week}</div>
     </div>
     <div class="track-week-title">${esc(wd.title)}</div>
+    <a class="hub-link" href="${hubUrl}" target="_blank" rel="noopener">Class Hub →</a>
     <div class="day-rows">${dayRows}</div>
     ${footer ? `<div class="col-footer">${footer}</div>` : ''}`;
 
