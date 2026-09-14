@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.59',
+    VERSION: 'v2.9.60',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -231,6 +231,17 @@ const BRIEF_CRITERIA = {
         { id: 's7_analysis',     label: 'S7 — Analysis',              max: 2 },
         { id: 's9_challenges',   label: 'S9 — Challenges',            max: 3 },
         { id: 's9_solutions',    label: 'S9 — Solutions',             max: 3 },
+    ],
+    // D1.1 Design Brief — 7 criteria × 4 pts = 28 pts
+    // design_statement (§5) is not graded for 8AER — mark skipFor8AER: true
+    11: [
+        { id: 'problem_id',            label: '§1 — Client / End User',       max: 4 },
+        { id: 'problem_statement',     label: '§2 — Problem Statement',        max: 4 },
+        { id: 'criteria_completeness', label: '§3 — Criteria Completeness',    max: 4 },
+        { id: 'criteria_quality',      label: '§3 — Criteria Quality',         max: 4 },
+        { id: 'constraints',           label: '§4 — Constraints',              max: 4 },
+        { id: 'design_statement',      label: '§5 — Design Statement',         max: 4, skipFor8AER: true },
+        { id: 'decision_matrix',       label: '§7 — Decision Matrix',          max: 4 },
     ]
 };
 
@@ -2597,7 +2608,7 @@ async function openDesignBriefGrader(email, deliverableId, docUrl, deliverableTi
     overlay.style.display = 'block';
 
     try {
-        const course = CONFIG.COURSES['hsaer'];
+        const course = CONFIG.COURSES[state.activeCourse] || CONFIG.COURSES['hsaer'];
         const res = await fetch(course.apiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain' },
@@ -2605,7 +2616,7 @@ async function openDesignBriefGrader(email, deliverableId, docUrl, deliverableTi
         });
         const data = await res.json();
         if (data.success) {
-            panel.innerHTML = renderBriefGradesPanel(email, deliverableId, data.grades);
+            panel.innerHTML = renderBriefGradesPanel(email, deliverableId, data.grades, state.activeCourse);
         } else {
             panel.innerHTML = `<div style="padding:20px; color:#b91c1c; background:#fef2f2; border-radius:8px; font-size:13px;">
                 <strong>Error:</strong> ${data.error || 'Unknown error'}</div>`;
@@ -2622,8 +2633,10 @@ function closeDesignBriefGrader() {
     document.getElementById('designBriefFrame').src = 'about:blank';
 }
 
-function renderBriefGradesPanel(email, deliverableId, grades) {
-    const criteria = BRIEF_CRITERIA[deliverableId] || [];
+function renderBriefGradesPanel(email, deliverableId, grades, courseKey) {
+    const allCriteria = BRIEF_CRITERIA[deliverableId] || [];
+    // 8AER does not grade the design_statement section (§5)
+    const criteria = allCriteria.filter(c => !(c.skipFor8AER && courseKey === '8aer'));
     const maxTotal  = criteria.reduce((s, c) => s + c.max, 0);
     let aiTotal = 0;
     let hasManual = false;

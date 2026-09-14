@@ -15,9 +15,9 @@ from datetime import date
 
 # Monday / Wednesday / Friday  (7-Period Day, 50-min classes)
 MWF_BELLS = [
+    ("06:40", "06:41"),   # test
     ("08:22", "08:24"),   # 1st  — 8AER   MS bell 8:32 · 10-min lead for 8th graders
     ("09:20", "09:22"),   # 2nd  — DBL
-   # ("09:57", "09:58"),   # test
     ("10:15", "10:17"),   # 3rd  — PREP   (your planning period — no students)
     ("11:09", "11:11"),   # 4th  — DBL
     ("12:09", "12:11"),   # 5th  — DBL
@@ -28,6 +28,7 @@ MWF_BELLS = [
 
 # Tuesday / Thursday  (30-Min Tutorial Day, 43-min classes)
 TTH_BELLS = [
+    ("07:00", "07:02"),   # test
     ("08:22", "08:24"),   # 1st  — 8AER   MS bell 8:32 · 10-min lead for 8th graders
     ("09:08", "09:10"),   # 2nd  — DBL
     ("09:56", "09:58"),   # 3rd  — PREP   (your planning period — no students)
@@ -74,7 +75,6 @@ ASSEMBLY_BELLS = [
 # Valid keys: "mwf", "tth", "half_day", "assembly", "skip" (no bells at all)
 SPECIAL_DAYS: dict[date, str] = {
     date(2026,  9,  8): "mwf",         # No Tutorial
-    date(2026,  9, 10): "mwf",         # No Tutorial
     date(2026,  9, 30): "half_day",    # 1/2 day students (a.m.) / PLC
     date(2026, 11, 11): "half_day",    # 1/2 day students (a.m.) / PD
     date(2027,  1, 13): "half_day",    # 1/2 day students (a.m.) / PLC

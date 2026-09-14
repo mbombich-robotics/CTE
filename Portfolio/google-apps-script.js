@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.11';
+const BACKEND_VERSION = 'v2.14.12';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2205,17 +2205,43 @@ function onOpen() {
 
 function handleGradeDesignBrief(data) {
   if (data.token !== TEACHER_TOKEN) return { error: 'Unauthorized' };
-  const deliverableId = Number(data.deliverableId);
-  if (deliverableId !== 0) return { error: 'AI grading is currently only supported for D0 (Career Ready Practices)' };
+  var deliverableId = Number(data.deliverableId);
 
-  const content = (data.content || '').trim();
-  if (!content) return { error: 'No reflection content provided' };
-  try {
-    const grades = gradeWithRubric(content, 'No external hyperlinks (plain text submission).', 0);
-    return { success: true, grades };
-  } catch(e) {
-    return { success: false, error: e.message };
+  // ── D0: Career Ready Practices (plain text) ──────────────────────────────
+  if (deliverableId === 0) {
+    var content = (data.content || '').trim();
+    if (!content) return { error: 'No reflection content provided' };
+    try {
+      var grades = gradeWithRubric(content, 'No external hyperlinks (plain text submission).', 0);
+      return { success: true, grades };
+    } catch(e) {
+      return { success: false, error: e.message };
+    }
   }
+
+  // ── D11: Design Brief (Google Doc) ───────────────────────────────────────
+  if (deliverableId === 11) {
+    var docUrl  = (data.docUrl || '').trim();
+    var idMatch = docUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (!idMatch) return { success: false, error: 'Invalid Google Doc URL — paste the full sharing link.' };
+    try {
+      var doc  = DocumentApp.openById(idMatch[1]);
+      var text = doc.getBody().getText();
+      if (!text || text.trim().length < 80) {
+        return { success: false, error: 'Document appears empty — ask the student to fill it in first.' };
+      }
+      var grades = gradeDocWithRubric(text, 11);
+      return { success: true, grades };
+    } catch(e) {
+      Logger.log('handleGradeDesignBrief D11: ' + e);
+      if (e.message && e.message.indexOf('does not exist') !== -1) {
+        return { success: false, error: 'Document not found — check that the sharing link is set to "anyone with the link can view."' };
+      }
+      return { success: false, error: e.message };
+    }
+  }
+
+  return { success: false, error: 'AI grading is not configured for deliverable ' + deliverableId };
 }
 
 function handleGetStudentAIFeedback(data) {
