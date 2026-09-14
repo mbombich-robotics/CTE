@@ -190,12 +190,36 @@
         }
         .ref-link a:hover { background: rgba(0,208,132,0.25); }
 
+        /* Flip cards */
+        .flip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+        .flip-card { perspective: 1000px; cursor: pointer; min-height: 220px; }
+        .flip-card-inner {
+            position: relative; width: 100%; height: 100%; min-height: 220px;
+            transition: transform 0.55s cubic-bezier(.4,0,.2,1);
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back {
+            position: absolute; width: 100%; min-height: 220px;
+            border-radius: 12px; padding: 24px 22px;
+            backface-visibility: hidden; -webkit-backface-visibility: hidden;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        .flip-card-back { transform: rotateY(180deg); overflow-y: auto; justify-content: flex-start; }
+        .fc-green { background: rgba(0,208,132,0.07); border: 2px solid #00d084; text-align: center; }
+        .fc-green-back { background: rgba(0,208,132,0.05); border: 2px solid #00d084; }
+        .fc-amber { background: rgba(255,209,102,0.08); border: 2px solid #ffd166; text-align: center; }
+        .fc-amber-back { background: rgba(255,209,102,0.06); border: 2px solid #ffd166; }
+        .flip-hint { font-size: 0.82rem; color: #4a6a5a; margin-top: 10px; letter-spacing: 0.05em; }
+        .flip-card-front h3 { margin-bottom: 8px; }
+
         @media (max-width: 768px) {
             h1 { font-size: 2.5rem; } h2 { font-size: 1.8rem; }
             .slide { padding: 30px 20px 100px; }
             .grid-2, .grid-3 { grid-template-columns: 1fr; }
             .pipeline { flex-direction: column; }
             .pipeline-arrow { transform: rotate(90deg); }
+            .flip-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -287,39 +311,59 @@
 <div class="slide">
     <div class="slide-content">
         <h2>Efficiency Tips — Reference Video</h2>
-        <p class="subtitle">Watch it. Then think critically about the approach.</p>
 
-        <div class="video-section" style="padding: 20px 28px 18px; margin: 0 0 20px;">
-            <div class="vid-icon" style="font-size: 2.8rem; margin-bottom: 10px;">▶</div>
-            <h2 style="font-size: 1.2rem; margin-bottom: 6px;">Fusion 360 Hotkeys &amp; Workflow Tips</h2>
-            <p class="vid-sub" style="font-size: 0.95rem; margin-bottom: 12px;">Covers hotkeys, sketching workflow, and exporting directly to BambuStudio</p>
-            <a href="https://www.youtube.com/watch?v=_MaY_UycNKU" target="_blank" style="display:inline-block; padding: 10px 24px; background:#00d084; color:#0a0f1e; font-family:'Orbitron',sans-serif; font-size:0.95rem; font-weight:700; text-decoration:none; border-radius:8px; letter-spacing:1px;">▶ Watch Video</a>
+        <div class="video-section" style="padding: 16px 24px 14px; margin: 0 0 14px;">
+            <div class="vid-icon" style="font-size: 2.4rem; margin-bottom: 8px;">▶</div>
+            <h2 style="font-size: 1.1rem; margin-bottom: 4px;">Fusion 360 Hotkeys &amp; Workflow Tips</h2>
+            <p class="vid-sub" style="font-size: 0.9rem; margin-bottom: 10px;">Hotkeys · multi-sketch modeling · direct export to BambuStudio</p>
+            <a href="https://www.youtube.com/watch?v=_MaY_UycNKU" target="_blank" style="display:inline-block; padding: 9px 22px; background:#00d084; color:#0a0f1e; font-family:'Orbitron',sans-serif; font-size:0.9rem; font-weight:700; text-decoration:none; border-radius:8px; letter-spacing:1px;">▶ Watch Video</a>
         </div>
 
-        <div class="note-box" style="margin-bottom: 16px;">
-            <h3>⚠️ Watch mode — don't follow his modeling strategy without reading this first</h3>
-            <p style="margin: 0;">This video is a useful reference for hotkeys and the Fusion → BambuStudio export path. His <em>modeling approach</em>, however, is worth thinking through before you adopt it. Read the notes below.</p>
-        </div>
+        <p style="font-size: 0.95rem; color: #6a8070; margin: 0 0 12px; text-align: center;">Watch first — then click each card for the instructor's take.</p>
 
-        <div class="grid-2">
-            <div class="box">
-                <h3 style="color:#00d084;">✔ What he does well</h3>
-                <ul class="bullet-list" style="font-size: 1rem;">
-                    <li><span class="highlight">Names every sketch</span> — he renames each sketch in the browser to something descriptive. This is a habit worth copying. If you have four sketches, name them or you will lose track of what each one does when you come back to modify.</li>
-                    <li>Hotkeys are genuinely useful — <span class="highlight">S</span> for search, <span class="highlight">P</span> for project, <span class="highlight">E</span> for extrude. Worth practicing.</li>
-                </ul>
+        <div class="flip-grid">
+            <!-- Card 1 -->
+            <div class="flip-card" onclick="this.classList.toggle('flipped')" title="Click to flip">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front fc-green">
+                        <div style="font-size:2.6rem; margin-bottom:10px;">✅</div>
+                        <h3 style="color:#00d084;">What he does well</h3>
+                        <p style="font-size:0.95rem; color:#b8c5d6; margin:6px 0 0;">Two habits worth adding to your own workflow.</p>
+                        <p class="flip-hint">click to reveal</p>
+                    </div>
+                    <div class="flip-card-back fc-green-back">
+                        <h3 style="color:#00d084; font-size:1.1rem; margin-bottom:10px;">Worth copying:</h3>
+                        <ul class="bullet-list" style="font-size:0.95rem;">
+                            <li><span class="highlight">Name every sketch.</span> He renames each one in the browser to something descriptive. If you have four sketches and none are named, you will lose track of what each one does when you need to edit. Make this a habit from day one.</li>
+                            <li>Hotkeys: <span class="highlight">S</span> (search commands) · <span class="highlight">P</span> (project geometry) · <span class="highlight">E</span> (extrude). Build these into muscle memory and your modeling speed improves significantly.</li>
+                        </ul>
+                        <p class="flip-hint" style="margin-top:12px;">click to flip back</p>
+                    </div>
+                </div>
             </div>
-            <div class="box-amber">
-                <h3>⚠️ Commentary on his modeling approach</h3>
-                <p style="font-size: 1rem;">He builds the component using <strong>four sketches, four extrusions, and one hole feature</strong>. This is not invalid — it works, and if you name everything carefully it stays manageable.</p>
-                <p style="font-size: 1rem;">However, that same component could likely be drawn from <strong>one sketch and three extrusions</strong>. A single master sketch means one place to update dimensions — no hunting through multiple sketches when a measurement changes.</p>
-                <p style="font-size: 1rem; margin-bottom: 0;"><span class="warning">Where students struggle with his method:</span> the timeline fills up with nested modifications to multiple extrusions, and untangling the history becomes harder than just redrawing the sketch. Use it if you can stay organized; the single-sketch approach is more forgiving.</p>
+
+            <!-- Card 2 -->
+            <div class="flip-card" onclick="this.classList.toggle('flipped')" title="Click to flip">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front fc-amber">
+                        <div style="font-size:2.6rem; margin-bottom:10px;">⚠️</div>
+                        <h3 style="color:#ffd166;">His modeling approach</h3>
+                        <p style="font-size:0.95rem; color:#b8c5d6; margin:6px 0 0;">Valid — but should you follow it?</p>
+                        <p class="flip-hint">click to reveal</p>
+                    </div>
+                    <div class="flip-card-back fc-amber-back">
+                        <h3 style="color:#ffd166; font-size:1.05rem; margin-bottom:8px;">His method: 4 sketches + 4 extrusions + hole</h3>
+                        <p style="font-size:0.9rem; color:#d4c190; margin-bottom:8px;">Not wrong — it works if you name everything carefully (see card 1). But that same part could be built from <span class="warning">one sketch and three extrusions</span>. One master sketch = one place to change a dimension.</p>
+                        <p style="font-size:0.9rem; color:#d4c190; margin-bottom: 0;"><span class="warning">Where students struggle:</span> the timeline fills with modifications spread across multiple extrusions. When something needs to change, you're hunting. A single master sketch would have made it a two-second edit. Use his approach only if you can stay organized — otherwise the simpler path is more forgiving.</p>
+                        <p class="flip-hint" style="margin-top:10px;">click to flip back</p>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="note-box" style="margin-top: 16px; margin-bottom: 0;">
+        <div class="note-box" style="margin-top: 12px; margin-bottom: 0;">
             <h3>Fusion → BambuStudio (end of his video)</h3>
-            <p style="margin: 0;">He demonstrates sending a model directly from Fusion to BambuStudio — this workflow is confirmed to work in our shop. One open question: whether the exported job retains your filename the way a manual export does, which is how we track ownership in the print queue. Until that's confirmed, use the manual export steps on the next slides and name your file <span style="font-family:'JetBrains Mono',monospace; color:#00d084;">Lastname_ComponentName_v1.3mf</span>.</p>
+            <p style="margin: 0; font-size: 0.95rem;">He sends directly from Fusion to BambuStudio — confirmed to work in our shop. Open question: does the job retain your filename in the print queue? Until confirmed, use the manual export steps on the next slides and name your file <span style="font-family:'JetBrains Mono',monospace; color:#00d084; font-size:0.9rem;">Lastname_ComponentName_v1.3mf</span>.</p>
         </div>
     </div>
 </div>
