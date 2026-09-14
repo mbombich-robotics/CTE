@@ -606,7 +606,7 @@
             <div class="step-row">
                 <div class="step-num">1</div>
                 <div class="step-body">
-                    <h3>Click "Slice Now"</h3>
+                    <h3>Click "Slice Plate"</h3>
                     <p>BambuStudio processes the geometry. This takes a few seconds to a minute depending on part complexity. A progress bar appears at the bottom.</p>
                 </div>
             </div>
@@ -627,8 +627,8 @@
             <div class="step-row">
                 <div class="step-num">4</div>
                 <div class="step-body">
-                    <h3>If something looks wrong, go back</h3>
-                    <p>Click <span class="highlight">Edit Plate</span> to return to the 3D view. Re-orient, adjust settings, and re-slice. Slicing is fast — iterate freely before committing to a print.</p>
+                    <h3>If something looks wrong, adjust and re-slice</h3>
+                    <p>Start changing settings or moving the part — the slice preview clears automatically and you're back in edit mode. Adjust whatever needs fixing, then click <span class="highlight">Slice Plate</span> again. Slicing is fast — iterate freely before committing to a print.</p>
                 </div>
             </div>
         </div>
@@ -641,21 +641,16 @@
         <h2>Send to Printer</h2>
         <p>Once you're satisfied with the preview, you send the sliced job to the printer. Bambu Lab printers support three methods:</p>
 
-        <div class="grid-3" style="margin-top: 24px;">
+        <div class="grid-2" style="margin-top: 24px; max-width: 800px;">
             <div class="box" style="text-align:center;">
-                <p style="font-size:2.2rem; margin-bottom:8px;">☁️</p>
-                <h3>Cloud (Recommended)</h3>
-                <p>Click <span class="highlight">Print → Send</span>. Select the printer from the dropdown. The job uploads and the printer starts after you confirm on its touchscreen. Both you and your teacher can see the queue.</p>
-            </div>
-            <div class="box-amber" style="text-align:center;">
                 <p style="font-size:2.2rem; margin-bottom:8px;">🔌</p>
                 <h3>LAN (Direct)</h3>
-                <p>If cloud is unavailable, BambuStudio can send directly to the printer over the school network. Requires the printer to be on the same WiFi. Same process — click Print, select LAN mode.</p>
+                <p>Click <span class="highlight">Print → Send</span> and select LAN mode. BambuStudio sends directly to the printer over the school network. The printer starts after you confirm on its touchscreen. Requires the printer to be on the same WiFi.</p>
             </div>
-            <div class="box" style="text-align:center; border-color: rgba(0,208,132,0.25);">
+            <div class="box" style="text-align:center;">
                 <p style="font-size:2.2rem; margin-bottom:8px;">💾</p>
-                <h3>SD Card</h3>
-                <p>Export the sliced file as a <span class="highlight">.gcode.3mf</span> to an SD card. Insert into the printer and select the file from the touchscreen. No network needed.</p>
+                <h3>SD Card / USB Stick</h3>
+                <p>Export the sliced file to an SD card or USB drive. Insert into the printer and select the file from the touchscreen. No network needed — use this as a fallback if LAN is unavailable.</p>
             </div>
         </div>
 
@@ -824,10 +819,14 @@
     </div>
 </div>
 
-<!-- SLIDE 14: Ender 3 / Cura -->
+<!-- SLIDE 14: Ender 3 / Cura (legacy reference) -->
 <div class="slide">
     <div class="slide-content">
         <h2>Ender 3 V3 KE — Ultimaker Cura</h2>
+        <div class="note-box" style="margin-bottom: 20px;">
+            <h3>📚 Legacy Reference</h3>
+            <p style="margin:0;">We now slice Ender prints directly in <span style="color:#ffd166; font-weight:700;">BambuStudio</span> — you do not need to install Cura. This slide is kept for reference in case you ever need to use Cura on a machine that doesn't have BambuStudio, or want to understand the differences.</p>
+        </div>
         <p>The Ender 3 V3 KE printers use the same workflow, but with <span class="highlight">Ultimaker Cura</span> as the slicer instead of BambuStudio.</p>
 
         <div class="grid-2" style="margin-top: 20px;">
