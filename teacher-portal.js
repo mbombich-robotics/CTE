@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.60',
+    VERSION: 'v2.9.61',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -1026,8 +1026,11 @@ function openStudentDetail(email) {
             const dStatusLabel = isResubmitted ? 'Resubmitted' : (isUngraded ? 'Needs Grading' : 'Graded');
             const dStatusClass = isResubmitted ? 'status-behind' : (isUngraded ? 'status-behind' : 'status-on-track');
             const dBorderStyle = isResubmitted ? 'border-left: 4px solid #e53935;' : (isUngraded ? 'border-left: 4px solid var(--warning);' : '');
-            const docUrl = submitted[5] || draft?.links || '';
+            // For Design Briefs students submit the Google Doc URL as the content (submitted[4]);
+            // fall back to submitted[5] or draft links for other deliverables.
             const isDesignBrief = delLabel.toLowerCase().includes('design brief');
+            const docUrl = submitted[5] || draft?.links ||
+                (isDesignBrief && /docs\.google\.com\/document/.test(submitted[4] || '') ? submitted[4] : '') || '';
             const briefInputId = `brief-url-${email.replace(/[^a-zA-Z0-9]/g,'-')}-${id}`;
             const aiBriefBtn = id === 0 ? `
                 <div style="margin-top:10px;">
@@ -1979,6 +1982,24 @@ function loadGradeTable() {
         return;
     }
 
+    // Show/hide Batch AI Grade button (only for D1.1 Design Brief)
+    let batchBtn = document.getElementById('batchAiGradeBtn');
+    if (assignmentId === 11) {
+        if (!batchBtn) {
+            batchBtn = document.createElement('button');
+            batchBtn.id = 'batchAiGradeBtn';
+            batchBtn.className = 'btn btn-secondary btn-small';
+            batchBtn.innerHTML = '<i class="fas fa-robot"></i> Batch AI Grade';
+            batchBtn.onclick = runBatchD11Grading;
+            document.getElementById('saveAllGradesBtn').insertAdjacentElement('beforebegin', batchBtn);
+        }
+        batchBtn.style.display = '';
+        batchBtn.disabled = false;
+        batchBtn.innerHTML = '<i class="fas fa-robot"></i> Batch AI Grade';
+    } else if (batchBtn) {
+        batchBtn.style.display = 'none';
+    }
+
     tbody.innerHTML = filteredStudents.map(student => {
         let status = '<span class="status-badge status-very-behind">Not Started</span>';
         let aiGrade = '';        // read-only baseline (AI or auto-scored)
@@ -2140,6 +2161,118 @@ async function saveAllGrades() {
             btn.disabled = false;
         }, 2000);
     }
+}
+
+// ============================================
+// D1.1 BATCH AI GRADER
+// ============================================
+
+async function runBatchD11Grading() {
+    const btn = document.getElementById('batchAiGradeBtn');
+    const courseKey  = state.activeCourse;
+    const course     = CONFIG.COURSES[courseKey] || CONFIG.COURSES['hsaer'];
+    const allCriteria = BRIEF_CRITERIA[11] || [];
+    const criteria   = allCriteria.filter(c => !(c.skipFor8AER && courseKey === '8aer'));
+    const maxTotal   = criteria.reduce((s, c) => s + c.max, 0);
+
+    // Collect rows that have a Google Doc URL in submitted[4] or submitted[5]
+    const tasks = [];
+    document.querySelectorAll('#gradeTableBody tr[data-email]').forEach(row => {
+        const email     = row.dataset.email;
+        const submitted = state.rawData.deliverables?.find(d => d[0] === email && d[2] == 11);
+        if (!submitted || submitted[7] !== 'completed') return;
+        const docUrl = (submitted[5] || submitted[4] || '').trim();
+        if (!docUrl.includes('docs.google.com')) return;
+        tasks.push({ email, docUrl, row });
+    });
+
+    if (tasks.length === 0) {
+        alert('No submitted students with Google Doc URLs found. Make sure the assignment is set to D1.1 and students have submitted.');
+        return;
+    }
+
+    btn.disabled = true;
+    let done = 0;
+    const BATCH_SIZE = 5;
+
+    const updateBtn = () => {
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Grading ${done} / ${tasks.length}…`;
+    };
+    updateBtn();
+
+    for (let i = 0; i < tasks.length; i += BATCH_SIZE) {
+        const batch = tasks.slice(i, i + BATCH_SIZE);
+
+        await Promise.allSettled(batch.map(async ({ email, docUrl, row }) => {
+            try {
+                const res = await fetch(course.apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({
+                        action: 'gradeDesignBrief',
+                        token: CONFIG.TEACHER_TOKEN,
+                        email,
+                        docUrl,
+                        deliverableId: 11
+                    })
+                });
+                const data = await res.json();
+
+                if (data.success && data.grades) {
+                    // Build total + per-criterion feedback text
+                    let total = 0;
+                    const lines = criteria.map(c => {
+                        const g = data.grades[c.id] || {};
+                        const score = (g.score !== null && g.score !== undefined)
+                            ? Math.min(Number(g.score) || 0, c.max) : 0;
+                        total += score;
+                        const fb = (g.feedback || '').replace(/\n/g, ' ');
+                        return `${c.label}: ${score}/${c.max} — ${fb}`;
+                    });
+                    const feedbackText = lines.join('\n') + `\n\nTotal: ${total}/${maxTotal}`;
+
+                    // Update the row in the grade table
+                    row.dataset.aigrade = total;
+
+                    // 4th <td> is the AI Grade display cell
+                    const cells = row.querySelectorAll('td');
+                    if (cells[3]) cells[3].textContent = total;
+
+                    // Final score cell
+                    const finalCell = row.querySelector('.final-score-cell');
+                    if (finalCell) {
+                        finalCell.dataset.base = total;
+                        const adj = parseFloat(row.querySelector('.adjustment-input')?.value) || 0;
+                        finalCell.textContent = total + adj;
+                        finalCell.style.color = 'var(--primary)';
+                    }
+
+                    // Feedback input
+                    const feedbackInput = row.querySelector('.feedback-input');
+                    if (feedbackInput) {
+                        feedbackInput.value = feedbackText;
+                        feedbackInput.title = feedbackText;  // hover tooltip
+                    }
+                }
+            } catch (e) {
+                // silently skip — row keeps its "—" AI Grade
+            }
+            done++;
+            updateBtn();
+        }));
+
+        // Brief pause between batches to be polite to the API
+        if (i + BATCH_SIZE < tasks.length) {
+            await new Promise(r => setTimeout(r, 600));
+        }
+    }
+
+    btn.innerHTML = `<i class="fas fa-check"></i> Graded ${done}`;
+    btn.disabled = false;
+    showToast(
+        `AI grading complete — ${done} students scored. Review the AI Grade column, adjust if needed, then click Save and Close.`,
+        'success', 6000
+    );
 }
 
 // ============================================
