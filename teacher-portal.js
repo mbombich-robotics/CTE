@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.61',
+    VERSION: 'v2.9.62',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -26,7 +26,7 @@ const CONFIG = {
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
-            deliverablePoints: { 0: 20, 10: 10, 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75 },
+            deliverablePoints: { 0: 20, 10: 10, 11: 28, 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75 },
             deliverableWeeks: { 8: 10, 9: 11 },
             quizzes: [
                 { id: 'claw',       name: 'Claw Quiz',  questionCount: 7,  maxPoints: 28 },
@@ -40,7 +40,7 @@ const CONFIG = {
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
-            deliverablePoints: { 0: 20, 10: 10, 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75 },
+            deliverablePoints: { 0: 20, 10: 10, 11: 24, 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75 },
             deliverableWeeks: { 8: 10, 9: 11 },
             quizzes: [
                 { id: 'claw',       name: 'Claw Quiz',  questionCount: 7,  maxPoints: 28 },
@@ -54,7 +54,7 @@ const CONFIG = {
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
-            deliverablePoints: { 10: 10 },
+            deliverablePoints: { 10: 10, 11: 28 },
             deliverableWeeks: {},
             quizzes: []
         }
@@ -1040,9 +1040,13 @@ function openStudentDetail(email) {
                     </button>
                 </div>` : isDesignBrief ? `
                 <div style="margin-top:10px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    ${docUrl ? `<a href="${docUrl.replace(/"/g,'&quot;')}" target="_blank" rel="noopener"
+                        style="padding:5px 12px; border:1px solid var(--gray-300); border-radius:6px; font-size:12px; color:var(--primary); text-decoration:none; white-space:nowrap; display:inline-flex; align-items:center; gap:5px;">
+                        <i class="fas fa-external-link-alt"></i> Open Doc
+                    </a>` : ''}
                     <input id="${briefInputId}" type="text" placeholder="Paste Google Doc URL here"
                            value="${docUrl.replace(/"/g,'&quot;')}"
-                           style="flex:1; min-width:220px; padding:5px 10px; border:1px solid var(--gray-300); border-radius:6px; font-size:12px;"/>
+                           style="flex:1; min-width:180px; padding:5px 10px; border:1px solid var(--gray-300); border-radius:6px; font-size:12px;"/>
                     <button onclick="openDesignBriefGrader('${email.replace(/'/g,"\\'")}', ${id}, document.getElementById('${briefInputId}').value, '${(submitted[3]||'Deliverable '+id).replace(/'/g,"\\'")}', '${(student.name||'').replace(/'/g,"\\'")}' )"
                             style="padding:6px 14px; background:var(--primary); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">
                         <i class="fas fa-robot"></i> AI Grade Design Brief
