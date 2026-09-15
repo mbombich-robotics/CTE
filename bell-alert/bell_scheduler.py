@@ -3,9 +3,9 @@
 bell_scheduler.py — VCS Classroom Bell Alert
 Turns Shelly smart plugs ON before each bell, OFF at the bell.
 Controls plugs via local HTTP (Gen4 RPC API) — no cloud account required.
-Resolves plug IPs at startup (and each midnight rollover) by MAC address
-via the Windows ARP table, so IP changes after a hotspot restart are handled
-automatically.
+Resolves plug IPs by MAC address via the Windows ARP table, re-resolving
+before each bell so mid-day hotspot restarts are handled automatically.
+Stale ARP entries are cleaned up by clear-stale-arp.ps1 at startup.
 Runs continuously; auto-started via Windows Startup folder.
 """
 
@@ -44,15 +44,14 @@ logging.basicConfig(
 log = logging.getLogger("bell_alert")
 
 
-# ── MAC → IP resolution ───────────────────────────────────────────────────────
+# ── MAC → IP resolution (ARP fallback only) ───────────────────────────────────
 def mac_to_ip(mac: str) -> str | None:
     """
     Look up the current IP for a MAC address in the Windows ARP table.
     Accepts either colon- or dash-separated MAC strings, any case.
 
-    If multiple IPs map to the same MAC (e.g. stale static entries after a
-    DHCP lease change), probes each candidate with a quick HTTP call and
-    returns the first one that responds to the Shelly RPC API.
+    If multiple IPs map to the same MAC (stale static entries after a DHCP
+    lease change), probes each candidate and returns the first live Shelly.
     """
     normalized = mac.lower().replace(":", "-")
     candidates: list[str] = []
@@ -74,7 +73,7 @@ def mac_to_ip(mac: str) -> str | None:
     if len(candidates) == 1:
         return candidates[0]
 
-    # Multiple IPs — probe each one and return the first live Shelly
+    # Multiple ARP entries — probe to find the live one
     log.warning("Multiple IPs for MAC %s: %s — probing for live device…", mac, candidates)
     for ip in candidates:
         try:
@@ -84,16 +83,14 @@ def mac_to_ip(mac: str) -> str | None:
                 return ip
         except Exception:
             pass
-    # If none responded, fall back to the first candidate
     log.warning("No candidate responded — defaulting to %s", candidates[0])
     return candidates[0]
 
 
 def resolve_ips() -> list[str]:
     """
-    Resolve all configured MAC addresses to their current IPs.
-    Logs and skips any that aren't in the ARP table yet.
-    Falls back to the previous IPs list if provided and resolution yields nothing.
+    Resolve all configured MAC addresses to their current IPs via the ARP table.
+    Logs and skips any that aren't found.
     """
     ips = []
     for mac in SHELLY_MACS:
