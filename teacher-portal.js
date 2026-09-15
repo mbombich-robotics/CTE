@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.63',
+    VERSION: 'v2.9.64',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -1922,7 +1922,7 @@ function debounce(func, wait) {
 // ============================================
 function initGradeEntry() {
     document.getElementById('gradeEntryBtn').addEventListener('click', openGradeEntry);
-    document.getElementById('closeGradeModal').addEventListener('click', closeGradeEntry);
+    document.getElementById('closeGradeModal').addEventListener('click', handleSaveAndClose);
     // Note: click-outside-to-close intentionally removed — accidental dismissal loses unsaved grades
     document.getElementById('assignmentType').addEventListener('change', updateAssignmentSelect);
     document.getElementById('assignmentSelect').addEventListener('change', refreshGradeView);
@@ -2364,6 +2364,11 @@ async function saveStudentGradeInline(email, assignmentId, statusId) {
         // Update card border
         const card = document.getElementById(`rcard-${slug}`);
         if (card && ok) card.style.borderLeftColor = 'var(--gray-300)';
+        // Patch in-memory cache so reopening the modal shows the saved grade, not the stale snapshot
+        if (ok && state.rawData?.deliverables) {
+            const row = state.rawData.deliverables.find(d => d[0] === email && d[2] == assignmentId);
+            if (row) { row[9] = grade; row[10] = feedback; }
+        }
     } catch (e) {
         if (statusEl) statusEl.innerHTML = '<span style="color:#dc2626;"><i class="fas fa-exclamation-triangle"></i> Network error</span>';
     }
