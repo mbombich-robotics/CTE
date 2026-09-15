@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.38',
+    VERSION: 'v2.14.39',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -2349,6 +2349,7 @@ function updateUI() {
     updateDashboardDeliverables();
     updateDeliverablesList();
     updateFeedbackNotification();
+    renderLateWorkBanner();
 
     const quizNav = document.getElementById('quizNavItem');
     if (quizNav) {
@@ -2427,6 +2428,62 @@ function renderDashboardRow(d) {
         <span style="flex:1;font-size:0.95rem;${titleStyle}">${d.title}${optionalTag}</span>
         <span style="font-size:0.85rem;color:var(--gray-500);white-space:nowrap;">${d.points} pts</span>
     </div>`;
+}
+
+// ── Late Work Banner ─────────────────────────────────────────────────────────
+// Shows a policy reminder whenever the student has an overdue, unsubmitted
+// deliverable.  Disappears automatically once the work is turned in.
+function renderLateWorkBanner() {
+    const banner = document.getElementById('lateWorkBanner');
+    if (!banner) return;
+
+    // Collect overdue deliverables: assigned in a past week, not yet completed
+    const overdueItems = [];
+    for (let week = 1; week < state.currentWeek; week++) {
+        const d = DELIVERABLES.find(del =>
+            !del.hidden && isForCourse(del) && del.week === week
+        );
+        if (d && !d.optional
+            && !state.config.skipDeliverableWeeks.includes(d.id)
+            && !!state.config.deliverableDueDates[d.id]
+            && state.deliverables[d.id]?.status !== 'completed') {
+            overdueItems.push(d);
+        }
+    }
+
+    if (overdueItems.length === 0) {
+        banner.style.display = 'none';
+        banner.innerHTML = '';
+        return;
+    }
+
+    // Build a human-readable list of overdue item names
+    const itemList = overdueItems
+        .map(d => `<strong>${d.title}</strong>`)
+        .join(', ');
+
+    // How many school days have passed since the due date end-of-week?
+    // Keep the policy reminder generic — penalty math is teacher's call.
+    banner.style.display = '';
+    banner.innerHTML = `
+<div class="card" style="background:#fff7ed;border-left:4px solid #ef4444;margin-bottom:20px;padding:16px 20px;">
+    <h3 style="color:#ef4444;margin:0 0 10px;font-size:1rem;display:flex;align-items:center;gap:8px;">
+        <i class="fas fa-exclamation-triangle"></i>
+        Past Due — ${itemList}
+    </h3>
+    <p style="margin:0 0 10px;font-size:0.9rem;line-height:1.55;color:var(--gray-700);">
+        <strong>Late Work Policy (from your syllabus):</strong> Deliverables are accepted
+        up to <strong>3 school days late</strong> with a <strong>10% per-day deduction</strong>.
+        After 3 days, work may still be submitted for partial credit at the teacher's
+        discretion — but you need to turn it in as soon as possible.
+    </p>
+    <p style="margin:0;font-size:0.9rem;line-height:1.55;color:var(--gray-700);">
+        <i class="fas fa-user-clock" style="color:#f97316;margin-right:5px;"></i>
+        <strong>Were you absent or do you have an accommodation plan?</strong>
+        Contact Mr. Bombich directly — don't wait. Students who need extra time for
+        these reasons should reach out before the penalty window closes.
+    </p>
+</div>`;
 }
 
 function updateFeedbackNotification() {
