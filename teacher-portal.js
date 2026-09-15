@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.62',
+    VERSION: 'v2.9.63',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -354,6 +354,11 @@ let state = {
     },
     currentWeek: 1
 };
+
+// Grade Entry view mode: 'cards' (default scrollable review) | 'table' (bulk table)
+let gradeViewMode = 'cards';
+// Debounce timers for auto-save per student email
+let autoSaveTimers = {};
 
 // ============================================
 // INITIALIZATION
@@ -1918,13 +1923,11 @@ function debounce(func, wait) {
 function initGradeEntry() {
     document.getElementById('gradeEntryBtn').addEventListener('click', openGradeEntry);
     document.getElementById('closeGradeModal').addEventListener('click', closeGradeEntry);
-    document.getElementById('gradeEntryModal').addEventListener('click', (e) => {
-        if (e.target.id === 'gradeEntryModal') closeGradeEntry();
-    });
+    // Note: click-outside-to-close intentionally removed — accidental dismissal loses unsaved grades
     document.getElementById('assignmentType').addEventListener('change', updateAssignmentSelect);
-    document.getElementById('assignmentSelect').addEventListener('change', loadGradeTable);
-    document.getElementById('gradePeriodFilter').addEventListener('change', loadGradeTable);
-    document.getElementById('saveAllGradesBtn').addEventListener('click', saveAllGrades);
+    document.getElementById('assignmentSelect').addEventListener('change', refreshGradeView);
+    document.getElementById('gradePeriodFilter').addEventListener('change', refreshGradeView);
+    document.getElementById('saveAllGradesBtn').addEventListener('click', handleSaveAndClose);
 }
 
 function openGradeEntry() {
@@ -1954,7 +1957,7 @@ function updateAssignmentSelect() {
         }
     }
 
-    loadGradeTable();
+    refreshGradeView();
 }
 
 function loadGradeTable() {
@@ -1984,24 +1987,6 @@ function loadGradeTable() {
     if (filteredStudents.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No students found.</td></tr>';
         return;
-    }
-
-    // Show/hide Batch AI Grade button (only for D1.1 Design Brief)
-    let batchBtn = document.getElementById('batchAiGradeBtn');
-    if (assignmentId === 11) {
-        if (!batchBtn) {
-            batchBtn = document.createElement('button');
-            batchBtn.id = 'batchAiGradeBtn';
-            batchBtn.className = 'btn btn-secondary btn-small';
-            batchBtn.innerHTML = '<i class="fas fa-robot"></i> Batch AI Grade';
-            batchBtn.onclick = runBatchD11Grading;
-            document.getElementById('saveAllGradesBtn').insertAdjacentElement('beforebegin', batchBtn);
-        }
-        batchBtn.style.display = '';
-        batchBtn.disabled = false;
-        batchBtn.innerHTML = '<i class="fas fa-robot"></i> Batch AI Grade';
-    } else if (batchBtn) {
-        batchBtn.style.display = 'none';
     }
 
     tbody.innerHTML = filteredStudents.map(student => {
@@ -2142,7 +2127,7 @@ async function saveAllGrades() {
                 btn.innerHTML = '<i class="fas fa-check"></i> Saved!';
             }
             await loadCourseData();
-            loadGradeTable();
+            refreshGradeView();
             setTimeout(() => {
                 btn.innerHTML = '<i class="fas fa-save"></i> Save and Close';
                 btn.disabled = false;
@@ -2151,7 +2136,7 @@ async function saveAllGrades() {
         } else {
             btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error: ' + (result.error || 'Unknown');
             await loadCourseData();
-            loadGradeTable();
+            refreshGradeView();
             setTimeout(() => {
                 btn.innerHTML = '<i class="fas fa-save"></i> Save and Close';
                 btn.disabled = false;
@@ -2168,6 +2153,223 @@ async function saveAllGrades() {
 }
 
 // ============================================
+// GRADE VIEW ROUTING
+// ============================================
+
+function toggleGradeViewMode() {
+    gradeViewMode = gradeViewMode === 'cards' ? 'table' : 'cards';
+    const btn = document.getElementById('gradeViewToggleBtn');
+    if (btn) {
+        btn.innerHTML = gradeViewMode === 'cards'
+            ? '<i class="fas fa-table"></i> Table View'
+            : '<i class="fas fa-th-list"></i> Card View';
+    }
+    refreshGradeView();
+}
+
+function refreshGradeView() {
+    const assignmentId    = parseInt(document.getElementById('assignmentSelect')?.value);
+    const tableContainer  = document.querySelector('.grade-table-container');
+    const cardsPanel      = document.getElementById('gradeReviewPanel');
+
+    // Batch AI Grade button — visible for D1.1 in any view mode
+    let batchBtn = document.getElementById('batchAiGradeBtn');
+    if (assignmentId === 11) {
+        if (!batchBtn) {
+            batchBtn = document.createElement('button');
+            batchBtn.id        = 'batchAiGradeBtn';
+            batchBtn.className = 'btn btn-secondary btn-small';
+            batchBtn.innerHTML = '<i class="fas fa-robot"></i> Batch AI Grade';
+            batchBtn.onclick   = runBatchD11Grading;
+            document.getElementById('saveAllGradesBtn').insertAdjacentElement('beforebegin', batchBtn);
+        }
+        batchBtn.style.display = '';
+        batchBtn.disabled      = false;
+        batchBtn.innerHTML     = '<i class="fas fa-robot"></i> Batch AI Grade';
+    } else if (batchBtn) {
+        batchBtn.style.display = 'none';
+    }
+
+    if (gradeViewMode === 'cards') {
+        if (tableContainer) tableContainer.style.display = 'none';
+        if (cardsPanel)     { cardsPanel.style.display = 'block'; loadReviewCards(); }
+    } else {
+        if (tableContainer) tableContainer.style.display = 'block';
+        if (cardsPanel)     cardsPanel.style.display = 'none';
+        loadGradeTable();
+    }
+}
+
+async function handleSaveAndClose() {
+    if (gradeViewMode === 'cards') {
+        // In card mode: save anything still marked unsaved, then close
+        const pending = document.querySelectorAll('.review-card');
+        const saves = [];
+        pending.forEach(card => {
+            const gradeEl = card.querySelector('.review-grade-input');
+            const statusEl = gradeEl ? document.getElementById(gradeEl.dataset.status) : null;
+            const statusText = statusEl?.textContent || '';
+            if (gradeEl && gradeEl.value !== '' && statusText.includes('Unsaved')) {
+                saves.push(saveStudentGradeInline(
+                    gradeEl.dataset.email,
+                    parseInt(gradeEl.dataset.assignment),
+                    gradeEl.dataset.status
+                ));
+            }
+        });
+        if (saves.length) await Promise.allSettled(saves);
+        closeGradeEntry();
+    } else {
+        saveAllGrades();
+    }
+}
+
+// ── Card renderer ────────────────────────────────────────────────────────────
+
+function loadReviewCards() {
+    const panel = document.getElementById('gradeReviewPanel');
+    if (!panel) return;
+    const assignmentId = parseInt(document.getElementById('assignmentSelect').value);
+    if (isNaN(assignmentId)) { panel.innerHTML = '<p style="padding:16px; color:var(--gray-400);">Select an assignment.</p>'; return; }
+
+    const periodFilter = document.getElementById('gradePeriodFilter').value;
+    const course  = CONFIG.COURSES[state.activeCourse];
+    const maxPts  = course.deliverablePoints?.[assignmentId] || 50;
+    const isBrief = assignmentId === 11;
+
+    let students = [...state.students];
+    if (periodFilter !== 'all') students = students.filter(s => s.period === periodFilter);
+    students.sort((a, b) => {
+        if (a.period !== b.period) return (a.period || '').localeCompare(b.period || '');
+        return (a.name.split(' ').pop() || '').localeCompare(b.name.split(' ').pop() || '');
+    });
+
+    const cards = [];
+    let skipped = 0;
+    students.forEach(student => {
+        const submitted = state.rawData.deliverables?.find(d => d[0] === student.email && d[2] == assignmentId);
+        const draft = student.fullState?.deliverables?.[assignmentId];
+        if (!submitted || submitted[7] !== 'completed') { skipped++; return; }
+
+        const grade    = (submitted[9] !== '' && submitted[9] !== null && submitted[9] !== undefined) ? submitted[9] : '';
+        const feedback = submitted[10] || '';
+        const docUrl   = submitted[5] || draft?.links ||
+            (isBrief && /docs\.google\.com\/document/.test(submitted[4] || '') ? submitted[4] : '') || '';
+
+        cards.push(renderReviewCard(student, assignmentId, maxPts, grade, feedback, docUrl));
+    });
+
+    panel.innerHTML = `
+        <div style="padding:6px 2px 12px; font-size:13px; color:var(--gray-500);">
+            ${cards.length} submitted${skipped ? ` · ${skipped} not yet submitted` : ''}
+        </div>
+        ${cards.join('')}
+    `;
+}
+
+function renderReviewCard(student, assignmentId, maxPts, grade, feedback, docUrl) {
+    const slug     = student.email.replace(/[^a-zA-Z0-9]/g, '-');
+    const statusId = `ss-${slug}`;
+    const isGraded = grade !== '' && grade !== null && grade !== undefined;
+    const safeFb   = (feedback || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const docLink  = docUrl
+        ? `<a href="${docUrl.replace(/"/g, '&quot;')}" target="_blank" rel="noopener"
+               style="font-size:12px; color:var(--primary); text-decoration:none; display:inline-flex; align-items:center; gap:4px; white-space:nowrap; padding:4px 10px; border:1px solid var(--primary); border-radius:5px;">
+               <i class="fas fa-external-link-alt"></i> Open Doc
+           </a>` : '';
+
+    return `
+<div class="review-card${isGraded ? ' graded' : ''}" id="rcard-${slug}">
+  <div class="review-card-header">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div class="avatar">${getInitials(student.name)}</div>
+      <div>
+        <div style="font-weight:700; font-size:14px; color:var(--gray-800);">${student.name}</div>
+        <div style="font-size:12px; color:var(--gray-500);">${formatPeriod(student.period)}</div>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+      ${docLink}
+      <span id="${statusId}" style="font-size:11px; color:var(--gray-400); white-space:nowrap;">${isGraded ? '<i class="fas fa-check" style="color:#16a34a;"></i> Graded' : '● Unsaved'}</span>
+      <button onclick="saveStudentGradeInline('${student.email.replace(/'/g, "\\'")}', ${assignmentId}, '${statusId}')"
+              style="padding:4px 14px; background:var(--primary); color:white; border:none; border-radius:5px; font-size:12px; font-weight:600; cursor:pointer;">
+        Save
+      </button>
+    </div>
+  </div>
+  <div class="review-card-body">
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+      <label style="font-size:13px; font-weight:600; color:var(--gray-700);">Grade:</label>
+      <input type="number" class="review-grade-input"
+             id="rg-${slug}"
+             data-email="${student.email}" data-assignment="${assignmentId}" data-status="${statusId}"
+             value="${grade}" min="0" max="${maxPts}" step="1"
+             oninput="markCardUnsaved('${statusId}')"
+             onchange="scheduleCardAutoSave('${student.email.replace(/'/g, "\\'")}', ${assignmentId}, '${statusId}')"
+             style="width:65px; padding:5px 8px; border:1px solid var(--gray-300); border-radius:5px; font-size:18px; font-weight:700; text-align:center;">
+      <span style="font-size:13px; color:var(--gray-500);">/ ${maxPts} pts</span>
+    </div>
+    <textarea id="rf-${slug}"
+              data-email="${student.email}" data-assignment="${assignmentId}" data-status="${statusId}"
+              oninput="markCardUnsaved('${statusId}')"
+              onchange="scheduleCardAutoSave('${student.email.replace(/'/g, "\\'")}', ${assignmentId}, '${statusId}')"
+              style="width:100%; box-sizing:border-box; padding:10px; border:1px solid var(--gray-200); border-radius:6px; font-size:12px; line-height:1.6; color:var(--gray-700); resize:vertical; min-height:130px; font-family:inherit; background:var(--gray-50);"
+              placeholder="AI feedback appears here after batch grading, or type your own…">${safeFb}</textarea>
+  </div>
+</div>`;
+}
+
+// ── Per-card save helpers ─────────────────────────────────────────────────────
+
+function markCardUnsaved(statusId) {
+    const el = document.getElementById(statusId);
+    if (el) el.innerHTML = '<span style="color:var(--warning);">● Unsaved</span>';
+}
+
+function scheduleCardAutoSave(email, assignmentId, statusId) {
+    clearTimeout(autoSaveTimers[email]);
+    autoSaveTimers[email] = setTimeout(() => saveStudentGradeInline(email, assignmentId, statusId), 1500);
+}
+
+async function saveStudentGradeInline(email, assignmentId, statusId) {
+    clearTimeout(autoSaveTimers[email]);
+    const slug      = email.replace(/[^a-zA-Z0-9]/g, '-');
+    const gradeEl   = document.getElementById(`rg-${slug}`);
+    const feedbackEl = document.getElementById(`rf-${slug}`);
+    const statusEl  = document.getElementById(statusId);
+
+    const gradeVal = gradeEl?.value ?? '';
+    if (gradeVal === '') return;   // nothing to save yet
+
+    const grade    = parseFloat(gradeVal);
+    const feedback = feedbackEl?.value || '';
+    const course   = CONFIG.COURSES[state.activeCourse] || CONFIG.COURSES['hsaer'];
+
+    if (statusEl) statusEl.innerHTML = '<span style="color:var(--gray-400);"><i class="fas fa-spinner fa-spin"></i> Saving…</span>';
+
+    try {
+        const res = await fetch(course.apiUrl, {
+            method: 'POST',
+            redirect: 'follow',
+            body: JSON.stringify({
+                action: 'saveGrades',
+                grades: [{ email, type: 'deliverable', assignmentId, grade, feedback }]
+            })
+        });
+        const data = await res.json();
+        const ok = data.success && (!data.missed || data.missed.length === 0);
+        if (statusEl) statusEl.innerHTML = ok
+            ? '<span style="color:#16a34a;"><i class="fas fa-check"></i> Saved</span>'
+            : `<span style="color:#dc2626;"><i class="fas fa-exclamation-triangle"></i> ${data.missed?.length ? 'Wrong track?' : 'Error'}</span>`;
+        // Update card border
+        const card = document.getElementById(`rcard-${slug}`);
+        if (card && ok) card.style.borderLeftColor = 'var(--gray-300)';
+    } catch (e) {
+        if (statusEl) statusEl.innerHTML = '<span style="color:#dc2626;"><i class="fas fa-exclamation-triangle"></i> Network error</span>';
+    }
+}
+
+// ============================================
 // D1.1 BATCH AI GRADER
 // ============================================
 
@@ -2179,15 +2381,18 @@ async function runBatchD11Grading() {
     const criteria   = allCriteria.filter(c => !(c.skipFor8AER && courseKey === '8aer'));
     const maxTotal   = criteria.reduce((s, c) => s + c.max, 0);
 
-    // Collect rows that have a Google Doc URL in submitted[4] or submitted[5]
+    // Collect all submitted students with Google Doc URLs (from state, not DOM)
+    const periodFilter = document.getElementById('gradePeriodFilter').value;
     const tasks = [];
-    document.querySelectorAll('#gradeTableBody tr[data-email]').forEach(row => {
-        const email     = row.dataset.email;
-        const submitted = state.rawData.deliverables?.find(d => d[0] === email && d[2] == 11);
-        if (!submitted || submitted[7] !== 'completed') return;
-        const docUrl = (submitted[5] || submitted[4] || '').trim();
+    (state.rawData.deliverables || []).forEach(sub => {
+        if (sub[2] != 11 || sub[7] !== 'completed') return;
+        const email = sub[0];
+        const student = state.students.find(s => s.email === email);
+        if (!student) return;
+        if (periodFilter !== 'all' && student.period !== periodFilter) return;
+        const docUrl = (sub[5] || sub[4] || '').trim();
         if (!docUrl.includes('docs.google.com')) return;
-        tasks.push({ email, docUrl, row });
+        tasks.push({ email, docUrl });
     });
 
     if (tasks.length === 0) {
@@ -2207,7 +2412,7 @@ async function runBatchD11Grading() {
     for (let i = 0; i < tasks.length; i += BATCH_SIZE) {
         const batch = tasks.slice(i, i + BATCH_SIZE);
 
-        await Promise.allSettled(batch.map(async ({ email, docUrl, row }) => {
+        await Promise.allSettled(batch.map(async ({ email, docUrl }) => {
             try {
                 const res = await fetch(course.apiUrl, {
                     method: 'POST',
@@ -2234,32 +2439,34 @@ async function runBatchD11Grading() {
                         return `${c.label}: ${score}/${c.max} — ${fb}`;
                     });
                     const feedbackText = lines.join('\n') + `\n\nTotal: ${total}/${maxTotal}`;
+                    const slug = email.replace(/[^a-zA-Z0-9]/g, '-');
 
-                    // Update the row in the grade table
-                    row.dataset.aigrade = total;
+                    // ── Card view ──────────────────────────────────────────────
+                    const gradeCard = document.getElementById(`rg-${slug}`);
+                    const feedCard  = document.getElementById(`rf-${slug}`);
+                    const statusEl  = gradeCard ? document.getElementById(gradeCard.dataset.status) : null;
+                    if (gradeCard) { gradeCard.value = total; }
+                    if (feedCard)  { feedCard.value  = feedbackText; }
+                    if (statusEl)  { markCardUnsaved(gradeCard.dataset.status); }
 
-                    // 4th <td> is the AI Grade display cell
-                    const cells = row.querySelectorAll('td');
-                    if (cells[3]) cells[3].textContent = total;
-
-                    // Final score cell
-                    const finalCell = row.querySelector('.final-score-cell');
-                    if (finalCell) {
-                        finalCell.dataset.base = total;
-                        const adj = parseFloat(row.querySelector('.adjustment-input')?.value) || 0;
-                        finalCell.textContent = total + adj;
-                        finalCell.style.color = 'var(--primary)';
-                    }
-
-                    // Feedback input
-                    const feedbackInput = row.querySelector('.feedback-input');
-                    if (feedbackInput) {
-                        feedbackInput.value = feedbackText;
-                        feedbackInput.title = feedbackText;  // hover tooltip
+                    // ── Table view (fallback) ──────────────────────────────────
+                    const row = document.querySelector(`#gradeTableBody tr[data-email="${CSS.escape(email)}"]`);
+                    if (row) {
+                        row.dataset.aigrade = total;
+                        const cells = row.querySelectorAll('td');
+                        if (cells[3]) cells[3].textContent = total;
+                        const finalCell = row.querySelector('.final-score-cell');
+                        if (finalCell) {
+                            finalCell.dataset.base = total;
+                            const adj = parseFloat(row.querySelector('.adjustment-input')?.value) || 0;
+                            finalCell.textContent = total + adj;
+                        }
+                        const feedbackInput = row.querySelector('.feedback-input');
+                        if (feedbackInput) feedbackInput.value = feedbackText;
                     }
                 }
             } catch (e) {
-                // silently skip — row keeps its "—" AI Grade
+                // silently skip — keeps "—" / empty
             }
             done++;
             updateBtn();

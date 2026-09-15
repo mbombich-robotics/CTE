@@ -185,6 +185,35 @@
             overflow: hidden;
         }
 
+        /* ── Grade Review Cards ─────────────────────────── */
+        .review-card {
+            background: var(--surface);
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--warning);
+            border-radius: 10px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            transition: border-left-color 0.3s;
+        }
+        .review-card.graded {
+            border-left-color: var(--gray-300);
+        }
+        .review-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--gray-100);
+            flex-wrap: wrap;
+            gap: 8px;
+            background: var(--gray-50);
+        }
+        .review-card-body {
+            padding: 12px 14px;
+        }
+        .review-grade-input::-webkit-inner-spin-button,
+        .review-grade-input::-webkit-outer-spin-button { opacity: 1; }
+
         .student-table {
             width: 100%;
             border-collapse: collapse;
@@ -1051,6 +1080,9 @@
                                 </button>
                             </div>
                         </div>
+                        <button class="btn btn-secondary btn-small" id="gradeViewToggleBtn" onclick="toggleGradeViewMode()">
+                            <i class="fas fa-table"></i> Table View
+                        </button>
                         <button class="btn btn-primary btn-small" id="saveAllGradesBtn">
                             <i class="fas fa-save"></i> Save and Close
                         </button>
@@ -1062,8 +1094,11 @@
                     </div>
                 </div>
 
+                <!-- Card review mode -->
+                <div id="gradeReviewPanel" style="display:none; flex:1; overflow-y:auto; min-height:0; padding:0 2px;"></div>
+
                 <!-- Scrollable table only -->
-                <div class="grade-table-container" style="flex: 1; overflow-y: auto; min-height: 0;">
+                <div class="grade-table-container" style="flex: 1; overflow-y: auto; min-height: 0; display:none;">
                     <table class="student-table" id="gradeTable">
                         <thead style="position: sticky; top: 0; z-index: 1; background: var(--surface);">
                             <tr>
