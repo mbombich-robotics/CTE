@@ -28,7 +28,7 @@ MWF_BELLS = [
 
 # Tuesday / Thursday  (30-Min Tutorial Day, 43-min classes)
 TTH_BELLS = [
-    ("07:00", "07:02"),   # test
+    ("06:55", "06:56"),   # test
     ("08:22", "08:24"),   # 1st  — 8AER   MS bell 8:32 · 10-min lead for 8th graders
     ("09:08", "09:10"),   # 2nd  — DBL
     ("09:56", "09:58"),   # 3rd  — PREP   (your planning period — no students)
