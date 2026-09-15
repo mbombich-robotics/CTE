@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.64',
+    VERSION: 'v2.9.65',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -643,6 +643,9 @@ function processStudentData() {
         let draftDeliverables = 0;
         let ungradedDeliverables = 0;
 
+        // Track completed IDs for specific-deliverable status check below
+        const completedIdSet = new Set();
+
         if (state.rawData.deliverables) {
             const studentDeliverables = state.rawData.deliverables.filter(
                 d => d[0] === email && d[7] === 'completed'
@@ -655,6 +658,7 @@ function processStudentData() {
             });
             const deduped = Object.values(seen);
             completedDeliverables = deduped.length;
+            deduped.forEach(d => completedIdSet.add(Number(d[2])));
             // Count ungraded (column J = index 9 is Grade)
             ungradedDeliverables = deduped.filter(d => !d[9] && d[9] !== 0).length;
         }
@@ -671,6 +675,7 @@ function processStudentData() {
                     if (!inSheet) {
                         completedDeliverables++;
                         ungradedDeliverables++;
+                        completedIdSet.add(Number(dId));
                     }
                 }
             });
@@ -690,8 +695,11 @@ function processStudentData() {
                 });
         }
 
-        // Determine status - count deliverables expected past their Friday 3pm deadline
-        let expectedDeliverables = 0;
+        // Determine status — check whether each past-due deliverable is specifically completed.
+        // Previously this compared counts (expected vs total completed), which let a student
+        // appear on-track if they had SOME completed items even if the specific past-due one
+        // was missing. Now we check each expected deliverable by ID.
+        let deliverablesBehind = 0;
         for (let week = 1; week <= state.currentWeek; week++) {
             const weekStart = new Date(CONFIG.SEMESTER_START);
             weekStart.setDate(weekStart.getDate() + (week - 1) * 7);
@@ -701,12 +709,13 @@ function processStudentData() {
 
             if (new Date() > fridayDeadline) {
                 const dueDeliverable = deliverableForWeek(state.activeCourse, week);
-                if (dueDeliverable !== null && isDeliverableRequired(state.activeCourse, dueDeliverable.id)) {
-                    expectedDeliverables++;
+                if (dueDeliverable !== null
+                    && isDeliverableRequired(state.activeCourse, dueDeliverable.id)
+                    && !completedIdSet.has(dueDeliverable.id)) {
+                    deliverablesBehind++;
                 }
             }
         }
-        const deliverablesBehind = expectedDeliverables - completedDeliverables;
         const totalBehind = deliverablesBehind;
 
         let status = 'on-track';
