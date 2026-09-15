@@ -188,6 +188,16 @@ def run():
         while datetime.now() < next_dt:
             time.sleep(0.1)
 
+        # Re-resolve immediately before firing — IP may have changed since startup
+        # if the hotspot restarted or a DHCP lease was renewed mid-day.
+        fresh = resolve_ips()
+        if fresh:
+            if fresh != shelly_ips:
+                log.info("IP change detected — was %s, now %s", shelly_ips, fresh)
+            shelly_ips = fresh
+        else:
+            log.warning("Re-resolve failed before bell — retrying with cached IPs %s", shelly_ips)
+
         set_plugs(next_on, shelly_ips)
 
 
