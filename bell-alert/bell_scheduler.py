@@ -49,18 +49,44 @@ def mac_to_ip(mac: str) -> str | None:
     """
     Look up the current IP for a MAC address in the Windows ARP table.
     Accepts either colon- or dash-separated MAC strings, any case.
+
+    If multiple IPs map to the same MAC (e.g. stale static entries after a
+    DHCP lease change), probes each candidate with a quick HTTP call and
+    returns the first one that responds to the Shelly RPC API.
     """
     normalized = mac.lower().replace(":", "-")
+    candidates: list[str] = []
     try:
         result = subprocess.run(["arp", "-a"], capture_output=True, text=True, timeout=5)
         for line in result.stdout.splitlines():
             if normalized in line.lower():
                 match = re.search(r"(\d+\.\d+\.\d+\.\d+)", line)
                 if match:
-                    return match.group(1)
+                    ip = match.group(1)
+                    if ip not in candidates:
+                        candidates.append(ip)
     except Exception as exc:
         log.warning("ARP lookup failed for MAC %s: %s", mac, exc)
-    return None
+        return None
+
+    if not candidates:
+        return None
+    if len(candidates) == 1:
+        return candidates[0]
+
+    # Multiple IPs — probe each one and return the first live Shelly
+    log.warning("Multiple IPs for MAC %s: %s — probing for live device…", mac, candidates)
+    for ip in candidates:
+        try:
+            r = requests.get(f"http://{ip}/rpc/Shelly.GetStatus", timeout=2)
+            if r.ok:
+                log.info("Live Shelly at %s (others are stale ARP entries)", ip)
+                return ip
+        except Exception:
+            pass
+    # If none responded, fall back to the first candidate
+    log.warning("No candidate responded — defaulting to %s", candidates[0])
+    return candidates[0]
 
 
 def resolve_ips() -> list[str]:
