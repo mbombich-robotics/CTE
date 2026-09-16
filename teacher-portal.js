@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.67',
+    VERSION: 'v2.9.68',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -339,6 +339,27 @@ function deliverableForWeek(courseId, week) {
     return (TRACK_DELIVERABLES[courseId] || []).find(d => d.week === week) ?? null;
 }
 
+// Builds { portfolioId: isoDateString } from schedule-data.json for the active course.
+// For 8aer, picks g1 (fall) or g2 (spring) based on today's date.
+function buildDueDateMap(schedData, courseKey) {
+    const tracks = schedData?.tracks;
+    if (!tracks) return {};
+    let weeks;
+    if (courseKey === '8aer') {
+        const isSpring = new Date() >= new Date('2027-01-01');
+        weeks = isSpring ? tracks['8aer']?.g2?.weeks : tracks['8aer']?.g1?.weeks;
+    } else {
+        weeks = tracks[courseKey]?.weeks;
+    }
+    if (!weeks) return {};
+    const map = {};
+    weeks.forEach(w => {
+        const d = w.deliverable;
+        if (d?.portfolioId != null && d.dueDate) map[d.portfolioId] = d.dueDate;
+    });
+    return map;
+}
+
 // Returns whole days late for a submission, or 0 if on time / no timestamp.
 // Uses the explicit due date from backend config when set; falls back to
 // Friday 3pm of the deliverable's assigned week.
@@ -602,15 +623,15 @@ async function loadCourseData() {
     const fetchTimeout = setTimeout(() => controller.abort(), 35000); // 35-second hard timeout
 
     try {
-        const [response, cfgResponse] = await Promise.all([
+        const [response, scheduleResponse] = await Promise.all([
             fetch(course.apiUrl + '?action=all&_t=' + Date.now(), { signal: controller.signal }),
-            fetch(course.apiUrl + '?action=getConfig&_t=' + Date.now()).catch(() => null)
+            fetch('https://mbombich-robotics.github.io/CTE/schedule-data.json?_t=' + Date.now()).catch(() => null)
         ]);
         clearTimeout(fetchTimeout);
         state.rawData = await response.json();
-        if (cfgResponse?.ok) {
-            const cfg = await cfgResponse.json().catch(() => ({}));
-            state.deliverableDueDates = cfg.deliverableDueDates || {};
+        if (scheduleResponse?.ok) {
+            const sched = await scheduleResponse.json().catch(() => ({}));
+            state.deliverableDueDates = buildDueDateMap(sched, state.activeCourse);
         }
         processStudentData();
         applyFilters();
