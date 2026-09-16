@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.40',
+    VERSION: 'v2.14.41',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -4897,22 +4897,24 @@ async function loadQuizPage() {
 
     if (!state.quiz.loaded) {
         try {
-            const res = await fetch(`${CONFIG.SHEETS_API_URL}?action=checkQuiz&email=${encodeURIComponent(state.student.email)}&quizId=${encodeURIComponent(state.config.quizKey || 'claw')}&_t=${Date.now()}`);
+            const res = await fetch(`${CONFIG.SHEETS_API_URL}?action=checkQuiz&email=${encodeURIComponent(state.student.email)}&quizId=${encodeURIComponent(state.config.quizKey || 'edp_quiz')}&_t=${Date.now()}`);
             const data = await res.json();
             state.quiz.loaded = true;
             if (data.submitted) {
-                state.quiz.submitted = true;
-                state.quiz.grades    = data.grades;
-                state.quiz.aiTotal   = data.aiTotal;
-                updateUI(); // re-run to keep nav item visible
+                state.quiz.submitted      = true;
+                state.quiz.grades         = data.grades;
+                state.quiz.aiTotal        = data.aiTotal;
+                state.quiz.gradingPending = !!data.gradingPending;
+                updateUI();
             }
         } catch(e) {
-            state.quiz.loaded = true; // treat as not submitted on error
+            state.quiz.loaded = true;
         }
     }
 
-    if (state.quiz.submitted && state.quiz.grades) {
+    if (state.quiz.submitted) {
         renderQuizResults(page);
+        if (state.quiz.gradingPending) pollForGrades();
         return;
     }
 
@@ -5146,11 +5148,11 @@ async function submitQuiz(e) {
     }
 
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Grading your answers…';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving your answers…';
 
     const payload = {
         action:    'submitQuiz',
-        quizId:    state.config.quizKey || 'claw',
+        quizId:    state.config.quizKey || 'edp_quiz',
         email:     state.student.email,
         name:      state.student.name,
         timestamp: new Date().toLocaleString()
@@ -5173,16 +5175,15 @@ async function submitQuiz(e) {
 
         if (data.success) {
             state.quiz.submitted      = true;
-            state.quiz.grades         = data.grades;
-            state.quiz.aiTotal        = data.aiTotal;
-            state.quiz.gradingPending = !!data.gradingPending;
+            state.quiz.grades         = null;
+            state.quiz.aiTotal        = null;
+            state.quiz.gradingPending = true;
             state.quiz.loaded         = true;
             clearQuizDraft();
             updateUI();
             renderQuizResults(document.getElementById('quizPage'));
-            showToast(data.gradingPending
-                ? 'Quiz submitted! AI grading unavailable — Mr. Bombich will grade manually.'
-                : 'Quiz submitted!', data.gradingPending ? 'warning' : 'success');
+            showToast('Quiz saved! Getting your score…', 'success');
+            pollForGrades();
         } else if (data.error === 'already_submitted') {
             state.quiz.submitted = true;
             state.quiz.loaded    = true;
@@ -5198,10 +5199,57 @@ async function submitQuiz(e) {
     }
 }
 
+async function pollForGrades() {
+    const quizId = state.config.quizKey || 'edp_quiz';
+    const email   = state.student.email;
+    const maxAttempts = 8;
+
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        await new Promise(r => setTimeout(r, attempt === 0 ? 3000 : 8000));
+
+        if (!state.quiz.gradingPending) return; // already resolved
+
+        try {
+            const url = `${CONFIG.SHEETS_API_URL}?action=gradeQuizPending&email=${encodeURIComponent(email)}&quizId=${encodeURIComponent(quizId)}&_t=${Date.now()}`;
+            const data = await (await fetch(url)).json();
+
+            if (data.success && !data.gradingPending) {
+                state.quiz.grades         = data.grades;
+                state.quiz.aiTotal        = data.aiTotal;
+                state.quiz.gradingPending = false;
+                const page = document.getElementById('quizPage');
+                if (page) renderQuizResults(page);
+                showToast('Grading complete!', 'success');
+                return;
+            }
+        } catch(e) { /* keep trying */ }
+
+        const msg = document.getElementById('gradingPendingMsg');
+        if (msg) msg.textContent = `Still grading… (check ${attempt + 1} of ${maxAttempts})`;
+    }
+
+    const msg = document.getElementById('gradingPendingMsg');
+    if (msg) msg.innerHTML = 'Grading is taking longer than usual. <strong>Refresh this page in 1–2 minutes</strong> to see your score.';
+}
+
 function renderQuizResults(page) {
+    const gradingPending = state.quiz.gradingPending;
+
+    if (gradingPending) {
+        page.innerHTML = `
+            <div class="page-header">
+                <h1 class="page-title"><i class="fas fa-check-circle" style="color:var(--success);"></i> Quiz Submitted</h1>
+            </div>
+            <div class="card" style="text-align:center; padding:48px 24px;">
+                <i class="fas fa-spinner fa-spin" style="font-size:2.5rem; color:var(--primary); display:block; margin-bottom:20px;"></i>
+                <p style="font-size:17px; font-weight:700; color:var(--gray-700); margin-bottom:8px;">Grading in progress…</p>
+                <p id="gradingPendingMsg" style="font-size:14px; color:var(--gray-500);">Your answers are saved. Scores will appear here automatically — hang tight.</p>
+            </div>`;
+        return;
+    }
+
     const grades   = state.quiz.grades || {};
     const aiTotal        = state.quiz.aiTotal ?? '—';
-    const gradingPending = state.quiz.gradingPending;
 
     function badgeStyle(score, max) {
         const pct = score / max;

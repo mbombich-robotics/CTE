@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.12';
+const BACKEND_VERSION = 'v2.14.13';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -381,6 +381,9 @@ function doGet(e) {
 
       case 'checkQuiz':
         return jsonResponse(handleCheckQuiz(e));
+
+      case 'gradeQuizPending':
+        return jsonResponse(handleGradeQuizPending(e));
 
       case 'getQuizMeta':
         return jsonResponse(handleGetQuizMeta(e));
@@ -1995,53 +1998,91 @@ function handleCheckQuiz(e) {
     col += 3;
   });
   const aiTotal = rowData[col];
-  return { submitted: true, grades, aiTotal };
+  const gradingPending = (aiTotal === '' || aiTotal === null || aiTotal === undefined);
+  return { submitted: true, grades, aiTotal, gradingPending };
 }
 
 function handleSubmitQuiz(data) {
   if (data.token !== TEACHER_TOKEN && !data.email) return { error: 'Unauthorized' };
   const email = (data.email || '').trim();
   if (!email) return { error: 'Missing email' };
-  const quizId = (data.quizId || 'claw').trim();
+  const quizId = (data.quizId || 'edp_quiz').trim();
   const questions = quizQuestions(quizId).length ? quizQuestions(quizId) : QUIZ_QUESTIONS;
 
   const sheet = getOrCreateQuizSheet(quizId);
   if (quizEmailSubmitted(sheet, email)) return { success: false, error: 'already_submitted' };
 
-  let gradeMap = {};
-  let gradingError = null;
-  try {
-    gradeMap = gradeQuiz(quizId, data);
-  } catch(err) {
-    gradingError = err.toString();
-    logActivity('QUIZ_GRADE_ERROR', email, gradingError);
-    questions.forEach(q => {
-      gradeMap[q.id] = { score: null, feedback: 'AI grading unavailable — Mr. Bombich will grade manually.' };
-    });
-  }
-
-  let aiTotal = gradingError ? null : 0;
-  if (!gradingError) {
-    questions.forEach(q => {
-      const g = gradeMap[q.id] || { score: 0 };
-      aiTotal += Math.min(Number(g.score) || 0, q.maxPts);
-    });
-  }
-
+  // Save answers immediately — grading happens separately via gradeQuizPending
   const row = [data.timestamp || new Date().toLocaleString(), email, data.name || ''];
   questions.forEach(q => {
-    const g = gradeMap[q.id] || { score: null, feedback: '' };
-    const score = g.score === null ? '' : Math.min(Number(g.score) || 0, q.maxPts);
-    row.push((data[q.id] || '').trim(), score, g.feedback || '');
+    row.push((data[q.id] || '').trim(), '', ''); // answer, empty score, empty feedback
   });
-  row.push(aiTotal !== null ? aiTotal : '', '');
+  row.push('', ''); // empty aiTotal, empty teacher-final col
   sheet.appendRow(row);
 
-  questions.forEach(q => { if (gradeMap[q.id]) gradeMap[q.id].answer = (data[q.id] || '').trim(); });
+  logActivity('QUIZ_SUBMIT', email, 'Answers saved — grading pending');
+  return { success: true, gradingPending: true };
+}
 
-  const maxPts = (typeof QUIZ_REGISTRY !== 'undefined' && QUIZ_REGISTRY[quizId]) ? QUIZ_REGISTRY[quizId].maxPoints : 26;
-  logActivity('QUIZ_SUBMIT', email, gradingError ? 'AI grading failed — saved for manual grading' : `AI Total: ${aiTotal}/${maxPts}`);
-  return { success: true, grades: gradeMap, aiTotal, gradingPending: !!gradingError, gradingErrorMessage: gradingError || null };
+function handleGradeQuizPending(e) {
+  const email = (e.parameter.email || '').trim();
+  if (!email) return { error: 'Missing email' };
+  const quizId = (e.parameter.quizId || 'edp_quiz').trim();
+
+  const sheet = getOrCreateQuizSheet(quizId);
+  const rowNum = quizEmailSubmitted(sheet, email);
+  if (!rowNum) return { error: 'not_submitted' };
+
+  const questions = quizQuestions(quizId).length ? quizQuestions(quizId) : QUIZ_QUESTIONS;
+  const rowData = sheet.getRange(rowNum, 1, 1, sheet.getLastColumn()).getValues()[0];
+
+  // Check if already graded (aiTotal column non-empty)
+  let col = 3;
+  questions.forEach(() => { col += 3; });
+  const existingTotal = rowData[col]; // 0-based index of aiTotal
+  if (existingTotal !== '' && existingTotal !== null && existingTotal !== undefined) {
+    const grades = {};
+    let c = 3;
+    questions.forEach(q => {
+      grades[q.id] = { answer: rowData[c], score: rowData[c + 1], feedback: rowData[c + 2] };
+      c += 3;
+    });
+    return { success: true, grades, aiTotal: existingTotal };
+  }
+
+  // Read saved answers
+  const answers = { email, name: rowData[2] };
+  let c = 3;
+  questions.forEach(q => { answers[q.id] = rowData[c]; c += 3; });
+
+  // Run AI grading
+  let gradeMap = {};
+  try {
+    gradeMap = gradeQuiz(quizId, answers);
+  } catch(err) {
+    logActivity('QUIZ_GRADE_ERROR', email, err.toString());
+    return { success: false, gradingPending: true, error: err.toString() };
+  }
+
+  // Calculate total and write grades back to the row in one batch
+  let aiTotal = 0;
+  const newRow = rowData.slice();
+  let ci = 3;
+  questions.forEach(q => {
+    const g = gradeMap[q.id] || { score: 0, feedback: '' };
+    const score = Math.min(Number(g.score) || 0, q.maxPts);
+    aiTotal += score;
+    newRow[ci + 1] = score;
+    newRow[ci + 2] = g.feedback || '';
+    if (gradeMap[q.id]) gradeMap[q.id].answer = answers[q.id];
+    ci += 3;
+  });
+  newRow[ci] = aiTotal; // aiTotal column
+  sheet.getRange(rowNum, 1, 1, newRow.length).setValues([newRow]);
+
+  const maxPts = (typeof QUIZ_REGISTRY !== 'undefined' && QUIZ_REGISTRY[quizId]) ? QUIZ_REGISTRY[quizId].maxPoints : 24;
+  logActivity('QUIZ_GRADE', email, `AI Total: ${aiTotal}/${maxPts}`);
+  return { success: true, grades: gradeMap, aiTotal };
 }
 
 function handleRegradeQuiz(data) {
