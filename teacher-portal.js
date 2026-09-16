@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.66',
+    VERSION: 'v2.9.67',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -339,6 +339,31 @@ function deliverableForWeek(courseId, week) {
     return (TRACK_DELIVERABLES[courseId] || []).find(d => d.week === week) ?? null;
 }
 
+// Returns whole days late for a submission, or 0 if on time / no timestamp.
+// Uses the explicit due date from backend config when set; falls back to
+// Friday 3pm of the deliverable's assigned week.
+function daysLate(submittedAtStr, deliverableId, courseId) {
+    if (!submittedAtStr) return 0;
+    const submittedAt = new Date(submittedAtStr);
+    if (isNaN(submittedAt)) return 0;
+
+    let deadline;
+    const explicit = state.deliverableDueDates?.[deliverableId] || state.deliverableDueDates?.[String(deliverableId)];
+    if (explicit) {
+        deadline = new Date(explicit);
+    } else {
+        const delRecord = (TRACK_DELIVERABLES[courseId || state.activeCourse] || []).find(d => d.id === deliverableId);
+        if (!delRecord || !delRecord.week) return 0;
+        deadline = new Date(CONFIG.SEMESTER_START);
+        deadline.setDate(deadline.getDate() + (delRecord.week - 1) * 7 + 4); // Friday of that week
+        deadline.setHours(15, 0, 0, 0);
+    }
+
+    if (isNaN(deadline)) return 0;
+    const msDiff = submittedAt - deadline;
+    return msDiff > 0 ? Math.floor(msDiff / (1000 * 60 * 60 * 24)) : 0;
+}
+
 // ============================================
 // APPLICATION STATE
 // ============================================
@@ -352,7 +377,8 @@ let state = {
         team: 'all',
         search: ''
     },
-    currentWeek: 1
+    currentWeek: 1,
+    deliverableDueDates: {}  // { [deliverableId]: ISO date string } from backend config
 };
 
 // Grade Entry view mode: 'cards' (default scrollable review) | 'table' (bulk table)
@@ -576,9 +602,16 @@ async function loadCourseData() {
     const fetchTimeout = setTimeout(() => controller.abort(), 35000); // 35-second hard timeout
 
     try {
-        const response = await fetch(course.apiUrl + '?action=all&_t=' + Date.now(), { signal: controller.signal });
+        const [response, cfgResponse] = await Promise.all([
+            fetch(course.apiUrl + '?action=all&_t=' + Date.now(), { signal: controller.signal }),
+            fetch(course.apiUrl + '?action=getConfig&_t=' + Date.now()).catch(() => null)
+        ]);
         clearTimeout(fetchTimeout);
         state.rawData = await response.json();
+        if (cfgResponse?.ok) {
+            const cfg = await cfgResponse.json().catch(() => ({}));
+            state.deliverableDueDates = cfg.deliverableDueDates || {};
+        }
         processStudentData();
         applyFilters();
     } catch (error) {
@@ -2009,7 +2042,11 @@ function loadGradeTable() {
 
         if (submitted && submitted[7] === 'completed') {
             isSubmitted = true;
-            status = '<span class="status-badge status-on-track">Completed</span>';
+            const late = daysLate(submitted[8], assignmentId, state.activeCourse);
+            const lateTag = late > 0
+                ? ` <span style="font-size:10px; font-weight:700; background:#fef2f2; color:#dc2626; border:1px solid #fca5a5; border-radius:4px; padding:1px 5px;">${late}d late</span>`
+                : '';
+            status = `<span class="status-badge status-on-track">Completed</span>${lateTag}`;
             // D1.0 is pass/fail — auto-score maxPts; others use existing grade from sheet
             aiGrade = (assignmentId === 10)
                 ? (maxPoints !== undefined ? maxPoints : 10)
@@ -2260,12 +2297,13 @@ function loadReviewCards() {
         const draft = student.fullState?.deliverables?.[assignmentId];
         if (!submitted || submitted[7] !== 'completed') { skipped++; return; }
 
-        const grade    = (submitted[9] !== '' && submitted[9] !== null && submitted[9] !== undefined) ? submitted[9] : '';
-        const feedback = submitted[10] || '';
-        const docUrl   = submitted[5] || draft?.links ||
+        const grade       = (submitted[9] !== '' && submitted[9] !== null && submitted[9] !== undefined) ? submitted[9] : '';
+        const feedback    = submitted[10] || '';
+        const submittedAt = submitted[8] || '';
+        const docUrl      = submitted[5] || draft?.links ||
             (isBrief && /docs\.google\.com\/document/.test(submitted[4] || '') ? submitted[4] : '') || '';
 
-        cards.push(renderReviewCard(student, assignmentId, maxPts, grade, feedback, docUrl));
+        cards.push(renderReviewCard(student, assignmentId, maxPts, grade, feedback, docUrl, submittedAt));
     });
 
     panel.innerHTML = `
@@ -2276,7 +2314,7 @@ function loadReviewCards() {
     `;
 }
 
-function renderReviewCard(student, assignmentId, maxPts, grade, feedback, docUrl) {
+function renderReviewCard(student, assignmentId, maxPts, grade, feedback, docUrl, submittedAt) {
     const slug     = student.email.replace(/[^a-zA-Z0-9]/g, '-');
     const statusId = `ss-${slug}`;
     const isGraded = grade !== '' && grade !== null && grade !== undefined;
@@ -2286,6 +2324,11 @@ function renderReviewCard(student, assignmentId, maxPts, grade, feedback, docUrl
                style="font-size:12px; color:var(--primary); text-decoration:none; display:inline-flex; align-items:center; gap:4px; white-space:nowrap; padding:4px 10px; border:1px solid var(--primary); border-radius:5px;">
                <i class="fas fa-external-link-alt"></i> Open Doc
            </a>` : '';
+    const late = daysLate(submittedAt, assignmentId, state.activeCourse);
+    const lateBadge = late > 0
+        ? `<span style="font-size:11px; font-weight:700; background:#fef2f2; color:#dc2626; border:1px solid #fca5a5; border-radius:4px; padding:2px 7px; white-space:nowrap;">
+               ${late} day${late === 1 ? '' : 's'} late
+           </span>` : '';
 
     return `
 <div class="review-card${isGraded ? ' graded' : ''}" id="rcard-${slug}">
@@ -2293,7 +2336,7 @@ function renderReviewCard(student, assignmentId, maxPts, grade, feedback, docUrl
     <div style="display:flex; align-items:center; gap:10px;">
       <div class="avatar">${getInitials(student.name)}</div>
       <div>
-        <div style="font-weight:700; font-size:14px; color:var(--gray-800);">${student.name}</div>
+        <div style="font-weight:700; font-size:14px; color:var(--gray-800);">${student.name} ${lateBadge}</div>
         <div style="font-size:12px; color:var(--gray-500);">${formatPeriod(student.period)}</div>
       </div>
     </div>
