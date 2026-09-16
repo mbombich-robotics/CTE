@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.69',
+    VERSION: 'v2.9.70',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -2864,13 +2864,13 @@ async function openWeekSettings() {
             }
         }
 
-        // Quiz toggle + key selector (HS AE&R and 8AER only)
-        if (courseId === 'hsaer' || courseId === '8aer') {
-            const suffix = courseId === '8aer' ? '_8aer' : '';
+        // Quiz toggle + key selector
+        {
+            const suffix = courseId === '8aer' ? '_8aer' : courseId === 'dbl' ? '_dbl' : '';
             const quizToggle = document.getElementById('quizEnabledToggle' + suffix);
             if (quizToggle) quizToggle.checked = weekSettings[courseId].quizEnabled || false;
             const quizKeySelect = document.getElementById('quizKeySelect' + suffix);
-            if (quizKeySelect) quizKeySelect.value = weekSettings[courseId].quizKey || 'claw';
+            if (quizKeySelect) quizKeySelect.value = weekSettings[courseId].quizKey || 'edp_quiz';
         }
 
         // Version display fields
@@ -2927,10 +2927,10 @@ async function applyWeekSettings() {
 
         weekSettings[courseId].expectedVersion = document.getElementById(`expectedVersion_${courseId}`)?.value.trim() || '';
 
-        if (courseId === 'hsaer' || courseId === '8aer') {
-            const suffix = courseId === '8aer' ? '_8aer' : '';
+        {
+            const suffix = courseId === '8aer' ? '_8aer' : courseId === 'dbl' ? '_dbl' : '';
             weekSettings[courseId].quizEnabled = document.getElementById('quizEnabledToggle' + suffix)?.checked || false;
-            weekSettings[courseId].quizKey     = document.getElementById('quizKeySelect' + suffix)?.value || 'claw';
+            weekSettings[courseId].quizKey     = document.getElementById('quizKeySelect' + suffix)?.value || 'edp_quiz';
         }
     }
 
