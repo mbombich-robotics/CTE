@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.65',
+    VERSION: 'v2.9.66',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -2400,6 +2400,7 @@ async function runBatchD11Grading() {
     const tasks = [];
     (state.rawData.deliverables || []).forEach(sub => {
         if (sub[2] != 11 || sub[7] !== 'completed') return;
+        if (sub[9] !== null && sub[9] !== undefined && sub[9] !== '') return; // skip already-graded
         const email = sub[0];
         const student = state.students.find(s => s.email === email);
         if (!student) return;
