@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.68',
+    VERSION: 'v2.9.69',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -29,6 +29,7 @@ const CONFIG = {
             deliverablePoints: { 0: 20, 10: 10, 11: 28, 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75 },
             deliverableWeeks: { 8: 10, 9: 11 },
             quizzes: [
+                { id: 'edp_quiz',   name: 'EDP Quiz',   questionCount: 12, maxPoints: 24 },
                 { id: 'claw',       name: 'Claw Quiz',  questionCount: 7,  maxPoints: 28 },
                 { id: 'final_exam', name: 'Final Exam', questionCount: 41, maxPoints: 41 }
             ]
@@ -43,6 +44,7 @@ const CONFIG = {
             deliverablePoints: { 0: 20, 10: 10, 11: 24, 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75 },
             deliverableWeeks: { 8: 10, 9: 11 },
             quizzes: [
+                { id: 'edp_quiz',   name: 'EDP Quiz',   questionCount: 12, maxPoints: 24 },
                 { id: 'claw',       name: 'Claw Quiz',  questionCount: 7,  maxPoints: 28 },
                 { id: 'final_exam', name: 'Final Exam', questionCount: 41, maxPoints: 41 }
             ]
@@ -56,7 +58,9 @@ const CONFIG = {
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
             deliverablePoints: { 10: 10, 11: 28 },
             deliverableWeeks: {},
-            quizzes: []
+            quizzes: [
+                { id: 'edp_quiz',   name: 'EDP Quiz',   questionCount: 12, maxPoints: 24 }
+            ]
         }
     },
 
