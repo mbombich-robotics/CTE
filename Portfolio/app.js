@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.43',
+    VERSION: 'v2.14.44',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -709,65 +709,44 @@ const DELIVERABLES = [
     // D1.0 (id:10) and D1.1 (id:11) are shared with other tracks — no duplicate entries needed.
     {
         id: 421,
-        title: 'D2.1 — C1: Bearing Model + Key Dimensions',
+        title: 'D2.1 — Spinner Body CAD File',
         unit: '02',
         week: 3,
         points: 20,
         phase: 'cad',
         tracks: ['dbl'],
         type: 'googleDoc',
-        description: 'Document your completed C1 Bearing Model using the Google Doc template. Record three key dimensions — bearing pocket diameter, body thickness, and center to end of arm distance — and note what each controls (fit, function, or assembly). Attach sketches with dimensions and an isometric view screenshot.',
+        description: 'Document your completed Spinner Body using the Google Doc template. Record three key dimensions — bearing pocket diameter, body thickness, and center to end of arm distance — and note what each controls (fit, function, or assembly). Attach sketches with dimensions and an isometric view screenshot.',
     },
     {
         id: 422,
-        title: 'D2.2 — Spinner Body CAD File',
+        title: 'D2.2 — TBD',
         unit: '02',
         week: 4,
-        points: 25,
+        points: 20,
         phase: 'cad',
         tracks: ['dbl'],
-        description: 'Design the spinner body in Fusion 360 with a bearing pocket using C1 dimensions.',
-        requirements: [
-            'Spinner body revolved from sketch — symmetrical arm/grip features',
-            'Bearing pocket: 12 mm OD × 3.5 mm deep — bored using C1 dimensions',
-            'Parametric constraints applied (sketch fully constrained)',
-            'Screenshot: isometric view of completed spinner body',
-            'Screenshot: parameter table showing bearing pocket dimensions as named parameters'
-        ]
+        description: 'Details coming soon.',
     },
     {
         id: 423,
-        title: 'D2.3 — Spinner Assembly',
+        title: 'D2.3 — TBD',
         unit: '02',
         week: 5,
-        points: 25,
+        points: 20,
         phase: 'cad',
         tracks: ['dbl'],
-        description: 'Assemble spinner body, bearing cap, and bearing in Fusion 360, then slice and submit to print queue.',
-        requirements: [
-            'F360 assembly: spinner body + cap + bearing — all three components constrained',
-            'Screenshot: assembled cross-section or exploded view showing bearing seated in pocket',
-            'Bambu Studio slice: < 30 g and < 2 hr print time — screenshot showing both',
-            'Print submitted to queue — file name and date recorded',
-            'Reflection: what did you check in the slice before submitting?'
-        ]
+        description: 'Details coming soon.',
     },
     {
         id: 424,
-        title: 'D2.4 — Completed Spinner + Portfolio Photo',
+        title: 'D2.4 — TBD',
         unit: '02',
         week: 8,
-        points: 30,
-        phase: 'spinner',
+        points: 20,
+        phase: 'cad',
         tracks: ['dbl'],
-        description: 'Post-process, assemble, and photograph your completed fidget spinner.',
-        requirements: [
-            'Bearing press-fit into pocket — no wobble, spins freely for ≥ 5 seconds',
-            'Post-processing complete: supports removed, surfaces sanded',
-            'Caliper check: bearing pocket OD within ± 0.3 mm of target',
-            'Portfolio photo: clear shot of assembled spinner on a clean background',
-            'Reflection: what would you change about the design if you printed it again?'
-        ]
+        description: 'Details coming soon.',
     },
     // ── DBL: Unit 3 Safety ────────────────────────────────────────────────
     {
