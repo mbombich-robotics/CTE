@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.42',
+    VERSION: 'v2.14.43',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -2210,13 +2210,6 @@ async function fetchConfig() {
         state.config.reflectionDueDates   = cfg.reflectionDueDates  || {};
         state.config.deliverableDueDates  = cfg.deliverableDueDates || {}; // baseline; schedule-data.json merges on top
 
-        const expected = cfg.expectedVersion;
-        if (expected && expected !== CONFIG.VERSION) {
-            // Always show the banner — never auto-reload. Auto-reload caused a
-            // login vortex when the teacher portal had pushed an older expected
-            // version than the deployed code.
-            showUpdateBanner();
-        }
 
         updateUI();
     } catch(e) { /* silent — keep existing config */ }
@@ -2259,14 +2252,6 @@ async function loadScheduleDueDates() {
     } catch(e) { /* silent — keep existing config */ }
 }
 
-function showUpdateBanner() {
-    if (document.getElementById('updateBanner')) return;
-    const banner = document.createElement('div');
-    banner.id = 'updateBanner';
-    banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#f59e0b;color:#1a1a1a;text-align:center;padding:12px 20px;font-weight:600;z-index:9999;font-size:14px;';
-    banner.innerHTML = '⚠️ A new version of the portfolio is available. <a href="#" onclick="location.reload()" style="color:#1a1a1a;text-decoration:underline;font-weight:700;">Refresh the page</a> to update — your draft is auto-saved.';
-    document.body.prepend(banner);
-}
 
 // ============================================
 // DIRTY TRACKING
