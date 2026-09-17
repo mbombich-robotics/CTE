@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.41',
+    VERSION: 'v2.14.42',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -167,7 +167,7 @@ const DELIVERABLES = [
         phase: 'cad',
         type: 'googleDoc',
         points: 20,
-        description: 'Document your completed Wheel Hub. Identify the key dimensions (M3 clearance holes, M3 tap hole, M8 bore, counterbore depth, assembled width), log every print version with caliper measurements, and submit a labeled CAD screenshot.',
+        description: 'Document your completed C1 Wheel Hub using the Google Doc template. Record four key dimensions — bearing pocket diameter, counterbore diameter, clearance hole diameter, and tap hole diameter — and note what each controls (fit, function, or assembly). Attach sketches with dimensions and an isometric view screenshot.',
         // requirements removed — rubric shown in portfolio; section instructions live in the doc template
     },
     {
@@ -715,14 +715,8 @@ const DELIVERABLES = [
         points: 20,
         phase: 'cad',
         tracks: ['dbl'],
-        description: 'Model the MR128 bearing from caliper measurements and document key dimensions.',
-        requirements: [
-            'Caliper measurements recorded: OD, ID, and width of MR128 bearing',
-            'F360 sketch: correct OD and ID with revolve or extrude',
-            'Key dimensions labeled: 12 mm OD, 4 mm ID, 3.5 mm width',
-            'Screenshot: isometric view of completed model',
-            'Reflection: how close were your model dimensions to the actual bearing?'
-        ]
+        type: 'googleDoc',
+        description: 'Document your completed C1 Bearing Model using the Google Doc template. Record three key dimensions — bearing pocket diameter, body thickness, and center to end of arm distance — and note what each controls (fit, function, or assembly). Attach sketches with dimensions and an isometric view screenshot.',
     },
     {
         id: 422,
@@ -4106,11 +4100,10 @@ function renderD0FeedbackPanel(grades) {
 // ============================================
 
 const COMPONENT_RUBRIC_CRITERIA = [
-    { key: 'key_dimensions',   label: 'Key Dimensions',   max: 4 },
-    { key: 'version_log',      label: 'Version Log',      max: 4 },
-    { key: 'iteration_logic',  label: 'Iteration Logic',  max: 4 },
-    { key: 'cad_evidence',     label: 'CAD Evidence',     max: 4 },
-    { key: 'reflection',       label: 'Reflection',       max: 4 },
+    { key: 'key_dimensions', label: 'Key Dimensions', max: 5 },
+    { key: 'version_log',    label: 'Version Log',    max: 5 },
+    { key: 'cad_evidence',   label: 'CAD Evidence',   max: 5 },
+    { key: 'reflection',     label: 'Reflection',     max: 5 },
 ];
 
 const DOC_RUBRIC_CRITERIA = {
@@ -4126,6 +4119,8 @@ const DOC_RUBRIC_CRITERIA = {
     // D21–D27: Completed Component (all share the same 5-criterion rubric)
     21: COMPONENT_RUBRIC_CRITERIA,
     22: COMPONENT_RUBRIC_CRITERIA,
+    // DBL D2.1: also uses the Completed Component template
+    421: COMPONENT_RUBRIC_CRITERIA,
     23: COMPONENT_RUBRIC_CRITERIA,
     24: COMPONENT_RUBRIC_CRITERIA,
     25: COMPONENT_RUBRIC_CRITERIA,
