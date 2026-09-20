@@ -22,7 +22,7 @@ const CONFIG = {
         hsaer: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-            currentAppVersion: 'v2.14.44',
+            currentAppVersion: 'v2.14.45',
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
@@ -37,7 +37,7 @@ const CONFIG = {
         '8aer': {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
-            currentAppVersion: 'v2.14.44',
+            currentAppVersion: 'v2.14.45',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
@@ -52,7 +52,7 @@ const CONFIG = {
         dbl: {
             name: 'Design & Build Lab',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
-            currentAppVersion: 'v2.14.44',
+            currentAppVersion: 'v2.14.45',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
@@ -313,7 +313,7 @@ function tallyRubric(uid, deliverableId, email) {
 let weekSettings = {
     hsaer: { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {} },
     '8aer':     { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {} },
-    dbl:      { skipDeliverables: [], deliverableDueDates: {} },
+    dbl:      { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {} },
     currentWeekOverride: null
 };
 
@@ -325,7 +325,7 @@ function loadWeekSettings() {
             weekSettings = { ...weekSettings, ...parsed };
             weekSettings.hsaer = { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {}, ...parsed.hsaer };
             weekSettings['8aer']     = { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {}, ...parsed['8aer'] };
-            weekSettings.dbl      = { skipDeliverables: [], deliverableDueDates: {}, ...parsed.dbl };
+            weekSettings.dbl      = { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {}, ...parsed.dbl };
         }
     } catch(e) {}
 }
@@ -2952,10 +2952,8 @@ async function applyWeekSettings() {
                 expectedVersion:      weekSettings[courseId].expectedVersion
                 // deliverableDueDates removed — now driven by schedule-data.json
             };
-            if (courseId === 'hsaer' || courseId === '8aer') {
-                body.quizEnabled = weekSettings[courseId].quizEnabled;
-                body.quizKey     = weekSettings[courseId].quizKey || 'claw';
-            }
+            body.quizEnabled = weekSettings[courseId].quizEnabled;
+            body.quizKey     = weekSettings[courseId].quizKey || 'claw';
             return fetch(CONFIG.COURSES[courseId].apiUrl, { method: 'POST', body: JSON.stringify(body) });
         }));
         saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
