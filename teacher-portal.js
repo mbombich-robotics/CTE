@@ -311,9 +311,9 @@ function tallyRubric(uid, deliverableId, email) {
 // WEEK SETTINGS (localStorage)
 // ============================================
 let weekSettings = {
-    hsaer: { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {} },
-    '8aer':     { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {} },
-    dbl:      { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {} },
+    hsaer: { skipDeliverables: [], quizEnabled: false, quizKey: 'edp_quiz', deliverableDueDates: {} },
+    '8aer':     { skipDeliverables: [], quizEnabled: false, quizKey: 'edp_quiz', deliverableDueDates: {} },
+    dbl:      { skipDeliverables: [], quizEnabled: false, quizKey: 'edp_quiz', deliverableDueDates: {} },
     currentWeekOverride: null
 };
 
@@ -323,9 +323,9 @@ function loadWeekSettings() {
         if (saved) {
             const parsed = JSON.parse(saved);
             weekSettings = { ...weekSettings, ...parsed };
-            weekSettings.hsaer = { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {}, ...parsed.hsaer };
-            weekSettings['8aer']     = { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {}, ...parsed['8aer'] };
-            weekSettings.dbl      = { skipDeliverables: [], quizEnabled: false, quizKey: 'claw', deliverableDueDates: {}, ...parsed.dbl };
+            weekSettings.hsaer = { skipDeliverables: [], quizEnabled: false, quizKey: 'edp_quiz', deliverableDueDates: {}, ...parsed.hsaer };
+            weekSettings['8aer']     = { skipDeliverables: [], quizEnabled: false, quizKey: 'edp_quiz', deliverableDueDates: {}, ...parsed['8aer'] };
+            weekSettings.dbl      = { skipDeliverables: [], quizEnabled: false, quizKey: 'edp_quiz', deliverableDueDates: {}, ...parsed.dbl };
         }
     } catch(e) {}
 }
@@ -2953,7 +2953,7 @@ async function applyWeekSettings() {
                 // deliverableDueDates removed — now driven by schedule-data.json
             };
             body.quizEnabled = weekSettings[courseId].quizEnabled;
-            body.quizKey     = weekSettings[courseId].quizKey || 'claw';
+            body.quizKey     = weekSettings[courseId].quizKey || 'edp_quiz';
             return fetch(CONFIG.COURSES[courseId].apiUrl, { method: 'POST', body: JSON.stringify(body) });
         }));
         saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
