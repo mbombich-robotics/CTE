@@ -345,8 +345,64 @@ body {
 .no-notes { font-size: 12px; color: var(--dim); font-style: italic; }
 
 /* ── RESPONSIVE ──────────────────────────────────── */
+/* ── CLASSROOM POST STRIP ────────────────────────── */
+.classroom-strip {
+  padding: 0 16px 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+}
+.classroom-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 14px 14px;
+}
+.classroom-eyebrow {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.classroom-post {
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.8;
+  color: var(--txt);
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 10px 12px;
+  display: block;
+  user-select: all;
+}
+.classroom-copy {
+  margin-top: 8px;
+  width: 100%;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 6px 10px;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: color .12s, border-color .12s;
+}
+.classroom-copy:hover { color: var(--txt); border-color: var(--muted); }
+.classroom-copy.copied { color: var(--aer8th); border-color: var(--aer8th); }
+
 @media (max-width: 800px) {
   .main { grid-template-columns: 1fr; }
+  .classroom-strip { grid-template-columns: 1fr; }
   .bottom-strip { grid-template-columns: 1fr; }
   .week-label { min-width: 150px; font-size: 11px; }
   .topbar-title { display: none; }
@@ -370,6 +426,12 @@ body {
   <div class="track-col" data-track="dbl" id="col-dbl"></div>
   <div class="track-col" data-track="hsaer" id="col-hsaer"></div>
 </main>
+
+<section class="classroom-strip" id="classroomStrip">
+  <div class="classroom-card" id="cls-8aer"></div>
+  <div class="classroom-card" id="cls-dbl"></div>
+  <div class="classroom-card" id="cls-hsaer"></div>
+</section>
 
 <section class="bottom-strip" id="bottomStrip">
   <div class="bottom-card" id="careerCard"></div>
@@ -509,6 +571,70 @@ function renderColumn(track, monday) {
   return wd;
 }
 
+function buildClassroomPost(track, wd) {
+  const label = TRACK_LABELS[track];
+  const del  = wd?.deliverable;
+  const quiz = wd?.quiz;
+  const q    = wd?.quote;
+
+  const lines = [];
+  lines.push('WEEK ' + (wd?.week || '?') + ' — ' + label);
+  if (wd?.title) lines.push(wd.title);
+  if (wd?.dates) lines.push(wd.dates);
+  lines.push('');
+  lines.push(quiz
+    ? '📝 Quiz: ' + quiz.title + ' — ' + quiz.day
+    : 'No quiz this week.');
+  lines.push(del
+    ? '📋 Due: ' + del.label + ' — ' + del.title + ' — ' + del.due
+    : 'No deliverable due this week.');
+  if (q) {
+    lines.push('');
+    lines.push('Quote of the Week:');
+    lines.push('“' + q.text + '”');
+    lines.push(q.by);
+  }
+  return lines.join('\n');
+}
+
+function renderClassroomStrip(wds) {
+  ['8aer', 'dbl', 'hsaer'].forEach((track, i) => {
+    const wd   = wds[i];
+    const card = document.getElementById('cls-' + track);
+    const label = TRACK_LABELS[track];
+    if (!wd) {
+      card.innerHTML = `<div class="classroom-eyebrow">${label} — Classroom Post</div>
+        <div style="font-size:11px;color:var(--dim);font-style:italic">No data for this week.</div>`;
+      return;
+    }
+    const postText = buildClassroomPost(track, wd);
+    const postId   = 'cls-post-' + track;
+    card.innerHTML = `
+      <div class="classroom-eyebrow">${label} — Classroom Post</div>
+      <pre class="classroom-post" id="${postId}">${esc(postText)}</pre>
+      <button class="classroom-copy" onclick="copyClassroomPost('${postId}', this)">Copy</button>`;
+  });
+}
+
+function copyClassroomPost(id, btn) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  }).catch(() => {
+    const el = document.createElement('textarea');
+    el.value = text;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
 function renderBottom(wds) {
   // Career: use first non-null track's careerConnection (same across tracks for a given week)
   const career = wds.find(w => w?.careerConnection)?.careerConnection;
@@ -550,6 +676,7 @@ function render() {
 
   const wds = ['8aer','dbl','hsaer'].map(t => renderColumn(t, currentMonday));
   renderBottom(wds);
+  renderClassroomStrip(wds);
 }
 
 // ── INIT ────────────────────────────────────────────────────
