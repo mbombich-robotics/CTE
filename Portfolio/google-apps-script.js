@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.13';
+const BACKEND_VERSION = 'v2.14.14';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -1657,7 +1657,7 @@ function sendRemindersWeb(semesterStart) {
     { id: 11, title: 'Design Brief', week: 1 },
     { id: 12, title: 'Robot Deck Design Record', week: 2 },
     { id: 21, title: 'C1 — Wheel Hub', week: 3 },
-    { id: 22, title: 'C2 — Drive Wheel', week: 4 },
+    { id: 22, title: 'C2 — Wheel Hub Cap', week: 5 },
     { id: 23, title: 'C3 — Motor Sleeve Mount', week: 4 },
     { id: 25, title: 'C5 — Omni Wheel Mount', week: 6 },
     { id: 26, title: 'C6 — IR Sensor Mount', week: 7 },

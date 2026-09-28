@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.45',
+    VERSION: 'v2.14.46',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -174,12 +174,12 @@ const DELIVERABLES = [
         id: 22,
         title: 'C2 — Wheel Hub Cap',
         unit: '02',
-        week: 4,
+        week: 5,
         tracks: ['hsaer', '8aer'],
         phase: 'cad',
         type: 'googleDoc',
         points: 20,
-        description: 'Design a hub cap for the AndyMark 4" wheel. Six alignment pins lock the wheel from rotating on the shaft; a center counterbore for a 10-32 screw retains the cap to the wheel and keeps the wheel on the motor shaft.',
+        description: 'Document your completed C2 Wheel Hub Cap using the Component Design Google Doc template. Record four key dimensions — pin diameter, bolt circle radius, center counterbore diameter, and cap outer diameter — and note what each controls (fit, function, or assembly). Attach sketches with dimensions and an isometric view screenshot. Excelling students: include a section describing your personalization decision and its design rationale.',
         requirements: [
             '── BASELINE ──────────────────────────────────────',
             '6 pins correctly sized and positioned to match the AndyMark 4" wheel hole pattern',
@@ -720,23 +720,25 @@ const DELIVERABLES = [
     },
     {
         id: 422,
-        title: 'D2.2 — TBD',
-        unit: '02',
-        week: 4,
-        points: 20,
-        phase: 'cad',
-        tracks: ['dbl'],
-        description: 'Details coming soon.',
-    },
-    {
-        id: 423,
-        title: 'D2.3 — TBD',
+        title: 'Doorstop — Design Brief',
         unit: '02',
         week: 5,
         points: 20,
         phase: 'cad',
         tracks: ['dbl'],
-        description: 'Details coming soon.',
+        type: 'googleDoc',
+        description: 'Complete a Design Brief for your classroom doorstop project using the Design Brief Google Doc template. Define the problem statement, identify constraints and criteria, sketch at least two concept designs, and use a decision matrix to select your best concept.',
+    },
+    {
+        id: 423,
+        title: 'Doorstop — CAD Model',
+        unit: '02',
+        week: 6,
+        points: 20,
+        phase: 'cad',
+        tracks: ['dbl'],
+        type: 'googleDoc',
+        description: 'Document your completed doorstop CAD model using the Component Design Google Doc template. Record four key dimensions, note what each controls, and include your iteration log with caliper measurements from your printed version(s).',
     },
     {
         id: 424,

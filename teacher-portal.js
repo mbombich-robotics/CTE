@@ -22,7 +22,7 @@ const CONFIG = {
         hsaer: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-            currentAppVersion: 'v2.14.45',
+            currentAppVersion: 'v2.14.46',
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
@@ -37,7 +37,7 @@ const CONFIG = {
         '8aer': {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
-            currentAppVersion: 'v2.14.45',
+            currentAppVersion: 'v2.14.46',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
@@ -52,7 +52,7 @@ const CONFIG = {
         dbl: {
             name: 'Design & Build Lab',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
-            currentAppVersion: 'v2.14.45',
+            currentAppVersion: 'v2.14.46',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
@@ -144,8 +144,8 @@ const TRACK_DELIVERABLES = {
         { id:  11, label: 'D1.1 — Design Brief',                           week: 2  },
         // Unit 2: CAD — Fidget Spinner (P1)
         { id: 421, label: 'D2.1 — C1: Bearing Model + Key Dimensions',    week: 3  },
-        { id: 422, label: 'D2.2 — Spinner Body CAD File',                  week: 4  },
-        { id: 423, label: 'D2.3 — Spinner Assembly',                       week: 5  },
+        { id: 422, label: 'D2.2 — Doorstop Design Brief',                   week: 5  },
+        { id: 423, label: 'D2.3 — Doorstop CAD Model',                     week: 6  },
         { id: 431, label: 'D3.1 — Tool Cert Card',                         week: 6  },
         { id: 424, label: 'D2.4 — Completed Spinner + Portfolio Photo',    week: 8  },
         // Unit 7: Electrical Systems
