@@ -165,14 +165,18 @@ def build_events(bells: list[tuple[str, str]]) -> list[tuple[datetime, bool]]:
 def run():
     log.info("Bell alert scheduler started  macs=%s", SHELLY_MACS)
 
-    # Resolve IPs at startup; retry once after 60 s if ARP table isn't populated yet
+    # Resolve IPs at startup — retry every 30 s for up to 5 min to allow
+    # the hotspot and Shelly time to fully connect after a reboot.
     shelly_ips = resolve_ips()
     if not shelly_ips:
-        log.warning("No plugs resolved yet — waiting 60 s for ARP table to populate…")
-        time.sleep(60)
-        shelly_ips = resolve_ips()
+        for attempt in range(1, 10):
+            log.warning("No plugs resolved yet — waiting 30 s (attempt %d/9)…", attempt)
+            time.sleep(30)
+            shelly_ips = resolve_ips()
+            if shelly_ips:
+                break
     if not shelly_ips:
-        sys.exit("ERROR: Could not resolve any plug IPs. Check that plugs are connected to the hotspot.")
+        sys.exit("ERROR: Could not resolve any plug IPs after 4.5 min. Check that plugs are connected to the hotspot.")
 
     while True:
         now   = datetime.now()
