@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.46',
+    VERSION: 'v2.14.47',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -179,17 +179,16 @@ const DELIVERABLES = [
         phase: 'cad',
         type: 'googleDoc',
         points: 20,
-        description: 'Document your completed C2 Wheel Hub Cap using the Component Design Google Doc template. Record four key dimensions — pin diameter, bolt circle radius, center counterbore diameter, and cap outer diameter — and note what each controls (fit, function, or assembly). Attach sketches with dimensions and an isometric view screenshot. Excelling students: include a section describing your personalization decision and its design rationale.',
+        description: 'Document your completed C2 Wheel Hub Cap using the Component Design Google Doc template. For each key dimension, identify the feature and explain the fit or function it must achieve — the goal is to show you understand WHY the dimension matters, not just what the number is. In the version log, record the fit/function test result for each printed version and describe what you changed for the next iteration and why. Caliper measurements are required only when a manufactured part sets the target (e.g. screw counterbore, pin hole mating with the wheel). Excelling students: add a section describing your personalization decision and its design rationale.',
         requirements: [
             '── BASELINE ──────────────────────────────────────',
-            '6 pins correctly sized and positioned to match the AndyMark 4" wheel hole pattern',
-            'Center counterbore correctly sized for a 10-32 socket head screw (check head diameter and depth)',
-            'Cap outer diameter fits flush within the wheel rim face',
-            'Iteration log: at least one printed version measured with calipers; record what you adjusted and why',
+            'Key Dimension table: for each feature (e.g. pin diameter, counterbore depth, cap OD) state the fit or function it must achieve — show you know WHY it is a key dimension, not just its value',
+            'Version log: at least one printed version physically tested; record the fit/function test result (e.g. "pins seated flush — cap spun freely on wheel") and what you changed for the next version with a reason (e.g. "counterbore too shallow — screw head proud; deepened to 4.5 mm")',
+            'Caliper measurements required only where a manufactured part sets the target (screw head diameter/depth, pin hole pattern); functional test result is sufficient for clearance and aesthetic features',
             '── MINOR IMPROVEMENT (bonus) ─────────────────────',
-            'Any thoughtful aesthetic enhancement: chamfers or fillets, embossed name/initials, decorative face pattern, or lightening holes that maintain structural integrity',
+            'Any thoughtful aesthetic or ergonomic enhancement: chamfers or fillets, embossed name/initials, decorative face pattern, or lightening holes that maintain structural integrity',
             '── SUBSTANTIAL IMPROVEMENT (full marks) ──────────',
-            'A functional design decision that improves the component beyond the baseline — modified pin geometry, a retention lip or snap feature, a recessed boss to reduce material while maintaining strength, or another engineering-justified change — with a written rationale explaining what you changed and why',
+            'A functional design decision beyond the baseline — modified pin geometry, a retention lip or snap feature, a recessed boss to reduce material while maintaining strength, or another engineering-justified change — with a written rationale explaining what you changed and why',
         ]
     },
     {
