@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.47',
+    VERSION: 'v2.14.48',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -179,12 +179,12 @@ const DELIVERABLES = [
         phase: 'cad',
         type: 'googleDoc',
         points: 20,
-        description: 'Document your completed C2 Wheel Hub Cap using the Component Design Google Doc template. For each key dimension, identify the feature and explain the fit or function it must achieve — the goal is to show you understand WHY the dimension matters, not just what the number is. In the version log, record the fit/function test result for each printed version and describe what you changed for the next iteration and why. Caliper measurements are required only when a manufactured part sets the target (e.g. screw counterbore, pin hole mating with the wheel). Excelling students: add a section describing your personalization decision and its design rationale.',
+        description: 'Document your completed C2 Wheel Hub Cap using the Component Design Google Doc template. For each key dimension, identify the feature and explain the fit or function it must achieve — the goal is to show you understand WHY the dimension matters, not just what the number is. In the version log, record the fit/function test result for each printed version (does the screw seat flush? do the pins lock the wheel?) and describe what you changed for the next iteration and why. Use calipers to diagnose what needs to change, not as the primary report. Excelling students: add a section describing your personalization decision and its design rationale.',
         requirements: [
             '── BASELINE ──────────────────────────────────────',
             'Key Dimension table: for each feature (e.g. pin diameter, counterbore depth, cap OD) state the fit or function it must achieve — show you know WHY it is a key dimension, not just its value',
-            'Version log: at least one printed version physically tested; record the fit/function test result (e.g. "pins seated flush — cap spun freely on wheel") and what you changed for the next version with a reason (e.g. "counterbore too shallow — screw head proud; deepened to 4.5 mm")',
-            'Caliper measurements required only where a manufactured part sets the target (screw head diameter/depth, pin hole pattern); functional test result is sufficient for clearance and aesthetic features',
+            'Version log: at least one printed version physically fit-tested with the actual parts; record the test result (e.g. "pins seated — cap locked wheel; screw head proud — not flush") and what you changed for the next version with a reason (e.g. "deepened counterbore to 4.5 mm so screw sits flush")',
+            'Calipers are a diagnostic tool — use them to figure out what to change, but the fit/function test result is what goes in the log',
             '── MINOR IMPROVEMENT (bonus) ─────────────────────',
             'Any thoughtful aesthetic or ergonomic enhancement: chamfers or fillets, embossed name/initials, decorative face pattern, or lightening holes that maintain structural integrity',
             '── SUBSTANTIAL IMPROVEMENT (full marks) ──────────',
