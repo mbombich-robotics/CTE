@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.14';
+const BACKEND_VERSION = 'v2.14.15';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2588,9 +2588,13 @@ function handleCreateDeliverableDoc(data) {
 
   var deliverableTitle = data.deliverableTitle || '';
 
+  // Some deliverables reuse another deliverable's template (e.g. DBL D2.2 reuses the Design Brief)
+  var TEMPLATE_ALIASES = { 422: 11 };
+  var templateLookupId = TEMPLATE_ALIASES[deliverableId] || deliverableId;
+
   // Look up template: specific key first, then shared component fallback
   var props      = PropertiesService.getScriptProperties();
-  var templateId = props.getProperty('DELIVERABLE_DOC_TEMPLATE_' + deliverableId)
+  var templateId = props.getProperty('DELIVERABLE_DOC_TEMPLATE_' + templateLookupId)
                 || props.getProperty('DELIVERABLE_DOC_TEMPLATE_COMPONENT');
   if (!templateId) {
     return { success: false, error: 'Template not configured for deliverable ' + deliverableId + '. Ask your teacher to complete the one-time setup.' };
