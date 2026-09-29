@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.48',
+    VERSION: 'v2.14.49',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -1431,6 +1431,37 @@ const COMPONENT_RUBRIC_DISPLAY = {
     ]
 };
 
+// D2.2-specific rubric — fit/function over raw dimensioning
+const WHEEL_HUB_CAP_RUBRIC = {
+    categories: [
+        { name: 'Key Dimensions', points: 4, criteria: [
+            'Identifies 3+ key features (e.g., pin diameter, counterbore depth, cap OD)',
+            'For each feature, states the fit or function it must achieve — not just its value',
+            'Shows understanding of WHY it is a key dimension, not just what the number is'
+        ]},
+        { name: 'Version Log', points: 4, criteria: [
+            'At least one printed version physically fit-tested with the actual parts',
+            'Records the fit/function test result (e.g., "pins seated — cap locked wheel; screw head proud — not flush")',
+            'States what changed for the next version and gives a specific reason why'
+        ]},
+        { name: 'Iteration Logic', points: 4, criteria: [
+            'Explains WHY changes were made — links the fit-test result to the next design decision',
+            'At least one change is directly justified by a specific fit/function test outcome',
+            'Shows a logical connection between what failed the test and what was modified in CAD'
+        ]},
+        { name: 'CAD Evidence', points: 4, criteria: [
+            'CAD screenshot shows the completed hub cap design',
+            'Photo or description shows the fit test was actually performed with real parts',
+            'Both images are clear, in focus, and easy to identify'
+        ]},
+        { name: 'Reflection', points: 4, criteria: [
+            'References specific fit-test results from the version log — not vague or generic',
+            'Identifies what was learned from the iteration process',
+            'Connects to broader design or engineering thinking'
+        ]}
+    ]
+};
+
 const RUBRICS = {
     11: {
         categories: [
@@ -1472,7 +1503,7 @@ const RUBRICS = {
         ]
     },
     21: COMPONENT_RUBRIC_DISPLAY,
-    22: COMPONENT_RUBRIC_DISPLAY,
+    22: WHEEL_HUB_CAP_RUBRIC,
     23: COMPONENT_RUBRIC_DISPLAY,
     24: COMPONENT_RUBRIC_DISPLAY,
     25: COMPONENT_RUBRIC_DISPLAY,

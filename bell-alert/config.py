@@ -15,7 +15,7 @@ from datetime import date
 
 # Monday / Wednesday / Friday  (7-Period Day, 50-min classes)
 MWF_BELLS = [
-    ("07:00", "07:01"),   # test
+    ("09:48", "09:49"),   # test
     ("08:22", "08:24"),   # 1st  — 8AER   MS bell 8:32 · 10-min lead for 8th graders
     ("09:20", "09:22"),   # 2nd  — DBL
     ("10:15", "10:17"),   # 3rd  — PREP   (your planning period — no students)
@@ -28,7 +28,7 @@ MWF_BELLS = [
 
 # Tuesday / Thursday  (30-Min Tutorial Day, 43-min classes)
 TTH_BELLS = [
-    ("07:10", "07:11"),   # test
+    ("07:04", "07:05"),   # test
     ("08:22", "08:24"),   # 1st  — 8AER   MS bell 8:32 · 10-min lead for 8th graders
     ("09:08", "09:10"),   # 2nd  — DBL
     ("09:56", "09:58"),   # 3rd  — PREP   (your planning period — no students)
