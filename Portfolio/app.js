@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.49',
+    VERSION: 'v2.14.50',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -4115,8 +4115,18 @@ const DOC_RUBRIC_CRITERIA = {
     // D21–D27: Completed Component (all share the same 5-criterion rubric)
     21: COMPONENT_RUBRIC_CRITERIA,
     22: COMPONENT_RUBRIC_CRITERIA,
-    // DBL D2.1: also uses the Completed Component template
-    421: COMPONENT_RUBRIC_CRITERIA,
+    // DBL deliverables
+    421: COMPONENT_RUBRIC_CRITERIA,   // Spinner Body — Completed Component
+    422: [                             // Doorstop — Design Brief (same keys as id 11)
+        { key: 'problem_id',             label: 'Client & End User',     max: 4 },
+        { key: 'problem_statement',      label: 'Problem Statement',     max: 4 },
+        { key: 'criteria_completeness',  label: 'Criteria (quantity)',   max: 4 },
+        { key: 'criteria_quality',       label: 'Criteria (quality)',    max: 4 },
+        { key: 'constraints',            label: 'Constraints',           max: 4 },
+        { key: 'design_statement',       label: 'Design Statement',      max: 4 },
+        { key: 'decision_matrix',        label: 'Decision Matrix',       max: 4 },
+    ],
+    423: COMPONENT_RUBRIC_CRITERIA,   // Doorstop CAD Model — Completed Component
     23: COMPONENT_RUBRIC_CRITERIA,
     24: COMPONENT_RUBRIC_CRITERIA,
     25: COMPONENT_RUBRIC_CRITERIA,

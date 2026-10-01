@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.15';
+const BACKEND_VERSION = 'v2.14.16';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2745,7 +2745,13 @@ decision_matrix (max 4): Completeness and mathematical correctness of the Sectio
 
     criteriaKeys = ['problem_id', 'problem_statement', 'criteria_completeness', 'criteria_quality', 'constraints', 'design_statement', 'decision_matrix'];
 
-  } else if (deliverableId === 13 || (deliverableId >= 21 && deliverableId <= 27)) {
+  } else if (deliverableId === 422) {
+    // ── DBL D2.2: Doorstop Design Brief — same rubric as D11 ──────────────
+    // Re-uses the Design Brief rubric and criteria keys already defined above.
+    // (Fall through by reassigning deliverableId to 11 so the block above fires.)
+    return gradeDocWithRubric(docText, 11);
+
+  } else if (deliverableId === 13 || deliverableId === 421 || deliverableId === 423 || (deliverableId >= 21 && deliverableId <= 27)) {
     // ── D13 / D21–D27: Completed Component ────────────────────────────────
     rubric = `RUBRIC — COMPLETED COMPONENT (5 criteria, 4 pts each):
 
