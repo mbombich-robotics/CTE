@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.17';
+const BACKEND_VERSION = 'v2.14.18';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2670,13 +2670,26 @@ function handleGetDocAIFeedback(data) {
 
   try {
     var doc  = DocumentApp.openById(docId);
-    var text = doc.getBody().getText();
+    var body = doc.getBody();
+    var text = body.getText();
 
     if (!text || text.trim().length < 80) {
       return { success: false, error: 'Your document looks empty or very short. Fill in each section first, then come back for feedback.' };
     }
 
-    var grades = gradeDocWithRubric(text, deliverableId);
+    // Count inline images so the rubric can credit photo/screenshot evidence
+    // without needing to see the actual image content.
+    var imageCount = 0;
+    var imgSearch = body.findElement(DocumentApp.ElementType.INLINE_IMAGE);
+    while (imgSearch) {
+      imageCount++;
+      imgSearch = body.findElement(DocumentApp.ElementType.INLINE_IMAGE, imgSearch);
+    }
+    var imageNote = imageCount > 0
+      ? '[DOCUMENT CONTAINS ' + imageCount + ' IMAGE(S) — presence confirmed by server]\n\n'
+      : '[DOCUMENT CONTAINS 0 IMAGES]\n\n';
+
+    var grades = gradeDocWithRubric(imageNote + text, deliverableId);
 
     if (isTeacher) {
       logActivity('DOC_AI_BATCH', email, 'D' + deliverableId + ' | teacher batch');
@@ -2768,7 +2781,7 @@ version_log (max 4): Completeness and specificity of the version log in Section 
 
 iteration_logic (max 4): Whether changes between versions logically address the measured discrepancies. 4=changes directly address measured errors with explicit reasoning connecting measurements to decisions; 3=changes reasonable and mostly explained; 2=some changes unexplained or not connected to measurements; 1=versions differ but no reasoning shown; 0=blank or only one version.
 
-cad_evidence (max 4): Quality of the CAD screenshot in Section 3. 4=screenshot present; ALL key dimensions from Section 1 called out with visible, readable dimension lines; no overlapping text; clean, professional layout; 3=screenshot present, most key dimensions labeled, minor readability issues; 2=screenshot present, fewer than half the key dimensions labeled, or readability is poor; 1=screenshot present but no dimension callouts at all; 0=no screenshot.
+cad_evidence (max 4): Evidence that the CAD model was completed and documented. IMPORTANT: You cannot view images, but the first line of this document tells you exactly how many images are present — trust it. 4=images confirmed present (≥1 image) AND Section 1 has 4 or more key dimensions with specific target values; 3=images confirmed present AND Section 1 has 2–3 key dimensions with specific target values; 2=images confirmed present AND Section 1 has at least 1 specific key dimension value; 1=images confirmed present but Section 1 has no specific dimension values at all; 0=0 images confirmed (document says "[DOCUMENT CONTAINS 0 IMAGES]").
 
 reflection (max 4): Depth and specificity of the Section 4 reflection. 4=specific and data-driven; references measured values by name and number; clearly connects data to decisions; identifies concrete changes they would make if starting over; 3=addresses what worked and what they would change, references at least one measurement; 2=mentions iteration but no connection to actual measurement data; 1=generic or one sentence; 0=blank.`;
 
