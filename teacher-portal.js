@@ -2342,8 +2342,8 @@ function loadReviewCards() {
         const grade       = (submitted[9] !== '' && submitted[9] !== null && submitted[9] !== undefined) ? submitted[9] : '';
         const feedback    = submitted[10] || '';
         const submittedAt = submitted[8] || '';
-        const docUrl      = submitted[5] || draft?.links ||
-            (isBrief && /docs\.google\.com\/document/.test(submitted[4] || '') ? submitted[4] : '') || '';
+        const docUrl      = submitted[5] || draft?.docUrl || draft?.links ||
+            (/docs\.google\.com\/document/.test(submitted[4] || '') ? submitted[4] : '') || '';
 
         cards.push(renderReviewCard(student, assignmentId, maxPts, grade, feedback, docUrl, submittedAt));
     });
