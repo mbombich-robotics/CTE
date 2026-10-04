@@ -22,7 +22,7 @@ const CONFIG = {
         hsaer: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-            currentAppVersion: 'v2.14.53',
+            currentAppVersion: 'v2.14.54',
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
@@ -37,7 +37,7 @@ const CONFIG = {
         '8aer': {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
-            currentAppVersion: 'v2.14.53',
+            currentAppVersion: 'v2.14.54',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
@@ -52,7 +52,7 @@ const CONFIG = {
         dbl: {
             name: 'Design & Build Lab',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
-            currentAppVersion: 'v2.14.53',
+            currentAppVersion: 'v2.14.54',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
@@ -266,6 +266,10 @@ const BRIEF_CRITERIA = {
     // 422 (DBL Doorstop Design Brief) resolves to BRIEF_CRITERIA[11] at runtime
 };
 
+function escHtml(s) {
+    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 function renderGradeSection(courseKey, deliverableId, maxPoints, existingGrade, existingFeedback, email) {
     const rubric = RUBRICS[courseKey]?.[deliverableId];
     const gradeInputHtml = `
@@ -277,7 +281,7 @@ function renderGradeSection(courseKey, deliverableId, maxPoints, existingGrade, 
     const feedbackHtml = `
         <textarea class="feedback-input" data-type="deliverable" data-id="${deliverableId}" data-email="${email}"
                   placeholder="Feedback for student..."
-                  style="width: 100%; padding: 8px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 13px; resize: vertical; min-height: 60px;">${existingFeedback}</textarea>`;
+                  style="width: 100%; padding: 8px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 13px; resize: vertical; min-height: 60px;">${escHtml(existingFeedback)}</textarea>`;
 
     if (!rubric) {
         return `
@@ -2129,9 +2133,10 @@ function loadGradeTable() {
                 <td class="final-score-cell" data-base="${aiNum !== null ? aiNum : ''}"
                     style="text-align:center; font-weight:600; color: var(--primary);">${finalDisplay}</td>
                 <td>
-                    <input type="text" class="feedback-input" data-email="${student.email}"
-                           value="${existingFeedback}" placeholder="Add feedback..."
-                           style="width: 100%; padding: 6px 8px; border: 1px solid var(--gray-300); border-radius: 6px;">
+                    <textarea class="feedback-input" data-email="${student.email}"
+                              placeholder="Add feedback..."
+                              rows="2"
+                              style="width: 100%; padding: 6px 8px; border: 1px solid var(--gray-300); border-radius: 6px; resize: vertical; font-size: 12px; font-family: inherit;">${escHtml(existingFeedback)}</textarea>
                 </td>
             </tr>
         `;
@@ -2603,7 +2608,7 @@ async function runBatchDocGrading(deliverableId) {
     const tasks = [];
     (state.rawData.deliverables || []).forEach(sub => {
         if (sub[2] != deliverableId || sub[7] !== 'completed') return;
-        if (sub[9] !== null && sub[9] !== undefined && sub[9] !== '') return; // skip already-graded
+        if (sub[9] !== null && sub[9] !== undefined && sub[9] !== '' && Number(sub[9]) > 0) return; // skip already-graded (0 = failed batch, allow retry)
         const email   = sub[0];
         const student = state.students.find(s => s.email === email);
         if (!student) return;
