@@ -22,7 +22,7 @@ const CONFIG = {
         hsaer: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-            currentAppVersion: 'v2.14.50',
+            currentAppVersion: 'v2.14.51',
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
@@ -37,7 +37,7 @@ const CONFIG = {
         '8aer': {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
-            currentAppVersion: 'v2.14.50',
+            currentAppVersion: 'v2.14.51',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
@@ -52,7 +52,7 @@ const CONFIG = {
         dbl: {
             name: 'Design & Build Lab',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
-            currentAppVersion: 'v2.14.50',
+            currentAppVersion: 'v2.14.51',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
@@ -143,7 +143,7 @@ const TRACK_DELIVERABLES = {
         { id:  10, label: 'D1.0 — Signed Syllabus & Safety Contract',     week: 1  },
         { id:  11, label: 'D1.1 — Design Brief',                           week: 2  },
         // Unit 2: CAD — Fidget Spinner (P1)
-        { id: 421, label: 'D2.1 — C1: Bearing Model + Key Dimensions',    week: 3  },
+        { id: 421, label: 'D2.1 — Spinner Body CAD File',                  week: 3  },
         { id: 422, label: 'D2.2 — Doorstop Design Brief',                   week: 5  },
         { id: 423, label: 'D2.3 — Doorstop CAD Model',                     week: 6  },
         { id: 431, label: 'D3.1 — Tool Cert Card',                         week: 6  },
@@ -204,6 +204,18 @@ const RUBRICS = {
     }
 };
 
+// Criteria for component-design googleDoc deliverables (D21, D22, D421, D423)
+const COMPONENT_BATCH_CRITERIA = [
+    { id: 'key_dimensions',  label: 'Key Dimensions',  max: 4 },
+    { id: 'version_log',     label: 'Version Log',     max: 4 },
+    { id: 'iteration_logic', label: 'Iteration Logic', max: 4 },
+    { id: 'cad_evidence',    label: 'CAD Evidence',    max: 4 },
+    { id: 'reflection',      label: 'Reflection',      max: 4 },
+];
+
+// Deliverable IDs that support Batch AI Grade (excludes D11 which has its own handler)
+const DOC_GRADABLE_IDS = new Set([11, 21, 22, 421, 422]);
+
 // Criteria definitions for Design Brief AI grading
 const BRIEF_CRITERIA = {
     0: [
@@ -246,7 +258,12 @@ const BRIEF_CRITERIA = {
         { id: 'constraints',           label: '§4 — Constraints',              max: 4 },
         { id: 'design_statement',      label: '§5 — Design Statement',         max: 4, skipFor8AER: true },
         { id: 'decision_matrix',       label: '§7 — Decision Matrix',          max: 4 },
-    ]
+    ],
+    // Component Design deliverables — 5 criteria × 4 pts = 20 pts
+    21:  COMPONENT_BATCH_CRITERIA,   // AER D2.1 — Wheel Hub
+    22:  COMPONENT_BATCH_CRITERIA,   // AER D2.2 — Wheel Hub Cap
+    421: COMPONENT_BATCH_CRITERIA,   // DBL D2.1 — Spinner Body
+    // 422 (DBL Doorstop Design Brief) resolves to BRIEF_CRITERIA[11] at runtime
 };
 
 function renderGradeSection(courseKey, deliverableId, maxPoints, existingGrade, existingFeedback, email) {
@@ -2243,17 +2260,17 @@ function refreshGradeView() {
     const tableContainer  = document.querySelector('.grade-table-container');
     const cardsPanel      = document.getElementById('gradeReviewPanel');
 
-    // Batch AI Grade button — visible for D1.1 in any view mode
+    // Batch AI Grade button — visible for all googleDoc deliverables with rubrics
     let batchBtn = document.getElementById('batchAiGradeBtn');
-    if (assignmentId === 11) {
+    if (DOC_GRADABLE_IDS.has(assignmentId)) {
         if (!batchBtn) {
             batchBtn = document.createElement('button');
             batchBtn.id        = 'batchAiGradeBtn';
             batchBtn.className = 'btn btn-secondary btn-small';
             batchBtn.innerHTML = '<i class="fas fa-robot"></i> Batch AI Grade';
-            batchBtn.onclick   = runBatchD11Grading;
             document.getElementById('saveAllGradesBtn').insertAdjacentElement('beforebegin', batchBtn);
         }
+        batchBtn.onclick   = assignmentId === 11 ? runBatchD11Grading : () => runBatchDocGrading(assignmentId);
         batchBtn.style.display = '';
         batchBtn.disabled      = false;
         batchBtn.innerHTML     = '<i class="fas fa-robot"></i> Batch AI Grade';
@@ -2567,6 +2584,101 @@ async function runBatchD11Grading() {
         `AI grading complete — ${done} students scored. Review the AI Grade column, adjust if needed, then click Save and Close.`,
         'success', 6000
     );
+}
+
+// ============================================
+// BATCH DOC GRADING — component & design-brief deliverables
+// ============================================
+async function runBatchDocGrading(deliverableId) {
+    const btn       = document.getElementById('batchAiGradeBtn');
+    const courseKey = state.activeCourse;
+    const course    = CONFIG.COURSES[courseKey] || CONFIG.COURSES['hsaer'];
+
+    // 422 (Doorstop Design Brief) reuses the D1.1 criteria set
+    const criteriaKey = deliverableId === 422 ? 11 : deliverableId;
+    const criteria    = BRIEF_CRITERIA[criteriaKey] || [];
+    const maxTotal    = criteria.reduce((s, c) => s + c.max, 0);
+
+    const periodFilter = document.getElementById('gradePeriodFilter').value;
+    const tasks = [];
+    (state.rawData.deliverables || []).forEach(sub => {
+        if (sub[2] != deliverableId || sub[7] !== 'completed') return;
+        if (sub[9] !== null && sub[9] !== undefined && sub[9] !== '') return; // skip already-graded
+        const email   = sub[0];
+        const student = state.students.find(s => s.email === email);
+        if (!student) return;
+        if (periodFilter !== 'all' && student.period !== periodFilter) return;
+        const docUrl = (sub[5] || sub[4] || '').trim();
+        if (!docUrl.includes('docs.google.com')) return;
+        const m = docUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+        if (!m) return;
+        tasks.push({ email, docId: m[1] });
+    });
+
+    if (tasks.length === 0) {
+        alert('No submitted, ungraded students found for this deliverable in the selected period.');
+        return;
+    }
+
+    btn.disabled = true;
+    let done = 0;
+    const BATCH_SIZE = 5;
+    const updateBtn = () => { btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Grading ${done} / ${tasks.length}…`; };
+    updateBtn();
+
+    for (let i = 0; i < tasks.length; i += BATCH_SIZE) {
+        const batch = tasks.slice(i, i + BATCH_SIZE);
+        await Promise.allSettled(batch.map(async ({ email, docId }) => {
+            try {
+                const res  = await fetch(course.apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ action: 'getDocAIFeedback', token: CONFIG.TEACHER_TOKEN, email, docId, deliverableId })
+                });
+                const data = await res.json();
+
+                if (data.success && data.grades) {
+                    let total = 0;
+                    const lines = criteria.map(c => {
+                        const g     = data.grades[c.id] || {};
+                        const score = (g.score !== null && g.score !== undefined) ? Math.min(Number(g.score) || 0, c.max) : 0;
+                        total += score;
+                        return `${c.label}: ${score}/${c.max} — ${(g.feedback || '').replace(/\n/g, ' ')}`;
+                    });
+                    const feedbackText = lines.join('\n') + `\n\nTotal: ${total}/${maxTotal}`;
+                    const slug = email.replace(/[^a-zA-Z0-9]/g, '-');
+
+                    const gradeCard = document.getElementById(`rg-${slug}`);
+                    const feedCard  = document.getElementById(`rf-${slug}`);
+                    if (gradeCard) { gradeCard.value = total; }
+                    if (feedCard)  { feedCard.value  = feedbackText; }
+                    if (gradeCard?.dataset.status) markCardUnsaved(gradeCard.dataset.status);
+
+                    const row = document.querySelector(`#gradeTableBody tr[data-email="${CSS.escape(email)}"]`);
+                    if (row) {
+                        row.dataset.aigrade = total;
+                        const cells = row.querySelectorAll('td');
+                        if (cells[3]) cells[3].textContent = total;
+                        const finalCell = row.querySelector('.final-score-cell');
+                        if (finalCell) {
+                            finalCell.dataset.base = total;
+                            const adj = parseFloat(row.querySelector('.adjustment-input')?.value) || 0;
+                            finalCell.textContent = total + adj;
+                        }
+                        const feedbackInput = row.querySelector('.feedback-input');
+                        if (feedbackInput) feedbackInput.value = feedbackText;
+                    }
+                }
+            } catch (e) { /* silently skip */ }
+            done++;
+            updateBtn();
+        }));
+        if (i + BATCH_SIZE < tasks.length) await new Promise(r => setTimeout(r, 600));
+    }
+
+    btn.innerHTML = `<i class="fas fa-check"></i> Graded ${done}`;
+    btn.disabled = false;
+    showToast(`AI grading complete — ${done} students scored. Review grades, adjust if needed, then Save and Close.`, 'success', 6000);
 }
 
 // ============================================

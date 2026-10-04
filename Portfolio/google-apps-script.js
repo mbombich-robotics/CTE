@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.16';
+const BACKEND_VERSION = 'v2.14.17';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2648,20 +2648,24 @@ function handleGetDocAIFeedback(data) {
   var docId         = data.docId || '';
   var deliverableId = Number(data.deliverableId);
   var email         = (data.email || '').toLowerCase().trim();
+  var isTeacher     = data.token === TEACHER_TOKEN;
 
   if (!docId) return { success: false, error: 'No document ID provided.' };
 
-  // --- Rate limit check ---
-  var usedToday = countAIFeedbackToday(email);
-  if (usedToday >= DAILY_AI_FEEDBACK_LIMIT) {
-    logActivity('DOC_AI_BLOCKED', email, 'Daily limit reached (' + DAILY_AI_FEEDBACK_LIMIT + ')');
-    return {
-      success: false,
-      rateLimited: true,
-      error: 'You have used AI feedback ' + DAILY_AI_FEEDBACK_LIMIT + ' time' +
-             (DAILY_AI_FEEDBACK_LIMIT === 1 ? '' : 's') + ' today — that is your daily limit. ' +
-             'Revise your work based on the feedback you already received and try again tomorrow.'
-    };
+  // --- Rate limit check (bypassed for teacher batch grading) ---
+  var usedToday = 0;
+  if (!isTeacher) {
+    usedToday = countAIFeedbackToday(email);
+    if (usedToday >= DAILY_AI_FEEDBACK_LIMIT) {
+      logActivity('DOC_AI_BLOCKED', email, 'Daily limit reached (' + DAILY_AI_FEEDBACK_LIMIT + ')');
+      return {
+        success: false,
+        rateLimited: true,
+        error: 'You have used AI feedback ' + DAILY_AI_FEEDBACK_LIMIT + ' time' +
+               (DAILY_AI_FEEDBACK_LIMIT === 1 ? '' : 's') + ' today — that is your daily limit. ' +
+               'Revise your work based on the feedback you already received and try again tomorrow.'
+      };
+    }
   }
 
   try {
@@ -2674,8 +2678,11 @@ function handleGetDocAIFeedback(data) {
 
     var grades = gradeDocWithRubric(text, deliverableId);
 
-    // Log successful call (count = usedToday + 1 after this one)
-    logActivity('DOC_AI_FEEDBACK', email, 'D' + deliverableId + ' | use ' + (usedToday + 1) + '/' + DAILY_AI_FEEDBACK_LIMIT + ' today');
+    if (isTeacher) {
+      logActivity('DOC_AI_BATCH', email, 'D' + deliverableId + ' | teacher batch');
+    } else {
+      logActivity('DOC_AI_FEEDBACK', email, 'D' + deliverableId + ' | use ' + (usedToday + 1) + '/' + DAILY_AI_FEEDBACK_LIMIT + ' today');
+    }
 
     return { success: true, grades: grades, usedToday: usedToday + 1, dailyLimit: DAILY_AI_FEEDBACK_LIMIT };
 
