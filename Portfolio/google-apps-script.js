@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.18';
+const BACKEND_VERSION = 'v2.14.19';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2781,7 +2781,7 @@ version_log (max 4): Completeness and specificity of the version log in Section 
 
 iteration_logic (max 4): Whether changes between versions logically address the measured discrepancies. 4=changes directly address measured errors with explicit reasoning connecting measurements to decisions; 3=changes reasonable and mostly explained; 2=some changes unexplained or not connected to measurements; 1=versions differ but no reasoning shown; 0=blank or only one version.
 
-cad_evidence (max 4): Evidence that the CAD model was completed and documented. IMPORTANT: You cannot view images, but the first line of this document tells you exactly how many images are present — trust it. 4=images confirmed present (≥1 image) AND Section 1 has 4 or more key dimensions with specific target values; 3=images confirmed present AND Section 1 has 2–3 key dimensions with specific target values; 2=images confirmed present AND Section 1 has at least 1 specific key dimension value; 1=images confirmed present but Section 1 has no specific dimension values at all; 0=0 images confirmed (document says "[DOCUMENT CONTAINS 0 IMAGES]").
+cad_evidence (max 4): Images submitted as CAD/photo evidence. IMPORTANT: You cannot view images, but the first line of this document tells you exactly how many images are present — trust it completely. Score = number of images confirmed, capped at 3. 3=3 or more images confirmed; 2=exactly 2 images confirmed; 1=exactly 1 image confirmed; 0=0 images confirmed (document says "[DOCUMENT CONTAINS 0 IMAGES]"). Never award 4 — that point is reserved for the teacher's visual review.
 
 reflection (max 4): Depth and specificity of the Section 4 reflection. 4=specific and data-driven; references measured values by name and number; clearly connects data to decisions; identifies concrete changes they would make if starting over; 3=addresses what worked and what they would change, references at least one measurement; 2=mentions iteration but no connection to actual measurement data; 1=generic or one sentence; 0=blank.`;
 
@@ -2804,7 +2804,7 @@ reflection (max 4): Depth and specificity of the Section 4 reflection. 4=specifi
     'SECTION ISOLATION — score each section based only on what the student wrote in that section:\n' +
     'criteria_completeness and criteria_quality must be scored from Section 3 only. The decision matrix in Section 7 has a "Criterion" column where the template instructs students to copy their criteria — do NOT use that column to infer what was written in Section 3. If Section 3 is blank or has only placeholders, score both criteria as 0 regardless of what appears in Section 7.\n\n' +
     'IMPORTANT: The document may contain template instruction text in highlighted boxes, or lines starting with "INSTRUCTION" or "DELETE THIS BOX." Ignore all template/instruction text -- grade only what the student actually wrote.\n\n' +
-    'INSTRUCTION BOX CHECK: After scoring, scan the document for any remaining text that starts with "INSTRUCTION" or contains "delete this box." If any instruction boxes are still present, prepend this exact sentence to your problem_id feedback: "Reminder: delete the yellow instruction boxes before submitting -- they should be gone before your teacher reviews your work. " (Then continue with your normal feedback for that criterion.)\n\n' +
+    'INSTRUCTION BOX CHECK: After scoring, scan the document for any remaining text that starts with "INSTRUCTION" or contains "delete this box." If any instruction boxes are still present, prepend this exact sentence to your problem_id feedback: "Reminder: delete the yellow instruction boxes before submitting -- they should be gone before I review your work. " (Then continue with your normal feedback for that criterion.)\n\n' +
     rubric + '\n\n' +
     'Return ONLY a valid JSON object -- no markdown fences, no explanation. One entry per criterion key.\n\n' +
     'Format: {"problem_id": {"score": 3, "max": 4, "feedback": "..."}, "criteria_completeness": {"score": 4, "max": 4, "feedback": "..."}, ...}\n\n' +
