@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.51',
+    VERSION: 'v2.14.52',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -1462,53 +1462,58 @@ const WHEEL_HUB_CAP_RUBRIC = {
     ]
 };
 
+const DESIGN_BRIEF_RUBRIC_DISPLAY = {
+    categories: [
+        { name: 'Client & End User', points: 4, criteria: [
+            'Clearly identifies who the client is (person, group, or organization)',
+            'Describes who will actually use the product (end user)',
+            'Client and end user are distinct and specific — not vague or generic'
+        ]},
+        { name: 'Problem Statement', points: 4, criteria: [
+            'States the specific problem to be solved — not the solution',
+            'Describes what is missing, broken, inefficient, or not working (a need, not an "I will build…")',
+            'Specific enough that a finished design could be tested against it'
+        ]},
+        { name: 'Criteria (quantity)', points: 4, criteria: [
+            'Lists at least 5 design criteria',
+            'Each criterion is written as a specific, measurable requirement',
+            'Criteria are numbered and formatted consistently'
+        ]},
+        { name: 'Criteria (quality)', points: 4, criteria: [
+            'Criteria describe what the product must do or how it must perform',
+            'Criteria are testable — you could verify each one with a test or measurement',
+            'Criteria are distinct from constraints (they are goals, not limitations)'
+        ]},
+        { name: 'Constraints', points: 4, criteria: [
+            'Lists real limitations on the design (time, budget, materials, size, etc.)',
+            'Constraints are specific enough to actually limit design choices',
+            'At least 3 constraints are identified'
+        ]},
+        { name: 'Design Statement', points: 4, criteria: [
+            'Written as a single clear sentence or short paragraph',
+            'Names the client/end user, the problem, and the general solution direction',
+            'Specific enough to guide design decisions — not a generic mission statement'
+        ]},
+        { name: 'Decision Matrix', points: 4, criteria: [
+            'Compares at least 3 design options against weighted criteria',
+            'Criteria weights reflect the priorities in the design brief',
+            'Shows the reasoning for the chosen design, not just the scores'
+        ]}
+    ]
+};
+
 const RUBRICS = {
-    11: {
-        categories: [
-            { name: 'Client & End User', points: 4, criteria: [
-                'Clearly identifies who the client is (person, group, or organization)',
-                'Describes who will actually use the product (end user)',
-                'Client and end user are distinct and specific — not vague or generic'
-            ]},
-            { name: 'Problem Statement', points: 4, criteria: [
-                'States the specific problem to be solved — not the solution',
-                'Describes what is missing, broken, inefficient, or not working (a need, not an "I will build…")',
-                'Specific enough that a finished design could be tested against it'
-            ]},
-            { name: 'Criteria (quantity)', points: 4, criteria: [
-                'Lists at least 5 design criteria',
-                'Each criterion is written as a specific, measurable requirement',
-                'Criteria are numbered and formatted consistently'
-            ]},
-            { name: 'Criteria (quality)', points: 4, criteria: [
-                'Criteria describe what the product must do or how it must perform',
-                'Criteria are testable — you could verify each one with a test or measurement',
-                'Criteria are distinct from constraints (they are goals, not limitations)'
-            ]},
-            { name: 'Constraints', points: 4, criteria: [
-                'Lists real limitations on the design (time, budget, materials, size, etc.)',
-                'Constraints are specific enough to actually limit design choices',
-                'At least 3 constraints are identified'
-            ]},
-            { name: 'Design Statement', points: 4, criteria: [
-                'Written as a single clear sentence or short paragraph',
-                'Names the client/end user, the problem, and the general solution direction',
-                'Specific enough to guide design decisions — not a generic mission statement'
-            ]},
-            { name: 'Decision Matrix', points: 4, criteria: [
-                'Compares at least 3 design options against weighted criteria',
-                'Criteria weights reflect the priorities in the design brief',
-                'Shows the reasoning for the chosen design, not just the scores'
-            ]}
-        ]
-    },
-    21: COMPONENT_RUBRIC_DISPLAY,
-    22: WHEEL_HUB_CAP_RUBRIC,
-    23: COMPONENT_RUBRIC_DISPLAY,
-    24: COMPONENT_RUBRIC_DISPLAY,
-    25: COMPONENT_RUBRIC_DISPLAY,
-    26: COMPONENT_RUBRIC_DISPLAY,
-    27: COMPONENT_RUBRIC_DISPLAY,
+    11:  DESIGN_BRIEF_RUBRIC_DISPLAY,
+    21:  COMPONENT_RUBRIC_DISPLAY,
+    22:  WHEEL_HUB_CAP_RUBRIC,
+    23:  COMPONENT_RUBRIC_DISPLAY,
+    24:  COMPONENT_RUBRIC_DISPLAY,
+    25:  COMPONENT_RUBRIC_DISPLAY,
+    26:  COMPONENT_RUBRIC_DISPLAY,
+    27:  COMPONENT_RUBRIC_DISPLAY,
+    421: COMPONENT_RUBRIC_DISPLAY,   // DBL D2.1 — Spinner Body
+    422: DESIGN_BRIEF_RUBRIC_DISPLAY, // DBL D2.2 — Doorstop Design Brief
+    423: COMPONENT_RUBRIC_DISPLAY,   // DBL D2.3 — Doorstop CAD Model
     4: {
         categories: [
             { name: 'Customized CAD Model', points: 20, criteria: [
