@@ -5,7 +5,7 @@
  * Deploy as: Web app · Execute as Me · Access: Anyone
  */
 
-var HEADERS = ['Timestamp', 'First Name', 'Last Name', 'Grade', 'Period', 'Parent Email'];
+var HEADERS = ['Timestamp', 'First Name', 'Last Name', 'Grade', 'Parent Email'];
 
 function doPost(e) {
   try {
@@ -21,10 +21,9 @@ function doPost(e) {
 
     sheet.appendRow([
       new Date().toLocaleString('en-US', { timeZone: 'America/Detroit' }),
-      data.first     || '',
-      data.last      || '',
-      data.grade     || '',
-      'Period ' + (data.period || ''),
+      data.first       || '',
+      data.last        || '',
+      data.grade       || '',
       data.parentEmail || ''
     ]);
 

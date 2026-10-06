@@ -351,30 +351,15 @@
       </div>
     </div>
 
-    <div class="two-col">
-      <div class="field">
-        <label for="grade">Grade</label>
-        <select id="grade" required>
-          <option value="">— select —</option>
-          <option value="9">9th</option>
-          <option value="10">10th</option>
-          <option value="11">11th</option>
-          <option value="12">12th</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="period">Period to Be Excused</label>
-        <select id="period" required>
-          <option value="">— select —</option>
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
-          <option>5</option>
-          <option>6</option>
-          <option>7</option>
-        </select>
-      </div>
+    <div class="field">
+      <label for="grade">Grade</label>
+      <select id="grade" required>
+        <option value="">— select —</option>
+        <option value="9">9th</option>
+        <option value="10">10th</option>
+        <option value="11">11th</option>
+        <option value="12">12th</option>
+      </select>
     </div>
 
     <div class="field">
@@ -438,7 +423,7 @@
   // ── Replace with your deployed Apps Script URL after deployment ──
   var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcjV4D-7vNInRRbA4OA0-ycHON_4UHgHzdtmlrU1sZHOYx6MlHtKPAzpPoqLa04vpPCg/exec';
 
-  function buildEmail(first, last, grade, period) {
+  function buildEmail(first, last, grade) {
     return 'Subject: Permission Slip — Manufacturing Day Field Trip (Oct. 21, 2026)\n\n'
       + 'Dear Parent or Guardian,\n\n'
       + first + ' ' + last + ' has signed up to attend the Manufacturing Day field trip '
@@ -449,7 +434,7 @@
       + '  Date:     Wednesday, October 21, 2026\n'
       + '  Session:  Morning — 9:00 AM to 12:00 PM\n'
       + '  Student:  ' + first + ' ' + last + ' · Grade ' + grade + '\n\n'
-      + first + ' will be excused from Period ' + period + ' on that date. '
+      + first + ' will be excused from 2nd–5th hour that day. '
       + 'Students will tour up to three manufacturing facilities alongside KVCC engineering students '
       + '(≈ 1 hour per building).\n\n'
       + 'TO GIVE PERMISSION: Please reply to this email or contact Mr. Bombich directly:\n\n'
@@ -470,11 +455,10 @@
     var first       = document.getElementById('firstName').value.trim();
     var last        = document.getElementById('lastName').value.trim();
     var grade       = document.getElementById('grade').value;
-    var period      = document.getElementById('period').value;
     var parentEmail = document.getElementById('parentEmail').value.trim();
     var errMsg      = document.getElementById('errMsg');
 
-    if (!first || !last || !grade || !period || !parentEmail) {
+    if (!first || !last || !grade || !parentEmail) {
       errMsg.classList.add('show');
       return;
     }
@@ -490,7 +474,7 @@
         await fetch(SCRIPT_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain' },
-          body: JSON.stringify({ first, last, grade, period, parentEmail })
+          body: JSON.stringify({ first, last, grade, parentEmail })
         });
       } catch (_) { /* sheet write failed silently — confirmation still shows */ }
     }
@@ -503,7 +487,7 @@
     document.getElementById('confirmSub').textContent =
       first + ', your name is on the list. One more step — your parent or guardian needs to give permission before October 9.';
 
-    document.getElementById('emailText').textContent = buildEmail(first, last, grade, period);
+    document.getElementById('emailText').textContent = buildEmail(first, last, grade);
   });
 
   function copyEmail() {
