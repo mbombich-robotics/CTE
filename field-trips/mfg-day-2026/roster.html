@@ -1,0 +1,307 @@
+<title>Mfg Day Roster</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+  :root {
+    --red:     #C41C1C;
+    --black:   #111111;
+    --grey-dk: #444444;
+    --grey-md: #888888;
+    --grey-lt: #E0E0E0;
+    --off-wh:  #F5F5F5;
+    --white:   #FFFFFF;
+    --success: #1E7A43;
+    color-scheme: light;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--off-wh);
+    color: var(--black);
+    font-family: 'Source Sans 3', system-ui, sans-serif;
+    padding: 24px 16px;
+  }
+
+  /* ── Screen layout ── */
+  .page-header {
+    max-width: 900px;
+    margin: 0 auto 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .page-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(26px, 6vw, 40px);
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--black);
+    line-height: 1;
+  }
+  .page-sub {
+    font-size: 13px;
+    color: var(--grey-md);
+    margin-top: 4px;
+  }
+  .page-sub span { color: var(--red); font-weight: 600; }
+
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .btn {
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn:hover { background: #9E1515; }
+  .btn-ghost {
+    background: none;
+    color: var(--grey-dk);
+    border: 1.5px solid var(--grey-lt);
+    border-radius: 3px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .btn-ghost:hover { border-color: var(--grey-dk); }
+
+  /* ── Stats bar ── */
+  .stats-bar {
+    max-width: 900px;
+    margin: 0 auto 12px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .stat {
+    font-size: 13px;
+    color: var(--grey-dk);
+  }
+  .stat strong { color: var(--black); font-size: 22px; font-weight: 600; display: block; line-height: 1; }
+
+  /* ── Table wrapper ── */
+  .table-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--white);
+    border: 1px solid var(--grey-lt);
+    border-radius: 3px;
+    overflow-x: auto;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    min-width: 560px;
+  }
+
+  thead tr {
+    background: var(--black);
+    color: #fff;
+  }
+  thead th {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 10px 12px;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  tbody tr { border-bottom: 1px solid var(--grey-lt); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:nth-child(even) { background: var(--off-wh); }
+
+  td {
+    padding: 9px 12px;
+    vertical-align: middle;
+    color: var(--grey-dk);
+    line-height: 1.35;
+  }
+  td.student-name { font-weight: 600; color: var(--black); white-space: nowrap; }
+  td.grade { text-align: center; color: var(--grey-md); font-size: 12px; }
+  td.email { font-size: 12px; color: var(--grey-md); word-break: break-all; }
+  td.perm-col { text-align: center; }
+
+  .perm-yes {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    background: var(--success);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .perm-no {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--grey-lt);
+    border-radius: 3px;
+    vertical-align: middle;
+  }
+
+  /* ── Loading / empty states ── */
+  .state-msg {
+    max-width: 900px;
+    margin: 40px auto;
+    text-align: center;
+    color: var(--grey-md);
+    font-size: 15px;
+  }
+
+  /* ── Print styles ── */
+  @media print {
+    body { background: #fff; padding: 0; }
+    .btn-row, .btn-ghost, .btn { display: none !important; }
+    .page-header { max-width: none; margin-bottom: 10px; }
+    .page-title { font-size: 26px; }
+    .stats-bar { max-width: none; margin-bottom: 8px; gap: 16px; }
+    .table-wrap {
+      max-width: none;
+      border: none;
+      box-shadow: none;
+      border-radius: 0;
+      overflow: visible;
+    }
+    table { font-size: 11px; min-width: 0; }
+    thead tr { background: #111 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    thead th { padding: 6px 8px; }
+    td { padding: 6px 8px; }
+    tbody tr:nth-child(even) { background: #f5f5f5 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .perm-yes { background: #1E7A43 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+
+<div id="loadingMsg" class="state-msg">Loading roster…</div>
+<div id="errorMsg" class="state-msg" style="display:none; color: #C41C1C;"></div>
+
+<div id="rosterContent" style="display:none;">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Manufacturing Day Roster</div>
+      <div class="page-sub">Nissha Eimo Technologies · Oct. 21, 2026 · <span id="asOfLabel"></span></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-ghost" onclick="loadRoster()">Refresh</button>
+      <button class="btn" onclick="window.print()">Print Roster</button>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat"><strong id="statTotal">—</strong>Signed up</div>
+    <div class="stat"><strong id="statPerm">—</strong>Permission received</div>
+    <div class="stat"><strong id="statPending">—</strong>Pending</div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>Gr.</th>
+          <th>Parent Name</th>
+          <th>Parent Email</th>
+          <th>Parent Phone</th>
+          <th>Permission</th>
+        </tr>
+      </thead>
+      <tbody id="rosterBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div id="emptyMsg" class="state-msg" style="display:none;">No sign-ups yet.</div>
+
+<script>
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcjV4D-7vNInRRbA4OA0-ycHON_4UHgHzdtmlrU1sZHOYx6MlHtKPAzpPoqLa04vpPCg/exec';
+
+  function lastInitial(last) {
+    return last ? last.charAt(0).toUpperCase() + '.' : '';
+  }
+
+  function renderRow(s) {
+    var hasPerm = s.permission && s.permission.toString().trim().length > 0;
+    return '<tr>'
+      + '<td class="student-name">' + esc(s.first) + ' ' + esc(lastInitial(s.last)) + '</td>'
+      + '<td class="grade">' + esc(s.grade) + '</td>'
+      + '<td>' + esc(s.parentName || '—') + '</td>'
+      + '<td class="email">' + esc(s.parentEmail || '—') + '</td>'
+      + '<td>' + esc(s.parentPhone || '—') + '</td>'
+      + '<td class="perm-col">'
+        + (hasPerm
+          ? '<span class="perm-yes" title="' + esc(s.permDate || '') + '">✓</span>'
+          : '<span class="perm-no" title="Pending"></span>')
+      + '</td>'
+      + '</tr>';
+  }
+
+  function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  async function loadRoster() {
+    document.getElementById('loadingMsg').style.display = 'block';
+    document.getElementById('rosterContent').style.display = 'none';
+    document.getElementById('emptyMsg').style.display = 'none';
+    document.getElementById('errorMsg').style.display = 'none';
+
+    try {
+      var res  = await fetch(SCRIPT_URL);
+      var rows = await res.json();
+
+      if (!Array.isArray(rows)) throw new Error('Unexpected response from server.');
+
+      // Filter out header-only or empty rows, sort by last name
+      var students = rows.filter(function(r) { return r.first; });
+      students.sort(function(a, b) {
+        return (a.last || '').localeCompare(b.last || '') || (a.first || '').localeCompare(b.first || '');
+      });
+
+      document.getElementById('loadingMsg').style.display = 'none';
+
+      if (students.length === 0) {
+        document.getElementById('emptyMsg').style.display = 'block';
+        return;
+      }
+
+      var permCount = students.filter(function(s) { return s.permission && s.permission.toString().trim(); }).length;
+
+      document.getElementById('statTotal').textContent   = students.length;
+      document.getElementById('statPerm').textContent    = permCount;
+      document.getElementById('statPending').textContent = students.length - permCount;
+      document.getElementById('asOfLabel').textContent   = 'as of ' + new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+
+      document.getElementById('rosterBody').innerHTML = students.map(renderRow).join('');
+      document.getElementById('rosterContent').style.display = 'block';
+
+    } catch (err) {
+      document.getElementById('loadingMsg').style.display = 'none';
+      document.getElementById('errorMsg').textContent = 'Could not load roster: ' + err.message;
+      document.getElementById('errorMsg').style.display = 'block';
+    }
+  }
+
+  loadRoster();
+</script>

@@ -24,6 +24,29 @@ var HEADERS  = ['Timestamp', 'First Name', 'Last Name', 'Grade', 'Parent Email',
 var COL = { TS: 1, FIRST: 2, LAST: 3, GRADE: 4, PEMAIL: 5,
             PNAME: 6, PPHONE: 7, PERMISSION: 8, PDATE: 9 };
 
+// ── Roster read (GET) ────────────────────────────────────────────────────────
+function doGet(e) {
+  try {
+    var ss    = SpreadsheetApp.openById(SHEET_ID);
+    var sheet = ss.getSheets()[0];
+    var data  = sheet.getDataRange().getValues();
+    var rows  = data.slice(1).filter(function(r) { return r[1]; }).map(function(r) {
+      return {
+        first:       r[1], last:       r[2], grade:      r[3],
+        parentEmail: r[4], parentName: r[5], parentPhone: r[6],
+        permission:  r[7], permDate:   r[8]
+      };
+    });
+    return ContentService
+      .createTextOutput(JSON.stringify(rows))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ error: err.message }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
 function doPost(e) {
   try {
     var data  = JSON.parse(e.postData.contents);
