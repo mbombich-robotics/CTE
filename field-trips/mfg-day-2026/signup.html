@@ -403,7 +403,7 @@
   <div class="next-step">
     <div class="next-step-eyebrow">Next Step</div>
     <div class="next-step-heading">Forward This to Your Parent</div>
-    <div class="next-step-body">Copy the message below and paste it into an email to your parent or guardian. Ask them to reply to Mr. Bombich to confirm permission.</div>
+    <div class="next-step-body">Copy the message below and paste it into an email or text to your parent or guardian. The message includes a permission link — they click it and fill out a quick form.</div>
 
     <div class="email-box">
       <div class="email-header">
@@ -437,12 +437,10 @@
       + first + ' will be excused from 2nd–5th hour that day. '
       + 'Students will tour up to three manufacturing facilities alongside KVCC engineering students '
       + '(≈ 1 hour per building).\n\n'
-      + 'TO GIVE PERMISSION: Please reply to this email or contact Mr. Bombich directly:\n\n'
-      + '  mbombich@vicksburgschools.org\n\n'
-      + 'In your reply, please include:\n'
-      + '  • Your full name\n'
-      + '  • Confirmation that ' + first + ' has permission to attend\n'
-      + '  • Any allergies or medical information we should know\n\n'
+      + 'TO GIVE PERMISSION: Click the link below to fill out a short permission form (takes about one minute):\n\n'
+      + '  https://mbombich-robotics.github.io/CTE/field-trips/mfg-day-2026/parent-permission.html'
+      + '?first=' + encodeURIComponent(first) + '&last=' + encodeURIComponent(last) + '\n\n'
+      + 'You will enter your name, phone number, and confirm permission on the form.\n\n'
       + 'Thank you,\n'
       + 'Mr. Bombich\n'
       + 'Applied Engineering & Robotics\n'
@@ -474,7 +472,7 @@
         await fetch(SCRIPT_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain' },
-          body: JSON.stringify({ first, last, grade, parentEmail })
+          body: JSON.stringify({ action: 'signup', first, last, grade, parentEmail })
         });
       } catch (_) { /* sheet write failed silently — confirmation still shows */ }
     }

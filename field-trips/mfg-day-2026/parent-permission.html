@@ -1,0 +1,358 @@
+<title>Manufacturing Day Permission</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+  :root {
+    --red:      #C41C1C;
+    --red-dark: #9E1515;
+    --black:    #111111;
+    --grey-dk:  #444444;
+    --grey-md:  #888888;
+    --grey-lt:  #DDDDDD;
+    --off-white:#F5F5F5;
+    --white:    #FFFFFF;
+    --success:  #1E7A43;
+    color-scheme: light;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--off-white);
+    color: var(--black);
+    font-family: 'Source Sans 3', system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 28px 16px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 540px;
+    background: var(--white);
+    border: 1px solid var(--grey-lt);
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  }
+
+  .topbar {
+    background: var(--black);
+    padding: 9px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .topbar span {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+  }
+  .topbar .red-tag {
+    background: var(--red);
+    color: #fff;
+    border-radius: 2px;
+    padding: 1px 8px;
+  }
+
+  .card-hero {
+    padding: 24px 28px 18px;
+    border-bottom: 3px solid var(--red);
+  }
+  .card-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 6px;
+  }
+  .card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(26px, 7vw, 38px);
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 1;
+    color: var(--black);
+  }
+  .card-sub {
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--grey-dk);
+    line-height: 1.45;
+  }
+  .student-name {
+    display: inline-block;
+    background: var(--off-white);
+    border: 1.5px solid var(--grey-lt);
+    border-radius: 3px;
+    padding: 4px 12px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--black);
+    margin-top: 10px;
+  }
+
+  .trip-detail {
+    background: var(--off-white);
+    border-left: 4px solid var(--red);
+    padding: 10px 20px;
+    margin: 0;
+    border-bottom: 1px solid var(--grey-lt);
+    font-size: 13px;
+    color: var(--grey-dk);
+    line-height: 1.6;
+  }
+  .trip-detail strong { color: var(--black); }
+
+  .form-body {
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .field { display: flex; flex-direction: column; gap: 5px; }
+
+  label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--grey-dk);
+  }
+
+  input[type="text"],
+  input[type="tel"] {
+    background: var(--white);
+    border: 1.5px solid var(--grey-lt);
+    border-radius: 3px;
+    color: var(--black);
+    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-size: 15px;
+    padding: 9px 12px;
+    width: 100%;
+    transition: border-color 0.15s;
+    outline: none;
+  }
+  input[type="text"]::placeholder,
+  input[type="tel"]::placeholder { color: var(--grey-md); }
+  input[type="text"]:focus,
+  input[type="tel"]:focus { border-color: var(--red); }
+
+  .confirm-check-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--off-white);
+    border: 1.5px solid var(--grey-lt);
+    border-radius: 3px;
+    padding: 14px 16px;
+    cursor: pointer;
+  }
+  .confirm-check-row input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    accent-color: var(--red);
+    cursor: pointer;
+    margin-top: 1px;
+  }
+  .confirm-check-row .check-label {
+    font-size: 14px;
+    color: var(--black);
+    line-height: 1.5;
+    cursor: pointer;
+  }
+
+  .submit-btn {
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 12px 28px;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.15s;
+  }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .err-msg { font-size: 13px; color: var(--red); display: none; margin-top: 4px; }
+  .err-msg.show { display: block; }
+
+  /* Confirmation */
+  #confirmation { display: none; }
+
+  .confirm-hero {
+    padding: 28px 28px 20px;
+    border-bottom: 3px solid var(--success);
+  }
+  .confirm-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--success);
+    color: #fff;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+  .confirm-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 34px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--black);
+    line-height: 1;
+  }
+  .confirm-sub {
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--grey-dk);
+    line-height: 1.5;
+  }
+  .confirm-footer {
+    padding: 14px 28px 20px;
+    font-size: 13px;
+    color: var(--grey-md);
+    line-height: 1.5;
+  }
+  .confirm-footer strong { color: var(--grey-dk); }
+</style>
+
+<div class="card" id="permissionCard">
+  <div class="topbar">
+    <span>Manufacturing Day · Oct. 21, 2026</span>
+    <span class="red-tag">Parent Permission</span>
+  </div>
+
+  <div class="card-hero">
+    <div class="card-eyebrow">Vicksburg High School · Nissha Eimo Technologies</div>
+    <div class="card-title">Parent Permission Form</div>
+    <div class="card-sub">Granting permission for:</div>
+    <div class="student-name" id="studentNameDisplay">—</div>
+  </div>
+
+  <div class="trip-detail">
+    <strong>Event:</strong> Manufacturing Day — Facility Tours<br>
+    <strong>Date:</strong> Wednesday, October 21, 2026 · 9:00 AM – 12:00 PM<br>
+    <strong>Location:</strong> Nissha Eimo Technologies, Vicksburg, MI<br>
+    Your student will be excused from 2nd–5th hour. Tours of up to three manufacturing facilities alongside KVCC engineering students (~1 hour per building).
+  </div>
+
+  <form class="form-body" id="permissionForm" novalidate>
+
+    <div class="field">
+      <label for="parentName">Your Full Name (Parent / Guardian)</label>
+      <input type="text" id="parentName" autocomplete="name" placeholder="First Last" required>
+    </div>
+
+    <div class="field">
+      <label for="parentPhone">Your Phone Number</label>
+      <input type="tel" id="parentPhone" autocomplete="tel" placeholder="269-555-0100" required>
+    </div>
+
+    <label class="confirm-check-row" for="permissionCheck">
+      <input type="checkbox" id="permissionCheck" required>
+      <span class="check-label" id="checkText">
+        I give permission for my student to attend the Manufacturing Day field trip on October 21, 2026, and understand they will be excused from 2nd–5th hour that day.
+      </span>
+    </label>
+
+    <div>
+      <button type="submit" class="submit-btn" id="submitBtn">Submit Permission</button>
+      <div class="err-msg" id="errMsg">Please fill in all fields and check the permission box.</div>
+    </div>
+
+  </form>
+</div>
+
+<!-- Confirmation -->
+<div class="card" id="confirmation">
+  <div class="topbar">
+    <span>Manufacturing Day · Oct. 21, 2026</span>
+    <span class="red-tag">Permission Received</span>
+  </div>
+  <div class="confirm-hero">
+    <div class="confirm-icon">✓</div>
+    <div class="confirm-title">Permission Granted</div>
+    <div class="confirm-sub" id="confirmSub"></div>
+  </div>
+  <div class="confirm-footer">
+    Questions? Contact <strong>Mr. Bombich</strong> — <strong>mbombich@vicksburgschools.org</strong>
+  </div>
+</div>
+
+<script>
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcjV4D-7vNInRRbA4OA0-ycHON_4UHgHzdtmlrU1sZHOYx6MlHtKPAzpPoqLa04vpPCg/exec';
+
+  var params      = new URLSearchParams(window.location.search);
+  var studentFirst = params.get('first') || '';
+  var studentLast  = params.get('last')  || '';
+
+  // Pre-fill student name display
+  var nameDisplay = document.getElementById('studentNameDisplay');
+  nameDisplay.textContent = studentFirst && studentLast
+    ? studentFirst + ' ' + studentLast
+    : '(student name not found — see form below)';
+
+  document.getElementById('permissionForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    var parentName  = document.getElementById('parentName').value.trim();
+    var parentPhone = document.getElementById('parentPhone').value.trim();
+    var checked     = document.getElementById('permissionCheck').checked;
+    var errMsg      = document.getElementById('errMsg');
+
+    if (!parentName || !parentPhone || !checked) {
+      errMsg.classList.add('show');
+      return;
+    }
+    errMsg.classList.remove('show');
+
+    var btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+          action: 'parentPermission',
+          studentFirst: studentFirst,
+          studentLast:  studentLast,
+          parentName:   parentName,
+          parentPhone:  parentPhone
+        })
+      });
+    } catch (_) { /* proceed to confirmation regardless */ }
+
+    document.getElementById('permissionCard').style.display = 'none';
+    var conf = document.getElementById('confirmation');
+    conf.style.display = 'block';
+
+    var student = studentFirst || 'your student';
+    document.getElementById('confirmSub').textContent =
+      'Thank you, ' + parentName + '. '
+      + 'Permission for ' + (studentFirst ? studentFirst + ' ' + studentLast : 'your student')
+      + ' to attend Manufacturing Day on October 21 has been recorded. '
+      + 'Mr. Bombich will confirm closer to the date.';
+  });
+</script>
