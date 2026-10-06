@@ -10,7 +10,8 @@ var HEADERS = ['Timestamp', 'First Name', 'Last Name', 'Grade', 'Parent Email'];
 function doPost(e) {
   try {
     var data = JSON.parse(e.postData.contents);
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var ss = SpreadsheetApp.openById('1P7hEMqoPUAIYky1sJ_y0y9bN1XgesMgLEfD1X4mshCQ');
+    var sheet = ss.getSheets()[0];
 
     // Write headers if the sheet is empty
     if (sheet.getLastRow() === 0) {
@@ -38,10 +39,10 @@ function doPost(e) {
   }
 }
 
-/** Test: run manually to verify sheet writes */
+/** Test: run manually from the Apps Script editor to verify sheet writes */
 function testWrite() {
   doPost({ postData: { contents: JSON.stringify({
-    first: 'Test', last: 'Student', grade: '11', period: '3',
+    first: 'Test', last: 'Student', grade: '11',
     parentEmail: 'parent@example.com'
   })}});
 }
