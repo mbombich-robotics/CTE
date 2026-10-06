@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.55',
+    VERSION: 'v2.14.57',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -2530,7 +2530,7 @@ function updateFeedbackNotification() {
 
     notification.style.display = 'block';
     list.innerHTML = gradedItems.map(item => `
-        <a href="#" onclick="event.preventDefault(); markFeedbackViewed('${item.key}'); ${item.type === 'reflection' ? `navigateTo('weekly'); selectWeek(${item.week});` : `navigateTo('deliverables'); openDeliverable(${item.id});`}"
+        <a href="#" onclick="event.preventDefault(); markFeedbackViewed('${item.key}'); ${item.type === 'reflection' ? `navigateTo('weekly'); selectWeek(${item.week});` : `navigateTo('deliverables'); openDeliverableForm(${item.id});`}"
            style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: white; border-radius: 8px; text-decoration: none; color: inherit;">
             <i class="fas ${item.type === 'reflection' ? 'fa-calendar-check' : 'fa-file-alt'}" style="color: var(--success);"></i>
             <div style="flex: 1;">
@@ -2704,11 +2704,16 @@ function renderDeliverableCard(d) {
     const status = state.deliverables[d.id]?.status || 'pending';
     const isCurrent = d.week === state.currentWeek;
     const isAssigned = d.alwaysOpen || status === 'completed' || !!state.config.deliverableDueDates[d.id];
+    const delState = state.deliverables[d.id] || {};
+    const hasFeedback = status === 'completed' && (delState.teacherGrade !== undefined || delState.teacherFeedback);
+    const feedbackBadge = hasFeedback
+        ? `<span style="display:inline-flex;align-items:center;gap:4px;background:var(--success);color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;margin-left:8px;"><i class="fas fa-comment-dots"></i> Feedback</span>`
+        : '';
     return `
         <div class="deliverable-card ${status} ${isCurrent ? 'current' : ''} ${!isAssigned ? 'not-assigned' : ''}" data-id="${d.id}">
             <div class="deliverable-number">${status === 'completed' ? '<i class="fas fa-check"></i>' : formatDeliverableLabel(d)}</div>
             <div class="deliverable-info">
-                <div class="deliverable-title">${d.title}</div>
+                <div class="deliverable-title">${d.title}${feedbackBadge}</div>
                 <div class="deliverable-meta">
                     <span>Unit ${d.unit || '?'}</span>
                     <span>${formatPhase(d.phase)}</span>
@@ -3294,6 +3299,18 @@ function openDeliverableForm(id) {
 
         ${renderRubricCard(id)}
 
+        <div id="teacherFeedbackCard" class="card" style="display: none; background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-left: 4px solid var(--success); margin-top: 20px;">
+            <h3 style="color: var(--success); margin-bottom: 12px;"><i class="fas fa-comment-dots"></i> Teacher Feedback</h3>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                <span style="font-weight: 600;">Your Score:</span>
+                <span id="teacherGradeDisplay" style="font-size: 24px; font-weight: 700; color: var(--success);">--</span>
+                <span style="color: var(--gray-600);">pts</span>
+            </div>
+            <div id="teacherFeedbackText" style="background: white; padding: 12px 16px; border-radius: 8px; color: var(--gray-700); font-style: italic; white-space: pre-wrap;">
+                No feedback yet.
+            </div>
+        </div>
+
         <form id="deliverableForm" style="margin-top: 20px;">
 
             ${deliverable.hasLevelSelect ? `
@@ -3699,6 +3716,7 @@ function openDeliverableForm(id) {
         submitDeliverable(id);
     });
 
+    showTeacherFeedback(existing);
     modal.classList.add('active');
 }
 

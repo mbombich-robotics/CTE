@@ -1,0 +1,528 @@
+<title>Manufacturing Day Sign-Up</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+  /*
+   * Single-theme: red · black · white · grey
+   * Layout: centered card, single-column form → confirmation screen
+   */
+  :root {
+    --red:      #C41C1C;
+    --red-dark: #9E1515;
+    --black:    #111111;
+    --grey-dk:  #444444;
+    --grey-md:  #888888;
+    --grey-lt:  #DDDDDD;
+    --off-white:#F5F5F5;
+    --white:    #FFFFFF;
+    --success:  #1E7A43;
+    color-scheme: light;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--off-white);
+    color: var(--black);
+    font-family: 'Source Sans 3', system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 28px 16px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 560px;
+    background: var(--white);
+    border: 1px solid var(--grey-lt);
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  }
+
+  .topbar {
+    background: var(--black);
+    padding: 9px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .topbar span {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+  }
+  .topbar .red-tag {
+    background: var(--red);
+    color: #fff;
+    border-radius: 2px;
+    padding: 1px 8px;
+  }
+
+  .card-hero {
+    padding: 24px 28px 18px;
+    border-bottom: 3px solid var(--red);
+  }
+  .card-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 6px;
+  }
+  .card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(30px, 8vw, 44px);
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 1;
+    color: var(--black);
+  }
+  .card-sub {
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--grey-dk);
+    line-height: 1.45;
+  }
+
+  /* Deadline */
+  .deadline-bar {
+    background: var(--off-white);
+    border-left: 4px solid var(--red);
+    padding: 10px 28px 10px 20px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--grey-lt);
+  }
+  .deadline-bar strong {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--red);
+  }
+  .deadline-bar span { font-size: 14px; color: var(--grey-dk); }
+
+  /* Form */
+  .form-body {
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .field { display: flex; flex-direction: column; gap: 5px; }
+
+  label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--grey-dk);
+  }
+
+  input, select {
+    background: var(--white);
+    border: 1.5px solid var(--grey-lt);
+    border-radius: 3px;
+    color: var(--black);
+    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-size: 15px;
+    padding: 9px 12px;
+    width: 100%;
+    transition: border-color 0.15s;
+    outline: none;
+  }
+  input::placeholder { color: var(--grey-md); }
+  input:focus, select:focus { border-color: var(--red); }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 440px) { .two-col { grid-template-columns: 1fr; } }
+
+  .field-hint { font-size: 12px; color: var(--grey-md); margin-top: -2px; }
+
+  /* Session info box */
+  .session-box {
+    background: var(--off-white);
+    border: 1.5px solid var(--grey-lt);
+    border-radius: 3px;
+    padding: 12px 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .session-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--red);
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+  .session-title { font-size: 15px; font-weight: 600; color: var(--black); }
+  .session-detail { font-size: 13px; color: var(--grey-dk); margin-top: 2px; }
+
+  .submit-btn {
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 12px 28px;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.15s;
+  }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .err-msg { font-size: 13px; color: var(--red); display: none; margin-top: 4px; }
+  .err-msg.show { display: block; }
+
+  /* Confirmation */
+  #confirmation { display: none; }
+
+  .confirm-hero {
+    padding: 28px 28px 20px;
+    border-bottom: 3px solid var(--red);
+  }
+  .confirm-check {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--success);
+    color: #fff;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+  .confirm-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 34px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--black);
+    line-height: 1;
+  }
+  .confirm-sub {
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--grey-dk);
+    line-height: 1.5;
+  }
+
+  .next-step {
+    padding: 22px 28px;
+  }
+  .next-step-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 6px;
+  }
+  .next-step-heading {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--black);
+    margin-bottom: 6px;
+  }
+  .next-step-body {
+    font-size: 14px;
+    color: var(--grey-dk);
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+
+  /* Email template */
+  .email-box {
+    border: 1.5px solid var(--grey-lt);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .email-header {
+    background: var(--off-white);
+    border-bottom: 1px solid var(--grey-lt);
+    padding: 8px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .email-header-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--grey-md);
+  }
+  .copy-btn {
+    background: var(--black);
+    color: #fff;
+    border: none;
+    border-radius: 2px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+  .copy-btn:hover { background: var(--grey-dk); }
+  .copy-btn.copied { background: var(--success); }
+
+  .email-text {
+    padding: 16px;
+    font-size: 13px;
+    color: var(--grey-dk);
+    line-height: 1.7;
+    white-space: pre-wrap;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
+    background: var(--white);
+  }
+
+  .confirm-footer {
+    padding: 14px 28px 20px;
+    font-size: 13px;
+    color: var(--grey-md);
+    line-height: 1.5;
+    border-top: 1px solid var(--grey-lt);
+  }
+  .confirm-footer strong { color: var(--grey-dk); }
+</style>
+
+<!-- ── SIGN-UP FORM ── -->
+<div class="card" id="signupCard">
+  <div class="topbar">
+    <span>Manufacturing Day · Oct. 21, 2026</span>
+    <span class="red-tag">Field Trip</span>
+  </div>
+
+  <div class="card-hero">
+    <div class="card-eyebrow">Nissha Eimo Technologies</div>
+    <div class="card-title">Sign Up for the Tour</div>
+    <div class="card-sub">Morning session only — 9:00 AM to 12:00 PM. Fill this out and you'll get a permission slip email to forward to your parent or guardian.</div>
+  </div>
+
+  <div class="deadline-bar">
+    <strong>⚠ Sign-up deadline:</strong>
+    <span>Friday, October 9, 2026</span>
+  </div>
+
+  <form class="form-body" id="signupForm" novalidate>
+
+    <div class="two-col">
+      <div class="field">
+        <label for="firstName">First Name</label>
+        <input type="text" id="firstName" autocomplete="given-name" placeholder="First" required>
+      </div>
+      <div class="field">
+        <label for="lastName">Last Name</label>
+        <input type="text" id="lastName" autocomplete="family-name" placeholder="Last" required>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="field">
+        <label for="grade">Grade</label>
+        <select id="grade" required>
+          <option value="">— select —</option>
+          <option value="9">9th</option>
+          <option value="10">10th</option>
+          <option value="11">11th</option>
+          <option value="12">12th</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="period">Period to Be Excused</label>
+        <select id="period" required>
+          <option value="">— select —</option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+          <option>6</option>
+          <option>7</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Tour Session</label>
+      <div class="session-box">
+        <div class="session-dot"></div>
+        <div>
+          <div class="session-title">Morning — 9:00 AM to 12:00 PM</div>
+          <div class="session-detail">You will be excused from the period you selected above. Tours of up to three Nissha Eimo facilities, ~1 hour each, alongside KVCC students.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="parentEmail">Parent / Guardian Email</label>
+      <input type="email" id="parentEmail" autocomplete="email" placeholder="parent@example.com" required>
+      <span class="field-hint">You'll receive a permission slip to forward to them after submitting.</span>
+    </div>
+
+    <div>
+      <button type="submit" class="submit-btn" id="submitBtn">Submit Sign-Up</button>
+      <div class="err-msg" id="errMsg">Please fill in all fields before submitting.</div>
+    </div>
+
+  </form>
+</div>
+
+<!-- ── CONFIRMATION ── -->
+<div class="card" id="confirmation">
+  <div class="topbar">
+    <span>Manufacturing Day · Oct. 21, 2026</span>
+    <span class="red-tag">Field Trip</span>
+  </div>
+
+  <div class="confirm-hero">
+    <div class="confirm-check">✓</div>
+    <div class="confirm-title">You're Signed Up</div>
+    <div class="confirm-sub" id="confirmSub"></div>
+  </div>
+
+  <div class="next-step">
+    <div class="next-step-eyebrow">Next Step</div>
+    <div class="next-step-heading">Forward This to Your Parent</div>
+    <div class="next-step-body">Copy the message below and paste it into an email to your parent or guardian. Ask them to reply to Mr. Bombich to confirm permission.</div>
+
+    <div class="email-box">
+      <div class="email-header">
+        <span class="email-header-label">Permission Slip — ready to copy &amp; forward</span>
+        <button class="copy-btn" id="copyBtn" onclick="copyEmail()">Copy</button>
+      </div>
+      <div class="email-text" id="emailText"></div>
+    </div>
+  </div>
+
+  <div class="confirm-footer">
+    Questions? See <strong>Mr. Bombich</strong> or email <strong>mbombich@vicksburgschools.org</strong>
+  </div>
+</div>
+
+<script>
+  // ── Replace with your deployed Apps Script URL after deployment ──
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcjV4D-7vNInRRbA4OA0-ycHON_4UHgHzdtmlrU1sZHOYx6MlHtKPAzpPoqLa04vpPCg/exec';
+
+  function buildEmail(first, last, grade, period) {
+    return 'Subject: Permission Slip — Manufacturing Day Field Trip (Oct. 21, 2026)\n\n'
+      + 'Dear Parent or Guardian,\n\n'
+      + first + ' ' + last + ' has signed up to attend the Manufacturing Day field trip '
+      + 'organized by Mr. Bombich at Vicksburg High School.\n\n'
+      + 'Details:\n\n'
+      + '  Event:    Manufacturing Day — Facility Tours\n'
+      + '  Location: Nissha Eimo Technologies, Vicksburg, MI\n'
+      + '  Date:     Wednesday, October 21, 2026\n'
+      + '  Session:  Morning — 9:00 AM to 12:00 PM\n'
+      + '  Student:  ' + first + ' ' + last + ' · Grade ' + grade + '\n\n'
+      + first + ' will be excused from Period ' + period + ' on that date. '
+      + 'Students will tour up to three manufacturing facilities alongside KVCC engineering students '
+      + '(≈ 1 hour per building).\n\n'
+      + 'TO GIVE PERMISSION: Please reply to this email or contact Mr. Bombich directly:\n\n'
+      + '  mbombich@vicksburgschools.org\n\n'
+      + 'In your reply, please include:\n'
+      + '  • Your full name\n'
+      + '  • Confirmation that ' + first + ' has permission to attend\n'
+      + '  • Any allergies or medical information we should know\n\n'
+      + 'Thank you,\n'
+      + 'Mr. Bombich\n'
+      + 'Applied Engineering & Robotics\n'
+      + 'Vicksburg High School';
+  }
+
+  document.getElementById('signupForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    var first       = document.getElementById('firstName').value.trim();
+    var last        = document.getElementById('lastName').value.trim();
+    var grade       = document.getElementById('grade').value;
+    var period      = document.getElementById('period').value;
+    var parentEmail = document.getElementById('parentEmail').value.trim();
+    var errMsg      = document.getElementById('errMsg');
+
+    if (!first || !last || !grade || !period || !parentEmail) {
+      errMsg.classList.add('show');
+      return;
+    }
+    errMsg.classList.remove('show');
+
+    var btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+
+    // POST to Google Apps Script
+    if (SCRIPT_URL) {
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({ first, last, grade, period, parentEmail })
+        });
+      } catch (_) { /* sheet write failed silently — confirmation still shows */ }
+    }
+
+    // Show confirmation
+    document.getElementById('signupCard').style.display = 'none';
+    var conf = document.getElementById('confirmation');
+    conf.style.display = 'block';
+
+    document.getElementById('confirmSub').textContent =
+      first + ', your name is on the list. One more step — your parent or guardian needs to give permission before October 9.';
+
+    document.getElementById('emailText').textContent = buildEmail(first, last, grade, period);
+  });
+
+  function copyEmail() {
+    var text = document.getElementById('emailText').textContent;
+    var btn  = document.getElementById('copyBtn');
+    navigator.clipboard.writeText(text).then(function() {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(function() {
+        btn.textContent = 'Copy';
+        btn.classList.remove('copied');
+      }, 2500);
+    }).catch(function() {
+      var el = document.getElementById('emailText');
+      var range = document.createRange();
+      range.selectNodeContents(el);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    });
+  }
+</script>
