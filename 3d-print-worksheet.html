@@ -162,7 +162,7 @@
 
   /* ── Print ── */
   @media print {
-    @page { size: letter portrait; margin: 0.18in 0.22in; }
+    @page { size: letter portrait; margin: 0.12in 0.18in; }
 
     body {
       background: none;
@@ -170,39 +170,42 @@
       flex-direction: column;
       align-items: stretch;
       padding: 0;
-      gap: 0.12in;
+      gap: 0.07in;
+      zoom: 0.87;
     }
     .print-hint { display: none; }
 
-    /* Both copies visible, each takes roughly half the page */
+    /* Both copies fill the page */
     .sheet, .sheet-copy {
       display: block;
       max-width: none;
       width: 100%;
       box-shadow: none;
-      border: 1px solid #ccc;
+      border: 1px solid #bbb;
       page-break-inside: avoid;
       break-inside: avoid;
     }
-    .sheet-copy { border-top: 1.5px dashed #aaa; }
+    .sheet-copy { border-top: 2px dashed #999; }
 
-    /* Compact everything to fit in ~half a letter page */
-    .cell-label { font-size: 13px; letter-spacing: 0.13em; margin-bottom: 8px; }
-    .write-line { height: 30px; border-bottom-width: 1.5px; }
-    .write-lines .write-line { height: 22px; }
-    .write-lines { gap: 14px; margin-top: 5px; }
-    .cell { padding: 9px 14px 10px; }
-    .cell-full { padding: 9px 14px 10px; }
-    .cell-multiline { padding: 9px 14px 11px; }
-    .header { padding: 10px 18px 9px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .header-title { font-size: 36px; }
-    .header-sub { font-size: 12px; }
-    .red-bar { height: 26px; }
-    .check-box { width: 22px; height: 22px; }
-    .check-item { font-size: 17px; gap: 8px; }
+    /* Tight spacing so two fit on one letter page */
+    .cell-label { font-size: 11px; letter-spacing: 0.12em; margin-bottom: 5px; }
+    .write-line { height: 22px; border-bottom-width: 1.5px; }
+    .write-lines .write-line { height: 16px; }
+    .write-lines { gap: 10px; margin-top: 4px; }
+    .cell { padding: 5px 13px 6px; }
+    .cell-full { padding: 5px 13px 6px; }
+    .cell-multiline { padding: 5px 13px 7px; }
+    .header { padding: 8px 18px 7px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .header-title { font-size: 30px; }
+    .header-sub { font-size: 10px; }
+    .red-bar { height: 22px; }
+    .check-row { gap: 14px; margin-top: 2px; }
+    .check-box { width: 17px; height: 17px; }
+    .check-item { font-size: 14px; gap: 6px; }
     .warning-section { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .sheet-footer { padding: 4px 14px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .sheet-footer span { font-size: 10px; }
+    .sheet-footer { padding: 3px 13px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .sheet-footer span { font-size: 9px; }
+    .footer-dot { width: 5px; height: 5px; }
   }
 </style>
 </head>
