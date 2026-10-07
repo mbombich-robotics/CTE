@@ -6,7 +6,6 @@
 <title>3D Print Job Ticket</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Source+Sans+3:wght@400;600&display=swap">
 <style>
-  /* Layout: single-sheet print doc, portrait letter */
   :root {
     --red:     #C41C1C;
     --black:   #111111;
@@ -26,6 +25,7 @@
     flex-direction: column;
     align-items: center;
     padding: 32px 16px;
+    gap: 20px;
     font-family: 'Source Sans 3', system-ui, sans-serif;
   }
 
@@ -40,7 +40,6 @@
     text-transform: uppercase;
     padding: 8px 20px;
     border-radius: 3px;
-    margin-bottom: 20px;
     text-align: center;
   }
   .print-hint span { color: rgba(255,255,255,0.4); }
@@ -55,6 +54,9 @@
     border: 1px solid var(--grey-lt);
   }
 
+  /* Second copy hidden on screen */
+  .sheet-copy { display: none; }
+
   /* Header */
   .header {
     background: var(--black);
@@ -64,17 +66,8 @@
     justify-content: space-between;
     gap: 10px;
   }
-  .header-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .red-bar {
-    width: 5px;
-    height: 30px;
-    background: var(--red);
-    flex-shrink: 0;
-  }
+  .header-left { display: flex; align-items: center; gap: 10px; }
+  .red-bar { width: 5px; height: 30px; background: var(--red); flex-shrink: 0; }
   .header-title {
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 32px;
@@ -100,18 +93,9 @@
   .divider-light  { border-top: 1px solid var(--grey-lt); }
 
   /* Row grids */
-  .row-4 {
-    display: grid;
-    grid-template-columns: 2.2fr 1fr 1fr 0.9fr;
-  }
-  .row-3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1.2fr;
-  }
-  .row-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
+  .row-4 { display: grid; grid-template-columns: 2.2fr 1fr 1fr 0.9fr; }
+  .row-3 { display: grid; grid-template-columns: 1fr 1fr 1.2fr; }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; }
 
   /* Field cell */
   .cell {
@@ -137,11 +121,7 @@
   }
 
   /* Checkbox field */
-  .check-row {
-    display: flex;
-    gap: 18px;
-    margin-top: 3px;
-  }
+  .check-row { display: flex; gap: 18px; margin-top: 3px; }
   .check-item {
     display: flex;
     align-items: center;
@@ -151,37 +131,16 @@
     font-weight: 700;
     color: var(--black);
   }
-  .check-box {
-    width: 18px;
-    height: 18px;
-    border: 2px solid var(--black);
-    flex-shrink: 0;
-  }
+  .check-box { width: 18px; height: 18px; border: 2px solid var(--black); flex-shrink: 0; }
 
-  /* Full-width part name */
-  .cell-full {
-    padding: 8px 14px 9px;
-  }
+  .cell-full { padding: 8px 14px 9px; }
 
-  /* Multi-line write area */
-  .cell-multiline {
-    padding: 8px 14px 10px;
-  }
-  .write-lines {
-    display: flex;
-    flex-direction: column;
-    gap: 13px;
-    margin-top: 6px;
-  }
+  .cell-multiline { padding: 8px 14px 10px; }
+  .write-lines { display: flex; flex-direction: column; gap: 13px; margin-top: 6px; }
   .write-lines .write-line { height: 18px; }
 
-  /* Warning section */
-  .warning-section {
-    background: #FFF5F5;
-  }
-  .warning-section .cell-label {
-    color: var(--red);
-  }
+  .warning-section { background: #FFF5F5; }
+  .warning-section .cell-label { color: var(--red); }
 
   /* Footer */
   .sheet-footer {
@@ -199,57 +158,62 @@
     text-transform: uppercase;
     color: rgba(255,255,255,0.30);
   }
-  .footer-dot {
-    width: 6px;
-    height: 6px;
-    background: var(--red);
-    border-radius: 50%;
-    opacity: 0.7;
-  }
+  .footer-dot { width: 6px; height: 6px; background: var(--red); border-radius: 50%; opacity: 0.7; }
 
-  /* Print overrides */
+  /* ── Print ── */
   @media print {
-    @page { size: letter portrait; margin: 0.3in 0.35in; }
+    @page { size: letter portrait; margin: 0.18in 0.22in; }
 
     body {
       background: none;
-      display: block;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
       padding: 0;
+      gap: 0.12in;
     }
     .print-hint { display: none; }
-    .sheet {
+
+    /* Both copies visible, each takes roughly half the page */
+    .sheet, .sheet-copy {
+      display: block;
       max-width: none;
       width: 100%;
       box-shadow: none;
-      border: none;
+      border: 1px solid #ccc;
+      page-break-inside: avoid;
+      break-inside: avoid;
     }
-    /* Scale up text and spacing so the worksheet fills the page */
-    .cell-label { font-size: 13px; letter-spacing: 0.14em; margin-bottom: 10px; }
-    .write-line { height: 34px; }
-    .write-lines .write-line { height: 26px; }
-    .write-lines { gap: 18px; }
-    .cell { padding: 12px 18px 14px; }
-    .cell-full { padding: 12px 18px 14px; }
-    .cell-multiline { padding: 12px 18px 16px; }
-    .header { padding: 16px 24px 15px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .header-title { font-size: 44px; }
-    .header-sub { font-size: 13px; }
-    .check-box { width: 24px; height: 24px; }
-    .check-item { font-size: 18px; gap: 9px; }
+    .sheet-copy { border-top: 1.5px dashed #aaa; }
+
+    /* Compact everything to fit in ~half a letter page */
+    .cell-label { font-size: 13px; letter-spacing: 0.13em; margin-bottom: 8px; }
+    .write-line { height: 30px; border-bottom-width: 1.5px; }
+    .write-lines .write-line { height: 22px; }
+    .write-lines { gap: 14px; margin-top: 5px; }
+    .cell { padding: 9px 14px 10px; }
+    .cell-full { padding: 9px 14px 10px; }
+    .cell-multiline { padding: 9px 14px 11px; }
+    .header { padding: 10px 18px 9px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .header-title { font-size: 36px; }
+    .header-sub { font-size: 12px; }
+    .red-bar { height: 26px; }
+    .check-box { width: 22px; height: 22px; }
+    .check-item { font-size: 17px; gap: 8px; }
     .warning-section { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .sheet-footer { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .sheet-footer { padding: 4px 14px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .sheet-footer span { font-size: 10px; }
   }
 </style>
 </head>
 <body>
 
 <div class="print-hint">
-  Ctrl + P to print &nbsp;<span>·</span>&nbsp; Save as PDF or send to printer
+  Ctrl + P to print &nbsp;<span>·</span>&nbsp; Prints 2 per page
 </div>
 
+<!-- Copy 1 -->
 <div class="sheet">
-
-  <!-- Header -->
   <div class="header">
     <div class="header-left">
       <div class="red-bar"></div>
@@ -261,7 +225,6 @@
     </div>
   </div>
 
-  <!-- Row 1: Student info -->
   <div class="row-4 divider-heavy" style="border-bottom: 2px solid var(--black);">
     <div class="cell">
       <span class="cell-label">Student Name</span>
@@ -281,13 +244,11 @@
     </div>
   </div>
 
-  <!-- Part name full width -->
   <div class="cell-full divider-light" style="border-bottom: 2px solid var(--black);">
     <span class="cell-label">Part / File Name</span>
     <span class="write-line" style="max-width: 520px;"></span>
   </div>
 
-  <!-- Row 2: Filament / Infill / Supports -->
   <div class="row-3 divider-heavy" style="border-bottom: 1px solid var(--grey-lt);">
     <div class="cell">
       <span class="cell-label">Filament (grams)</span>
@@ -300,31 +261,23 @@
     <div class="cell">
       <span class="cell-label">Supports</span>
       <div class="check-row">
-        <div class="check-item">
-          <div class="check-box"></div>
-          Yes
-        </div>
-        <div class="check-item">
-          <div class="check-box"></div>
-          No
-        </div>
+        <div class="check-item"><div class="check-box"></div>Yes</div>
+        <div class="check-item"><div class="check-box"></div>No</div>
       </div>
     </div>
   </div>
 
-  <!-- Row 3: Temps / Layer height -->
   <div class="row-2 divider-light" style="border-bottom: 2px solid var(--black);">
-    <div class="cell">
-      <span class="cell-label">Build Plate Temp (°C)</span>
-      <span class="write-line" style="max-width: 160px;"></span>
-    </div>
     <div class="cell">
       <span class="cell-label">Initial Layer Height (mm)</span>
       <span class="write-line" style="max-width: 160px;"></span>
     </div>
+    <div class="cell">
+      <span class="cell-label">Build Plate Temp (°C)</span>
+      <span class="write-line" style="max-width: 160px;"></span>
+    </div>
   </div>
 
-  <!-- Special settings -->
   <div class="cell-multiline divider-heavy" style="border-bottom: 1px solid var(--grey-lt);">
     <span class="cell-label">Special / Experimental Settings</span>
     <div class="write-lines">
@@ -334,7 +287,6 @@
     </div>
   </div>
 
-  <!-- Special instructions (warning tint) -->
   <div class="cell-multiline warning-section">
     <span class="cell-label">&#9888; Special Instructions &mdash; pauses, inserts, hardware</span>
     <div class="write-lines">
@@ -345,13 +297,103 @@
     </div>
   </div>
 
-  <!-- Footer -->
   <div class="sheet-footer">
     <span>Do not remove until print is complete</span>
     <div class="footer-dot"></div>
     <span>mbombich@vicksburgschools.org</span>
   </div>
+</div>
 
+<!-- Copy 2 — hidden on screen, printed below copy 1 -->
+<div class="sheet sheet-copy">
+  <div class="header">
+    <div class="header-left">
+      <div class="red-bar"></div>
+      <div class="header-title">3D Print Job</div>
+    </div>
+    <div class="header-sub">
+      Applied Engineering &amp; Robotics<br>
+      Tape to printer — do not remove
+    </div>
+  </div>
+
+  <div class="row-4 divider-heavy" style="border-bottom: 2px solid var(--black);">
+    <div class="cell">
+      <span class="cell-label">Student Name</span>
+      <span class="write-line"></span>
+    </div>
+    <div class="cell">
+      <span class="cell-label">Period</span>
+      <span class="write-line"></span>
+    </div>
+    <div class="cell">
+      <span class="cell-label">Date</span>
+      <span class="write-line"></span>
+    </div>
+    <div class="cell">
+      <span class="cell-label">Machine #</span>
+      <span class="write-line"></span>
+    </div>
+  </div>
+
+  <div class="cell-full divider-light" style="border-bottom: 2px solid var(--black);">
+    <span class="cell-label">Part / File Name</span>
+    <span class="write-line" style="max-width: 520px;"></span>
+  </div>
+
+  <div class="row-3 divider-heavy" style="border-bottom: 1px solid var(--grey-lt);">
+    <div class="cell">
+      <span class="cell-label">Filament (grams)</span>
+      <span class="write-line" style="max-width: 110px;"></span>
+    </div>
+    <div class="cell">
+      <span class="cell-label">Infill %</span>
+      <span class="write-line" style="max-width: 110px;"></span>
+    </div>
+    <div class="cell">
+      <span class="cell-label">Supports</span>
+      <div class="check-row">
+        <div class="check-item"><div class="check-box"></div>Yes</div>
+        <div class="check-item"><div class="check-box"></div>No</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row-2 divider-light" style="border-bottom: 2px solid var(--black);">
+    <div class="cell">
+      <span class="cell-label">Initial Layer Height (mm)</span>
+      <span class="write-line" style="max-width: 160px;"></span>
+    </div>
+    <div class="cell">
+      <span class="cell-label">Build Plate Temp (°C)</span>
+      <span class="write-line" style="max-width: 160px;"></span>
+    </div>
+  </div>
+
+  <div class="cell-multiline divider-heavy" style="border-bottom: 1px solid var(--grey-lt);">
+    <span class="cell-label">Special / Experimental Settings</span>
+    <div class="write-lines">
+      <span class="write-line"></span>
+      <span class="write-line"></span>
+      <span class="write-line"></span>
+    </div>
+  </div>
+
+  <div class="cell-multiline warning-section">
+    <span class="cell-label">&#9888; Special Instructions &mdash; pauses, inserts, hardware</span>
+    <div class="write-lines">
+      <span class="write-line"></span>
+      <span class="write-line"></span>
+      <span class="write-line"></span>
+      <span class="write-line"></span>
+    </div>
+  </div>
+
+  <div class="sheet-footer">
+    <span>Do not remove until print is complete</span>
+    <div class="footer-dot"></div>
+    <span>mbombich@vicksburgschools.org</span>
+  </div>
 </div>
 
 </body>
