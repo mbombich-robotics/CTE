@@ -209,7 +209,7 @@
 
   /* Print overrides */
   @media print {
-    @page { size: letter portrait; margin: 0.45in 0.5in; }
+    @page { size: letter portrait; margin: 0.3in 0.35in; }
 
     body {
       background: none;
@@ -223,7 +223,18 @@
       box-shadow: none;
       border: none;
     }
-    .header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    /* Scale up text and spacing so the worksheet fills the page */
+    .cell-label { font-size: 11px; letter-spacing: 0.16em; margin-bottom: 9px; }
+    .write-line { height: 28px; }
+    .write-lines .write-line { height: 22px; }
+    .write-lines { gap: 16px; }
+    .cell { padding: 10px 16px 12px; }
+    .cell-full { padding: 10px 16px 12px; }
+    .cell-multiline { padding: 10px 16px 14px; }
+    .header { padding: 14px 22px 13px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .header-title { font-size: 38px; }
+    .check-box { width: 20px; height: 20px; }
+    .check-item { font-size: 16px; }
     .warning-section { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .sheet-footer { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
