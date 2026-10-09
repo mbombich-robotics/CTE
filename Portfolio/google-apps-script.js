@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.19';
+const BACKEND_VERSION = 'v2.14.20';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -1165,13 +1165,27 @@ function loadStudentData(email) {
           const deliverablesSheet = ss.getSheetByName(SHEET_NAMES.DELIVERABLES);
           const deliverablesData = deliverablesSheet.getDataRange().getValues();
 
+          if (!fullState.deliverables) fullState.deliverables = {};
           for (let j = 1; j < deliverablesData.length; j++) {
             if (deliverablesData[j][0] === email) {
               const id = deliverablesData[j][2];
-              if (fullState.deliverables && fullState.deliverables[id]) {
-                // Grade in column J (index 9), Feedback in column K (index 10)
-                fullState.deliverables[id].teacherGrade = deliverablesData[j][9] || undefined;
+              const sheetGrade = (deliverablesData[j][9] !== '' && deliverablesData[j][9] !== null && deliverablesData[j][9] !== undefined)
+                ? deliverablesData[j][9] : undefined;
+              if (fullState.deliverables[id]) {
+                // Deliverable exists in fullState — merge teacher grades/feedback
+                fullState.deliverables[id].teacherGrade = sheetGrade;
                 fullState.deliverables[id].teacherFeedback = deliverablesData[j][10] || '';
+              } else if (deliverablesData[j][7] === 'completed') {
+                // Deliverable in sheet but missing from fullState (e.g. email-recorded submission)
+                fullState.deliverables[id] = {
+                  status: 'completed',
+                  submitted: true,
+                  submittedAt: deliverablesData[j][8] || '',
+                  content: deliverablesData[j][4] || '',
+                  links: deliverablesData[j][5] || '',
+                  teacherGrade: sheetGrade,
+                  teacherFeedback: deliverablesData[j][10] || ''
+                };
               }
             }
           }
@@ -1261,9 +1275,10 @@ function loadStudentData(email) {
             links: deliverablesData[j][5],
             selfAssessment: deliverablesData[j][6],
             status: deliverablesData[j][7],
+            submitted: deliverablesData[j][7] === 'completed',
             submittedAt: deliverablesData[j][8],
             // Grade in column J (index 9), Feedback in column K (index 10)
-            grade: deliverablesData[j][9],
+            teacherGrade: deliverablesData[j][9] !== '' && deliverablesData[j][9] !== null && deliverablesData[j][9] !== undefined ? deliverablesData[j][9] : undefined,
             teacherFeedback: deliverablesData[j][10] || ''
           };
         }

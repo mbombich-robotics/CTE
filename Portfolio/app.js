@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.57',
+    VERSION: 'v2.14.58',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -2912,9 +2912,9 @@ function showTeacherFeedback(data) {
     const gradeDisplay = document.getElementById('teacherGradeDisplay');
     const feedbackText = document.getElementById('teacherFeedbackText');
 
-    if (data.submitted && (data.teacherGrade !== undefined || data.teacherFeedback)) {
+    if ((data.submitted || data.status === 'completed') && (data.teacherGrade !== undefined || data.teacherFeedback)) {
         feedbackCard.style.display = 'block';
-        gradeDisplay.textContent = data.teacherGrade !== undefined ? data.teacherGrade : '--';
+        gradeDisplay.textContent = data.teacherGrade !== undefined ? data.teacherGrade : (data.grade !== undefined ? data.grade : '--');
         feedbackText.textContent = data.teacherFeedback || 'No written feedback yet.';
     } else {
         feedbackCard.style.display = 'none';
