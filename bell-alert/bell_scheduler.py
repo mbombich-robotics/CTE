@@ -14,13 +14,15 @@ import re
 import sys
 import time
 import logging
+import importlib
 import subprocess
 import requests
 from datetime import datetime, timedelta, date
 
 from dotenv import load_dotenv
 
-from config import DAY_SCHEDULE, SCHEDULES, SPECIAL_DAYS, LOG_FILE
+import config as _cfg
+from config import LOG_FILE   # needed at startup for logging setup
 
 # ── Load credentials ──────────────────────────────────────────────────────────
 load_dotenv()
@@ -111,17 +113,17 @@ def get_today_bells() -> list[tuple[str, str]] | None:
     """
     today   = date.today()
     dow     = today.weekday()   # 0=Mon … 6=Sun
-    special = SPECIAL_DAYS.get(today)
+    special = _cfg.SPECIAL_DAYS.get(today)
 
     if special == "skip":
         return None
-    if special and special in SCHEDULES:
-        return SCHEDULES[special]
+    if special and special in _cfg.SCHEDULES:
+        return _cfg.SCHEDULES[special]
     if dow >= 5:
         return None
 
-    key = DAY_SCHEDULE.get(dow)
-    return SCHEDULES.get(key)
+    key = _cfg.DAY_SCHEDULE.get(dow)
+    return _cfg.SCHEDULES.get(key)
 
 
 # ── Plug control ──────────────────────────────────────────────────────────────
@@ -189,7 +191,9 @@ def run():
             reason   = "weekend" if today.weekday() >= 5 else "skip / no school"
             log.info("No bells today (%s) — sleeping until %s", reason, midnight.date())
             time.sleep(sleep_s)
-            # Re-resolve after midnight — hotspot may have restarted overnight
+            # Reload config and re-resolve after midnight
+            importlib.reload(_cfg)
+            log.info("Config reloaded for %s", (today + timedelta(days=1)).strftime("%A %b %-d"))
             shelly_ips = resolve_ips() or shelly_ips
             continue
 
@@ -200,7 +204,9 @@ def run():
             sleep_s  = (midnight - now).total_seconds() + 5
             log.info("All bells done for today — sleeping until %s", midnight.date())
             time.sleep(sleep_s)
-            # Re-resolve after midnight — hotspot may have restarted overnight
+            # Reload config and re-resolve after midnight
+            importlib.reload(_cfg)
+            log.info("Config reloaded for %s", (today + timedelta(days=1)).strftime("%A %b %-d"))
             shelly_ips = resolve_ips() or shelly_ips
             continue
 

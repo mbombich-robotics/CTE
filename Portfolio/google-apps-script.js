@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.20';
+const BACKEND_VERSION = 'v2.14.21';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2758,7 +2758,7 @@ function countAIFeedbackToday(email) {
  * Add a new if/else block here for each new googleDoc deliverable.
  */
 function gradeDocWithRubric(docText, deliverableId) {
-  var rubric, criteriaKeys;
+  var rubric, criteriaKeys, overridePrefix;
 
   if (deliverableId === 11) {
     // ── D11: Design Brief ──────────────────────────────────────────────────
@@ -2802,13 +2802,31 @@ reflection (max 4): Depth and specificity of the Section 4 reflection. 4=specifi
 
     criteriaKeys = ['key_dimensions', 'version_log', 'iteration_logic', 'cad_evidence', 'reflection'];
 
+  } else if (deliverableId === 424) {
+    // ── DBL D2.4: Doorstop Final Documentation — binary completeness check ──
+    // Pass/fail per section; image count already prepended by caller.
+    criteriaKeys = ['settings_complete', 'photo_attached', 'does_it_work', 'post_processing'];
+    overridePrefix =
+      'You are checking whether a student\'s Google Doc is complete. This is a PASS/FAIL completeness check — not a quality rubric. Award score 1 only when the item is clearly present; award 0 when it is absent, blank, or contains only placeholder text (underscores, empty lines).\n\n' +
+      'CRITICAL: The very first line of the document states how many images are embedded in it. Trust this count completely — do not infer photo presence from surrounding text.\n\n' +
+      'CRITERIA (each max 1):\n\n' +
+      'settings_complete (max 1): Section 1 print settings table. All 7 rows must have actual student-entered values — Filament Type, Build Plate Temperature, Initial Layer Nozzle Temp, Nozzle Temp (remaining layers), Initial Layer Height, Sparse Infill Density, Wall Loops. 1=all 7 contain real values; 0=any field is blank or shows only "___" or similar. If 0, name the missing field(s) in your feedback.\n\n' +
+      'photo_attached (max 1): Based solely on the image count in the first line. 1=document contains 1 or more images; 0=document contains 0 images. Ignore any placeholder text about inserting a photo — only the server-confirmed count matters.\n\n' +
+      'does_it_work (max 1): Section 3 "Does It Work?" — any student-written sentence about whether the doorstop holds a door open. 1=any real sentence is present (even "it did not work"); 0=blank or placeholder only.\n\n' +
+      'post_processing (max 1): Section 4 "Post-Processing Notes" — any student-written content, or the word "None." 1=real content or "None" present; 0=blank or placeholder.\n\n' +
+      'FEEDBACK STYLE: One sentence, direct. Score 1 → confirm what you found. Score 0 → one specific action to fix it.\n\n' +
+      'Return ONLY valid JSON, no markdown or explanation:\n' +
+      '{"settings_complete": {"score": 1, "max": 1, "feedback": "..."}, "photo_attached": {"score": 1, "max": 1, "feedback": "..."}, "does_it_work": {"score": 1, "max": 1, "feedback": "..."}, "post_processing": {"score": 1, "max": 1, "feedback": "..."}}\n\n' +
+      'STUDENT DOCUMENT:';
+
   } else {
     throw new Error('No rubric configured for deliverable ' + deliverableId);
   }
 
   // Stable prefix (rubric + instructions) — same for every student on this deliverable.
   // Marked for prompt caching so calls after the first are ~55% cheaper on the input side.
-  var stablePrefix =
+  // D2.4 uses overridePrefix (binary completeness check, different tone).
+  var stablePrefix = overridePrefix ||
     'You are grading a high school student\'s deliverable for an Applied Engineering & Robotics course.\n\n' +
     'SCORING PHILOSOPHY:\n' +
     'Award points generously when the student demonstrates genuine effort, even if imperfectly worded. Reserve 0-1 for sections that are truly absent or show no engagement. A hardworking student who has genuinely filled out all sections should score in the 85-95% range overall.\n\n' +
