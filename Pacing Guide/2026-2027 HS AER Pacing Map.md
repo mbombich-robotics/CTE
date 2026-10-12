@@ -56,15 +56,15 @@
 
 | Wk | Dates | Days | Notes | Content |
 |----|-------|------|-------|---------|
-| 3 | Sep 14–18 | 5 | | **L2.2:** C1 modeling video — concentric circles, multi-depth extrude, bore, export + print. **L2.3:** Measurement Workshop — calipers, reading tolerances, measure printed C1 and log. **L2.4:** 3D Printing — slicer settings, orient, iterate C1 v2; **EDP Quiz** after C1 iteration |
-| 4 | Sep 21–25 | 5 | | **L2.5: C2 Drive Wheel** — hex bore, Circular Pattern spokes, student design choice; print + iterate; **mid-unit CAD checkpoint quiz** |
-| 5 | Sep 28 – Oct 2 | 5 | ⚡ Sep 30 | **L2.6: C3 Motor Sleeve Mount** — sleeve bore (measure motor model in F360), T-slot nut-capture rail, face screw holes; print + iterate |
-| 6 | Oct 5–9 | 5 | | **L2.7: C4 Robot Deck** — outer profile + motor mount holes; start assembly file (deck + C3 linked); constrain C3 in assembly |
-| 7 | Oct 12–16 | 5 | | **L2.8: C5 Omni Wheel Mount + C6 IR Sensor Mount + C7 Ultrasonic Sensor Mount** — multi-plane sketches; insert each into assembly → position → edit C4 sketch → constrain; print C5/C6/C7 |
-| 8 | Oct 19–23 | 5 | | Run Interference Check on full assembly; fix any collisions; finalize C4 deck; **CNC toolpath intro + deck CNC cut**; all-component test-fit; **CAD quiz end of week** |
+| 3 | Sep 14–18 | 5 | | **L2.2:** C1 modeling video — concentric circles, multi-depth extrude, bore, export + print. **L2.3:** Measurement Workshop — calipers, reading tolerances, measure printed C1 and log. **L2.4:** 3D Printing — slicer settings, orient, iterate C1 v2; **EDP Quiz (Sep 16)**. ⚠️ D2.1 extended → week 4 |
+| 4 | Sep 21–25 | 5 | | C1 final iteration + caliper check; **D2.1 due Fri Sep 25**; **L2.5 C2 Wheel Hub Cap** intro for early finishers |
+| 5 | Sep 28 – Oct 2 | 5 | ⚡ Sep 30 | **L2.5: C2 Wheel Hub Cap** — bolt circle, counterbore, hex bore, student design choice; print + iterate. D2.2 first deadline Fri Oct 2 — extended |
+| 6 | Oct 5–9 | 5 | | C2 wrap-up — iterate, caliper check, finalize; **L2.6: C3 Motor Sleeve Mount** intro (Thu Oct 8) — begin sketch. D2.2 extended deadline Fri Oct 9 |
+| 7 | Oct 12–16 | 5 | 🚌 Mfg Day Oct 21 | **D2.2 turn-in Mon Oct 12**; **L2.6: C3 Motor Sleeve Mount** — full week: sleeve bore, nut-capture rail, screw holes; print + iterate |
+| 8 | Oct 19–23 | 5 | | C3 wrap-up + caliper check; **L2.7: C4 Robot Deck** — outer profile + motor mount holes; begin assembly file |
 
 **Unit 2 deliverables:** D21–D27 — one per component; each requires screenshot + level selection + learning check Q1–Q5. All 7 required before build phase.  
-**Quizzes:** Mid-unit checkpoint (Week 4) + CAD quiz (Week 8).
+**Quizzes:** Mid-unit checkpoint (TBD ~wk 6–7) + CAD quiz (TBD ~wk 9–10). ⚠️ Both shifted due to slower-than-planned C1/C2 pace.
 
 ---
 
@@ -249,9 +249,9 @@ Every assignment has up to 4 levels. Students choose their level — grade refle
 
 ## Quiz Schedule (all quizzes built into portfolio system)
 More quizzes than 2025-26. Every unit gets at least one; long units get a mid-unit checkpoint.
-- **EDP quiz** — Week 3, after C1 iteration (students test a real printed part before taking the quiz)
-- **CAD checkpoint quiz** — ~Week 5 (mid-unit)
-- **CAD quiz** — end of Week 8
+- **EDP quiz** — Week 3 ✓ (Sep 16 — students tested printed C1 before taking quiz)
+- **CAD checkpoint quiz** — TBD ~wk 6–7 (originally week 5; shifted due to C1/C2 pace)
+- **CAD quiz** — TBD ~wk 9–10 (originally week 8; shifted accordingly)
 - **Safety quiz** — end of Week 10
 - **Programming quiz (Lessons 1–5)** — Week 18
 - **Programming quiz (Lessons 6–9)** — ~Week 20

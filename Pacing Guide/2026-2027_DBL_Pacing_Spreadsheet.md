@@ -21,11 +21,11 @@
 |------|-------|------|------|-------|---------|--------------------|
 | 1 | Aug 31–Sep 4 | 4 | 1 — EDP | ⚡ Aug 31 (20-min half day) · 🔴 Sep 4 no school | **Aug 31 (20 min):** Join Google Classroom, bookmark hub page, teacher + aide intro. **Sep 1:** L1.1 Intro to DBL + course overview. **Sep 2:** L1.2 Spaghetti Tower (no framework, 18 min). **Sep 3:** L1.3 EDP Framework + Week Ahead preview | **D1.0 — Signed Syllabus & Safety Contract** (due Thu Sep 3) |
 | 2 | Sep 7–11 | 4 | 1 — EDP | 🔴 Labor Day Sep 7 | **Sep 8:** L1.4 Paper Glider (EDP applied, 18 min build). **Sep 9:** L1.5 Design Brief Workshop — fidget spinner criteria, constraints, design statement (portfolio D1.1). **Sep 10:** L1.6 Client Interview + Design Statement. **Sep 11:** L1.7 Concept Sketching + Decision Matrix | **D1.1 — Design Brief** |
-| 3 | Sep 14–18 | 5 | 1 → 2 | | **Sep 14:** Kevin Kennedy F360 orientation video (watch twice, orientation check). **Sep 15–18:** Measurement fundamentals — calipers (OD/ID/depth); **C1: Bearing** — measure MR128 bearing with calipers; sketch, revolve/extrude to match measurements; export + print | **Q1: EDP Quiz**; **D2.1 — C1: Bearing Model + Key Dimensions** |
-| 4 | Sep 21–25 | 5 | 2 — CAD | | Spinner body design: revolve main body; bore bearing pocket using C1 dimensions (12mm OD × 3.5mm deep); apply parametric constraints; arm/grip features; model bearing cap | **D2.2 — Spinner Body CAD File** |
-| 5 | Sep 28–Oct 2 | 5 | 2 — CAD | ⚡ Sep 30 (20-min period) | Assemble spinner body + cap + bearing in F360; render; export; slice and verify; submit to print queue | **Q2: CAD Quiz**; **D2.3 — Spinner Assembly** |
-| 6 | Oct 5–9 | 5 | 3 — Safety | | 3D printer safety + operator cert; hand tools (files, calipers, drill press); CNC router awareness; xTool laser awareness; fire extinguisher + first aid | **Q3: Safety Quiz**; **D3.1 — Tool Cert Card** |
-| 7 | Oct 12–16 | 5 | P1 — Fidget Spinner | | Slice spinner files; load print queue; manage active prints; post-process (remove supports, sand, finish) | |
+| 3 | Sep 14–18 | 5 | 1 → 2 | | **Sep 14:** Kevin Kennedy F360 orientation video (watch twice, orientation check). **Sep 15–18:** Measurement fundamentals — calipers (OD/ID/depth); **C1: Bearing** — measure MR128 bearing; sketch, revolve/extrude; export + print (instructional — not submitted as standalone deliverable) | **Q1: EDP Quiz** (Sep 16) · ⚠️ D2.1 (Spinner Body) extended → week 4 |
+| 4 | Sep 21–25 | 5 | 2 — CAD | | Spinner body design: revolve main body; bore bearing pocket using C1 dimensions (12mm OD × 3.5mm deep); apply parametric constraints; arm/grip features; model bearing cap | **D2.1 — Spinner Body CAD File** (Fri Sep 25) |
+| 5 | Sep 28–Oct 2 | 5 | 2 — CAD | ⚡ Sep 30 (20-min period) | Doorstop Design Challenge — watch intro video; **Design Brief**: problem statement, constraints, criteria, concept sketches; peer review | **D2.2 — Doorstop Design Brief** (Fri Oct 2) · Q2 CAD Quiz deferred |
+| 6 | Oct 5–9 | 5 | 2 — CAD | | L2.5 Doorstop CAD — translate Design Brief into F360 model; check dimensions; export STL; queue print; first print → test function; iterate | D2.3 — Doorstop CAD Model (first deadline Fri Oct 9 — extended) · Q3 Safety + D3.1 deferred |
+| 7 | Oct 12–16 | 5 | 2 — CAD | ★ Student teacher Tue Oct 13 · 🎖️ AFSF recruiter 2nd & 4th hr Thu Oct 15 · 🚌 Mfg Day Oct 21 | **D2.3 due midnight Mon Oct 12**; receive prints; test doorstop function; post-process; document; begin **D2.4 Final Documentation** | **D2.3 — Doorstop CAD Model** (midnight Mon Oct 12) · begin **D2.4 — Doorstop Final Documentation** |
 | 8 | Oct 19–23 | 5 | P1 — Fidget Spinner | | Bearing press-fit + assembly; spin test + caliper check; photography for portfolio; class showcase | **D2.4 — Completed Spinner + Portfolio Photo** |
 | 9 | Oct 26–30 | 4 | 7 — Electrical | 🟡 🔴 Records Day Oct 30 | L7.1 Multimeter: DMM parts, measuring V/I/R, safety; L7.2 Breadboards: internal connections, power rails, schematic symbols; L7.3 LED Circuits: polarity, V_f, current-limiting resistor | |
 | 10 | Nov 2–6 | 5 | 7 — Electrical | | L7.4 Ohm's Law: V=IR, triangle, units, worked examples; L7.5 Series & Parallel: concepts, math, comparison table; breadboard lab — build and measure circuits | |
@@ -67,8 +67,8 @@
 | # | Name | Week | Scope |
 |---|------|------|-------|
 | Q1 | EDP Quiz | 3 | Unit 1 — Engineering Design Process |
-| Q2 | CAD Quiz | 5 | Unit 2 — Fundamentals of CAD |
-| Q3 | Safety Quiz | 6 | Unit 3 — Shop Safety |
+| Q2 | CAD Quiz | *(deferred)* | Unit 2 — Fundamentals of CAD |
+| Q3 | Safety Quiz | *(deferred)* | Unit 3 — Shop Safety |
 | Q4 | Unit 7 Quiz | 11 | Unit 7 — Electrical Systems |
 | Q5 | Unit 8 Quiz | 29 | Unit 8 — Mechanisms |
 
@@ -80,11 +80,11 @@
 |---|------|------|
 | D1.0 | Signed Syllabus & Safety Contract | 1 |
 | D1.1 | Design Brief | 2 |
-| D2.1 | C1 — Bearing Model + Key Dimensions | 3 |
-| D2.2 | Spinner Body CAD File | 4 |
-| D2.3 | Spinner Assembly | 5 |
-| D2.4 | Completed Spinner + Portfolio Photo | 8 |
-| D3.1 | Tool Cert Card | 6 |
+| D2.1 | Spinner Body CAD File | 4 |
+| D2.2 | Doorstop Design Brief | 5 |
+| D2.3 | Doorstop CAD Model | 7 *(extended Oct 12)* |
+| D2.4 | Doorstop Final Documentation | *(TBD ~wk 8–9)* |
+| D3.1 | Tool Cert Card | *(deferred — TBD)* |
 | D7.1 | Unit 7 Lab Results | 11 |
 | D8.1 | Fix Fran's Farm | 29 |
 | P2.1 | Design Brief + LED Model Screenshot | 12 |

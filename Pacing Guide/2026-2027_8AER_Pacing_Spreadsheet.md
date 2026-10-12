@@ -13,11 +13,11 @@
 |------|-------|------|------|-------|---------|--------------------|
 | 1 | Aug 31–Sep 4 | 4 | 1 — EDP | ⚡ Aug 31 (20-min half day) · 🔴 Sep 4 no school | **Aug 31 (20 min):** Join Google Classroom, bookmark hub page, teacher + aide intro. **Sep 1:** L1.1 Intro to AE&R. **Sep 2:** L1.2 Spaghetti Tower (no framework, 18 min). **Sep 3:** L1.3 EDP Framework + Week Ahead preview | **D1.0 — Signed Syllabus & Safety Contract** (due Thu Sep 3) |
 | 2 | Sep 7–11 | 4 | 1 — EDP | 🔴 Labor Day Sep 7 | **Sep 8:** L1.4 Paper Glider (EDP applied, 18 min build). **Sep 9:** L1.5 Design Brief Workshop — C1 criteria, constraints, design statement (portfolio D1.1). **Sep 10:** L1.6 Client Interview + Design Statement. **Sep 11:** L1.7 Concept Sketching + Decision Matrix | **D1.1 — Design Brief + Concept Sketches** |
-| 3 | Sep 14–18 | 5 | 1 → 2 | ⚠️ BOY Math i-Ready Sep 14–15 — give Q1 Wed Sep 16+ | **Sep 14:** L2.1 Kevin Kennedy F360 orientation video (watch twice, orientation check). **Sep 15–18:** L2.2 C1 modeling video — sketch, extrude, bore, export + print; L2.3 Measurement Tools Workshop — measure printed C1; L2.4 3D Printing — slicer settings, iterate C1 v2; EDP Quiz **Wed Sep 16 or later** | **Q1: EDP Quiz** (Wed–Fri); **D2.1 — C1: Key Dimensions + Iteration Log** |
-| 4 | Sep 21–25 | 5 | 2 — CAD | | **L2.5: C2 Wheel Hub Cap** — measure from AndyMark wheel, bolt circle + counterbore, hex bore, student design face; print + iterate | **D2.2 — C2: Key Dimensions + Iteration Log** |
-| 5 | Sep 28–Oct 2 | 5 | 2 — CAD | ⚡ Sep 30 (20-min period) | **C3: Robot Deck** — front wheel hub + all sensor and electronic mounts provided; full robot CAD assembly due end of week | **Q2: CAD Quiz**; **D2.3 — Robot Assembly** |
-| 6 | Oct 5–9 | 5 | 3 — Safety | | Hand drill cert; CNC awareness (safety rules, what the machine does, toolpath concepts); safety quiz | **Q3: Safety Quiz**; **D3.1 — Tool Safety Certifications** |
-| 7 | Oct 12–16 | 5 | Build | | Manufacturing: manage 3D print queue (motor mount, sensor mounts, battery holder); teacher cuts decks on CNC during class; students responsible for cleanup | |
+| 3 | Sep 14–18 | 5 | 1 → 2 | ⚠️ BOY Math i-Ready Sep 14–15 — give Q1 Wed Sep 16+ | **Sep 14:** L2.1 Kevin Kennedy F360 orientation video (watch twice, orientation check). **Sep 15–18:** L2.2 C1 modeling video — sketch, extrude, bore, export + print; L2.3 Measurement Tools Workshop — measure printed C1; L2.4 3D Printing — slicer settings, iterate C1 v2; EDP Quiz **Wed Sep 16 or later** | **Q1: EDP Quiz** (Wed Sep 16+) · ⚠️ D2.1 extended → week 4 |
+| 4 | Sep 21–25 | 5 | 2 — CAD | | C1 wrap-up — final iteration + caliper check; **D2.1 due Fri Sep 25**; L2.5 C2 Wheel Hub Cap intro for early finishers | **D2.1 — C1: Key Dimensions + Iteration Log** (Fri Sep 25) |
+| 5 | Sep 28–Oct 2 | 5 | 2 — CAD | ⚡ Sep 30 (20-min period) | **L2.5: C2 Wheel Hub Cap** — bolt circle, counterbore, hex bore, student design face; print + iterate | D2.2 first deadline Fri Oct 2 — extended |
+| 6 | Oct 5–9 | 5 | 2 — CAD | | C2 wrap-up — iterate, caliper check, finalize; C3 Motor Mount intro (Thu Oct 8) — begin sketch | **D2.2 extended deadline** Fri Oct 9 |
+| 7 | Oct 12–16 | 5 | 2 — CAD | 🚌 Mfg Day field trip Oct 21 | **D2.2 turn-in Mon Oct 12**; L2.6 C3 Motor Mount — full week modeling + printing | **D2.2 — C2: Component Design** (turn-in Mon Oct 12) |
 | 8 | Oct 19–23 | 5 | Build | | Assemble frame: motors, wheels, caster; mount electronics board; wire motors and battery; caliper check — **build gate: robot rolls under manual power** | |
 | 9 | Oct 26–30 | 4 | 4 — Programming | 🟡 🔴 Records Day Oct 30 | L4.1 Microcontroller Fundamentals: what is a microcontroller, IDE setup, MicroPython REPL; A4.1 Blink — onboard LED, `utime.sleep()`, basic program loop | **D4.1 — Blink (A4.1)** |
 | 10 | Nov 2–6 | 5 | 4 — Programming | | L4.3 Functions: define, call, parameters; A4.3 — SOS pattern using named functions; refactor blink from wk 9 | **D4.2 — SOS with Functions (A4.3)** |
@@ -67,8 +67,8 @@
 | # | Name | G1 Week | G2 Week | Scope |
 |---|------|---------|---------|-------|
 | Q1 | EDP Quiz | 3 (Wed Sep 16+) | 3 | Unit 1 — Engineering Design Process |
-| Q2 | CAD Quiz | 5 | 5 | Unit 2 — Fundamentals of CAD |
-| Q3 | Safety Quiz | 6 | 6 | Unit 3 — Shop Safety |
+| Q2 | CAD Quiz | *(TBD)* | 5 | Unit 2 — Fundamentals of CAD |
+| Q3 | Safety Quiz | *(TBD)* | 6 | Unit 3 — Shop Safety |
 | Q4 | Programming Quiz | 12 | 12 | Unit 4 — Programming, Electronics & Sensors |
 | Q5 | Final Exam | 19 | 19 | Units 1–4 + Unit 8 cumulative |
 
@@ -80,10 +80,10 @@
 |---|------|---------|---------|
 | D1.0 | Signed Syllabus & Safety Contract | 1 | 1 |
 | D1.1 | Design Brief + Concept Sketches | 2 | 2 |
-| D2.1 | C1 — Key Dimensions + Iteration Log | 3 | 3 |
-| D2.2 | C2 — Key Dimensions + Iteration Log | 4 | 4 |
-| D2.3 | Robot Assembly | 5 | 5 |
-| D3.1 | Tool Safety Certifications | 6 | 6 |
+| D2.1 | C1 — Key Dimensions + Iteration Log | 4 | 3 |
+| D2.2 | C2 — Key Dimensions + Iteration Log | 7 *(extended Oct 12)* | 4 |
+| D2.3 | Robot Assembly | *(TBD ~wk 9)* | 5 |
+| D3.1 | Tool Safety Certifications | *(TBD ~wk 10)* | 6 |
 | D4.1 | Blink (A4.1) | 9 | 9 |
 | D4.2 | SOS with Functions (A4.3) | 10 | 10 |
 | D4.3 | Robot Drives a Square | 11 | 11 |

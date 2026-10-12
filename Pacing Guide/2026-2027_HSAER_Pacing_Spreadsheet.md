@@ -10,11 +10,11 @@
 |------|-------|------|------|-------|---------|--------------------|
 | 1 | Aug 31–Sep 4 | 4 | 1 — EDP | ⚡ Aug 31 (20-min half day) · 🔴 Sep 4 no school | **Aug 31 (20 min):** Join Google Classroom, bookmark hub page, teacher + aide intro. **Sep 1:** L1.1 Intro to AE&R. **Sep 2:** L1.2 Spaghetti Tower (no framework, 18 min). **Sep 3:** L1.3 EDP Framework + Week Ahead preview | D1.0 — Signed syllabus + safety contract (due Thu Sep 3) |
 | 2 | Sep 7–11 | 4 | 1 — EDP | 🔴 Labor Day Sep 7 | **Sep 8:** L1.4 Paper Glider (EDP applied, 18 min build). **Sep 9:** L1.5 Design Brief Workshop — C1 criteria, constraints, design statement (portfolio D1.1). **Sep 10:** L1.6 Client Interview + Design Statement. **Sep 11:** L1.7 Concept Sketching + Decision Matrix | D1.1 — Design Brief (signed); Concept Sketches (approved) |
-| 3 | Sep 14–18 | 5 | 1 → 2 | | **Sep 14:** L2.1 Kevin Kennedy F360 orientation video (watch twice, orientation check). **Sep 15–18:** L2.2 C1 modeling video — sketch, extrude, bore; export + queue print; L2.3 Measurement Tools Workshop — calipers, measure printed C1; L2.4 3D Printing — slicer settings, orient, iterate C1 v2 | D2.1 — C1: key dimensions + iteration log; **Q1: EDP Quiz** |
-| 4 | Sep 21–25 | 5 | 2 — CAD | | **L2.5: C2 Wheel Hub Cap** — measure from AndyMark wheel, bolt circle + counterbore, hex bore, student design face; print + iterate; intro to **L2.6: C3 Motor Mount** | D2.2 — C2: key dimensions + iteration log |
-| 5 | Sep 28–Oct 2 | 5 | 2 — CAD | ⚡ Sep 30 (20-min period) | **L2.6: C3 Motor Mount** (complete) | D2.3 — C3: key dimensions + iteration log |
-| 6 | Oct 5–9 | 5 | 2 — CAD | | **L2.7: C4 Deck** + CAD assemblies intro | D2.4 — C4: key dimensions + iteration log |
-| 7 | Oct 12–16 | 5 | 2 — CAD | | **L2.8: C5** Front Wheel Mount; **C6** IR Sensor Mount; **C7** Ultrasonic Sensor Mount | D2.5, D2.6, D2.7 — C5, C6, C7: key dimensions + iteration logs |
+| 3 | Sep 14–18 | 5 | 1 → 2 | | **Sep 14:** L2.1 Kevin Kennedy F360 orientation video (watch twice, orientation check). **Sep 15–18:** L2.2 C1 modeling video — sketch, extrude, bore; export + queue print; L2.3 Measurement Tools Workshop — calipers, measure printed C1; L2.4 3D Printing — slicer settings, orient, iterate C1 v2 | **Q1: EDP Quiz** (Sep 16) · ⚠️ D2.1 extended → week 4 |
+| 4 | Sep 21–25 | 5 | 2 — CAD | | C1 Wheel Hub — final iteration + caliper check; **D2.1 due Fri Sep 25**; L2.5 C2 Wheel Hub Cap intro for early finishers | **D2.1 — C1: key dimensions + iteration log** (Fri Sep 25) |
+| 5 | Sep 28–Oct 2 | 5 | 2 — CAD | ⚡ Sep 30 (20-min period) | **L2.5: C2 Wheel Hub Cap** — bolt circle, counterbore, hex bore, student design face; print + iterate | D2.2 — C2: Component Design (first deadline Fri Oct 2 — extended) |
+| 6 | Oct 5–9 | 5 | 2 — CAD | | C2 wrap-up — iterate, caliper check, finalize; **L2.6: C3 Motor Mount** intro (Thu Oct 8) — begin sketch | **D2.2 extended deadline** Fri Oct 9 |
+| 7 | Oct 12–16 | 5 | 2 — CAD | 🚌 Mfg Day field trip Oct 21 — check roster | **D2.2 turn-in Mon Oct 12**; L2.6 C3 Motor Mount — full week modeling + printing | **D2.2 — C2: Component Design** (turn-in Mon Oct 12) |
 | 8 | Oct 19–23 | 5 | 2 — CAD | 2nd yr: **C8: Electronics Board Mount** w/ strain relief | Final robot CAD assembly | **Q2: CAD Quiz**; D2.8 — Robot Assembly |
 | 9 | Oct 26–30 | 4 | 3 — Safety | 🟡 🔴 Records Day Oct 30 | OSHA/LOTO/PPE/SDS; Matthew Henne case study; drill press, pedestal grinder, hand drill certs; CNC awareness; manufacturing processes | **Q3: Safety Quiz**; Tool Cert Cards |
 | 10 | Nov 2–6 | 5 | 3 — Safety | | CNC toolpaths; cut decks | D3.1 — Toolpaths to cut deck |
@@ -88,13 +88,13 @@
 |---|------|------|
 | D1.0 | Signed Syllabus & Safety Contract | 1 |
 | D1.1 | Design Brief | 2 |
-| D2.1 | C1 — Wheel Hub | 3 |
-| D2.2 | C2 — Wheel Hub Cap | 4 |
-| D2.3 | C3 — Motor Sleeve Mount | 5 |
-| D2.4 | C4 — Robot Deck | 6 |
-| D2.5 | C5 — Omni Wheel Mount | 7 |
-| D2.6 | C6 — IR Sensor Mount | 7 |
-| D2.7 | C7 — Ultrasonic Sensor Mount | 7 |
+| D2.1 | C1 — Wheel Hub | 4 |
+| D2.2 | C2 — Wheel Hub Cap | 7 *(extended Oct 12)* |
+| D2.3 | C3 — Motor Sleeve Mount | *(TBD ~wk 9)* |
+| D2.4 | C4 — Robot Deck | *(TBD ~wk 11)* |
+| D2.5 | C5 — Omni Wheel Mount | *(TBD ~wk 12)* |
+| D2.6 | C6 — IR Sensor Mount | *(TBD ~wk 12)* |
+| D2.7 | C7 — Ultrasonic Sensor Mount | *(TBD ~wk 12)* |
 | D2.8 | Robot Assembly | 8 |
 | D3.1 | Tool Safety Certifications | 10 |
 | D4.1 | Programming Basics: Lessons 4.1–4.3 | 13 |
