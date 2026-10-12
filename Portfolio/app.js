@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.58',
+    VERSION: 'v2.14.59',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -741,13 +741,22 @@ const DELIVERABLES = [
     },
     {
         id: 424,
-        title: 'D2.4 — TBD',
+        title: 'D2.4 — Doorstop Final Documentation',
         unit: '02',
         week: 8,
-        points: 20,
+        points: 0,
         phase: 'cad',
         tracks: ['dbl'],
-        description: 'Details coming soon.',
+        type: 'googleDoc',
+        description: 'Document your final 3D-printed doorstop. Open your Bambu Studio project and record the exact print settings. Attach a photo of the finished part, note whether it holds a door open, and include Google Drive links to your Fusion .f3d and Bambu .3mf files.',
+        checklistItems: [
+            'Print settings table is complete — all 7 fields filled in from Bambu Studio.',
+            'A photo of my finished doorstop is in the document.',
+            'The "Does It Work?" section is answered in at least one sentence.',
+            'Post-processing notes are filled in (or marked "None").',
+            'I included a Google Drive link to my <strong>Fusion .f3d</strong> file in Section 5.',
+            'I included a Google Drive link to my <strong>Bambu .3mf</strong> sliced file in Section 5.',
+        ],
     },
     // ── DBL: Unit 3 Safety ────────────────────────────────────────────────
     {
@@ -4357,6 +4366,21 @@ function confirmDocSubmit(deliverable) {
         // Remove any previous instance
         document.getElementById('docSubmitConfirmModal')?.remove();
 
+        const defaultItems = [
+            'My document has <strong>all required sections</strong> filled in — nothing is blank or still has placeholder text.',
+            'I have re-read my work and it reflects my <strong>best effort</strong>.',
+            'I understand my teacher will grade this document and the grade will count.',
+        ];
+        const items = (deliverable.checklistItems && deliverable.checklistItems.length)
+            ? deliverable.checklistItems
+            : defaultItems;
+
+        const checkboxesHtml = items.map(text => `
+            <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:14px;color:var(--gray-800);">
+                <input type="checkbox" class="doc-confirm-check" style="margin-top:2px;width:16px;height:16px;accent-color:var(--primary,#0d47a1);flex-shrink:0;">
+                ${text}
+            </label>`).join('');
+
         const modal = document.createElement('div');
         modal.id = 'docSubmitConfirmModal';
         modal.style.cssText = `
@@ -4366,7 +4390,7 @@ function confirmDocSubmit(deliverable) {
 
         modal.innerHTML = `
             <div style="background:var(--surface,#fff);border-radius:12px;padding:28px 28px 24px;
-                        max-width:440px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,0.22);">
+                        max-width:480px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,0.22);">
                 <h3 style="margin:0 0 6px;font-size:18px;color:var(--gray-900);">
                     Ready to submit?
                 </h3>
@@ -4375,18 +4399,7 @@ function confirmDocSubmit(deliverable) {
                     — only your teacher can undo this. Check off each item before continuing.
                 </p>
                 <div id="docSubmitChecklist" style="display:flex;flex-direction:column;gap:12px;margin-bottom:22px;">
-                    <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:14px;color:var(--gray-800);">
-                        <input type="checkbox" class="doc-confirm-check" style="margin-top:2px;width:16px;height:16px;accent-color:var(--primary,#0d47a1);flex-shrink:0;">
-                        My document has <strong style="margin-left:3px;">all required sections</strong> filled in — nothing is blank or still has placeholder text.
-                    </label>
-                    <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:14px;color:var(--gray-800);">
-                        <input type="checkbox" class="doc-confirm-check" style="margin-top:2px;width:16px;height:16px;accent-color:var(--primary,#0d47a1);flex-shrink:0;">
-                        I have re-read my work and it reflects my <strong style="margin-left:3px;">best effort</strong>.
-                    </label>
-                    <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:14px;color:var(--gray-800);">
-                        <input type="checkbox" class="doc-confirm-check" style="margin-top:2px;width:16px;height:16px;accent-color:var(--primary,#0d47a1);flex-shrink:0;">
-                        I understand my teacher will grade this document and the grade will count.
-                    </label>
+                    ${checkboxesHtml}
                 </div>
                 <div style="display:flex;gap:10px;justify-content:flex-end;">
                     <button id="docSubmitCancel"
