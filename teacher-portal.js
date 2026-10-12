@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.70',
+    VERSION: 'v2.9.71',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -81,13 +81,13 @@ const TRACK_DELIVERABLES = {
         { id: 10, label: 'D1.0 — Signed Syllabus & Safety Contract',    week: 1  },
         { id: 11, label: 'D1.1 — Design Brief',                         week: 1  },
         // Unit 2: Component deliverables (Google Doc template)
-        { id: 21, label: 'D2.1 — C1: Wheel Hub',                        week: 3  },
-        { id: 22, label: 'D2.2 — C2: Wheel Hub Cap',                    week: 4  },
-        { id: 23, label: 'D2.3 — C3: Motor Sleeve Mount',               week: 4  },
-        { id: 25, label: 'D2.4 — C5: Omni Wheel Mount',                 week: 6  },
-        { id: 26, label: 'D2.5 — C6: IR Sensor Mount',                  week: 7  },
-        { id: 27, label: 'D2.6 — C7: Ultrasonic Sensor Mount',          week: 7  },
-        { id: 24, label: 'D2.7 — C4: Robot Deck (Final)',                week: 8  },
+        { id: 21, label: 'D2.1 — C1: Wheel Hub',                        week: 4  },
+        { id: 22, label: 'D2.2 — C2: Wheel Hub Cap',                    week: 7  },
+        { id: 23, label: 'D2.3 — C3: Motor Sleeve Mount',               week: 9  },
+        { id: 25, label: 'D2.4 — C5: Omni Wheel Mount',                 week: 11 },
+        { id: 26, label: 'D2.5 — C6: IR Sensor Mount',                  week: 12 },
+        { id: 27, label: 'D2.6 — C7: Ultrasonic Sensor Mount',          week: 12 },
+        { id: 24, label: 'D2.7 — C4: Robot Deck (Final)',               week: 14 },
         // Unit 3: Shop Safety
         { id: 31, label: 'D3.1 — Tool Safety Certifications',           week: 10 },
         // Unit 4: Programming & sensors
@@ -119,11 +119,11 @@ const TRACK_DELIVERABLES = {
         { id: 10, label: 'D10 — Signed Syllabus & Safety Contract', week: 1  },
         { id: 11, label: 'D11 — Design Brief',                     week: 2  },
         // Unit 2: Component deliverables
-        { id: 21, label: 'D2.1 — C1: Wheel Hub',                    week: 3  },
-        { id: 22, label: 'D2.2 — C2: Wheel Hub Cap',               week: 4  },
-        { id: 89, label: 'D2.3 — Robot Assembly',                  week: 5  },
+        { id: 21, label: 'D2.1 — C1: Wheel Hub',                    week: 4  },
+        { id: 22, label: 'D2.2 — C2: Wheel Hub Cap',               week: 7  },
+        { id: 89, label: 'D2.3 — Robot Assembly',                  week: 9  },
         // Unit 3: Safety
-        { id: 31, label: 'D3.1 — Tool Safety Certifications',      week: 6  },
+        { id: 31, label: 'D3.1 — Tool Safety Certifications',      week: 10 },
         // Unit 4: Programming
         { id: 90, label: 'D4.1 — Blink (A4.1)',                   week: 9  },
         { id: 94, label: 'D4.2 — SOS with Functions',              week: 10 },
