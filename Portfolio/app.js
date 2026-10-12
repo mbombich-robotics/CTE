@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.59',
+    VERSION: 'v2.14.60',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -748,15 +748,10 @@ const DELIVERABLES = [
         phase: 'cad',
         tracks: ['dbl'],
         type: 'googleDoc',
-        description: 'Document your final 3D-printed doorstop. Open your Bambu Studio project and record the exact print settings. Attach a photo of the finished part, note whether it holds a door open, and include Google Drive links to your Fusion .f3d and Bambu .3mf files.',
-        checklistItems: [
-            'Print settings table is complete — all 7 fields filled in from Bambu Studio.',
-            'A photo of my finished doorstop is in the document.',
-            'The "Does It Work?" section is answered in at least one sentence.',
-            'Post-processing notes are filled in (or marked "None").',
-            'I included a Google Drive link to my <strong>Fusion .f3d</strong> file in Section 5.',
-            'I included a Google Drive link to my <strong>Bambu .3mf</strong> sliced file in Section 5.',
-        ],
+        aiGated: true,
+        feedbackButtonLabel: 'Verify Work',
+        folderUrl: 'https://drive.google.com/drive/folders/1QXD5080pfZA5mnEgnGxaNXxLXY6tk9Py',
+        description: 'Document your final 3D-printed doorstop. Record print settings from Bambu Studio, insert a photo of the finished part, answer whether it holds the door, and paste Drive links to your .f3d and .3mf files. Then upload those files to the class Drive folder.',
     },
     // ── DBL: Unit 3 Safety ────────────────────────────────────────────────
     {
@@ -4159,6 +4154,12 @@ const DOC_RUBRIC_CRITERIA = {
         { key: 'decision_matrix',        label: 'Decision Matrix',       max: 4 },
     ],
     423: COMPONENT_RUBRIC_CRITERIA,   // Doorstop CAD Model — Completed Component
+    424: [                             // Doorstop Final Documentation — completeness check (pass/fail per item)
+        { key: 'settings_complete', label: 'Print Settings — all 7 fields',  max: 1 },
+        { key: 'photo_attached',    label: 'Photo of Finished Doorstop',      max: 1 },
+        { key: 'does_it_work',      label: '"Does It Work?" Answered',        max: 1 },
+        { key: 'post_processing',   label: 'Post-Processing Notes',           max: 1 },
+    ],
     23: COMPONENT_RUBRIC_CRITERIA,
     24: COMPONENT_RUBRIC_CRITERIA,
     25: COMPONENT_RUBRIC_CRITERIA,
@@ -4167,10 +4168,14 @@ const DOC_RUBRIC_CRITERIA = {
 };
 
 function renderDocDeliverableUI(id, deliverable, existing) {
-    const docId  = existing?.docId  || '';
-    const docUrl = existing?.docUrl || '';
-    const hasDoc = !!docId;
+    const docId       = existing?.docId  || '';
+    const docUrl      = existing?.docUrl || '';
+    const hasDoc      = !!docId;
     const isSubmitted = existing?.status === 'completed';
+    const aiGated     = !!deliverable.aiGated;
+    const aiVerified  = !!existing?.aiVerified;
+    const fbLabel     = deliverable.feedbackButtonLabel || 'Get Immediate Feedback';
+    const fbIcon      = aiGated ? 'fa-check-double' : 'fa-comments';
 
     const createBtn = hasDoc
         ? ''
@@ -4178,19 +4183,27 @@ function renderDocDeliverableUI(id, deliverable, existing) {
                <i class="fas fa-file-alt"></i> Create My ${deliverable.title}
            </button>`;
 
+    const folderBtn = hasDoc && deliverable.folderUrl
+        ? `<a href="${deliverable.folderUrl}" target="_blank" rel="noopener"
+              style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:var(--gray-100);border:1px solid var(--gray-300);border-radius:8px;color:var(--gray-700);text-decoration:none;font-weight:600;font-size:14px;">
+               <i class="fas fa-folder-open"></i> Upload Files to Class Folder
+           </a>`
+        : '';
+
     const docLink = hasDoc
-        ? `<div style="margin-bottom:16px;">
+        ? `<div style="margin-bottom:16px;display:flex;flex-wrap:wrap;gap:10px;">
                <a href="${docUrl}" target="_blank" rel="noopener"
                   style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:var(--gray-100);border:1px solid var(--gray-300);border-radius:8px;color:var(--primary);text-decoration:none;font-weight:600;font-size:14px;">
                    <i class="fas fa-external-link-alt"></i> Open My ${deliverable.title} in Google Docs
                </a>
+               ${folderBtn}
            </div>`
         : '';
 
     const feedbackSection = hasDoc && !isSubmitted
         ? `<div style="margin-bottom:16px;">
                <button type="button" class="btn btn-secondary" onclick="requestDocFeedback(${id})" id="docFeedbackBtn">
-                   <i class="fas fa-comments"></i> Get Immediate Feedback
+                   <i class="fas ${fbIcon}"></i> ${fbLabel}
                </button>
                <div id="docFeedbackResult" style="margin-top:16px;"></div>
            </div>`
@@ -4198,29 +4211,40 @@ function renderDocDeliverableUI(id, deliverable, existing) {
         ? `<div id="docFeedbackResult" style="margin-top:0;"></div>`
         : '';
 
-    const submitBtn = hasDoc && !isSubmitted
-        ? `<div class="form-actions">
+    // For aiGated deliverables, submit is hidden until AI verification passes
+    const submitBtn = isSubmitted
+        ? `<div style="display:flex;align-items:center;gap:8px;color:var(--success,#2e7d32);font-weight:600;margin-top:8px;">
+               <i class="fas fa-check-circle"></i> Submitted
+           </div>`
+        : hasDoc
+        ? `<div class="form-actions" id="docSubmitSection" style="${aiGated && !aiVerified ? 'display:none;' : ''}">
                <button type="button" class="btn btn-primary" onclick="submitDeliverable(${id})">
                    <i class="fas fa-paper-plane"></i> Submit
                </button>
            </div>`
-        : isSubmitted
-        ? `<div style="display:flex;align-items:center;gap:8px;color:var(--success,#2e7d32);font-weight:600;margin-top:8px;">
-               <i class="fas fa-check-circle"></i> Submitted
-           </div>`
         : '';
 
-    const instructions = `
-        <div style="background:var(--gray-50,#fafafa);border:1px solid var(--gray-200);border-radius:8px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:var(--gray-600);">
-            <strong>How it works:</strong>
-            <ol style="margin:8px 0 0 16px;padding:0;line-height:1.8;">
-                <li>Click <strong>Create My ${deliverable.title}</strong> — your personal copy opens in Google Docs.</li>
-                <li>Read the yellow instruction boxes, then <strong>delete them</strong> as you complete each section.</li>
-                <li>Fill in all sections. Photos go directly into the doc.</li>
-                <li>Click <strong>Get immediate feedback</strong> to check your work before submitting.</li>
-                <li>When you're satisfied, click <strong>Submit</strong>.</li>
-            </ol>
-        </div>`;
+    const instructions = aiGated
+        ? `<div style="background:var(--gray-50,#fafafa);border:1px solid var(--gray-200);border-radius:8px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:var(--gray-600);">
+               <strong>How it works:</strong>
+               <ol style="margin:8px 0 0 16px;padding:0;line-height:1.8;">
+                   <li>Click <strong>Create My ${deliverable.title}</strong> — your personal copy opens in Google Docs.</li>
+                   <li>Fill in all four sections. For the photo, use <strong>Insert → Image</strong> in Google Docs.</li>
+                   <li>Upload your <strong>.f3d</strong> and <strong>.3mf</strong> files to the class Drive folder (name them <em>LastName_FirstName_doorstop</em>).</li>
+                   <li>Click <strong>${fbLabel}</strong> — AI checks each section. Fix anything that doesn't pass.</li>
+                   <li>Once everything passes, <strong>Submit</strong> unlocks.</li>
+               </ol>
+           </div>`
+        : `<div style="background:var(--gray-50,#fafafa);border:1px solid var(--gray-200);border-radius:8px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:var(--gray-600);">
+               <strong>How it works:</strong>
+               <ol style="margin:8px 0 0 16px;padding:0;line-height:1.8;">
+                   <li>Click <strong>Create My ${deliverable.title}</strong> — your personal copy opens in Google Docs.</li>
+                   <li>Read the yellow instruction boxes, then <strong>delete them</strong> as you complete each section.</li>
+                   <li>Fill in all sections. Photos go directly into the doc.</li>
+                   <li>Click <strong>Get immediate feedback</strong> to check your work before submitting.</li>
+                   <li>When you're satisfied, click <strong>Submit</strong>.</li>
+               </ol>
+           </div>`;
 
     return `
         ${instructions}
@@ -4271,9 +4295,14 @@ async function createDeliverableDoc(id) {
 }
 
 async function requestDocFeedback(id) {
+    const deliverable = DELIVERABLES.find(d => d.id === id);
     const btn    = document.getElementById('docFeedbackBtn');
     const panel  = document.getElementById('docFeedbackResult');
     const docId  = state.deliverables[id]?.docId;
+    const aiGated   = !!deliverable?.aiGated;
+    const fbLabel   = deliverable?.feedbackButtonLabel || 'Get Immediate Feedback';
+    const fbIcon    = aiGated ? 'fa-check-double' : 'fa-comments';
+
     if (!docId) { showToast('No document linked yet.', 'error'); return; }
     if (btn)   { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking…'; }
     if (panel) { panel.innerHTML = ''; }
@@ -4281,7 +4310,7 @@ async function requestDocFeedback(id) {
     try {
         const res = await fetch(CONFIG.SHEETS_API_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'text/plain' }, // Required for Google Apps Script CORS
+            headers: { 'Content-Type': 'text/plain' },
             body: JSON.stringify({
                 action: 'getDocAIFeedback',
                 email: state.student?.email || '',
@@ -4293,15 +4322,54 @@ async function requestDocFeedback(id) {
         if (!data.success) throw new Error(data.error || 'Unknown error');
 
         const criteria = DOC_RUBRIC_CRITERIA[id] || [];
-        if (panel) panel.innerHTML = renderDocFeedbackPanel(data.grades, criteria);
+        if (panel) panel.innerHTML = renderDocFeedbackPanel(data.grades, criteria, aiGated);
+
+        // For AI-gated deliverables, unlock Submit when all criteria pass
+        if (aiGated && criteria.length > 0) {
+            const allPassed = criteria.every(c => (data.grades[c.key]?.score || 0) >= c.max);
+            if (allPassed) {
+                state.deliverables[id] = { ...state.deliverables[id], aiVerified: true };
+                await saveToCloud();
+                const submitSection = document.getElementById('docSubmitSection');
+                if (submitSection) submitSection.style.display = '';
+            }
+        }
     } catch (err) {
         if (panel) panel.innerHTML = `<p style="color:var(--danger,#c62828);font-size:14px;">${err.message}</p>`;
     } finally {
-        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-comments"></i> Get Immediate Feedback'; }
+        if (btn) { btn.disabled = false; btn.innerHTML = `<i class="fas ${fbIcon}"></i> ${fbLabel}`; }
     }
 }
 
-function renderDocFeedbackPanel(grades, criteria) {
+function renderDocFeedbackPanel(grades, criteria, isBinaryMode) {
+    // Binary mode: max=1 per criterion — show ✓/✗ instead of scores
+    if (isBinaryMode) {
+        const passed = criteria.filter(c => (grades[c.key]?.score || 0) >= c.max).length;
+        const allPass = passed === criteria.length;
+
+        const rows = criteria.map(c => {
+            const g    = grades[c.key] || { score: 0, feedback: '' };
+            const pass = g.score >= c.max;
+            return `
+                <div style="display:flex;gap:12px;align-items:flex-start;border:1px solid ${pass ? 'var(--success,#2e7d32)' : 'var(--gray-200,#e0e0e0)'};border-radius:8px;padding:11px 14px;background:${pass ? 'var(--success-bg,#f1f8f1)' : 'var(--surface,#fff)'};">
+                    <span style="font-size:18px;line-height:1;flex-shrink:0;">${pass ? '✅' : '❌'}</span>
+                    <div>
+                        <div style="font-weight:600;font-size:14px;margin-bottom:${g.feedback ? '4px' : '0'};">${c.label}</div>
+                        ${g.feedback ? `<p style="font-size:13px;color:var(--gray-700,#444);margin:0;line-height:1.5;">${g.feedback}</p>` : ''}
+                    </div>
+                </div>`;
+        }).join('');
+
+        const footer = allPass
+            ? `<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--success-bg,#f1f8f1);border:1px solid var(--success,#2e7d32);border-radius:8px;font-weight:600;color:var(--success,#2e7d32);">
+                   <i class="fas fa-unlock"></i> All items verified — Submit is now unlocked!
+               </div>`
+            : `<p style="font-size:13px;color:var(--gray-600,#666);margin-top:4px;">Fix the items above, then click <strong>Verify Work</strong> again.</p>`;
+
+        return `<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">${rows}</div>${footer}`;
+    }
+
+    // Standard rubric mode
     const total    = criteria.reduce((sum, c) => sum + (grades[c.key]?.score || 0), 0);
     const maxTotal = criteria.reduce((sum, c) => sum + (c.max || 4), 0);
 
@@ -4371,7 +4439,12 @@ function confirmDocSubmit(deliverable) {
             'I have re-read my work and it reflects my <strong>best effort</strong>.',
             'I understand my teacher will grade this document and the grade will count.',
         ];
-        const items = (deliverable.checklistItems && deliverable.checklistItems.length)
+        const aiGatedItems = [
+            'I uploaded my <strong>LastName_FirstName_doorstop.f3d</strong> and <strong>.3mf</strong> files to the class Drive folder.',
+        ];
+        const items = deliverable.aiGated
+            ? aiGatedItems
+            : (deliverable.checklistItems && deliverable.checklistItems.length)
             ? deliverable.checklistItems
             : defaultItems;
 
