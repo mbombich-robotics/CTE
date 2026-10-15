@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.71',
+    VERSION: 'v2.9.72',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -421,7 +421,8 @@ let state = {
     filters: {
         period: 'all',
         team: 'all',
-        search: ''
+        search: '',
+        sort: 'behind'
     },
     currentWeek: 1,
     deliverableDueDates: {}  // { [deliverableId]: ISO date string } from backend config
@@ -521,6 +522,7 @@ function initEventListeners() {
     document.getElementById('periodFilter').addEventListener('change', applyFilters);
     document.getElementById('teamFilter').addEventListener('change', applyFilters);
     document.getElementById('searchInput').addEventListener('input', debounce(applyFilters, 300));
+    document.getElementById('sortOrder').addEventListener('change', applyFilters);
 
     // Export
     document.getElementById('exportBtn').addEventListener('click', exportCSV);
@@ -620,7 +622,7 @@ function switchCourse(courseId) {
     document.getElementById('teamHeader').style.display = course.hasTeams ? '' : 'none';
 
     // Reset filters
-    state.filters = { period: 'all', team: 'all', search: '' };
+    state.filters = { period: 'all', team: 'all', search: '', sort: 'behind' };
     document.getElementById('periodFilter').value = 'all';
     document.getElementById('teamFilter').value = 'all';
     document.getElementById('searchInput').value = '';
@@ -814,6 +816,7 @@ function processStudentData() {
             ungradedTotal: ungradedDeliverables,
             points,
             progress,
+            behindCount: totalBehind,
             status,
             fullState
         };
@@ -834,6 +837,7 @@ function applyFilters() {
     state.filters.period = document.getElementById('periodFilter').value;
     state.filters.team = document.getElementById('teamFilter').value;
     state.filters.search = document.getElementById('searchInput').value.toLowerCase();
+    state.filters.sort = document.getElementById('sortOrder').value;
 
     const filtered = state.students.filter(s => {
         if (state.filters.period !== 'all' && s.period !== state.filters.period) return false;
@@ -843,6 +847,22 @@ function applyFilters() {
             !s.email.toLowerCase().includes(state.filters.search)) return false;
         return true;
     });
+
+    const lastName = s => s.name.split(' ').pop() || s.name;
+    if (state.filters.sort === 'behind') {
+        filtered.sort((a, b) =>
+            b.behindCount !== a.behindCount
+                ? b.behindCount - a.behindCount
+                : lastName(a).localeCompare(lastName(b))
+        );
+    } else if (state.filters.sort === 'period') {
+        filtered.sort((a, b) =>
+            a.period !== b.period
+                ? (a.period || '').localeCompare(b.period || '')
+                : lastName(a).localeCompare(lastName(b))
+        );
+    }
+    // 'name' keeps the last-name order already applied in processStudentData
 
     renderStudentTable(filtered);
     updateStats(filtered);
@@ -888,7 +908,7 @@ function renderStudentTable(students) {
                 </div>
             </td>
             <td>
-                <span class="status-badge status-${s.status}">${formatStatus(s.status)}</span>
+                <span class="status-badge status-${s.status}">${formatStatus(s.status)}${s.behindCount > 0 ? ` (${s.behindCount})` : ''}</span>
                 ${s.ungradedTotal > 0 ? `<span class="status-badge" style="background: #fef3c7; color: #92400e; margin-left: 4px;" title="${s.ungradedDeliverables} deliverable(s) need grading"><i class="fas fa-pen"></i> ${s.ungradedTotal}</span>` : ''}
                 <button class="repair-btn" data-email="${s.email}" title="Repair student data (use if student's work isn't loading)" style="margin-left:6px;padding:2px 6px;border:1px solid #d1d5db;border-radius:4px;background:#fff;color:#6b7280;font-size:11px;cursor:pointer;vertical-align:middle;"><i class="fas fa-wrench"></i></button>
             </td>
