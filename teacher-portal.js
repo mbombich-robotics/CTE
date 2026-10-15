@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.72',
+    VERSION: 'v2.9.73',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -2356,17 +2356,19 @@ function loadReviewCards() {
 
     let students = [...state.students];
     if (periodFilter !== 'all') students = students.filter(s => s.period === periodFilter);
-    students.sort((a, b) => {
-        if (a.period !== b.period) return (a.period || '').localeCompare(b.period || '');
-        return (a.name.split(' ').pop() || '').localeCompare(b.name.split(' ').pop() || '');
-    });
+    students.sort((a, b) =>
+        (a.name.split(' ').pop() || '').localeCompare(b.name.split(' ').pop() || ''));
 
     const cards = [];
     let skipped = 0;
     students.forEach(student => {
         const submitted = state.rawData.deliverables?.find(d => d[0] === student.email && d[2] == assignmentId);
         const draft = student.fullState?.deliverables?.[assignmentId];
-        if (!submitted || submitted[7] !== 'completed') { skipped++; return; }
+        if (!submitted || submitted[7] !== 'completed') {
+            skipped++;
+            cards.push(renderPlaceholderCard(student));
+            return;
+        }
 
         const grade       = (submitted[9] !== '' && submitted[9] !== null && submitted[9] !== undefined) ? submitted[9] : '';
         const feedback    = submitted[10] || '';
@@ -2377,12 +2379,30 @@ function loadReviewCards() {
         cards.push(renderReviewCard(student, assignmentId, maxPts, grade, feedback, docUrl, submittedAt));
     });
 
+    const submittedCount = cards.length - skipped;
     panel.innerHTML = `
         <div style="padding:6px 2px 12px; font-size:13px; color:var(--gray-500);">
-            ${cards.length} submitted${skipped ? ` · ${skipped} not yet submitted` : ''}
+            ${submittedCount} submitted · ${skipped} not yet submitted
         </div>
         ${cards.join('')}
     `;
+}
+
+function renderPlaceholderCard(student) {
+    const slug = student.email.replace(/[^a-zA-Z0-9]/g, '-');
+    return `
+<div class="review-card" id="rcard-${slug}" style="opacity:0.55;">
+  <div class="review-card-header">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div class="avatar" style="opacity:0.5;">${getInitials(student.name)}</div>
+      <div>
+        <div style="font-weight:700; font-size:14px; color:var(--gray-800);">${student.name}</div>
+        <div style="font-size:12px; color:var(--gray-500);">${formatPeriod(student.period)}</div>
+      </div>
+    </div>
+    <span class="status-badge status-very-behind">Not Submitted</span>
+  </div>
+</div>`;
 }
 
 function renderReviewCard(student, assignmentId, maxPts, grade, feedback, docUrl, submittedAt) {
