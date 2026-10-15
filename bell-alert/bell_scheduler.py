@@ -167,18 +167,17 @@ def build_events(bells: list[tuple[str, str]]) -> list[tuple[datetime, bool]]:
 def run():
     log.info("Bell alert scheduler started  macs=%s", SHELLY_MACS)
 
-    # Resolve IPs at startup — retry every 30 s for up to 5 min to allow
-    # the hotspot and Shelly time to fully connect after a reboot.
+    # Resolve IPs at startup — retry every 30 s indefinitely until the
+    # hotspot and Shelly connect.  Never exit: the hotspot may take several
+    # minutes to start (especially after a reboot), and we want the task to
+    # stay "Running" in Task Scheduler rather than exiting and going to "Ready".
     shelly_ips = resolve_ips()
-    if not shelly_ips:
-        for attempt in range(1, 10):
-            log.warning("No plugs resolved yet — waiting 30 s (attempt %d/9)…", attempt)
-            time.sleep(30)
-            shelly_ips = resolve_ips()
-            if shelly_ips:
-                break
-    if not shelly_ips:
-        sys.exit("ERROR: Could not resolve any plug IPs after 4.5 min. Check that plugs are connected to the hotspot.")
+    attempt = 0
+    while not shelly_ips:
+        attempt += 1
+        log.warning("No plugs resolved yet — waiting 30 s (attempt %d)…", attempt)
+        time.sleep(30)
+        shelly_ips = resolve_ips()
 
     while True:
         now   = datetime.now()
