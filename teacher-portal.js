@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.73',
+    VERSION: 'v2.9.74',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -2456,7 +2456,7 @@ function renderReviewCard(student, assignmentId, maxPts, grade, feedback, docUrl
               data-email="${student.email}" data-assignment="${assignmentId}" data-status="${statusId}"
               oninput="markCardUnsaved('${statusId}')"
               onchange="scheduleCardAutoSave('${student.email.replace(/'/g, "\\'")}', ${assignmentId}, '${statusId}')"
-              style="width:100%; box-sizing:border-box; padding:10px; border:1px solid var(--gray-200); border-radius:6px; font-size:12px; line-height:1.6; color:var(--gray-700); resize:vertical; min-height:130px; font-family:inherit; background:var(--gray-50);"
+              style="width:100%; box-sizing:border-box; padding:10px; border:1px solid var(--gray-200); border-radius:6px; font-size:12px; line-height:1.6; color:var(--gray-700); resize:vertical; min-height:325px; font-family:inherit; background:var(--gray-50);"
               placeholder="AI feedback appears here after batch grading, or type your own…">${safeFb}</textarea>
   </div>
 </div>`;
