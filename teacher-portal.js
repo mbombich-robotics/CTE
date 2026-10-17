@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.74',
+    VERSION: 'v2.9.75',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -214,7 +214,7 @@ const COMPONENT_BATCH_CRITERIA = [
 ];
 
 // Deliverable IDs that support Batch AI Grade (excludes D11 which has its own handler)
-const DOC_GRADABLE_IDS = new Set([11, 21, 22, 421, 422]);
+const DOC_GRADABLE_IDS = new Set([11, 21, 22, 23, 421, 422]);
 
 // Criteria definitions for Design Brief AI grading
 const BRIEF_CRITERIA = {
@@ -262,6 +262,7 @@ const BRIEF_CRITERIA = {
     // Component Design deliverables — 5 criteria × 4 pts = 20 pts
     21:  COMPONENT_BATCH_CRITERIA,   // AER D2.1 — Wheel Hub
     22:  COMPONENT_BATCH_CRITERIA,   // AER D2.2 — Wheel Hub Cap
+    23:  COMPONENT_BATCH_CRITERIA,   // AER D2.3 — Motor Sleeve Mount
     421: COMPONENT_BATCH_CRITERIA,   // DBL D2.1 — Spinner Body
     // 422 (DBL Doorstop Design Brief) resolves to BRIEF_CRITERIA[11] at runtime
 };
@@ -2694,7 +2695,10 @@ async function runBatchDocGrading(deliverableId) {
                         total += score;
                         return `${c.label}: ${score}/${c.max} — ${(g.feedback || '').replace(/\n/g, ' ')}`;
                     });
-                    const feedbackText = lines.join('\n') + `\n\nTotal: ${total}/${maxTotal}`;
+                    let feedbackText = lines.join('\n') + `\n\nTotal: ${total}/${maxTotal}`;
+                    if ([22, 23, 422].includes(deliverableId) && total < 10) {
+                        feedbackText += '\n\nPlease update this doc and resubmit it for credit. Send me an email when your changes are complete.';
+                    }
                     const slug = email.replace(/[^a-zA-Z0-9]/g, '-');
 
                     const gradeCard = document.getElementById(`rg-${slug}`);
