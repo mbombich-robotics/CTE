@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.61',
+    VERSION: 'v2.14.62',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -3728,6 +3728,31 @@ function openDeliverableForm(id) {
                       </tr>
                     </tbody>
                   </table>
+                </div>
+              </div>
+
+              <div class="card" style="margin-bottom:16px;background:var(--gray-50,#f8f9fa);">
+                <h4 style="margin-bottom:4px;color:var(--primary);"><i class="fas fa-calculator"></i> Trig Calculator</h4>
+                <p style="font-size:12px;color:var(--gray-500);margin:0 0 12px;">Use these while filling out the table and reflection above.</p>
+                <div style="display:flex;gap:16px;flex-wrap:wrap;">
+                  <div style="flex:1;min-width:160px;">
+                    <label style="font-size:12px;font-weight:600;color:var(--gray-600);display:block;margin-bottom:4px;">tan(θ°)</label>
+                    <div style="display:flex;align-items:center;gap:6px;">
+                      <input id="calcTanIn" type="number" placeholder="angle °" step="any" style="width:90px;padding:5px 8px;border:1px solid var(--gray-200);border-radius:5px;font-size:13px;"
+                        oninput="const v=parseFloat(this.value);document.getElementById('calcTanOut').textContent=isNaN(v)?'—':Math.tan(v*Math.PI/180).toFixed(4);">
+                      <span style="font-size:13px;color:var(--gray-500);">→</span>
+                      <span id="calcTanOut" style="font-size:14px;font-weight:600;color:var(--primary);min-width:56px;">—</span>
+                    </div>
+                  </div>
+                  <div style="flex:1;min-width:160px;">
+                    <label style="font-size:12px;font-weight:600;color:var(--gray-600);display:block;margin-bottom:4px;">arctan(x) → degrees</label>
+                    <div style="display:flex;align-items:center;gap:6px;">
+                      <input id="calcAtanIn" type="number" placeholder="decimal" step="any" style="width:90px;padding:5px 8px;border:1px solid var(--gray-200);border-radius:5px;font-size:13px;"
+                        oninput="const v=parseFloat(this.value);document.getElementById('calcAtanOut').textContent=isNaN(v)?'—':(Math.atan(v)*180/Math.PI).toFixed(2)+'°';">
+                      <span style="font-size:13px;color:var(--gray-500);">→</span>
+                      <span id="calcAtanOut" style="font-size:14px;font-weight:600;color:var(--primary);min-width:56px;">—</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
