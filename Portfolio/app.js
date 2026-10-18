@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.60',
+    VERSION: 'v2.14.61',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -752,6 +752,17 @@ const DELIVERABLES = [
         feedbackButtonLabel: 'Verify Work',
         folderUrl: 'https://drive.google.com/drive/folders/1QXD5080pfZA5mnEgnGxaNXxLXY6tk9Py',
         description: 'Document your final 3D-printed doorstop. Record print settings from Bambu Studio, insert a photo of the finished part, answer whether it holds the door, and paste Drive links to your .f3d and .3mf files. Then upload those files to the class Drive folder.',
+    },
+    {
+        id: 425,
+        shortLabel: 'D2.5',
+        title: 'D2.5 — Wedge Physics Activity',
+        unit: '02',
+        week: 9,
+        points: 10,
+        phase: 'cad',
+        tracks: ['dbl'],
+        description: 'Apply the physics of the wedge simple machine to your doorstop. Record your wedge dimensions, calculate mechanical advantage and floor normal force, and check whether your design is self-locking on tile, hardwood, and carpet.',
     },
     // ── DBL: Unit 3 Safety ────────────────────────────────────────────────
     {
@@ -3625,13 +3636,135 @@ function openDeliverableForm(id) {
             </div>
             ` : ''}
 
-            ${id !== 0 && id !== 10 && !deliverable.questions?.length ? `
+            ${id === 425 ? `
+            <div style="margin-bottom:8px;">
+              <div style="background:var(--gray-50);border-radius:8px;padding:10px 16px;margin-bottom:20px;border:1px solid var(--gray-200);">
+                <span style="font-size:13px;color:var(--gray-600);">Fill this in during the lesson — use your CAD file for Part 1 and a calculator for Parts 2–3.</span>
+              </div>
+
+              <div class="card" style="margin-bottom:16px;">
+                <h4 style="margin-bottom:4px;color:var(--primary);">Part 1 — Your Wedge Geometry</h4>
+                <p style="font-size:13px;color:var(--gray-500);margin-bottom:14px;">Open your CAD file and record these three dimensions.</p>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;">
+                  <div class="form-group" style="margin:0;">
+                    <label for="d425L" style="font-size:13px;">Length <em>L</em> (mm)</label>
+                    <input type="number" id="d425L" min="0" step="0.1" placeholder="e.g. 80" value="${existing.wedgeL || ''}" style="width:100%;box-sizing:border-box;">
+                  </div>
+                  <div class="form-group" style="margin:0;">
+                    <label for="d425H" style="font-size:13px;">Max height <em>h</em> (mm)</label>
+                    <input type="number" id="d425H" min="0" step="0.1" placeholder="e.g. 12" value="${existing.wedgeH || ''}" style="width:100%;box-sizing:border-box;">
+                  </div>
+                  <div class="form-group" style="margin:0;">
+                    <label for="d425Theta" style="font-size:13px;">Taper angle θ (°)</label>
+                    <input type="number" id="d425Theta" min="0" max="45" step="0.1" placeholder="e.g. 8.5" value="${existing.wedgeTheta || ''}" style="width:100%;box-sizing:border-box;">
+                  </div>
+                </div>
+                <div style="background:var(--primary-light,#e8eaf6);border-radius:6px;padding:8px 12px;margin-bottom:12px;font-size:13px;">
+                  <strong>MA = L ÷ h</strong>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                  <label for="d425MA" style="font-size:13px;">Your calculated MA</label>
+                  <input type="number" id="d425MA" min="0" step="0.01" placeholder="e.g. 6.67" value="${existing.wedgeMA || ''}" style="max-width:180px;">
+                </div>
+              </div>
+
+              <div class="card" style="margin-bottom:16px;">
+                <h4 style="margin-bottom:4px;color:var(--primary);">Part 2 — Force Conversion</h4>
+                <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px;">A closing door pushes your wedge with about <strong>15 N</strong> of horizontal force.</p>
+                <div style="background:var(--primary-light,#e8eaf6);border-radius:6px;padding:8px 12px;margin-bottom:12px;font-size:13px;">
+                  <strong>N<sub>floor</sub> = 15 N × MA</strong>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                  <label for="d425Nfloor" style="font-size:13px;">Floor normal force N<sub>floor</sub> (N)</label>
+                  <input type="number" id="d425Nfloor" min="0" step="0.1" placeholder="15 × your MA" value="${existing.nFloor || ''}" style="max-width:200px;">
+                </div>
+              </div>
+
+              <div class="card" style="margin-bottom:16px;">
+                <h4 style="margin-bottom:4px;color:var(--primary);">Part 3 — Will It Hold?</h4>
+                <p style="font-size:13px;color:var(--gray-500);margin-bottom:10px;">Self-locking condition: <strong>μ &gt; tan(θ)</strong>. Compute tan(θ) on your calculator, then compare to each μ below.</p>
+                <div style="overflow-x:auto;">
+                  <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                    <thead>
+                      <tr style="background:var(--gray-100,#f5f5f5);">
+                        <th style="padding:8px 10px;text-align:left;border:1px solid var(--gray-200);font-weight:600;">Floor</th>
+                        <th style="padding:8px 10px;text-align:center;border:1px solid var(--gray-200);font-weight:600;">μ (PLA)</th>
+                        <th style="padding:8px 10px;text-align:center;border:1px solid var(--gray-200);font-weight:600;">Self-locking?</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style="padding:8px 10px;border:1px solid var(--gray-200);">Smooth tile</td>
+                        <td style="padding:8px 10px;border:1px solid var(--gray-200);text-align:center;">0.27</td>
+                        <td style="padding:8px 10px;border:1px solid var(--gray-200);text-align:center;">
+                          <select id="d425LockTile" style="font-size:13px;padding:3px 6px;border:1px solid var(--gray-200);border-radius:4px;background:var(--bg,white);">
+                            <option value="">—</option>
+                            <option value="yes" ${existing.lockTile === 'yes' ? 'selected' : ''}>Yes</option>
+                            <option value="no" ${existing.lockTile === 'no' ? 'selected' : ''}>No</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:8px 10px;border:1px solid var(--gray-200);">Hardwood / laminate</td>
+                        <td style="padding:8px 10px;border:1px solid var(--gray-200);text-align:center;">0.33</td>
+                        <td style="padding:8px 10px;border:1px solid var(--gray-200);text-align:center;">
+                          <select id="d425LockHardwood" style="font-size:13px;padding:3px 6px;border:1px solid var(--gray-200);border-radius:4px;background:var(--bg,white);">
+                            <option value="">—</option>
+                            <option value="yes" ${existing.lockHardwood === 'yes' ? 'selected' : ''}>Yes</option>
+                            <option value="no" ${existing.lockHardwood === 'no' ? 'selected' : ''}>No</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:8px 10px;border:1px solid var(--gray-200);">Carpet</td>
+                        <td style="padding:8px 10px;border:1px solid var(--gray-200);text-align:center;">0.50</td>
+                        <td style="padding:8px 10px;border:1px solid var(--gray-200);text-align:center;">
+                          <select id="d425LockCarpet" style="font-size:13px;padding:3px 6px;border:1px solid var(--gray-200);border-radius:4px;background:var(--bg,white);">
+                            <option value="">—</option>
+                            <option value="yes" ${existing.lockCarpet === 'yes' ? 'selected' : ''}>Yes</option>
+                            <option value="no" ${existing.lockCarpet === 'no' ? 'selected' : ''}>No</option>
+                          </select>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="card" style="margin-bottom:16px;">
+                <h4 style="margin-bottom:12px;color:var(--primary);">Part 4 — Reflect</h4>
+                <div class="form-group">
+                  <label for="d425Reflect1" style="font-size:13px;">1. Based on today's physics, is there anything about your doorstop design you'd change? Reference a specific dimension or angle.</label>
+                  <textarea id="d425Reflect1" rows="3" placeholder="Be specific — reference a dimension or angle from your design." style="width:100%;padding:8px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;resize:vertical;box-sizing:border-box;">${existing.reflect1 || ''}</textarea>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                  <label style="font-size:13px;display:block;margin-bottom:8px;">2. PLA on tile has μ ≈ 0.27. What's the maximum taper angle that keeps your doorstop self-locking? Is your design under that limit?</label>
+                  <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end;">
+                    <div>
+                      <label for="d425Q2MaxAngle" style="font-size:12px;color:var(--gray-500);">Max angle — arctan(0.27) ≈ ___°</label>
+                      <input type="number" id="d425Q2MaxAngle" min="0" max="45" step="0.1" placeholder="°" value="${existing.q2MaxAngle || ''}" style="width:80px;display:block;margin-top:4px;">
+                    </div>
+                    <div>
+                      <label for="d425Q2SelfLocking" style="font-size:12px;color:var(--gray-500);">My design is self-locking on tile:</label>
+                      <select id="d425Q2SelfLocking" style="font-size:13px;padding:5px 8px;border:1px solid var(--gray-200);border-radius:4px;display:block;margin-top:4px;background:var(--bg,white);">
+                        <option value="">—</option>
+                        <option value="yes" ${existing.q2SelfLocking === 'yes' ? 'selected' : ''}>Yes</option>
+                        <option value="no" ${existing.q2SelfLocking === 'no' ? 'selected' : ''}>No</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            ` : ''}
+
+            ${id !== 0 && id !== 10 && id !== 425 && !deliverable.questions?.length ? `
             <div class="form-group">
                 <label for="deliverableContent">Your Submission</label>
                 <textarea id="deliverableContent" rows="8" placeholder="Describe what you did, paste your code, explain your process...">${existing.content || ''}</textarea>
             </div>` : ''}
 
-            ${(id !== 0 && id !== 10) ? `
+            ${(id !== 0 && id !== 10 && id !== 425) ? `
             <div class="form-group">
                 <label>
                     Photos / Screenshots
@@ -3665,7 +3798,7 @@ function openDeliverableForm(id) {
                 </div>
             </div>` : ''}
 
-            ${id !== 10 ? `
+            ${id !== 10 && id !== 425 ? `
             <div class="form-group">
                 <label for="deliverableLinks">Supporting Documentation</label>
                 <textarea id="deliverableLinks" rows="3" placeholder="Links, notes, or brief code snippets">${existing.links || ''}</textarea>
@@ -3798,6 +3931,7 @@ function saveDeliverableDraft(id) {
         completionTime: completionTimeEl ? parseInt(completionTimeEl.value) || null : null,
         ...(id === 0 ? collectDeliverable0CustomData() : {}),
         ...(id === 10 ? collectD10Data() : {}),
+        ...(id === 425 ? collectD425Data() : {}),
         ...(CAD_DELIVERABLE_IDS.includes(id) ? collectCadDeliverableData() : {}),
         // photos are written to state live on upload, preserved here via spread
         status: 'in-progress',
@@ -3999,6 +4133,15 @@ function submitDeliverable(id) {
         if (!document.getElementById('d10ContractTurnedIn')?.checked) {
             showToast('Please confirm you have turned in your signed safety contract', 'error'); return;
         }
+    } else if (id === 425) {
+        const d = collectD425Data();
+        if (!d.wedgeL || !d.wedgeH || !d.wedgeTheta) { showToast('Fill in all three wedge dimensions (L, h, θ)', 'error'); return; }
+        if (!d.wedgeMA) { showToast('Enter your calculated mechanical advantage', 'error'); return; }
+        if (!d.nFloor) { showToast('Enter your floor normal force calculation', 'error'); return; }
+        if (!d.lockTile || !d.lockHardwood || !d.lockCarpet) { showToast('Complete the self-locking table for all three floor types', 'error'); return; }
+        if (!d.reflect1 || d.reflect1.length < 20) { showToast('Answer reflection question 1 with at least a sentence', 'error'); return; }
+        if (!d.q2MaxAngle) { showToast('Calculate the max angle for question 2', 'error'); return; }
+        if (!d.q2SelfLocking) { showToast('Answer whether your design is self-locking on tile', 'error'); return; }
     } else if (CAD_DELIVERABLE_IDS.includes(id)) {
         const cadData = collectCadDeliverableData();
         if (!cadData.level) {
@@ -4020,8 +4163,8 @@ function submitDeliverable(id) {
         }
     }
 
-    const customData = id === 0 ? collectDeliverable0CustomData() : id === 10 ? collectD10Data() : CAD_DELIVERABLE_IDS.includes(id) ? collectCadDeliverableData() : {};
-    let finalContent = id === 0 ? formatDeliverable0Content(customData) : id === 10 ? formatD10Content(customData) : CAD_DELIVERABLE_IDS.includes(id) ? formatCadDeliverableContent(id, customData) : content;
+    const customData = id === 0 ? collectDeliverable0CustomData() : id === 10 ? collectD10Data() : id === 425 ? collectD425Data() : CAD_DELIVERABLE_IDS.includes(id) ? collectCadDeliverableData() : {};
+    let finalContent = id === 0 ? formatDeliverable0Content(customData) : id === 10 ? formatD10Content(customData) : id === 425 ? formatD425Content(customData) : CAD_DELIVERABLE_IDS.includes(id) ? formatCadDeliverableContent(id, customData) : content;
 
     // Append photo links to content for Sheets storage
     if (photos.length > 0) {
@@ -4040,8 +4183,95 @@ function submitDeliverable(id) {
 
     saveToCloud(); // immediate save on submission
     updateUI();
+    if (id === 425) {
+        renderD425FeedbackPanel(customData);
+        showCelebration(`${deliverable.title} Submitted!`);
+        return;
+    }
     document.getElementById('deliverableModal').classList.remove('active');
     showCelebration(`${deliverable.title} Submitted!`);
+}
+
+// ============================================
+// D2.5 — WEDGE PHYSICS ACTIVITY (DBL)
+// ============================================
+function collectD425Data() {
+    const g = id => (document.getElementById(id)?.value || '').trim();
+    const n = id => parseFloat(document.getElementById(id)?.value) || 0;
+    return {
+        wedgeL:        n('d425L'),
+        wedgeH:        n('d425H'),
+        wedgeTheta:    n('d425Theta'),
+        wedgeMA:       n('d425MA'),
+        nFloor:        n('d425Nfloor'),
+        lockTile:      g('d425LockTile'),
+        lockHardwood:  g('d425LockHardwood'),
+        lockCarpet:    g('d425LockCarpet'),
+        reflect1:      g('d425Reflect1'),
+        q2MaxAngle:    n('d425Q2MaxAngle'),
+        q2SelfLocking: g('d425Q2SelfLocking'),
+    };
+}
+
+function formatD425Content(d) {
+    const tanTheta = d.wedgeTheta ? Math.tan(d.wedgeTheta * Math.PI / 180).toFixed(3) : '?';
+    return [
+        'WEDGE GEOMETRY',
+        `L: ${d.wedgeL} mm  |  h: ${d.wedgeH} mm  |  θ: ${d.wedgeTheta}°  |  tan(θ): ${tanTheta}`,
+        `Calculated MA: ${d.wedgeMA}`,
+        '',
+        'FORCE CONVERSION',
+        `N_floor = 15 N × ${d.wedgeMA} = ${d.nFloor} N`,
+        '',
+        'SELF-LOCKING CHECK',
+        `Tile (μ=0.27): ${d.lockTile}  |  Hardwood (μ=0.33): ${d.lockHardwood}  |  Carpet (μ=0.50): ${d.lockCarpet}`,
+        '',
+        'REFLECTION',
+        `Q1 — Design change: ${d.reflect1}`,
+        `Q2 — Max angle: arctan(0.27) ≈ ${d.q2MaxAngle}°  |  My design self-locking on tile: ${d.q2SelfLocking}`,
+    ].join('\n');
+}
+
+function renderD425FeedbackPanel(data) {
+    const theta = data.wedgeTheta;
+    const tanTheta = Math.tan(theta * Math.PI / 180);
+    const ma = data.wedgeMA || '?';
+
+    let mainMsg = '';
+    if (theta < 15.1) {
+        mainMsg = `Your ${theta}° wedge is well under the 15° self-locking limit for PLA on tile — it holds on every surface in the table. Notice what the math is actually saying: both the friction available and the friction required scale with door force, so F_door cancels out of the inequality. The only thing that decides if your wedge holds is the ratio μ/tan(θ). With your design, that ratio is comfortably above 1 everywhere.`;
+    } else if (theta < 18.3) {
+        mainMsg = `At ${theta}°, you're just over the tile threshold (15.1°). On smooth tile a hard push could slide your wedge back; hardwood and carpet are fine. You're only a few degrees away from being self-locking everywhere — reducing the height <em>h</em> a couple of millimetres while keeping the same length would do it, since MA = L/h.`;
+    } else if (theta < 26.6) {
+        mainMsg = `At ${theta}°, only carpet reliably holds your design. On tile and hardwood, a strong enough door force would push it back. This is the tradeoff of a steeper wedge: easier to slide under a narrow door gap, but less friction margin. If your classroom floor is tile, that's worth thinking about.`;
+    } else {
+        mainMsg = `At ${theta}°, none of the three surfaces are self-locking for your design — the door can push it back on any of them with enough force. Steep wedges need very high-friction surfaces (rubber, grip tape) to compensate. This is why nearly every commercial doorstop combines a shallow angle with a rubber foot.`;
+    }
+
+    const nFloorActual = (15 * ma).toFixed(0);
+    const maMsg = `Your MA of ${ma} means the wedge converts the door's 15 N into roughly ${nFloorActual} N of floor pressure — that's what friction has to work with.`;
+
+    const deepMsg = `One thing worth sitting with: the self-locking condition (μ &gt; tan θ) has no F<sub>door</sub> in it. If that condition is satisfied, the wedge holds no matter how hard the door pushes — the shape guarantees it. The same principle shows up in self-locking screw threads, lathe chucks, and wedge-type clamps. Mechanism geometry doing the work instead of friction strength.`;
+
+    const panel = document.getElementById('deliverableFormContent');
+    if (!panel) return;
+    panel.innerHTML = `
+      <div style="text-align:center;padding:28px 0 16px;">
+        <i class="fas fa-check-circle" style="font-size:52px;color:var(--success);display:block;margin-bottom:12px;"></i>
+        <h2 style="margin:0 0 4px;">Activity Submitted!</h2>
+        <p style="color:var(--gray-500);font-size:14px;margin:0;">D2.5 — Wedge Physics Activity</p>
+      </div>
+      <div class="card" style="margin-bottom:20px;border-left:4px solid var(--primary);">
+        <h4 style="color:var(--primary);margin-bottom:12px;"><i class="fas fa-lightbulb"></i> Food for Thought</h4>
+        <p style="font-size:14px;line-height:1.65;margin-bottom:12px;">${mainMsg}</p>
+        <p style="font-size:14px;line-height:1.65;margin-bottom:12px;">${maMsg}</p>
+        <p style="font-size:13.5px;line-height:1.65;color:var(--gray-600);margin:0;">${deepMsg}</p>
+      </div>
+      <div style="text-align:center;">
+        <button class="btn btn-primary" onclick="document.getElementById('deliverableModal').classList.remove('active')">
+          <i class="fas fa-times"></i> Close
+        </button>
+      </div>`;
 }
 
 // ============================================
