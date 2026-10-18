@@ -470,20 +470,79 @@
     <!-- ── SLIDE 6: Self-Locking Derivation ── -->
     <div class="slide">
         <div class="slide-content">
-            <h2>Self-Locking — The Math</h2>
-            <div class="callout">
-                A wedge is <strong>self-locking</strong> when friction alone can resist ejection, no matter how hard the door pushes. Let's find out when that's true.
-            </div>
-            <div class="math-block">
-                <span class="math-line">Condition needed: &nbsp; f ≥ F<sub>door</sub> <span class="label">friction must resist the door</span></span>
-                <span class="math-line" style="padding-top:12px;">μ · N<sub>floor</sub> ≥ F<sub>door</sub></span>
-                <span class="math-line">μ · F<sub>door</sub> / tan(θ) ≥ F<sub>door</sub></span>
-                <span class="math-line">μ · <span class="cancel">F<sub>door</sub></span> / tan(θ) ≥ <span class="cancel">F<sub>door</sub></span> <span class="label">← F_door cancels!</span></span>
-                <span class="math-line" style="padding-top:14px; border-top: 1px solid rgba(74,222,128,0.2);"><span class="result">μ ≥ tan(θ) &nbsp;&nbsp;&nbsp; ←  self-locking condition</span></span>
-                <span class="math-line" style="padding-top:8px;"><span class="result">MA ≥ 1 / μ &nbsp;&nbsp;&nbsp;&nbsp; ←  equivalent design rule</span></span>
-            </div>
-            <div class="callout" style="font-size:1.2em; margin-top:16px;">
-                <strong>F<sub>door</sub> cancels completely.</strong> A harder push creates proportionally more floor friction <em>and</em> more ejection force — they scale together. Whether the wedge holds depends only on <strong>shape (θ)</strong> and <strong>surface (μ)</strong>, never on how hard the door pushes.
+            <div style="display:flex; gap:32px; align-items:flex-start;">
+
+                <!-- Left: proof steps -->
+                <div style="flex:1.1; min-width:0;">
+                    <div style="font-family:'JetBrains Mono',monospace; font-size:0.75em; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:#4ade80; margin-bottom:12px;">Mathematical Proof</div>
+
+                    <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:20px;">
+                        <!-- Step 1 -->
+                        <div style="display:flex; gap:14px; align-items:center; background:rgba(74,222,128,0.05); border:1px solid rgba(74,222,128,0.15); border-radius:8px; padding:10px 14px;">
+                            <span style="font-family:'Orbitron',sans-serif; font-size:0.7em; font-weight:700; color:#4ade80; flex-shrink:0; width:18px;">1</span>
+                            <div style="flex:1; min-width:0;">
+                                <div style="font-size:0.8em; color:#475569; margin-bottom:2px;">Equilibrium Threshold</div>
+                                <div style="font-family:'JetBrains Mono',monospace; font-size:1.05em; color:#cbd5e1;">f &nbsp;≥&nbsp; F<sub>door</sub></div>
+                            </div>
+                        </div>
+                        <!-- Step 2 -->
+                        <div style="display:flex; gap:14px; align-items:center; background:rgba(74,222,128,0.05); border:1px solid rgba(74,222,128,0.15); border-radius:8px; padding:10px 14px;">
+                            <span style="font-family:'Orbitron',sans-serif; font-size:0.7em; font-weight:700; color:#4ade80; flex-shrink:0; width:18px;">2</span>
+                            <div style="flex:1; min-width:0;">
+                                <div style="font-size:0.8em; color:#475569; margin-bottom:2px;">Substitute Friction Law</div>
+                                <div style="font-family:'JetBrains Mono',monospace; font-size:1.05em; color:#cbd5e1;">μ · N<sub>floor</sub> &nbsp;≥&nbsp; F<sub>door</sub></div>
+                            </div>
+                        </div>
+                        <!-- Step 3 -->
+                        <div style="display:flex; gap:14px; align-items:center; background:rgba(74,222,128,0.05); border:1px solid rgba(74,222,128,0.15); border-radius:8px; padding:10px 14px;">
+                            <span style="font-family:'Orbitron',sans-serif; font-size:0.7em; font-weight:700; color:#4ade80; flex-shrink:0; width:18px;">3</span>
+                            <div style="flex:1; min-width:0;">
+                                <div style="font-size:0.8em; color:#475569; margin-bottom:2px;">Substitute Force Ratio</div>
+                                <div style="font-family:'JetBrains Mono',monospace; font-size:1.05em; color:#cbd5e1;">μ · (F<sub>door</sub> ÷ tan θ) &nbsp;≥&nbsp; F<sub>door</sub></div>
+                            </div>
+                        </div>
+                        <!-- Step 4 -->
+                        <div style="display:flex; gap:14px; align-items:center; background:rgba(74,222,128,0.08); border:1px solid rgba(74,222,128,0.3); border-radius:8px; padding:10px 14px;">
+                            <span style="font-family:'Orbitron',sans-serif; font-size:0.7em; font-weight:700; color:#4ade80; flex-shrink:0; width:18px;">4</span>
+                            <div style="flex:1; min-width:0;">
+                                <div style="font-size:0.8em; color:#475569; margin-bottom:2px;">Force Cancellation</div>
+                                <div style="font-family:'JetBrains Mono',monospace; font-size:1.05em; color:#cbd5e1;">μ · (<span style="text-decoration:line-through; color:#f87171; text-decoration-thickness:2px;">F<sub>door</sub></span> ÷ tan θ) &nbsp;≥&nbsp; <span style="text-decoration:line-through; color:#f87171; text-decoration-thickness:2px;">F<sub>door</sub></span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Result box -->
+                    <div style="background:#0a1a0a; border:1px solid rgba(74,222,128,0.4); border-radius:10px; padding:16px 20px; display:flex; gap:24px;">
+                        <div>
+                            <div style="font-size:0.7em; font-family:'JetBrains Mono',monospace; color:#4ade80; text-transform:uppercase; letter-spacing:.08em; margin-bottom:4px;">Self-Locking Rule</div>
+                            <div style="font-family:'Lora',Georgia,serif; font-size:1.6em; font-weight:700; color:#4ade80;">μ ≥ tan(θ)</div>
+                        </div>
+                        <div style="border-left:1px solid rgba(74,222,128,0.2); padding-left:24px;">
+                            <div style="font-size:0.7em; font-family:'JetBrains Mono',monospace; color:#86efac; text-transform:uppercase; letter-spacing:.08em; margin-bottom:4px;">Design Limit</div>
+                            <div style="font-family:'Lora',Georgia,serif; font-size:1.6em; font-weight:700; color:#86efac;">MA ≥ 1 / μ</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: insights -->
+                <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:14px; padding-top:30px;">
+                    <div style="background:rgba(74,222,128,0.06); border:1px solid rgba(74,222,128,0.2); border-radius:10px; padding:16px 18px;">
+                        <div style="font-size:0.85em; font-weight:700; color:#4ade80; margin-bottom:6px;">⇄ &nbsp;Input Force Cancels Completely</div>
+                        <p style="font-size:0.95em; color:#94a3b8; line-height:1.55; margin:0;">Pushing harder creates proportionally higher ejection force and higher floor friction simultaneously — both scale together and cancel out.</p>
+                    </div>
+                    <div style="background:rgba(74,222,128,0.06); border:1px solid rgba(74,222,128,0.2); border-radius:10px; padding:16px 18px;">
+                        <div style="font-size:0.85em; font-weight:700; color:#4ade80; margin-bottom:6px;">⬡ &nbsp;Governed Only by Geometry &amp; Material</div>
+                        <p style="font-size:0.95em; color:#94a3b8; line-height:1.55; margin:0;">Whether the wedge holds depends strictly on slope angle (θ) and surface friction coefficient (μ), never on the magnitude of the door push.</p>
+                    </div>
+                    <div style="background:rgba(74,222,128,0.06); border:1px solid rgba(74,222,128,0.2); border-radius:10px; padding:16px 18px;">
+                        <div style="font-size:0.85em; font-weight:700; color:#4ade80; margin-bottom:6px;">🔒 &nbsp;Friction Alone Holds the Wedge</div>
+                        <p style="font-size:0.95em; color:#94a3b8; line-height:1.55; margin:0;">When the condition is satisfied, the system enters permanent static equilibrium regardless of applied force magnitude.</p>
+                    </div>
+                    <div style="background:rgba(96,165,250,0.06); border:1px solid rgba(96,165,250,0.2); border-radius:8px; padding:10px 14px; font-size:0.88em; color:#94a3b8; line-height:1.5;">
+                        <strong style="color:#60a5fa;">Takeaway:</strong> Design a shallow taper angle (θ) or choose high-friction materials (μ) so that μ ≥ tan(θ).
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
