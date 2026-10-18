@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 8.11: Wedge Physics | Unit 8 — Mechanisms</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #020f02 0%, #061606 40%, #0a1f0a 100%);
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.2em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #4ade80;
+            text-shadow: 0 0 30px rgba(74,222,128,0.4);
+            line-height: 1.15;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #86efac;
+            text-align: center;
+        }
+
+        .lesson-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #4ade80;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            text-align: center;
+            color: #94a3b8;
+            font-weight: 300;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        .bullet-list { list-style: none; padding: 0; margin: 20px 0; }
+
+        .bullet-list li {
+            font-size: 1.4em;
+            padding: 10px 0 10px 46px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .bullet-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #4ade80;
+            font-size: 1.1em;
+        }
+
+        .bullet-list li strong { color: #e2e8f0; }
+        .bullet-list li em { color: #86efac; font-style: normal; font-weight: 600; }
+
+        .callout {
+            background: rgba(74,222,128,0.08);
+            border-left: 5px solid #4ade80;
+            border-radius: 0 10px 10px 0;
+            padding: 22px 28px;
+            margin: 20px 0;
+            font-size: 1.4em;
+            font-style: italic;
+            color: #86efac;
+            line-height: 1.5;
+        }
+
+        .callout strong { color: #e2e8f0; font-style: normal; }
+
+        .step-list { list-style: none; padding: 0; margin: 20px 0; counter-reset: step-counter; }
+
+        .step-list li {
+            font-size: 1.25em;
+            padding: 13px 14px 13px 62px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            background: rgba(74,222,128,0.04);
+            border-radius: 8px;
+        }
+
+        .step-list li::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: rgba(74,222,128,0.18);
+            border: 2px solid #4ade80;
+            border-radius: 50%;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #4ade80;
+            text-align: center;
+            line-height: 28px;
+        }
+
+        .step-list li strong { color: #86efac; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(74,222,128,0.12);
+            color: #86efac;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin: 20px 0;
+        }
+
+        .col-box {
+            background: rgba(74,222,128,0.06);
+            border: 1px solid rgba(74,222,128,0.2);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .col-box h4 {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #4ade80;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .col-box p { font-size: 1.05em; color: #94a3b8; line-height: 1.6; margin-bottom: 8px; }
+        .col-box p strong { color: #e2e8f0; }
+
+        .deliverable-box {
+            background: rgba(74,222,128,0.08);
+            border: 2px solid rgba(74,222,128,0.4);
+            border-radius: 14px;
+            padding: 28px 32px;
+            margin: 24px 0;
+        }
+
+        .deliverable-box h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+            color: #4ade80;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .deliverable-box ul { list-style: none; padding: 0; }
+
+        .deliverable-box ul li {
+            font-size: 1.25em;
+            color: #cbd5e1;
+            padding: 8px 0 8px 36px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .deliverable-box ul li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4ade80;
+            font-weight: 700;
+        }
+
+        /* Math derivation */
+        .math-block {
+            background: rgba(0,0,0,0.35);
+            border: 1px solid rgba(74,222,128,0.25);
+            border-radius: 12px;
+            padding: 24px 32px;
+            margin: 20px 0;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .math-line {
+            font-size: 1.35em;
+            color: #cbd5e1;
+            padding: 6px 0;
+            display: block;
+            line-height: 1.5;
+        }
+
+        .math-line .cancel {
+            text-decoration: line-through;
+            color: #f87171;
+            text-decoration-thickness: 2px;
+        }
+
+        .math-line .result { color: #4ade80; font-weight: 700; font-size: 1.1em; }
+        .math-line .label { color: #475569; font-size: 0.8em; margin-left: 16px; font-family: 'Exo 2', sans-serif; }
+
+        /* Threshold table */
+        .thresh-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 1.15em; }
+        .thresh-table th {
+            background: rgba(74,222,128,0.12);
+            color: #4ade80;
+            padding: 12px 16px;
+            text-align: left;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            letter-spacing: 1px;
+            border-bottom: 2px solid rgba(74,222,128,0.3);
+        }
+        .thresh-table td {
+            padding: 12px 16px;
+            color: #cbd5e1;
+            border-bottom: 1px solid rgba(74,222,128,0.1);
+        }
+        .thresh-table tr.highlight td { background: rgba(74,222,128,0.08); color: #e2e8f0; font-weight: 600; }
+        .thresh-table td strong { color: #4ade80; }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(2,15,2,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(74,222,128,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
+        }
+
+        .nav button {
+            background: rgba(74,222,128,0.15);
+            color: #86efac;
+            border: 1px solid rgba(74,222,128,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover { background: rgba(74,222,128,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 18px;
+            right: 24px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #86efac;
+            text-decoration: none;
+            background: rgba(74,222,128,0.15);
+            border: 1px solid rgba(74,222,128,0.35);
+            padding: 5px 12px;
+            border-radius: 20px;
+            z-index: 100;
+            transition: background 0.2s;
+        }
+        .back-link:hover { background: rgba(74,222,128,0.3); }
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Unit 8</a>
+
+<div class="presentation">
+
+    <!-- ── SLIDE 1: Title ── -->
+    <div class="slide active">
+        <div class="slide-content" style="text-align:center;">
+            <div class="lesson-tag">Unit 8 · Mechanisms · Design &amp; Build Lab</div>
+            <h1>L8.11 Wedge<br>Physics</h1>
+            <p class="subtitle">Why Your Doorstop Holds — Or Doesn't</p>
+            <div style="margin-top:40px; display:flex; justify-content:center; gap:30px; flex-wrap:wrap;">
+                <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#4ade80;">Mechanical Advantage</div>
+                <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#4ade80;">Self-Locking</div>
+                <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#4ade80;">Design Thresholds</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 2: Learning Objectives ── -->
+    <div class="slide">
+        <div class="slide-content" style="text-align:center;">
+            <h2>Learning Objectives</h2>
+            <p class="subtitle">By the end of this lesson, you will be able to:</p>
+            <div style="display:flex; flex-direction:column; gap:32px; margin-top:40px; max-width:860px; text-align:left; margin-left:auto; margin-right:auto;">
+                <div style="display:flex; gap:28px; align-items:baseline;">
+                    <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#4ade80; flex-shrink:0; width:36px; line-height:1;">1</span>
+                    <p style="margin:0; font-size:1.5rem; color:#e2e8f0; line-height:1.4;"><strong style="color:#4ade80;">Calculate</strong> the mechanical advantage of your doorstop using its dimensions and taper angle</p>
+                </div>
+                <div style="display:flex; gap:28px; align-items:baseline;">
+                    <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#4ade80; flex-shrink:0; width:36px; line-height:1;">2</span>
+                    <p style="margin:0; font-size:1.5rem; color:#e2e8f0; line-height:1.4;"><strong style="color:#4ade80;">Apply</strong> the self-locking condition (μ ≥ tan θ) to predict whether a design will hold on a given floor</p>
+                </div>
+                <div style="display:flex; gap:28px; align-items:baseline;">
+                    <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#4ade80; flex-shrink:0; width:36px; line-height:1;">3</span>
+                    <p style="margin:0; font-size:1.5rem; color:#e2e8f0; line-height:1.4;"><strong style="color:#4ade80;">Explain</strong> why the door force is irrelevant to whether your doorstop holds</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 3: Wedge as Simple Machine ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>The Wedge as a Simple Machine</h2>
+            <div class="callout">
+                A wedge converts a <strong>horizontal push</strong> (the door) into a <strong>vertical force</strong> on the floor. The ratio of those forces is its Mechanical Advantage.
+            </div>
+            <ul class="bullet-list">
+                <li><strong>MA = L ÷ h</strong> — length along the floor divided by max height. No units.</li>
+                <li><strong>MA = 7</strong> means every 1 N from the door creates 7 N pushing down on the floor</li>
+                <li>That downward force is what <em>friction has to work with</em> — more floor force = more grip</li>
+                <li>A <em>shallower</em> wedge (smaller angle, longer for its height) has higher MA</li>
+                <li>This is why angle matters more than it looks — a few degrees changes everything</li>
+            </ul>
+            <div class="callout" style="font-size:1.2em;">
+                For a <strong>notched design</strong> (flat toe, doesn't taper to a point), use the taper angle from your CAD file:<br>
+                <span style="font-family:'JetBrains Mono',monospace; font-size:1.15em; color:#4ade80; display:block; margin-top:8px;">MA = 1 ÷ tan(θ)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 4: Notched Design — Virtual Apex ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Notched Designs — The Virtual Apex</h2>
+            <div class="two-col" style="align-items:center;">
+                <div>
+                    <ul class="bullet-list" style="font-size:0.9em;">
+                        <li>A notched doorstop has a <strong>flat toe</strong> — the inclined face doesn't reach the floor</li>
+                        <li>If you use the physical length in MA = L/h, you get a <em>lower, incorrect answer</em></li>
+                        <li>The inclined face would reach the floor at the <strong>virtual apex</strong> — farther back than the physical part</li>
+                        <li>The CAD angle θ captures the real incline geometry</li>
+                        <li><strong>MA = 1 ÷ tan(θ)</strong> uses the effective virtual length automatically</li>
+                    </ul>
+                    <div style="background:rgba(74,222,128,0.08); border:1px solid rgba(74,222,128,0.25); border-radius:10px; padding:16px 20px; margin-top:16px;">
+                        <p style="font-size:1.1em; color:#94a3b8; margin-bottom:6px;">Example: L=100 mm, h=25 mm, θ=8°</p>
+                        <p style="font-family:'JetBrains Mono',monospace; color:#4ade80; font-size:1.05em;">L/h = 100/25 = 4.0 &nbsp;← physical only</p>
+                        <p style="font-family:'JetBrains Mono',monospace; color:#86efac; font-size:1.05em;">1/tan(8°) ≈ 7.1 &nbsp;← correct (use this)</p>
+                    </div>
+                </div>
+                <div style="display:flex; flex-direction:column; align-items:center;">
+                    <svg viewBox="0 0 380 175" style="width:100%;max-width:380px;" aria-label="Notched wedge with virtual apex">
+                        <defs>
+                            <marker id="ah-g" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+                                <polygon points="0 0, 7 2.5, 0 5" fill="#4ade80"/>
+                            </marker>
+                            <marker id="ah-l" markerWidth="7" markerHeight="5" refX="0" refY="2.5" orient="auto">
+                                <polygon points="7 0, 0 2.5, 7 5" fill="#4ade80"/>
+                            </marker>
+                            <marker id="ah-m" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+                                <polygon points="0 0, 7 2.5, 0 5" fill="#64748b"/>
+                            </marker>
+                            <marker id="ah-ml" markerWidth="7" markerHeight="5" refX="0" refY="2.5" orient="auto">
+                                <polygon points="7 0, 0 2.5, 7 5" fill="#64748b"/>
+                            </marker>
+                        </defs>
+
+                        <!-- Floor -->
+                        <line x1="20" y1="125" x2="360" y2="125" stroke="#334155" stroke-width="1.5"/>
+
+                        <!-- Dashed virtual extension -->
+                        <line x1="40" y1="125" x2="165" y2="96" stroke="#4ade80" stroke-width="1.5" stroke-dasharray="7 4" opacity="0.45"/>
+                        <line x1="40" y1="125" x2="165" y2="125" stroke="#4ade80" stroke-width="1.5" stroke-dasharray="7 4" opacity="0.35"/>
+
+                        <!-- Physical wedge fill -->
+                        <polygon points="165,96 340,55 340,125 165,125" fill="rgba(74,222,128,0.13)" stroke="#4ade80" stroke-width="2" stroke-linejoin="round"/>
+
+                        <!-- Virtual apex dot + label -->
+                        <circle cx="40" cy="125" r="4" fill="#4ade80" opacity="0.6"/>
+                        <text x="40" y="143" font-size="11" fill="#4ade80" text-anchor="middle" opacity="0.7" font-family="JetBrains Mono,monospace">virtual</text>
+                        <text x="40" y="155" font-size="11" fill="#4ade80" text-anchor="middle" opacity="0.7" font-family="JetBrains Mono,monospace">apex</text>
+
+                        <!-- θ arc -->
+                        <path d="M 68,125 A 28,28 0 0,0 55,113" fill="none" stroke="#86efac" stroke-width="1.4"/>
+                        <text x="75" y="117" font-size="13" fill="#86efac" font-style="italic">θ</text>
+
+                        <!-- h dimension -->
+                        <line x1="350" y1="55" x2="358" y2="55" stroke="#64748b" stroke-width="1"/>
+                        <line x1="350" y1="125" x2="358" y2="125" stroke="#64748b" stroke-width="1"/>
+                        <line x1="354" y1="60" x2="354" y2="120" stroke="#64748b" stroke-width="1.2" marker-end="url(#ah-m)" marker-start="url(#ah-ml)"/>
+                        <text x="363" y="95" font-size="13" fill="#64748b" font-style="italic">h</text>
+
+                        <!-- Physical L bracket -->
+                        <line x1="165" y1="135" x2="340" y2="135" stroke="#4ade80" stroke-width="1.2" marker-end="url(#ah-g)" marker-start="url(#ah-l)" opacity="0.7"/>
+                        <text x="252" y="148" font-size="11" fill="#4ade80" text-anchor="middle" opacity="0.7">Physical L only</text>
+
+                        <!-- Effective L bracket -->
+                        <line x1="40" y1="162" x2="340" y2="162" stroke="#64748b" stroke-width="1.2" marker-end="url(#ah-m)" marker-start="url(#ah-ml)"/>
+                        <text x="190" y="175" font-size="11" fill="#64748b" text-anchor="middle">Effective L = h ÷ tan(θ)</text>
+
+                        <!-- Labels on wedge -->
+                        <text x="270" y="87" font-size="12" fill="#86efac" text-anchor="middle">physical</text>
+                        <text x="270" y="100" font-size="12" fill="#86efac" text-anchor="middle">wedge</text>
+
+                        <!-- Virtual region label -->
+                        <text x="100" y="85" font-size="11" fill="#4ade80" text-anchor="middle" opacity="0.5">virtual</text>
+                        <text x="100" y="97" font-size="11" fill="#4ade80" text-anchor="middle" opacity="0.5">extension</text>
+
+                        <!-- Notch toe mark -->
+                        <line x1="165" y1="125" x2="165" y2="138" stroke="#4ade80" stroke-width="1" opacity="0.6"/>
+                        <text x="165" y="148" font-size="10" fill="#4ade80" text-anchor="middle" opacity="0.6">toe</text>
+                    </svg>
+                    <p style="font-size:0.85em; color:#475569; margin-top:8px; text-align:center; font-style:italic;">The virtual apex is where the inclined face would reach the floor</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 5: Force Balance ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Force Balance — What the Wedge Actually Does</h2>
+            <div class="two-col" style="align-items:center;">
+                <div>
+                    <ul class="bullet-list" style="font-size:0.9em;">
+                        <li><strong style="color:#60a5fa;">F<sub>door</sub></strong> — door pushes horizontally (trying to eject the wedge)</li>
+                        <li><strong style="color:#4ade80;">N<sub>floor</sub></strong> — floor pushes straight up on the wedge</li>
+                        <li><strong style="color:#fbbf24;">f</strong> — friction acts horizontally, resisting ejection</li>
+                    </ul>
+                    <div style="background:rgba(0,0,0,0.3); border:1px solid rgba(74,222,128,0.2); border-radius:10px; padding:18px 22px; margin-top:16px;">
+                        <p style="font-size:1.1em; color:#94a3b8; margin-bottom:10px;">The inclined surface converts horizontal force into vertical:</p>
+                        <p style="font-family:'JetBrains Mono',monospace; color:#4ade80; font-size:1.25em; margin-bottom:6px;">N<sub>floor</sub> = F<sub>door</sub> × MA</p>
+                        <p style="font-family:'JetBrains Mono',monospace; color:#86efac; font-size:1.1em;">N<sub>floor</sub> = F<sub>door</sub> ÷ tan(θ)</p>
+                        <p style="font-size:1em; color:#64748b; margin-top:10px;">A shallower wedge → higher MA → more floor force → more friction available</p>
+                    </div>
+                </div>
+
+                <!-- FBD -->
+                <div style="display:flex; flex-direction:column; align-items:center;">
+                    <svg viewBox="0 0 280 230" style="width:100%;max-width:260px;" aria-label="Free body diagram of wedge">
+                        <defs>
+                            <marker id="arr-b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#60a5fa"/></marker>
+                            <marker id="arr-g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4ade80"/></marker>
+                            <marker id="arr-y" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#fbbf24"/></marker>
+                        </defs>
+
+                        <!-- Floor -->
+                        <line x1="40" y1="175" x2="240" y2="175" stroke="#334155" stroke-width="2"/>
+                        <!-- Floor hatch -->
+                        <line x1="50" y1="175" x2="40" y2="188" stroke="#334155" stroke-width="1.5"/>
+                        <line x1="70" y1="175" x2="60" y2="188" stroke="#334155" stroke-width="1.5"/>
+                        <line x1="90" y1="175" x2="80" y2="188" stroke="#334155" stroke-width="1.5"/>
+                        <line x1="110" y1="175" x2="100" y2="188" stroke="#334155" stroke-width="1.5"/>
+                        <line x1="130" y1="175" x2="120" y2="188" stroke="#334155" stroke-width="1.5"/>
+                        <line x1="150" y1="175" x2="140" y2="188" stroke="#334155" stroke-width="1.5"/>
+                        <line x1="170" y1="175" x2="160" y2="188" stroke="#334155" stroke-width="1.5"/>
+                        <line x1="190" y1="175" x2="180" y2="188" stroke="#334155" stroke-width="1.5"/>
+                        <line x1="210" y1="175" x2="200" y2="188" stroke="#334155" stroke-width="1.5"/>
+                        <line x1="230" y1="175" x2="220" y2="188" stroke="#334155" stroke-width="1.5"/>
+
+                        <!-- Wedge shape -->
+                        <polygon points="70,145 210,175 70,175" fill="rgba(74,222,128,0.15)" stroke="#4ade80" stroke-width="2" stroke-linejoin="round"/>
+
+                        <!-- θ arc -->
+                        <path d="M 100,175 A 22,22 0 0,0 88,162" fill="none" stroke="#86efac" stroke-width="1.4"/>
+                        <text x="106" y="168" font-size="13" fill="#86efac" font-style="italic">θ</text>
+
+                        <!-- F_door: push from right going left -->
+                        <line x1="260" y1="152" x2="213" y2="152" stroke="#60a5fa" stroke-width="2.5" marker-end="url(#arr-b)"/>
+                        <text x="265" y="148" font-size="13" fill="#60a5fa" font-weight="700">F</text>
+                        <text x="265" y="162" font-size="10" fill="#60a5fa">door</text>
+
+                        <!-- N_floor: up from base center -->
+                        <line x1="140" y1="210" x2="140" y2="178" stroke="#4ade80" stroke-width="2.5" marker-end="url(#arr-g)"/>
+                        <text x="148" y="218" font-size="13" fill="#4ade80" font-weight="700">N</text>
+                        <text x="162" y="218" font-size="10" fill="#4ade80">floor</text>
+
+                        <!-- Friction: pointing right (resisting door) -->
+                        <line x1="38" y1="152" x2="68" y2="152" stroke="#fbbf24" stroke-width="2.5" marker-end="url(#arr-y)"/>
+                        <text x="8" y="148" font-size="13" fill="#fbbf24" font-weight="700">f</text>
+                        <text x="4" y="163" font-size="10" fill="#fbbf24">= μN</text>
+                    </svg>
+                    <p style="font-size:0.85em; color:#475569; margin-top:6px; text-align:center; font-style:italic;">Free body diagram — forces on the wedge</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 6: Self-Locking Derivation ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Self-Locking — The Math</h2>
+            <div class="callout">
+                A wedge is <strong>self-locking</strong> when friction alone can resist ejection, no matter how hard the door pushes. Let's find out when that's true.
+            </div>
+            <div class="math-block">
+                <span class="math-line">Condition needed: &nbsp; f ≥ F<sub>door</sub> <span class="label">friction must resist the door</span></span>
+                <span class="math-line" style="padding-top:12px;">μ · N<sub>floor</sub> ≥ F<sub>door</sub></span>
+                <span class="math-line">μ · F<sub>door</sub> / tan(θ) ≥ F<sub>door</sub></span>
+                <span class="math-line">μ · <span class="cancel">F<sub>door</sub></span> / tan(θ) ≥ <span class="cancel">F<sub>door</sub></span> <span class="label">← F_door cancels!</span></span>
+                <span class="math-line" style="padding-top:14px; border-top: 1px solid rgba(74,222,128,0.2);"><span class="result">μ ≥ tan(θ) &nbsp;&nbsp;&nbsp; ←  self-locking condition</span></span>
+                <span class="math-line" style="padding-top:8px;"><span class="result">MA ≥ 1 / μ &nbsp;&nbsp;&nbsp;&nbsp; ←  equivalent design rule</span></span>
+            </div>
+            <div class="callout" style="font-size:1.2em; margin-top:16px;">
+                <strong>F<sub>door</sub> cancels completely.</strong> A harder push creates proportionally more floor friction <em>and</em> more ejection force — they scale together. Whether the wedge holds depends only on <strong>shape (θ)</strong> and <strong>surface (μ)</strong>, never on how hard the door pushes.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 7: Design Thresholds ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Design Thresholds for PLA Doorstops</h2>
+            <div class="callout" style="font-size:1.2em;">
+                Since <code>tan(θ) = 1/MA</code>, the self-locking condition is also: <strong>MA ≥ 1/μ</strong>. Higher MA (shallower wedge) gives more margin. Use this as your design target.
+            </div>
+            <table class="thresh-table">
+                <thead>
+                    <tr>
+                        <th>Floor Surface</th>
+                        <th>μ (PLA, approx.)</th>
+                        <th>Max Angle θ</th>
+                        <th>Minimum MA</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="highlight">
+                        <td>Smooth tile <span style="font-size:0.8em; color:#64748b;">(most classrooms)</span></td>
+                        <td>0.27</td>
+                        <td><strong>≈ 15.1°</strong></td>
+                        <td><strong>≈ 3.7</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Hardwood / laminate</td>
+                        <td>0.33</td>
+                        <td><strong>≈ 18.3°</strong></td>
+                        <td><strong>≈ 3.0</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Carpet</td>
+                        <td>0.50</td>
+                        <td><strong>≈ 26.6°</strong></td>
+                        <td><strong>≈ 2.0</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="background:rgba(74,222,128,0.06); border:1px solid rgba(74,222,128,0.25); border-radius:10px; padding:18px 22px; margin-top:16px; font-size:1.15em; color:#94a3b8;">
+                A wedge with <strong style="color:#e2e8f0;">θ = 8°</strong> has <strong style="color:#e2e8f0;">MA ≈ 7.1</strong> — nearly double the minimum for tile. Plenty of margin.
+                A wedge with <strong style="color:#e2e8f0;">θ = 14°</strong> has <strong style="color:#e2e8f0;">MA ≈ 4.0</strong> — barely self-locking on tile. Marginal.
+                A wedge with <strong style="color:#e2e8f0;">θ = 16°</strong> — not self-locking on tile. The door can push it out.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 8: D2.5 Activity ── -->
+    <div class="slide">
+        <div class="slide-content" style="text-align:center;">
+            <h2>D2.5 — Wedge Physics Activity</h2>
+            <p class="subtitle" style="margin-bottom:28px;">Open the portfolio and complete D2.5 using your own doorstop dimensions.</p>
+            <div class="deliverable-box" style="text-align:left; max-width:760px; margin:0 auto;">
+                <h4>What You'll Do</h4>
+                <ul>
+                    <li><strong>Part 1:</strong> Enter L, h, and θ from your CAD file — calculate MA = L/h and compare to 1/tan(θ)</li>
+                    <li><strong>Part 2:</strong> Calculate N<sub>floor</sub> = 15 N × MA — see how much force your wedge creates on the floor</li>
+                    <li><strong>Part 3:</strong> Fill in the self-locking table — is μ &gt; tan(θ) for tile, hardwood, and carpet?</li>
+                    <li><strong>Part 4:</strong> Reflect — would you change your design? What's the max angle for PLA on tile?</li>
+                </ul>
+            </div>
+            <div style="margin-top:24px; display:flex; justify-content:center; gap:24px; flex-wrap:wrap;">
+                <div style="background:rgba(74,222,128,0.08); border:1px solid rgba(74,222,128,0.2); border-radius:12px; padding:14px 22px;">
+                    <p style="font-size:0.9em; color:#4ade80; font-family:'JetBrains Mono',monospace; margin-bottom:4px;">BUILT-IN CALCULATOR</p>
+                    <p style="font-size:1em; color:#94a3b8;">The form includes a trig helper — type an angle to get tan(θ), or a decimal to get arctan in degrees.</p>
+                </div>
+                <div style="background:rgba(74,222,128,0.08); border:1px solid rgba(74,222,128,0.2); border-radius:12px; padding:14px 22px;">
+                    <p style="font-size:0.9em; color:#4ade80; font-family:'JetBrains Mono',monospace; margin-bottom:4px;">ON SUBMISSION</p>
+                    <p style="font-size:1em; color:#94a3b8;">You'll get personalized feedback based on your actual θ — how close to the self-locking limit you are.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div><!-- /.presentation -->
+
+<!-- Navigation -->
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 8</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
+
+<script>
+    var slides = document.querySelectorAll('.slide');
+    var current = 0;
+
+    function showSlide(n) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(n, slides.length - 1));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    }
+
+    function changeSlide(dir) { showSlide(current + dir); }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+
+</body>
+</html>
