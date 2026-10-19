@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.62',
+    VERSION: 'v2.14.63',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -762,6 +762,7 @@ const DELIVERABLES = [
         points: 10,
         phase: 'cad',
         tracks: ['dbl'],
+        alwaysOpen: true,
         description: 'Apply the physics of the wedge simple machine to your doorstop. Record your wedge dimensions, calculate mechanical advantage and floor normal force, and check whether your design is self-locking on tile, hardwood, and carpet.',
     },
     // ── DBL: Unit 3 Safety ────────────────────────────────────────────────
