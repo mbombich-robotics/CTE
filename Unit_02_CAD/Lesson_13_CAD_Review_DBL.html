@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 2.13: CAD Unit Review | Unit 2 — CAD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #021008 0%, #041a10 40%, #061f14 100%);
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .slide.active.top-align {
+            justify-content: flex-start;
+            padding-top: 48px;
+        }
+
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.2em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #00d084;
+            text-shadow: 0 0 30px rgba(0,208,132,0.4);
+            line-height: 1.15;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: #6ee7b7;
+            text-align: center;
+        }
+
+        .lesson-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #00d084;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.4em;
+            text-align: center;
+            color: #94a3b8;
+            font-weight: 300;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        .badge-row {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 36px;
+        }
+
+        .badge {
+            background: rgba(0,208,132,0.1);
+            border: 1px solid rgba(0,208,132,0.3);
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-size: 1em;
+            color: #00d084;
+        }
+
+        .bullet-list { list-style: none; padding: 0; margin: 20px 0; }
+
+        .bullet-list li {
+            font-size: 1.35em;
+            padding: 10px 0 10px 46px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .bullet-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #00d084;
+            font-size: 1.1em;
+        }
+
+        .bullet-list li strong { color: #e2e8f0; }
+        .bullet-list li em { color: #6ee7b7; font-style: normal; font-weight: 600; }
+
+        /* Two-column grid */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin: 20px 0;
+        }
+
+        .three-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 18px;
+            margin: 20px 0;
+        }
+
+        .col-box {
+            background: rgba(0,208,132,0.06);
+            border: 1px solid rgba(0,208,132,0.2);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .col-box h4 {
+            font-size: 1.05em;
+            font-weight: 700;
+            color: #00d084;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .col-box ul { list-style: none; padding: 0; }
+
+        .col-box ul li {
+            font-size: 1em;
+            color: #94a3b8;
+            padding: 5px 0 5px 24px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .col-box ul li::before { content: "▸"; position: absolute; left: 0; color: #00d084; }
+        .col-box ul li strong { color: #e2e8f0; }
+
+        /* Callout */
+        .callout {
+            background: rgba(0,208,132,0.08);
+            border-left: 5px solid #00d084;
+            border-radius: 0 10px 10px 0;
+            padding: 18px 24px;
+            margin: 16px 0;
+            font-size: 1.2em;
+            color: #6ee7b7;
+            line-height: 1.5;
+        }
+
+        .callout strong { color: #e2e8f0; font-weight: 700; }
+
+        /* Quiz / check question */
+        .q-card {
+            background: rgba(0,208,132,0.05);
+            border: 1px solid rgba(0,208,132,0.25);
+            border-radius: 14px;
+            padding: 20px 24px;
+            margin: 12px 0;
+        }
+
+        .q-card .scenario {
+            font-size: 1.15em;
+            color: #e2e8f0;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .q-card .answer {
+            display: none;
+            background: rgba(0,208,132,0.12);
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 1.1em;
+            color: #6ee7b7;
+            font-weight: 600;
+        }
+
+        .q-card.revealed .answer { display: block; }
+
+        .reveal-btn {
+            background: rgba(0,208,132,0.15);
+            color: #6ee7b7;
+            border: 1px solid rgba(0,208,132,0.35);
+            border-radius: 8px;
+            padding: 6px 18px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 0.9em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+            letter-spacing: 0.5px;
+        }
+
+        .reveal-btn:hover { background: rgba(0,208,132,0.28); }
+        .q-card.revealed .reveal-btn { display: none; }
+
+        /* DOF color indicators */
+        .dof-row {
+            display: flex;
+            gap: 16px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        .dof-box {
+            flex: 1;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .dof-box .dof-icon {
+            font-size: 2.4em;
+            margin-bottom: 10px;
+        }
+
+        .dof-box h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9em;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .dof-box p {
+            font-size: 0.95em;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
+
+        .dof-blue  { background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.3); }
+        .dof-blue h4  { color: #60a5fa; }
+        .dof-black { background: rgba(100,116,139,0.12); border: 1px solid rgba(100,116,139,0.3); }
+        .dof-black h4 { color: #94a3b8; }
+        .dof-yellow{ background: rgba(234,179,8,0.10); border: 1px solid rgba(234,179,8,0.3); }
+        .dof-yellow h4{ color: #fbbf24; }
+
+        /* Extrude operation cards */
+        .op-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin: 24px 0;
+        }
+
+        .op-card {
+            border-radius: 14px;
+            padding: 24px 20px;
+            text-align: center;
+        }
+
+        .op-card .op-icon {
+            font-size: 2.8em;
+            margin-bottom: 12px;
+        }
+
+        .op-card h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .op-card p {
+            font-size: 0.95em;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
+
+        .op-new  { background: rgba(0,208,132,0.08); border: 1px solid rgba(0,208,132,0.25); }
+        .op-new h4 { color: #00d084; }
+        .op-join { background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.25); }
+        .op-join h4 { color: #60a5fa; }
+        .op-cut  { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25); }
+        .op-cut h4 { color: #f87171; }
+
+        /* Constraint table */
+        .constraint-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .constraint-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: rgba(0,208,132,0.05);
+            border: 1px solid rgba(0,208,132,0.15);
+            border-radius: 10px;
+            padding: 14px 16px;
+        }
+
+        .constraint-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em;
+            font-weight: 700;
+            color: #00d084;
+            min-width: 110px;
+            flex-shrink: 0;
+        }
+
+        .constraint-def {
+            font-size: 0.95em;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
+
+        .constraint-def strong { color: #e2e8f0; }
+
+        /* Sketch tools chip grid */
+        .tool-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        .tool-chip {
+            background: rgba(0,208,132,0.09);
+            border: 1px solid rgba(0,208,132,0.25);
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-size: 1em;
+            color: #e2e8f0;
+            font-weight: 600;
+        }
+
+        .tool-chip span {
+            display: block;
+            font-size: 0.78em;
+            color: #6ee7b7;
+            font-weight: 400;
+            margin-top: 3px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Quiz preview list */
+        .quiz-list {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .quiz-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            background: rgba(0,208,132,0.06);
+            border: 1px solid rgba(0,208,132,0.2);
+            border-radius: 10px;
+            padding: 16px 20px;
+            font-size: 1.1em;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+
+        .quiz-list li .num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+            font-weight: 900;
+            color: #00d084;
+            flex-shrink: 0;
+            min-width: 28px;
+        }
+
+        /* Check slide header */
+        .check-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .check-badge {
+            background: rgba(234,179,8,0.15);
+            border: 1px solid rgba(234,179,8,0.4);
+            border-radius: 20px;
+            padding: 6px 18px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em;
+            color: #fbbf24;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(5,10,20,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0,208,132,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
+        }
+
+        .nav button {
+            background: rgba(0,208,132,0.15);
+            color: #6ee7b7;
+            border: 1px solid rgba(0,208,132,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover { background: rgba(0,208,132,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 18px;
+            right: 24px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #6ee7b7;
+            text-decoration: none;
+            background: rgba(0,208,132,0.15);
+            border: 1px solid rgba(0,208,132,0.35);
+            padding: 5px 12px;
+            border-radius: 20px;
+            z-index: 100;
+            transition: background 0.2s;
+        }
+        .back-link:hover { background: rgba(0,208,132,0.3); }
+
+        .slide-eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em;
+            color: #475569;
+            text-align: center;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        /* Workflow arrow row */
+        .workflow-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            margin: 28px 0;
+        }
+
+        .wf-step {
+            background: rgba(0,208,132,0.09);
+            border: 1px solid rgba(0,208,132,0.25);
+            border-radius: 12px;
+            padding: 18px 24px;
+            text-align: center;
+            min-width: 160px;
+        }
+
+        .wf-step .wf-num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5em;
+            font-weight: 900;
+            color: #00d084;
+        }
+
+        .wf-step .wf-label {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #e2e8f0;
+            margin-top: 6px;
+        }
+
+        .wf-step .wf-sub {
+            font-size: 0.85em;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .wf-arrow {
+            font-size: 2em;
+            color: #00d084;
+            padding: 0 12px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Unit 2</a>
+
+<div class="presentation">
+
+    <!-- ── SLIDE 1: Title ── -->
+    <div class="slide active">
+        <div class="slide-content" style="text-align:center;">
+            <div class="lesson-tag">Unit 2 · CAD &amp; Fabrication · Design &amp; Build Lab</div>
+            <h1>L2.13 CAD<br>Unit Review</h1>
+            <p class="subtitle">Sketch · Constrain · Extrude</p>
+            <div class="badge-row">
+                <div class="badge">Sketch Tools</div>
+                <div class="badge">Constraints</div>
+                <div class="badge">Fully Constrained</div>
+                <div class="badge">Extrude Operations</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 2: Learning Objectives ── -->
+    <div class="slide">
+        <div class="slide-content" style="text-align:center;">
+            <h2>Learning Objectives</h2>
+            <p class="subtitle">By the end of this lesson, you will be able to:</p>
+            <div style="display:flex; flex-direction:column; gap:32px; margin-top:40px; max-width:860px; text-align:left; margin-left:auto; margin-right:auto;">
+                <div style="display:flex; gap:28px; align-items:baseline;">
+                    <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d084; flex-shrink:0; width:36px; line-height:1;">1</span>
+                    <p style="margin:0; font-size:1.5rem; color:#e2e8f0; line-height:1.4;"><strong style="color:#00d084;">Name</strong> the sketch tools and constraints used to build a fully constrained profile in Fusion 360</p>
+                </div>
+                <div style="display:flex; gap:28px; align-items:baseline;">
+                    <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d084; flex-shrink:0; width:36px; line-height:1;">2</span>
+                    <p style="margin:0; font-size:1.5rem; color:#e2e8f0; line-height:1.4;"><strong style="color:#00d084;">Explain</strong> what "fully constrained" means and why it matters for a repeatable design</p>
+                </div>
+                <div style="display:flex; gap:28px; align-items:baseline;">
+                    <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#00d084; flex-shrink:0; width:36px; line-height:1;">3</span>
+                    <p style="margin:0; font-size:1.5rem; color:#e2e8f0; line-height:1.4;"><strong style="color:#00d084;">Choose</strong> the correct extrude operation — New Body, Join, or Cut — for a given design task</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 3: The Workflow ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="slide-eyebrow">The Big Picture</div>
+            <h2>Sketch → Constrain → Extrude</h2>
+            <div class="workflow-row">
+                <div class="wf-step">
+                    <div class="wf-num">1</div>
+                    <div class="wf-label">Sketch</div>
+                    <div class="wf-sub">Draw the 2D profile</div>
+                </div>
+                <div class="wf-arrow">→</div>
+                <div class="wf-step">
+                    <div class="wf-num">2</div>
+                    <div class="wf-label">Constrain</div>
+                    <div class="wf-sub">Lock every DOF</div>
+                </div>
+                <div class="wf-arrow">→</div>
+                <div class="wf-step">
+                    <div class="wf-num">3</div>
+                    <div class="wf-label">Extrude</div>
+                    <div class="wf-sub">Push the profile into 3D</div>
+                </div>
+                <div class="wf-arrow">→</div>
+                <div class="wf-step">
+                    <div class="wf-num">4</div>
+                    <div class="wf-label">Repeat</div>
+                    <div class="wf-sub">Add features with more sketches</div>
+                </div>
+            </div>
+            <div class="callout">
+                <strong>Why sketch in 2D first?</strong> The sketch is the blueprint. Every dimension and relationship is
+                locked in before Fusion 360 builds the solid — so changing one number updates the whole part, not just one face.
+            </div>
+            <ul class="bullet-list" style="margin-top:16px;">
+                <li>A <strong>closed profile</strong> is required — open loops won't extrude</li>
+                <li>One sketch can drive <strong>multiple extrude operations</strong></li>
+                <li>Editing the sketch later <strong>updates the 3D body automatically</strong></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 4: Sketch Tools ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="slide-eyebrow">Sketch Toolbar</div>
+            <h2>Sketch Tools — Quick Reference</h2>
+            <div class="tool-grid">
+                <div class="tool-chip">Line<span>L · click-click to draw segments</span></div>
+                <div class="tool-chip">Rectangle<span>R · center or 2-point</span></div>
+                <div class="tool-chip">Circle<span>C · center-diameter is most common</span></div>
+                <div class="tool-chip">Arc<span>3-point or center-point</span></div>
+                <div class="tool-chip">Slot<span>for oblong holes and channels</span></div>
+                <div class="tool-chip">Polygon<span>for hex and other regular shapes</span></div>
+                <div class="tool-chip">Offset<span>O · copies a profile outward/inward</span></div>
+                <div class="tool-chip">Mirror<span>reflects geometry across an axis</span></div>
+                <div class="tool-chip">Trim<span>T · removes unwanted segments</span></div>
+                <div class="tool-chip">Extend<span>stretches a line to meet another</span></div>
+                <div class="tool-chip">Point<span>marks a location; used with constraints</span></div>
+            </div>
+            <div class="callout" style="margin-top:8px;">
+                <strong>Rule of thumb:</strong> Use the fewest tools that produce a closed, fully constrained profile.
+                Trim is your eraser — draw generously, then clean up.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 5: Degrees of Freedom ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="slide-eyebrow">Core Concept</div>
+            <h2>Degrees of Freedom</h2>
+            <ul class="bullet-list">
+                <li>A <strong>degree of freedom (DOF)</strong> is one way a point or line can still move</li>
+                <li>A single point in 2D has <strong>2 DOF</strong> — it can slide in X and in Y</li>
+                <li>A line has <strong>4 DOF</strong> — both endpoints can move independently</li>
+                <li>Each <strong>constraint removes one or more DOF</strong> until nothing can move</li>
+            </ul>
+            <div class="dof-row" style="margin-top:24px;">
+                <div class="dof-box dof-blue">
+                    <div class="dof-icon">🔵</div>
+                    <h4>Blue</h4>
+                    <p>Under-constrained — some DOF still remain. The geometry can still drift.</p>
+                </div>
+                <div class="dof-box dof-black">
+                    <div class="dof-icon">⚫</div>
+                    <h4>Black</h4>
+                    <p>Fully constrained — every DOF is locked. The sketch is complete and repeatable.</p>
+                </div>
+                <div class="dof-box dof-yellow">
+                    <div class="dof-icon">🟡</div>
+                    <h4>Yellow</h4>
+                    <p>Over-constrained — conflicting rules applied. Remove or relax one constraint.</p>
+                </div>
+            </div>
+            <div class="callout">
+                <strong>Goal:</strong> all geometry turns <em style="color:#e2e8f0;">black</em> before you extrude.
+                A blue sketch will print differently every time someone opens the file.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 6: Constraints ── -->
+    <div class="slide top-align">
+        <div class="slide-content">
+            <div class="slide-eyebrow">Constraints Toolbar</div>
+            <h2>The Key Constraints</h2>
+            <div class="constraint-grid">
+                <div class="constraint-row">
+                    <span class="constraint-name">Coincident</span>
+                    <span class="constraint-def">Forces two points to <strong>share the same location</strong> — the most common constraint; snaps corners together</span>
+                </div>
+                <div class="constraint-row">
+                    <span class="constraint-name">Horiz / Vert</span>
+                    <span class="constraint-def">Forces a line to be <strong>exactly horizontal or vertical</strong> — removes one rotational DOF</span>
+                </div>
+                <div class="constraint-row">
+                    <span class="constraint-name">Parallel</span>
+                    <span class="constraint-def">Two lines run in <strong>the same direction</strong> — they never converge, even if lengths differ</span>
+                </div>
+                <div class="constraint-row">
+                    <span class="constraint-name">Perpendicular</span>
+                    <span class="constraint-def">Two lines meet at <strong>exactly 90°</strong> — guarantees square corners</span>
+                </div>
+                <div class="constraint-row">
+                    <span class="constraint-name">Tangent</span>
+                    <span class="constraint-def">A line or arc meets a curve <strong>without a corner</strong> — smooth, continuous transition</span>
+                </div>
+                <div class="constraint-row">
+                    <span class="constraint-name">Equal</span>
+                    <span class="constraint-def">Two lengths or radii share <strong>the same value</strong> — change one, both update</span>
+                </div>
+                <div class="constraint-row">
+                    <span class="constraint-name">Midpoint</span>
+                    <span class="constraint-def">A point is constrained to the <strong>center of a line</strong> — great for centering geometry</span>
+                </div>
+                <div class="constraint-row">
+                    <span class="constraint-name">Fix / Ground</span>
+                    <span class="constraint-def">Locks a point to a <strong>specific coordinate in space</strong> — anchors the sketch to the origin</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 7: CHECK — Which Constraint? ── -->
+    <div class="slide top-align">
+        <div class="slide-content">
+            <div class="check-header">
+                <span class="check-badge">CHECK — Which Constraint?</span>
+                <h2 style="margin:0;">Read the scenario. Name the constraint.</h2>
+            </div>
+
+            <div class="q-card" id="q1">
+                <div class="scenario">1 · Your doorstop sketch has a corner where two lines meet, but they're not quite touching — there's a tiny gap, so the profile won't close.</div>
+                <button class="reveal-btn" onclick="reveal('q1')">Reveal Answer</button>
+                <div class="answer">✅ <strong>Coincident</strong> — snap the endpoints together so the gap closes and the profile is closed.</div>
+            </div>
+
+            <div class="q-card" id="q2">
+                <div class="scenario">2 · The bottom of your doorstop is supposed to be flat, but when you drag it in the sketch, it tilts slightly instead of staying horizontal.</div>
+                <button class="reveal-btn" onclick="reveal('q2')">Reveal Answer</button>
+                <div class="answer">✅ <strong>Horizontal</strong> — locks the bottom edge to exactly 0° so it can't tilt.</div>
+            </div>
+
+            <div class="q-card" id="q3">
+                <div class="scenario">3 · You want two circular holes in your part to have identical diameters so you only have to change one dimension to resize both.</div>
+                <button class="reveal-btn" onclick="reveal('q3')">Reveal Answer</button>
+                <div class="answer">✅ <strong>Equal</strong> — links the two radii; editing one circle updates both automatically.</div>
+            </div>
+
+            <div class="q-card" id="q4">
+                <div class="scenario">4 · Your sketch drifts when someone opens the file on a different computer — the whole profile is the right shape, but it's floating in the wrong place.</div>
+                <button class="reveal-btn" onclick="reveal('q4')">Reveal Answer</button>
+                <div class="answer">✅ <strong>Fix / Ground</strong> (or a Coincident to the origin point) — anchors the sketch to a known location in the coordinate system.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 8: Fully Constrained ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="slide-eyebrow">The Goal</div>
+            <h2>Fully Constrained Sketches</h2>
+            <ul class="bullet-list">
+                <li><strong>Fully constrained</strong> = zero remaining degrees of freedom — no point can move</li>
+                <li>In Fusion 360: all lines and arcs <em>turn black</em> when the last DOF is removed</li>
+                <li>A fully constrained sketch <strong>prints the same way every time</strong> — no surprises when you share the file or iterate</li>
+            </ul>
+            <div class="two-col" style="margin-top:20px;">
+                <div class="col-box">
+                    <h4>How to Get There</h4>
+                    <ul>
+                        <li>Add a <strong>Fix / Ground</strong> or Coincident-to-origin to anchor the sketch</li>
+                        <li>Apply a <strong>dimension</strong> to every length and angle that isn't driven by a constraint</li>
+                        <li>Watch the <strong>color</strong> — chase each remaining blue segment until none are left</li>
+                        <li>Use <strong>Sketch Palette</strong> to confirm: "Fully Constrained" appears in the status bar</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Common Misses</h4>
+                    <ul>
+                        <li>Sketch is the right <em>shape</em> but can still <strong>translate</strong> as a whole (not anchored)</li>
+                        <li>One segment <strong>still blue</strong> — a length or angle dimension is missing</li>
+                        <li>Two coincident constraints on the same point — <strong>over-constrained</strong>, turns yellow</li>
+                        <li>Forgetting that arcs have <strong>radius AND position</strong> — both need constraints</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout">
+                Constraints are <strong>free</strong> — they don't change the look of the part.
+                Dimensions cost a number. Use constraints first, then dimension only what's left.
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 9: Extrude Operations ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="slide-eyebrow">Solid Tools</div>
+            <h2>Extrude — Three Operations</h2>
+            <div class="op-row">
+                <div class="op-card op-new">
+                    <div class="op-icon">🟩</div>
+                    <h4>New Body</h4>
+                    <p>Creates a brand-new solid. Use this for the <strong>first feature</strong> of any part — the foundation everything else builds on.</p>
+                </div>
+                <div class="op-card op-join">
+                    <div class="op-icon">🔵</div>
+                    <h4>Join</h4>
+                    <p><strong>Adds material</strong> to an existing body. Use for tabs, bosses, ribs — anything that grows out of the base.</p>
+                </div>
+                <div class="op-card op-cut">
+                    <div class="op-icon">🔴</div>
+                    <h4>Cut</h4>
+                    <p><strong>Removes material</strong> from an existing body. Use for holes, slots, notches — any void inside the part.</p>
+                </div>
+            </div>
+            <ul class="bullet-list" style="margin-top:4px;">
+                <li>You must select a <strong>closed profile</strong> first — open loops produce no solid</li>
+                <li>The <strong>distance</strong> field controls depth — match it to your design intent or a measured dimension</li>
+                <li>Fusion 360 usually <strong>guesses the right operation</strong> based on context; verify before pressing OK</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 10: CHECK — Extrude ── -->
+    <div class="slide top-align">
+        <div class="slide-content">
+            <div class="check-header">
+                <span class="check-badge">CHECK — Extrude Operations</span>
+                <h2 style="margin:0;">Which operation? Explain your reasoning.</h2>
+            </div>
+
+            <div class="q-card" id="q5">
+                <div class="scenario">5 · You've sketched the triangular side profile of your doorstop. This is the first feature in a new file.</div>
+                <button class="reveal-btn" onclick="reveal('q5')">Reveal Answer</button>
+                <div class="answer">✅ <strong>New Body</strong> — there's no existing solid yet, so this extrude creates the foundation.</div>
+            </div>
+
+            <div class="q-card" id="q6">
+                <div class="scenario">6 · Your doorstop body is done. You've sketched a small bump on the top face to keep the door from sliding off the wedge when the door pushes down.</div>
+                <button class="reveal-btn" onclick="reveal('q6')">Reveal Answer</button>
+                <div class="answer">✅ <strong>Join</strong> — the bump adds material onto an existing body. Join merges it into one solid.</div>
+            </div>
+
+            <div class="q-card" id="q7">
+                <div class="scenario">7 · You want to remove the toe of the doorstop (the sharp front edge) and replace it with a flat face — you've sketched a rectangle over the area to remove.</div>
+                <button class="reveal-btn" onclick="reveal('q7')">Reveal Answer</button>
+                <div class="answer">✅ <strong>Cut</strong> — you're subtracting material from the body. The rectangle's extrusion will carve out the toe.</div>
+            </div>
+
+            <div class="q-card" id="q8">
+                <div class="scenario">8 · After extruding, the part looks right but feels thinner than your design. Where do you make the change?</div>
+                <button class="reveal-btn" onclick="reveal('q8')">Reveal Answer</button>
+                <div class="answer">✅ <strong>Edit the extrude feature</strong> (double-click it in the timeline) and update the <strong>distance value</strong> — not the sketch. The sketch controls the profile shape; the extrude controls the depth.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 11: Quiz Preview ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="slide-eyebrow">What's Coming</div>
+            <h2>Quiz Preview</h2>
+            <ul class="quiz-list">
+                <li>
+                    <span class="num">1</span>
+                    <span><strong>Identify constraints from a scenario</strong> — read a description of a sketch problem and name the constraint that solves it</span>
+                </li>
+                <li>
+                    <span class="num">2</span>
+                    <span><strong>Interpret sketch color</strong> — given a description of a sketch's state (all black, partly blue, yellow segment), explain what it means and what to do next</span>
+                </li>
+                <li>
+                    <span class="num">3</span>
+                    <span><strong>Choose an extrude operation</strong> — read a design task and select New Body, Join, or Cut with a one-sentence justification</span>
+                </li>
+                <li>
+                    <span class="num">4</span>
+                    <span><strong>Explain the sketch-to-solid workflow</strong> — put the steps in order and explain why each step matters</span>
+                </li>
+            </ul>
+            <div class="callout" style="margin-top:20px;">
+                <strong>Best prep:</strong> Open your doorstop file in Fusion 360. Find one of each constraint type you applied.
+                Check the sketch status bar — is it fully constrained? If not, figure out why.
+            </div>
+        </div>
+    </div>
+
+</div><!-- /presentation -->
+
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 11</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
+
+<script>
+    const slides = document.querySelectorAll('.slide');
+    let current = 0;
+
+    function changeSlide(dir) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(slides.length - 1, current + dir));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = `${current + 1} / ${slides.length}`;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+
+    function reveal(id) {
+        document.getElementById(id).classList.add('revealed');
+    }
+</script>
+</body>
+</html>
