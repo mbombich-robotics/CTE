@@ -147,7 +147,8 @@ const TRACK_DELIVERABLES = {
         { id: 422, label: 'D2.2 — Doorstop Design Brief',                   week: 5  },
         { id: 423, label: 'D2.3 — Doorstop CAD Model',                     week: 6  },
         { id: 431, label: 'D3.1 — Tool Cert Card',                         week: 6  },
-        { id: 424, label: 'D2.4 — Completed Spinner + Portfolio Photo',    week: 8  },
+        { id: 424, label: 'D2.4 — Doorstop Final Documentation',           week: 8  },
+        { id: 425, label: 'D2.5 — Wedge Physics Activity',                 week: 9  },
         // Unit 7: Electrical Systems
         { id: 471, label: 'D7.1 — Unit 7 Lab Results',                     week: 11 },
         // Project 2: Christmas Ornament / Gift
