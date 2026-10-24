@@ -17,6 +17,9 @@ import logging
 import importlib
 import subprocess
 import requests
+
+# Suppress console windows when shelling out from pythonw.exe (no console host).
+_NO_WINDOW = subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
 from datetime import datetime, timedelta, date
 
 from dotenv import load_dotenv
@@ -58,7 +61,8 @@ def mac_to_ip(mac: str) -> str | None:
     normalized = mac.lower().replace(":", "-")
     candidates: list[str] = []
     try:
-        result = subprocess.run(["arp", "-a"], capture_output=True, text=True, timeout=5)
+        result = subprocess.run(["arp", "-a"], capture_output=True, text=True, timeout=5,
+                                 creationflags=_NO_WINDOW)
         for line in result.stdout.splitlines():
             if normalized in line.lower():
                 match = re.search(r"(\d+\.\d+\.\d+\.\d+)", line)
