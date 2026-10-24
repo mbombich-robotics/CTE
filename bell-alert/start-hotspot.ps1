@@ -3,10 +3,26 @@
 # WinRT tethering API requires Windows PowerShell 5.1 for type loading.
 # Polls until an ETHERNET internet connection appears, then starts the hotspot.
 # Gives up after $maxWait seconds so it does not run forever.
+#
+# Guards (exit silently if either fails):
+#   1. SCHOOL HOURS — only runs between $schoolHoursStart and $schoolHoursEnd.
+#      Prevents "StartWhenAvailable" from firing missed tasks at off hours.
+#   2. SCHOOL LAN   — pings $schoolGateway to confirm we're on the school network.
+#      Set $schoolGateway to the IP of the school's ethernet gateway (ask IT if
+#      unsure — it's the default gateway shown by `ipconfig` when plugged into LAN).
 
-$logFile   = "$PSScriptRoot\logs\hotspot-start.log"
-$maxWait   = 600   # seconds -- stop trying after 10 min
-$pollEvery = 20    # seconds between checks
+$logFile        = "$PSScriptRoot\logs\hotspot-start.log"
+$maxWait        = 600   # seconds -- stop trying after 10 min
+$pollEvery      = 20    # seconds between checks
+
+# ── School-hours window (24-hour HH:MM) ──────────────────────────────────────
+$schoolHoursStart = "05:45"
+$schoolHoursEnd   = "09:00"
+
+# ── School LAN gateway ────────────────────────────────────────────────────────
+# Set this to the school's ethernet gateway IP (e.g. "10.1.0.1").
+# Leave empty ("") to skip the LAN check and rely on the time window only.
+$schoolGateway = ""   # <-- fill this in
 
 function Write-Log($msg) {
     $line = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')  $msg"
@@ -16,7 +32,28 @@ function Write-Log($msg) {
 # Ensure log directory exists
 try { New-Item -ItemType Directory -Force -Path (Split-Path $logFile) | Out-Null } catch {}
 
+# ── Guard 1: school hours ─────────────────────────────────────────────────────
+$now      = Get-Date
+$todayStr = $now.ToString("yyyy-MM-dd")
+$winStart = [datetime]::ParseExact("$todayStr $schoolHoursStart", "yyyy-MM-dd HH:mm", $null)
+$winEnd   = [datetime]::ParseExact("$todayStr $schoolHoursEnd",   "yyyy-MM-dd HH:mm", $null)
+
+if ($now -lt $winStart -or $now -gt $winEnd) {
+    # Silent exit — no log entry so the log stays clean
+    exit 0
+}
+
 Write-Log "--- run start ---"
+
+# ── Guard 2: school LAN ───────────────────────────────────────────────────────
+if ($schoolGateway -ne "") {
+    $ping = Test-Connection -ComputerName $schoolGateway -Count 1 -Quiet -ErrorAction SilentlyContinue
+    if (-not $ping) {
+        Write-Log "School gateway ($schoolGateway) unreachable -- not on school LAN, skipping."
+        exit 0
+    }
+    Write-Log "School gateway reachable -- proceeding."
+}
 
 # Load WinRT types (requires powershell.exe 5.1 -- fails in pwsh.exe 7)
 try {
