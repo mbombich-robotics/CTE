@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.21';
+const BACKEND_VERSION = 'v2.14.22';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2297,6 +2297,19 @@ function handleGradeDesignBrief(data) {
     }
   }
 
+  // ── D2.5: Wedge Physics Activity (plain text form submission) ───────────────
+  if (deliverableId === 425) {
+    var content = (data.content || '').trim();
+    if (!content) return { success: false, error: 'No submission content provided.' };
+    try {
+      var grades = gradeDocWithRubric(content, 425);
+      return { success: true, grades };
+    } catch(e) {
+      Logger.log('handleGradeDesignBrief D425: ' + e);
+      return { success: false, error: e.message };
+    }
+  }
+
   return { success: false, error: 'AI grading is not configured for deliverable ' + deliverableId };
 }
 
@@ -2818,6 +2831,53 @@ reflection (max 4): Depth and specificity of the Section 4 reflection. 4=specifi
       'Return ONLY valid JSON, no markdown or explanation:\n' +
       '{"settings_complete": {"score": 1, "max": 1, "feedback": "..."}, "photo_attached": {"score": 1, "max": 1, "feedback": "..."}, "does_it_work": {"score": 1, "max": 1, "feedback": "..."}, "post_processing": {"score": 1, "max": 1, "feedback": "..."}}\n\n' +
       'STUDENT DOCUMENT:';
+
+  } else if (deliverableId === 425) {
+    // ── DBL D2.5: Wedge Physics Activity — math check + reflection ─────────
+    criteriaKeys = ['geometry_ma', 'force_conversion', 'self_locking', 'reflection_design', 'q2_analysis'];
+    overridePrefix =
+      'You are checking a high school student\'s Wedge Physics Activity submission. ' +
+      'The submission is structured plain text — all values come from their CAD file and calculator.\n\n' +
+      'SCORING PHILOSOPHY: Award points when the student demonstrates genuine understanding and correct work, ' +
+      'even if wording is imperfect. A student who got the math right deserves full marks on math criteria. ' +
+      'Each criterion is max 2 pts.\n\n' +
+      'FEEDBACK TONE: Encouraging and specific. Speak directly to the student using "you." ' +
+      '1-2 sentences per criterion — lead with what they did right, then one actionable suggestion if needed.\n\n' +
+      'PHYSICS REFERENCE:\n' +
+      'MA = L / h  (or equivalently 1/tan θ, where tan θ = h/L)\n' +
+      'N_floor = F_door × MA  (F_door = 15 N in this activity)\n' +
+      'Self-locking condition: tan(θ) < μ (the wedge holds when the angle is shallow enough for surface friction)\n' +
+      '  Tile:     μ = 0.27  →  self-locking when θ < arctan(0.27) ≈ 15.1°\n' +
+      '  Hardwood: μ = 0.33  →  self-locking when θ < arctan(0.33) ≈ 18.3°\n' +
+      '  Carpet:   μ = 0.50  →  self-locking when θ < arctan(0.50) ≈ 26.6°\n\n' +
+      'CRITERIA (each max 2):\n\n' +
+      'geometry_ma (max 2): Are L, h, and θ all present with real numeric values? ' +
+      'Is the calculated MA approximately equal to L/h (within 10%)? ' +
+      '2=all three dimensions present AND MA ≈ L/h within 10%; ' +
+      '1=dimensions present but MA is off by more than 10%, or one dimension is missing; ' +
+      '0=two or more dimensions missing, or no MA attempt.\n\n' +
+      'force_conversion (max 2): Is N_floor approximately equal to 15 × MA (within 5%)? ' +
+      '2=N_floor is within 5% of 15 × MA; ' +
+      '1=within 20% but not 5% (small arithmetic error); ' +
+      '0=blank, wildly wrong, or formula misunderstood.\n\n' +
+      'self_locking (max 2): Are the tile/hardwood/carpet answers physically correct given the student\'s θ? ' +
+      'Compare their θ to the thresholds above. ' +
+      '2=all three are correct; 1=two of three correct; 0=one or fewer correct, or all blank.\n\n' +
+      'reflection_design (max 2): Q1 — Does the student reference a specific dimension or angle ' +
+      'and connect it to MA, θ, or friction (e.g., "I would reduce h to lower θ and improve the friction margin")? ' +
+      '2=specific dimension or angle named WITH physics reasoning; ' +
+      '1=vague — mentions a change but no specific value or physics connection; ' +
+      '0=blank or completely generic.\n\n' +
+      'q2_analysis (max 2): Q2 — Is the max self-locking angle for tile approximately correct? ' +
+      'Accept 14°–16° (arctan(0.27) ≈ 15.1°). Is the self-locking conclusion consistent with their θ vs. 15.1°? ' +
+      '2=angle is 14°–16° AND conclusion is consistent with their θ; ' +
+      '1=angle is in the right ballpark (12°–18°) but conclusion is inconsistent, or angle is exact but conclusion missing; ' +
+      '0=blank, wildly wrong angle, or impossible conclusion.\n\n' +
+      'Return ONLY valid JSON, no markdown or explanation:\n' +
+      '{"geometry_ma": {"score": 2, "max": 2, "feedback": "..."}, "force_conversion": {"score": 2, "max": 2, "feedback": "..."}, ' +
+      '"self_locking": {"score": 2, "max": 2, "feedback": "..."}, "reflection_design": {"score": 2, "max": 2, "feedback": "..."}, ' +
+      '"q2_analysis": {"score": 2, "max": 2, "feedback": "..."}}\n\n' +
+      'STUDENT SUBMISSION:';
 
   } else {
     throw new Error('No rubric configured for deliverable ' + deliverableId);

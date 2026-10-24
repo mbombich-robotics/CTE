@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.76',
+    VERSION: 'v2.9.77',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -215,7 +215,7 @@ const COMPONENT_BATCH_CRITERIA = [
 ];
 
 // Deliverable IDs that support Batch AI Grade (excludes D11 which has its own handler)
-const DOC_GRADABLE_IDS = new Set([11, 21, 22, 23, 421, 422, 423]);
+const DOC_GRADABLE_IDS = new Set([11, 21, 22, 23, 421, 422, 423, 424, 425]);
 
 // Criteria definitions for Design Brief AI grading
 const BRIEF_CRITERIA = {
@@ -267,6 +267,21 @@ const BRIEF_CRITERIA = {
     421: COMPONENT_BATCH_CRITERIA,   // DBL D2.1 — Spinner Body
     423: COMPONENT_BATCH_CRITERIA,   // DBL D2.3 — Doorstop CAD Model
     // 422 (DBL Doorstop Design Brief) resolves to BRIEF_CRITERIA[11] at runtime
+    // DBL D2.4: Doorstop Final Documentation — binary completeness check (4 × 1 pt = 4 pts)
+    424: [
+        { id: 'settings_complete', label: 'Print Settings (all 7 fields)', max: 1 },
+        { id: 'photo_attached',    label: 'Photo of Finished Doorstop',    max: 1 },
+        { id: 'does_it_work',      label: '"Does It Work?" Answered',       max: 1 },
+        { id: 'post_processing',   label: 'Post-Processing Notes',          max: 1 },
+    ],
+    // DBL D2.5: Wedge Physics Activity — math + reflection (5 × 2 pts = 10 pts)
+    425: [
+        { id: 'geometry_ma',       label: 'Geometry + MA Calculation',     max: 2 },
+        { id: 'force_conversion',  label: 'Force Conversion (N_floor)',     max: 2 },
+        { id: 'self_locking',      label: 'Self-Locking Check',            max: 2 },
+        { id: 'reflection_design', label: 'Q1 — Design Reflection',        max: 2 },
+        { id: 'q2_analysis',       label: 'Q2 — Max Angle Analysis',       max: 2 },
+    ],
 };
 
 function escHtml(s) {
@@ -2651,6 +2666,9 @@ async function runBatchDocGrading(deliverableId) {
     const criteria    = BRIEF_CRITERIA[criteriaKey] || [];
     const maxTotal    = criteria.reduce((s, c) => s + c.max, 0);
 
+    // D2.5 stores formatted text in sub[4] (content column), not a Google Doc URL
+    const isPlainText = deliverableId === 425;
+
     const periodFilter = document.getElementById('gradePeriodFilter').value;
     const tasks = [];
     (state.rawData.deliverables || []).forEach(sub => {
@@ -2660,11 +2678,18 @@ async function runBatchDocGrading(deliverableId) {
         const student = state.students.find(s => s.email === email);
         if (!student) return;
         if (periodFilter !== 'all' && student.period !== periodFilter) return;
-        const docUrl = (sub[5] || sub[4] || '').trim();
-        if (!docUrl.includes('docs.google.com')) return;
-        const m = docUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
-        if (!m) return;
-        tasks.push({ email, docId: m[1] });
+
+        if (isPlainText) {
+            const content = (sub[4] || '').trim();
+            if (!content) return;
+            tasks.push({ email, content });
+        } else {
+            const docUrl = (sub[5] || sub[4] || '').trim();
+            if (!docUrl.includes('docs.google.com')) return;
+            const m = docUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            if (!m) return;
+            tasks.push({ email, docId: m[1] });
+        }
     });
 
     if (tasks.length === 0) {
@@ -2680,14 +2705,18 @@ async function runBatchDocGrading(deliverableId) {
 
     for (let i = 0; i < tasks.length; i += BATCH_SIZE) {
         const batch = tasks.slice(i, i + BATCH_SIZE);
-        await Promise.allSettled(batch.map(async ({ email, docId }) => {
+        await Promise.allSettled(batch.map(async (task) => {
             try {
+                const payload = isPlainText
+                    ? { action: 'gradeDesignBrief', token: CONFIG.TEACHER_TOKEN, email: task.email, content: task.content, deliverableId }
+                    : { action: 'getDocAIFeedback', token: CONFIG.TEACHER_TOKEN, email: task.email, docId: task.docId, deliverableId };
                 const res  = await fetch(course.apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({ action: 'getDocAIFeedback', token: CONFIG.TEACHER_TOKEN, email, docId, deliverableId })
+                    body: JSON.stringify(payload)
                 });
                 const data = await res.json();
+                const email = task.email;
 
                 if (data.success && data.grades) {
                     let total = 0;
