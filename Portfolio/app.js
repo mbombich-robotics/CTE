@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.63',
+    VERSION: 'v2.14.64',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -744,7 +744,7 @@ const DELIVERABLES = [
         title: 'D2.4 — Doorstop Final Documentation',
         unit: '02',
         week: 8,
-        points: 0,
+        points: 4,
         phase: 'cad',
         tracks: ['dbl'],
         type: 'googleDoc',

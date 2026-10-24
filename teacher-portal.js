@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.77',
+    VERSION: 'v2.9.78',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -22,11 +22,21 @@ const CONFIG = {
         hsaer: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-            currentAppVersion: 'v2.14.63',
+            currentAppVersion: 'v2.14.64',
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
-            deliverablePoints: { 0: 20, 10: 10, 11: 28, 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75 },
+            deliverablePoints: {
+                0: 20, 10: 10, 11: 28,
+                21: 20, 22: 20, 23: 20, 24: 20, 25: 20, 26: 20, 27: 20,
+                31: 50,
+                41: 50, 42: 50, 43: 50, 44: 50, 52: 75,
+                71: 25, 72: 30,
+                86: 30, 87: 30, 88: 25,
+                55: 50, 53: 100, 54: 50,
+                91: 25, 92: 20, 93: 50,
+                1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75
+            },
             deliverableWeeks: { 8: 10, 9: 11 },
             quizzes: [
                 { id: 'edp_quiz',   name: 'EDP Quiz',   questionCount: 12, maxPoints: 24 },
@@ -37,11 +47,18 @@ const CONFIG = {
         '8aer': {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
-            currentAppVersion: 'v2.14.63',
+            currentAppVersion: 'v2.14.64',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
-            deliverablePoints: { 0: 20, 10: 10, 11: 24, 1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75 },
+            deliverablePoints: {
+                0: 20, 10: 10, 11: 24,
+                21: 20, 22: 20,
+                31: 50,
+                89: 20, 90: 25, 94: 25, 95: 30, 96: 40,
+                81: 25, 82: 25, 83: 20, 84: 25, 85: 20,
+                1: 50, 2: 75, 3: 40, 4: 50, 5: 75, 6: 50, 7: 50, 8: 50, 9: 75
+            },
             deliverableWeeks: { 8: 10, 9: 11 },
             quizzes: [
                 { id: 'edp_quiz',   name: 'EDP Quiz',   questionCount: 12, maxPoints: 24 },
@@ -52,11 +69,21 @@ const CONFIG = {
         dbl: {
             name: 'Design & Build Lab',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
-            currentAppVersion: 'v2.14.63',
+            currentAppVersion: 'v2.14.64',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
-            deliverablePoints: { 10: 10, 11: 28, 421: 20, 422: 28, 423: 20 },
+            deliverablePoints: {
+                0: 20, 10: 10, 11: 28,
+                421: 20, 422: 20, 423: 20, 424: 4, 425: 10,
+                431: 50,
+                471: 40,
+                481: 30, 482: 25, 483: 30, 484: 50,
+                491: 20, 492: 20, 493: 25, 494: 50,
+                501: 20, 502: 25, 503: 50,
+                511: 20, 512: 25, 513: 75,
+                521: 20, 522: 25, 523: 20, 524: 50, 525: 100
+            },
             deliverableWeeks: {},
             quizzes: [
                 { id: 'edp_quiz',   name: 'EDP Quiz',   questionCount: 12, maxPoints: 24 }
