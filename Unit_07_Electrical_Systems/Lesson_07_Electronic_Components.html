@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 7.6: Electronic Components &amp; Motors | Unit 7 — Electrical Systems</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0a0800 0%, #130f00 40%, #1c1700 100%);
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .slide-content { max-width: 1200px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.2em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #f59e0b;
+            text-shadow: 0 0 30px rgba(245,158,11,0.4);
+            line-height: 1.15;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #fcd34d;
+            text-align: center;
+        }
+
+        .lesson-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #f59e0b;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            text-align: center;
+            color: #94a3b8;
+            font-weight: 300;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        .bullet-list { list-style: none; padding: 0; margin: 20px 0; }
+
+        .bullet-list li {
+            font-size: 1.4em;
+            padding: 10px 0 10px 46px;
+            position: relative;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .bullet-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #f59e0b;
+            font-size: 1.1em;
+        }
+
+        .bullet-list li strong { color: #e2e8f0; }
+        .bullet-list li em { color: #fcd34d; font-style: normal; font-weight: 600; }
+
+        .callout {
+            background: rgba(245,158,11,0.08);
+            border-left: 5px solid #f59e0b;
+            border-radius: 0 10px 10px 0;
+            padding: 22px 28px;
+            margin: 20px 0;
+            font-size: 1.4em;
+            font-style: italic;
+            color: #fcd34d;
+            line-height: 1.5;
+        }
+
+        .callout strong { color: #e2e8f0; font-style: normal; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(245,158,11,0.12);
+            color: #fcd34d;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin: 20px 0;
+        }
+
+        .three-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 22px;
+            margin: 20px 0;
+        }
+
+        .col-box {
+            background: rgba(245,158,11,0.06);
+            border: 1px solid rgba(245,158,11,0.2);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .col-box h4 {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #f59e0b;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .col-box ul { list-style: none; padding: 0; }
+
+        .col-box ul li {
+            font-size: 1.05em;
+            color: #94a3b8;
+            padding: 6px 0 6px 26px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .col-box ul li::before { content: "▸"; position: absolute; left: 0; color: #f59e0b; }
+
+        .col-box p { font-size: 1.05em; color: #94a3b8; line-height: 1.6; }
+
+        .checklist { list-style: none; padding: 0; margin: 20px 0; }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            font-size: 1.35em;
+            padding: 10px 0;
+            color: #cbd5e1;
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(245,158,11,0.08);
+        }
+
+        .checklist li:last-child { border-bottom: none; }
+
+        .checklist li .icon { flex-shrink: 0; font-size: 1.1em; margin-top: 1px; }
+        .checklist li .label { flex: 1; }
+        .checklist li .label strong { color: #f59e0b; }
+        .checklist li .note { font-size: 0.75em; color: #64748b; display: block; margin-top: 2px; }
+
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(10,8,0,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(245,158,11,0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            z-index: 100;
+        }
+
+        .nav button {
+            background: rgba(245,158,11,0.15);
+            color: #fcd34d;
+            border: 1px solid rgba(245,158,11,0.3);
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover { background: rgba(245,158,11,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 18px;
+            right: 24px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #fbbf24;
+            text-decoration: none;
+            background: rgba(245,158,11,0.15);
+            border: 1px solid rgba(245,158,11,0.35);
+            padding: 5px 12px;
+            border-radius: 20px;
+            z-index: 100;
+            transition: background 0.2s;
+        }
+        .back-link:hover { background: rgba(245,158,11,0.3); }
+
+        /* Component symbol boxes */
+        .sym-box {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(245,158,11,0.1);
+            border: 2px solid rgba(245,158,11,0.4);
+            border-radius: 8px;
+            padding: 6px 14px;
+            font-family: 'Orbitron', monospace;
+            font-size: 1em;
+            font-weight: 700;
+            color: #f59e0b;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Unit 7</a>
+
+<div class="presentation">
+
+    <!-- ── SLIDE 1: Title ── -->
+    <div class="slide active">
+        <div class="slide-content" style="text-align:center;">
+            <div class="lesson-tag">Unit 7 · Electrical Systems · All Tracks</div>
+            <h1>L7.6 Electronic<br>Components &amp; Motors</h1>
+            <p class="subtitle">Capacitors · Inductors · Transistors · ICs · Magnetics · Motors</p>
+            <div style="margin-top:40px; display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
+                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">Capacitor</div>
+                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">Inductor</div>
+                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">Transistor</div>
+                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">Motor</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 2: Learning Objectives ── -->
+    <div class="slide">
+        <div class="slide-content" style="text-align:center;">
+            <h2>Learning Objectives</h2>
+            <p class="subtitle">By the end of this lesson, you will be able to:</p>
+            <div style="display:flex; flex-direction:column; gap:32px; margin-top:40px; max-width:800px; text-align:left; margin-left:auto; margin-right:auto;">
+                <div style="display:flex; gap:28px; align-items:baseline;">
+                    <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#f59e0b; flex-shrink:0; width:36px; line-height:1;">1</span>
+                    <p style="margin:0; font-size:1.5rem; color:#e2e8f0; line-height:1.4;"><strong style="color:#f59e0b;">Identify</strong> capacitors, inductors, transistors, and common ICs and state one key function of each</p>
+                </div>
+                <div style="display:flex; gap:28px; align-items:baseline;">
+                    <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#f59e0b; flex-shrink:0; width:36px; line-height:1;">2</span>
+                    <p style="margin:0; font-size:1.5rem; color:#e2e8f0; line-height:1.4;"><strong style="color:#f59e0b;">Explain</strong> how a current-carrying coil creates a magnetic field and how that is used in a motor</p>
+                </div>
+                <div style="display:flex; gap:28px; align-items:baseline;">
+                    <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#f59e0b; flex-shrink:0; width:36px; line-height:1;">3</span>
+                    <p style="margin:0; font-size:1.5rem; color:#e2e8f0; line-height:1.4;"><strong style="color:#f59e0b;">Describe</strong> what stall current is and why it matters when selecting a motor driver</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 3: Capacitors ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Capacitors — Storing Charge</h2>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>What It Does</h4>
+                    <ul>
+                        <li>Stores electrical charge between two conductive plates separated by an insulator (dielectric)</li>
+                        <li>Measured in <strong>Farads (F)</strong> — typical values: µF (microfarad) and pF (picofarad)</li>
+                        <li>Voltage builds as charge accumulates; it can't change instantly</li>
+                        <li>Releases stored charge back into the circuit when voltage drops</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Where You'll See Them</h4>
+                    <ul>
+                        <li><strong>Power supply filtering:</strong> smooths out voltage ripple after a rectifier</li>
+                        <li><strong>Timing circuits:</strong> a capacitor charging through a resistor creates a predictable time delay (RC time constant τ = R × C)</li>
+                        <li><strong>Decoupling:</strong> small caps placed near IC power pins absorb momentary current spikes</li>
+                        <li><strong>Polarity warning:</strong> electrolytic caps are polarized — reversed voltage destroys them and can cause them to rupture</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout">A capacitor is the charge equivalent of a spring: it resists sudden voltage changes the way a spring resists sudden compression. It's the "anti-voltage-spike" component.</div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 4: Inductors ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Inductors — Opposing Current Change</h2>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>What It Does</h4>
+                    <ul>
+                        <li>A coil of wire that stores energy in a <strong>magnetic field</strong> when current flows through it</li>
+                        <li>Measured in <strong>Henries (H)</strong> — typical values: µH to mH range</li>
+                        <li>Opposes changes in current: resists current increasing AND resists current decreasing</li>
+                        <li>When the current path is suddenly broken, the inductor generates a voltage spike to keep current flowing — this can destroy transistors if unprotected</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Where You'll See Them</h4>
+                    <ul>
+                        <li><strong>Motors and relays:</strong> their coils are inductors — always use a flyback diode across them</li>
+                        <li><strong>Filters:</strong> inductors block high-frequency signals while passing DC</li>
+                        <li><strong>Power converters:</strong> switching regulators (boost/buck) use inductors to store and transfer energy</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout">An inductor is the current equivalent of a flywheel: it resists sudden current changes the way a flywheel resists sudden speed changes. It's the "anti-current-spike" component.</div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 5: Transistors ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Transistors — Controlled Switches</h2>
+            <div class="callout">A transistor is a <strong>current-controlled switch</strong> (BJT) or <strong>voltage-controlled switch</strong> (MOSFET). A small signal at the control pin allows or blocks a much larger current through the main path.</div>
+            <div class="two-col" style="margin-top:16px;">
+                <div class="col-box">
+                    <h4>NPN BJT as a Switch</h4>
+                    <ul>
+                        <li><strong>Base</strong> — control input. A small current (≈1 mA) here…</li>
+                        <li><strong>Collector</strong> — high side of the load</li>
+                        <li><strong>Emitter</strong> — connects to ground</li>
+                        <li>When base current flows: transistor saturates → collector–emitter looks like a closed switch → load current flows</li>
+                        <li>When base current stops: transistor cuts off → no load current</li>
+                        <li>Common for driving motors, relays, and LEDs from microcontroller pins</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>MOSFET as a Switch</h4>
+                    <ul>
+                        <li><strong>Gate</strong> — voltage input (no current needed to hold ON)</li>
+                        <li><strong>Drain / Source</strong> — main current path</li>
+                        <li>Gate voltage above threshold → switch ON; below → switch OFF</li>
+                        <li>N-channel MOSFETs are the most common in motor drivers</li>
+                        <li>Advantage over BJT: nearly zero gate current → very efficient switching</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 6: Common ICs ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Common Integrated Circuits (ICs)</h2>
+            <div class="three-col">
+                <div class="col-box">
+                    <h4>555 Timer</h4>
+                    <p>One of the most popular ICs ever made. In <strong>astable mode</strong> it generates a continuous square wave (blink an LED, generate a tone). In <strong>monostable mode</strong> it produces a single timed pulse. Uses resistors and a capacitor to set timing — RC time constant controls frequency.</p>
+                </div>
+                <div class="col-box">
+                    <h4>Op-Amp (e.g. LM358)</h4>
+                    <p>An <strong>operational amplifier</strong> amplifies the difference between two input voltages. In comparator mode: output goes high when one input exceeds the other — useful for sensors, line followers, level detectors. Thousands of analog circuits are built around op-amps.</p>
+                </div>
+                <div class="col-box">
+                    <h4>Motor Driver (e.g. L298N)</h4>
+                    <p>Contains an <strong>H-bridge</strong> — four transistors arranged to allow current through a motor in either direction. Control pins set forward, reverse, brake, or coast. Most motor drivers also handle the flyback protection internally. Rated by peak current (e.g., 2A per channel).</p>
+                </div>
+            </div>
+            <div class="callout">ICs package complex circuits into a single component. You don't need to know every internal transistor — you need to know the <strong>pinout, supply voltage range, and what each pin does</strong>. Always read the datasheet.</div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 7: Magnetics & Electromagnets ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Magnetics &amp; Electromagnets</h2>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>Current Creates Magnetic Fields</h4>
+                    <ul>
+                        <li>Any wire carrying current is surrounded by a magnetic field — this is how electromagnetism works</li>
+                        <li>The field wraps around the wire in circles (right-hand rule: thumb points in current direction, fingers curl in field direction)</li>
+                        <li>Winding the wire into a coil (solenoid) concentrates and amplifies the field — the fields from each turn add up</li>
+                        <li>Adding an <strong>iron core</strong> inside the coil multiplies the field strength dramatically (iron is highly permeable)</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Practical Uses</h4>
+                    <ul>
+                        <li><strong>Relays:</strong> an electromagnet pulls a mechanical switch — lets a small signal control a high-power circuit with electrical isolation</li>
+                        <li><strong>Solenoids:</strong> linear actuators — the core pulls into the coil when energized (door locks, valves)</li>
+                        <li><strong>Transformers:</strong> two coils share a core — voltage in one coil induces a voltage in the other; ratio of turns sets the voltage ratio</li>
+                        <li><strong>Electric motors:</strong> rotating version of the electromagnet principle</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout">Faraday's Law (1831): a changing magnetic field induces a voltage. This is the operating principle of every generator, transformer, and motor on the planet.</div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 8: DC Motors ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>DC Motors</h2>
+            <div class="two-col">
+                <div class="col-box">
+                    <h4>How a DC Motor Works</h4>
+                    <ul>
+                        <li>A coil of wire (the <strong>armature</strong>) sits inside a permanent magnet</li>
+                        <li>Current through the coil creates an electromagnet that is attracted and repelled by the fixed magnets — producing torque (rotational force)</li>
+                        <li>A <strong>commutator</strong> and brushes switch the current direction continuously so the motor keeps spinning rather than locking to one position</li>
+                        <li>Reversing the supply voltage reverses the rotation direction</li>
+                    </ul>
+                </div>
+                <div class="col-box">
+                    <h4>Key Motor Specs</h4>
+                    <ul>
+                        <li><strong>Stall current:</strong> the maximum current drawn when the motor is held still — can be 5–10× the normal running current. Motor drivers must be rated for stall current or they'll burn out.</li>
+                        <li><strong>Back-EMF:</strong> a spinning motor generates its own voltage opposing the supply. At full speed, back-EMF limits current; at stall, there is no back-EMF, so current surges.</li>
+                        <li><strong>PWM speed control:</strong> rapidly switching the motor on and off at varying duty cycles controls average power and speed without wasting energy as heat.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout">Always add a <strong>flyback diode</strong> across a DC motor (cathode to + supply, anode to − supply). When the motor is switched off, its inductor kicks back a voltage spike that can destroy the switching transistor.</div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 9: Done Checklist ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Done Checklist</h2>
+            <ul class="checklist">
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>I can describe what a capacitor, inductor, and transistor each do in one sentence</strong>
+                        <span class="note">Cap = stores charge / smooths voltage · Inductor = opposes current change · Transistor = controlled switch</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>I can read the pinout of a simple IC and identify supply, ground, and control pins</strong>
+                        <span class="note">Datasheet reading: always check V_cc range and max current before powering</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>I understand why a current-carrying coil creates a magnetic field and how motors use this</strong>
+                        <span class="note">Right-hand rule, armature, commutator, permanent magnet field</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>I can explain stall current and why it matters for motor driver selection</strong>
+                        <span class="note">No back-EMF at stall → maximum current → driver must survive this condition</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="icon">✅</span>
+                    <span class="label">
+                        <strong>I know what a flyback diode is and where it goes when driving a motor or relay</strong>
+                        <span class="note">Across the load, cathode to + supply — absorbs inductive kickback</span>
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div><!-- /.presentation -->
+
+<!-- Navigation -->
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 9</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
+
+<script>
+    var slides = document.querySelectorAll('.slide');
+    var current = 0;
+
+    function showSlide(n) {
+        slides[current].classList.remove('active');
+        current = Math.max(0, Math.min(n, slides.length - 1));
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    }
+
+    function changeSlide(dir) { showSlide(current + dir); }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+</script>
+
+</body>
+</html>

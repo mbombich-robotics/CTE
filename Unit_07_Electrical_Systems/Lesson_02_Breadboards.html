@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="../favicon.svg">
-    <title>Lesson 7.2: Breadboards | Unit 7 — Electrical Systems</title>
+    <title>Lesson 7.3: Breadboards | Unit 7 — Electrical Systems</title>
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -365,7 +365,7 @@
     <div class="slide active">
         <div class="slide-content" style="text-align:center;">
             <div class="lesson-tag">Unit 7 · Electrical Systems · All Tracks</div>
-            <h1>L7.2 Breadboards &amp;<br>Circuit Assembly</h1>
+            <h1>L7.3 Breadboards &amp;<br>Circuit Assembly</h1>
             <p class="subtitle">Solderless Prototyping · Reading Schematics</p>
             <div style="margin-top:40px; display:flex; justify-content:center; gap:30px; flex-wrap:wrap;">
                 <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">Solderless</div>
@@ -422,7 +422,7 @@
                 </li>
                 <li>
                     <span class="icon">📐</span>
-                    <span class="label"><strong>Standard size fits DIP chips</strong> — the center gap matches the 0.3" or 0.6" row spacing of DIP (Dual Inline Package) integrated circuits.
+                    <span class="label"><strong>Standard size fits DIP chips</strong> — DIP (Dual Inline Package) ICs have pins spaced 0.1" (2.54 mm) apart, matching the breadboard's tie-point grid. The center gap straddles the chip body so each pin lands on a separate half.
                         <span class="note">Place DIP chips straddling the center gap so each pin connects to a separate row on each side.</span>
                     </span>
                 </li>
@@ -483,7 +483,7 @@
                 <li><strong>Switch / Button</strong> — a line with a gap (open) or a line connecting two contacts (closed). Momentary buttons are labeled SW or BTN.</li>
                 <li><strong>Voltage source (battery)</strong> — long line (+) and short line (−) stacked. Multiple pairs = multi-cell battery.</li>
                 <li><strong>Ground</strong> — three horizontal lines decreasing in width (chassis ground) or a single triangle. All ground symbols in a schematic connect to the same node even if not drawn with a wire.</li>
-                <li><strong>Wire / Node</strong> — wires that touch with a dot (junction dot) are electrically connected. Wires that cross with NO dot are NOT connected.</li>
+                <li><strong>Wire / Node</strong> — a <strong>T-junction</strong> (three wires meeting at a point) is always electrically connected — no dot required. A <strong>junction dot</strong> marks a 4-way crossing that IS connected. Wires that cross with <strong>no dot</strong> pass over each other without connecting — the lines don't share a node.</li>
             </ul>
         </div>
     </div>
@@ -498,6 +498,7 @@
                 <li><strong>Connect power and ground rails</strong> but do NOT plug in the supply yet.</li>
                 <li><strong>Follow each wire in the schematic</strong> one at a time. Place a jumper wire on the breadboard for each schematic wire.</li>
                 <li><strong>Double-check every connection</strong> against the schematic before applying power.</li>
+                <li><strong>Pre-power resistance check:</strong> with the supply unplugged, use the DMM in resistance mode between + and − rails. Near-zero Ω means a short circuit — find it before powering on.</li>
                 <li><strong>Apply power last.</strong> If something smells hot or a component gets warm, disconnect immediately.</li>
             </ol>
         </div>
@@ -518,7 +519,21 @@
         </div>
     </div>
 
-    <!-- ── SLIDE 8: Lab ── -->
+    <!-- ── SLIDE 8: Breadboard Limitations ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>When Breadboards Fall Short</h2>
+            <div class="callout">Breadboards are ideal for learning and early prototyping. But knowing their limits tells you when to move on.</div>
+            <ul class="bullet-list">
+                <li><strong>Vibration</strong> — spring contacts lose grip under mechanical shock or vibration. Robots, vehicles, anything that moves: solder your circuit or use a PCB. A breadboard will work on the bench but fail in the field.</li>
+                <li><strong>Contact oxidation</strong> — older boards develop flaky contacts as the metal tarnishes. Symptom: intermittent connection that "fixes itself" when you re-seat the component. Replace worn breadboards.</li>
+                <li><strong>Through-hole only</strong> — modern ICs, sensors, and modules come in surface-mount (SMD) packages that don't fit breadboard holes. Use a breakout board or a dev board with breadboard-friendly pin headers.</li>
+                <li><strong>Dev boards are the real tool</strong> — a microcontroller dev board (Arduino, ESP32, Raspberry Pi Pico) gives you regulated power, USB programming, and soldered connections. Breadboards connect peripheral components to the dev board's pins.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 9: Lab ── -->
     <div class="slide">
         <div class="slide-content">
             <h2>Lab: Your First Breadboard Circuit</h2>

@@ -406,7 +406,7 @@
                 <li>Current is the <strong>same</strong> through every component: I₁ = I₂ = I₃ = I_total</li>
                 <li>Voltage <strong>splits</strong> across the components: V₁ + V₂ + V₃ = V_supply</li>
                 <li>Total resistance <strong>adds up:</strong> R_total = R₁ + R₂ + R₃ + …</li>
-                <li>If <strong>any component fails (open)</strong>, the entire circuit goes dead — no path for current</li>
+                <li>If <strong>any component fails (open)</strong>, the entire circuit goes dead — classic example: old-style Christmas lights in series, where one dead bulb killed the whole string</li>
             </ul>
         </div>
     </div>
@@ -433,8 +433,8 @@
             <ul class="bullet-list">
                 <li>Voltage is the <strong>same</strong> across every branch: V₁ = V₂ = V₃ = V_supply</li>
                 <li>Current <strong>splits</strong> among the branches: I_total = I₁ + I₂ + I₃</li>
-                <li>Total resistance <strong>decreases:</strong> 1/R_total = 1/R₁ + 1/R₂ + 1/R₃ + …</li>
-                <li>If <strong>one branch fails (open)</strong>, other branches continue to work independently</li>
+                <li>Total resistance <strong>decreases:</strong> R_total = 1/(1/R₁ + 1/R₂ + 1/R₃ + …) — add the reciprocals, then take the reciprocal of the sum</li>
+                <li>If <strong>one branch fails (open)</strong>, other branches continue to work — each branch's current depends only on its own resistance and the (unchanged) supply voltage</li>
             </ul>
         </div>
     </div>
@@ -444,7 +444,7 @@
         <div class="slide-content">
             <h2>Parallel Math</h2>
             <ol class="step-list">
-                <li><strong>1/R_total = 1/R₁ + 1/R₂ + 1/R₃</strong> — add the reciprocals, then take the reciprocal of the result</li>
+                <li><strong>R_total = 1/(1/R₁ + 1/R₂ + 1/R₃)</strong> — add the reciprocals, then take the reciprocal of the sum</li>
                 <li><strong>Special case (2 resistors):</strong> R_total = (R₁ × R₂) / (R₁ + R₂) — the "product over sum" shortcut</li>
                 <li><strong>I_n = V_supply / R_n</strong> — each branch current by Ohm's Law</li>
                 <li><strong>I_total = I₁ + I₂ + I₃</strong> — total current from the supply</li>
@@ -522,7 +522,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="callout">Your home's circuit breakers respond to <strong>total current</strong> (I_total). When you run too many appliances on one circuit, I_total exceeds the breaker's rating and it trips to protect the wiring.</div>
+            <div class="callout">Your home's circuit breakers respond to <strong>total current</strong> (I_total). When you run too many appliances on one circuit, I_total exceeds the breaker's rating and it trips to protect the wiring. <strong>Context:</strong> AC power is transmitted at very high voltage (hundreds of thousands of volts) specifically to keep current — and therefore losses — low over long distances. Transformers step it back down at your neighborhood substation. This works because every home gets the same voltage regardless of load — a parallel property.</div>
         </div>
     </div>
 

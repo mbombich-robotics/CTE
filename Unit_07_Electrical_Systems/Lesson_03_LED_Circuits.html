@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="../favicon.svg">
-    <title>Lesson 7.3: LED Circuits | Unit 7 — Electrical Systems</title>
+    <title>Lesson 7.4: LED Circuits | Unit 7 — Electrical Systems</title>
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -324,7 +324,7 @@
     <div class="slide active">
         <div class="slide-content" style="text-align:center;">
             <div class="lesson-tag">Unit 7 · Electrical Systems · All Tracks</div>
-            <h1>L7.3 LED Circuits<br>Illumination Creation</h1>
+            <h1>L7.4 LED Circuits<br>Illumination Creation</h1>
             <p class="subtitle">Forward Voltage · Limiting Resistors · PLTW POE_311</p>
             <div style="margin-top:40px; display:flex; justify-content:center; gap:30px; flex-wrap:wrap;">
                 <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">LED Polarity</div>
@@ -364,7 +364,7 @@
                 <li>
                     <span class="icon">💡</span>
                     <span class="label"><strong>LED = Light Emitting Diode</strong> — a semiconductor that emits light when current flows through it in one direction.
-                        <span class="note">"Diode" means it only conducts in one direction. Current flowing the wrong way = no light, and possibly damage.</span>
+                        <span class="note">"Diode" means it only conducts in one direction — think of it as a check valve in a pipe: water (current) flows freely one way but is blocked the other way. Current flowing the wrong way = no light, and possibly damage.</span>
                     </span>
                 </li>
                 <li>
@@ -382,7 +382,7 @@
                 <li>
                     <span class="icon">⚡</span>
                     <span class="label"><strong>LEDs are current-driven devices</strong> — more current = more light, but too much current destroys them instantly.
-                        <span class="note">Maximum forward current for standard 5mm LEDs is typically 20–30 mA. Operating at 10–20 mA is safe and gives good brightness.</span>
+                        <span class="note">Maximum forward current varies by package — typical 3 mm and 5 mm through-hole LEDs are rated 20–30 mA. Operating at 10–20 mA gives good brightness. Always check the datasheet for your specific LED.</span>
                     </span>
                 </li>
             </ul>
@@ -423,11 +423,11 @@
         <div class="slide-content">
             <h2>Forward Voltage (V_f) and Forward Current (I_f)</h2>
             <ul class="bullet-list">
-                <li><strong>V_f (Forward Voltage)</strong> = the voltage drop across the LED when it's conducting. It's relatively fixed regardless of supply voltage.</li>
+                <li><strong>V_f (Forward Voltage)</strong> = the voltage drop across the LED when it's conducting. V_f is largely set by the semiconductor material — it rises slightly at higher currents but is stable enough to use as a constant in calculations.</li>
                 <li><strong>Typical values:</strong> Red ≈ 2.0 V · Green ≈ 2.2 V · Blue/White ≈ 3.2 V</li>
                 <li><strong>I_f (Forward Current)</strong> = the current flowing through the LED. This controls brightness.</li>
                 <li><strong>Typical operating range:</strong> 10–20 mA (0.010–0.020 A) for standard 5mm through-hole LEDs</li>
-                <li><strong>Maximum I_f:</strong> 20–30 mA for most classroom LEDs — exceeding this destroys the LED permanently</li>
+                <li><strong>Maximum I_f:</strong> 20–30 mA for typical 3 mm/5 mm through-hole LEDs — exceeding this destroys the LED. Reverse voltage also destroys LEDs — most common LEDs break down at just 5 V reverse; always maintain correct polarity.</li>
             </ul>
             <div class="callout">
                 The forward voltage V_f is NOT the same as your supply voltage. V_f is the voltage that drops across the LED itself. The rest of your supply voltage must drop across your limiting resistor.
@@ -443,7 +443,7 @@
                 <li>An LED without a limiting resistor connected to a power supply sees all the supply voltage across it.</li>
                 <li>Since V_f is roughly fixed, the LED tries to pull whatever current is needed to maintain that voltage — which is <strong>unlimited</strong> from an ideal supply.</li>
                 <li>In reality, the current skyrockets in microseconds, the junction overheats, and the LED fails permanently.</li>
-                <li>A <strong>series resistor</strong> limits the current by consuming the extra voltage (V_supply − V_f) according to Ohm's Law.</li>
+                <li>A <strong>series resistor</strong> limits the current by dropping the extra voltage (V_supply − V_f) across itself according to Ohm's Law.</li>
                 <li>Choose R so that at the desired current (say 20 mA), the voltage across R equals V_supply − V_f.</li>
             </ol>
             <div class="callout">
@@ -464,7 +464,7 @@
                 <li><strong>Look up V_f</strong> for your LED color: e.g., red LED → V_f = 2.0 V</li>
                 <li><strong>Choose your operating current:</strong> e.g., I_f = 20 mA = 0.020 A</li>
                 <li><strong>Calculate:</strong> R = (9 − 2.0) / 0.020 = 7 / 0.020 = <strong>350 Ω</strong></li>
-                <li><strong>Pick the nearest standard value:</strong> use a <strong>330 Ω</strong> or <strong>360 Ω</strong> resistor (standard values). Slightly higher is fine — a bit dimmer but safer.</li>
+                <li><strong>Pick the nearest standard value:</strong> Resistors come in E12 (12 values per decade: …22, 27, 33, 39, 47, 56, 68, 82…) and E24 series. Use <strong>330 Ω</strong> or <strong>360 Ω</strong>. Slightly higher is fine — a bit dimmer but safer.</li>
                 <li><strong>Verify with Ohm's Law:</strong> I = (9 − 2.0) / 330 = 0.0212 A = 21.2 mA ✓ (within range)</li>
             </ol>
         </div>
@@ -501,7 +501,23 @@
         </div>
     </div>
 
-    <!-- ── SLIDE 8: Lab: Illumination Creation ── -->
+    <!-- ── SLIDE 8: Tinkercad Simulation ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>Tinkercad Circuits — Simulate Before You Build</h2>
+            <div class="callout">Use <strong>Tinkercad Circuits</strong> (tinkercad.com) to design and test your LED circuit before touching physical components. Mistakes are free in simulation.</div>
+            <ol class="step-list">
+                <li>Open <strong>tinkercad.com → Circuits → Create new Circuit</strong>.</li>
+                <li>Drag in a power supply, resistors, and LEDs from the component panel. Set supply voltage and resistor values.</li>
+                <li>Connect with virtual wires. Tinkercad shows anode (+) and cathode (−) — confirm your polarity is correct.</li>
+                <li>Click <strong>Start Simulation</strong>. Hover over each component to read live voltage and current.</li>
+                <li>Adjust resistor values until the simulated current falls in your target range (10–20 mA), then note that value for your physical build.</li>
+            </ol>
+            <div class="callout"><strong>Hybrid workflow:</strong> Simulation uses ideal models — real LED V<sub>f</sub> may differ 0.1–0.3 V from the simulation. Design in Tinkercad first, then verify current and voltage with your DMM on the physical circuit. The two steps reinforce each other.</div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 9: Lab: Illumination Creation ── -->
     <div class="slide">
         <div class="slide-content">
             <h2>Lab: Illumination Creation (PLTW POE_311)</h2>
@@ -513,6 +529,7 @@
                     <li>Calculate the required limiting resistor for each LED (or chain)</li>
                     <li>Build the circuit on a breadboard and verify it works</li>
                     <li>Measure actual voltage across each LED with your DMM and compare to V_f specification</li>
+                    <li>Measure the current through one LED branch using the DMM in series (current mode) and compare to your calculated I_f</li>
                 </ul>
             </div>
             <div class="callout">
