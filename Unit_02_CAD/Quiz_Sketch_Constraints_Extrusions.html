@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>CAD Quiz — Sketch Constraints &amp; Extrusions</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #050f0a 0%, #0d1f17 100%);
+            color: #e0e6f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation { width: 100%; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute; width: 100%; height: 100%;
+            display: none; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 55px 60px 100px 60px;
+            opacity: 0; transition: opacity 0.35s ease;
+            overflow-y: auto;
+        }
+        .slide.active { display: flex; opacity: 1; }
+        .slide-content { max-width: 860px; width: 100%; }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif; font-size: 2.6rem; font-weight: 900;
+            color: #00d084; margin-bottom: 10px; text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        h2 {
+            font-family: 'Orbitron', sans-serif; font-size: 1.55rem; font-weight: 700;
+            color: #00d084; margin-bottom: 22px; text-transform: uppercase;
+        }
+        .tag {
+            display: inline-block; font-size: 0.75rem; font-weight: 700;
+            color: #ffd166; letter-spacing: 1px; text-transform: uppercase;
+            background: rgba(255,209,102,0.1); border: 1px solid rgba(255,209,102,0.3);
+            border-radius: 20px; padding: 3px 12px; margin-bottom: 14px;
+        }
+
+        .question-text {
+            font-size: 1.2rem; line-height: 1.6; color: #c8d5e8;
+            margin-bottom: 24px;
+            background: rgba(0,208,132,0.05);
+            border-left: 3px solid #00d084;
+            padding: 14px 18px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .options { display: flex; flex-direction: column; gap: 10px; }
+
+        .option {
+            background: rgba(0,208,132,0.06);
+            border: 2px solid rgba(0,208,132,0.2);
+            border-radius: 10px;
+            padding: 13px 18px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #b8c5d6;
+            transition: all 0.18s ease;
+            line-height: 1.45;
+        }
+        .option:hover:not(.locked) { border-color: #00d084; background: rgba(0,208,132,0.12); color: #e0e6f0; }
+        .option .opt-letter {
+            display: inline-block; width: 24px; font-weight: 800;
+            color: #00d084; font-family: 'JetBrains Mono', monospace;
+        }
+
+        .option.correct {
+            border-color: #00d084;
+            background: rgba(0,208,132,0.18);
+            color: #d1fae5;
+        }
+        .option.incorrect {
+            border-color: #ef4444;
+            background: rgba(239,68,68,0.12);
+            color: #fca5a5;
+        }
+        .option.reveal-correct {
+            border-color: rgba(0,208,132,0.5);
+            background: rgba(0,208,132,0.08);
+            color: #86efac;
+        }
+
+        .feedback {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            display: none;
+        }
+        .feedback.show { display: block; }
+        .feedback.correct-fb { background: rgba(0,208,132,0.12); border: 1px solid #00d084; color: #6ee7b7; }
+        .feedback.incorrect-fb { background: rgba(239,68,68,0.1); border: 1px solid #ef4444; color: #fca5a5; }
+
+        .score-bar {
+            position: fixed; top: 0; left: 0; right: 0;
+            display: flex; align-items: center; justify-content: flex-end;
+            padding: 10px 24px 10px 10px;
+            z-index: 50;
+        }
+        .score-chip {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem; color: #475569;
+            background: rgba(2,10,6,0.7);
+            border: 1px solid rgba(0,208,132,0.15);
+            border-radius: 20px; padding: 4px 14px;
+        }
+
+        /* Practical slide */
+        .practical-section {
+            background: rgba(0,208,132,0.05);
+            border: 2px solid rgba(0,208,132,0.3);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 16px;
+        }
+        .practical-section h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem; color: #ffd166;
+            text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        .step-list { list-style: none; padding: 0; }
+        .step-list li {
+            position: relative; padding-left: 30px;
+            margin-bottom: 10px; color: #b8c5d6;
+            font-size: 0.97rem; line-height: 1.5;
+        }
+        .step-list li::before {
+            content: attr(data-n);
+            position: absolute; left: 0;
+            color: #00d084; font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .step-list li strong { color: #e0e6f0; }
+        .note-inline {
+            font-size: 0.85rem; color: #ffd166;
+            background: rgba(255,209,102,0.07);
+            border-radius: 6px; padding: 8px 12px; margin-top: 8px;
+            display: inline-block;
+        }
+
+        /* Results slide */
+        .result-ring {
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center;
+            width: 160px; height: 160px;
+            border-radius: 50%;
+            border: 6px solid #00d084;
+            margin: 0 auto 24px;
+            box-shadow: 0 0 40px rgba(0,208,132,0.3);
+        }
+        .result-score { font-family: 'Orbitron', sans-serif; font-size: 2.8rem; font-weight: 900; color: #00d084; }
+        .result-label { font-size: 0.9rem; color: #475569; }
+        .result-msg { text-align: center; font-size: 1.1rem; color: #b8c5d6; }
+
+        /* Title slide extras */
+        .subtitle { font-size: 1.1rem; color: #ffd166; font-weight: 600; margin-bottom: 10px; }
+        .intro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 24px; }
+        .intro-box {
+            background: rgba(0,208,132,0.05);
+            border: 1px solid rgba(0,208,132,0.2);
+            border-radius: 10px; padding: 16px 18px;
+        }
+        .intro-box h3 { font-size: 0.85rem; color: #ffd166; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .intro-box p { font-size: 0.9rem; color: #94a3b8; line-height: 1.5; }
+
+        /* Nav pill */
+        .nav {
+            position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+            display: flex; align-items: center; gap: 20px;
+            background: rgba(2,10,6,0.85); backdrop-filter: blur(10px);
+            border: 1px solid rgba(0,208,132,0.2); border-radius: 50px;
+            padding: 12px 24px; z-index: 100;
+        }
+        .nav button {
+            background: rgba(0,208,132,0.15); color: #6ee7b7;
+            border: 1px solid rgba(0,208,132,0.3); border-radius: 8px;
+            padding: 10px 24px; font-family: 'Exo 2', sans-serif;
+            font-size: 1em; font-weight: 700; cursor: pointer; transition: all 0.2s;
+        }
+        .nav button:hover { background: rgba(0,208,132,0.3); color: #e2e8f0; }
+        .nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
+            color: #475569; min-width: 60px; text-align: center;
+        }
+
+        /* Back link */
+        .back-link {
+            position: fixed; top: 18px; right: 24px;
+            font-size: 0.78rem; font-weight: 700; color: #6ee7b7;
+            text-decoration: none;
+            background: rgba(0,208,132,0.15); border: 1px solid rgba(0,208,132,0.35);
+            padding: 5px 12px; border-radius: 20px; z-index: 200;
+            transition: background 0.2s;
+        }
+        .back-link:hover { background: rgba(0,208,132,0.3); }
+
+        @media (max-width: 680px) {
+            .slide { padding: 50px 20px 90px 20px; }
+            h1 { font-size: 1.8rem; }
+            h2 { font-size: 1.2rem; }
+            .intro-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Unit 2</a>
+
+<div class="score-bar">
+    <div class="score-chip" id="scoreChip">Score: 0 / 0</div>
+</div>
+
+<div class="presentation">
+
+    <!-- ── SLIDE 1: Title ── -->
+    <div class="slide active">
+        <div class="slide-content">
+            <div class="tag">Unit 2 · CAD · All Tracks</div>
+            <h1>Sketch Constraints &amp; Extrusions</h1>
+            <p class="subtitle">10-Question Knowledge Check</p>
+            <p style="color:#94a3b8;font-size:0.95rem;margin-bottom:20px;">
+                Click an answer on each slide. You'll see immediate feedback and explanations.<br>
+                Your score is tracked and displayed at the end.
+            </p>
+            <div class="intro-grid">
+                <div class="intro-box">
+                    <h3>Topics Covered</h3>
+                    <p>Coincident · Horizontal · Vertical · Equal · Parallel · Perpendicular · Tangent · Fix · Boss &amp; Cut Extrusions · End Conditions</p>
+                </div>
+                <div class="intro-box">
+                    <h3>Format</h3>
+                    <p>10 multiple-choice questions + 1 practical task. Use arrow keys or the buttons below to navigate.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Q1 ── -->
+    <div class="slide" data-q="1" data-correct="B">
+        <div class="slide-content">
+            <div class="tag">Question 1 of 10 · Sketch Constraints</div>
+            <h2>Coincident Constraint</h2>
+            <div class="question-text">Which constraint forces two sketch points to share the same location?</div>
+            <div class="options">
+                <div class="option" onclick="checkAnswer(this,'A')"><span class="opt-letter">A.</span> Equal — the constraint gives both points the same distance from the sketch origin</div>
+                <div class="option" onclick="checkAnswer(this,'B')"><span class="opt-letter">B.</span> Coincident — the constraint merges two points so they occupy one exact position</div>
+                <div class="option" onclick="checkAnswer(this,'C')"><span class="opt-letter">C.</span> Fix — the constraint pins each point independently to predetermined coordinates</div>
+                <div class="option" onclick="checkAnswer(this,'D')"><span class="opt-letter">D.</span> Parallel — the constraint aligns the connecting segment between the two points</div>
+            </div>
+            <div class="feedback" id="fb1"></div>
+        </div>
+    </div>
+
+    <!-- ── Q2 ── -->
+    <div class="slide" data-q="2" data-correct="A">
+        <div class="slide-content">
+            <div class="tag">Question 2 of 10 · Sketch Constraints</div>
+            <h2>Fix Constraint</h2>
+            <div class="question-text">A student wants to anchor one corner of a rectangle so it never moves, even when other dimensions change. Which constraint is the best choice?</div>
+            <div class="options">
+                <div class="option" onclick="checkAnswer(this,'A')"><span class="opt-letter">A.</span> Fix — it pins the point to specific coordinates that do not shift</div>
+                <div class="option" onclick="checkAnswer(this,'B')"><span class="opt-letter">B.</span> Coincident — it connects that corner permanently to the sketch origin point</div>
+                <div class="option" onclick="checkAnswer(this,'C')"><span class="opt-letter">C.</span> Horizontal — it locks the corner's position along the x-axis baseline only</div>
+                <div class="option" onclick="checkAnswer(this,'D')"><span class="opt-letter">D.</span> Equal — it keeps that corner equidistant from both of the adjacent sketch lines</div>
+            </div>
+            <div class="feedback" id="fb2"></div>
+        </div>
+    </div>
+
+    <!-- ── Q3 ── -->
+    <div class="slide" data-q="3" data-correct="D">
+        <div class="slide-content">
+            <div class="tag">Question 3 of 10 · Sketch Constraints</div>
+            <h2>Horizontal Constraint</h2>
+            <div class="question-text">After applying a Horizontal constraint to a diagonal line in a sketch, what change occurs to the line?</div>
+            <div class="options">
+                <div class="option" onclick="checkAnswer(this,'A')"><span class="opt-letter">A.</span> The line's endpoints merge onto the center axis of the sketch at equal heights</div>
+                <div class="option" onclick="checkAnswer(this,'B')"><span class="opt-letter">B.</span> The line's length resets to match the total width of the sketch bounding region</div>
+                <div class="option" onclick="checkAnswer(this,'C')"><span class="opt-letter">C.</span> The line's midpoint is fixed at the same y-coordinate as the sketch origin</div>
+                <div class="option" onclick="checkAnswer(this,'D')"><span class="opt-letter">D.</span> The line rotates until it lies flat and parallel to the x-axis of the sketch</div>
+            </div>
+            <div class="feedback" id="fb3"></div>
+        </div>
+    </div>
+
+    <!-- ── Q4 ── -->
+    <div class="slide" data-q="4" data-correct="C">
+        <div class="slide-content">
+            <div class="tag">Question 4 of 10 · Sketch Constraints</div>
+            <h2>Equal Constraint</h2>
+            <div class="question-text">Two circles in a sketch have an Equal constraint applied between them. What does this enforce?</div>
+            <div class="options">
+                <div class="option" onclick="checkAnswer(this,'A')"><span class="opt-letter">A.</span> The circles are centered at the same point and cannot move independently</div>
+                <div class="option" onclick="checkAnswer(this,'B')"><span class="opt-letter">B.</span> The distance between the two circle centers stays fixed as dimensions change</div>
+                <div class="option" onclick="checkAnswer(this,'C')"><span class="opt-letter">C.</span> Both circles keep the same radius, so resizing one automatically resizes the other</div>
+                <div class="option" onclick="checkAnswer(this,'D')"><span class="opt-letter">D.</span> The circles stay tangent to each other as the surrounding sketch geometry updates</div>
+            </div>
+            <div class="feedback" id="fb4"></div>
+        </div>
+    </div>
+
+    <!-- ── Q5 ── -->
+    <div class="slide" data-q="5" data-correct="A">
+        <div class="slide-content">
+            <div class="tag">Question 5 of 10 · Sketch Constraints</div>
+            <h2>Parallel Constraint</h2>
+            <div class="question-text">Which sketch scenario is the Parallel constraint most suited for?</div>
+            <div class="options">
+                <div class="option" onclick="checkAnswer(this,'A')"><span class="opt-letter">A.</span> Keeping two angled lines at the same slope so they never converge or diverge</div>
+                <div class="option" onclick="checkAnswer(this,'B')"><span class="opt-letter">B.</span> Making sure two line segments remain the same length as the design changes</div>
+                <div class="option" onclick="checkAnswer(this,'C')"><span class="opt-letter">C.</span> Aligning the endpoints of two separate lines onto a shared vertical reference</div>
+                <div class="option" onclick="checkAnswer(this,'D')"><span class="opt-letter">D.</span> Ensuring a circle and a rectangle share the same center point in the sketch</div>
+            </div>
+            <div class="feedback" id="fb5"></div>
+        </div>
+    </div>
+
+    <!-- ── Q6 ── -->
+    <div class="slide" data-q="6" data-correct="B">
+        <div class="slide-content">
+            <div class="tag">Question 6 of 10 · Sketch Constraints</div>
+            <h2>Perpendicular Constraint</h2>
+            <div class="question-text">A Perpendicular constraint is placed between two sketch lines. What does the software enforce?</div>
+            <div class="options">
+                <div class="option" onclick="checkAnswer(this,'A')"><span class="opt-letter">A.</span> Both lines are assigned equal lengths so the corner they form is a perfect square</div>
+                <div class="option" onclick="checkAnswer(this,'B')"><span class="opt-letter">B.</span> The two lines form a 90-degree angle at their shared or nearest endpoint</div>
+                <div class="option" onclick="checkAnswer(this,'C')"><span class="opt-letter">C.</span> Each line aligns along one of the two major sketch axes, horizontal or vertical</div>
+                <div class="option" onclick="checkAnswer(this,'D')"><span class="opt-letter">D.</span> Both lines intersect at a single point located exactly at the sketch origin</div>
+            </div>
+            <div class="feedback" id="fb6"></div>
+        </div>
+    </div>
+
+    <!-- ── Q7 ── -->
+    <div class="slide" data-q="7" data-correct="C">
+        <div class="slide-content">
+            <div class="tag">Question 7 of 10 · Sketch Constraints</div>
+            <h2>Tangent Constraint</h2>
+            <div class="question-text">You draw an arc and a straight line that meets the arc at one endpoint. A Tangent constraint is applied. What geometric condition results?</div>
+            <div class="options">
+                <div class="option" onclick="checkAnswer(this,'A')"><span class="opt-letter">A.</span> The arc is resized until its center point lies directly on the extended path of the line</div>
+                <div class="option" onclick="checkAnswer(this,'B')"><span class="opt-letter">B.</span> The arc and line share the same radius of curvature at the shared point of contact</div>
+                <div class="option" onclick="checkAnswer(this,'C')"><span class="opt-letter">C.</span> The line and arc join smoothly with no abrupt change of direction at that shared point</div>
+                <div class="option" onclick="checkAnswer(this,'D')"><span class="opt-letter">D.</span> The line meets the arc at a right angle, perpendicular to the arc's local direction</div>
+            </div>
+            <div class="feedback" id="fb7"></div>
+        </div>
+    </div>
+
+    <!-- ── Q8 ── -->
+    <div class="slide" data-q="8" data-correct="D">
+        <div class="slide-content">
+            <div class="tag">Question 8 of 10 · Extrusions</div>
+            <h2>Boss Extrusion</h2>
+            <div class="question-text">What does a Boss Extrusion operation do to a sketch profile?</div>
+            <div class="options">
+                <div class="option" onclick="checkAnswer(this,'A')"><span class="opt-letter">A.</span> It removes the sketched shape from an existing solid body by cutting inward through it</div>
+                <div class="option" onclick="checkAnswer(this,'B')"><span class="opt-letter">B.</span> It converts the 2D sketch outline into a construction line used for reference only</div>
+                <div class="option" onclick="checkAnswer(this,'C')"><span class="opt-letter">C.</span> It mirrors the sketch profile across the part's plane of symmetry automatically</div>
+                <div class="option" onclick="checkAnswer(this,'D')"><span class="opt-letter">D.</span> It adds solid material by projecting the sketch shape outward into a third dimension</div>
+            </div>
+            <div class="feedback" id="fb8"></div>
+        </div>
+    </div>
+
+    <!-- ── Q9 ── -->
+    <div class="slide" data-q="9" data-correct="B">
+        <div class="slide-content">
+            <div class="tag">Question 9 of 10 · Extrusions</div>
+            <h2>Through All End Condition</h2>
+            <div class="question-text">A student is designing a bolt hole in a plate whose final thickness is still being determined. Which extrusion end condition removes material regardless of how thick the model becomes?</div>
+            <div class="options">
+                <div class="option" onclick="checkAnswer(this,'A')"><span class="opt-letter">A.</span> Blind — the designer manually enters a fixed depth value that does not update with the model</div>
+                <div class="option" onclick="checkAnswer(this,'B')"><span class="opt-letter">B.</span> Through All — the cut exits the far side of all solid bodies in the part</div>
+                <div class="option" onclick="checkAnswer(this,'C')"><span class="opt-letter">C.</span> To Surface — the extrusion terminates at a selected face that defines the far boundary</div>
+                <div class="option" onclick="checkAnswer(this,'D')"><span class="opt-letter">D.</span> Mid Plane — the feature extends equally in both directions from the sketch plane</div>
+            </div>
+            <div class="feedback" id="fb9"></div>
+        </div>
+    </div>
+
+    <!-- ── Q10 ── -->
+    <div class="slide" data-q="10" data-correct="C">
+        <div class="slide-content">
+            <div class="tag">Question 10 of 10 · Extrusions</div>
+            <h2>To Surface End Condition</h2>
+            <div class="question-text">When is "To Surface" the most appropriate extrusion end condition compared to Blind or Through All?</div>
+            <div class="options">
+                <div class="option" onclick="checkAnswer(this,'A')"><span class="opt-letter">A.</span> When the feature must pass through every solid in the assembly without stopping early</div>
+                <div class="option" onclick="checkAnswer(this,'B')"><span class="opt-letter">B.</span> When the designer needs to enter a precise numeric depth value for the extrusion</div>
+                <div class="option" onclick="checkAnswer(this,'C')"><span class="opt-letter">C.</span> When the extrusion depth must automatically conform to an existing curved or angled face</div>
+                <div class="option" onclick="checkAnswer(this,'D')"><span class="opt-letter">D.</span> When the sketch profile is too complex for the software to compute a fixed distance</div>
+            </div>
+            <div class="feedback" id="fb10"></div>
+        </div>
+    </div>
+
+    <!-- ── RESULTS ── -->
+    <div class="slide" id="resultsSlide">
+        <div class="slide-content" style="text-align:center;">
+            <div class="tag">Quiz Complete</div>
+            <h2 style="margin-bottom:20px;">Your Results</h2>
+            <div class="result-ring">
+                <div class="result-score" id="resultScore">—</div>
+                <div class="result-label">out of 10</div>
+            </div>
+            <div class="result-msg" id="resultMsg"></div>
+        </div>
+    </div>
+
+    <!-- ── PRACTICAL ── -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="tag">Practical Task · Unit 2 CAD</div>
+            <h2>Model a Stepped Block</h2>
+            <p style="color:#94a3b8;font-size:0.9rem;margin-bottom:18px;">
+                Apply sketch constraints and extrusion types to build a two-step solid body.
+                Use <strong style="color:#e0e6f0;">only constraints</strong> to control shape — no Smart Dimensions.
+                Deliverable: screenshot of the finished part with the Feature Tree fully expanded.
+            </p>
+
+            <div class="practical-section">
+                <h3>Step 1 — Base (Boss Extrusion)</h3>
+                <ul class="step-list">
+                    <li data-n="1.">Sketch a rectangle on the Front Plane. Apply <strong>Horizontal</strong> and <strong>Vertical</strong> constraints to all four edges. Apply a <strong>Coincident</strong> constraint between one corner and the sketch origin.</li>
+                    <li data-n="2.">Add a <strong>Smart Dimension</strong>: 80 mm wide × 50 mm tall.</li>
+                    <li data-n="3.">Boss Extrude the rectangle <strong>25 mm Blind</strong>.</li>
+                </ul>
+            </div>
+
+            <div class="practical-section">
+                <h3>Step 2 — Step Feature (Boss Extrusion)</h3>
+                <ul class="step-list">
+                    <li data-n="4.">On the top face of the base, sketch a smaller rectangle spanning the full 50 mm depth (use <strong>Coincident</strong> constraints to lock it to both front and rear edges of the top face).</li>
+                    <li data-n="5.">Apply an <strong>Equal</strong> constraint between the two 50 mm edges to confirm they match.</li>
+                    <li data-n="6.">Add a Smart Dimension: 40 mm wide. Boss Extrude <strong>15 mm Blind</strong>.</li>
+                </ul>
+            </div>
+
+            <div class="practical-section">
+                <h3>Step 3 — Through-Hole (Cut Extrusion)</h3>
+                <ul class="step-list">
+                    <li data-n="7.">On the top face of the step, sketch a circle. Apply a <strong>Coincident</strong> constraint between the circle center and the midpoint of the top face.</li>
+                    <li data-n="8.">Add a Smart Dimension: diameter 12 mm. Cut Extrude <strong>Through All</strong>.</li>
+                </ul>
+            </div>
+
+            <div class="note-inline">
+                Graded on: correct constraint types applied · correct extrusion types · Feature Tree shows 3 named features
+            </div>
+        </div>
+    </div>
+
+</div><!-- .presentation -->
+
+<!-- Nav pill -->
+<nav class="nav">
+    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 13</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</nav>
+
+<script>
+    const slides = document.querySelectorAll('.slide');
+    let current = 0;
+    let score = 0;
+    let answered = 0;
+
+    const explanations = {
+        1: { correct: "Coincident forces two sketch points to occupy the exact same location — they merge into one shared point. Use it to connect endpoints of separate entities.",
+             incorrect: "Coincident merges points to the same location. Equal controls size/length. Fix pins a single point at fixed coordinates. Parallel controls direction, not position." },
+        2: { correct: "Fix pins a point to specific XY coordinates in the sketch, so it never moves when other geometry is modified — useful for locking a reference corner.",
+             incorrect: "Fix is the correct choice for anchoring a point to unchanging coordinates. Coincident links two points to each other (not to coordinates). Horizontal and Equal control orientation and size." },
+        3: { correct: "The Horizontal constraint forces the line's orientation to 0°, rotating it until it is perfectly flat and parallel to the x-axis.",
+             incorrect: "Horizontal changes the line's angle to match the x-axis. It does not merge endpoints or reset the length — only its orientation changes." },
+        4: { correct: "Equal applied to two circles forces them to share the same radius. Changing one circle's radius via a Smart Dimension instantly updates the other to match.",
+             incorrect: "Equal controls size — for circles, that means radius. It does NOT make them concentric (Coincident at centers) or keep them touching (Tangent) or fix the distance between them." },
+        5: { correct: "Parallel ensures two lines maintain the same slope — they run in the same direction and will never converge or diverge, even as other geometry shifts.",
+             incorrect: "Parallel controls direction (slope). Equal controls length. Coincident controls position. 'Shared center' between a circle and rectangle would require Coincident, not Parallel." },
+        6: { correct: "Perpendicular enforces exactly 90° between two lines. It does not require them to be axis-aligned — a diagonal line and another diagonal can be perpendicular.",
+             incorrect: "Perpendicular creates a 90° relationship. It does not equalize lengths (Equal does that), force axis-alignment (Horizontal/Vertical do that), or move lines to the origin (Coincident does that)." },
+        7: { correct: "Tangent makes the transition between a line and an arc smooth — the direction of the line exactly matches the arc's direction at the contact point, so there is no visible kink.",
+             incorrect: "Tangent creates a smooth, G1-continuous join — no sudden direction change. It does not control arc size, create a right angle (Perpendicular does), or move the arc's center." },
+        8: { correct: "A Boss Extrusion adds solid material by pushing the sketch profile outward in the Z direction, creating a 3D solid from the 2D outline.",
+             incorrect: "Boss Extrusion adds material. Cut Extrusion removes material. Neither converts to construction geometry (that is a sketch property), and Boss does not mirror anything." },
+        9: { correct: "Through All continues the cut until it exits the far side of every solid body in the model, regardless of how thick the part is. Perfect for holes that must always go all the way through.",
+             incorrect: "Through All is the correct pick when the thickness may change. Blind uses a fixed number. To Surface stops at a specific face (useful but not thickness-independent). Mid Plane splits depth in two." },
+        10: { correct: "To Surface lets the extrusion terminate exactly at a selected face, even if that face is curved or angled — the end of the extrusion follows the face's contour automatically.",
+              incorrect: "To Surface matches the extrusion to an existing face shape. Through All ignores faces and keeps going. Blind uses a fixed number. Sketch complexity does not determine end condition choice." }
+    };
+
+    function checkAnswer(el, chosen) {
+        const slide = el.closest('.slide');
+        if (slide.classList.contains('answered')) return;
+        slide.classList.add('answered');
+
+        const correct = slide.dataset.correct;
+        const qNum = parseInt(slide.dataset.q);
+        const opts = slide.querySelectorAll('.option');
+        const fb = document.getElementById('fb' + qNum);
+
+        answered++;
+
+        opts.forEach(o => {
+            o.classList.add('locked');
+            const letter = o.querySelector('.opt-letter').textContent.trim().replace('.','');
+            if (letter === correct && letter !== chosen) o.classList.add('reveal-correct');
+        });
+
+        if (chosen === correct) {
+            score++;
+            el.classList.add('correct');
+            fb.className = 'feedback show correct-fb';
+            fb.innerHTML = '<strong>✓ Correct!</strong> ' + explanations[qNum].correct;
+        } else {
+            el.classList.add('incorrect');
+            fb.className = 'feedback show incorrect-fb';
+            fb.innerHTML = '<strong>✗ Incorrect.</strong> ' + explanations[qNum].incorrect;
+        }
+
+        updateScore();
+    }
+
+    function updateScore() {
+        document.getElementById('scoreChip').textContent = `Score: ${score} / ${answered}`;
+    }
+
+    function showResults() {
+        const el = document.getElementById('resultScore');
+        el.textContent = score;
+        const msg = document.getElementById('resultMsg');
+        const pct = Math.round(score / 10 * 100);
+        let text = '';
+        if (pct >= 90) text = 'Excellent! You have a strong grasp of constraints and extrusion types.';
+        else if (pct >= 70) text = 'Good work. Review the questions you missed and retry those specific constraints.';
+        else text = 'Keep practicing. Go back through the questions and re-read the explanations.';
+        msg.innerHTML = `<span style="color:#ffd166;font-size:1.6rem;font-weight:800;">${pct}%</span><br><br>${text}`;
+    }
+
+    function showSlide(n) {
+        if (n < 0 || n >= slides.length) return;
+        slides[current].classList.remove('active');
+        current = n;
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+
+        // Build results when arriving at results slide (index 11)
+        if (current === 11) showResults();
+    }
+
+    function changeSlide(dir) { showSlide(current + dir); }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+
+    showSlide(0);
+</script>
+</body>
+</html>
