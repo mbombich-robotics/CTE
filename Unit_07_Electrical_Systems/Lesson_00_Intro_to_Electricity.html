@@ -7,257 +7,224 @@
     <title>Lesson 7.0: Intro to Electricity | Unit 7 — Electrical Systems</title>
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-dark: #0a0f1d;
+            --card-bg: #131b2e;
+            --card-border: #1e293b;
+            --primary-accent: #38bdf8;
+            --voltage-color: #ec4899;
+            --current-color: #06b6d4;
+            --resistance-color: #eab308;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --success-color: #22c55e;
+            --danger-color: #ef4444;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
 
         body {
-            font-family: 'Exo 2', sans-serif;
-            background: linear-gradient(135deg, #0a0800 0%, #130f00 40%, #1c1700 100%);
-            color: #e2e8f0;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
             height: 100vh;
             overflow: hidden;
         }
 
-        .presentation { width: 100%; height: 100vh; position: relative; }
+        /* ── Slide Viewport ── */
+        .slide-viewport {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 16px 90px 16px;
+        }
 
         .slide {
-            position: absolute;
-            width: 100%;
-            height: 100%;
             display: none;
-            padding: 60px;
-            opacity: 0;
-            transition: opacity 0.4s ease-in-out;
+            width: 100%;
+            max-width: 1000px;
+            max-height: calc(100vh - 110px);
+            overflow-y: auto;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 36px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5);
+            animation: fadeIn 0.25s ease-in-out;
         }
 
-        .slide.active {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            opacity: 1;
+        .slide.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
-        .slide.active.top-align {
-            justify-content: flex-start;
-            padding-top: 48px;
-        }
-
-        .slide-content { max-width: 1200px; width: 100%; }
-
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3.2em;
-            font-weight: 900;
-            margin-bottom: 20px;
-            text-align: center;
-            color: #f59e0b;
-            text-shadow: 0 0 30px rgba(245,158,11,0.4);
-            line-height: 1.15;
-        }
-
-        h2 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2em;
-            font-weight: 700;
-            margin-bottom: 24px;
-            color: #fcd34d;
-            text-align: center;
-        }
-
-        .lesson-tag {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.95em;
-            color: #f59e0b;
-            text-align: center;
-            margin-bottom: 20px;
-            letter-spacing: 2px;
+        .slide-subtitle {
+            color: var(--primary-accent);
             text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 8px;
         }
 
-        .subtitle {
-            font-size: 1.4em;
-            text-align: center;
-            color: #94a3b8;
-            font-weight: 300;
-            margin-top: 10px;
-            line-height: 1.5;
+        .slide-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .badge-row {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-top: 36px;
-        }
-
-        .badge {
-            background: rgba(245,158,11,0.1);
-            border: 1px solid rgba(245,158,11,0.3);
-            border-radius: 20px;
-            padding: 8px 20px;
-            font-size: 1em;
-            color: #f59e0b;
-        }
-
-        .bullet-list { list-style: none; padding: 0; margin: 20px 0; }
-
-        .bullet-list li {
-            font-size: 1.3em;
-            padding: 9px 0 9px 44px;
-            position: relative;
-            line-height: 1.5;
-            color: #cbd5e1;
-        }
-
-        .bullet-list li::before {
-            content: "▸";
-            position: absolute;
-            left: 0;
-            color: #f59e0b;
-            font-size: 1.1em;
-        }
-
-        .bullet-list li strong { color: #e2e8f0; }
-        .bullet-list li em { color: #fcd34d; font-style: normal; font-weight: 600; }
-
-        .two-col {
+        .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 24px;
-            margin: 20px 0;
         }
 
-        .col-box {
-            background: rgba(245,158,11,0.06);
-            border: 1px solid rgba(245,158,11,0.2);
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .slide-title { font-size: 1.75rem; }
+            .slide { padding: 20px; }
+        }
+
+        .info-card {
+            background: rgba(15,23,42,0.6);
+            border: 1px solid var(--card-border);
             border-radius: 12px;
-            padding: 22px;
+            padding: 20px;
         }
 
-        .col-box h4 {
-            font-size: 1.05em;
-            font-weight: 700;
-            color: #f59e0b;
+        .info-card h3 {
+            font-size: 1.1rem;
             margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color: var(--primary-accent);
         }
 
-        .col-box ul { list-style: none; padding: 0; }
-        .col-box ul li {
-            font-size: 1em;
-            color: #94a3b8;
-            padding: 5px 0 5px 24px;
+        ul.feature-list { list-style: none; }
+
+        ul.feature-list li {
             position: relative;
+            padding-left: 24px;
+            margin-bottom: 12px;
             line-height: 1.5;
+            color: var(--text-muted);
         }
-        .col-box ul li::before { content: "▸"; position: absolute; left: 0; color: #f59e0b; }
-        .col-box ul li strong { color: #e2e8f0; }
+
+        ul.feature-list li strong { color: var(--text-main); }
+
+        ul.feature-list li::before {
+            content: "•";
+            color: var(--primary-accent);
+            font-size: 1.5rem;
+            position: absolute;
+            left: 8px;
+            top: -4px;
+        }
+
+        .interactive-box {
+            background: rgba(15,23,42,0.8);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        canvas {
+            background: #090d16;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            width: 100%;
+            height: auto;
+            max-height: 260px;
+        }
+
+        .controls-panel {
+            width: 100%;
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .slider-group { display: flex; flex-direction: column; gap: 6px; }
+
+        .slider-group label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        input[type="range"] { width: 100%; accent-color: var(--primary-accent); }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+
+        th, td {
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--card-border);
+            font-size: 0.9rem;
+        }
+
+        th { background: rgba(30,41,59,0.5); color: var(--primary-accent); }
 
         .callout {
-            background: rgba(245,158,11,0.08);
-            border-left: 5px solid #f59e0b;
-            border-radius: 0 10px 10px 0;
-            padding: 16px 22px;
-            margin: 16px 0;
-            font-size: 1.2em;
-            color: #fcd34d;
+            margin-top: 20px;
+            padding: 16px;
+            border-left: 4px solid var(--primary-accent);
+            background: rgba(56,189,248,0.05);
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95rem;
             line-height: 1.5;
         }
-        .callout strong { color: #e2e8f0; font-weight: 700; }
 
-        .danger-callout {
-            background: rgba(239,68,68,0.08);
-            border-left: 5px solid #ef4444;
-            border-radius: 0 10px 10px 0;
-            padding: 16px 22px;
-            margin: 16px 0;
-            font-size: 1.2em;
-            color: #fca5a5;
-            line-height: 1.5;
-        }
-        .danger-callout strong { color: #e2e8f0; font-weight: 700; }
-
-        /* Analogy table */
-        .analogy-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            font-size: 1.1em;
+        .callout.danger {
+            border-left-color: var(--danger-color);
+            background: rgba(239,68,68,0.05);
         }
 
-        .analogy-table th {
-            background: rgba(245,158,11,0.15);
-            color: #f59e0b;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.85em;
-            font-weight: 700;
-            padding: 12px 20px;
-            text-align: left;
-            letter-spacing: 1px;
-            border-bottom: 2px solid rgba(245,158,11,0.3);
+        .btn {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .analogy-table td {
-            padding: 12px 20px;
-            border-bottom: 1px solid rgba(245,158,11,0.1);
-            color: #cbd5e1;
-            vertical-align: middle;
+        .btn:hover { background: #1e293b; border-color: var(--primary-accent); color: var(--primary-accent); }
+
+        .btn-primary { background: #0284c7; border-color: #0369a1; color: white; }
+        .btn-primary:hover { background: #0369a1; color: white; }
+
+        .quiz-opt {
+            background: rgba(15,23,42,0.6);
+            border: 1px solid var(--card-border);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        .analogy-table tr:last-child td { border-bottom: none; }
-        .analogy-table td:first-child { color: #60a5fa; font-weight: 600; }
-        .analogy-table td:nth-child(2) { color: #fcd34d; font-weight: 600; }
-        .analogy-table td:nth-child(3) { color: #94a3b8; font-size: 0.95em; }
+        .quiz-opt:hover { border-color: var(--primary-accent); background: #1e293b; }
+        .quiz-opt.correct { border-color: var(--success-color); background: rgba(34,197,94,0.1); }
+        .quiz-opt.incorrect { border-color: var(--danger-color); background: rgba(239,68,68,0.1); }
 
-        /* Ohm triangle */
-        .ohm-row {
-            display: flex;
-            gap: 24px;
-            align-items: flex-start;
-            margin: 20px 0;
-        }
-
-        .ohm-triangle-wrap {
-            flex-shrink: 0;
-        }
-
-        /* Current threshold table */
-        .threshold-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 16px 0;
-            font-size: 1.05em;
-        }
-
-        .threshold-table th {
-            background: rgba(239,68,68,0.15);
-            color: #f87171;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.8em;
-            padding: 10px 16px;
-            text-align: left;
-            letter-spacing: 1px;
-        }
-
-        .threshold-table td {
-            padding: 10px 16px;
-            border-bottom: 1px solid rgba(239,68,68,0.1);
-            color: #cbd5e1;
-        }
-
-        .threshold-table tr:last-child td { border-bottom: none; }
-        .threshold-table td:first-child {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 700;
-            color: #fcd34d;
-        }
-
-        .threshold-table .row-danger td { color: #fca5a5; }
-        .threshold-table .row-fatal td { color: #ef4444; font-weight: 700; }
-
-        /* Navigation */
+        /* ── Standard Unit 7 nav chrome ── */
         .nav {
             position: fixed;
             bottom: 30px;
@@ -266,12 +233,12 @@
             display: flex;
             align-items: center;
             gap: 20px;
-            background: rgba(10,8,0,0.85);
+            background: rgba(6,9,19,0.92);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(245,158,11,0.2);
             border-radius: 50px;
             padding: 12px 24px;
-            z-index: 100;
+            z-index: 200;
         }
 
         .nav button {
@@ -293,7 +260,7 @@
         .slide-counter {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.9em;
-            color: #475569;
+            color: #94a3b8;
             min-width: 60px;
             text-align: center;
         }
@@ -304,522 +271,339 @@
             right: 24px;
             font-size: 0.78rem;
             font-weight: 700;
-            color: #fcd34d;
+            color: #fbbf24;
             text-decoration: none;
             background: rgba(245,158,11,0.15);
             border: 1px solid rgba(245,158,11,0.35);
             padding: 5px 12px;
             border-radius: 20px;
-            z-index: 100;
+            z-index: 200;
             transition: background 0.2s;
         }
+
         .back-link:hover { background: rgba(245,158,11,0.3); }
-
-        .slide-eyebrow {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85em;
-            color: #475569;
-            text-align: center;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-        }
-
-        svg text { font-family: 'Exo 2', sans-serif; }
     </style>
 </head>
 <body>
 
 <a href="index.html" class="back-link">← Unit 7</a>
 
-<div class="presentation">
+<div class="slide-viewport">
 
     <!-- ── SLIDE 1: Title ── -->
     <div class="slide active">
-        <div class="slide-content" style="text-align:center;">
-            <div class="lesson-tag">Unit 7 · Electrical Systems · Design &amp; Build Lab</div>
-            <h1>L7.0 Intro to<br>Electricity</h1>
-            <p class="subtitle">Voltage · Current · Resistance · Safety</p>
-            <div class="badge-row">
-                <div class="badge">Water Analogy</div>
-                <div class="badge">AC vs DC</div>
-                <div class="badge">Ohm's Law</div>
-                <div class="badge">Electrical Safety</div>
+        <div class="slide-subtitle">Unit 7 · Lesson 7.0 · All Tracks</div>
+        <h1 class="slide-title">L7.0 Intro to Electricity</h1>
+        <p style="font-size: 1.2rem; color: var(--text-muted); margin-bottom: 30px;">
+            Understanding Voltage, Current, Resistance, and Electrical Safety through Real-World Physics.
+        </p>
+        <div class="grid-2">
+            <div class="info-card">
+                <h3>⚡ Key Topics Covered</h3>
+                <ul class="feature-list">
+                    <li><strong>Water Analogy:</strong> Pressure, flow rate, and pipe friction</li>
+                    <li><strong>AC vs DC:</strong> Battery power vs household wall outlets</li>
+                    <li><strong>Ohm's Law:</strong> V = I × R relationship</li>
+                    <li><strong>Electrical Safety:</strong> Skin resistance and current hazards</li>
+                </ul>
+            </div>
+            <div class="info-card" style="display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;">
+                <div style="font-size:4rem;margin-bottom:10px;">⚡💧</div>
+                <p style="color:var(--text-muted);">Use keyboard arrow keys (← →) or buttons below to navigate through the interactive slides.</p>
             </div>
         </div>
     </div>
 
     <!-- ── SLIDE 2: Objectives ── -->
     <div class="slide">
-        <div class="slide-content" style="text-align:center;">
-            <h2>Learning Objectives</h2>
-            <p class="subtitle">By the end of this lesson, you will be able to:</p>
-            <div style="display:flex;flex-direction:column;gap:32px;margin-top:40px;max-width:860px;text-align:left;margin-left:auto;margin-right:auto;">
-                <div style="display:flex;gap:28px;align-items:baseline;">
-                    <span style="font-family:'Orbitron',sans-serif;font-size:2.2rem;font-weight:900;color:#f59e0b;flex-shrink:0;width:36px;line-height:1;">1</span>
-                    <p style="margin:0;font-size:1.5rem;color:#e2e8f0;line-height:1.4;"><strong style="color:#f59e0b;">Explain</strong> voltage, current, and resistance using the water-pressure analogy</p>
-                </div>
-                <div style="display:flex;gap:28px;align-items:baseline;">
-                    <span style="font-family:'Orbitron',sans-serif;font-size:2.2rem;font-weight:900;color:#f59e0b;flex-shrink:0;width:36px;line-height:1;">2</span>
-                    <p style="margin:0;font-size:1.5rem;color:#e2e8f0;line-height:1.4;"><strong style="color:#f59e0b;">Distinguish</strong> between DC and AC and describe what comes out of a standard US outlet</p>
-                </div>
-                <div style="display:flex;gap:28px;align-items:baseline;">
-                    <span style="font-family:'Orbitron',sans-serif;font-size:2.2rem;font-weight:900;color:#f59e0b;flex-shrink:0;width:36px;line-height:1;">3</span>
-                    <p style="margin:0;font-size:1.5rem;color:#e2e8f0;line-height:1.4;"><strong style="color:#f59e0b;">Predict</strong> why current path through the body — not voltage alone — determines electrical hazard</p>
-                </div>
+        <div class="slide-subtitle">Course Roadmap</div>
+        <h1 class="slide-title">Learning Objectives</h1>
+        <div class="grid-2">
+            <div class="info-card">
+                <h3>1. Master the Water Analogy</h3>
+                <p style="color:var(--text-muted);line-height:1.6;">
+                    Explain voltage, current, and resistance using physical models like water pressure, gallons per minute, and pipe restrictions.
+                </p>
+            </div>
+            <div class="info-card">
+                <h3>2. AC vs DC Distinction</h3>
+                <p style="color:var(--text-muted);line-height:1.6;">
+                    Distinguish between Direct Current (batteries) and Alternating Current (wall outlets), including RMS vs Peak voltage concepts.
+                </p>
+            </div>
+            <div class="info-card" style="grid-column:span 2;">
+                <h3>3. Human Electrical Safety</h3>
+                <p style="color:var(--text-muted);line-height:1.6;">
+                    Predict why current path through the body — combined with skin resistance (dry vs wet) — determines electrical hazard levels rather than voltage alone.
+                </p>
             </div>
         </div>
     </div>
 
-    <!-- ── SLIDE 3: Vicksburg Hook ── -->
+    <!-- ── SLIDE 3: Water Tower Analogy ── -->
     <div class="slide">
-        <div class="slide-content">
-            <div class="slide-eyebrow">Local History</div>
-            <h2>Why Vicksburg? Why Here?</h2>
-            <div class="two-col">
-                <div class="col-box">
-                    <h4>The Site</h4>
-                    <ul>
-                        <li>Settlers chose locations where <strong>water dropped in elevation</strong> — free mechanical energy</li>
-                        <li>A stream falling over a dam turns a wheel; the wheel turns a millstone or a saw</li>
-                        <li>Kalamazoo River area: multiple usable <strong>head differences</strong> for early mills</li>
-                        <li>Water was the original power grid — towns built around it</li>
-                    </ul>
-                </div>
-                <div class="col-box">
-                    <h4>The Key Insight</h4>
-                    <ul>
-                        <li><strong>Height difference = stored energy</strong> — same principle as a battery</li>
-                        <li>Dam = a way to hold energy until it's needed</li>
-                        <li>Millpond = energy storage; the wheel = energy converter</li>
-                        <li>This exact logic → modern <strong>hydroelectric dams</strong> and pumped-storage facilities</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="callout">
-                <strong>Coming up:</strong> We're going to use water — pressure, pipes, and tanks — as a mental model for electricity.
-                Every concept in this unit has a direct water equivalent.
-            </div>
-        </div>
-    </div>
-
-    <!-- ── SLIDE 4: Water Tower ── -->
-    <div class="slide">
-        <div class="slide-content">
-            <div class="slide-eyebrow">The Analogy Starts Here</div>
-            <h2>The Water Tower</h2>
-            <div class="two-col" style="align-items:center;">
-                <div>
-                    <!-- Water tower SVG -->
-                    <svg viewBox="0 0 260 300" width="260" height="300" style="display:block;margin:0 auto;">
-                        <!-- Tank -->
-                        <ellipse cx="130" cy="90" rx="70" ry="18" fill="#1e3a5f" stroke="#60a5fa" stroke-width="2"/>
-                        <rect x="60" y="90" width="140" height="90" fill="#1e3a5f" stroke="#60a5fa" stroke-width="2"/>
-                        <ellipse cx="130" cy="180" rx="70" ry="18" fill="#1e4a7f" stroke="#60a5fa" stroke-width="2"/>
-                        <!-- Water fill indicator -->
-                        <rect x="62" y="110" width="136" height="68" fill="#2563eb" opacity="0.4"/>
-                        <!-- Legs -->
-                        <line x1="80" y1="180" x2="70" y2="270" stroke="#64748b" stroke-width="4"/>
-                        <line x1="180" y1="180" x2="190" y2="270" stroke="#64748b" stroke-width="4"/>
-                        <line x1="130" y1="198" x2="130" y2="270" stroke="#64748b" stroke-width="4"/>
-                        <!-- Cross braces -->
-                        <line x1="80" y1="200" x2="180" y2="240" stroke="#475569" stroke-width="2"/>
-                        <line x1="180" y1="200" x2="80" y2="240" stroke="#475569" stroke-width="2"/>
-                        <!-- Ground -->
-                        <line x1="40" y1="272" x2="220" y2="272" stroke="#475569" stroke-width="2"/>
-                        <!-- Pump (small box at base) -->
-                        <rect x="30" y="250" width="34" height="20" rx="4" fill="#064e3b" stroke="#10b981" stroke-width="1.5"/>
-                        <text x="47" y="264" text-anchor="middle" fill="#10b981" font-size="8" font-weight="700">PUMP</text>
-                        <!-- Pipe up from pump to tank -->
-                        <line x1="64" y1="252" x2="80" y2="180" stroke="#10b981" stroke-width="2.5" stroke-dasharray="4,3"/>
-                        <!-- Pipe down from tank to house -->
-                        <line x1="190" y1="252" x2="215" y2="252" stroke="#60a5fa" stroke-width="3"/>
-                        <!-- House -->
-                        <rect x="215" y="240" width="36" height="28" fill="#1e293b" stroke="#60a5fa" stroke-width="1.5"/>
-                        <polygon points="215,240 233,222 251,240" fill="#0f172a" stroke="#60a5fa" stroke-width="1.5"/>
-                        <!-- Labels -->
-                        <text x="130" y="138" text-anchor="middle" fill="#93c5fd" font-size="10" font-weight="600">STORAGE</text>
-                        <text x="130" y="152" text-anchor="middle" fill="#93c5fd" font-size="10" font-weight="600">TANK</text>
-                        <text x="130" y="86" text-anchor="middle" fill="#fcd34d" font-size="9" font-weight="700">HEIGHT = PRESSURE</text>
-                        <!-- Height arrow -->
-                        <line x1="200" y1="90" x2="200" y2="272" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arr)"/>
-                        <text x="208" y="186" fill="#f59e0b" font-size="9">h</text>
-                        <defs>
-                            <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-                                <path d="M0,0 L6,3 L0,6 Z" fill="#f59e0b"/>
-                            </marker>
-                        </defs>
-                    </svg>
-                </div>
-                <div>
-                    <ul class="bullet-list">
-                        <li><strong>Off-peak hours</strong> — small pump fills the tank slowly (cheap, low-demand electricity)</li>
-                        <li><strong>Peak demand</strong> — morning showers, commute rush — water flows from the tank under gravity pressure</li>
-                        <li>Pressure at the tap = <em>height × 0.43 PSI/ft</em> — a 100-ft tower gives ~43 PSI, enough for normal household use</li>
-                        <li>The tank is <strong>energy storage</strong> — exactly like a battery</li>
-                        <li>The pump is <strong>oversized for peak</strong> if it had to work alone — the tank smooths demand</li>
-                    </ul>
-                    <div class="callout" style="margin-top:12px;">
-                        <strong>Question:</strong> When do water utilities have the highest demand?<br>
-                        <span style="color:#94a3b8;font-size:0.9em;">Morning showers, before-work rush, lawn irrigation on hot summer evenings.</span>
+        <div class="slide-subtitle">Interactive Physics</div>
+        <h1 class="slide-title">The Water Tower Analogy</h1>
+        <div class="grid-2">
+            <div class="interactive-box">
+                <canvas id="waterCanvas" width="400" height="200"></canvas>
+                <div class="controls-panel">
+                    <div class="slider-group">
+                        <label>Tower Height (Voltage / Pressure): <span id="towerHeightVal">50 ft</span></label>
+                        <input type="range" id="towerHeight" min="10" max="100" value="50" oninput="updateWaterSim()">
+                    </div>
+                    <div class="slider-group">
+                        <label>Pipe Width (1/Resistance): <span id="pipeWidthVal">Medium</span></label>
+                        <input type="range" id="pipeWidth" min="4" max="24" value="12" oninput="updateWaterSim()">
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- ── SLIDE 5: Water → Electricity ── -->
-    <div class="slide">
-        <div class="slide-content">
-            <div class="slide-eyebrow">The Analogy</div>
-            <h2>Water Pressure → Electricity</h2>
-            <table class="analogy-table">
-                <thead>
-                    <tr>
-                        <th>Water System</th>
-                        <th>Electrical Circuit</th>
-                        <th>Unit / Notes</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>💧 Pressure (PSI)</td>
-                        <td>⚡ Voltage (V)</td>
-                        <td>The "push" that drives flow. More pressure → more flow for same pipe size.</td>
-                    </tr>
-                    <tr>
-                        <td>🌊 Flow rate (GPM)</td>
-                        <td>⚡ Current (A)</td>
-                        <td>How much is actually moving. Measured in gallons per minute / amperes.</td>
-                    </tr>
-                    <tr>
-                        <td>🔧 Pipe diameter</td>
-                        <td>⚡ Resistance (Ω)</td>
-                        <td>Smaller pipe → less flow for same pressure. More resistance → less current.</td>
-                    </tr>
-                    <tr>
-                        <td>⛽ Pump / Dam</td>
-                        <td>⚡ Battery / Generator</td>
-                        <td>The source of the pressure / voltage.</td>
-                    </tr>
-                    <tr>
-                        <td>🏗️ Water tower</td>
-                        <td>⚡ Capacitor</td>
-                        <td>Stores energy, releases it when demand exceeds supply.</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="callout">
-                Electrons don't flow like water, but the <em>relationships between pressure, flow, and pipe size</em>
-                are mathematically identical. The analogy is exact enough to build real intuition.
-            </div>
-        </div>
-    </div>
-
-    <!-- ── SLIDE 6: AC vs DC / The Outlet ── -->
-    <div class="slide">
-        <div class="slide-content">
-            <div class="slide-eyebrow">What Comes Out of the Wall</div>
-            <h2>Voltage — AC and DC</h2>
-            <div class="two-col">
-                <div class="col-box">
-                    <h4>DC — Direct Current</h4>
-                    <ul>
-                        <li>Electrons flow in <strong>one direction</strong> — always</li>
-                        <li>Voltage is constant over time</li>
-                        <li>Sources: batteries, USB chargers, solar panels</li>
-                        <li>What your microcontroller and LED circuits use</li>
-                    </ul>
-                    <!-- DC line SVG -->
-                    <svg viewBox="0 0 220 60" width="220" height="60" style="margin-top:12px;">
-                        <line x1="10" y1="30" x2="210" y2="30" stroke="#60a5fa" stroke-width="2.5"/>
-                        <text x="110" y="20" text-anchor="middle" fill="#60a5fa" font-size="11">+5V DC</text>
-                        <text x="110" y="50" text-anchor="middle" fill="#475569" font-size="10">flat line — constant voltage</text>
-                    </svg>
-                </div>
-                <div class="col-box">
-                    <h4>AC — Alternating Current</h4>
-                    <ul>
-                        <li>Electrons reverse direction <strong>60 times per second</strong> (60 Hz in the US)</li>
-                        <li>Voltage follows a <strong>sine wave</strong> — positive half, then negative half</li>
-                        <li>US outlet: <strong>120V RMS</strong> — peak is actually ±170V</li>
-                        <li>Europe: 230V at 50 Hz — same concept, different numbers</li>
-                    </ul>
-                    <!-- Sine wave SVG -->
-                    <svg viewBox="0 0 220 80" width="220" height="80" style="margin-top:12px;">
-                        <line x1="10" y1="40" x2="210" y2="40" stroke="#475569" stroke-width="1"/>
-                        <path d="M10,40 C32,40 32,8 55,8 S78,40 100,40 S122,72 145,72 S168,40 190,40 S212,8 220,8" fill="none" stroke="#fbbf24" stroke-width="2.5"/>
-                        <text x="110" y="14" text-anchor="middle" fill="#fbbf24" font-size="10">+170V peak</text>
-                        <text x="110" y="76" text-anchor="middle" fill="#fbbf24" font-size="10">−170V peak</text>
-                        <text x="10" y="36" fill="#475569" font-size="9">0V</text>
-                        <text x="140" y="55" fill="#94a3b8" font-size="9">1 cycle = 1/60 s</text>
-                    </svg>
+            <div>
+                <ul class="feature-list">
+                    <li><strong>Water Height = Voltage (V):</strong> The higher the water tank, the more gravitational pressure pushes down.</li>
+                    <li><strong>Flow Rate = Current (I):</strong> The volume of water passing through the pipe per second.</li>
+                    <li><strong>Pipe Restriction = Resistance (R):</strong> A narrow pipe restricts water flow; a wider pipe allows free passage.</li>
+                </ul>
+                <div class="callout">
+                    Calculated Flow Rate (Current): <strong id="simFlowRate" style="color:var(--primary-accent);">0.00 A</strong>
                 </div>
             </div>
-            <div class="callout">
-                The "120V" rating is the <strong>RMS (effective) value</strong> — the equivalent DC voltage that delivers the same power.
-                The actual peak of your wall outlet is ±170V.
+        </div>
+    </div>
+
+    <!-- ── SLIDE 4: Comparison Table ── -->
+    <div class="slide">
+        <div class="slide-subtitle">Mental Models</div>
+        <h1 class="slide-title">Water System vs. Electrical Circuit</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Water Concept</th>
+                    <th>Electrical Concept</th>
+                    <th>Unit / Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>💧 Pressure (PSI)</td><td>⚡ Voltage (V)</td><td>The "push" that drives flow. More pressure = more flow.</td></tr>
+                <tr><td>🌊 Flow Rate (GPM)</td><td>⚡ Current (I / A)</td><td>The actual amount of charge moving per second (Amperes).</td></tr>
+                <tr><td>🔧 Pipe Friction</td><td>⚡ Resistance (R / Ω)</td><td>Opposition to flow. Narrower pipes = higher resistance.</td></tr>
+                <tr><td>⛽ Pump / Water Dam</td><td>⚡ Battery / Generator</td><td>Energy source producing potential difference.</td></tr>
+                <tr><td>🏗️ Water Tower</td><td>⚡ Capacitor</td><td>Stores potential energy, releases during peak demand.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ── SLIDE 5: AC vs DC ── -->
+    <div class="slide">
+        <div class="slide-subtitle">Waveforms</div>
+        <h1 class="slide-title">Voltage: AC vs DC</h1>
+        <div class="grid-2">
+            <div class="interactive-box">
+                <canvas id="scopeCanvas" width="400" height="180"></canvas>
+                <div style="margin-top:12px;display:flex;gap:10px;">
+                    <button class="btn btn-primary" onclick="setWaveform('dc')">Direct Current (DC)</button>
+                    <button class="btn" onclick="setWaveform('ac')">Alternating Current (AC)</button>
+                </div>
+            </div>
+            <div>
+                <div id="waveInfo">
+                    <h3>Direct Current (DC)</h3>
+                    <p style="color:var(--text-muted);margin-top:8px;">
+                        Electrons flow continuously in one single direction. Voltage remains constant over time.
+                    </p>
+                    <ul class="feature-list" style="margin-top:12px;">
+                        <li><strong>Sources:</strong> Batteries, USB ports, solar panels</li>
+                        <li><strong>Used by:</strong> Microcontrollers, LEDs, computers</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- ── SLIDE 7: Earth Ground ── -->
+    <!-- ── SLIDE 6: Earth Ground ── -->
     <div class="slide">
-        <div class="slide-content">
-            <div class="slide-eyebrow">Safety Concept</div>
-            <h2>Earth Ground</h2>
-            <ul class="bullet-list">
-                <li><strong>"Ground" = the earth itself</strong> — a massive conductor sitting at 0 V by definition</li>
-                <li>Electrical systems tie one wire to earth so everything else has a <em>known reference point</em></li>
-                <li>Your house has a <strong>ground rod</strong> driven into the soil — the green wire in every outlet connects to it</li>
-                <li>If a live wire touches a metal appliance case, fault current flows to earth through the ground wire — not through you</li>
-                <li>Lightning rods, neutral wires, equipment grounds — all using the same principle</li>
+        <div class="slide-subtitle">Reference Points</div>
+        <h1 class="slide-title">What is Earth Ground?</h1>
+        <div class="grid-2">
+            <div class="info-card">
+                <h3>The Planet as a Conductor</h3>
+                <p style="color:var(--text-muted);line-height:1.6;">
+                    "Ground" refers to the literal earth, which acts as a massive conductor held at 0 Volts baseline.
+                </p>
+                <ul class="feature-list" style="margin-top:12px;">
+                    <li>Houses utilize metal ground rods driven 8+ feet into soil.</li>
+                    <li>Ties system reference to a stable 0V baseline.</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h3>Safety Function</h3>
+                <p style="color:var(--text-muted);line-height:1.6;">
+                    If a live wire touches a metal appliance casing, fault current flows directly to earth ground via green safety ground wire, tripping the breaker instead of flowing through a person.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 7: Ohm's Law Intro ── -->
+    <div class="slide">
+        <div class="slide-subtitle">Core Equation</div>
+        <h1 class="slide-title">Ohm's Law: V = I × R</h1>
+        <div class="info-card" style="text-align:center;padding:30px;margin-bottom:20px;">
+            <div style="font-size:3rem;font-weight:800;color:var(--primary-accent);">V = I × R</div>
+            <p style="color:var(--text-muted);margin-top:10px;">Voltage (Volts) = Current (Amps) × Resistance (Ohms)</p>
+        </div>
+        <div class="grid-2">
+            <div class="info-card">
+                <p><strong>I = V / R</strong> — Current increases with Voltage, decreases with Resistance</p>
+            </div>
+            <div class="info-card">
+                <p><strong>R = V / I</strong> — Resistance equals Voltage divided by Current flow</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 8: Skin Resistance / Shock Calculator ── -->
+    <div class="slide">
+        <div class="slide-subtitle">Electrical Hazard</div>
+        <h1 class="slide-title">Can 120V Kill You?</h1>
+        <div class="grid-2">
+            <div class="interactive-box">
+                <h3 style="margin-bottom:12px;color:var(--primary-accent);">Skin Moisture Calculator</h3>
+                <div class="controls-panel">
+                    <div class="slider-group">
+                        <label>Skin Resistance: <span id="skinResVal">100,000 Ω (Dry)</span></label>
+                        <input type="range" id="skinRes" min="1000" max="100000" step="1000" value="100000" oninput="calcShock()">
+                    </div>
+                </div>
+                <div style="margin-top:20px;text-align:center;">
+                    <div style="font-size:0.9rem;color:var(--text-muted);">Current at 120V Household Outlet:</div>
+                    <div id="shockCurrentVal" style="font-size:2rem;font-weight:800;color:var(--success-color);">1.2 mA</div>
+                    <div id="shockEffect" style="margin-top:8px;font-weight:600;">Barely perceptible tingle</div>
+                </div>
+            </div>
+            <div>
+                <h3>Physiological Effects of Current</h3>
+                <table>
+                    <tr><th>Current</th><th>Effect on Body</th></tr>
+                    <tr><td>1 mA</td><td>Slight tingle</td></tr>
+                    <tr><td>5 mA</td><td>Slight shock felt; not painful</td></tr>
+                    <tr><td>10–20 mA</td><td>"Can't let go" muscle contraction</td></tr>
+                    <tr><td>50–100 mA</td><td>Ventricular fibrillation / lethal hazard</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 9: Body Path (interactive canvas) ── -->
+    <div class="slide">
+        <div class="slide-subtitle">Body Path Mechanics</div>
+        <h1 class="slide-title">Why Current Path Matters</h1>
+
+        <div class="grid-2">
+            <div class="interactive-box">
+                <canvas id="bodyPathCanvas" width="380" height="260"></canvas>
+                <div style="margin-top:14px;display:flex;gap:8px;width:100%;">
+                    <button class="btn" id="pathHandFootBtn" style="flex:1;justify-content:center;font-size:0.8rem;" onclick="setBodyPath('hand-foot')">
+                        Hand-to-Foot
+                    </button>
+                    <button class="btn btn-primary" id="pathHandHandBtn" style="flex:1;justify-content:center;font-size:0.8rem;" onclick="setBodyPath('hand-hand')">
+                        Hand-to-Hand (Heart Path)
+                    </button>
+                </div>
+            </div>
+
+            <div>
+                <div id="pathDetailsCard" class="info-card" style="border-color:var(--danger-color);margin-bottom:12px;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                        <h3 id="pathTitle" style="color:var(--danger-color);margin:0;">⚠️ Hand-to-Hand Path</h3>
+                        <span id="pathHazardBadge" style="background:rgba(239,68,68,0.2);color:var(--danger-color);padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:700;">CRITICAL RISK</span>
+                    </div>
+                    <p id="pathDescription" style="color:var(--text-muted);font-size:0.9rem;line-height:1.5;">
+                        Current enters one arm, travels straight across the chest cavity, and exits through the other arm. Because the current vector passes directly through the heart muscle, it poses the highest risk of triggering <strong>ventricular fibrillation</strong>.
+                    </p>
+                </div>
+
+                <div class="callout" style="border-left-color:var(--primary-accent);background:rgba(56,189,248,0.05);margin-top:0;">
+                    <strong>💼 The "One Hand in Pocket" Rule:</strong><br>
+                    High-voltage technicians working on live gear keep one hand tucked inside a pocket. This breaks the hand-to-hand loop, ensuring any accidental contact path goes to ground through the legs rather than across the heart.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 10: Step Potential (interactive canvas) ── -->
+    <div class="slide">
+        <div class="slide-subtitle">Ground Voltage Gradients</div>
+        <h1 class="slide-title">Lightning &amp; Step Potential</h1>
+
+        <div class="grid-2">
+            <div class="interactive-box">
+                <canvas id="lightningCanvas" width="400" height="220"></canvas>
+
+                <div class="controls-panel">
+                    <div class="slider-group">
+                        <label>Stance Width / Step Length: <span id="stepWidthVal">3.0 ft (Wide Step)</span></label>
+                        <input type="range" id="stepWidth" min="0.2" max="4.0" step="0.2" value="3.0" oninput="drawLightningSim()">
+                    </div>
+                </div>
+
+                <div style="margin-top:14px;text-align:center;background:rgba(15,23,42,0.9);padding:10px;border-radius:8px;width:100%;">
+                    <div style="font-size:0.85rem;color:var(--text-muted);">Voltage Difference Across Feet (ΔV):</div>
+                    <div id="potentialDiffVal" style="font-size:1.8rem;font-weight:800;color:var(--danger-color);">4,500 V</div>
+                    <div id="stepSafetyStatus" style="font-size:0.85rem;font-weight:600;color:var(--danger-color);margin-top:4px;">
+                        ⚠️ EXTREME HAZARD: Current flows up one leg and down the other!
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="info-card" style="margin-bottom:12px;">
+                    <h3 style="color:#f59e0b;">⚡ Why Step Potential Happens</h3>
+                    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.5;">
+                        When thousands of volts discharge into the earth, voltage drops exponentially with distance from the strike point.
+                        If your feet touch two points at different voltage levels, your legs complete a high-voltage circuit.
+                    </p>
+                </div>
+
+                <div class="callout danger" style="margin-top:0;">
+                    <strong>🦘 Practical Survival Rule:</strong><br>
+                    If caught near a downed power line or strike zone: <strong>keep feet together</strong> and shuffle or bunny-hop away. With zero distance between your feet, the potential difference drops to near <strong>0 Volts</strong>!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 11: Knowledge Check ── -->
+    <div class="slide">
+        <div class="slide-subtitle">Self Assessment</div>
+        <h1 class="slide-title">Knowledge Check</h1>
+        <div class="info-card">
+            <h3 style="margin-bottom:16px;">What variable changes most drastically when hands are wet, making electrical contact far more dangerous?</h3>
+            <div class="quiz-opt" onclick="checkQuiz(this, false)">A. The wall outlet voltage increases</div>
+            <div class="quiz-opt" onclick="checkQuiz(this, true)">B. Body skin resistance decreases dramatically</div>
+            <div class="quiz-opt" onclick="checkQuiz(this, false)">C. The ground rod stops working</div>
+            <div id="quizFeedback" style="margin-top:12px;font-weight:600;"></div>
+        </div>
+    </div>
+
+    <!-- ── SLIDE 12: Next Steps ── -->
+    <div class="slide">
+        <div class="slide-subtitle">Looking Ahead</div>
+        <h1 class="slide-title">Next: Ohm's Law Deep Dive</h1>
+        <div class="info-card">
+            <h3>In Lesson 7.1, you will:</h3>
+            <ul class="feature-list" style="margin-top:12px;">
+                <li>Solve for V, I, or R using the Ohm's Law triangle</li>
+                <li>Use the interactive canvas simulations to see proportional relationships</li>
+                <li>Calculate LED current-limiting resistor values</li>
+                <li>Test understanding with a 3-question knowledge check quiz</li>
             </ul>
-            <div class="two-col" style="margin-top:16px;">
-                <div class="callout" style="margin:0;">
-                    <strong>Water analogy:</strong> Ground is the lowest point in the water system — the drain. Everything flows toward it when there's a path.
-                </div>
-                <div class="danger-callout" style="margin:0;">
-                    <strong>The hazard:</strong> You standing barefoot on the earth while touching a live wire completes the circuit — <em>you become the path to ground</em>.
-                </div>
-            </div>
         </div>
     </div>
 
-    <!-- ── SLIDE 8: Ohm's Law ── -->
-    <div class="slide">
-        <div class="slide-content">
-            <div class="slide-eyebrow">The Fundamental Relationship</div>
-            <h2>Ohm's Law — V = I · R</h2>
-            <div class="two-col" style="align-items:center;">
-                <div>
-                    <!-- Simple circuit SVG -->
-                    <svg viewBox="0 0 240 180" width="240" height="180" style="display:block;margin:0 auto;">
-                        <!-- Battery left -->
-                        <line x1="40" y1="40" x2="40" y2="80" stroke="#e2e8f0" stroke-width="2"/>
-                        <line x1="30" y1="80" x2="50" y2="80" stroke="#e2e8f0" stroke-width="3"/>
-                        <line x1="33" y1="92" x2="47" y2="92" stroke="#e2e8f0" stroke-width="1.5"/>
-                        <line x1="30" y1="103" x2="50" y2="103" stroke="#e2e8f0" stroke-width="3"/>
-                        <line x1="33" y1="115" x2="47" y2="115" stroke="#e2e8f0" stroke-width="1.5"/>
-                        <line x1="40" y1="115" x2="40" y2="145" stroke="#e2e8f0" stroke-width="2"/>
-                        <!-- + and - labels -->
-                        <text x="20" y="75" fill="#f87171" font-size="14" font-weight="700">+</text>
-                        <text x="20" y="128" fill="#60a5fa" font-size="14" font-weight="700">−</text>
-                        <text x="55" y="98" fill="#fcd34d" font-size="12" font-weight="700">V</text>
-                        <!-- Wires top and bottom -->
-                        <line x1="40" y1="40" x2="200" y2="40" stroke="#f59e0b" stroke-width="2.5"/>
-                        <line x1="40" y1="145" x2="200" y2="145" stroke="#f59e0b" stroke-width="2.5"/>
-                        <!-- Resistor right side -->
-                        <line x1="200" y1="40" x2="200" y2="65" stroke="#f59e0b" stroke-width="2.5"/>
-                        <!-- Resistor zigzag -->
-                        <polyline points="200,65 192,72 208,80 192,88 208,96 192,104 208,112 200,120" fill="none" stroke="#a78bfa" stroke-width="2.5"/>
-                        <line x1="200" y1="120" x2="200" y2="145" stroke="#f59e0b" stroke-width="2.5"/>
-                        <!-- R label -->
-                        <text x="215" y="98" fill="#a78bfa" font-size="12" font-weight="700">R</text>
-                        <!-- Current arrow -->
-                        <text x="100" y="30" text-anchor="middle" fill="#f59e0b" font-size="11">→ I (current)</text>
-                    </svg>
-                </div>
-                <div>
-                    <div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:12px;padding:20px;text-align:center;margin-bottom:16px;">
-                        <div style="font-family:'JetBrains Mono',monospace;font-size:2.4em;font-weight:700;color:#fcd34d;">V = I · R</div>
-                        <div style="font-size:0.95em;color:#94a3b8;margin-top:8px;">rearranged: I = V / R &nbsp;|&nbsp; R = V / I</div>
-                    </div>
-                    <ul class="bullet-list">
-                        <li><em>V</em> = voltage (volts) — the pressure</li>
-                        <li><em>I</em> = current (amperes) — the flow rate</li>
-                        <li><em>R</em> = resistance (ohms, Ω) — the pipe restriction</li>
-                        <li>Double the voltage → <strong>double the current</strong></li>
-                        <li>Double the resistance → <strong>half the current</strong></li>
-                        <li>Straw-sized pipe + high pressure = still a trickle</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+</div><!-- .slide-viewport -->
 
-    <!-- ── SLIDE 9: Can It Kill You? ── -->
-    <div class="slide">
-        <div class="slide-content">
-            <div class="slide-eyebrow">Electrical Safety</div>
-            <h2>Can 120V Kill You?</h2>
-            <div class="two-col" style="align-items:start;">
-                <div>
-                    <ul class="bullet-list">
-                        <li><strong>Voltage doesn't kill — current does.</strong> Voltage is the pressure that drives current through you.</li>
-                        <li>Your body's resistance is the variable: <em>dry skin ≈ 100,000 Ω</em>, <em>wet skin ≈ 1,000 Ω</em></li>
-                        <li>120 V ÷ 100,000 Ω = <strong>1.2 mA</strong> — a tingle, not lethal (dry)</li>
-                        <li>120 V ÷ 1,000 Ω = <strong>120 mA</strong> — easily lethal (wet)</li>
-                        <li>Sweat, water, damaged skin — all <strong>lower your resistance dramatically</strong></li>
-                    </ul>
-                    <div class="callout" style="margin-top:16px;">
-                        Parents warned you about the outlet — and they were right. But the real danger is <strong>wet hands + live wire</strong>, not dry contact with low-amperage sources.
-                    </div>
-                </div>
-                <div>
-                    <table class="threshold-table">
-                        <thead>
-                            <tr><th>Current</th><th>Effect on Body</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>1 mA</td><td>Barely perceptible tingle</td></tr>
-                            <tr><td>5 mA</td><td>Noticeable shock, usually harmless</td></tr>
-                            <tr class="row-danger"><td>10–20 mA</td><td>"Can't let go" — muscle lock, cannot release</td></tr>
-                            <tr class="row-danger"><td>50 mA</td><td>Ventricular fibrillation risk begins</td></tr>
-                            <tr class="row-fatal"><td>100–200 mA</td><td>Likely fatal through chest</td></tr>
-                            <tr class="row-fatal"><td>&gt; 200 mA</td><td>Severe burns, cardiac arrest</td></tr>
-                        </tbody>
-                    </table>
-                    <p style="font-size:0.85em;color:#475569;margin-top:8px;">These thresholds assume current passes through the chest/heart region.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ── SLIDE 10: Path Through Body ── -->
-    <div class="slide">
-        <div class="slide-content">
-            <div class="slide-eyebrow">Why Path Matters</div>
-            <h2>Current Path Through the Body</h2>
-            <div class="two-col" style="align-items:center;">
-                <div style="text-align:center;">
-                    <!-- One-hand contact -->
-                    <svg viewBox="0 0 160 220" width="160" height="220" style="display:block;margin:0 auto;">
-                        <!-- Stick figure -->
-                        <circle cx="80" cy="36" r="18" fill="none" stroke="#94a3b8" stroke-width="2"/>
-                        <line x1="80" y1="54" x2="80" y2="130" stroke="#94a3b8" stroke-width="2"/>
-                        <!-- Left arm reaching to wire -->
-                        <line x1="80" y1="72" x2="26" y2="100" stroke="#f59e0b" stroke-width="3"/>
-                        <!-- Right arm -->
-                        <line x1="80" y1="72" x2="120" y2="88" stroke="#94a3b8" stroke-width="2"/>
-                        <!-- Legs -->
-                        <line x1="80" y1="130" x2="55" y2="190" stroke="#f59e0b" stroke-width="3"/>
-                        <line x1="80" y1="130" x2="105" y2="190" stroke="#94a3b8" stroke-width="2"/>
-                        <!-- Wire (live) -->
-                        <rect x="8" y="96" width="18" height="10" rx="2" fill="#ef4444"/>
-                        <text x="17" y="88" text-anchor="middle" fill="#ef4444" font-size="9" font-weight="700">LIVE</text>
-                        <!-- Ground at foot -->
-                        <line x1="40" y1="192" x2="75" y2="192" stroke="#64748b" stroke-width="2"/>
-                        <line x1="45" y1="196" x2="70" y2="196" stroke="#64748b" stroke-width="1.5"/>
-                        <line x1="51" y1="200" x2="64" y2="200" stroke="#64748b" stroke-width="1"/>
-                        <!-- Current path arrows -->
-                        <text x="80" y="215" text-anchor="middle" fill="#fbbf24" font-size="9">One hand + bare feet</text>
-                    </svg>
-                    <p style="font-size:0.95em;color:#94a3b8;margin-top:4px;">Current travels through one arm, torso, and one leg — <strong style="color:#fbbf24;">misses the heart</strong> (less dangerous)</p>
-                </div>
-                <div style="text-align:center;">
-                    <!-- Two-hand contact -->
-                    <svg viewBox="0 0 160 220" width="160" height="220" style="display:block;margin:0 auto;">
-                        <!-- Stick figure -->
-                        <circle cx="80" cy="36" r="18" fill="none" stroke="#94a3b8" stroke-width="2"/>
-                        <line x1="80" y1="54" x2="80" y2="130" stroke="#ef4444" stroke-width="3"/>
-                        <!-- Left arm to live -->
-                        <line x1="80" y1="72" x2="20" y2="96" stroke="#ef4444" stroke-width="3"/>
-                        <!-- Right arm to ground -->
-                        <line x1="80" y1="72" x2="140" y2="96" stroke="#ef4444" stroke-width="3"/>
-                        <!-- Legs -->
-                        <line x1="80" y1="130" x2="55" y2="190" stroke="#94a3b8" stroke-width="2"/>
-                        <line x1="80" y1="130" x2="105" y2="190" stroke="#94a3b8" stroke-width="2"/>
-                        <!-- Live wire left -->
-                        <rect x="2" y="92" width="18" height="10" rx="2" fill="#ef4444"/>
-                        <text x="11" y="84" text-anchor="middle" fill="#ef4444" font-size="9" font-weight="700">LIVE</text>
-                        <!-- Ground right -->
-                        <rect x="140" y="92" width="18" height="10" rx="2" fill="#64748b"/>
-                        <text x="149" y="84" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="700">GND</text>
-                        <!-- Heart highlight -->
-                        <ellipse cx="80" cy="90" rx="12" ry="14" fill="rgba(239,68,68,0.25)" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3,2"/>
-                        <text x="80" y="215" text-anchor="middle" fill="#ef4444" font-size="9">Both hands — different potentials</text>
-                    </svg>
-                    <p style="font-size:0.95em;color:#fca5a5;margin-top:4px;">Current travels arm-to-arm — <strong style="color:#ef4444;">directly through the heart.</strong> This is why electricians keep one hand in their pocket when probing live circuits.</p>
-                </div>
-            </div>
-            <div class="danger-callout" style="margin-top:12px;">
-                <strong>"Left hand in pocket"</strong> — a real rule in industrial electrical work. Keeps the left-hand-to-right-hand path broken and reduces cardiac risk.
-            </div>
-        </div>
-    </div>
-
-    <!-- ── SLIDE 11: Lightning Safety ── -->
-    <div class="slide">
-        <div class="slide-content">
-            <div class="slide-eyebrow">Applied Safety</div>
-            <h2>Lightning — Step Potential</h2>
-            <div class="two-col" style="align-items:center;">
-                <div>
-                    <!-- Ground step potential SVG -->
-                    <svg viewBox="0 0 240 200" width="240" height="200" style="display:block;margin:0 auto;">
-                        <!-- Ground -->
-                        <rect x="0" y="155" width="240" height="45" fill="#1e293b"/>
-                        <!-- Voltage gradient rings (concentric) -->
-                        <ellipse cx="80" cy="155" rx="70" ry="12" fill="none" stroke="#f59e0b" stroke-width="1" opacity="0.3"/>
-                        <ellipse cx="80" cy="155" rx="50" ry="9" fill="none" stroke="#f59e0b" stroke-width="1.5" opacity="0.5"/>
-                        <ellipse cx="80" cy="155" rx="30" ry="6" fill="none" stroke="#ef4444" stroke-width="2" opacity="0.7"/>
-                        <ellipse cx="80" cy="155" rx="12" ry="4" fill="none" stroke="#ef4444" stroke-width="2.5" opacity="0.9"/>
-                        <!-- Lightning bolt -->
-                        <polyline points="80,10 65,70 78,70 62,130 80,155" fill="none" stroke="#fbbf24" stroke-width="3"/>
-                        <circle cx="80" cy="155" r="5" fill="#ef4444"/>
-                        <!-- Figure 1: feet apart -->
-                        <text x="148" y="100" text-anchor="middle" fill="#94a3b8" font-size="9">FEET APART</text>
-                        <!-- Stick fig feet apart -->
-                        <circle cx="148" cy="108" r="8" fill="none" stroke="#f87171" stroke-width="1.5"/>
-                        <line x1="148" y1="116" x2="148" y2="140" stroke="#f87171" stroke-width="1.5"/>
-                        <line x1="148" y1="124" x2="136" y2="132" stroke="#f87171" stroke-width="1.5"/>
-                        <line x1="148" y1="124" x2="160" y2="132" stroke="#f87171" stroke-width="1.5"/>
-                        <line x1="148" y1="140" x2="136" y2="155" stroke="#f87171" stroke-width="2"/>
-                        <line x1="148" y1="140" x2="160" y2="155" stroke="#f87171" stroke-width="2"/>
-                        <!-- Step voltage indicator -->
-                        <line x1="136" y1="155" x2="160" y2="155" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3,2"/>
-                        <text x="148" y="168" text-anchor="middle" fill="#ef4444" font-size="8">ΔV = high</text>
-                        <!-- Figure 2: feet together -->
-                        <text x="210" y="100" text-anchor="middle" fill="#94a3b8" font-size="9">FEET TOGETHER</text>
-                        <circle cx="210" cy="108" r="8" fill="none" stroke="#4ade80" stroke-width="1.5"/>
-                        <line x1="210" y1="116" x2="210" y2="140" stroke="#4ade80" stroke-width="1.5"/>
-                        <line x1="210" y1="124" x2="198" y2="132" stroke="#4ade80" stroke-width="1.5"/>
-                        <line x1="210" y1="124" x2="222" y2="132" stroke="#4ade80" stroke-width="1.5"/>
-                        <line x1="210" y1="140" x2="207" y2="155" stroke="#4ade80" stroke-width="2"/>
-                        <line x1="210" y1="140" x2="213" y2="155" stroke="#4ade80" stroke-width="2"/>
-                        <line x1="207" y1="155" x2="213" y2="155" stroke="#4ade80" stroke-width="1.5" stroke-dasharray="3,2"/>
-                        <text x="210" y="168" text-anchor="middle" fill="#4ade80" font-size="8">ΔV = low</text>
-                    </svg>
-                </div>
-                <div>
-                    <ul class="bullet-list">
-                        <li>A lightning strike pushes <strong>100,000+ volts</strong> into the ground at the strike point</li>
-                        <li>Voltage fans outward — the ground surface has a <em>voltage gradient</em> away from the strike</li>
-                        <li><strong>Step potential:</strong> the voltage difference between your two feet — the farther apart, the larger the difference</li>
-                        <li>Feet together → smaller step → less current through your legs</li>
-                        <li><strong>Worst place:</strong> open field or hilltop — you become the tallest object, attracting the leader</li>
-                        <li>In a car: the metal body acts as a Faraday cage — current travels the shell, not through you</li>
-                    </ul>
-                    <div class="callout" style="margin-top:8px;">
-                        If caught in the open: crouch low, feet together, don't lie flat. Get to a substantial building or a hard-topped vehicle.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ── SLIDE 12: What's Next ── -->
-    <div class="slide">
-        <div class="slide-content" style="text-align:center;">
-            <div class="slide-eyebrow">Coming Up</div>
-            <h2>Next: The Digital Multimeter</h2>
-            <ul class="bullet-list" style="max-width:760px;margin:20px auto;text-align:left;">
-                <li>The <strong>DMM</strong> (digital multimeter) measures voltage, current, and resistance directly</li>
-                <li>Ohm's Law becomes real: <em>build a circuit → predict the current → measure it → compare</em></li>
-                <li><strong>Try it yourself:</strong> measure your own skin resistance — dry vs. wet hands</li>
-                <li>Then use I = V / R to predict what current would flow at 120V — and check it against the thresholds we discussed today</li>
-                <li>Breadboards, LEDs, resistors — the tools for your first circuits lab</li>
-            </ul>
-            <div class="callout" style="max-width:760px;margin:0 auto;">
-                <strong>The big idea:</strong> Every electrical decision — which resistor to pick, whether a wire is safe,
-                why a fuse blows — comes back to V = IR. You now have the mental model. Next class, you get the tools.
-            </div>
-        </div>
-    </div>
-
-</div><!-- /presentation -->
-
+<!-- ── Standard nav pill ── -->
 <nav class="nav">
     <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
     <span class="slide-counter" id="counter">1 / 12</span>
@@ -827,22 +611,313 @@
 </nav>
 
 <script>
-    const slides = document.querySelectorAll('.slide');
-    let current = 0;
+    /* ── Navigation ── */
+    let currentSlide = 0;
+    let currentAnimFrame = null;
+    let activeBodyPath = 'hand-hand';
+    let currentWave = 'dc';
+
+    const slideEls = document.querySelectorAll('.slide');
+
+    function showSlide(index) {
+        slideEls.forEach(s => s.classList.remove('active'));
+        slideEls[index].classList.add('active');
+        document.getElementById('counter').textContent = `${index + 1} / ${slideEls.length}`;
+        document.getElementById('prevBtn').disabled = index === 0;
+        document.getElementById('nextBtn').disabled = index === slideEls.length - 1;
+
+        // Stop body path animation when leaving that slide
+        if (index !== 8) cancelAnimationFrame(currentAnimFrame);
+
+        if (index === 2) setTimeout(updateWaterSim, 50);
+        if (index === 4) setTimeout(drawScope, 50);
+        if (index === 8) setTimeout(() => setBodyPath('hand-hand'), 50);
+        if (index === 9) setTimeout(drawLightningSim, 50);
+    }
 
     function changeSlide(dir) {
-        slides[current].classList.remove('active');
-        current = Math.max(0, Math.min(slides.length - 1, current + dir));
-        slides[current].classList.add('active');
-        document.getElementById('counter').textContent = `${current + 1} / ${slides.length}`;
-        document.getElementById('prevBtn').disabled = current === 0;
-        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+        currentSlide = Math.max(0, Math.min(currentSlide + dir, slideEls.length - 1));
+        showSlide(currentSlide);
     }
 
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
         if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
     });
+
+    /* ── Water Simulation (Slide 3) ── */
+    function updateWaterSim() {
+        const height = document.getElementById('towerHeight').value;
+        const pipe   = document.getElementById('pipeWidth').value;
+        const canvas = document.getElementById('waterCanvas');
+        if (!canvas) return;
+        document.getElementById('towerHeightVal').textContent = `${height} ft`;
+        document.getElementById('pipeWidthVal').textContent   = pipe > 16 ? 'Wide' : pipe > 8 ? 'Medium' : 'Narrow';
+        const flow = ((height / 100) * (pipe / 24)).toFixed(2);
+        document.getElementById('simFlowRate').textContent = `${flow} A`;
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#1e293b'; ctx.fillRect(40, 20, 80, 100);
+        ctx.fillStyle = '#38bdf8';
+        const wl = (height / 100) * 80;
+        ctx.fillRect(42, 120 - wl, 76, wl);
+        ctx.fillStyle = '#334155'; ctx.fillRect(120, 90, 200, parseInt(pipe));
+        ctx.fillStyle = '#06b6d4'; ctx.fillRect(120, 91, 200, parseInt(pipe) - 2);
+    }
+
+    /* ── Oscilloscope (Slide 5) ── */
+    function setWaveform(type) {
+        currentWave = type;
+        const info = document.getElementById('waveInfo');
+        if (type === 'dc') {
+            info.innerHTML = `<h3>Direct Current (DC)</h3><p style="color:var(--text-muted);margin-top:8px;">Electrons flow continuously in one single direction. Voltage remains constant over time.</p><ul class="feature-list" style="margin-top:12px;"><li><strong>Sources:</strong> Batteries, USB ports, solar panels</li><li><strong>Used by:</strong> Microcontrollers, LEDs, computers</li></ul>`;
+        } else {
+            info.innerHTML = `<h3>Alternating Current (AC)</h3><p style="color:var(--text-muted);margin-top:8px;">Electrons periodically reverse direction (60 Hz in US). Voltage oscillates smoothly as a sine wave.</p><ul class="feature-list" style="margin-top:12px;"><li><strong>US outlets:</strong> 120 V RMS, 60 Hz</li><li><strong>Peak voltage:</strong> ~170 V (120 × √2)</li></ul>`;
+        }
+        drawScope();
+    }
+
+    function drawScope() {
+        const canvas = document.getElementById('scopeCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = '#1e293b'; ctx.beginPath();
+        for (let x = 0; x < canvas.width; x += 40) { ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); }
+        for (let y = 0; y < canvas.height; y += 30) { ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); }
+        ctx.stroke();
+        ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 3; ctx.beginPath();
+        if (currentWave === 'dc') {
+            ctx.moveTo(0, 60); ctx.lineTo(canvas.width, 60);
+        } else {
+            for (let x = 0; x < canvas.width; x++) {
+                const y = 90 + Math.sin(x * 0.05) * 50;
+                x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+            }
+        }
+        ctx.stroke();
+    }
+
+    /* ── Shock Calculator (Slide 8) ── */
+    function calcShock() {
+        const res = parseInt(document.getElementById('skinRes').value);
+        document.getElementById('skinResVal').textContent = res === 1000 ? '1,000 Ω (Wet Hands)' : `${res.toLocaleString()} Ω`;
+        const current = (120 / res) * 1000;
+        const valEl = document.getElementById('shockCurrentVal');
+        const effEl = document.getElementById('shockEffect');
+        valEl.textContent = `${current.toFixed(1)} mA`;
+        if (current < 5) {
+            valEl.style.color = 'var(--success-color)'; effEl.textContent = 'Barely perceptible tingle';
+        } else if (current < 20) {
+            valEl.style.color = '#eab308'; effEl.textContent = 'Painful shock; muscle contraction';
+        } else {
+            valEl.style.color = 'var(--danger-color)'; effEl.textContent = 'HAZARD: Muscle lock / fibrillation risk!';
+        }
+    }
+
+    /* ── Body Path Diagram (Slide 9) ── */
+    function setBodyPath(pathType) {
+        activeBodyPath = pathType;
+        const handFootBtn = document.getElementById('pathHandFootBtn');
+        const handHandBtn = document.getElementById('pathHandHandBtn');
+        const card = document.getElementById('pathDetailsCard');
+        const title = document.getElementById('pathTitle');
+        const badge = document.getElementById('pathHazardBadge');
+        const desc  = document.getElementById('pathDescription');
+        if (pathType === 'hand-hand') {
+            handHandBtn.className = 'btn btn-primary';
+            handFootBtn.className = 'btn';
+            card.style.borderColor = 'var(--danger-color)';
+            title.style.color = 'var(--danger-color)';
+            title.textContent = '⚠️ Hand-to-Hand Path';
+            badge.style.background = 'rgba(239,68,68,0.2)';
+            badge.style.color = 'var(--danger-color)';
+            badge.textContent = 'CRITICAL RISK';
+            desc.innerHTML = 'Current enters one arm, travels straight across the chest cavity, and exits through the other arm. Because the current vector passes directly through the heart muscle, it poses the highest risk of triggering <strong>ventricular fibrillation</strong>.';
+        } else {
+            handFootBtn.className = 'btn btn-primary';
+            handHandBtn.className = 'btn';
+            card.style.borderColor = 'var(--primary-accent)';
+            title.style.color = 'var(--primary-accent)';
+            title.textContent = '⚡ Hand-to-Foot Path';
+            badge.style.background = 'rgba(56,189,248,0.2)';
+            badge.style.color = 'var(--primary-accent)';
+            badge.textContent = 'MODERATE RISK';
+            desc.innerHTML = 'Current enters one arm and exits down through the leg to ground. While still hazardous, a smaller fraction of the overall current passes through the cardiac tissue compared to a direct hand-to-hand chest path.';
+        }
+        cancelAnimationFrame(currentAnimFrame);
+        drawBodyPathSim();
+    }
+
+    function drawBodyPathSim() {
+        const canvas = document.getElementById('bodyPathCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#090d16';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const centerX = canvas.width / 2;
+        const headY = 42, neckY = 62, shoulderY = 82, chestY = 115, waistY = 155, hipY = 175, footY = 240;
+        const leftHandX = centerX - 110, rightHandX = centerX + 110;
+        const leftFootX = centerX - 35, rightFootX = centerX + 35;
+        const isHeartHazard = activeBodyPath === 'hand-hand';
+
+        // Mannequin
+        ctx.fillStyle = '#1e293b'; ctx.strokeStyle = '#334155'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.ellipse(centerX, headY, 14, 18, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.beginPath(); ctx.rect(centerX - 5, neckY - 2, 10, 12); ctx.fill(); ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(centerX - 35, shoulderY);
+        ctx.bezierCurveTo(centerX - 30, chestY, centerX - 25, waistY, centerX - 22, hipY);
+        ctx.lineTo(centerX + 22, hipY);
+        ctx.bezierCurveTo(centerX + 25, waistY, centerX + 30, chestY, centerX + 35, shoulderY);
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+
+        ctx.lineCap = 'round';
+        [[centerX - 35, centerX - 75, leftHandX], [centerX + 35, centerX + 75, rightHandX]].forEach(([sx, cx2, ex]) => {
+            ctx.beginPath(); ctx.moveTo(sx, shoulderY); ctx.quadraticCurveTo(cx2, shoulderY + 10, ex, shoulderY + 40);
+            ctx.lineWidth = 12; ctx.strokeStyle = '#1e293b'; ctx.stroke();
+            ctx.lineWidth = 1.5; ctx.strokeStyle = '#334155'; ctx.stroke();
+        });
+        [[centerX - 15, leftFootX], [centerX + 15, rightFootX]].forEach(([sx, ex]) => {
+            ctx.beginPath(); ctx.moveTo(sx, hipY); ctx.lineTo(ex, footY);
+            ctx.lineWidth = 14; ctx.strokeStyle = '#1e293b'; ctx.stroke();
+            ctx.lineWidth = 1.5; ctx.strokeStyle = '#334155'; ctx.stroke();
+        });
+
+        // Heart
+        const heartX = centerX - 10, heartY_pos = chestY - 12;
+        const time = Date.now() * 0.005;
+        const heartScale = isHeartHazard ? 1 + Math.sin(time * 3) * 0.15 : 1;
+        ctx.save(); ctx.translate(heartX, heartY_pos); ctx.scale(heartScale, heartScale);
+        if (isHeartHazard) {
+            const aura = ctx.createRadialGradient(0, 0, 2, 0, 0, 28);
+            aura.addColorStop(0, 'rgba(239,68,68,0.8)'); aura.addColorStop(1, 'rgba(239,68,68,0)');
+            ctx.fillStyle = aura; ctx.beginPath(); ctx.arc(0, 0, 28, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.fillStyle = isHeartHazard ? '#ef4444' : '#22c55e';
+        ctx.beginPath();
+        ctx.moveTo(0, 6); ctx.bezierCurveTo(-10, -6, -12, -14, 0, -18); ctx.bezierCurveTo(12, -14, 10, -6, 0, 6);
+        ctx.fill(); ctx.restore();
+
+        // Current flow path
+        const pathColor = isHeartHazard ? '#ef4444' : '#38bdf8';
+        const dashOffset = -(Date.now() / 20) % 16;
+        ctx.strokeStyle = isHeartHazard ? 'rgba(239,68,68,0.4)' : 'rgba(56,189,248,0.4)';
+        ctx.lineWidth = 8; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        ctx.beginPath();
+        if (isHeartHazard) {
+            ctx.moveTo(leftHandX, shoulderY + 40);
+            ctx.quadraticCurveTo(centerX - 60, shoulderY + 5, centerX - 30, shoulderY + 5);
+            ctx.lineTo(heartX, heartY_pos);
+            ctx.lineTo(centerX + 30, shoulderY + 5);
+            ctx.quadraticCurveTo(centerX + 60, shoulderY + 5, rightHandX, shoulderY + 40);
+        } else {
+            const flankX = centerX - 26;
+            ctx.moveTo(leftHandX, shoulderY + 40);
+            ctx.quadraticCurveTo(centerX - 65, shoulderY + 5, flankX, shoulderY + 15);
+            ctx.lineTo(flankX, waistY); ctx.lineTo(leftFootX, footY);
+        }
+        ctx.stroke();
+        ctx.strokeStyle = pathColor; ctx.lineWidth = 3;
+        ctx.setLineDash([8, 8]); ctx.lineDashOffset = dashOffset; ctx.stroke(); ctx.setLineDash([]);
+
+        // Terminal dots
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath(); ctx.arc(leftHandX, shoulderY + 40, 7, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#ffffff'; ctx.font = 'bold 10px sans-serif';
+        ctx.fillText('IN (Live)', leftHandX - 22, shoulderY + 58);
+        ctx.fillStyle = isHeartHazard ? '#ef4444' : '#22c55e';
+        const exitX = isHeartHazard ? rightHandX : leftFootX;
+        const exitY = isHeartHazard ? shoulderY + 40 : footY;
+        ctx.beginPath(); ctx.arc(exitX, exitY, 7, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#ffffff'; ctx.fillText('OUT (Ground)', exitX - 15, exitY + 18);
+
+        currentAnimFrame = requestAnimationFrame(drawBodyPathSim);
+    }
+
+    /* ── Lightning / Step Potential (Slide 10) ── */
+    function drawLightningSim() {
+        const canvas = document.getElementById('lightningCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const stepFt = parseFloat(document.getElementById('stepWidth').value);
+        document.getElementById('stepWidthVal').textContent =
+            `${stepFt.toFixed(1)} ft (${stepFt < 1.0 ? 'Feet Together' : stepFt < 2.5 ? 'Normal Step' : 'Wide Stride'})`;
+
+        ctx.fillStyle = '#090d16'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        const strikeX = 60, groundY = 170;
+        ctx.fillStyle = '#1e293b'; ctx.fillRect(0, groundY, canvas.width, 50);
+
+        const ringRadii = [30, 70, 120, 180, 250];
+        const ringVoltages = [10000, 7500, 5000, 2500, 1000];
+        ringRadii.forEach((r, i) => {
+            ctx.beginPath(); ctx.arc(strikeX, groundY, r, Math.PI, 0, false);
+            ctx.strokeStyle = `rgba(239,68,68,${0.8 - i * 0.15})`; ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]); ctx.stroke(); ctx.setLineDash([]);
+            ctx.fillStyle = '#94a3b8'; ctx.font = '10px sans-serif';
+            if (strikeX + r < canvas.width) ctx.fillText(`${ringVoltages[i]}V`, strikeX + r - 15, groundY + 15);
+        });
+
+        ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(strikeX - 20, 0); ctx.lineTo(strikeX + 10, 50);
+        ctx.lineTo(strikeX - 5, 90); ctx.lineTo(strikeX, groundY); ctx.stroke();
+
+        const foot1X = 220, foot2X = foot1X + stepFt * 25;
+        const dist1 = foot1X - strikeX, dist2 = foot2X - strikeX;
+        const deltaV = Math.round(Math.abs(150000 / dist1 - 150000 / dist2));
+
+        const diffEl = document.getElementById('potentialDiffVal');
+        const statusEl = document.getElementById('stepSafetyStatus');
+        diffEl.textContent = `${deltaV.toLocaleString()} V`;
+        if (deltaV < 300) {
+            diffEl.style.color = 'var(--success-color)';
+            statusEl.style.color = 'var(--success-color)';
+            statusEl.innerHTML = '✅ SAFE: Feet at equal potential. Minimal current path!';
+        } else if (deltaV < 1500) {
+            diffEl.style.color = '#eab308'; statusEl.style.color = '#eab308';
+            statusEl.innerHTML = '⚠️ WARNING: Painful shock potential across legs.';
+        } else {
+            diffEl.style.color = 'var(--danger-color)'; statusEl.style.color = 'var(--danger-color)';
+            statusEl.innerHTML = '⚠️ EXTREME HAZARD: Current flows up one leg and down the other!';
+        }
+
+        const bodyColor = deltaV > 1500 ? '#ef4444' : deltaV > 300 ? '#eab308' : '#22c55e';
+        ctx.fillStyle = bodyColor;
+        ctx.beginPath(); ctx.arc(foot1X, groundY, 5, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(foot2X, groundY, 5, 0, Math.PI * 2); ctx.fill();
+        const hipX = (foot1X + foot2X) / 2, hipY_pos = groundY - 45;
+        ctx.strokeStyle = bodyColor; ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(foot1X, groundY); ctx.lineTo(hipX, hipY_pos); ctx.lineTo(foot2X, groundY);
+        ctx.moveTo(hipX, hipY_pos); ctx.lineTo(hipX, hipY_pos - 25);
+        ctx.stroke();
+        ctx.beginPath(); ctx.arc(hipX, hipY_pos - 32, 7, 0, Math.PI * 2); ctx.fill();
+        if (deltaV > 500) {
+            ctx.strokeStyle = 'rgba(239,68,68,0.6)'; ctx.lineWidth = 2;
+            ctx.setLineDash([2, 2]);
+            ctx.beginPath(); ctx.moveTo(foot1X, groundY - 5); ctx.lineTo(foot2X, groundY - 5); ctx.stroke();
+            ctx.setLineDash([]);
+        }
+    }
+
+    /* ── Quiz (Slide 11) ── */
+    function checkQuiz(el, isCorrect) {
+        document.querySelectorAll('.quiz-opt').forEach(o => o.classList.remove('correct', 'incorrect'));
+        const feedback = document.getElementById('quizFeedback');
+        if (isCorrect) {
+            el.classList.add('correct');
+            feedback.textContent = 'Correct! Wet skin lowers electrical resistance by up to 100×, allowing dangerous current to flow.';
+            feedback.style.color = 'var(--success-color)';
+        } else {
+            el.classList.add('incorrect');
+            feedback.textContent = 'Incorrect. Try again!';
+            feedback.style.color = 'var(--danger-color)';
+        }
+    }
+
+    // Init
+    showSlide(0);
 </script>
 </body>
 </html>
