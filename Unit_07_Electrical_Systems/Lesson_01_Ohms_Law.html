@@ -5,244 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="../favicon.svg">
     <title>Lesson 7.1: Ohm's Law | Unit 7 — Electrical Systems</title>
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0B0F19',
+                            card: '#111827',
+                            border: '#1F2937',
+                            voltage: '#EC4899',
+                            current: '#06B6D4',
+                            resistance: '#F59E0B',
+                            accent: '#6366F1'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Exo 2', sans-serif;
-            background: linear-gradient(135deg, #0a0800 0%, #130f00 40%, #1c1700 100%);
-            color: #e2e8f0;
+            background-color: #060913;
+            color: #F3F4F6;
+            font-family: 'Inter', sans-serif;
             height: 100vh;
             overflow: hidden;
         }
 
-        .presentation { width: 100%; height: 100vh; position: relative; }
-
-        .slide {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: none;
-            padding: 60px;
-            opacity: 0;
-            transition: opacity 0.4s ease-in-out;
-        }
-
-        .slide.active {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            opacity: 1;
-        }
-
-        .slide-content { max-width: 1200px; width: 100%; }
-
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3.2em;
-            font-weight: 900;
-            margin-bottom: 20px;
-            text-align: center;
-            color: #f59e0b;
-            text-shadow: 0 0 30px rgba(245,158,11,0.4);
-            line-height: 1.15;
-        }
-
-        h2 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.2em;
-            font-weight: 700;
-            margin-bottom: 30px;
-            color: #fcd34d;
-            text-align: center;
-        }
-
-        .lesson-tag {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.95em;
-            color: #f59e0b;
-            text-align: center;
-            margin-bottom: 20px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .subtitle {
-            font-size: 1.5em;
-            text-align: center;
-            color: #94a3b8;
-            font-weight: 300;
-            margin-top: 10px;
-            line-height: 1.5;
-        }
-
-        /* Bullet lists */
-        .bullet-list { list-style: none; padding: 0; margin: 20px 0; }
-
-        .bullet-list li {
-            font-size: 1.4em;
-            padding: 10px 0 10px 46px;
-            position: relative;
-            line-height: 1.5;
-            color: #cbd5e1;
-        }
-
-        .bullet-list li::before {
-            content: "▸";
-            position: absolute;
-            left: 0;
-            color: #f59e0b;
-            font-size: 1.1em;
-        }
-
-        .bullet-list li strong { color: #e2e8f0; }
-        .bullet-list li em { color: #fcd34d; font-style: normal; font-weight: 600; }
-
-        /* Callout */
-        .callout {
-            background: rgba(245,158,11,0.08);
-            border-left: 5px solid #f59e0b;
-            border-radius: 0 10px 10px 0;
-            padding: 22px 28px;
-            margin: 20px 0;
-            font-size: 1.4em;
-            font-style: italic;
-            color: #fcd34d;
-            line-height: 1.5;
-        }
-
-        .callout strong { color: #e2e8f0; font-style: normal; }
-
-        /* Step list */
-        .step-list { list-style: none; padding: 0; margin: 20px 0; counter-reset: step-counter; }
-
-        .step-list li {
-            font-size: 1.25em;
-            padding: 13px 14px 13px 62px;
-            position: relative;
-            line-height: 1.5;
-            color: #cbd5e1;
-            margin-bottom: 8px;
-            background: rgba(245,158,11,0.04);
-            border-radius: 8px;
-        }
-
-        .step-list li::before {
-            counter-increment: step-counter;
-            content: counter(step-counter);
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 32px;
-            height: 32px;
-            background: rgba(245,158,11,0.18);
-            border: 2px solid #f59e0b;
-            border-radius: 50%;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.75em;
-            font-weight: 700;
-            color: #f59e0b;
-            text-align: center;
-            line-height: 28px;
-        }
-
-        .step-list li strong { color: #fcd34d; }
-
-        code {
-            font-family: 'JetBrains Mono', monospace;
-            background: rgba(245,158,11,0.12);
-            color: #fcd34d;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.9em;
-        }
-
-        /* Two-column */
-        .two-col {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 28px;
-            margin: 20px 0;
-        }
-
-        /* Three-column */
-        .three-col {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 22px;
-            margin: 20px 0;
-        }
-
-        .col-box {
-            background: rgba(245,158,11,0.06);
-            border: 1px solid rgba(245,158,11,0.2);
-            border-radius: 12px;
-            padding: 22px;
-        }
-
-        .col-box h4 {
-            font-size: 1.15em;
-            font-weight: 700;
-            color: #f59e0b;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .col-box ul { list-style: none; padding: 0; }
-
-        .col-box ul li {
-            font-size: 1.05em;
-            color: #94a3b8;
-            padding: 6px 0 6px 26px;
-            position: relative;
-            line-height: 1.5;
-        }
-
-        .col-box ul li::before { content: "▸"; position: absolute; left: 0; color: #f59e0b; }
-
-        .col-box p { font-size: 1.05em; color: #94a3b8; line-height: 1.6; }
-
-        /* Deliverable box */
-        .deliverable-box {
-            background: rgba(245,158,11,0.08);
-            border: 2px solid rgba(245,158,11,0.4);
-            border-radius: 14px;
-            padding: 28px 32px;
-            margin: 24px 0;
-        }
-
-        .deliverable-box h4 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.1em;
-            color: #f59e0b;
-            margin-bottom: 16px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .deliverable-box ul { list-style: none; padding: 0; }
-
-        .deliverable-box ul li {
-            font-size: 1.25em;
-            color: #cbd5e1;
-            padding: 8px 0 8px 36px;
-            position: relative;
-            line-height: 1.5;
-        }
-
-        .deliverable-box ul li::before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #f59e0b;
-            font-weight: 700;
-        }
-
-        /* Navigation */
+        /* ── Original nav chrome ── */
         .nav {
             position: fixed;
             bottom: 30px;
@@ -251,12 +51,12 @@
             display: flex;
             align-items: center;
             gap: 20px;
-            background: rgba(10,8,0,0.85);
+            background: rgba(6,9,19,0.92);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(245,158,11,0.2);
             border-radius: 50px;
             padding: 12px 24px;
-            z-index: 100;
+            z-index: 200;
         }
 
         .nav button {
@@ -278,7 +78,7 @@
         .slide-counter {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.9em;
-            color: #475569;
+            color: #94a3b8;
             min-width: 60px;
             text-align: center;
         }
@@ -295,293 +95,1018 @@
             border: 1px solid rgba(245,158,11,0.35);
             padding: 5px 12px;
             border-radius: 20px;
-            z-index: 100;
+            z-index: 200;
             transition: background 0.2s;
         }
         .back-link:hover { background: rgba(245,158,11,0.3); }
 
-        /* Ohm's Law Triangle */
-        .ohm-triangle {
-            display: inline-block;
-            border: 3px solid #f59e0b;
-            border-radius: 10px;
-            overflow: hidden;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2em;
-            font-weight: 900;
+        /* ── Glassmorphism ── */
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .ohm-triangle-top {
-            background: rgba(245,158,11,0.15);
-            padding: 22px 80px;
-            text-align: center;
-            border-bottom: 3px solid #f59e0b;
-            color: #fcd34d;
+        .glass-card {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .ohm-triangle-bottom {
-            display: flex;
-        }
+        /* ── Glow effects ── */
+        .glow-voltage   { box-shadow: 0 0 20px rgba(236, 72, 153, 0.25); }
+        .glow-current   { box-shadow: 0 0 20px rgba(6, 182, 212, 0.25); }
+        .glow-resistance{ box-shadow: 0 0 20px rgba(245, 158, 11, 0.25); }
+        .glow-accent    { box-shadow: 0 0 25px rgba(99, 102, 241, 0.3); }
 
-        .ohm-triangle-bottom-left {
-            padding: 22px 50px;
-            border-right: 3px solid #f59e0b;
-            color: #fcd34d;
-            text-align: center;
-            flex: 1;
-        }
+        /* ── Custom scrollbar ── */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0B0F19; }
+        ::-webkit-scrollbar-thumb { background: #1F2937; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #374151; }
 
-        .ohm-triangle-bottom-right {
-            padding: 22px 50px;
-            color: #fcd34d;
-            text-align: center;
-            flex: 1;
-        }
+        /* ── Triangle interactive ── */
+        .triangle-segment { transition: all 0.2s ease-in-out; cursor: pointer; }
+        .triangle-segment:hover { filter: brightness(1.2); transform: scale(1.02); }
 
-        .triangle-cover-label {
-            font-size: 0.75em;
-            font-family: 'JetBrains Mono', monospace;
-            color: #94a3b8;
-            margin-top: 6px;
-        }
+        .no-select { user-select: none; -webkit-user-select: none; }
+
+        /* ── Slide content transition ── */
+        #slideContainer .slide-body { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
-<body>
+<body class="no-select">
 
 <a href="index.html" class="back-link">← Unit 7</a>
 
-<div class="presentation">
-
-    <!-- ── SLIDE 1: Title ── -->
-    <div class="slide active">
-        <div class="slide-content" style="text-align:center;">
-            <div class="lesson-tag">Unit 7 · Electrical Systems · All Tracks</div>
-            <h1>L7.1 Ohm's Law</h1>
-            <p class="subtitle">V = I × R · The Foundation of Circuit Analysis</p>
-            <div style="margin-top:40px; display:flex; justify-content:center; gap:30px; flex-wrap:wrap;">
-                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">Voltage</div>
-                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">Current</div>
-                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:8px 20px; font-size:1em; color:#f59e0b;">Resistance</div>
-            </div>
-        </div>
+<!-- Full-viewport wrapper, padded bottom for nav pill -->
+<div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:16px 16px 96px 16px;">
+    <div id="slideContainer" class="w-full h-full max-w-6xl flex flex-col glass-panel rounded-2xl border border-gray-800 p-6 sm:p-8 relative shadow-2xl overflow-y-auto">
+        <!-- Slides rendered here by JS -->
     </div>
+</div>
 
-    <!-- ── SLIDE 2: Learning Objectives ── -->
-    <div class="slide">
-        <div class="slide-content" style="text-align:center;">
-            <h2>Learning Objectives</h2>
-            <p class="subtitle">By the end of this lesson, you will be able to:</p>
-            <div style="display:flex; flex-direction:column; gap:32px; margin-top:40px; max-width:800px; text-align:left; margin-left:auto; margin-right:auto;">
-                <div style="display:flex; gap:28px; align-items:baseline;">
-                    <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#f59e0b; flex-shrink:0; width:36px; line-height:1;">1</span>
-                    <p style="margin:0; font-size:1.5rem; color:#e2e8f0; line-height:1.4;"><strong style="color:#f59e0b;">Apply</strong> V = I × R to solve for the unknown variable in any simple circuit</p>
-                </div>
-                <div style="display:flex; gap:28px; align-items:baseline;">
-                    <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#f59e0b; flex-shrink:0; width:36px; line-height:1;">2</span>
-                    <p style="margin:0; font-size:1.5rem; color:#e2e8f0; line-height:1.4;"><strong style="color:#f59e0b;">Convert</strong> between standard units (V, A, Ω) and common prefixes (mA, kΩ)</p>
-                </div>
-                <div style="display:flex; gap:28px; align-items:baseline;">
-                    <span style="font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:900; color:#f59e0b; flex-shrink:0; width:36px; line-height:1;">3</span>
-                    <p style="margin:0; font-size:1.5rem; color:#e2e8f0; line-height:1.4;"><strong style="color:#f59e0b;">Use</strong> the Ohm's Law triangle to set up the formula for voltage, current, or resistance</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ── SLIDE 3: The Relationship ── -->
-    <div class="slide">
-        <div class="slide-content">
-            <h2>V = I × R</h2>
-            <div style="text-align:center; margin: 16px 0 24px;">
-                <span style="font-size:3em; color:#fcd34d; font-family:'Orbitron',sans-serif; font-weight:900; text-shadow: 0 0 20px rgba(252,211,77,0.4);">V = I × R</span>
-            </div>
-            <div class="three-col">
-                <div class="col-box">
-                    <h4>V — Voltage</h4>
-                    <p>The electrical "pressure" that pushes current through a circuit. Measured in Volts (V). Think of it as water pressure in a pipe.</p>
-                </div>
-                <div class="col-box">
-                    <h4>I — Current</h4>
-                    <p>The flow of electrical charge. Measured in Amperes (A) or milliamperes (mA). Think of it as how much water flows per second.</p>
-                </div>
-                <div class="col-box">
-                    <h4>R — Resistance</h4>
-                    <p>Opposition to current flow. Measured in Ohms (Ω). Think of it as the size of the pipe — smaller pipe = more resistance = less flow.</p>
-                </div>
-            </div>
-            <div class="callout">
-                Georg Ohm discovered this relationship in 1827. It's one of the most useful equations in all of electronics — if you know any two values, you can find the third.
-            </div>
-        </div>
-    </div>
-
-    <!-- ── SLIDE 3: The Triangle ── -->
-    <div class="slide">
-        <div class="slide-content">
-            <h2>The Ohm's Law Triangle</h2>
-            <div style="text-align:center; margin: 16px 0 8px;">
-                <div class="ohm-triangle">
-                    <div class="ohm-triangle-top">V</div>
-                    <div class="ohm-triangle-bottom">
-                        <div class="ohm-triangle-bottom-left">I</div>
-                        <div class="ohm-triangle-bottom-right">R</div>
-                    </div>
-                </div>
-                <p style="margin-top:12px; font-size:1.1em; color:#94a3b8; font-style:italic;">Cover the unknown. What's left is how to find it.</p>
-            </div>
-            <div class="three-col" style="margin-top:20px;">
-                <div class="col-box" style="text-align:center;">
-                    <h4>Cover V</h4>
-                    <p style="font-family:'Orbitron',sans-serif; font-size:1.3em; color:#fcd34d; margin:10px 0;">V = I × R</p>
-                    <div class="triangle-cover-label">Multiply I and R</div>
-                </div>
-                <div class="col-box" style="text-align:center;">
-                    <h4>Cover I</h4>
-                    <p style="font-family:'Orbitron',sans-serif; font-size:1.3em; color:#fcd34d; margin:10px 0;">I = V / R</p>
-                    <div class="triangle-cover-label">Divide V by R</div>
-                </div>
-                <div class="col-box" style="text-align:center;">
-                    <h4>Cover R</h4>
-                    <p style="font-family:'Orbitron',sans-serif; font-size:1.3em; color:#fcd34d; margin:10px 0;">R = V / I</p>
-                    <div class="triangle-cover-label">Divide V by I</div>
-                </div>
-            </div>
-            <div class="callout">
-                This triangle only works when the units are correct: Voltage in Volts, Current in Amperes (not milliamperes), Resistance in Ohms.
-            </div>
-        </div>
-    </div>
-
-    <!-- ── SLIDE 4: Units and Prefixes ── -->
-    <div class="slide">
-        <div class="slide-content">
-            <h2>Units and Prefixes</h2>
-            <ul class="bullet-list">
-                <li><strong>Voltage:</strong> 1 V = 1 Volt. Common values: AA battery = 1.5V, 9V battery = 9V, Arduino pins = 5V or 3.3V</li>
-                <li><strong>Current:</strong> 1 A = 1 Ampere. Use mA (milliamperes) for small circuits: 1 A = 1000 mA. LED current ≈ 20 mA = 0.020 A</li>
-                <li><strong>Resistance:</strong> 1 Ω = 1 Ohm. Common: 330 Ω, 1 kΩ (= 1,000 Ω), 10 kΩ (= 10,000 Ω)</li>
-                <li><strong>Convert before calculating:</strong> If I is in mA, divide by 1000 before plugging into V = I × R</li>
-            </ul>
-            <div class="callout">
-                Unit error is the #1 math mistake in electrical circuits. Always write units next to every number. If your calculated current is 0.020 A, also write "= 20 mA" to catch errors.
-            </div>
-        </div>
-    </div>
-
-    <!-- ── SLIDE 5: The Proportional Relationship ── -->
-    <div class="slide">
-        <div class="slide-content">
-            <h2>The Proportional Relationship</h2>
-            <div class="two-col">
-                <div class="col-box">
-                    <h4>More R → Less I (at fixed V)</h4>
-                    <ul>
-                        <li>If you double the resistance while voltage stays the same, current is cut in half.</li>
-                        <li>R × 2 → I ÷ 2</li>
-                        <li>Example: V = 9V, R = 100Ω → I = 90 mA. Now R = 200Ω → I = 45 mA.</li>
-                        <li>Analogy: narrower pipe = less flow at the same pressure.</li>
-                    </ul>
-                </div>
-                <div class="col-box">
-                    <h4>More V → More I (at fixed R)</h4>
-                    <ul>
-                        <li>If you double the voltage while resistance stays the same, current doubles.</li>
-                        <li>V × 2 → I × 2</li>
-                        <li>Example: R = 100Ω, V = 5V → I = 50 mA. Now V = 10V → I = 100 mA.</li>
-                        <li>Analogy: more pressure = more flow through the same pipe.</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="callout">
-                These proportional relationships let you predict what will happen before you build. Always ask: "If I change X, what happens to Y?"
-            </div>
-        </div>
-    </div>
-
-    <!-- ── SLIDE 6: Worked Example 1 ── -->
-    <div class="slide">
-        <div class="slide-content">
-            <h2>Worked Example 1: Find Current (I)</h2>
-            <ol class="step-list">
-                <li><strong>Known:</strong> V = 12 V, R = 470 Ω</li>
-                <li><strong>Want:</strong> I = ?</li>
-                <li><strong>Formula:</strong> I = V / R</li>
-                <li><strong>Calculate:</strong> I = 12 / 470 = <strong>0.0255 A</strong></li>
-                <li><strong>Convert:</strong> 0.0255 A × 1000 = <strong>25.5 mA</strong></li>
-                <li><strong>Check units:</strong> Volts / Ohms = Amperes ✓</li>
-                <li><strong>Sanity check:</strong> 25.5 mA is a reasonable current for an LED circuit — not too high, not too low. ✓</li>
-            </ol>
-            <div class="callout">
-                Always do a sanity check. If you calculate 500 A flowing through a 9V circuit, something is wrong (maybe you forgot to convert mA to A). Real currents in small electronics are typically in the mA range.
-            </div>
-        </div>
-    </div>
-
-    <!-- ── SLIDE 7: Worked Example 2 ── -->
-    <div class="slide">
-        <div class="slide-content">
-            <h2>Worked Example 2: Find Resistance (R)</h2>
-            <ol class="step-list">
-                <li><strong>Scenario:</strong> You want an LED to draw exactly 15 mA from a 5V supply. The LED's forward voltage is 2V.</li>
-                <li><strong>Voltage across resistor:</strong> V<sub>R</sub> = V<sub>supply</sub> − V<sub>f</sub> = 5 − 2 = <strong>3 V</strong></li>
-                <li><strong>Known:</strong> V<sub>R</sub> = 3 V, I = 15 mA = 0.015 A</li>
-                <li><strong>Formula:</strong> R = V / I</li>
-                <li><strong>Calculate:</strong> R = 3 / 0.015 = <strong>200 Ω</strong></li>
-                <li><strong>Pick nearest standard value:</strong> 200 Ω is a standard value ✓ (or use 220 Ω for a tiny bit less current)</li>
-                <li><strong>Verify:</strong> I = 3 / 200 = 15 mA ✓</li>
-            </ol>
-        </div>
-    </div>
-
-    <!-- ── SLIDE 8: Lab ── -->
-    <div class="slide">
-        <div class="slide-content">
-            <h2>Lab: Verify Ohm's Law</h2>
-            <div class="deliverable-box">
-                <h4>Procedure</h4>
-                <ul>
-                    <li>Gather 4 different resistors (e.g., 100Ω, 220Ω, 470Ω, 1kΩ), a 9V battery, and your DMM</li>
-                    <li>For each resistor: predict I using I = V / R (use measured V from your battery, not 9V)</li>
-                    <li>Build the circuit: battery → resistor → back to battery (use a breadboard)</li>
-                    <li>Measure actual current with the DMM in series; measure voltage across the resistor</li>
-                    <li>Record predicted I, measured I, and percent error for each resistor</li>
-                </ul>
-            </div>
-            <div class="callout">
-                The measured battery voltage is almost never exactly 9.00V — it depends on charge state. Always use the MEASURED voltage in your calculations, not the nominal value. This is why Step 1 is to measure V first.
-            </div>
-        </div>
-    </div>
-
-</div><!-- /.presentation -->
-
-<!-- Navigation -->
+<!-- Original nav pill -->
 <nav class="nav">
-    <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
-    <span class="slide-counter" id="counter">1 / 8</span>
-    <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+    <button id="prevBtn" onclick="prevSlide()" disabled>← Prev</button>
+    <span class="slide-counter" id="counter">1 / 9</span>
+    <button id="nextBtn" onclick="nextSlide()">Next →</button>
 </nav>
 
 <script>
-    var slides = document.querySelectorAll('.slide');
-    var current = 0;
+    // ─────────────────────────────────────────────
+    // SLIDE DEFINITIONS
+    // ─────────────────────────────────────────────
+    const slides = [
+        {
+            id: 1,
+            title: "Ohm's Law Fundamentals",
+            subtitle: "The Foundation of Circuit Analysis",
+            render: () => `
+                <div class="flex-1 flex flex-col justify-center items-center text-center py-6">
+                    <div class="inline-flex items-center space-x-2 px-3 py-1 bg-indigo-500/10 border border-indigo-500/30 rounded-full text-indigo-400 text-xs font-semibold uppercase tracking-wider mb-6">
+                        <i class="fa-solid fa-atom"></i>
+                        <span>Unit 7 · Lesson 7.1 · All Tracks</span>
+                    </div>
+                    <h1 class="text-4xl sm:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-cyan-400 to-amber-400 tracking-tight mb-4">
+                        Ohm's Law (V = I &times; R)
+                    </h1>
+                    <p class="text-lg sm:text-xl text-gray-300 max-w-2xl font-light mb-10 leading-relaxed">
+                        The fundamental relationship governing every electrical circuit: Voltage pushes electrons, Resistance restricts them, and Current flows as a result.
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-3xl">
+                        <div class="p-5 rounded-2xl glass-card border border-pink-500/30 glow-voltage text-left hover:scale-105 transition-transform">
+                            <div class="w-10 h-10 rounded-xl bg-pink-500/20 flex items-center justify-center text-pink-400 font-bold text-xl mb-3">V</div>
+                            <h3 class="font-bold text-pink-400 text-lg">Voltage (V)</h3>
+                            <p class="text-xs text-gray-400 mt-1">Electrical Pressure / Potential Difference — measured in Volts (V).</p>
+                        </div>
+                        <div class="p-5 rounded-2xl glass-card border border-cyan-500/30 glow-current text-left hover:scale-105 transition-transform">
+                            <div class="w-10 h-10 rounded-xl bg-cyan-500/20 flex items-center justify-center text-cyan-400 font-bold text-xl mb-3">I</div>
+                            <h3 class="font-bold text-cyan-400 text-lg">Current (I)</h3>
+                            <p class="text-xs text-gray-400 mt-1">Rate of Charge Flow through a conductor — measured in Amperes (A).</p>
+                        </div>
+                        <div class="p-5 rounded-2xl glass-card border border-amber-500/30 glow-resistance text-left hover:scale-105 transition-transform">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-xl mb-3">R</div>
+                            <h3 class="font-bold text-amber-400 text-lg">Resistance (R)</h3>
+                            <p class="text-xs text-gray-400 mt-1">Opposition to the flow of current — measured in Ohms (&Omega;).</p>
+                        </div>
+                    </div>
+                    <button onclick="nextSlide()" class="mt-8 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/25 transition flex items-center space-x-2">
+                        <span>Begin Exploration</span>
+                        <i class="fa-solid fa-play text-xs"></i>
+                    </button>
+                </div>
+            `
+        },
+        {
+            id: 2,
+            title: "Learning Objectives",
+            subtitle: "What you will master in this lesson",
+            render: () => `
+                <div class="flex-1 flex flex-col justify-center max-w-4xl mx-auto w-full py-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="glass-card p-6 rounded-2xl border border-gray-800 flex flex-col justify-between hover:border-indigo-500/50 transition">
+                            <div>
+                                <div class="w-12 h-12 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-2xl font-bold mb-4">1</div>
+                                <h3 class="text-lg font-bold text-white mb-2">Apply the Formula</h3>
+                                <p class="text-sm text-gray-400 leading-relaxed">Solve for any unknown variable (<span class="text-pink-400 font-semibold">V</span>, <span class="text-cyan-400 font-semibold">I</span>, or <span class="text-amber-400 font-semibold">R</span>) given two known values in a simple DC circuit.</p>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-gray-800/80 font-mono text-xs text-indigo-400">
+                                V = I &times; R &nbsp;|&nbsp; I = V &divide; R &nbsp;|&nbsp; R = V &divide; I
+                            </div>
+                        </div>
+                        <div class="glass-card p-6 rounded-2xl border border-gray-800 flex flex-col justify-between hover:border-cyan-500/50 transition">
+                            <div>
+                                <div class="w-12 h-12 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-2xl font-bold mb-4">2</div>
+                                <h3 class="text-lg font-bold text-white mb-2">Convert Units &amp; Prefixes</h3>
+                                <p class="text-sm text-gray-400 leading-relaxed">Convert between standard engineering prefixes: Milliamps (mA), Amps (A), Kilo-ohms (k&Omega;), and Ohms (&Omega;).</p>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-gray-800/80 font-mono text-xs text-cyan-400">
+                                1 mA = 0.001 A &nbsp;|&nbsp; 1 k&Omega; = 1,000 &Omega;
+                            </div>
+                        </div>
+                        <div class="glass-card p-6 rounded-2xl border border-gray-800 flex flex-col justify-between hover:border-amber-500/50 transition">
+                            <div>
+                                <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl font-bold mb-4">3</div>
+                                <h3 class="text-lg font-bold text-white mb-2">Predict Circuit Behavior</h3>
+                                <p class="text-sm text-gray-400 leading-relaxed">Predict current changes, calculate protective resistor values for LEDs, and verify using a DMM.</p>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-gray-800/80 font-mono text-xs text-amber-400">
+                                Interactive Lab &amp; Sandbox
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-8 p-4 rounded-xl bg-indigo-950/40 border border-indigo-500/30 flex items-center space-x-4">
+                        <i class="fa-solid fa-lightbulb text-indigo-400 text-2xl"></i>
+                        <p class="text-xs sm:text-sm text-gray-300">
+                            <strong class="text-white">Pro-tip:</strong> Ohm's Law applies to individual components and to whole resistive circuits. Mastering this foundation lets you analyze complex robotics and embedded systems.
+                        </p>
+                    </div>
+                </div>
+            `
+        },
+        {
+            id: 3,
+            title: "Understanding the Core Variables",
+            subtitle: "The Hydraulic (Water Pipe) Visual Analogy",
+            render: () => `
+                <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center py-2">
+                    <div class="lg:col-span-5 space-y-4">
+                        <div class="p-4 rounded-xl glass-card border-l-4 border-pink-500">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-pink-400">Voltage (V)</span>
+                                <span class="text-xs font-mono bg-pink-500/20 text-pink-300 px-2 py-0.5 rounded">Volts [V]</span>
+                            </div>
+                            <p class="text-xs text-gray-300 mt-1">Equivalent to <strong>Water Pressure</strong> from a pump or water tower. Pushes charge.</p>
+                        </div>
+                        <div class="p-4 rounded-xl glass-card border-l-4 border-cyan-500">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-cyan-400">Current (I)</span>
+                                <span class="text-xs font-mono bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded">Amperes [A]</span>
+                            </div>
+                            <p class="text-xs text-gray-300 mt-1">Equivalent to <strong>Flow Rate</strong> (gallons per second). Volume of charge moving past a point.</p>
+                        </div>
+                        <div class="p-4 rounded-xl glass-card border-l-4 border-amber-500">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-amber-400">Resistance (R)</span>
+                                <span class="text-xs font-mono bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded">Ohms [&Omega;]</span>
+                            </div>
+                            <p class="text-xs text-gray-300 mt-1">Equivalent to <strong>Pipe Constriction</strong> or narrowness. Opposes flow rate.</p>
+                        </div>
+                        <div class="p-3 bg-gray-900/80 rounded-xl border border-gray-800 text-xs text-gray-400">
+                            <i class="fa-solid fa-circle-info text-cyan-400 mr-1"></i> Adjust sliders on the right to observe how pressure and constriction alter particle velocity!
+                        </div>
+                    </div>
+                    <div class="lg:col-span-7 glass-card p-4 rounded-2xl border border-gray-800 flex flex-col items-center">
+                        <div class="w-full flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold text-gray-400">HYDRAULIC SIMULATION</span>
+                            <span id="analogyCurrentText" class="text-xs font-mono text-cyan-400 bg-cyan-950/80 px-2.5 py-1 rounded border border-cyan-800/50">Current = 1.00 A</span>
+                        </div>
+                        <canvas id="pipeCanvas" width="500" height="200" class="w-full bg-slate-950 rounded-xl border border-gray-800 shadow-inner"></canvas>
+                        <div class="w-full grid grid-cols-2 gap-4 mt-4">
+                            <div>
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span class="text-pink-400 font-medium"><i class="fa-solid fa-gauge-high mr-1"></i> Pressure (Voltage)</span>
+                                    <span id="vSliderVal" class="font-mono text-gray-300">12 V</span>
+                                </div>
+                                <input type="range" id="vPipeSlider" min="1" max="24" value="12" class="w-full accent-pink-500 bg-gray-800 rounded-lg cursor-pointer">
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span class="text-amber-400 font-medium"><i class="fa-solid fa-filter mr-1"></i> Constriction (Resistance)</span>
+                                    <span id="rSliderVal" class="font-mono text-gray-300">12 &Omega;</span>
+                                </div>
+                                <input type="range" id="rPipeSlider" min="2" max="30" value="12" class="w-full accent-amber-500 bg-gray-800 rounded-lg cursor-pointer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            onMount: () => initPipeVisualizer()
+        },
+        {
+            id: 4,
+            title: "The Ohm's Law Triangle",
+            subtitle: "Click any variable to isolate and calculate",
+            render: () => `
+                <div class="flex-1 grid grid-cols-1 md:grid-cols-12 gap-8 items-center py-2">
+                    <div class="md:col-span-6 flex flex-col items-center justify-center">
+                        <div class="relative w-72 h-64">
+                            <svg viewBox="0 0 300 260" class="w-full h-full filter drop-shadow-2xl">
+                                <polygon points="150,20 20,240 280,240" fill="#1E293B" stroke="#334155" stroke-width="4" />
+                                <line x1="75" y1="130" x2="225" y2="130" stroke="#475569" stroke-width="4" />
+                                <line x1="150" y1="130" x2="150" y2="240" stroke="#475569" stroke-width="4" />
+                                <g id="triV" class="triangle-segment" onclick="selectTriangleVar('V')">
+                                    <polygon points="150,25 80,125 220,125" fill="#EC4899" fill-opacity="0.25" stroke="#EC4899" stroke-width="2" />
+                                    <text x="150" y="90" text-anchor="middle" fill="#EC4899" font-size="42" font-weight="800" font-family="Inter">V</text>
+                                </g>
+                                <g id="triI" class="triangle-segment" onclick="selectTriangleVar('I')">
+                                    <polygon points="28,235 76,135 145,135 145,235" fill="#06B6D4" fill-opacity="0.25" stroke="#06B6D4" stroke-width="2" />
+                                    <text x="90" y="200" text-anchor="middle" fill="#06B6D4" font-size="42" font-weight="800" font-family="Inter">I</text>
+                                </g>
+                                <g id="triR" class="triangle-segment" onclick="selectTriangleVar('R')">
+                                    <polygon points="155,135 224,135 272,235 155,235" fill="#F59E0B" fill-opacity="0.25" stroke="#F59E0B" stroke-width="2" />
+                                    <text x="210" y="200" text-anchor="middle" fill="#F59E0B" font-size="42" font-weight="800" font-family="Inter">R</text>
+                                </g>
+                            </svg>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-2">Click <strong>V</strong>, <strong>I</strong>, or <strong>R</strong> to select the variable you want to solve for</p>
+                    </div>
+                    <div class="md:col-span-6 space-y-4">
+                        <div id="triangleDetailCard" class="glass-card p-6 rounded-2xl border border-indigo-500/40">
+                        </div>
+                        <div class="p-4 rounded-xl bg-gray-900/60 border border-gray-800 flex items-center space-x-3">
+                            <i class="fa-solid fa-key text-amber-400 text-xl"></i>
+                            <div class="text-xs text-gray-300">
+                                <strong>Memory Trick:</strong> Cover up the variable you want to solve for — what remains visible is the formula.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            onMount: () => selectTriangleVar('V')
+        },
+        {
+            id: 5,
+            title: "Units & Engineering Prefixes",
+            subtitle: "Converting Metric Prefixes for Electronics",
+            render: () => `
+                <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center py-2">
+                    <div class="lg:col-span-6 space-y-3">
+                        <h3 class="text-sm font-bold text-gray-300 uppercase tracking-wider">Common Electronic Prefixes</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="p-3 rounded-xl glass-card border border-gray-800">
+                                <div class="text-xs text-cyan-400 font-bold">Milliampere (mA)</div>
+                                <div class="text-lg font-mono font-bold text-white mt-1">1 mA = 0.001 A</div>
+                                <div class="text-[11px] text-gray-400 mt-0.5">Divide by 1,000 to get Amps (10<sup>-3</sup>)</div>
+                            </div>
+                            <div class="p-3 rounded-xl glass-card border border-gray-800">
+                                <div class="text-xs text-amber-400 font-bold">Kilo-ohm (k&Omega;)</div>
+                                <div class="text-lg font-mono font-bold text-white mt-1">1 k&Omega; = 1,000 &Omega;</div>
+                                <div class="text-[11px] text-gray-400 mt-0.5">Multiply by 1,000 to get Ohms (10<sup>3</sup>)</div>
+                            </div>
+                            <div class="p-3 rounded-xl glass-card border border-gray-800">
+                                <div class="text-xs text-amber-400 font-bold">Megohm (M&Omega;)</div>
+                                <div class="text-lg font-mono font-bold text-white mt-1">1 M&Omega; = 1,000,000 &Omega;</div>
+                                <div class="text-[11px] text-gray-400 mt-0.5">Multiply by 1,000,000 (10<sup>6</sup>)</div>
+                            </div>
+                            <div class="p-3 rounded-xl glass-card border border-gray-800">
+                                <div class="text-xs text-cyan-400 font-bold">Microampere (&mu;A)</div>
+                                <div class="text-lg font-mono font-bold text-white mt-1">1 &mu;A = 0.000001 A</div>
+                                <div class="text-[11px] text-gray-400 mt-0.5">Divide by 1,000,000 (10<sup>-6</sup>)</div>
+                            </div>
+                        </div>
+                        <div class="p-4 rounded-xl glass-card border border-indigo-500/30">
+                            <span class="text-xs font-bold text-indigo-400 uppercase">Real-World Examples:</span>
+                            <div class="grid grid-cols-3 gap-2 mt-2 text-center text-xs">
+                                <button onclick="setPreset(1.5, 10, 'AA Battery', 'mA')" class="p-2 bg-gray-800 hover:bg-gray-700 rounded-lg border border-gray-700">AA Battery (1.5V)</button>
+                                <button onclick="setPreset(5, 220, 'Arduino 5V + 220Ω', 'mA')" class="p-2 bg-gray-800 hover:bg-gray-700 rounded-lg border border-gray-700">Arduino (5V + 220&Omega;)</button>
+                                <button onclick="setPreset(9, 1000, '9V &amp; 1kΩ', 'mA')" class="p-2 bg-gray-800 hover:bg-gray-700 rounded-lg border border-gray-700">9V &amp; 1k&Omega;</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-6 glass-card p-6 rounded-2xl border border-gray-800 space-y-4">
+                        <h3 class="text-sm font-bold text-indigo-400 uppercase tracking-wider flex items-center justify-between">
+                            <span>Interactive Unit Converter</span>
+                            <i class="fa-solid fa-calculator"></i>
+                        </h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-xs text-gray-400 block mb-1">Current Input Value</label>
+                                <div class="flex space-x-2">
+                                    <input type="number" id="unitValInput" value="20" class="flex-1 bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-white font-mono focus:border-indigo-500 focus:outline-none">
+                                    <select id="unitTypeSelect" class="bg-gray-800 border border-gray-700 text-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none">
+                                        <option value="mA">Milliamps (mA)</option>
+                                        <option value="A">Amperes (A)</option>
+                                        <option value="kOhm">Kilo-ohms (k&Omega;)</option>
+                                        <option value="Ohm">Ohms (&Omega;)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="p-4 bg-gray-950 rounded-xl border border-gray-800 font-mono space-y-2">
+                                <div class="text-xs text-gray-500 uppercase">Converted Equivalent Values</div>
+                                <div id="convResult1" class="text-sm text-cyan-400">20 mA = 0.02000 A</div>
+                                <div id="convResult2" class="text-sm text-indigo-400">20 mA = 20,000 &mu;A</div>
+                            </div>
+                            <div id="presetResult" class="hidden p-3 bg-indigo-950/40 border border-indigo-500/30 rounded-xl text-xs font-mono text-indigo-300"></div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            onMount: () => initUnitConverter()
+        },
+        {
+            id: 6,
+            title: "Proportional Relationships",
+            subtitle: "How V and R directly & inversely affect Current (I)",
+            render: () => `
+                <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center py-2">
+                    <div class="lg:col-span-5 space-y-4">
+                        <div class="p-4 rounded-2xl glass-card border border-pink-500/30">
+                            <h4 class="font-bold text-pink-400 text-sm flex items-center space-x-2">
+                                <i class="fa-solid fa-arrow-up-right-dots"></i>
+                                <span>Direct Proportion: V &amp; I</span>
+                            </h4>
+                            <p class="text-xs text-gray-300 mt-1">Resistance constant → doubling Voltage doubles Current.</p>
+                            <div class="mt-2 text-xs font-mono text-pink-300 bg-pink-950/40 p-2 rounded border border-pink-900/50">
+                                V &uarr; &nbsp;&rArr;&nbsp; I &uarr;
+                            </div>
+                        </div>
+                        <div class="p-4 rounded-2xl glass-card border border-amber-500/30">
+                            <h4 class="font-bold text-amber-400 text-sm flex items-center space-x-2">
+                                <i class="fa-solid fa-arrow-down-right-dots"></i>
+                                <span>Inverse Proportion: R &amp; I</span>
+                            </h4>
+                            <p class="text-xs text-gray-300 mt-1">Voltage constant → doubling Resistance halves Current.</p>
+                            <div class="mt-2 text-xs font-mono text-amber-300 bg-amber-950/40 p-2 rounded border border-amber-900/50">
+                                R &uarr; &nbsp;&rArr;&nbsp; I &darr;
+                            </div>
+                        </div>
+                        <div class="p-3 bg-gray-900/60 rounded-xl border border-gray-800 text-xs text-gray-400">
+                            These proportional relationships let you <strong class="text-white">predict</strong> what will happen before you build. Ask: "If I change X, what happens to Y?"
+                        </div>
+                    </div>
+                    <div class="lg:col-span-7 glass-card p-5 rounded-2xl border border-gray-800 flex flex-col items-center">
+                        <div class="w-full flex justify-between items-center mb-3">
+                            <span class="text-xs font-bold text-gray-400">DYNAMIC CIRCUIT FLOW SIMULATOR</span>
+                            <span id="propCalculatedI" class="text-sm font-mono font-bold text-cyan-400 bg-cyan-950 px-3 py-1 rounded-lg border border-cyan-800">I = 12.0 mA</span>
+                        </div>
+                        <canvas id="propCircuitCanvas" width="500" height="200" class="w-full bg-gray-950 rounded-xl border border-gray-800"></canvas>
+                        <div class="w-full grid grid-cols-2 gap-6 mt-4">
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-xs">
+                                    <span class="text-pink-400 font-bold">Voltage (V)</span>
+                                    <span id="propVVal" class="font-mono text-white">12 V</span>
+                                </div>
+                                <input type="range" id="propVSlider" min="1" max="24" value="12" class="w-full accent-pink-500 bg-gray-800 rounded-lg cursor-pointer">
+                            </div>
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-xs">
+                                    <span class="text-amber-400 font-bold">Resistance (R)</span>
+                                    <span id="propRVal" class="font-mono text-white">1000 &Omega;</span>
+                                </div>
+                                <input type="range" id="propRSlider" min="100" max="5000" step="100" value="1000" class="w-full accent-amber-500 bg-gray-800 rounded-lg cursor-pointer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            onMount: () => initProportionalSim()
+        },
+        {
+            id: 7,
+            title: "Worked Example 1: Calculate Current",
+            subtitle: "Step-by-Step Problem Walkthrough",
+            render: () => `
+                <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center py-2">
+                    <div class="lg:col-span-5 space-y-4">
+                        <div class="p-5 rounded-2xl glass-card border border-indigo-500/40 space-y-3">
+                            <div class="inline-block px-2.5 py-1 bg-indigo-500/20 text-indigo-300 rounded-md text-xs font-semibold">Problem Scenario</div>
+                            <p class="text-sm text-gray-200 leading-relaxed">
+                                A robot microcontroller sensor loop runs from a <strong class="text-pink-400">12V DC supply</strong>. Total circuit resistance is <strong class="text-amber-400">240 &Omega;</strong>.
+                            </p>
+                            <p class="text-sm text-white font-semibold">Calculate the total current (<span class="text-cyan-400">I</span>) in Amperes and Milliamperes.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 text-xs text-gray-400 space-y-1">
+                            <div class="font-bold text-gray-200">Given:</div>
+                            <div>&bull; Voltage (V) = 12 V</div>
+                            <div>&bull; Resistance (R) = 240 &Omega;</div>
+                            <div>&bull; Current (I) = ?</div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-7 glass-card p-6 rounded-2xl border border-gray-800 space-y-4">
+                        <h3 class="text-sm font-bold text-cyan-400 uppercase tracking-wider">Solution Steps</h3>
+                        <div class="space-y-3">
+                            <div onclick="setEx1Step(1)" id="ex1Step1" class="p-3.5 rounded-xl border border-gray-800 bg-gray-900/50 cursor-pointer hover:border-gray-700 transition">
+                                <div class="flex items-center space-x-3">
+                                    <span class="w-7 h-7 rounded-full bg-indigo-600/30 text-indigo-400 flex items-center justify-center font-bold text-xs">1</span>
+                                    <span class="text-xs sm:text-sm text-gray-200 font-semibold">Select Formula from Triangle</span>
+                                </div>
+                                <div class="mt-2 text-xs font-mono text-gray-400 pl-10 hidden id-body">
+                                    Target variable is I &rArr; <strong class="text-white">I = V &divide; R</strong>
+                                </div>
+                            </div>
+                            <div onclick="setEx1Step(2)" id="ex1Step2" class="p-3.5 rounded-xl border border-gray-800 bg-gray-900/50 cursor-pointer hover:border-gray-700 transition">
+                                <div class="flex items-center space-x-3">
+                                    <span class="w-7 h-7 rounded-full bg-indigo-600/30 text-indigo-400 flex items-center justify-center font-bold text-xs">2</span>
+                                    <span class="text-xs sm:text-sm text-gray-200 font-semibold">Substitute Known Values</span>
+                                </div>
+                                <div class="mt-2 text-xs font-mono text-gray-400 pl-10 hidden id-body">
+                                    I = 12 V &divide; 240 &Omega;
+                                </div>
+                            </div>
+                            <div onclick="setEx1Step(3)" id="ex1Step3" class="p-3.5 rounded-xl border border-gray-800 bg-gray-900/50 cursor-pointer hover:border-gray-700 transition">
+                                <div class="flex items-center space-x-3">
+                                    <span class="w-7 h-7 rounded-full bg-indigo-600/30 text-indigo-400 flex items-center justify-center font-bold text-xs">3</span>
+                                    <span class="text-xs sm:text-sm text-gray-200 font-semibold">Calculate &amp; Convert Units</span>
+                                </div>
+                                <div class="mt-2 text-xs font-mono text-cyan-400 pl-10 hidden id-body">
+                                    I = 0.05 A &rArr; 0.05 &times; 1000 = <strong class="text-white">50 mA</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-3 border-t border-gray-800 flex justify-between items-center text-xs">
+                            <span class="text-gray-400">Click steps above to reveal solution details</span>
+                            <button onclick="setEx1Step(0)" class="text-indigo-400 hover:underline">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            `,
+            onMount: () => setEx1Step(0)
+        },
+        {
+            id: 8,
+            title: "Worked Example 2: LED Current Limiting",
+            subtitle: "Determining Resistor Value (R) with Forward Voltage Drop",
+            render: () => `
+                <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center py-2">
+                    <div class="lg:col-span-5 space-y-4">
+                        <div class="p-5 rounded-2xl glass-card border border-amber-500/40 space-y-3">
+                            <div class="inline-block px-2.5 py-1 bg-amber-500/20 text-amber-300 rounded-md text-xs font-semibold">Real-World LED Design</div>
+                            <p class="text-sm text-gray-200 leading-relaxed">
+                                Power a Red LED from a <strong class="text-pink-400">5V Arduino pin</strong>. The LED has a forward voltage (V<sub>f</sub>) of <strong class="text-pink-400">2.0V</strong> and needs <strong class="text-cyan-400">20 mA (0.020 A)</strong>.
+                            </p>
+                            <p class="text-sm text-white font-semibold">Calculate the required current-limiting resistor (<span class="text-amber-400">R</span>).</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 text-xs text-gray-300 font-mono space-y-1">
+                            <div>V<sub>resistor</sub> = V<sub>supply</sub> - V<sub>f</sub></div>
+                            <div>V<sub>resistor</sub> = 5.0 V - 2.0 V = 3.0 V</div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-7 glass-card p-6 rounded-2xl border border-gray-800 space-y-4">
+                        <h3 class="text-sm font-bold text-amber-400 uppercase tracking-wider">LED Resistor Formula</h3>
+                        <div class="p-4 bg-gray-950 rounded-xl border border-gray-800 space-y-3">
+                            <div class="text-center font-mono text-base text-white">
+                                R = (V<sub>supply</sub> - V<sub>f</sub>) &divide; I<sub>LED</sub>
+                            </div>
+                            <div class="text-center font-mono text-sm text-amber-400">
+                                R = (5.0 - 2.0) &divide; 0.020 = 3.0 &divide; 0.020 = <strong class="text-white">150 &Omega;</strong>
+                            </div>
+                            <div class="text-center text-xs text-gray-400">Nearest standard E12 value: <strong class="text-white">150 &Omega;</strong> ✓</div>
+                        </div>
+                        <div class="p-4 bg-gray-900/60 rounded-xl border border-gray-800 space-y-3">
+                            <div class="text-xs font-bold text-gray-300">Custom LED Calculator:</div>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="text-[10px] text-gray-400 block">V<sub>supply</sub> (V)</label>
+                                    <input type="number" id="ledVs" value="5" class="w-full bg-gray-800 border border-gray-700 rounded p-1.5 text-xs text-white text-center font-mono">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-gray-400 block">V<sub>f</sub> (LED V)</label>
+                                    <input type="number" id="ledVf" value="2.0" step="0.1" class="w-full bg-gray-800 border border-gray-700 rounded p-1.5 text-xs text-white text-center font-mono">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-gray-400 block">I<sub>target</sub> (mA)</label>
+                                    <input type="number" id="ledI" value="20" class="w-full bg-gray-800 border border-gray-700 rounded p-1.5 text-xs text-white text-center font-mono">
+                                </div>
+                            </div>
+                            <div id="ledResultBox" class="p-2.5 bg-amber-950/40 border border-amber-800/50 rounded-lg text-xs font-mono text-amber-300 text-center font-bold">
+                                Required Resistor: 150 &Omega;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            onMount: () => initLedCalc()
+        },
+        {
+            id: 9,
+            title: "Interactive Sandbox & Knowledge Check",
+            subtitle: "Test your understanding with live feedback",
+            render: () => `
+                <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center py-2">
+                    <div class="lg:col-span-7 glass-card p-6 rounded-2xl border border-gray-800 flex flex-col justify-between h-full">
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-sm font-bold text-indigo-400 uppercase tracking-wider flex items-center space-x-2">
+                                    <i class="fa-solid fa-clipboard-question"></i>
+                                    <span>Knowledge Check Quiz</span>
+                                </h3>
+                                <span id="quizScoreBadge" class="text-xs font-mono bg-indigo-950 text-indigo-300 px-2.5 py-1 rounded border border-indigo-800">
+                                    Question 1 of 3
+                                </span>
+                            </div>
+                            <div id="quizContainer" class="space-y-4"></div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-gray-800/80 flex justify-between items-center">
+                            <button id="quizPrevBtn" onclick="prevQuiz()" class="text-xs text-gray-400 hover:text-white flex items-center space-x-1">
+                                <i class="fa-solid fa-chevron-left text-[10px]"></i>
+                                <span>Prev Q</span>
+                            </button>
+                            <button id="quizNextBtn" onclick="nextQuiz()" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg transition font-semibold">
+                                Next Question
+                            </button>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-5 glass-card p-5 rounded-2xl border border-gray-800 flex flex-col items-center space-y-4">
+                        <h3 class="text-sm font-bold text-gray-300 uppercase tracking-wider flex items-center space-x-2 w-full">
+                            <i class="fa-solid fa-vial"></i>
+                            <span>Virtual DMM Sandbox</span>
+                        </h3>
+                        <div class="w-full bg-gray-950 p-4 rounded-xl border border-gray-800 space-y-3">
+                            <div class="flex justify-between items-center border-b border-gray-800 pb-2">
+                                <span class="text-xs text-gray-400 font-mono">DMM DISPLAY</span>
+                                <div class="flex space-x-1">
+                                    <button onclick="setDmmMode('V')" id="dmmBtnV" class="px-2 py-0.5 text-xs rounded bg-pink-600 text-white font-mono">V</button>
+                                    <button onclick="setDmmMode('I')" id="dmmBtnI" class="px-2 py-0.5 text-xs rounded bg-gray-800 text-gray-400 font-mono">mA</button>
+                                    <button onclick="setDmmMode('R')" id="dmmBtnR" class="px-2 py-0.5 text-xs rounded bg-gray-800 text-gray-400 font-mono">&Omega;</button>
+                                </div>
+                            </div>
+                            <div id="dmmDisplay" class="text-center font-mono text-3xl font-extrabold text-green-400 py-3 bg-black/80 rounded-lg border border-green-950 shadow-inner tracking-widest">
+                                9.00 V
+                            </div>
+                            <div class="space-y-2 pt-1">
+                                <div class="flex justify-between text-xs text-gray-300">
+                                    <span>Supply Voltage (V):</span>
+                                    <input type="number" id="sandboxV" value="9" min="1" max="50" class="w-16 bg-gray-800 border border-gray-700 rounded px-1 text-center font-mono">
+                                </div>
+                                <div class="flex justify-between text-xs text-gray-300">
+                                    <span>Resistor Value (&Omega;):</span>
+                                    <input type="number" id="sandboxR" value="330" min="1" max="10000" class="w-16 bg-gray-800 border border-gray-700 rounded px-1 text-center font-mono">
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-gray-400 text-center">Change circuit parameters to observe simulated DMM readings.</p>
+                    </div>
+                </div>
+            `,
+            onMount: () => { initQuiz(); initDmmSandbox(); }
+        }
+    ];
 
-    function showSlide(n) {
-        slides[current].classList.remove('active');
-        current = Math.max(0, Math.min(n, slides.length - 1));
-        slides[current].classList.add('active');
-        document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
-        document.getElementById('prevBtn').disabled = current === 0;
-        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    // ─────────────────────────────────────────────
+    // NAVIGATION
+    // ─────────────────────────────────────────────
+    let currentSlideIndex = 0;
+
+    function renderSlide(index) {
+        if (index < 0 || index >= slides.length) return;
+        currentSlideIndex = index;
+
+        const slide = slides[index];
+        const container = document.getElementById('slideContainer');
+
+        container.innerHTML = `
+            <div class="flex items-start justify-between pb-3 border-b border-gray-800/80 mb-4">
+                <div>
+                    <span class="text-xs font-mono text-indigo-400 uppercase tracking-widest font-semibold">Slide ${slide.id} of ${slides.length}</span>
+                    <div class="text-xl sm:text-2xl font-bold text-white tracking-tight mt-0.5">${slide.title}</div>
+                </div>
+                <p class="text-xs text-gray-500 hidden sm:block text-right max-w-xs">${slide.subtitle}</p>
+            </div>
+            <div class="flex-1 flex flex-col slide-body">
+                ${slide.render()}
+            </div>
+        `;
+
+        document.getElementById('counter').textContent = `${slide.id} / ${slides.length}`;
+        document.getElementById('prevBtn').disabled = currentSlideIndex === 0;
+        document.getElementById('nextBtn').disabled = currentSlideIndex === slides.length - 1;
+
+        if (slide.onMount) {
+            setTimeout(slide.onMount, 50);
+        }
     }
 
-    function changeSlide(dir) { showSlide(current + dir); }
+    function nextSlide() {
+        if (currentSlideIndex < slides.length - 1) renderSlide(currentSlideIndex + 1);
+    }
 
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
-        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    function prevSlide() {
+        if (currentSlideIndex > 0) renderSlide(currentSlideIndex - 1);
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'PageDown') nextSlide();
+        else if (e.key === 'ArrowLeft' || e.key === 'PageUp') prevSlide();
     });
-</script>
 
+    // ─────────────────────────────────────────────
+    // INTERACTIVE MODULES
+    // ─────────────────────────────────────────────
+
+    // 1. Hydraulic Pipe Simulation (Slide 3)
+    let pipeAnimId = null;
+    function initPipeVisualizer() {
+        const canvas = document.getElementById('pipeCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const vSlider = document.getElementById('vPipeSlider');
+        const rSlider = document.getElementById('rPipeSlider');
+        const vValText = document.getElementById('vSliderVal');
+        const rValText = document.getElementById('rSliderVal');
+        const curText = document.getElementById('analogyCurrentText');
+
+        let particles = Array.from({ length: 40 }, () => ({
+            x: Math.random() * canvas.width,
+            y: 0,
+            speed: 2
+        }));
+
+        function animate() {
+            if (!document.getElementById('pipeCanvas')) return;
+            const v = parseFloat(vSlider.value);
+            const r = parseFloat(rSlider.value);
+            const i = v / r;
+            vValText.textContent = `${v} V`;
+            rValText.textContent = `${r} Ω`;
+            curText.textContent = `Current = ${i.toFixed(2)} A`;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const pipeTop = 50, pipeHeight = 100;
+            const constrictionFactor = Math.max(15, 80 - (r * 2));
+
+            ctx.fillStyle = '#1E293B';
+            ctx.fillRect(0, pipeTop, canvas.width, pipeHeight);
+            ctx.fillStyle = '#F59E0B';
+            ctx.fillRect(180, pipeTop, 140, (pipeHeight - constrictionFactor) / 2);
+            ctx.fillRect(180, pipeTop + pipeHeight - (pipeHeight - constrictionFactor) / 2, 140, (pipeHeight - constrictionFactor) / 2);
+            ctx.fillStyle = 'rgba(6,182,212,0.2)';
+            ctx.fillRect(0, pipeTop, canvas.width, pipeHeight);
+
+            ctx.fillStyle = '#06B6D4';
+            particles.forEach(p => {
+                p.x += i * 2.5;
+                if (p.x > canvas.width) p.x = 0;
+                let yMin = pipeTop + 10, yMax = pipeTop + pipeHeight - 10;
+                if (p.x > 180 && p.x < 320) {
+                    yMin = pipeTop + (pipeHeight - constrictionFactor) / 2 + 5;
+                    yMax = pipeTop + pipeHeight - (pipeHeight - constrictionFactor) / 2 - 5;
+                }
+                if (p.y < yMin || p.y > yMax) p.y = yMin + Math.random() * (yMax - yMin);
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            pipeAnimId = requestAnimationFrame(animate);
+        }
+
+        if (pipeAnimId) cancelAnimationFrame(pipeAnimId);
+        animate();
+    }
+
+    // 2. Ohm's Triangle Selector (Slide 4)
+    function selectTriangleVar(variable) {
+        const card = document.getElementById('triangleDetailCard');
+        if (!card) return;
+        let html = '';
+        if (variable === 'V') {
+            html = `
+                <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+                    <span class="text-xs font-mono text-pink-400 font-bold">SOLVING FOR VOLTAGE</span>
+                    <span class="text-xs bg-pink-950 text-pink-300 px-2 py-0.5 rounded font-mono">V = I &times; R</span>
+                </div>
+                <p class="text-xs text-gray-300 mt-3">Voltage = Current × Resistance.</p>
+                <div class="grid grid-cols-2 gap-3 mt-4">
+                    <div><label class="text-[10px] text-gray-400 block">Current (I in Amps)</label>
+                    <input type="number" id="triInputI" value="2" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs text-white font-mono"></div>
+                    <div><label class="text-[10px] text-gray-400 block">Resistance (R in &Omega;)</label>
+                    <input type="number" id="triInputR" value="10" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs text-white font-mono"></div>
+                </div>
+                <div class="mt-4 p-3 bg-pink-950/40 border border-pink-800/50 rounded-xl text-center font-mono text-pink-300 font-bold text-base" id="triResult">Voltage (V) = 20.00 V</div>`;
+        } else if (variable === 'I') {
+            html = `
+                <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+                    <span class="text-xs font-mono text-cyan-400 font-bold">SOLVING FOR CURRENT</span>
+                    <span class="text-xs bg-cyan-950 text-cyan-300 px-2 py-0.5 rounded font-mono">I = V &divide; R</span>
+                </div>
+                <p class="text-xs text-gray-300 mt-3">Current = Voltage ÷ Resistance.</p>
+                <div class="grid grid-cols-2 gap-3 mt-4">
+                    <div><label class="text-[10px] text-gray-400 block">Voltage (V in Volts)</label>
+                    <input type="number" id="triInputV" value="12" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs text-white font-mono"></div>
+                    <div><label class="text-[10px] text-gray-400 block">Resistance (R in &Omega;)</label>
+                    <input type="number" id="triInputR2" value="240" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs text-white font-mono"></div>
+                </div>
+                <div class="mt-4 p-3 bg-cyan-950/40 border border-cyan-800/50 rounded-xl text-center font-mono text-cyan-300 font-bold text-base" id="triResult">Current (I) = 0.050 A (50 mA)</div>`;
+        } else if (variable === 'R') {
+            html = `
+                <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+                    <span class="text-xs font-mono text-amber-400 font-bold">SOLVING FOR RESISTANCE</span>
+                    <span class="text-xs bg-amber-950 text-amber-300 px-2 py-0.5 rounded font-mono">R = V &divide; I</span>
+                </div>
+                <p class="text-xs text-gray-300 mt-3">Resistance = Voltage ÷ Current.</p>
+                <div class="grid grid-cols-2 gap-3 mt-4">
+                    <div><label class="text-[10px] text-gray-400 block">Voltage (V in Volts)</label>
+                    <input type="number" id="triInputV" value="5" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs text-white font-mono"></div>
+                    <div><label class="text-[10px] text-gray-400 block">Current (I in Amps)</label>
+                    <input type="number" id="triInputI2" value="0.02" step="0.001" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs text-white font-mono"></div>
+                </div>
+                <div class="mt-4 p-3 bg-amber-950/40 border border-amber-800/50 rounded-xl text-center font-mono text-amber-300 font-bold text-base" id="triResult">Resistance (R) = 250.00 &Omega;</div>`;
+        }
+        card.innerHTML = html;
+
+        const updateTriCalc = () => {
+            const res = document.getElementById('triResult');
+            if (!res) return;
+            if (variable === 'V') {
+                const i = parseFloat(document.getElementById('triInputI').value) || 0;
+                const r = parseFloat(document.getElementById('triInputR').value) || 0;
+                res.textContent = `Voltage (V) = ${(i * r).toFixed(2)} V`;
+            } else if (variable === 'I') {
+                const v = parseFloat(document.getElementById('triInputV').value) || 0;
+                const r = parseFloat(document.getElementById('triInputR2').value) || 1;
+                const val = v / r;
+                res.textContent = `Current (I) = ${val.toFixed(3)} A (${(val * 1000).toFixed(1)} mA)`;
+            } else if (variable === 'R') {
+                const v = parseFloat(document.getElementById('triInputV').value) || 0;
+                const i = parseFloat(document.getElementById('triInputI2').value) || 0.001;
+                res.textContent = `Resistance (R) = ${(v / i).toFixed(2)} Ω`;
+            }
+        };
+        card.querySelectorAll('input').forEach(inp => inp.addEventListener('input', updateTriCalc));
+    }
+
+    // 3. Unit Converter (Slide 5)
+    function initUnitConverter() {
+        const input = document.getElementById('unitValInput');
+        const select = document.getElementById('unitTypeSelect');
+        const res1 = document.getElementById('convResult1');
+        const res2 = document.getElementById('convResult2');
+        if (!input) return;
+
+        function update() {
+            const val = parseFloat(input.value) || 0;
+            const type = select.value;
+            if (type === 'mA') {
+                res1.textContent = `${val} mA = ${(val / 1000).toFixed(5)} Amperes (A)`;
+                res2.textContent = `${val} mA = ${(val * 1000).toLocaleString()} Microamperes (μA)`;
+            } else if (type === 'A') {
+                res1.textContent = `${val} A = ${(val * 1000).toLocaleString()} Milliamperes (mA)`;
+                res2.textContent = `${val} A = ${(val * 1000000).toLocaleString()} Microamperes (μA)`;
+            } else if (type === 'kOhm') {
+                res1.textContent = `${val} kΩ = ${(val * 1000).toLocaleString()} Ohms (Ω)`;
+                res2.textContent = `${val} kΩ = ${(val / 1000).toFixed(4)} Megohms (MΩ)`;
+            } else if (type === 'Ohm') {
+                res1.textContent = `${val} Ω = ${(val / 1000).toFixed(4)} Kilo-ohms (kΩ)`;
+                res2.textContent = `${val} Ω = ${(val / 1000000).toFixed(6)} Megohms (MΩ)`;
+            }
+        }
+        input.oninput = update;
+        select.onchange = update;
+        update();
+    }
+
+    function setPreset(v, r, label) {
+        const input = document.getElementById('unitValInput');
+        const select = document.getElementById('unitTypeSelect');
+        const presetResult = document.getElementById('presetResult');
+        if (!input) return;
+        const iAmps = v / r;
+        const iMa = iAmps * 1000;
+        input.value = iMa.toFixed(2);
+        select.value = 'mA';
+        input.dispatchEvent(new Event('input'));
+        if (presetResult) {
+            presetResult.classList.remove('hidden');
+            presetResult.textContent = `${label}: ${v}V ÷ ${r}Ω = ${iMa.toFixed(2)} mA`;
+        }
+    }
+
+    // 4. Proportional Simulator Canvas (Slide 6)
+    let propAnimId = null;
+    function initProportionalSim() {
+        const canvas = document.getElementById('propCircuitCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const vSlider = document.getElementById('propVSlider');
+        const rSlider = document.getElementById('propRSlider');
+        const vText = document.getElementById('propVVal');
+        const rText = document.getElementById('propRVal');
+        const iText = document.getElementById('propCalculatedI');
+        let dots = Array.from({ length: 25 }, () => ({ pos: Math.random() * 800 }));
+
+        function animate() {
+            if (!document.getElementById('propCircuitCanvas')) return;
+            const v = parseFloat(vSlider.value);
+            const r = parseFloat(rSlider.value);
+            const iAmps = v / r;
+            const iMilli = iAmps * 1000;
+            vText.textContent = `${v} V`;
+            rText.textContent = `${r} Ω`;
+            iText.textContent = `I = ${iMilli.toFixed(1)} mA`;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 8;
+            ctx.strokeRect(60, 40, 380, 120);
+            ctx.fillStyle = '#EC4899';
+            ctx.fillRect(52, 70, 16, 60);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 12px Inter';
+            ctx.fillText(`${v}V`, 20, 105);
+            ctx.fillStyle = '#F59E0B';
+            ctx.fillRect(432, 70, 16, 60);
+            ctx.fillText(`${r}Ω`, 455, 105);
+
+            const perimeter = 1000;
+            const speed = iMilli * 0.3;
+            ctx.fillStyle = '#06B6D4';
+            dots.forEach(d => {
+                d.pos = (d.pos + speed) % perimeter;
+                let x = 60, y = 40;
+                if (d.pos < 380) { x = 60 + d.pos; y = 40; }
+                else if (d.pos < 500) { x = 440; y = 40 + (d.pos - 380); }
+                else if (d.pos < 880) { x = 440 - (d.pos - 500); y = 160; }
+                else { x = 60; y = 160 - (d.pos - 880); }
+                ctx.beginPath();
+                ctx.arc(x, y, 5, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            propAnimId = requestAnimationFrame(animate);
+        }
+
+        if (propAnimId) cancelAnimationFrame(propAnimId);
+        animate();
+    }
+
+    // 5. Worked Example Steps (Slide 7)
+    function setEx1Step(stepNum) {
+        for (let i = 1; i <= 3; i++) {
+            const el = document.getElementById(`ex1Step${i}`);
+            if (!el) continue;
+            const body = el.querySelector('.id-body');
+            if (i <= stepNum) {
+                el.classList.add('border-indigo-500', 'bg-indigo-950/20');
+                if (body) body.classList.remove('hidden');
+            } else {
+                el.classList.remove('border-indigo-500', 'bg-indigo-950/20');
+                if (body) body.classList.add('hidden');
+            }
+        }
+    }
+
+    // 6. LED Calculator (Slide 8)
+    function initLedCalc() {
+        const vsInput = document.getElementById('ledVs');
+        const vfInput = document.getElementById('ledVf');
+        const iInput = document.getElementById('ledI');
+        const resBox = document.getElementById('ledResultBox');
+        if (!vsInput) return;
+
+        function calc() {
+            const vs = parseFloat(vsInput.value) || 0;
+            const vf = parseFloat(vfInput.value) || 0;
+            const iMa = parseFloat(iInput.value) || 1;
+            const vRes = vs - vf;
+            if (vRes <= 0) {
+                resBox.textContent = 'Error: Supply Voltage must exceed LED Forward Voltage';
+                return;
+            }
+            const r = vRes / (iMa / 1000);
+            resBox.textContent = `Required Resistor: ${r.toFixed(1)} Ω`;
+        }
+        [vsInput, vfInput, iInput].forEach(inp => inp.oninput = calc);
+    }
+
+    // 7. Knowledge Check Quiz (Slide 9)
+    const quizQuestions = [
+        {
+            q: "If you double the Voltage in a circuit while keeping Resistance constant, what happens to the Current?",
+            options: ["Current is cut in half", "Current stays the same", "Current doubles", "Current quadruples"],
+            correct: 2,
+            explanation: "Current is directly proportional to Voltage (I = V &divide; R). Double V at fixed R → double I."
+        },
+        {
+            q: "How many Amperes is 250 mA equal to?",
+            options: ["25 A", "2.5 A", "0.025 A", "0.25 A"],
+            correct: 3,
+            explanation: "Divide by 1,000: 250 mA &divide; 1000 = 0.25 A."
+        },
+        {
+            q: "A circuit has a 9V battery and a 300 Ω resistor. What is the current?",
+            options: ["3 mA (0.003 A)", "30 mA (0.03 A)", "300 mA (0.3 A)", "2700 mA (2.7 A)"],
+            correct: 1,
+            explanation: "I = V &divide; R = 9 &divide; 300 = 0.03 A = 30 mA."
+        }
+    ];
+
+    let currentQuizIdx = 0;
+    let selectedAnswers = {};
+
+    function initQuiz() {
+        currentQuizIdx = 0;
+        selectedAnswers = {};
+        renderQuizQuestion(0);
+    }
+
+    function renderQuizQuestion(idx) {
+        const q = quizQuestions[idx];
+        const container = document.getElementById('quizContainer');
+        const badge = document.getElementById('quizScoreBadge');
+        if (!container) return;
+        if (badge) badge.textContent = `Question ${idx + 1} of ${quizQuestions.length}`;
+
+        container.innerHTML = `
+            <p class="text-sm font-semibold text-white mb-3">${q.q}</p>
+            <div class="space-y-2">
+                ${q.options.map((opt, i) => `
+                    <button onclick="answerQuiz(${idx}, ${i})" class="w-full text-left p-3 rounded-xl border border-gray-800 bg-gray-900/60 hover:bg-gray-800 text-xs text-gray-300 transition flex items-center justify-between font-medium">
+                        <span>${opt}</span>
+                        ${selectedAnswers[idx] === i ? '<i class="fa-solid fa-circle-check text-indigo-400"></i>' : ''}
+                    </button>
+                `).join('')}
+            </div>
+            <div id="quizFeedback" class="mt-3 text-xs p-3 rounded-lg hidden font-mono"></div>
+        `;
+        if (selectedAnswers[idx] !== undefined) showQuizFeedback(idx, selectedAnswers[idx]);
+    }
+
+    function answerQuiz(qIdx, optIdx) {
+        selectedAnswers[qIdx] = optIdx;
+        renderQuizQuestion(qIdx);
+        showQuizFeedback(qIdx, optIdx);
+    }
+
+    function showQuizFeedback(qIdx, optIdx) {
+        const q = quizQuestions[qIdx];
+        const fb = document.getElementById('quizFeedback');
+        if (!fb) return;
+        fb.classList.remove('hidden', 'bg-green-950', 'text-green-300', 'bg-red-950', 'text-red-300');
+        if (optIdx === q.correct) {
+            fb.classList.add('bg-green-950/80', 'text-green-300', 'border', 'border-green-800');
+            fb.innerHTML = `<i class="fa-solid fa-check mr-1"></i> ${q.explanation}`;
+        } else {
+            fb.classList.add('bg-red-950/80', 'text-red-300', 'border', 'border-red-800');
+            fb.innerHTML = `<i class="fa-solid fa-xmark mr-1"></i> Incorrect — try again!`;
+        }
+    }
+
+    function nextQuiz() {
+        if (currentQuizIdx < quizQuestions.length - 1) { currentQuizIdx++; renderQuizQuestion(currentQuizIdx); }
+    }
+    function prevQuiz() {
+        if (currentQuizIdx > 0) { currentQuizIdx--; renderQuizQuestion(currentQuizIdx); }
+    }
+
+    // 8. Virtual DMM Sandbox (Slide 9)
+    let dmmMode = 'V';
+    function initDmmSandbox() {
+        const vIn = document.getElementById('sandboxV');
+        const rIn = document.getElementById('sandboxR');
+        if (!vIn) return;
+        dmmMode = 'V';
+        ['V','I','R'].forEach(m => {
+            const btn = document.getElementById(`dmmBtn${m}`);
+            if (btn) btn.className = m === 'V'
+                ? 'px-2 py-0.5 text-xs rounded bg-pink-600 text-white font-mono'
+                : 'px-2 py-0.5 text-xs rounded bg-gray-800 text-gray-400 font-mono';
+        });
+
+        const updateDmm = () => {
+            const v = parseFloat(vIn.value) || 0;
+            const r = parseFloat(rIn.value) || 1;
+            const display = document.getElementById('dmmDisplay');
+            if (!display) return;
+            if (dmmMode === 'V') {
+                display.textContent = `${v.toFixed(2)} V`;
+                display.className = 'text-center font-mono text-3xl font-extrabold text-pink-400 py-3 bg-black/80 rounded-lg border border-pink-950 shadow-inner tracking-widest';
+            } else if (dmmMode === 'I') {
+                display.textContent = `${((v/r)*1000).toFixed(1)} mA`;
+                display.className = 'text-center font-mono text-3xl font-extrabold text-cyan-400 py-3 bg-black/80 rounded-lg border border-cyan-950 shadow-inner tracking-widest';
+            } else {
+                display.textContent = `${r.toFixed(0)} Ω`;
+                display.className = 'text-center font-mono text-3xl font-extrabold text-amber-400 py-3 bg-black/80 rounded-lg border border-amber-950 shadow-inner tracking-widest';
+            }
+        };
+        vIn.oninput = updateDmm;
+        rIn.oninput = updateDmm;
+        updateDmm();
+    }
+
+    function setDmmMode(mode) {
+        dmmMode = mode;
+        ['V','I','R'].forEach(m => {
+            const btn = document.getElementById(`dmmBtn${m}`);
+            if (btn) btn.className = m === mode
+                ? 'px-2 py-0.5 text-xs rounded bg-indigo-600 text-white font-mono'
+                : 'px-2 py-0.5 text-xs rounded bg-gray-800 text-gray-400 font-mono';
+        });
+        initDmmSandbox();
+    }
+
+    // ─────────────────────────────────────────────
+    window.onload = () => renderSlide(0);
+</script>
 </body>
 </html>
