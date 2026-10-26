@@ -652,6 +652,28 @@
                 </div>
             `,
             onMount: () => { initQuiz(); initDmmSandbox(); }
+        },
+        {
+            id: 10,
+            title: "Ohm's Law — 10-Problem Activity",
+            subtitle: "Solve for the missing variable · enter your answer and check",
+            render: () => `
+                <div class="flex-1 flex flex-col gap-4 py-1">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="actProblems"></div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/70">
+                        <button onclick="checkOhmActivity()"
+                            class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-lg transition">
+                            Check Answers
+                        </button>
+                        <div id="actScore" class="text-sm font-mono text-gray-400"></div>
+                        <button onclick="resetOhmActivity()"
+                            class="px-4 py-2 text-xs text-gray-400 hover:text-white border border-gray-700 hover:border-gray-500 rounded-lg transition">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+            `,
+            onMount: () => { initOhmActivity(); }
         }
     ];
 
@@ -1103,6 +1125,89 @@
                 : 'px-2 py-0.5 text-xs rounded bg-gray-800 text-gray-400 font-mono';
         });
         initDmmSandbox();
+    }
+
+    // ─────────────────────────────────────────────
+    // OHMS LAW ACTIVITY (Slide 10)
+    // ─────────────────────────────────────────────
+    const ACT_PROBLEMS = [
+        { find:'V', given:'I = 2 A, R = 5 Ω',      ans:10,   unit:'V'  },
+        { find:'I', given:'V = 12 V, R = 4 Ω',      ans:3,    unit:'A'  },
+        { find:'R', given:'V = 9 V, I = 3 A',        ans:3,    unit:'Ω'  },
+        { find:'V', given:'I = 500 mA, R = 6 Ω',     ans:3,    unit:'V'  },
+        { find:'I', given:'V = 5 V, R = 1000 Ω',     ans:5,    unit:'mA' },
+        { find:'R', given:'V = 6 V, I = 20 mA',      ans:300,  unit:'Ω'  },
+        { find:'V', given:'I = 10 mA, R = 470 Ω',    ans:4.7,  unit:'V'  },
+        { find:'R', given:'V = 9 V, I = 50 mA',      ans:180,  unit:'Ω'  },
+        { find:'I', given:'V = 3.3 V, R = 220 Ω',    ans:15,   unit:'mA' },
+        { find:'V', given:'I = 100 mA, R = 33 Ω',    ans:3.3,  unit:'V'  },
+    ];
+
+    const FIND_COLOR = { V:'text-pink-400', I:'text-cyan-400', R:'text-amber-400' };
+    const FIND_BG    = { V:'bg-pink-950/40 border-pink-800/50', I:'bg-cyan-950/40 border-cyan-800/50', R:'bg-amber-950/40 border-amber-800/50' };
+
+    function initOhmActivity() {
+        const el = document.getElementById('actProblems');
+        if (!el) return;
+        el.innerHTML = ACT_PROBLEMS.map((p, i) => `
+            <div class="flex items-center gap-3 glass-card rounded-xl border ${FIND_BG[p.find]} p-3" id="actRow${i}">
+                <span class="w-6 text-center text-xs font-mono text-gray-500">${i+1}.</span>
+                <div class="flex-1 min-w-0">
+                    <div class="text-xs text-gray-400 leading-tight">${p.given}</div>
+                    <div class="text-xs font-bold ${FIND_COLOR[p.find]} mt-0.5">Find ${p.find}</div>
+                </div>
+                <input id="actIn${i}" type="number" step="any" placeholder="?"
+                    class="w-20 bg-gray-900 border border-gray-700 rounded-lg px-2 py-1.5 text-sm text-center font-mono text-white focus:outline-none focus:border-indigo-500"
+                    onkeydown="if(event.key==='Enter') checkOhmActivity()">
+                <span class="text-xs font-mono text-gray-400 w-6">${p.unit}</span>
+                <span id="actMark${i}" class="text-base w-5 text-center"></span>
+            </div>`).join('');
+        document.getElementById('actScore').textContent = '';
+    }
+
+    function checkOhmActivity() {
+        let correct = 0;
+        ACT_PROBLEMS.forEach((p, i) => {
+            const raw = parseFloat(document.getElementById('actIn' + i)?.value);
+            const mark = document.getElementById('actMark' + i);
+            const row  = document.getElementById('actRow' + i);
+            if (isNaN(raw)) { if (mark) mark.textContent = ''; return; }
+            const ok = Math.abs(raw - p.ans) <= Math.max(p.ans * 0.02, 0.05);
+            if (mark) mark.textContent = ok ? '✓' : '✗';
+            if (row) {
+                row.style.borderColor = ok ? 'rgba(34,197,94,0.5)' : 'rgba(239,68,68,0.5)';
+                if (!ok) {
+                    let hint = row.querySelector('.act-hint');
+                    if (!hint) {
+                        hint = document.createElement('div');
+                        hint.className = 'act-hint text-[10px] text-gray-400 mt-1 col-span-full';
+                        hint.style.gridColumn = '1 / -1';
+                        row.appendChild(hint);
+                    }
+                    hint.textContent = `Answer: ${p.ans} ${p.unit}`;
+                }
+            }
+            if (ok) correct++;
+        });
+        const answered = ACT_PROBLEMS.filter((_, i) => !isNaN(parseFloat(document.getElementById('actIn' + i)?.value))).length;
+        const scoreEl = document.getElementById('actScore');
+        if (scoreEl) scoreEl.textContent = `${correct} / ${answered} correct`;
+    }
+
+    function resetOhmActivity() {
+        ACT_PROBLEMS.forEach((_, i) => {
+            const inp  = document.getElementById('actIn' + i);
+            const mark = document.getElementById('actMark' + i);
+            const row  = document.getElementById('actRow' + i);
+            if (inp)  inp.value = '';
+            if (mark) mark.textContent = '';
+            if (row) {
+                row.style.borderColor = '';
+                const hint = row.querySelector('.act-hint');
+                if (hint) hint.remove();
+            }
+        });
+        document.getElementById('actScore').textContent = '';
     }
 
     // ─────────────────────────────────────────────
