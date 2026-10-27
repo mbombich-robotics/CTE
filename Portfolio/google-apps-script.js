@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.66';
+const BACKEND_VERSION = 'v2.14.67';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2683,9 +2683,26 @@ function handleGetDocAIFeedback(data) {
 
   if (!docId) return { success: false, error: 'No document ID provided.' };
 
+  // CAD Quiz practicals have their own budget: CAD_PRACTICAL_CHECK_LIMIT checks in total,
+  // separate from (and not counted against) the daily limit for other deliverables.
+  var isPractical = deliverableId === 426 || deliverableId === 28;
+  var practicalChecksUsed = 0;
+  if (isPractical && !isTeacher) {
+    practicalChecksUsed = countPracticalChecks(email, deliverableId);
+    if (practicalChecksUsed >= CAD_PRACTICAL_CHECK_LIMIT) {
+      return {
+        success: false,
+        rateLimited: true,
+        checksUsed: practicalChecksUsed,
+        checkLimit: CAD_PRACTICAL_CHECK_LIMIT,
+        error: 'You have used all ' + CAD_PRACTICAL_CHECK_LIMIT + ' checks for this practical. Submit what you have.'
+      };
+    }
+  }
+
   // --- Rate limit check (bypassed for teacher batch grading) ---
   var usedToday = 0;
-  if (!isTeacher) {
+  if (!isTeacher && !isPractical) {
     usedToday = countAIFeedbackToday(email);
     if (usedToday >= DAILY_AI_FEEDBACK_LIMIT) {
       logActivity('DOC_AI_BLOCKED', email, 'Daily limit reached (' + DAILY_AI_FEEDBACK_LIMIT + ')');
@@ -2721,12 +2738,15 @@ function handleGetDocAIFeedback(data) {
       : '[DOCUMENT CONTAINS 0 IMAGES]\n\n';
 
     // CAD Quiz practicals are graded by looking at the screenshots themselves.
-    var grades = (deliverableId === 426 || deliverableId === 28)
+    var grades = isPractical
       ? gradeCadPracticalScreenshots(body, deliverableId)
       : gradeDocWithRubric(imageNote + text, deliverableId);
 
     if (isTeacher) {
       logActivity('DOC_AI_BATCH', email, 'D' + deliverableId + ' | teacher batch');
+    } else if (isPractical) {
+      logActivity('DOC_AI_PRACTICAL', email, 'D' + deliverableId + ' | check ' + (practicalChecksUsed + 1) + '/' + CAD_PRACTICAL_CHECK_LIMIT);
+      return { success: true, grades: grades, checksUsed: practicalChecksUsed + 1, checkLimit: CAD_PRACTICAL_CHECK_LIMIT };
     } else {
       logActivity('DOC_AI_FEEDBACK', email, 'D' + deliverableId + ' | use ' + (usedToday + 1) + '/' + DAILY_AI_FEEDBACK_LIMIT + ' today');
     }
@@ -2740,6 +2760,31 @@ function handleGetDocAIFeedback(data) {
       return { success: false, error: 'Document not found — it may have been deleted. Create a new copy from the portfolio.' };
     }
     return { success: false, error: 'Could not read your document: ' + e.message };
+  }
+}
+
+/**
+ * Count a student's successful Verify Work checks on one CAD Quiz practical (all days).
+ */
+function countPracticalChecks(email, deliverableId) {
+  if (!email) return 0;
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAMES.LOG);
+    if (!sheet) return 0;
+    var prefix = 'D' + deliverableId + ' |';
+    var values = sheet.getDataRange().getValues();
+    var count  = 0;
+    for (var i = 1; i < values.length; i++) {
+      if (values[i][1] === 'DOC_AI_PRACTICAL' &&
+          (values[i][2] || '').toString().toLowerCase().trim() === email &&
+          (values[i][3] || '').toString().indexOf(prefix) === 0) {
+        count++;
+      }
+    }
+    return count;
+  } catch (e) {
+    Logger.log('countPracticalChecks error: ' + e);
+    return 0; // fail open so a log error does not block students
   }
 }
 
@@ -2954,10 +2999,11 @@ reflection (max 4): Depth and specificity of the Section 4 reflection. 4=specifi
 
 /**
  * CAD Quiz practicals (DBL 426 / HS AER + 8AER 28): Claude looks at the
- * screenshots pasted into the student's Doc. Two pass/fail checks, 0 or 5 each:
- *   iso_view           — the finished part in an isometric 3D view
- *   sketch_constrained — a sketch whose lines are all black (fully constrained)
+ * screenshots pasted into the student's Doc. Two checks, scored 5 / 3 / 0:
+ *   iso_view           — 5 isometric view of the part · 3 flat (orthographic) view only
+ *   sketch_constrained — 5 every line black · 3 some lines black, some blue
  */
+var CAD_PRACTICAL_CHECK_LIMIT = 5;   // Verify Work clicks per practical (total, not per day)
 var CAD_PRACTICAL_MAX_IMAGES = 6;
 var CAD_PRACTICAL_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'];
 
@@ -2990,20 +3036,25 @@ function gradeCadPracticalScreenshots(body, deliverableId) {
 
   content.push({ type: 'text', text:
     'These are screenshots a high school student pasted into their CAD practical. They modeled ' + part + ' in Autodesk Fusion 360.\n\n' +
-    'Check two things, each PASS (5) or FAIL (0):\n\n' +
-    'iso_view: At least one screenshot shows the finished 3D solid part from an isometric (angled 3D) view, where you can see the top and two sides at once. ' +
-    'A flat, straight-on view or a 2D sketch does not count.\n\n' +
-    'sketch_constrained: At least one screenshot shows a Fusion 360 sketch (2D lines in sketch mode, usually with dimensions) where every sketch line is BLACK. ' +
-    'In Fusion, black lines are fully constrained and blue lines are not. Dashed construction lines, purple projected geometry and the dimension text itself do not count against it. ' +
-    'FAIL if any sketch line is blue, or if no sketch is shown. If the lines are too small or blurry to tell black from blue, FAIL and ask for a closer screenshot.\n\n' +
-    'Feedback: one short, direct sentence written to the student. On PASS, say which screenshot shows it. On FAIL, say exactly what to fix or add.' +
+    'Score two things. Use the best screenshot for each.\n\n' +
+    'iso_view:\n' +
+    '  5 = a screenshot shows the finished 3D solid part from an isometric (angled 3D) view, where you can see the top and two sides at once.\n' +
+    '  3 = the finished 3D part is shown, but only from a flat, straight-on (orthographic) view such as front, top or side.\n' +
+    '  0 = no screenshot shows the finished 3D part (a 2D sketch alone does not count).\n\n' +
+    'sketch_constrained: look at Fusion 360 sketches (2D lines in sketch mode, usually with dimensions). In Fusion, black lines are fully constrained and blue lines are not. ' +
+    'Dashed construction lines, purple projected geometry and the dimension text itself do not count either way.\n' +
+    '  5 = a sketch where every sketch line is black.\n' +
+    '  3 = a sketch where some lines are black but some are still blue.\n' +
+    '  0 = no sketch is shown, or every sketch line is blue.\n' +
+    '  If the lines are too small or blurry to tell black from blue, score 0 and ask for a closer screenshot.\n\n' +
+    'Feedback: one short, direct sentence written to the student. On 5, say which screenshot earned it. On 3 or 0, say exactly what to change to earn 5.' +
     (skippedLarge ? ' (Note: ' + skippedLarge + ' screenshot(s) were too large to include.)' : '')
   });
 
   var check = {
     type: 'object',
     properties: {
-      score:    { type: 'integer', enum: [0, 5] },
+      score:    { type: 'integer', enum: [0, 3, 5] },
       feedback: { type: 'string' }
     },
     required: ['score', 'feedback'],

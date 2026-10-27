@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.66',
+    VERSION: 'v2.14.67',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -269,6 +269,8 @@ const DELIVERABLES = [
             'Paste your three screenshots into the doc (<strong>Print Screen</strong>, or <strong>Win+Shift+S</strong> then <strong>Ctrl+V</strong>): an isometric view of the finished part, a fully constrained sketch (all lines black), and the timeline.',
         ],
         verifyCheckText: 'AI looks at your screenshots for an isometric view and a fully constrained sketch.',
+        partialCreditAfter: 2,   // Submit unlocks after this many checks, even without full marks
+        checkLimit: 5,           // must match CAD_PRACTICAL_CHECK_LIMIT in google-apps-script.js
         checklistItems: [
             'My doc has an <strong>isometric view</strong>, a <strong>fully constrained sketch</strong> (all lines black), and the <strong>timeline</strong>.',
         ],
@@ -805,6 +807,8 @@ const DELIVERABLES = [
             'Paste your three screenshots into the doc (<strong>Print Screen</strong>, or <strong>Win+Shift+S</strong> then <strong>Ctrl+V</strong>): an isometric view of the finished part, a fully constrained sketch (all lines black), and the timeline.',
         ],
         verifyCheckText: 'AI looks at your screenshots for an isometric view and a fully constrained sketch.',
+        partialCreditAfter: 2,   // Submit unlocks after this many checks, even without full marks
+        checkLimit: 5,           // must match CAD_PRACTICAL_CHECK_LIMIT in google-apps-script.js
         checklistItems: [
             'My doc has an <strong>isometric view</strong>, a <strong>fully constrained sketch</strong> (all lines black), and the <strong>timeline</strong>.',
         ],
@@ -2655,6 +2659,8 @@ function calculatePoints() {
             // Use teacher grade if available, otherwise use default points
             if (deliverable.teacherGrade !== undefined) {
                 points += Number(deliverable.teacherGrade) || 0;
+            } else if (d.partialCreditAfter && deliverable.aiScore !== undefined) {
+                points += Number(deliverable.aiScore) || 0;   // verified score until the teacher grades it
             } else {
                 points += d.points;
             }
@@ -4485,6 +4491,12 @@ function renderDocDeliverableUI(id, deliverable, existing) {
     const aiVerified  = !!existing?.aiVerified;
     const fbLabel     = deliverable.feedbackButtonLabel || 'Get Immediate Feedback';
     const fbIcon      = aiGated ? 'fa-check-double' : 'fa-comments';
+    // Partial-credit practicals: Submit also unlocks after `partialCreditAfter` checks
+    const partialAfter = deliverable.partialCreditAfter || 0;
+    const checksUsed   = existing?.aiChecks || 0;
+    const checksLeft   = Math.max(0, (deliverable.checkLimit || 0) - checksUsed);
+    const submitUnlocked = !aiGated || aiVerified || (partialAfter && checksUsed >= partialAfter);
+    const outOfChecks  = partialAfter && deliverable.checkLimit && checksLeft === 0;
 
     const createBtn = hasDoc
         ? ''
@@ -4511,9 +4523,10 @@ function renderDocDeliverableUI(id, deliverable, existing) {
 
     const feedbackSection = hasDoc && !isSubmitted
         ? `<div style="margin-bottom:16px;">
-               <button type="button" class="btn btn-secondary" onclick="requestDocFeedback(${id})" id="docFeedbackBtn">
+               <button type="button" class="btn btn-secondary" onclick="requestDocFeedback(${id})" id="docFeedbackBtn" ${outOfChecks ? 'disabled' : ''}>
                    <i class="fas ${fbIcon}"></i> ${fbLabel}
                </button>
+               ${partialAfter ? `<span id="docChecksLeft" style="margin-left:12px;font-size:13px;color:var(--gray-500);">${checksLeft} of ${deliverable.checkLimit} checks left</span>` : ''}
                <div id="docFeedbackResult" style="margin-top:16px;"></div>
            </div>`
         : hasDoc && isSubmitted
@@ -4526,12 +4539,16 @@ function renderDocDeliverableUI(id, deliverable, existing) {
                <i class="fas fa-check-circle"></i> Submitted
            </div>`
         : hasDoc
-        ? `<div class="form-actions" id="docSubmitSection" style="${aiGated && !aiVerified ? 'display:none;' : ''}">
-               <button type="button" class="btn btn-primary" onclick="submitDeliverable(${id})">
-                   <i class="fas fa-paper-plane"></i> Submit
+        ? `<div class="form-actions" id="docSubmitSection" style="${submitUnlocked ? '' : 'display:none;'}">
+               <button type="button" class="btn btn-primary" onclick="submitDeliverable(${id})" id="docSubmitBtn">
+                   <i class="fas fa-paper-plane"></i> ${submitButtonLabel(deliverable, existing?.aiScore)}
                </button>
            </div>`
         : '';
+
+    const unlockStep = partialAfter
+        ? `Once everything passes, <strong>Submit</strong> unlocks. After check #${partialAfter} you can also submit for partial credit. You get ${deliverable.checkLimit} checks.`
+        : `Once everything passes, <strong>Submit</strong> unlocks.`;
 
     const verifySteps = deliverable.verifySteps || [
         'Fill in all four sections. For the photo, use <strong>Insert → Image</strong> in Google Docs.',
@@ -4544,7 +4561,7 @@ function renderDocDeliverableUI(id, deliverable, existing) {
                    <li>Click <strong>Create My ${deliverable.title}</strong> — your personal copy opens in Google Docs.</li>
                    ${verifySteps.map(s => `<li>${s}</li>`).join('')}
                    <li>Click <strong>${fbLabel}</strong> — ${deliverable.verifyCheckText || 'AI checks each section.'} Fix anything that doesn't pass.</li>
-                   <li>Once everything passes, <strong>Submit</strong> unlocks.</li>
+                   <li>${unlockStep}</li>
                </ol>
            </div>`
         : `<div style="background:var(--gray-50,#fafafa);border:1px solid var(--gray-200);border-radius:8px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:var(--gray-600);">
@@ -4631,30 +4648,70 @@ async function requestDocFeedback(id) {
             })
         });
         const data = await res.json();
-        if (!data.success) throw new Error(data.error || 'Unknown error');
+        const partialAfter = deliverable?.partialCreditAfter || 0;
+        if (partialAfter && data.checksUsed !== undefined) {
+            state.deliverables[id] = { ...state.deliverables[id], aiChecks: data.checksUsed };
+        }
+        if (!data.success) {
+            if (partialAfter && data.rateLimited) { await saveToCloud(); updateDocSubmitUI(id); }
+            throw new Error(data.error || 'Unknown error');
+        }
 
         const criteria = DOC_RUBRIC_CRITERIA[id] || [];
-        if (panel) panel.innerHTML = renderDocFeedbackPanel(data.grades, criteria, aiGated);
+        if (panel) panel.innerHTML = renderDocFeedbackPanel(data.grades, criteria, aiGated, partialAfter ? {
+            checksUsed: data.checksUsed, checkLimit: data.checkLimit, partialAfter
+        } : null);
 
         // For AI-gated deliverables, unlock Submit when all criteria pass
+        // (partial-credit practicals also unlock after `partialCreditAfter` checks)
         if (aiGated && criteria.length > 0) {
             const allPassed = criteria.every(c => (data.grades[c.key]?.score || 0) >= c.max);
-            if (allPassed) {
-                state.deliverables[id] = { ...state.deliverables[id], aiVerified: true };
+            const update = {};
+            if (allPassed) update.aiVerified = true;
+            if (partialAfter) update.aiScore = criteria.reduce((sum, c) => sum + (Number(data.grades[c.key]?.score) || 0), 0);
+            if (Object.keys(update).length) {
+                state.deliverables[id] = { ...state.deliverables[id], ...update };
                 await saveToCloud();
-                const submitSection = document.getElementById('docSubmitSection');
-                if (submitSection) submitSection.style.display = '';
             }
+            updateDocSubmitUI(id);
         }
     } catch (err) {
         if (panel) panel.innerHTML = `<p style="color:var(--danger,#c62828);font-size:14px;">${err.message}</p>`;
     } finally {
         if (btn) { btn.disabled = false; btn.innerHTML = `<i class="fas ${fbIcon}"></i> ${fbLabel}`; }
+        updateDocSubmitUI(id);
     }
 }
 
-function renderDocFeedbackPanel(grades, criteria, isBinaryMode) {
-    // Binary mode: max=1 per criterion — show ✓/✗ instead of scores
+function submitButtonLabel(deliverable, aiScore) {
+    if (!deliverable?.partialCreditAfter || aiScore === undefined || aiScore === null) return 'Submit';
+    return `Submit — ${aiScore} point${aiScore === 1 ? '' : 's'}`;
+}
+
+// Sync the Submit button, its score label, and the checks-left counter with saved state.
+function updateDocSubmitUI(id) {
+    const deliverable = DELIVERABLES.find(d => d.id === id);
+    const st = state.deliverables[id] || {};
+    const partialAfter = deliverable?.partialCreditAfter || 0;
+    const unlocked = !deliverable?.aiGated || st.aiVerified || (partialAfter && (st.aiChecks || 0) >= partialAfter);
+
+    const section = document.getElementById('docSubmitSection');
+    if (section) section.style.display = unlocked ? '' : 'none';
+    const submitBtn = document.getElementById('docSubmitBtn');
+    if (submitBtn) submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> ${submitButtonLabel(deliverable, st.aiScore)}`;
+
+    if (partialAfter && deliverable.checkLimit) {
+        const left = Math.max(0, deliverable.checkLimit - (st.aiChecks || 0));
+        const counter = document.getElementById('docChecksLeft');
+        if (counter) counter.textContent = `${left} of ${deliverable.checkLimit} checks left`;
+        const verifyBtn = document.getElementById('docFeedbackBtn');
+        if (verifyBtn && left === 0) verifyBtn.disabled = true;
+    }
+}
+
+function renderDocFeedbackPanel(grades, criteria, isBinaryMode, partial) {
+    // Binary mode: pass/fail per criterion — show ✓/✗ instead of scores.
+    // `partial` ({checksUsed, checkLimit, partialAfter}) adds part-credit rows and points.
     if (isBinaryMode) {
         const passed = criteria.filter(c => (grades[c.key]?.score || 0) >= c.max).length;
         const allPass = passed === criteria.length;
@@ -4662,21 +4719,32 @@ function renderDocFeedbackPanel(grades, criteria, isBinaryMode) {
         const rows = criteria.map(c => {
             const g    = grades[c.key] || { score: 0, feedback: '' };
             const pass = g.score >= c.max;
+            const icon = pass ? '✅' : (partial && g.score > 0 ? '🟡' : '❌');
+            const pts  = partial ? ` <span style="font-weight:700;color:var(--gray-600);">${g.score || 0}/${c.max}</span>` : '';
             return `
                 <div style="display:flex;gap:12px;align-items:flex-start;border:1px solid ${pass ? 'var(--success,#2e7d32)' : 'var(--gray-200,#e0e0e0)'};border-radius:8px;padding:11px 14px;background:${pass ? 'var(--success-bg,#f1f8f1)' : 'var(--surface,#fff)'};">
-                    <span style="font-size:18px;line-height:1;flex-shrink:0;">${pass ? '✅' : '❌'}</span>
+                    <span style="font-size:18px;line-height:1;flex-shrink:0;">${icon}</span>
                     <div>
-                        <div style="font-weight:600;font-size:14px;margin-bottom:${g.feedback ? '4px' : '0'};">${c.label}</div>
+                        <div style="font-weight:600;font-size:14px;margin-bottom:${g.feedback ? '4px' : '0'};">${c.label}${pts}</div>
                         ${g.feedback ? `<p style="font-size:13px;color:var(--gray-700,#444);margin:0;line-height:1.5;">${g.feedback}</p>` : ''}
                     </div>
                 </div>`;
         }).join('');
 
+        let partialNote = '';
+        if (partial && !allPass) {
+            const total = criteria.reduce((sum, c) => sum + (Number(grades[c.key]?.score) || 0), 0);
+            const max   = criteria.reduce((sum, c) => sum + c.max, 0);
+            const left  = Math.max(0, partial.checkLimit - partial.checksUsed);
+            partialNote = partial.checksUsed >= partial.partialAfter
+                ? `You can submit now for <strong>${total} of ${max} points</strong>${left ? `, or fix the items above and verify again (${left} check${left === 1 ? '' : 's'} left)` : ''}.`
+                : `Fix the items above, then click <strong>Verify Work</strong> again. ${partial.partialAfter - partial.checksUsed === 1 ? 'After your next check' : 'After ' + (partial.partialAfter - partial.checksUsed) + ' more checks'} you can submit for partial credit if you need to.`;
+        }
         const footer = allPass
             ? `<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--success-bg,#f1f8f1);border:1px solid var(--success,#2e7d32);border-radius:8px;font-weight:600;color:var(--success,#2e7d32);">
                    <i class="fas fa-unlock"></i> All items verified — Submit is now unlocked!
                </div>`
-            : `<p style="font-size:13px;color:var(--gray-600,#666);margin-top:4px;">Fix the items above, then click <strong>Verify Work</strong> again.</p>`;
+            : `<p style="font-size:13px;color:var(--gray-600,#666);margin-top:4px;">${partialNote || 'Fix the items above, then click <strong>Verify Work</strong> again.'}</p>`;
 
         return `<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">${rows}</div>${footer}`;
     }
