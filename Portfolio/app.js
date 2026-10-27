@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.64',
+    VERSION: 'v2.14.65',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -250,6 +250,29 @@ const DELIVERABLES = [
         points: 20,
         description: 'Document your completed Ultrasonic Sensor Mount — the final component before the deck is locked. Track the sensor bore dimensions and L-bracket geometry.',
         // requirements removed — rubric shown in portfolio; section instructions live in the doc template
+    },
+    // CAD Quiz Part 1 — practical. Hidden from deliverable lists; opened from the Quiz page (see QUIZ_PRACTICALS).
+    {
+        id: 28,
+        title: 'CAD Quiz Practical — Motor L-Bracket',
+        unit: '02',
+        week: 8,
+        tracks: ['hsaer', '8aer'],
+        phase: 'cad',
+        type: 'googleDoc',
+        points: 10,
+        hidden: true,
+        aiGated: true,
+        feedbackButtonLabel: 'Verify Work',
+        description: 'Model an L-bracket mount for a motor in Fusion 360. The motor\'s output shaft needs a 15 mm clearance hole, and the motor face has four 4 mm mounting holes on a 32 mm circle pattern. The mounting flange is 8 mm thick with a 20 mm square hole pattern of 5.6 mm holes. Every sketch must be fully constrained.',
+        verifySteps: [
+            'Fill in every section — the dimension tables, your design choices, and your screenshots (use <strong>Insert → Image</strong>).',
+            'Paste a share link to your <strong>.f3d</strong> file in the last section.',
+        ],
+        checklistItems: [
+            'My doc has <strong>3 screenshots</strong> — isometric view, fully constrained sketch, and timeline.',
+            'My <strong>.f3d share link</strong> works when opened in a private/incognito window.',
+        ],
     },
     // ── Unit 3: Safety Certification ────────────────────────────────────
     {
@@ -764,6 +787,29 @@ const DELIVERABLES = [
         tracks: ['dbl'],
         alwaysOpen: true,
         description: 'Apply the physics of the wedge simple machine to your doorstop. Record your wedge dimensions, calculate mechanical advantage and floor normal force, and check whether your design is self-locking on tile, hardwood, and carpet.',
+    },
+    // CAD Quiz Part 1 — practical. Hidden from deliverable lists; opened from the Quiz page (see QUIZ_PRACTICALS).
+    {
+        id: 426,
+        title: 'CAD Quiz Practical — Doorstop Wedge',
+        unit: '02',
+        week: 9,
+        points: 10,
+        phase: 'cad',
+        tracks: ['dbl'],
+        type: 'googleDoc',
+        hidden: true,
+        aiGated: true,
+        feedbackButtonLabel: 'Verify Work',
+        description: 'Model a doorstop wedge in Fusion 360 with an 8° slope and a length of 100 mm. The door has a 13 mm gap, so give it a maximum height that will stop the door. Extrude it 25 mm, then add text to one side and cut extrude the text 1 mm deep. Every sketch must be fully constrained.',
+        verifySteps: [
+            'Fill in every section — the dimension table, your height reasoning, and your screenshots (use <strong>Insert → Image</strong>).',
+            'Paste a share link to your <strong>.f3d</strong> file in the last section.',
+        ],
+        checklistItems: [
+            'My doc has <strong>3 screenshots</strong> — isometric view, fully constrained sketch, and timeline.',
+            'My <strong>.f3d share link</strong> works when opened in a private/incognito window.',
+        ],
     },
     // ── DBL: Unit 3 Safety ────────────────────────────────────────────────
     {
@@ -1630,7 +1676,7 @@ let state = {
         reflectionDueDates: {},
         deliverableDueDates: {},
         quizEnabled: false,
-        quizKey: 'claw'
+        quizKey: 'edp_quiz'
     },
     quiz: {
         loaded: false,      // true once we've checked the backend
@@ -1802,7 +1848,7 @@ async function handleTokenResponse(tokenResponse) {
             if (!Array.isArray(state.codeSnippets)) state.codeSnippets = [];
             if (!Array.isArray(state.viewedFeedback)) state.viewedFeedback = [];
             // config is not persisted in cloud state — restore default so it's never undefined
-            state.config = { skipReflectionWeeks: [8], skipDeliverableWeeks: [], expectedVersion: null, quizEnabled: false, quizKey: 'claw', reflectionDueDates: {}, deliverableDueDates: {} };
+            state.config = { skipReflectionWeeks: [8], skipDeliverableWeeks: [], expectedVersion: null, quizEnabled: false, quizKey: 'edp_quiz', reflectionDueDates: {}, deliverableDueDates: {} };
             state.quiz = { loaded: false, submitted: false, grades: null, aiTotal: null };
             // URL_TRACK overrides stored course — lets a student in two classes
             // open each class hub and land in the correct portfolio for that session.
@@ -2238,7 +2284,7 @@ async function fetchConfig() {
         state.config.skipReflectionWeeks  = (cfg.skipReflectionWeeks  || []).map(Number);
         state.config.skipDeliverableWeeks = (cfg.skipDeliverableWeeks || []).map(Number);
         state.config.quizEnabled          = cfg.quizEnabled === true || cfg.quizEnabled === 'true';
-        state.config.quizKey              = cfg.quizKey || 'claw';
+        state.config.quizKey              = cfg.quizKey || 'edp_quiz';
         state.config.reflectionDueDates   = cfg.reflectionDueDates  || {};
         state.config.deliverableDueDates  = cfg.deliverableDueDates || {}; // baseline; schedule-data.json merges on top
 
@@ -2367,10 +2413,11 @@ function updateUI() {
         quizNav.style.display = (state.config.quizEnabled || state.quiz.submitted) ? 'flex' : 'none';
         const quizLabel = quizNav.querySelector('span');
         if (quizLabel) {
-            const QUIZ_LABELS = { claw: 'Claw Quiz', final_exam: 'Final Exam' };
+            const QUIZ_LABELS = { edp_quiz: 'EDP Quiz', cad_quiz: 'CAD Quiz' };
             quizLabel.textContent = QUIZ_LABELS[state.config.quizKey] || 'Quiz';
         }
     }
+    refreshQuizPracticalCard();
 }
 
 function updateDashboardDeliverables() {
@@ -4416,6 +4463,20 @@ const DOC_RUBRIC_CRITERIA = {
         { key: 'does_it_work',      label: '"Does It Work?" Answered',        max: 1 },
         { key: 'post_processing',   label: 'Post-Processing Notes',           max: 1 },
     ],
+    426: [                             // CAD Quiz Practical (DBL) — pass/fail per item, 2 pts each
+        { key: 'key_dimensions',   label: 'Dimension Table Matches Spec',    max: 2 },
+        { key: 'height_reasoning', label: 'Max Height Reasoning',            max: 2 },
+        { key: 'constraints',      label: 'Constraints Described',           max: 2 },
+        { key: 'screenshots',      label: 'Screenshots (3)',                 max: 2 },
+        { key: 'file_link',        label: '.f3d Share Link',                 max: 2 },
+    ],
+    28: [                              // CAD Quiz Practical (AER) — pass/fail per item, 2 pts each
+        { key: 'motor_face',       label: 'Motor Face Dimensions',           max: 2 },
+        { key: 'flange',           label: 'Mounting Flange Dimensions',      max: 2 },
+        { key: 'design_choices',   label: 'Design Choices Explained',        max: 2 },
+        { key: 'screenshots',      label: 'Screenshots (3)',                 max: 2 },
+        { key: 'file_link',        label: '.f3d Share Link',                 max: 2 },
+    ],
     23: COMPONENT_RUBRIC_CRITERIA,
     24: COMPONENT_RUBRIC_CRITERIA,
     25: COMPONENT_RUBRIC_CRITERIA,
@@ -4480,13 +4541,16 @@ function renderDocDeliverableUI(id, deliverable, existing) {
            </div>`
         : '';
 
+    const verifySteps = deliverable.verifySteps || [
+        'Fill in all four sections. For the photo, use <strong>Insert → Image</strong> in Google Docs.',
+        'Upload your <strong>.f3d</strong> and <strong>.3mf</strong> files to the class Drive folder (name them <em>LastName_FirstName_doorstop</em>).',
+    ];
     const instructions = aiGated
         ? `<div style="background:var(--gray-50,#fafafa);border:1px solid var(--gray-200);border-radius:8px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:var(--gray-600);">
                <strong>How it works:</strong>
                <ol style="margin:8px 0 0 16px;padding:0;line-height:1.8;">
                    <li>Click <strong>Create My ${deliverable.title}</strong> — your personal copy opens in Google Docs.</li>
-                   <li>Fill in all four sections. For the photo, use <strong>Insert → Image</strong> in Google Docs.</li>
-                   <li>Upload your <strong>.f3d</strong> and <strong>.3mf</strong> files to the class Drive folder (name them <em>LastName_FirstName_doorstop</em>).</li>
+                   ${verifySteps.map(s => `<li>${s}</li>`).join('')}
                    <li>Click <strong>${fbLabel}</strong> — AI checks each section. Fix anything that doesn't pass.</li>
                    <li>Once everything passes, <strong>Submit</strong> unlocks.</li>
                </ol>
@@ -4699,7 +4763,7 @@ function confirmDocSubmit(deliverable) {
             'I uploaded my <strong>LastName_FirstName_doorstop.f3d</strong> and <strong>.3mf</strong> files to the class Drive folder.',
         ];
         const items = deliverable.aiGated
-            ? aiGatedItems
+            ? (deliverable.checklistItems || aiGatedItems)
             : (deliverable.checklistItems && deliverable.checklistItems.length)
             ? deliverable.checklistItems
             : defaultItems;
@@ -5229,8 +5293,58 @@ if (AI_FEEDBACK_ENABLED) {
 }
 
 // ============================================
-// CLAW QUIZ PAGE
+// QUIZ PAGE
 // ============================================
+
+// Quizzes with a Part 1 practical: quizKey → googleDoc deliverable ids (one per track).
+// The practical deliverables are `hidden` so they only appear here, on the Quiz page.
+const QUIZ_PRACTICALS = {
+    cad_quiz: [426, 28],   // DBL: Doorstop Wedge · HS AER + 8AER: Motor L-Bracket
+};
+
+function quizPracticalDeliverable() {
+    const ids = QUIZ_PRACTICALS[state.config.quizKey] || [];
+    return DELIVERABLES.find(d => ids.includes(d.id) && isForCourse(d)) || null;
+}
+
+function renderQuizPracticalCard() {
+    const d = quizPracticalDeliverable();
+    if (!d) return '';
+    const existing = state.deliverables[d.id] || {};
+    const status = existing.status === 'completed'
+        ? { text: 'Submitted', icon: 'fa-check-circle', color: 'var(--success, #10b981)' }
+        : existing.aiVerified
+        ? { text: 'Verified — ready to submit', icon: 'fa-check-double', color: 'var(--primary)' }
+        : existing.docId
+        ? { text: 'In progress', icon: 'fa-pen', color: 'var(--warning, #b45309)' }
+        : { text: 'Not started', icon: 'fa-circle', color: 'var(--gray-400)' };
+    return `
+        <div id="quizPracticalPart" class="card" style="border:1px solid var(--gray-200); margin-bottom:24px; padding:24px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; gap:12px; flex-wrap:wrap;">
+                <span style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--gray-400);">Part 1 — Practical</span>
+                <span style="font-size:12px; font-weight:700; color:var(--primary); background:var(--primary-light, rgba(99,102,241,0.1)); padding:2px 10px; border-radius:12px;">${d.points} pts</span>
+            </div>
+            <h3 style="margin-bottom:8px;">${d.title.replace(/^CAD Quiz Practical — /, '')}</h3>
+            <p style="font-size:15px; line-height:1.65; margin-bottom:14px; color:var(--gray-700);">${d.description}</p>
+            <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+                <button type="button" class="btn ${existing.status === 'completed' ? 'btn-secondary' : 'btn-primary'}" onclick="openDeliverableForm(${d.id})">
+                    <i class="fas fa-file-alt"></i> ${existing.status === 'completed' ? 'View Practical' : 'Open Practical'}
+                </button>
+                <span style="font-size:14px; font-weight:600; color:${status.color};"><i class="fas ${status.icon}"></i> ${status.text}</span>
+            </div>
+        </div>`;
+}
+
+function refreshQuizPracticalCard() {
+    const el = document.getElementById('quizPracticalPart');
+    if (el) el.outerHTML = renderQuizPracticalCard();
+}
+
+function quizPart2Heading() {
+    return quizPracticalDeliverable()
+        ? `<h2 style="font-size:1.1rem; margin:8px 0 16px; color:var(--gray-700);">Part 2 — Multiple Choice</h2>`
+        : '';
+}
 
 // Minimal metadata for results display — question text is fetched from backend (kept private)
 const QUIZ_QUESTION_META = [
@@ -5255,7 +5369,7 @@ async function loadQuizPage() {
 
     // Show loading while we check backend
     page.innerHTML = `
-        <div class="page-header"><h1 class="page-title"><i class="fas fa-pencil-alt"></i> ${({claw:'Claw Project Quiz', final_exam:'Final Exam'})[state.config.quizKey] || 'Quiz'}</h1></div>
+        <div class="page-header"><h1 class="page-title"><i class="fas fa-pencil-alt"></i> ${({edp_quiz:'EDP Quiz', cad_quiz:'CAD Quiz'})[state.config.quizKey] || 'Quiz'}</h1></div>
         <div style="text-align:center; padding: 60px 20px; color: var(--gray-500);">
             <i class="fas fa-spinner fa-spin" style="font-size:2rem; margin-bottom:16px;"></i>
             <p>Checking submission status…</p>
@@ -5287,7 +5401,7 @@ async function loadQuizPage() {
     // Fetch quiz meta (question text) from backend if not yet loaded
     if (!state.quiz.meta) {
         try {
-            const res = await fetch(`${CONFIG.SHEETS_API_URL}?action=getQuizMeta&quizId=${encodeURIComponent(state.config.quizKey || 'claw')}&_t=${Date.now()}`);
+            const res = await fetch(`${CONFIG.SHEETS_API_URL}?action=getQuizMeta&quizId=${encodeURIComponent(state.config.quizKey || 'edp_quiz')}&_t=${Date.now()}`);
             const data = await res.json();
             if (data.questions) state.quiz.meta = data;
             else state.quiz.metaError = data.error || 'Backend returned no questions.';
@@ -5299,7 +5413,7 @@ async function loadQuizPage() {
     if (!state.quiz.meta) {
         const errDetail = state.quiz.metaError ? `<br><br><span style="font-size:12px; color:var(--gray-500);">Detail: ${escapeHtmlQuiz(state.quiz.metaError)}</span>` : '';
         page.innerHTML = `
-            <div class="page-header"><h1 class="page-title"><i class="fas fa-pencil-alt"></i> ${({claw:'Claw Project Quiz', final_exam:'Final Exam'})[state.config.quizKey] || 'Quiz'}</h1></div>
+            <div class="page-header"><h1 class="page-title"><i class="fas fa-pencil-alt"></i> ${({edp_quiz:'EDP Quiz', cad_quiz:'CAD Quiz'})[state.config.quizKey] || 'Quiz'}</h1></div>
             <div class="card" style="color:var(--danger); padding:20px;">
                 Unable to load quiz questions. Please refresh the page or notify Mr. Bombich.${errDetail}
             </div>`;
@@ -5374,6 +5488,8 @@ function renderQuizForm(page) {
             <h1 class="page-title"><i class="fas fa-pencil-alt"></i> ${escapeHtmlQuiz(quizName)}</h1>
             <p style="color:var(--gray-500); margin-top:6px;">${isMC ? (ptsLabel || '') : (ptsLabel ? `No notes permitted · ${ptsLabel}` : 'No notes permitted')}</p>
         </div>
+        ${renderQuizPracticalCard()}
+        ${quizPart2Heading()}
         ${noticeHtml}
 
         <div id="quizSaveIndicator" style="font-size:13px; color:var(--success, #10b981); margin-bottom:14px; min-height:18px; font-weight:600;"></div>
@@ -5606,6 +5722,8 @@ function renderQuizResults(page) {
             <div class="page-header">
                 <h1 class="page-title"><i class="fas fa-check-circle" style="color:var(--success);"></i> Quiz Submitted</h1>
             </div>
+            ${renderQuizPracticalCard()}
+            ${quizPart2Heading()}
             <div class="card" style="text-align:center; padding:48px 24px;">
                 <i class="fas fa-spinner fa-spin" style="font-size:2.5rem; color:var(--primary); display:block; margin-bottom:20px;"></i>
                 <p style="font-size:17px; font-weight:700; color:var(--gray-700); margin-bottom:8px;">Grading in progress…</p>
@@ -5675,6 +5793,8 @@ function renderQuizResults(page) {
         <div class="page-header">
             <h1 class="page-title"><i class="fas fa-check-circle" style="color:var(--success);"></i> Quiz Submitted</h1>
         </div>
+        ${renderQuizPracticalCard()}
+        ${quizPart2Heading()}
         ${disclaimerHtml}
         ${cardsHtml}
         ${totalHtml}`;

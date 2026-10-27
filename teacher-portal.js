@@ -22,13 +22,13 @@ const CONFIG = {
         hsaer: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-            currentAppVersion: 'v2.14.64',
+            currentAppVersion: 'v2.14.65',
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
             deliverablePoints: {
                 0: 20, 10: 10, 11: 28,
-                21: 20, 22: 20, 23: 20, 24: 20, 25: 20, 26: 20, 27: 20,
+                21: 20, 22: 20, 23: 20, 24: 20, 25: 20, 26: 20, 27: 20, 28: 10,
                 31: 50,
                 41: 50, 42: 50, 43: 50, 44: 50, 52: 75,
                 71: 25, 72: 30,
@@ -40,20 +40,19 @@ const CONFIG = {
             deliverableWeeks: { 8: 10, 9: 11 },
             quizzes: [
                 { id: 'edp_quiz',   name: 'EDP Quiz',   questionCount: 12, maxPoints: 24 },
-                { id: 'claw',       name: 'Claw Quiz',  questionCount: 7,  maxPoints: 28 },
-                { id: 'final_exam', name: 'Final Exam', questionCount: 41, maxPoints: 41 }
+                { id: 'cad_quiz',   name: 'CAD Quiz',   questionCount: 10, maxPoints: 10 }
             ]
         },
         '8aer': {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
-            currentAppVersion: 'v2.14.64',
+            currentAppVersion: 'v2.14.65',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
             deliverablePoints: {
                 0: 20, 10: 10, 11: 24,
-                21: 20, 22: 20,
+                21: 20, 22: 20, 28: 10,
                 31: 50,
                 89: 20, 90: 25, 94: 25, 95: 30, 96: 40,
                 81: 25, 82: 25, 83: 20, 84: 25, 85: 20,
@@ -62,20 +61,19 @@ const CONFIG = {
             deliverableWeeks: { 8: 10, 9: 11 },
             quizzes: [
                 { id: 'edp_quiz',   name: 'EDP Quiz',   questionCount: 12, maxPoints: 24 },
-                { id: 'claw',       name: 'Claw Quiz',  questionCount: 7,  maxPoints: 28 },
-                { id: 'final_exam', name: 'Final Exam', questionCount: 41, maxPoints: 41 }
+                { id: 'cad_quiz',   name: 'CAD Quiz',   questionCount: 10, maxPoints: 10 }
             ]
         },
         dbl: {
             name: 'Design & Build Lab',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
-            currentAppVersion: 'v2.14.64',
+            currentAppVersion: 'v2.14.65',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
             deliverablePoints: {
                 0: 20, 10: 10, 11: 28,
-                421: 20, 422: 20, 423: 20, 424: 4, 425: 10,
+                421: 20, 422: 20, 423: 20, 424: 4, 425: 10, 426: 10,
                 431: 50,
                 471: 40,
                 481: 30, 482: 25, 483: 30, 484: 50,
@@ -86,7 +84,8 @@ const CONFIG = {
             },
             deliverableWeeks: {},
             quizzes: [
-                { id: 'edp_quiz',   name: 'EDP Quiz',   questionCount: 12, maxPoints: 24 }
+                { id: 'edp_quiz',   name: 'EDP Quiz',   questionCount: 12, maxPoints: 24 },
+                { id: 'cad_quiz',   name: 'CAD Quiz',   questionCount: 10, maxPoints: 10 }
             ]
         }
     },
@@ -115,6 +114,7 @@ const TRACK_DELIVERABLES = {
         { id: 26, label: 'D2.5 — C6: IR Sensor Mount',                  week: 12 },
         { id: 27, label: 'D2.6 — C7: Ultrasonic Sensor Mount',          week: 12 },
         { id: 24, label: 'D2.7 — C4: Robot Deck (Final)',               week: 14 },
+        { id: 28, label: 'CAD Quiz Practical — Motor L-Bracket',        week: 8  },
         // Unit 3: Shop Safety
         { id: 31, label: 'D3.1 — Tool Safety Certifications',           week: 10 },
         // Unit 4: Programming & sensors
@@ -148,6 +148,7 @@ const TRACK_DELIVERABLES = {
         // Unit 2: Component deliverables
         { id: 21, label: 'D2.1 — C1: Wheel Hub',                    week: 4  },
         { id: 22, label: 'D2.2 — C2: Wheel Hub Cap',               week: 7  },
+        { id: 28, label: 'CAD Quiz Practical — Motor L-Bracket',   week: 8  },
         { id: 89, label: 'D2.3 — Robot Assembly',                  week: 9  },
         // Unit 3: Safety
         { id: 31, label: 'D3.1 — Tool Safety Certifications',      week: 10 },
@@ -176,6 +177,7 @@ const TRACK_DELIVERABLES = {
         { id: 431, label: 'D3.1 — Tool Cert Card',                         week: 6  },
         { id: 424, label: 'D2.4 — Doorstop Final Documentation',           week: 8  },
         { id: 425, label: 'D2.5 — Wedge Physics Activity',                 week: 9  },
+        { id: 426, label: 'CAD Quiz Practical — Doorstop Wedge',           week: 9  },
         // Unit 7: Electrical Systems
         { id: 471, label: 'D7.1 — Unit 7 Lab Results',                     week: 11 },
         // Project 2: Christmas Ornament / Gift
@@ -242,7 +244,7 @@ const COMPONENT_BATCH_CRITERIA = [
 ];
 
 // Deliverable IDs that support Batch AI Grade (excludes D11 which has its own handler)
-const DOC_GRADABLE_IDS = new Set([11, 21, 22, 23, 421, 422, 423, 424, 425]);
+const DOC_GRADABLE_IDS = new Set([11, 21, 22, 23, 28, 421, 422, 423, 424, 425, 426]);
 
 // Criteria definitions for Design Brief AI grading
 const BRIEF_CRITERIA = {
@@ -300,6 +302,21 @@ const BRIEF_CRITERIA = {
         { id: 'photo_attached',    label: 'Photo of Finished Doorstop',    max: 1 },
         { id: 'does_it_work',      label: '"Does It Work?" Answered',       max: 1 },
         { id: 'post_processing',   label: 'Post-Processing Notes',          max: 1 },
+    ],
+    // CAD Quiz Practicals — pass/fail per item (5 × 2 pts = 10 pts)
+    426: [   // DBL: Doorstop Wedge
+        { id: 'key_dimensions',   label: 'Dimension Table Matches Spec', max: 2 },
+        { id: 'height_reasoning', label: 'Max Height Reasoning',         max: 2 },
+        { id: 'constraints',      label: 'Constraints Described',        max: 2 },
+        { id: 'screenshots',      label: 'Screenshots (3)',              max: 2 },
+        { id: 'file_link',        label: '.f3d Share Link',              max: 2 },
+    ],
+    28: [    // HS AER: Motor L-Bracket
+        { id: 'motor_face',       label: 'Motor Face Dimensions',        max: 2 },
+        { id: 'flange',           label: 'Mounting Flange Dimensions',   max: 2 },
+        { id: 'design_choices',   label: 'Design Choices Explained',     max: 2 },
+        { id: 'screenshots',      label: 'Screenshots (3)',              max: 2 },
+        { id: 'file_link',        label: '.f3d Share Link',              max: 2 },
     ],
     // DBL D2.5: Wedge Physics Activity — math + reflection (5 × 2 pts = 10 pts)
     425: [
@@ -1343,88 +1360,6 @@ function openStudentDetail(email) {
         `;
     }
 
-    // Quiz panel (Robotics only)
-    const quizTab   = document.getElementById('quizDetailTab');
-    const quizPanel = document.getElementById('quizPanel');
-    if (quizTab && quizPanel) {
-        if (state.activeCourse === 'hsaer') {
-            quizTab.style.display = '';
-            const quizRow = (state.rawData?.quiz || []).find(r => r[1] === student.email);
-            if (!quizRow) {
-                quizPanel.innerHTML = '<p class="empty-state">No quiz submission yet.</p>';
-            } else {
-                const qMeta = [
-                    { label: 'Q1 — PWM',               max: 4 },
-                    { label: 'Q2 — Contact Detection',  max: 4 },
-                    { label: 'Q3 — abs() / Slip',       max: 4 },
-                    { label: 'Q4 — Rate of Closure',    max: 4 },
-                    { label: 'Q5 — Object Detection',   max: 4 },
-                    { label: 'Q6 — Blocking Code',      max: 6 },
-                    { label: 'Bonus — Active Low',      max: 2 },
-                ];
-                let col = 3;
-                let rows = '';
-                const gradingPending = qMeta.every((_, i) => quizRow[col + i*3 + 1] === '' || quizRow[col + i*3 + 1] === null);
-                qMeta.forEach(({ label, max }, i) => {
-                    const answer    = quizRow[col]   || '';
-                    const aiScore   = quizRow[col+1] !== '' && quizRow[col+1] !== null ? quizRow[col+1] : '';
-                    const feedback  = quizRow[col+2] || (gradingPending ? '<em style="color:var(--gray-400);">AI grading pending</em>' : '');
-                    col += 3;
-                    rows += `
-                        <tr style="border-bottom:1px solid var(--gray-100);">
-                            <td style="padding:10px 8px; font-weight:600; font-size:13px; white-space:nowrap; vertical-align:top;">${label}</td>
-                            <td style="padding:10px 8px; font-size:13px; vertical-align:top; max-width:260px;">${answer}</td>
-                            <td style="padding:6px 8px; text-align:center; vertical-align:top; white-space:nowrap;">
-                                <input type="number" class="quiz-q-score" data-max="${max}"
-                                    value="${aiScore}" min="0" max="${max}" step="1"
-                                    oninput="tallyQuizScore()"
-                                    style="width:48px; padding:4px 6px; border:1px solid var(--gray-300); border-radius:4px; text-align:center; font-size:13px; font-weight:700;">
-                                <span style="font-size:12px; color:var(--gray-400);">/${max}</span>
-                            </td>
-                            <td style="padding:10px 8px; font-size:12px; color:var(--gray-500); vertical-align:top;">${feedback}</td>
-                        </tr>`;
-                });
-                const aiTotal      = quizRow[col]   !== '' && quizRow[col]   !== null ? quizRow[col]   : '—';
-                const teacherFinal = quizRow[col+1] !== '' && quizRow[col+1] !== null ? quizRow[col+1] : '';
-                const regradeBtn = `<button class="btn btn-secondary" style="font-size:12px; padding:6px 12px;"
-                    onclick="regradeQuiz('${student.email}', this)">
-                    <i class="fas fa-robot"></i> ${gradingPending ? 'Run AI Grading' : 'Re-run AI Grading'}
-                </button>`;
-                quizPanel.innerHTML = `
-                    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
-                        <p style="font-size:13px; color:var(--gray-500); margin:0;">
-                            Submitted: ${quizRow[0]} &nbsp;|&nbsp; AI Total: <strong>${aiTotal}/26</strong>
-                        </p>
-                        ${regradeBtn}
-                    </div>
-                    <table style="width:100%; border-collapse:collapse; font-size:13px; margin-bottom:20px;">
-                        <thead><tr style="background:var(--gray-50);">
-                            <th style="padding:8px; text-align:left; border-bottom:2px solid var(--gray-200);">Question</th>
-                            <th style="padding:8px; text-align:left; border-bottom:2px solid var(--gray-200);">Student Answer</th>
-                            <th style="padding:8px; text-align:center; border-bottom:2px solid var(--gray-200); width:80px;">Score</th>
-                            <th style="padding:8px; text-align:left; border-bottom:2px solid var(--gray-200);">AI Feedback</th>
-                        </tr></thead>
-                        <tbody>${rows}</tbody>
-                        <tfoot><tr style="background:var(--gray-50); border-top:2px solid var(--gray-200);">
-                            <td colspan="2" style="padding:10px 8px; font-weight:700; font-size:14px;">Total</td>
-                            <td style="padding:10px 8px; text-align:center;">
-                                <span id="quizScoreTotal" style="font-size:15px; font-weight:900; color:var(--primary);">${teacherFinal !== '' ? teacherFinal : (aiTotal !== '—' ? aiTotal : '—')}</span>
-                                <span style="font-size:12px; color:var(--gray-400);">/28</span>
-                            </td>
-                            <td style="padding:10px 8px; text-align:right;">
-                                <button class="btn btn-primary" style="font-size:13px; padding:7px 16px;"
-                                    onclick="saveQuizGrade('${student.email}', this)">
-                                    <i class="fas fa-save"></i> Save Grade
-                                </button>
-                            </td>
-                        </tr></tfoot>
-                    </table>`;
-            }
-        } else {
-            quizTab.style.display = 'none';
-        }
-    }
-
     // Show modal
     document.getElementById('studentModal').classList.add('active');
 
@@ -1433,77 +1368,6 @@ function openStudentDetail(email) {
     document.querySelectorAll('.detail-panel').forEach(p => p.classList.remove('active'));
     document.querySelector('.detail-tab').classList.add('active');
     document.getElementById('deliverablesPanel').classList.add('active');
-}
-
-async function regradeQuiz(email, btn) {
-    const orig = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Grading…';
-    try {
-        const course = CONFIG.COURSES['hsaer'];
-        const res = await fetch(course.apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify({ action: 'regradeQuiz', token: CONFIG.TEACHER_TOKEN, email })
-        });
-        const data = await res.json();
-        if (data.success) {
-            btn.innerHTML = '<i class="fas fa-check"></i> Graded!';
-            // Reload data so the panel refreshes
-            await loadCourseData();
-            const student = state.students.find(s => s.email === email);
-            if (student) openStudentDetail(student.email);
-        } else {
-            btn.disabled = false;
-            btn.innerHTML = orig;
-            alert('Re-grade failed: ' + (data.error || 'Unknown error'));
-        }
-    } catch(err) {
-        btn.disabled = false;
-        btn.innerHTML = orig;
-        alert('Re-grade error: ' + err.message);
-    }
-}
-
-function tallyQuizScore() {
-    let total = 0;
-    document.querySelectorAll('.quiz-q-score').forEach(inp => {
-        const max = parseInt(inp.dataset.max) || 0;
-        total += Math.min(parseInt(inp.value) || 0, max);
-    });
-    const el = document.getElementById('quizScoreTotal');
-    if (el) el.textContent = total;
-}
-
-async function saveQuizGrade(email, btn) {
-    const inputs = document.querySelectorAll('.quiz-q-score');
-    let total = 0;
-    inputs.forEach(inp => { total += Math.min(parseInt(inp.value) || 0, parseInt(inp.dataset.max) || 0); });
-    const score = total;
-    const orig = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
-    try {
-        const course = CONFIG.COURSES['hsaer'];
-        const res = await fetch(course.apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify({ action: 'saveQuizGrade', token: CONFIG.TEACHER_TOKEN, email, score: Number(score) })
-        });
-        const data = await res.json();
-        if (data.success) {
-            btn.innerHTML = '<i class="fas fa-check"></i> Saved!';
-            setTimeout(() => { btn.disabled = false; btn.innerHTML = orig; }, 2000);
-        } else {
-            btn.disabled = false;
-            btn.innerHTML = orig;
-            alert('Save failed: ' + (data.error || 'Unknown error'));
-        }
-    } catch(err) {
-        btn.disabled = false;
-        btn.innerHTML = orig;
-        alert('Save error: ' + err.message);
-    }
 }
 
 function closeModal() {
@@ -1860,10 +1724,8 @@ function updateGradeReport() {
         // Quiz scores
         if (showQuizzes) {
             course.quizzes.forEach(quiz => {
-                // Prefer per-quiz data from the backend (keyed by quizId), falling
-                // back to the legacy single-quiz array for the original claw quiz.
+                // Per-quiz rows from the backend, keyed by quizId.
                 const quizRows = state.rawData?.quizzes?.[quiz.id]
-                              || (quiz.id === 'claw' ? state.rawData?.quiz : [])
                               || [];
                 const quizRow = quizRows.find(r => r[1] === email);
                 let quizScore = '';
