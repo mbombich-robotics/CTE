@@ -22,7 +22,7 @@ const CONFIG = {
         hsaer: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-            currentAppVersion: 'v2.14.68',
+            currentAppVersion: 'v2.14.69',
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
@@ -46,7 +46,7 @@ const CONFIG = {
         '8aer': {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
-            currentAppVersion: 'v2.14.68',
+            currentAppVersion: 'v2.14.69',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
@@ -67,7 +67,7 @@ const CONFIG = {
         dbl: {
             name: 'Design & Build Lab',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
-            currentAppVersion: 'v2.14.68',
+            currentAppVersion: 'v2.14.69',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
@@ -1977,6 +1977,33 @@ function closeGradeEntry() {
     document.getElementById('gradeEntryModal').classList.remove('active');
 }
 
+// A quiz with a practical (CAD Quiz) is stored in two places: the practical is a
+// deliverable row, the questions are a row on the quiz sheet. These pair them up.
+function quizForPractical(deliverableId) {
+    return (CONFIG.COURSES[state.activeCourse]?.quizzes || []).find(q => q.practicalId === deliverableId) || null;
+}
+
+// Question score for one student: teacher final if set, else the auto-graded total.
+function quizQuestionScore(quiz, email) {
+    const row = (state.rawData?.quizzes?.[quiz.id] || []).find(r => r[1] === email);
+    if (!row) return { taken: false, score: '' };
+    const aiTotalIdx = 3 + quiz.questionCount * 3;
+    const tf = row[aiTotalIdx + 1], ai = row[aiTotalIdx];
+    const score = (tf !== '' && tf !== null && tf !== undefined) ? tf
+                : (ai !== '' && ai !== null && ai !== undefined) ? ai : '';
+    return { taken: true, score };
+}
+
+function quizQuestionLine(quiz, email, practicalGrade, practicalMax) {
+    const q = quizQuestionScore(quiz, email);
+    const qText = !q.taken ? 'not taken' : (q.score !== '' ? q.score : 'pending');
+    const total = (parseFloat(q.score) || 0) + (parseFloat(practicalGrade) || 0);
+    return `<div style="font-size:12px; color:var(--gray-600); margin:2px 0 8px;">
+        Questions: <strong>${qText}</strong> / ${quiz.maxPoints}
+        &nbsp;·&nbsp; Quiz total: <strong>${total}</strong> / ${quiz.maxPoints + practicalMax}
+    </div>`;
+}
+
 function updateAssignmentSelect() {
     const type = document.getElementById('assignmentType').value;
     const select = document.getElementById('assignmentSelect');
@@ -1990,7 +2017,10 @@ function updateAssignmentSelect() {
             const option = document.createElement('option');
             option.value = del.id;
             const pts = course.deliverablePoints?.[del.id];
-            option.textContent = `${del.label} (${pts !== undefined ? pts + ' pts' : 'ungraded'})`;
+            const quiz = quizForPractical(del.id);
+            option.textContent = quiz
+                ? `${quiz.name} — Practical + Questions (${pts} + ${quiz.maxPoints} pts)`
+                : `${del.label} (${pts !== undefined ? pts + ' pts' : 'ungraded'})`;
             select.appendChild(option);
         }
     }
@@ -2004,6 +2034,7 @@ function loadGradeTable() {
     const periodFilter = document.getElementById('gradePeriodFilter').value;
     const course = CONFIG.COURSES[state.activeCourse];
     const maxPoints = course.deliverablePoints?.[assignmentId];
+    const practicalQuiz = quizForPractical(assignmentId);
     const tbody = document.getElementById('gradeTableBody');
 
     // Filter and sort students alphabetically
@@ -2053,6 +2084,12 @@ function loadGradeTable() {
             existingFeedback = draft.teacherFeedback || '';
         } else if (draft && draft.status === 'in-progress') {
             status = '<span class="status-badge status-behind">In Progress</span>';
+        }
+
+        if (practicalQuiz) {
+            // Practicals submitted before the backend recorded Verify Work scores: use the score the student saw.
+            if (isSubmitted && aiGrade === '' && draft?.aiScore !== undefined) aiGrade = draft.aiScore;
+            status += quizQuestionLine(practicalQuiz, student.email, aiGrade, maxPoints);
         }
 
         const aiNum = aiGrade !== '' ? parseFloat(aiGrade) : null;
@@ -2216,8 +2253,11 @@ function refreshGradeView() {
     const delRecord = (TRACK_DELIVERABLES[state.activeCourse] || []).find(d => d.id === assignmentId);
     const titleEl   = document.getElementById('gradeAssignmentTitle');
     const ptsEl     = document.getElementById('gradeAssignmentPoints');
+    const practicalQuiz = quizForPractical(assignmentId);
     if (titleEl) titleEl.textContent = delRecord ? delRecord.label : (assignmentId ? 'Assignment ' + assignmentId : '—');
-    if (ptsEl)   ptsEl.textContent   = `Max: ${maxPoints !== undefined ? maxPoints : '—'} pts`;
+    if (ptsEl)   ptsEl.textContent   = practicalQuiz
+        ? `Practical: ${maxPoints} pts · Questions: ${practicalQuiz.maxPoints} pts (auto-graded)`
+        : `Max: ${maxPoints !== undefined ? maxPoints : '—'} pts`;
 
     // Batch AI Grade button — visible for all googleDoc deliverables with rubrics
     let batchBtn = document.getElementById('batchAiGradeBtn');
@@ -2289,6 +2329,8 @@ function loadReviewCards() {
     students.sort((a, b) =>
         (a.name.split(' ').pop() || '').localeCompare(b.name.split(' ').pop() || ''));
 
+    const quiz = quizForPractical(assignmentId);
+
     const cards = [];
     let skipped = 0;
     students.forEach(student => {
@@ -2296,17 +2338,20 @@ function loadReviewCards() {
         const draft = student.fullState?.deliverables?.[assignmentId];
         if (!submitted || submitted[7] !== 'completed') {
             skipped++;
-            cards.push(renderPlaceholderCard(student));
+            cards.push(renderPlaceholderCard(student, quiz ? quizQuestionLine(quiz, student.email, '', maxPts) : ''));
             return;
         }
 
-        const grade       = (submitted[9] !== '' && submitted[9] !== null && submitted[9] !== undefined) ? submitted[9] : '';
+        let grade         = (submitted[9] !== '' && submitted[9] !== null && submitted[9] !== undefined) ? submitted[9] : '';
+        // Practicals submitted before the backend recorded Verify Work scores: offer the score the student saw.
+        if (quiz && grade === '' && draft?.aiScore !== undefined) grade = draft.aiScore;
         const feedback    = submitted[10] || '';
         const submittedAt = submitted[8] || '';
         const docUrl      = submitted[5] || draft?.docUrl || draft?.links ||
             (/docs\.google\.com\/document/.test(submitted[4] || '') ? submitted[4] : '') || '';
 
-        cards.push(renderReviewCard(student, assignmentId, maxPts, grade, feedback, docUrl, submittedAt));
+        cards.push(renderReviewCard(student, assignmentId, maxPts, grade, feedback, docUrl, submittedAt,
+            quiz ? quizQuestionLine(quiz, student.email, grade, maxPts) : ''));
     });
 
     const submittedCount = cards.length - skipped;
@@ -2318,7 +2363,7 @@ function loadReviewCards() {
     `;
 }
 
-function renderPlaceholderCard(student) {
+function renderPlaceholderCard(student, extraHtml = '') {
     const slug = student.email.replace(/[^a-zA-Z0-9]/g, '-');
     return `
 <div class="review-card" id="rcard-${slug}" style="opacity:0.55;">
@@ -2328,6 +2373,7 @@ function renderPlaceholderCard(student) {
       <div>
         <div style="font-weight:700; font-size:14px; color:var(--gray-800);">${student.name}</div>
         <div style="font-size:12px; color:var(--gray-500);">${formatPeriod(student.period)}</div>
+        ${extraHtml}
       </div>
     </div>
     <span class="status-badge status-very-behind">Not Submitted</span>
@@ -2335,10 +2381,11 @@ function renderPlaceholderCard(student) {
 </div>`;
 }
 
-function renderReviewCard(student, assignmentId, maxPts, grade, feedback, docUrl, submittedAt) {
+function renderReviewCard(student, assignmentId, maxPts, grade, feedback, docUrl, submittedAt, extraHtml = '') {
     const slug     = student.email.replace(/[^a-zA-Z0-9]/g, '-');
     const statusId = `ss-${slug}`;
-    const isGraded = grade !== '' && grade !== null && grade !== undefined;
+    const savedRow = state.rawData?.deliverables?.find(d => d[0] === student.email && d[2] == assignmentId);
+    const isGraded = savedRow?.[9] !== '' && savedRow?.[9] !== null && savedRow?.[9] !== undefined;
     const safeFb   = (feedback || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const docLink  = docUrl
         ? `<a href="${docUrl.replace(/"/g, '&quot;')}" target="_blank" rel="noopener"
@@ -2382,6 +2429,7 @@ function renderReviewCard(student, assignmentId, maxPts, grade, feedback, docUrl
              style="width:65px; padding:5px 8px; border:1px solid var(--gray-300); border-radius:5px; font-size:18px; font-weight:700; text-align:center;">
       <span style="font-size:13px; color:var(--gray-500);">/ ${maxPts} pts</span>
     </div>
+    ${extraHtml}
     <textarea id="rf-${slug}"
               data-email="${student.email}" data-assignment="${assignmentId}" data-status="${statusId}"
               oninput="markCardUnsaved('${statusId}')"
