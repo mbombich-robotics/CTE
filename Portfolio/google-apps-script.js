@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.67';
+const BACKEND_VERSION = 'v2.14.68';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -916,8 +916,22 @@ function saveDeliverable(student, id, deliverable) {
       deliverable.submittedAt || new Date().toISOString(),
       '' // Grade (teacher fills in)
     ]);
+    rowIndex = sheet.getLastRow();
+  }
+
+  // CAD Quiz practicals are graded by Verify Work before submit, so record that
+  // score as the grade. A grade already in the sheet (e.g. teacher override) wins.
+  const existingGrade = rowIndex <= data.length ? data[rowIndex - 1][9] : '';
+  if (CAD_PRACTICAL_IDS.indexOf(Number(id)) !== -1 && deliverable.status === 'completed' &&
+      (existingGrade === '' || existingGrade === null || existingGrade === undefined)) {
+    const score = latestPracticalScore(student.email, id);
+    if (score !== '') {
+      sheet.getRange(rowIndex, 10, 1, 3).setValues([[score, 'Verify Work screenshot check: ' + score + '/10', new Date().toISOString()]]);
+    }
   }
 }
+
+const CAD_PRACTICAL_IDS = [28, 426];
 
 /**
  * Teacher records a student's email-submitted deliverable.
@@ -2745,7 +2759,9 @@ function handleGetDocAIFeedback(data) {
     if (isTeacher) {
       logActivity('DOC_AI_BATCH', email, 'D' + deliverableId + ' | teacher batch');
     } else if (isPractical) {
-      logActivity('DOC_AI_PRACTICAL', email, 'D' + deliverableId + ' | check ' + (practicalChecksUsed + 1) + '/' + CAD_PRACTICAL_CHECK_LIMIT);
+      var practicalScore = Object.keys(grades).reduce(function(sum, k) { return sum + (Number(grades[k].score) || 0); }, 0);
+      logActivity('DOC_AI_PRACTICAL', email, 'D' + deliverableId + ' | check ' + (practicalChecksUsed + 1) + '/' + CAD_PRACTICAL_CHECK_LIMIT +
+        ' | score ' + practicalScore + '/10');
       return { success: true, grades: grades, checksUsed: practicalChecksUsed + 1, checkLimit: CAD_PRACTICAL_CHECK_LIMIT };
     } else {
       logActivity('DOC_AI_FEEDBACK', email, 'D' + deliverableId + ' | use ' + (usedToday + 1) + '/' + DAILY_AI_FEEDBACK_LIMIT + ' today');
@@ -2786,6 +2802,29 @@ function countPracticalChecks(email, deliverableId) {
     Logger.log('countPracticalChecks error: ' + e);
     return 0; // fail open so a log error does not block students
   }
+}
+
+/**
+ * Score from a student's most recent Verify Work check on a CAD Quiz practical,
+ * read from the Log sheet so the grade never comes from the browser. '' if none.
+ */
+function latestPracticalScore(email, deliverableId) {
+  email = (email || '').toString().toLowerCase().trim();
+  if (!email) return '';
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAMES.LOG);
+  if (!sheet) return '';
+  var prefix = 'D' + deliverableId + ' |';
+  var values = sheet.getDataRange().getValues();
+  for (var i = values.length - 1; i >= 1; i--) {
+    var details = (values[i][3] || '').toString();
+    if (values[i][1] === 'DOC_AI_PRACTICAL' &&
+        (values[i][2] || '').toString().toLowerCase().trim() === email &&
+        details.indexOf(prefix) === 0) {
+      var m = details.match(/\| score (\d+)\//);
+      return m ? Number(m[1]) : '';
+    }
+  }
+  return '';
 }
 
 /**

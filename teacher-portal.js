@@ -22,7 +22,7 @@ const CONFIG = {
         hsaer: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-            currentAppVersion: 'v2.14.67',
+            currentAppVersion: 'v2.14.68',
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
@@ -40,13 +40,13 @@ const CONFIG = {
             deliverableWeeks: { 8: 10, 9: 11 },
             quizzes: [
                 { id: 'edp_quiz',   name: 'EDP Quiz',   questionCount: 12, maxPoints: 24 },
-                { id: 'cad_quiz',   name: 'CAD Quiz',   questionCount: 10, maxPoints: 10 }
+                { id: 'cad_quiz',   name: 'CAD Quiz',   questionCount: 10, maxPoints: 10, practicalId: 28 }
             ]
         },
         '8aer': {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
-            currentAppVersion: 'v2.14.67',
+            currentAppVersion: 'v2.14.68',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
@@ -61,13 +61,13 @@ const CONFIG = {
             deliverableWeeks: { 8: 10, 9: 11 },
             quizzes: [
                 { id: 'edp_quiz',   name: 'EDP Quiz',   questionCount: 12, maxPoints: 24 },
-                { id: 'cad_quiz',   name: 'CAD Quiz',   questionCount: 10, maxPoints: 10 }
+                { id: 'cad_quiz',   name: 'CAD Quiz',   questionCount: 10, maxPoints: 10, practicalId: 28 }
             ]
         },
         dbl: {
             name: 'Design & Build Lab',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
-            currentAppVersion: 'v2.14.67',
+            currentAppVersion: 'v2.14.68',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
@@ -85,7 +85,7 @@ const CONFIG = {
             deliverableWeeks: {},
             quizzes: [
                 { id: 'edp_quiz',   name: 'EDP Quiz',   questionCount: 12, maxPoints: 24 },
-                { id: 'cad_quiz',   name: 'CAD Quiz',   questionCount: 10, maxPoints: 10 }
+                { id: 'cad_quiz',   name: 'CAD Quiz',   questionCount: 10, maxPoints: 10, practicalId: 426 }
             ]
         }
     },
@@ -243,8 +243,9 @@ const COMPONENT_BATCH_CRITERIA = [
     { id: 'reflection',      label: 'Reflection',      max: 4 },
 ];
 
-// Deliverable IDs that support Batch AI Grade (excludes D11 which has its own handler)
-const DOC_GRADABLE_IDS = new Set([11, 21, 22, 23, 28, 421, 422, 423, 424, 425, 426]);
+// Deliverable IDs that support Batch AI Grade (excludes D11 which has its own handler).
+// CAD Quiz practicals (28, 426) are left out: Verify Work grades them before the student submits.
+const DOC_GRADABLE_IDS = new Set([11, 21, 22, 23, 421, 422, 423, 424, 425]);
 
 // Criteria definitions for Design Brief AI grading
 const BRIEF_CRITERIA = {
@@ -1663,8 +1664,10 @@ function updateGradeReport() {
     const showQuizzes = (typeFilter === 'quiz' || typeFilter === 'all') && course.quizzes?.length;
 
     // Build headers based on type filter
+    // Quiz practicals (e.g. CAD Quiz Part 1) are scored inside their quiz's column, not on their own.
+    const quizPracticalIds = new Set((course.quizzes || []).map(q => q.practicalId).filter(id => id !== undefined));
     const reportDeliverables = (typeFilter === 'deliverables' || typeFilter === 'all')
-        ? (TRACK_DELIVERABLES[state.activeCourse] || []) : [];
+        ? (TRACK_DELIVERABLES[state.activeCourse] || []).filter(del => !quizPracticalIds.has(del.id)) : [];
 
     let headers = ['Name', 'Period'];
     reportDeliverables.forEach(del => {
@@ -1686,14 +1689,13 @@ function updateGradeReport() {
         let total = 0;
         let maxTotal = 0;
 
-        // Deliverable grades
-        reportDeliverables.forEach(del => {
-            const d = del.id;
+        // Grade: prefer sheet grade, then fullState teacherGrade, then auto-score D1.0,
+        // then (quiz practicals) the Verify Work score the student submitted with.
+        // isCompleted: either in Deliverables sheet OR fullState-only (not yet synced)
+        const deliverableGrade = d => {
             const draft = student.fullState?.deliverables?.[d];
             const submitted = state.rawData.deliverables?.find(sub => sub[0] === email && sub[2] == d && sub[7] === 'completed');
-            // isCompleted: either in Deliverables sheet OR fullState-only (not yet synced)
             const isCompleted = (submitted != null) || (draft?.status === 'completed');
-            // Grade: prefer sheet grade, then fullState teacherGrade, then auto-score D1.0
             let grade = '';
             if (submitted?.[9] !== '' && submitted?.[9] !== null && submitted?.[9] !== undefined) {
                 grade = submitted[9];
@@ -1701,7 +1703,16 @@ function updateGradeReport() {
                 grade = draft.teacherGrade;
             } else if (isCompleted && d === 10) {
                 grade = course.deliverablePoints?.[10] ?? 10; // D1.0 pass/fail
+            } else if (isCompleted && quizPracticalIds.has(d) && draft?.aiScore !== undefined) {
+                grade = draft.aiScore;
             }
+            return { grade, isCompleted };
+        };
+
+        // Deliverable grades
+        reportDeliverables.forEach(del => {
+            const d = del.id;
+            const { grade, isCompleted } = deliverableGrade(d);
             const maxPts = course.deliverablePoints?.[d];
 
             if (grade !== '' && grade !== undefined) {
@@ -1730,11 +1741,29 @@ function updateGradeReport() {
                     const ai = quizRow[aiTotalIdx];
                     quizScore = (tf !== '' && tf !== null && tf !== undefined) ? tf
                               : (ai !== '' && ai !== null && ai !== undefined) ? ai : '';
-                    if (quizScore !== '') total += parseFloat(quizScore) || 0;
                     maxTotal += quiz.maxPoints;
                 }
-                const cellStyle = quizScore !== '' ? '' : (quizRow ? 'color: var(--warning);' : 'color: var(--gray-300);');
-                row.push(`<td style="padding: 6px 8px; text-align: center; ${cellStyle}">${quizScore !== '' ? quizScore : (quizRow ? '-' : '')}</td>`);
+
+                // Quizzes with a practical (CAD Quiz): questions + practical in one cell.
+                let started = !!quizRow, waiting = !!quizRow && quizScore === '', parts = '';
+                if (quiz.practicalId !== undefined) {
+                    const practical = deliverableGrade(quiz.practicalId);
+                    const practicalMax = course.deliverablePoints?.[quiz.practicalId] ?? 0;
+                    if (practical.isCompleted) maxTotal += practicalMax;
+                    started = started || practical.isCompleted;
+                    waiting = waiting || (practical.isCompleted && practical.grade === '');
+                    parts = `Questions: ${quizRow ? (quizScore !== '' ? quizScore : 'pending') : 'not taken'}/${quiz.maxPoints} · `
+                          + `Practical: ${practical.isCompleted ? (practical.grade !== '' ? practical.grade : 'pending') : 'not submitted'}/${practicalMax}`;
+                    if (practical.grade !== '') {
+                        quizScore = (parseFloat(quizScore) || 0) + (parseFloat(practical.grade) || 0);
+                    }
+                    if (!quizRow || !practical.isCompleted) waiting = true; // one part still missing
+                }
+                if (quizScore !== '') total += parseFloat(quizScore) || 0;
+
+                const cellStyle = !started ? 'color: var(--gray-300);' : (waiting ? 'color: var(--warning);' : '');
+                const title = parts ? ` title="${parts}"` : '';
+                row.push(`<td style="padding: 6px 8px; text-align: center; ${cellStyle}"${title}>${quizScore !== '' ? quizScore : (started ? '-' : '')}</td>`);
             });
         }
 
