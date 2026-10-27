@@ -22,7 +22,7 @@ const CONFIG = {
         hsaer: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-            currentAppVersion: 'v2.14.65',
+            currentAppVersion: 'v2.14.66',
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
@@ -46,7 +46,7 @@ const CONFIG = {
         '8aer': {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
-            currentAppVersion: 'v2.14.65',
+            currentAppVersion: 'v2.14.66',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
@@ -67,7 +67,7 @@ const CONFIG = {
         dbl: {
             name: 'Design & Build Lab',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
-            currentAppVersion: 'v2.14.65',
+            currentAppVersion: 'v2.14.66',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
@@ -303,20 +303,14 @@ const BRIEF_CRITERIA = {
         { id: 'does_it_work',      label: '"Does It Work?" Answered',       max: 1 },
         { id: 'post_processing',   label: 'Post-Processing Notes',          max: 1 },
     ],
-    // CAD Quiz Practicals — pass/fail per item (5 × 2 pts = 10 pts)
+    // CAD Quiz Practicals — screenshot check, pass/fail (2 × 5 pts = 10 pts)
     426: [   // DBL: Doorstop Wedge
-        { id: 'key_dimensions',   label: 'Dimension Table Matches Spec', max: 2 },
-        { id: 'height_reasoning', label: 'Max Height Reasoning',         max: 2 },
-        { id: 'constraints',      label: 'Constraints Described',        max: 2 },
-        { id: 'screenshots',      label: 'Screenshots (3)',              max: 2 },
-        { id: 'file_link',        label: '.f3d Share Link',              max: 2 },
+        { id: 'iso_view',           label: 'Isometric View',           max: 5 },
+        { id: 'sketch_constrained', label: 'Fully Constrained Sketch', max: 5 },
     ],
-    28: [    // HS AER: Motor L-Bracket
-        { id: 'motor_face',       label: 'Motor Face Dimensions',        max: 2 },
-        { id: 'flange',           label: 'Mounting Flange Dimensions',   max: 2 },
-        { id: 'design_choices',   label: 'Design Choices Explained',     max: 2 },
-        { id: 'screenshots',      label: 'Screenshots (3)',              max: 2 },
-        { id: 'file_link',        label: '.f3d Share Link',              max: 2 },
+    28: [    // HS AER + 8AER: Motor L-Bracket
+        { id: 'iso_view',           label: 'Isometric View',           max: 5 },
+        { id: 'sketch_constrained', label: 'Fully Constrained Sketch', max: 5 },
     ],
     // DBL D2.5: Wedge Physics Activity — math + reflection (5 × 2 pts = 10 pts)
     425: [

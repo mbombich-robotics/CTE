@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.65',
+    VERSION: 'v2.14.66',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -266,12 +266,11 @@ const DELIVERABLES = [
         feedbackButtonLabel: 'Verify Work',
         description: 'Model an L-bracket mount for a motor in Fusion 360. The motor\'s output shaft needs a 15 mm clearance hole, and the motor face has four 4 mm mounting holes on a 32 mm circle pattern. The mounting flange is 8 mm thick with a 20 mm square hole pattern of 5.6 mm holes. Every sketch must be fully constrained.',
         verifySteps: [
-            'Fill in every section — the dimension tables, your design choices, and your screenshots (use <strong>Insert → Image</strong>).',
-            'Paste a share link to your <strong>.f3d</strong> file in the last section.',
+            'Paste your three screenshots into the doc (<strong>Print Screen</strong>, or <strong>Win+Shift+S</strong> then <strong>Ctrl+V</strong>): an isometric view of the finished part, a fully constrained sketch (all lines black), and the timeline.',
         ],
+        verifyCheckText: 'AI looks at your screenshots for an isometric view and a fully constrained sketch.',
         checklistItems: [
-            'My doc has <strong>3 screenshots</strong> — isometric view, fully constrained sketch, and timeline.',
-            'My <strong>.f3d share link</strong> works when opened in a private/incognito window.',
+            'My doc has an <strong>isometric view</strong>, a <strong>fully constrained sketch</strong> (all lines black), and the <strong>timeline</strong>.',
         ],
     },
     // ── Unit 3: Safety Certification ────────────────────────────────────
@@ -803,12 +802,11 @@ const DELIVERABLES = [
         feedbackButtonLabel: 'Verify Work',
         description: 'Model a doorstop wedge in Fusion 360 with an 8° slope and a length of 100 mm. The door has a 13 mm gap, so give it a maximum height that will stop the door. Extrude it 25 mm, then add text to one side and cut extrude the text 1 mm deep. Every sketch must be fully constrained.',
         verifySteps: [
-            'Fill in every section — the dimension table, your height reasoning, and your screenshots (use <strong>Insert → Image</strong>).',
-            'Paste a share link to your <strong>.f3d</strong> file in the last section.',
+            'Paste your three screenshots into the doc (<strong>Print Screen</strong>, or <strong>Win+Shift+S</strong> then <strong>Ctrl+V</strong>): an isometric view of the finished part, a fully constrained sketch (all lines black), and the timeline.',
         ],
+        verifyCheckText: 'AI looks at your screenshots for an isometric view and a fully constrained sketch.',
         checklistItems: [
-            'My doc has <strong>3 screenshots</strong> — isometric view, fully constrained sketch, and timeline.',
-            'My <strong>.f3d share link</strong> works when opened in a private/incognito window.',
+            'My doc has an <strong>isometric view</strong>, a <strong>fully constrained sketch</strong> (all lines black), and the <strong>timeline</strong>.',
         ],
     },
     // ── DBL: Unit 3 Safety ────────────────────────────────────────────────
@@ -4463,19 +4461,13 @@ const DOC_RUBRIC_CRITERIA = {
         { key: 'does_it_work',      label: '"Does It Work?" Answered',        max: 1 },
         { key: 'post_processing',   label: 'Post-Processing Notes',           max: 1 },
     ],
-    426: [                             // CAD Quiz Practical (DBL) — pass/fail per item, 2 pts each
-        { key: 'key_dimensions',   label: 'Dimension Table Matches Spec',    max: 2 },
-        { key: 'height_reasoning', label: 'Max Height Reasoning',            max: 2 },
-        { key: 'constraints',      label: 'Constraints Described',           max: 2 },
-        { key: 'screenshots',      label: 'Screenshots (3)',                 max: 2 },
-        { key: 'file_link',        label: '.f3d Share Link',                 max: 2 },
+    426: [                             // CAD Quiz Practical (DBL) — screenshot check, 5 pts each
+        { key: 'iso_view',           label: 'Isometric View',            max: 5 },
+        { key: 'sketch_constrained', label: 'Fully Constrained Sketch',  max: 5 },
     ],
-    28: [                              // CAD Quiz Practical (AER) — pass/fail per item, 2 pts each
-        { key: 'motor_face',       label: 'Motor Face Dimensions',           max: 2 },
-        { key: 'flange',           label: 'Mounting Flange Dimensions',      max: 2 },
-        { key: 'design_choices',   label: 'Design Choices Explained',        max: 2 },
-        { key: 'screenshots',      label: 'Screenshots (3)',                 max: 2 },
-        { key: 'file_link',        label: '.f3d Share Link',                 max: 2 },
+    28: [                              // CAD Quiz Practical (AER) — screenshot check, 5 pts each
+        { key: 'iso_view',           label: 'Isometric View',            max: 5 },
+        { key: 'sketch_constrained', label: 'Fully Constrained Sketch',  max: 5 },
     ],
     23: COMPONENT_RUBRIC_CRITERIA,
     24: COMPONENT_RUBRIC_CRITERIA,
@@ -4551,7 +4543,7 @@ function renderDocDeliverableUI(id, deliverable, existing) {
                <ol style="margin:8px 0 0 16px;padding:0;line-height:1.8;">
                    <li>Click <strong>Create My ${deliverable.title}</strong> — your personal copy opens in Google Docs.</li>
                    ${verifySteps.map(s => `<li>${s}</li>`).join('')}
-                   <li>Click <strong>${fbLabel}</strong> — AI checks each section. Fix anything that doesn't pass.</li>
+                   <li>Click <strong>${fbLabel}</strong> — ${deliverable.verifyCheckText || 'AI checks each section.'} Fix anything that doesn't pass.</li>
                    <li>Once everything passes, <strong>Submit</strong> unlocks.</li>
                </ol>
            </div>`

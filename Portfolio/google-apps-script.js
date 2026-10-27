@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.65';
+const BACKEND_VERSION = 'v2.14.66';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2720,7 +2720,10 @@ function handleGetDocAIFeedback(data) {
       ? '[DOCUMENT CONTAINS ' + imageCount + ' IMAGE(S) — presence confirmed by server]\n\n'
       : '[DOCUMENT CONTAINS 0 IMAGES]\n\n';
 
-    var grades = gradeDocWithRubric(imageNote + text, deliverableId);
+    // CAD Quiz practicals are graded by looking at the screenshots themselves.
+    var grades = (deliverableId === 426 || deliverableId === 28)
+      ? gradeCadPracticalScreenshots(body, deliverableId)
+      : gradeDocWithRubric(imageNote + text, deliverableId);
 
     if (isTeacher) {
       logActivity('DOC_AI_BATCH', email, 'D' + deliverableId + ' | teacher batch');
@@ -2835,35 +2838,6 @@ reflection (max 4): Depth and specificity of the Section 4 reflection. 4=specifi
       '{"settings_complete": {"score": 1, "max": 1, "feedback": "..."}, "photo_attached": {"score": 1, "max": 1, "feedback": "..."}, "does_it_work": {"score": 1, "max": 1, "feedback": "..."}, "post_processing": {"score": 1, "max": 1, "feedback": "..."}}\n\n' +
       'STUDENT DOCUMENT:';
 
-  } else if (deliverableId === 426 || deliverableId === 28) {
-    // ── CAD Quiz Practical — pass/fail verification (DBL 426 / HS AER 28) ──
-    // Each criterion is 0 (fail) or 2 (pass); all must pass to unlock Submit.
-    var isDBL = deliverableId === 426;
-    criteriaKeys = isDBL
-      ? ['key_dimensions', 'height_reasoning', 'constraints', 'screenshots', 'file_link']
-      : ['motor_face', 'flange', 'design_choices', 'screenshots', 'file_link'];
-
-    var specCriteria = isDBL
-      ? 'key_dimensions (max 2): Section 1 table — the "My Model" column must have a real numeric value in every row, and each must match the spec: Slope angle = 8°; Length = 100 mm; Width (extrude distance) = 25 mm; Text cut depth = 1 mm; Max height between 13.9 and 14.1 mm (100 × tan 8° ≈ 14.05 mm, or ≈ 13.92 mm if the 100 mm is measured along the slope). 2=all five present and matching; 0=any blank, placeholder, or out of spec. If 0, name the row(s) to fix.\n\n' +
-        'height_reasoning (max 2): Section 2 — the student explains HOW they found the max height (trig, a Fusion measurement, or the sketch) AND WHY that height stops a door with a 13 mm gap (it is taller than the gap, so the wedge jams under the door). 2=both the method and the reason are present; 0=either is missing.\n\n' +
-        'constraints (max 2): Section 3 — the student says their sketches are fully constrained (all lines black) AND names at least two specific constraints or dimensions they used. 2=both present; 0=otherwise.\n\n'
-      : 'motor_face (max 2): Section 1 table — the "My Model" column must have real values matching the spec: Shaft clearance hole = 15 mm; Mounting holes = 4 mm diameter (four of them); Mounting hole circle = 32 mm diameter. 2=all present and matching; 0=any blank, placeholder, or out of spec. If 0, name the row(s) to fix.\n\n' +
-        'flange (max 2): Section 2 table — the "My Model" column must have real values matching the spec: Flange thickness = 8 mm; Flange holes = 5.6 mm diameter (four of them); Flange hole pattern = 20 mm square. 2=all present and matching; 0=any blank, placeholder, or out of spec. If 0, name the row(s) to fix.\n\n' +
-        'design_choices (max 2): Section 3 — the prompt did not give every dimension. The student names at least TWO dimensions they chose themselves (for example motor-plate thickness, overall bracket size, hole-pattern rotation, fillets) with a value AND a reason for each. 2=two or more choices, each with a value and a reason; 0=otherwise.\n\n';
-
-    overridePrefix =
-      'You are verifying a high school student\'s CAD practical submission. This is a PASS/FAIL check — not a quality rubric. Award 2 only when the item is clearly present and correct; award 0 when it is absent, wrong, blank, or contains only placeholder text (underscores, empty lines, "___").\n\n' +
-      'CRITICAL: The very first line of the document states how many images are embedded in it. Trust this count completely — do not infer screenshots from surrounding text.\n\n' +
-      'Ignore the "Required" column of the tables — it is pre-filled by the template. Only check what the student typed in the "My Model" column and in the written sections.\n\n' +
-      'CRITERIA (each scored 0 or 2):\n\n' +
-      specCriteria +
-      'screenshots (max 2): Based solely on the image count in the first line. 2=document contains 3 or more images; 0=fewer than 3. If 0, say how many more are needed (isometric view, fully constrained sketch, timeline).\n\n' +
-      'file_link (max 2): Section 5 — a share link to the student\'s Fusion 360 file is pasted (a URL such as a360.co, autodesk360.com, fusion360.autodesk.com, or drive.google.com). 2=a real URL is present; 0=blank or placeholder.\n\n' +
-      'FEEDBACK STYLE: One sentence, direct. Score 2 → confirm what you found. Score 0 → one specific action to fix it.\n\n' +
-      'Return ONLY valid JSON, no markdown or explanation:\n' +
-      '{' + criteriaKeys.map(function(k) { return '"' + k + '": {"score": 2, "max": 2, "feedback": "..."}'; }).join(', ') + '}\n\n' +
-      'STUDENT DOCUMENT:';
-
   } else if (deliverableId === 425) {
     // ── DBL D2.5: Wedge Physics Activity — math check + reflection ─────────
     criteriaKeys = ['geometry_ma', 'force_conversion', 'self_locking', 'reflection_design', 'q2_analysis'];
@@ -2976,6 +2950,109 @@ reflection (max 4): Depth and specificity of the Section 4 reflection. 4=specifi
   var last  = text.lastIndexOf('}');
   if (first === -1 || last === -1) throw new Error('No JSON in Claude response');
   return JSON.parse(text.substring(first, last + 1));
+}
+
+/**
+ * CAD Quiz practicals (DBL 426 / HS AER + 8AER 28): Claude looks at the
+ * screenshots pasted into the student's Doc. Two pass/fail checks, 0 or 5 each:
+ *   iso_view           — the finished part in an isometric 3D view
+ *   sketch_constrained — a sketch whose lines are all black (fully constrained)
+ */
+var CAD_PRACTICAL_MAX_IMAGES = 6;
+var CAD_PRACTICAL_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'];
+
+function gradeCadPracticalScreenshots(body, deliverableId) {
+  var part = deliverableId === 426
+    ? 'a doorstop wedge (8° slope, about 100 mm long, with text cut into one side)'
+    : 'an L-bracket motor mount (a plate with a large shaft hole and four small holes, plus a mounting flange with four holes)';
+
+  var images = body.getImages();
+  var content = [];
+  var skippedLarge = 0;
+  for (var i = 0; i < images.length && content.length < CAD_PRACTICAL_MAX_IMAGES; i++) {
+    var blob  = images[i].getBlob();
+    var type  = blob.getContentType();
+    var bytes = blob.getBytes();
+    if (CAD_PRACTICAL_IMAGE_TYPES.indexOf(type) === -1) continue;
+    if (bytes.length > 5 * 1024 * 1024) { skippedLarge++; continue; }  // API limit is 5 MB per image
+    content.push({ type: 'image', source: { type: 'base64', media_type: type, data: Utilities.base64Encode(bytes) } });
+  }
+
+  if (!content.length) {
+    var none = skippedLarge
+      ? 'Your screenshots are too large to check — use Win+Shift+S to capture just the Fusion window, then paste again.'
+      : 'No screenshots found. Paste them into the doc with Win+Shift+S, then Ctrl+V.';
+    return {
+      iso_view:           { score: 0, max: 5, feedback: none },
+      sketch_constrained: { score: 0, max: 5, feedback: none }
+    };
+  }
+
+  content.push({ type: 'text', text:
+    'These are screenshots a high school student pasted into their CAD practical. They modeled ' + part + ' in Autodesk Fusion 360.\n\n' +
+    'Check two things, each PASS (5) or FAIL (0):\n\n' +
+    'iso_view: At least one screenshot shows the finished 3D solid part from an isometric (angled 3D) view, where you can see the top and two sides at once. ' +
+    'A flat, straight-on view or a 2D sketch does not count.\n\n' +
+    'sketch_constrained: At least one screenshot shows a Fusion 360 sketch (2D lines in sketch mode, usually with dimensions) where every sketch line is BLACK. ' +
+    'In Fusion, black lines are fully constrained and blue lines are not. Dashed construction lines, purple projected geometry and the dimension text itself do not count against it. ' +
+    'FAIL if any sketch line is blue, or if no sketch is shown. If the lines are too small or blurry to tell black from blue, FAIL and ask for a closer screenshot.\n\n' +
+    'Feedback: one short, direct sentence written to the student. On PASS, say which screenshot shows it. On FAIL, say exactly what to fix or add.' +
+    (skippedLarge ? ' (Note: ' + skippedLarge + ' screenshot(s) were too large to include.)' : '')
+  });
+
+  var check = {
+    type: 'object',
+    properties: {
+      score:    { type: 'integer', enum: [0, 5] },
+      feedback: { type: 'string' }
+    },
+    required: ['score', 'feedback'],
+    additionalProperties: false
+  };
+
+  var apiKey = PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY');
+  if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set in Script Properties.');
+
+  var response = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
+    method:  'post',
+    headers: {
+      'x-api-key':         apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-beta':    'server-side-fallback-2026-07-01',
+      'content-type':      'application/json'
+    },
+    payload: JSON.stringify({
+      model:      'claude-opus-5-5',
+      max_tokens: 8000,
+      fallbacks:  'default',              // re-run on another model if a safety classifier declines
+      output_config: {
+        effort: 'low',                    // a quick visual check; keeps the call well inside Apps Script's fetch timeout
+        format: {
+          type: 'json_schema',
+          schema: {
+            type: 'object',
+            properties: { iso_view: check, sketch_constrained: check },
+            required: ['iso_view', 'sketch_constrained'],
+            additionalProperties: false
+          }
+        }
+      },
+      messages: [{ role: 'user', content: content }]
+    }),
+    muteHttpExceptions: true
+  });
+
+  var result = JSON.parse(response.getContentText());
+  if (result.type === 'error') throw new Error('Claude API: ' + result.error.message);
+  if (result.stop_reason === 'refusal') throw new Error('The screenshot check was declined — ask Mr. Bombich to review your doc.');
+  if (result.stop_reason === 'max_tokens') throw new Error('The screenshot check ran out of room — please try Verify Work again.');
+
+  var textBlock = (result.content || []).filter(function(b) { return b.type === 'text'; })[0];
+  if (!textBlock) throw new Error('No result from the screenshot check.');
+  var grades = JSON.parse(textBlock.text);
+  grades.iso_view.max = 5;
+  grades.sketch_constrained.max = 5;
+  return grades;
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -3597,56 +3674,28 @@ function testDocAccess() {
 // practical templates. Copy each logged Doc ID into Script Properties:
 //   DBL Apps Script project:     DELIVERABLE_DOC_TEMPLATE_426  (Doorstop Wedge)
 //   HS AER + 8AER projects:      DELIVERABLE_DOC_TEMPLATE_28   (Motor L-Bracket)
-// Running it once from either project is enough — the doc IDs work in both.
+// Running it once from either project is enough — the doc IDs work in all of them.
+// The doc is screenshots only; gradeCadPracticalScreenshots() checks them.
 // ──────────────────────────────────────────────────────────────────────────────
 function createCadPracticalTemplates() {
-  var dblId = buildCadPracticalTemplate_({
-    title: 'CAD QUIZ PRACTICAL — DOORSTOP WEDGE',
-    prompt: 'Model a doorstop wedge in Fusion 360. It has a slope of 8° and a length of 100 mm — any longer would be excessive. ' +
-            'The door has a 13 mm gap, so give it a maximum height that will stop the door. Extrude it 25 mm. ' +
-            'Add text to one side and cut extrude the text 1 mm deep. Every sketch must be fully constrained.',
-    tables: [
-      { heading: '1  ·  Key Dimensions',
-        subtitle: 'Type the value from YOUR model in the "My Model" column.',
-        rows: [['Slope angle', '8°'], ['Length', '100 mm'], ['Max height', 'You figure it out'],
-               ['Width (extrude distance)', '25 mm'], ['Text cut depth', '1 mm']] }
-    ],
-    prompts: [
-      { heading: '2  ·  Max Height Reasoning',
-        text: 'How did you find the max height of your wedge? Why will that height stop a door with a 13 mm gap?' },
-      { heading: '3  ·  Constraints',
-        text: 'Is every sketch fully constrained (all lines black)? List the constraints and dimensions you used.' }
-    ]
-  });
+  var dblId = buildCadPracticalTemplate_(
+    'CAD QUIZ PRACTICAL — DOORSTOP WEDGE',
+    'Model a doorstop wedge in Fusion 360. It has a slope of 8° and a length of 100 mm — any longer would be excessive. ' +
+    'The door has a 13 mm gap, so give it a maximum height that will stop the door. Extrude it 25 mm. ' +
+    'Add text to one side and cut extrude the text 1 mm deep. Every sketch must be fully constrained.');
 
-  var aerId = buildCadPracticalTemplate_({
-    title: 'CAD QUIZ PRACTICAL — MOTOR L-BRACKET',
-    prompt: 'Model an L-bracket mount for a motor in Fusion 360. The motor\'s output shaft needs a 15 mm clearance hole. ' +
-            'The motor face has four 4 mm mounting holes on a 32 mm circle pattern. The mounting flange is 8 mm thick ' +
-            'and has a 20 mm square hole pattern with 5.6 mm holes. Every sketch must be fully constrained.',
-    tables: [
-      { heading: '1  ·  Motor Face',
-        subtitle: 'Type the value from YOUR model in the "My Model" column.',
-        rows: [['Shaft clearance hole', '15 mm'], ['Mounting hole diameter (×4)', '4 mm'],
-               ['Mounting hole circle', '32 mm diameter']] },
-      { heading: '2  ·  Mounting Flange',
-        subtitle: 'Type the value from YOUR model in the "My Model" column.',
-        rows: [['Flange thickness', '8 mm'], ['Flange hole diameter (×4)', '5.6 mm'],
-               ['Flange hole pattern', '20 mm square']] }
-    ],
-    prompts: [
-      { heading: '3  ·  Design Choices',
-        text: 'The prompt did not give you every dimension. List at least two dimensions you chose yourself ' +
-              '(for example motor-plate thickness or overall bracket size), the value you used, and why.' }
-    ]
-  });
+  var aerId = buildCadPracticalTemplate_(
+    'CAD QUIZ PRACTICAL — MOTOR L-BRACKET',
+    'Model an L-bracket mount for a motor in Fusion 360. The motor\'s output shaft needs a 15 mm clearance hole. ' +
+    'The motor face has four 4 mm mounting holes on a 32 mm circle pattern. The mounting flange is 8 mm thick ' +
+    'and has a 20 mm square hole pattern with 5.6 mm holes. Every sketch must be fully constrained.');
 
   Logger.log('✅ DBL Doorstop Wedge template:   ' + dblId + '   → DELIVERABLE_DOC_TEMPLATE_426');
   Logger.log('✅ AER Motor L-Bracket template:  ' + aerId + '   → DELIVERABLE_DOC_TEMPLATE_28');
 }
 
-function buildCadPracticalTemplate_(cfg) {
-  var doc  = DocumentApp.create(cfg.title + ' — TEMPLATE (do not edit)');
+function buildCadPracticalTemplate_(title, prompt) {
+  var doc  = DocumentApp.create(title + ' — TEMPLATE (do not edit)');
   var body = doc.getBody();
   body.clear();
 
@@ -3655,7 +3704,7 @@ function buildCadPracticalTemplate_(cfg) {
   bodyStyle[DocumentApp.Attribute.FONT_SIZE]   = 11;
   body.setAttributes(bodyStyle);
 
-  body.appendParagraph(cfg.title)
+  body.appendParagraph(title)
     .setHeading(DocumentApp.ParagraphHeading.TITLE)
     .setAlignment(DocumentApp.HorizontalAlignment.CENTER);
   body.appendParagraph('CAD Quiz  ·  Part 1 — Practical')
@@ -3671,53 +3720,24 @@ function buildCadPracticalTemplate_(cfg) {
   });
 
   body.appendParagraph('THE PROMPT').setBold(true).setFontSize(10).setForegroundColor('#444444');
-  body.appendParagraph(cfg.prompt).setBold(false).setFontSize(11).setForegroundColor('#000000');
+  body.appendParagraph(prompt).setBold(false).setFontSize(11).setForegroundColor('#000000');
   body.appendHorizontalRule();
 
-  function addHeading(text, subtitle) {
-    var headStyle = {};
-    headStyle[DocumentApp.Attribute.BOLD]           = true;
-    headStyle[DocumentApp.Attribute.FONT_SIZE]      = 12;
-    headStyle[DocumentApp.Attribute.SPACING_BEFORE] = 16;
-    body.appendParagraph(text).setAttributes(headStyle);
-    if (subtitle) {
-      body.appendParagraph(subtitle).setBold(false).setItalic(true).setFontSize(9).setForegroundColor('#666666');
-    }
-  }
-
-  cfg.tables.forEach(function(t) {
-    addHeading(t.heading, t.subtitle);
-    var data = [['Feature', 'Required', 'My Model']].concat(t.rows.map(function(r) { return [r[0], r[1], '___']; }));
-    var table = body.appendTable(data);
-    table.setBorderWidth(0.5);
-    for (var c = 0; c < 3; c++) {
-      var cell = table.getRow(0).getCell(c);
-      cell.setBackgroundColor('#e8f0fe');
-      cell.getChild(0).asParagraph().setBold(true).setItalic(false).setFontSize(10).setForegroundColor('#1a3461');
-    }
-    for (var r = 1; r < table.getNumRows(); r++) {
-      for (var cc = 0; cc < 3; cc++) {
-        table.getRow(r).getCell(cc).getChild(0).asParagraph()
-          .setBold(cc === 0).setItalic(false).setFontSize(10).setForegroundColor('#000000');
-      }
-    }
+  var headStyle = {};
+  headStyle[DocumentApp.Attribute.BOLD]           = true;
+  headStyle[DocumentApp.Attribute.FONT_SIZE]      = 12;
+  headStyle[DocumentApp.Attribute.SPACING_BEFORE] = 16;
+  body.appendParagraph('Screenshots').setAttributes(headStyle);
+  body.appendParagraph('Use Print Screen button, or  WIN+SHIFT+S and then CTRL+V. Add all three:')
+    .setBold(false).setItalic(true).setFontSize(9).setForegroundColor('#666666');
+  ['Isometric view of the finished part',
+   'A sketch showing it is fully constrained (all lines black)',
+   'Include the timeline at the bottom of the Fusion window'
+  ].forEach(function(item) {
+    body.appendListItem(item).setGlyphType(DocumentApp.GlyphType.NUMBER)
+      .setItalic(false).setFontSize(11).setForegroundColor('#000000');
   });
-
-  cfg.prompts.forEach(function(p) {
-    addHeading(p.heading, p.text);
-    body.appendParagraph('___').setItalic(false).setFontSize(11).setForegroundColor('#000000');
-  });
-
-  addHeading('4  ·  Screenshots', 'Use Insert → Image. Add all three:');
-  ['Isometric view of the finished part', 'A sketch showing it is fully constrained (all lines black)', 'The timeline at the bottom of the Fusion window']
-    .forEach(function(item) {
-      body.appendListItem(item).setGlyphType(DocumentApp.GlyphType.NUMBER)
-        .setItalic(false).setFontSize(11).setForegroundColor('#000000');
-    });
   body.appendParagraph('');
-
-  addHeading('5  ·  Fusion File Link', 'In Fusion 360: File → Share → Public Link. Turn the link on, copy it, and paste it below.');
-  body.appendParagraph('___').setItalic(false).setFontSize(11).setForegroundColor('#000000');
 
   doc.saveAndClose();
   return doc.getId();
