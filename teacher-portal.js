@@ -22,7 +22,7 @@ const CONFIG = {
         hsaer: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-            currentAppVersion: 'v2.14.69',
+            currentAppVersion: 'v2.14.70',
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
@@ -46,7 +46,7 @@ const CONFIG = {
         '8aer': {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
-            currentAppVersion: 'v2.14.69',
+            currentAppVersion: 'v2.14.70',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
@@ -67,7 +67,7 @@ const CONFIG = {
         dbl: {
             name: 'Design & Build Lab',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
-            currentAppVersion: 'v2.14.69',
+            currentAppVersion: 'v2.14.70',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
@@ -719,6 +719,7 @@ async function loadCourseData() {
         }
         processStudentData();
         applyFilters();
+        return true;
     } catch (error) {
         clearTimeout(fetchTimeout);
         const isTimeout = error.name === 'AbortError';
@@ -731,7 +732,36 @@ async function loadCourseData() {
                 </td>
             </tr>
         `;
+        return false;
     }
+}
+
+// Reload the current course's data in place (no page reload, so you stay signed in)
+// and redraw whichever view is open.
+async function refreshData() {
+    const btns = document.querySelectorAll('.refresh-data-btn');
+    btns.forEach(b => { b.disabled = true; b.querySelector('i')?.classList.add('fa-spin'); });
+
+    // Let any card grade still waiting on its auto-save finish first.
+    const pending = Object.keys(autoSaveTimers);
+    pending.forEach(email => clearTimeout(autoSaveTimers[email]));
+    if (pending.length && gradeViewMode === 'cards') {
+        const assignmentId = parseInt(document.getElementById('assignmentSelect')?.value);
+        await Promise.allSettled(pending.map(email =>
+            saveStudentGradeInline(email, assignmentId, `ss-${email.replace(/[^a-zA-Z0-9]/g, '-')}`)));
+    }
+    autoSaveTimers = {};
+
+    const studentOpen = document.getElementById('studentModal')?.classList.contains('active');
+    if (await loadCourseData()) {
+        if (document.getElementById('gradeEntryModal')?.classList.contains('active'))  refreshGradeView();
+        if (document.getElementById('gradeReportModal')?.classList.contains('active')) updateGradeReport();
+        if (studentOpen && state.detailEmail) openStudentDetail(state.detailEmail);
+        showToast('Data refreshed', 'success');
+    } else {
+        showToast('Refresh failed — try again in a moment', 'error', 6000);
+    }
+    btns.forEach(b => { b.disabled = false; b.querySelector('i')?.classList.remove('fa-spin'); });
 }
 
 function processStudentData() {
@@ -1151,6 +1181,7 @@ async function unsubmitDeliverable(email, deliverableId, delLabel, studentName) 
 function openStudentDetail(email) {
     const student = state.students.find(s => s.email === email);
     if (!student) return;
+    state.detailEmail = email;   // so Refresh can reopen the same student
 
     const course = CONFIG.COURSES[state.activeCourse];
 
@@ -1741,7 +1772,7 @@ function updateGradeReport() {
                     const ai = quizRow[aiTotalIdx];
                     quizScore = (tf !== '' && tf !== null && tf !== undefined) ? tf
                               : (ai !== '' && ai !== null && ai !== undefined) ? ai : '';
-                    maxTotal += quiz.maxPoints;
+                    maxTotal += quizMax(quiz);
                 }
 
                 // Quizzes with a practical (CAD Quiz): questions + practical in one cell.
@@ -1752,7 +1783,7 @@ function updateGradeReport() {
                     if (practical.isCompleted) maxTotal += practicalMax;
                     started = started || practical.isCompleted;
                     waiting = waiting || (practical.isCompleted && practical.grade === '');
-                    parts = `Questions: ${quizRow ? (quizScore !== '' ? quizScore : 'pending') : 'not taken'}/${quiz.maxPoints} · `
+                    parts = `Questions: ${quizRow ? (quizScore !== '' ? quizScore : 'pending') : 'not taken'}/${quizMax(quiz)} · `
                           + `Practical: ${practical.isCompleted ? (practical.grade !== '' ? practical.grade : 'pending') : 'not submitted'}/${practicalMax}`;
                     if (practical.grade !== '') {
                         quizScore = (parseFloat(quizScore) || 0) + (parseFloat(practical.grade) || 0);
@@ -1994,13 +2025,120 @@ function quizQuestionScore(quiz, email) {
     return { taken: true, score };
 }
 
+// Points the questions are worth after any "not scored" questions are dropped.
+function quizMax(quiz) {
+    return state.rawData?.quizSettings?.[quiz.id]?.maxPoints ?? quiz.maxPoints;
+}
+
+// ── Quiz scoring: pick questions to leave out, then recalculate every score ──
+async function openQuizScoring(courseId) {
+    const course = CONFIG.COURSES[courseId];
+    const suffix = courseId === 'hsaer' ? '' : '_' + courseId;
+    const quizId = document.getElementById('quizKeySelect' + suffix)?.value || 'edp_quiz';
+    const quizCfg = (course.quizzes || []).find(q => q.id === quizId);
+
+    document.getElementById('quizScoringModal')?.remove();
+    const modal = document.createElement('div');
+    modal.id = 'quizScoringModal';
+    modal.className = 'modal active';
+    modal.style.zIndex = '2000';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 720px; max-height: 90vh;">
+            <div class="modal-header">
+                <h2><i class="fas fa-sliders-h"></i> ${quizCfg?.name || quizId} Scoring — ${course.name}</h2>
+                <button class="modal-close" onclick="document.getElementById('quizScoringModal').remove()">&times;</button>
+            </div>
+            <div class="modal-body" id="quizScoringBody" style="overflow-y: auto;">
+                <p style="color: var(--gray-500);"><i class="fas fa-spinner fa-spin"></i> Loading questions…</p>
+            </div>
+        </div>`;
+    document.body.appendChild(modal);
+
+    let meta;
+    try {
+        meta = await fetch(`${course.apiUrl}?action=getQuizMeta&quizId=${encodeURIComponent(quizId)}&_t=${Date.now()}`).then(r => r.json());
+        if (meta.error) throw new Error(meta.error);
+    } catch (e) {
+        document.getElementById('quizScoringBody').innerHTML = `<p style="color: var(--danger);">Could not load the quiz: ${escHtml(e.message)}</p>`;
+        return;
+    }
+
+    // % correct per question — only when this course's data is loaded.
+    const rows = courseId === state.activeCourse ? (state.rawData?.quizzes?.[quizId] || []) : [];
+    const aiTotalIdx = 3 + meta.questions.length * 3;
+    const graded = rows.filter(r => r[aiTotalIdx] !== '' && r[aiTotalIdx] !== null && r[aiTotalIdx] !== undefined);
+
+    const items = meta.questions.map((q, i) => {
+        let pct = '';
+        if (graded.length) {
+            const right = graded.filter(r => Number(r[3 + i * 3 + 1]) >= q.pts).length;
+            pct = `<span style="font-size: 12px; color: var(--gray-500); white-space: nowrap;">${Math.round(100 * right / graded.length)}% correct</span>`;
+        }
+        return `
+            <label style="display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border: 1px solid var(--gray-200); border-radius: 8px; margin-bottom: 8px; cursor: pointer;">
+                <input type="checkbox" class="quiz-exclude-box" value="${escHtml(q.id)}" ${q.excluded ? 'checked' : ''} style="margin-top: 3px; width: 16px; height: 16px;">
+                <div style="flex: 1; font-size: 13px; color: var(--gray-700); line-height: 1.5;">
+                    <strong>${escHtml(q.label)}</strong> (${q.pts} pt${q.pts === 1 ? '' : 's'}) — ${escHtml(q.text)}
+                </div>
+                ${pct}
+            </label>`;
+    }).join('');
+
+    document.getElementById('quizScoringBody').innerHTML = `
+        <p style="font-size: 13px; color: var(--gray-600); margin-bottom: 12px;">
+            Check the questions to <strong>leave out of scoring</strong>. Saving recalculates every student's score
+            and lowers the quiz's max points to match. Students see those questions marked "Not scored".
+            Teacher Final Scores entered on the sheet are not changed.
+            ${graded.length ? `<br>Percent correct is from ${graded.length} graded submissions.` : ''}
+        </p>
+        ${items}
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; gap: 12px;">
+            <span id="quizScoringMax" style="font-size: 13px; color: var(--gray-600);"></span>
+            <button class="btn btn-primary" id="quizScoringSave" onclick="saveQuizScoring('${courseId}', '${quizId}')">
+                <i class="fas fa-calculator"></i> Save &amp; Recalculate
+            </button>
+        </div>`;
+
+    const updateMax = () => {
+        const out = new Set([...document.querySelectorAll('.quiz-exclude-box:checked')].map(b => b.value));
+        const max = meta.questions.reduce((sum, q) => sum + (out.has(q.id) ? 0 : q.pts), 0);
+        document.getElementById('quizScoringMax').textContent = `Quiz will be out of ${max} points.`;
+    };
+    document.querySelectorAll('.quiz-exclude-box').forEach(b => b.addEventListener('change', updateMax));
+    updateMax();
+}
+
+async function saveQuizScoring(courseId, quizId) {
+    const course = CONFIG.COURSES[courseId];
+    const excluded = [...document.querySelectorAll('.quiz-exclude-box:checked')].map(b => b.value);
+    const btn = document.getElementById('quizScoringSave');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Recalculating…';
+    try {
+        const res = await fetch(course.apiUrl, {
+            method: 'POST',
+            redirect: 'follow',
+            body: JSON.stringify({ action: 'setQuizExclusions', token: CONFIG.TEACHER_TOKEN, quizId, excluded })
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error || 'Unknown error — is the backend updated?');
+        showToast(`Recalculated ${data.rowsUpdated} score(s) — quiz is now out of ${data.maxPoints}`, 'success', 6000);
+        document.getElementById('quizScoringModal')?.remove();
+        if (courseId === state.activeCourse) await loadCourseData();
+    } catch (e) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-calculator"></i> Save &amp; Recalculate';
+        showToast('Could not save: ' + e.message, 'error', 8000);
+    }
+}
+
 function quizQuestionLine(quiz, email, practicalGrade, practicalMax) {
     const q = quizQuestionScore(quiz, email);
     const qText = !q.taken ? 'not taken' : (q.score !== '' ? q.score : 'pending');
     const total = (parseFloat(q.score) || 0) + (parseFloat(practicalGrade) || 0);
     return `<div style="font-size:12px; color:var(--gray-600); margin:2px 0 8px;">
-        Questions: <strong>${qText}</strong> / ${quiz.maxPoints}
-        &nbsp;·&nbsp; Quiz total: <strong>${total}</strong> / ${quiz.maxPoints + practicalMax}
+        Questions: <strong>${qText}</strong> / ${quizMax(quiz)}
+        &nbsp;·&nbsp; Quiz total: <strong>${total}</strong> / ${quizMax(quiz) + practicalMax}
     </div>`;
 }
 
@@ -2019,7 +2157,7 @@ function updateAssignmentSelect() {
             const pts = course.deliverablePoints?.[del.id];
             const quiz = quizForPractical(del.id);
             option.textContent = quiz
-                ? `${quiz.name} — Practical + Questions (${pts} + ${quiz.maxPoints} pts)`
+                ? `${quiz.name} — Practical + Questions (${pts} + ${quizMax(quiz)} pts)`
                 : `${del.label} (${pts !== undefined ? pts + ' pts' : 'ungraded'})`;
             select.appendChild(option);
         }
@@ -2256,7 +2394,7 @@ function refreshGradeView() {
     const practicalQuiz = quizForPractical(assignmentId);
     if (titleEl) titleEl.textContent = delRecord ? delRecord.label : (assignmentId ? 'Assignment ' + assignmentId : '—');
     if (ptsEl)   ptsEl.textContent   = practicalQuiz
-        ? `Practical: ${maxPoints} pts · Questions: ${practicalQuiz.maxPoints} pts (auto-graded)`
+        ? `Practical: ${maxPoints} pts · Questions: ${quizMax(practicalQuiz)} pts (auto-graded)`
         : `Max: ${maxPoints !== undefined ? maxPoints : '—'} pts`;
 
     // Batch AI Grade button — visible for all googleDoc deliverables with rubrics

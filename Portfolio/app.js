@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.69',
+    VERSION: 'v2.14.70',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -5810,7 +5810,9 @@ function renderQuizResults(page) {
         const g = grades[q.id] || { score: null, feedback: '' };
         const scoreNull = g.score === null || g.score === undefined || g.score === '';
         const score = scoreNull ? null : Math.min(Number(g.score) || 0, q.pts);
-        const badgePart = scoreNull
+        const badgePart = q.excluded
+            ? `<span style="font-size:13px; font-weight:700; padding:3px 12px; border-radius:12px; background:#f3f4f6; color:#6b7280;">Not scored</span>`
+            : scoreNull
             ? `<span style="font-size:13px; font-weight:700; padding:3px 12px; border-radius:12px; background:#f3f4f6; color:#6b7280;">Pending</span>`
             : `<span style="font-size:13px; font-weight:700; padding:3px 12px; border-radius:12px; ${badgeStyle(score, q.pts)}">${score} / ${q.pts}</span>`;
         const answerBlock = g.answer

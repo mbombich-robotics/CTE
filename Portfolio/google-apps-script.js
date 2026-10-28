@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.69';
+const BACKEND_VERSION = 'v2.14.70';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -449,6 +449,9 @@ function doPost(e) {
 
       case 'saveQuizGrade':
         return jsonResponse(handleSaveQuizGrade(data));
+
+      case 'setQuizExclusions':
+        return jsonResponse(handleSetQuizExclusions(data));
 
       case 'gradeDesignBrief':
         return jsonResponse(handleGradeDesignBrief(data));
@@ -1432,10 +1435,12 @@ function loadAllData() {
   // Load every quiz sheet registered in QUIZ_REGISTRY, keyed by quizId so the
   // teacher portal can pick the right rows per quiz (e.g. final_exam vs claw).
   const quizzes = {};
+  const quizSettings = {};   // { quizId: { excluded: [...], maxPoints } } — max after excluded questions
   if (typeof QUIZ_REGISTRY !== 'undefined') {
     Object.keys(QUIZ_REGISTRY).forEach(quizId => {
       const sheetName = QUIZ_REGISTRY[quizId].sheetName || SHEET_NAMES.QUIZ;
       quizzes[quizId] = safeGetSheet(sheetName).slice(1);
+      quizSettings[quizId] = { excluded: quizExcludedIds(quizId), maxPoints: quizScoredMax(quizId) };
     });
   }
 
@@ -1446,6 +1451,7 @@ function loadAllData() {
     evidence:     evidence.slice(1),
     quiz:         quiz.slice(1),     // legacy — kept so older frontends still work
     quizzes:      quizzes,           // new — keyed by quizId
+    quizSettings: quizSettings,      // excluded questions + scored max per quiz
     summary: {
       totalStudents:     Math.max(0, students.length - 1),
       totalReflections:  Math.max(0, reflections.length - 1),
@@ -1962,12 +1968,74 @@ function handleGetQuizMeta(e) {
     return { error: 'Quiz registry not loaded or quiz not found: ' + quizId };
   }
   const quiz = QUIZ_REGISTRY[quizId];
+  const excluded = quizExcludedIds(quizId);
   return {
     quizId,
     name: quiz.name,
-    maxPoints: quiz.maxPoints,
-    questions: quiz.questions.map(q => ({ id: q.id, label: q.label, pts: q.maxPts, text: q.question, type: q.type || 'open', options: q.options || null }))
+    maxPoints: quizScoredMax(quizId),
+    excluded,
+    questions: quiz.questions.map(q => ({ id: q.id, label: q.label, pts: q.maxPts, text: q.question, type: q.type || 'open', options: q.options || null,
+                                          excluded: excluded.indexOf(q.id) !== -1 }))
   };
+}
+
+// ── Question exclusions ("no-grade" a question after the fact) ──────────────────
+// Stored per quiz in Script Properties as QUIZ_EXCLUDED_<quizId> = JSON array of question ids.
+// Excluded questions stay on the sheet but are left out of AI Total and the quiz's max points.
+function quizExcludedIds(quizId) {
+  try {
+    const raw = PropertiesService.getScriptProperties().getProperty('QUIZ_EXCLUDED_' + quizId);
+    const ids = raw ? JSON.parse(raw) : [];
+    return Array.isArray(ids) ? ids : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function quizScoredMax(quizId) {
+  const excluded = quizExcludedIds(quizId);
+  const questions = quizQuestions(quizId);
+  if (!questions.length) return ((typeof QUIZ_REGISTRY !== 'undefined' && QUIZ_REGISTRY[quizId]) || {}).maxPoints;
+  return questions.reduce((sum, q) => sum + (excluded.indexOf(q.id) === -1 ? (Number(q.maxPts) || 0) : 0), 0);
+}
+
+/**
+ * Teacher sets which questions are not scored, then every graded row's AI Total is
+ * recalculated from the per-question scores already on the sheet.
+ */
+function handleSetQuizExclusions(data) {
+  if (data.token !== TEACHER_TOKEN) return { error: 'Unauthorized' };
+  const quizId = (data.quizId || '').trim();
+  const questions = quizQuestions(quizId);
+  if (!questions.length) return { error: 'Quiz not found: ' + quizId };
+
+  const validIds = questions.map(q => q.id);
+  const excluded = (Array.isArray(data.excluded) ? data.excluded : []).filter(id => validIds.indexOf(id) !== -1);
+  PropertiesService.getScriptProperties().setProperty('QUIZ_EXCLUDED_' + quizId, JSON.stringify(excluded));
+
+  const sheet = getOrCreateQuizSheet(quizId);
+  const lastRow = sheet.getLastRow();
+  const aiTotalCol = 3 + questions.length * 3;            // 0-based index in the row
+  let rowsUpdated = 0;
+  if (lastRow > 1) {
+    const rows = sheet.getRange(2, 1, lastRow - 1, aiTotalCol + 1).getValues();
+    const totals = rows.map(r => {
+      const current = r[aiTotalCol];
+      if (current === '' || current === null) return [current];   // not graded yet
+      let total = 0;
+      questions.forEach((q, i) => {
+        if (excluded.indexOf(q.id) === -1) total += Number(r[3 + i * 3 + 1]) || 0;
+      });
+      rowsUpdated++;
+      return [total];
+    });
+    sheet.getRange(2, aiTotalCol + 1, totals.length, 1).setValues(totals);
+  }
+
+  const maxPoints = quizScoredMax(quizId);
+  logActivity('QUIZ_EXCLUSIONS', 'teacher', quizId + ' | not scored: ' + (excluded.join(', ') || 'none') +
+    ' | max ' + maxPoints + ' | ' + rowsUpdated + ' rows recalculated');
+  return { success: true, excluded, maxPoints, rowsUpdated };
 }
 
 // QUIZ_QUESTIONS: legacy claw-quiz fallback removed. Quiz content lives in quiz-content.js (not tracked in git).
@@ -2093,14 +2161,15 @@ function handleGradeQuizPending(e) {
     return { success: false, gradingPending: true, error: err.toString() };
   }
 
-  // Calculate total and write grades back to the row in one batch
+  // Calculate total (excluded questions don't count) and write grades back to the row in one batch
+  const excluded = quizExcludedIds(quizId);
   let aiTotal = 0;
   const newRow = rowData.slice();
   let ci = 3;
   questions.forEach(q => {
     const g = gradeMap[q.id] || { score: 0, feedback: '' };
     const score = Math.min(Number(g.score) || 0, q.maxPts);
-    aiTotal += score;
+    if (excluded.indexOf(q.id) === -1) aiTotal += score;
     newRow[ci + 1] = score;
     newRow[ci + 2] = g.feedback || '';
     if (gradeMap[q.id]) gradeMap[q.id].answer = answers[q.id];
@@ -2109,8 +2178,7 @@ function handleGradeQuizPending(e) {
   newRow[ci] = aiTotal; // aiTotal column
   sheet.getRange(rowNum, 1, 1, newRow.length).setValues([newRow]);
 
-  const maxPts = (typeof QUIZ_REGISTRY !== 'undefined' && QUIZ_REGISTRY[quizId]) ? QUIZ_REGISTRY[quizId].maxPoints : 24;
-  logActivity('QUIZ_GRADE', email, `AI Total: ${aiTotal}/${maxPts}`);
+  logActivity('QUIZ_GRADE', email, `AI Total: ${aiTotal}/${quizScoredMax(quizId)}`);
   return { success: true, grades: gradeMap, aiTotal };
 }
 
@@ -2139,20 +2207,20 @@ function handleRegradeQuiz(data) {
     return { success: false, error: gradingError };
   }
 
+  const excluded = quizExcludedIds(quizId);
   let aiTotal = 0;
   col = 3;
   questions.forEach(q => {
     const g = gradeMap[q.id] || { score: 0, feedback: '' };
     const score = Math.min(Number(g.score) || 0, q.maxPts);
-    aiTotal += score;
+    if (excluded.indexOf(q.id) === -1) aiTotal += score;
     sheet.getRange(rowNum, col + 2).setValue(score);
     sheet.getRange(rowNum, col + 3).setValue(g.feedback || '');
     col += 3;
   });
   sheet.getRange(rowNum, col + 1).setValue(aiTotal);
 
-  const maxPts = (typeof QUIZ_REGISTRY !== 'undefined' && QUIZ_REGISTRY[quizId]) ? QUIZ_REGISTRY[quizId].maxPoints : 26;
-  logActivity('QUIZ_REGRADE', email, `AI Total: ${aiTotal}/${maxPts}`);
+  logActivity('QUIZ_REGRADE', email, `AI Total: ${aiTotal}/${quizScoredMax(quizId)}`);
   return { success: true, grades: gradeMap, aiTotal };
 }
 
@@ -2735,7 +2803,8 @@ function handleGetDocAIFeedback(data) {
     var body = doc.getBody();
     var text = body.getText();
 
-    if (!text || text.trim().length < 80) {
+    // Practicals are screenshots only, so they skip the "doc is too short" text check.
+    if (!isPractical && (!text || text.trim().length < 80)) {
       return { success: false, error: 'Your document looks empty or very short. Fill in each section first, then come back for feedback.' };
     }
 

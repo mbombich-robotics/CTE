@@ -940,6 +940,10 @@
 
             <input type="text" id="searchInput" class="search-input" placeholder="Search by name or email...">
 
+            <button class="btn btn-secondary btn-small refresh-data-btn" onclick="refreshData()" title="Reload the latest student data">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+
             <button class="btn btn-secondary btn-small" id="exportBtn">
                 <i class="fas fa-download"></i> Export CSV
             </button>
@@ -1083,6 +1087,9 @@
                                 </button>
                             </div>
                         </div>
+                        <button class="btn btn-secondary btn-small refresh-data-btn" onclick="refreshData()" title="Reload the latest student data">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
                         <button class="btn btn-secondary btn-small" id="gradeViewToggleBtn" onclick="toggleGradeViewMode()">
                             <i class="fas fa-table"></i> Table View
                         </button>
@@ -1151,6 +1158,9 @@
                         <option value="quiz">Quizzes</option>
                         <option value="all">All Grades</option>
                     </select>
+                    <button class="btn btn-secondary btn-small refresh-data-btn" onclick="refreshData()" title="Reload the latest student data">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
                     <button class="btn btn-secondary btn-small" onclick="copyGradeReport()">
                         <i class="fas fa-copy"></i> Copy to Clipboard
                     </button>
@@ -1292,6 +1302,7 @@
                                 <select id="quizKeySelect" style="font-size: 13px; padding: 5px 8px; border: 1px solid var(--gray-300); border-radius: 6px; background: white; color: var(--gray-700);">
                                     <option value="edp_quiz">EDP Quiz</option><option value="cad_quiz">CAD Quiz</option>
                                 </select>
+                                <button type="button" onclick="openQuizScoring('hsaer')" title="Choose questions to leave out of scoring" style="font-size: 12px; padding: 5px 10px; border: 1px solid var(--gray-300); border-radius: 6px; background: white; color: var(--gray-700); cursor: pointer;"><i class="fas fa-sliders-h"></i> Scoring…</button>
                                 <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; white-space: nowrap;">
                                     <input type="checkbox" id="quizEnabledToggle" style="width: 16px; height: 16px; cursor: pointer;">
                                     <span style="font-size: 13px; font-weight: 600; color: var(--gray-600);">Visible to students</span>
@@ -1335,6 +1346,7 @@
                                 <select id="quizKeySelect_8aer" style="font-size: 13px; padding: 5px 8px; border: 1px solid var(--gray-300); border-radius: 6px; background: white; color: var(--gray-700);">
                                     <option value="edp_quiz">EDP Quiz</option><option value="cad_quiz">CAD Quiz</option>
                                 </select>
+                                <button type="button" onclick="openQuizScoring('8aer')" title="Choose questions to leave out of scoring" style="font-size: 12px; padding: 5px 10px; border: 1px solid var(--gray-300); border-radius: 6px; background: white; color: var(--gray-700); cursor: pointer;"><i class="fas fa-sliders-h"></i> Scoring…</button>
                                 <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; white-space: nowrap;">
                                     <input type="checkbox" id="quizEnabledToggle_8aer" style="width: 16px; height: 16px; cursor: pointer;">
                                     <span style="font-size: 13px; font-weight: 600; color: var(--gray-600);">Visible to students</span>
@@ -1378,6 +1390,7 @@
                                 <select id="quizKeySelect_dbl" style="font-size: 13px; padding: 5px 8px; border: 1px solid var(--gray-300); border-radius: 6px; background: white; color: var(--gray-700);">
                                     <option value="edp_quiz">EDP Quiz</option><option value="cad_quiz">CAD Quiz</option>
                                 </select>
+                                <button type="button" onclick="openQuizScoring('dbl')" title="Choose questions to leave out of scoring" style="font-size: 12px; padding: 5px 10px; border: 1px solid var(--gray-300); border-radius: 6px; background: white; color: var(--gray-700); cursor: pointer;"><i class="fas fa-sliders-h"></i> Scoring…</button>
                                 <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; white-space: nowrap;">
                                     <input type="checkbox" id="quizEnabledToggle_dbl" style="width: 16px; height: 16px; cursor: pointer;">
                                     <span style="font-size: 13px; font-weight: 600; color: var(--gray-600);">Visible to students</span>
