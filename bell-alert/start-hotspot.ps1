@@ -22,7 +22,7 @@ $schoolHoursEnd   = "09:00"
 # ── School LAN gateway ────────────────────────────────────────────────────────
 # Set this to the school's ethernet gateway IP (e.g. "10.1.0.1").
 # Leave empty ("") to skip the LAN check and rely on the time window only.
-$schoolGateway = ""   # <-- fill this in
+$schoolGateway = "10.40.254.1"   # Room 70 ethernet gateway (confirmed 2026-10-28)
 
 function Write-Log($msg) {
     $line = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')  $msg"
