@@ -22,7 +22,7 @@ const CONFIG = {
         hsaer: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-            currentAppVersion: 'v2.14.72',
+            currentAppVersion: 'v2.14.73',
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
@@ -46,7 +46,7 @@ const CONFIG = {
         '8aer': {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
-            currentAppVersion: 'v2.14.72',
+            currentAppVersion: 'v2.14.73',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
@@ -67,7 +67,7 @@ const CONFIG = {
         dbl: {
             name: 'Design & Build Lab',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
-            currentAppVersion: 'v2.14.72',
+            currentAppVersion: 'v2.14.73',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
@@ -868,6 +868,7 @@ function processStudentData() {
         // appear on-track if they had SOME completed items even if the specific past-due one
         // was missing. Now we check each expected deliverable by ID.
         let deliverablesBehind = 0;
+        const missingTitles = [];   // sent with reminder emails so they match this count
         for (let week = 1; week <= state.currentWeek; week++) {
             const weekStart = new Date(CONFIG.SEMESTER_START);
             weekStart.setDate(weekStart.getDate() + (week - 1) * 7);
@@ -881,6 +882,7 @@ function processStudentData() {
                     && isDeliverableRequired(state.activeCourse, dueDeliverable.id)
                     && !completedIdSet.has(dueDeliverable.id)) {
                     deliverablesBehind++;
+                    missingTitles.push(dueDeliverable.label);
                 }
             }
         }
@@ -904,6 +906,7 @@ function processStudentData() {
             points,
             progress,
             behindCount: totalBehind,
+            missingTitles,
             status,
             fullState
         };
@@ -1875,19 +1878,28 @@ async function sendReminderEmails() {
 
     try {
         const course = CONFIG.COURSES[state.activeCourse];
+        // Send exactly what the portal shows as missing, so emails match the Behind (n) badges.
+        const reminders = state.students
+            .filter(s => s.missingTitles?.length)
+            .map(s => ({ email: s.email, name: s.name, missing: s.missingTitles }));
         const response = await fetch(course.apiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain' },
             body: JSON.stringify({
                 action: 'sendReminders',
-                semesterStart: CONFIG.SEMESTER_START.toISOString()
+                token: CONFIG.TEACHER_TOKEN,
+                reminders
             })
         });
 
         const result = await response.json();
 
         if (result.success) {
-            showToast(`Sent ${result.emailsSent} reminder email${result.emailsSent !== 1 ? 's' : ''}!`, 'success');
+            const skipped = result.skipped?.length
+                ? ` Skipped ${result.skipped.length}: ${result.skipped.map(s => `${s.name || '(no name)'} — ${s.reason}`).join('; ')}`
+                : '';
+            showToast(`Sent ${result.emailsSent} reminder email${result.emailsSent !== 1 ? 's' : ''}.${skipped}`,
+                      result.skipped?.length ? 'info' : 'success', result.skipped?.length ? 10000 : undefined);
         } else {
             showToast('Failed to send reminders: ' + (result.error || 'Unknown error'), 'error');
         }

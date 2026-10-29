@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.72';
+const BACKEND_VERSION = 'v2.14.73';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -436,7 +436,7 @@ function doPost(e) {
         return jsonResponse(handleRecordDeliverableUrl(data));
 
       case 'sendReminders':
-        return jsonResponse(sendRemindersWeb(data.semesterStart));
+        return jsonResponse(sendRemindersWeb(data));
 
       case 'getAIFeedback':
         return jsonResponse(getAIFeedback(data));
@@ -1670,99 +1670,42 @@ function generateSummaryReport() {
 }
 
 /**
- * Send reminder emails via web request (called from teacher portal)
+ * Send reminder emails via web request (called from teacher portal).
+ * The portal sends the per-student missing list it already shows (Behind (n)),
+ * so emails match the portal for every course. One bad address is skipped
+ * instead of aborting the whole batch.
  */
-function sendRemindersWeb(semesterStart) {
-  const data = loadAllData();
-  const startDate = semesterStart ? new Date(semesterStart) : new Date('2026-08-24');
-  const diffTime = new Date() - startDate;
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-  const currentWeek = Math.floor(diffDays / 7) + 1;
+function sendRemindersWeb(data) {
+  if (data.token !== TEACHER_TOKEN) return { error: 'Unauthorized' };
+  const reminders = Array.isArray(data.reminders) ? data.reminders : [];
   let emailsSent = 0;
   const emailedStudents = [];
+  const skipped = [];
 
-  // Read skip config from Config sheet
-  const cfg = handleGetConfig();
-  const skipReflectionWeeks  = cfg.skipReflectionWeeks  || [];
-  const skipDeliverableWeeks = cfg.skipDeliverableWeeks || [];
-
-  // Deliverable schedule: {id, title, week due}
-  const deliverableSchedule = [
-    { id: 0,  title: 'Career Ready Practices Reflection', week: 1 },
-    { id: 11, title: 'Design Brief', week: 1 },
-    { id: 12, title: 'Robot Deck Design Record', week: 2 },
-    { id: 21, title: 'C1 — Wheel Hub', week: 3 },
-    { id: 22, title: 'C2 — Wheel Hub Cap', week: 5 },
-    { id: 23, title: 'C3 — Motor Sleeve Mount', week: 4 },
-    { id: 25, title: 'C5 — Omni Wheel Mount', week: 6 },
-    { id: 26, title: 'C6 — IR Sensor Mount', week: 7 },
-    { id: 27, title: 'C7 — Ultrasonic Sensor Mount', week: 7 },
-    { id: 24, title: 'C4 — Robot Deck (Final)', week: 8 },
-    { id: 51, title: 'Programming Basics — Check Your Understanding', week: 17 }
-  ];
-
-  data.students.forEach(student => {
-    const email = student[0];
-    const name = student[1];
-
-    // Check missing reflections — only weeks whose Friday 3pm deadline has passed
-    const submittedWeeks = data.reflections
-      .filter(r => r[0] === email)
-      .map(r => r[2]);
-
-    const now = new Date();
-    const missingReflections = [];
-    for (let w = 1; w <= currentWeek; w++) {
-      const weekStart = new Date(startDate);
-      weekStart.setDate(weekStart.getDate() + (w - 1) * 7);
-      const fridayDeadline = new Date(weekStart);
-      fridayDeadline.setDate(fridayDeadline.getDate() + 4);
-      fridayDeadline.setHours(15, 0, 0, 0);
-      if (now > fridayDeadline && !skipReflectionWeeks.includes(w) && !submittedWeeks.includes(w)) {
-        missingReflections.push(w);
-      }
+  reminders.forEach(r => {
+    const email = String(r.email || '').trim();
+    const name = String(r.name || '').trim();
+    const missing = (Array.isArray(r.missing) ? r.missing : []).filter(Boolean);
+    if (!missing.length) return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      skipped.push({ name, email, reason: email ? 'invalid email' : 'no email on file' });
+      return;
     }
 
-    // Check missing deliverables — only past-deadline weeks, skip optional/skipped
-    const completedDeliverables = data.deliverables
-      .filter(d => d[0] === email && d[7] === 'completed')
-      .map(d => String(d[2]));
-
-    const missingDeliverables = [];
-    deliverableSchedule.forEach(d => {
-      const weekStart = new Date(startDate);
-      weekStart.setDate(weekStart.getDate() + (d.week - 1) * 7);
-      const fridayDeadline = new Date(weekStart);
-      fridayDeadline.setDate(fridayDeadline.getDate() + 4);
-      fridayDeadline.setHours(15, 0, 0, 0);
-      if (now > fridayDeadline && !skipDeliverableWeeks.includes(d.week) && !completedDeliverables.includes(String(d.id))) {
-        missingDeliverables.push(d.title);
-      }
-    });
-
-    if (missingReflections.length > 0 || missingDeliverables.length > 0) {
-      let body = `Hi ${name},\n\nYou have missing portfolio work:\n`;
-      if (missingReflections.length > 0) {
-        body += `\nMissing Reflections: Weeks ${missingReflections.join(', ')}`;
-      }
-      if (missingDeliverables.length > 0) {
-        body += `\nMissing Deliverables:\n- ${missingDeliverables.join('\n- ')}`;
-      }
-      body += `\n\nPlease submit them as soon as possible.\n\nPortfolio: https://mbombich-robotics.github.io/CTE/Portfolio/\n\nMr. B`;
-
-      MailApp.sendEmail({
-        to: email,
-        subject: 'Robotics Portfolio Reminder - Missing Work',
-        body: body
-      });
-
+    const body = `Hi ${name || 'there'},\n\nYou have missing portfolio work:\n- ${missing.join('\n- ')}` +
+      `\n\nPlease submit it as soon as possible.\n\nPortfolio: https://mbombich-robotics.github.io/CTE/Portfolio/\n\nMr. B`;
+    try {
+      MailApp.sendEmail({ to: email, subject: 'Portfolio Reminder - Missing Work', body: body });
       emailsSent++;
-      emailedStudents.push({ name, email, missingReflections, missingDeliverables });
+      emailedStudents.push({ name, email, missing });
+    } catch (e) {
+      skipped.push({ name, email, reason: e.message });
     }
   });
 
-  logActivity('REMINDERS', 'teacher', `Sent ${emailsSent} reminder emails via portal`);
-  return { success: true, emailsSent, emailedStudents };
+  logActivity('REMINDERS', 'teacher', `Sent ${emailsSent} reminder emails via portal` +
+    (skipped.length ? `; skipped ${skipped.length}` : ''));
+  return { success: true, emailsSent, emailedStudents, skipped };
 }
 
 /**
