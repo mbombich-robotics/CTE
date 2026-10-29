@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.71',
+    VERSION: 'v2.14.72',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -265,6 +265,9 @@ const DELIVERABLES = [
         aiGated: true,
         feedbackButtonLabel: 'Verify Work',
         description: 'Model an L-bracket mount for a motor in Fusion 360. The motor\'s output shaft needs a 15 mm clearance hole, and the motor face has four 4 mm mounting holes on a 32 mm circle pattern. The mounting flange is 8 mm thick with a 20 mm square hole pattern of 5.6 mm holes. Every sketch must be fully constrained.',
+        descriptionByTrack: {
+            '8aer': 'Model an L-bracket mount for a motor in Fusion 360. The motor\'s output shaft needs a 15 mm clearance hole, and the motor face has four 4 mm mounting holes on a 32 mm circle pattern. Extrude it 8 mm. Every sketch must be fully constrained.',
+        },
         verifySteps: [
             'Paste your three screenshots into the doc (<strong>Print Screen</strong>, or <strong>Win+Shift+S</strong> then <strong>Ctrl+V</strong>): an isometric view of the finished part, a fully constrained sketch (all lines black), and the timeline.',
         ],
@@ -2639,6 +2642,13 @@ function isForCourse(d) {
     return d.tracks.includes(course);
 }
 
+// Description for the current student's course — a shared deliverable can
+// override its wording per track via `descriptionByTrack`.
+function deliverableDescription(d) {
+    const course = URL_TRACK || state.student?.course || 'hsaer';
+    return d.descriptionByTrack?.[course] || d.description;
+}
+
 function calculatePoints() {
     let points = 0;
     Object.keys(state.weeklyReflections).forEach(week => {
@@ -3345,7 +3355,7 @@ function openDeliverableForm(id) {
 
     content.innerHTML = `
         <h2><i class="fas fa-clipboard-list"></i> ${deliverable.title}</h2>
-        <p style="color: var(--gray-600); margin-bottom: 20px;">${deliverable.description}</p>
+        <p style="color: var(--gray-600); margin-bottom: 20px;">${deliverableDescription(deliverable)}</p>
 
         <div style="display: flex; gap: 16px; margin-bottom: 20px;">
             <span style="background: var(--primary-light); color: var(--primary); padding: 6px 12px; border-radius: 20px; font-size: 14px;">
@@ -5385,7 +5395,7 @@ function renderQuizPracticalCard() {
                 <span style="font-size:12px; font-weight:700; color:var(--primary); background:var(--primary-light, rgba(99,102,241,0.1)); padding:2px 10px; border-radius:12px;">${d.points} pts</span>
             </div>
             <h3 style="margin-bottom:8px;">${d.title.replace(/^CAD Quiz Practical — /, '')}</h3>
-            <p style="font-size:15px; line-height:1.65; margin-bottom:14px; color:var(--gray-700);">${d.description}</p>
+            <p style="font-size:15px; line-height:1.65; margin-bottom:14px; color:var(--gray-700);">${deliverableDescription(d)}</p>
             <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
                 <button type="button" class="btn ${existing.status === 'completed' ? 'btn-secondary' : 'btn-primary'}" onclick="openDeliverableForm(${d.id})">
                     <i class="fas fa-file-alt"></i> ${existing.status === 'completed' ? 'View Practical' : 'Open Practical'}

@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.70';
+const BACKEND_VERSION = 'v2.14.72';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -3118,7 +3118,7 @@ var CAD_PRACTICAL_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/
 function gradeCadPracticalScreenshots(body, deliverableId) {
   var part = deliverableId === 426
     ? 'a doorstop wedge (8° slope, about 100 mm long, with text cut into one side)'
-    : 'an L-bracket motor mount (a plate with a large shaft hole and four small holes, plus a mounting flange with four holes)';
+    : 'an L-bracket motor mount (a plate with a large shaft hole and four small holes around it; the HS version also has a mounting flange with four holes)';
 
   var images = body.getImages();
   var content = [];
@@ -3851,6 +3851,18 @@ function createCadPracticalTemplates() {
 
   Logger.log('✅ DBL Doorstop Wedge template:   ' + dblId + '   → DELIVERABLE_DOC_TEMPLATE_426');
   Logger.log('✅ AER Motor L-Bracket template:  ' + aerId + '   → DELIVERABLE_DOC_TEMPLATE_28');
+}
+
+// ONE-TIME SETUP — 8th grade version of the Motor L-Bracket practical (no flange
+// hole pattern). Run once, then set DELIVERABLE_DOC_TEMPLATE_28 in the 8AER
+// project ONLY to the logged Doc ID. HS AER keeps its own template.
+function createCadPractical8aerTemplate() {
+  var id = buildCadPracticalTemplate_(
+    'CAD QUIZ PRACTICAL — MOTOR L-BRACKET',
+    'Model an L-bracket mount for a motor in Fusion 360. The motor\'s output shaft needs a 15 mm clearance hole, ' +
+    'and the motor face has four 4 mm mounting holes on a 32 mm circle pattern. Extrude it 8 mm. ' +
+    'Every sketch must be fully constrained.');
+  Logger.log('✅ 8AER Motor L-Bracket template: ' + id + '   → DELIVERABLE_DOC_TEMPLATE_28 (8AER project only)');
 }
 
 function buildCadPracticalTemplate_(title, prompt) {
