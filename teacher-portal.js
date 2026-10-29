@@ -22,7 +22,7 @@ const CONFIG = {
         hsaer: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-            currentAppVersion: 'v2.14.73',
+            currentAppVersion: 'v2.14.74',
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
@@ -46,7 +46,7 @@ const CONFIG = {
         '8aer': {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
-            currentAppVersion: 'v2.14.73',
+            currentAppVersion: 'v2.14.74',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
@@ -67,7 +67,7 @@ const CONFIG = {
         dbl: {
             name: 'Design & Build Lab',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
-            currentAppVersion: 'v2.14.73',
+            currentAppVersion: 'v2.14.74',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
@@ -2075,8 +2075,17 @@ async function openQuizScoring(courseId) {
         return;
     }
 
-    // % correct per question — only when this course's data is loaded.
-    const rows = courseId === state.activeCourse ? (state.rawData?.quizzes?.[quizId] || []) : [];
+    // % correct per question — use loaded data for the active course, otherwise fetch that course's results.
+    let rows = [];
+    if (courseId === state.activeCourse) {
+        rows = state.rawData?.quizzes?.[quizId] || [];
+    } else {
+        try {
+            const all = await fetch(`${course.apiUrl}?action=all&_t=${Date.now()}`).then(r => r.json());
+            rows = all?.quizzes?.[quizId] || [];
+        } catch (e) { /* stats are optional — show the questions without them */ }
+        if (!document.getElementById('quizScoringBody')) return;   // modal closed while loading
+    }
     const aiTotalIdx = 3 + meta.questions.length * 3;
     const graded = rows.filter(r => r[aiTotalIdx] !== '' && r[aiTotalIdx] !== null && r[aiTotalIdx] !== undefined);
 
@@ -2099,11 +2108,16 @@ async function openQuizScoring(courseId) {
     document.getElementById('quizScoringBody').innerHTML = `
         <p style="font-size: 13px; color: var(--gray-600); margin-bottom: 12px;">
             Check the questions to <strong>leave out of scoring</strong>. Saving recalculates every student's score
-            and lowers the quiz's max points to match. Students see those questions marked "Not scored".
-            Teacher Final Scores entered on the sheet are not changed.
+            and lowers the quiz's max points to match. Students see those questions marked "Not scored"
+            (or "Extra credit" if the box below is on). Teacher Final Scores entered on the sheet are not changed.
             ${graded.length ? `<br>Percent correct is from ${graded.length} graded submissions.` : ''}
         </p>
         ${items}
+        <label style="display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; margin-top: 12px; background: var(--gray-50); border-radius: 8px; cursor: pointer; font-size: 13px; color: var(--gray-700);">
+            <input type="checkbox" id="quizScoringBonus" ${meta.bonus ? 'checked' : ''} style="margin-top: 3px; width: 16px; height: 16px;">
+            <span><strong>Count checked questions as extra credit</strong> — a correct answer adds its points,
+            a wrong answer costs nothing, and the quiz stays out of the lower max (scores can go above it).</span>
+        </label>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; gap: 12px;">
             <span id="quizScoringMax" style="font-size: 13px; color: var(--gray-600);"></span>
             <button class="btn btn-primary" id="quizScoringSave" onclick="saveQuizScoring('${courseId}', '${quizId}')">
@@ -2114,15 +2128,20 @@ async function openQuizScoring(courseId) {
     const updateMax = () => {
         const out = new Set([...document.querySelectorAll('.quiz-exclude-box:checked')].map(b => b.value));
         const max = meta.questions.reduce((sum, q) => sum + (out.has(q.id) ? 0 : q.pts), 0);
-        document.getElementById('quizScoringMax').textContent = `Quiz will be out of ${max} points.`;
+        const extra = meta.questions.reduce((sum, q) => sum + (out.has(q.id) ? q.pts : 0), 0);
+        const bonus = document.getElementById('quizScoringBonus').checked && extra > 0;
+        document.getElementById('quizScoringMax').textContent = bonus
+            ? `Quiz will be out of ${max} points, with up to ${extra} extra credit.`
+            : `Quiz will be out of ${max} points.`;
     };
-    document.querySelectorAll('.quiz-exclude-box').forEach(b => b.addEventListener('change', updateMax));
+    document.querySelectorAll('.quiz-exclude-box, #quizScoringBonus').forEach(b => b.addEventListener('change', updateMax));
     updateMax();
 }
 
 async function saveQuizScoring(courseId, quizId) {
     const course = CONFIG.COURSES[courseId];
     const excluded = [...document.querySelectorAll('.quiz-exclude-box:checked')].map(b => b.value);
+    const bonus = !!document.getElementById('quizScoringBonus')?.checked;
     const btn = document.getElementById('quizScoringSave');
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Recalculating…';
@@ -2130,11 +2149,13 @@ async function saveQuizScoring(courseId, quizId) {
         const res = await fetch(course.apiUrl, {
             method: 'POST',
             redirect: 'follow',
-            body: JSON.stringify({ action: 'setQuizExclusions', token: CONFIG.TEACHER_TOKEN, quizId, excluded })
+            body: JSON.stringify({ action: 'setQuizExclusions', token: CONFIG.TEACHER_TOKEN, quizId, excluded, bonus })
         });
         const data = await res.json();
         if (!data.success) throw new Error(data.error || 'Unknown error — is the backend updated?');
-        showToast(`Recalculated ${data.rowsUpdated} score(s) — quiz is now out of ${data.maxPoints}`, 'success', 6000);
+        if (bonus && excluded.length && !data.bonus) throw new Error('Backend did not save extra credit — update the Apps Script to v2.14.74');
+        showToast(`Recalculated ${data.rowsUpdated} score(s) — quiz is now out of ${data.maxPoints}` +
+                  (data.bonus ? ' plus extra credit' : ''), 'success', 6000);
         document.getElementById('quizScoringModal')?.remove();
         if (courseId === state.activeCourse) await loadCourseData();
     } catch (e) {

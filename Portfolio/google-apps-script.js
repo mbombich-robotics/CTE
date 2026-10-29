@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.73';
+const BACKEND_VERSION = 'v2.14.74';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -1440,7 +1440,7 @@ function loadAllData() {
     Object.keys(QUIZ_REGISTRY).forEach(quizId => {
       const sheetName = QUIZ_REGISTRY[quizId].sheetName || SHEET_NAMES.QUIZ;
       quizzes[quizId] = safeGetSheet(sheetName).slice(1);
-      quizSettings[quizId] = { excluded: quizExcludedIds(quizId), maxPoints: quizScoredMax(quizId) };
+      quizSettings[quizId] = { excluded: quizExcludedIds(quizId), bonus: quizBonus(quizId), maxPoints: quizScoredMax(quizId) };
     });
   }
 
@@ -1917,6 +1917,7 @@ function handleGetQuizMeta(e) {
     name: quiz.name,
     maxPoints: quizScoredMax(quizId),
     excluded,
+    bonus: quizBonus(quizId),
     questions: quiz.questions.map(q => ({ id: q.id, label: q.label, pts: q.maxPts, text: q.question, type: q.type || 'open', options: q.options || null,
                                           excluded: excluded.indexOf(q.id) !== -1 }))
   };
@@ -1933,6 +1934,19 @@ function quizExcludedIds(quizId) {
   } catch (e) {
     return [];
   }
+}
+
+// QUIZ_BONUS_<quizId> = 'true' → excluded questions become extra credit: they still add to
+// AI Total when answered correctly, but stay out of the max points.
+function quizBonus(quizId) {
+  return PropertiesService.getScriptProperties().getProperty('QUIZ_BONUS_' + quizId) === 'true';
+}
+
+// Returns a test for whether a question's score is added to AI Total.
+function quizCountsToward(quizId) {
+  const excluded = quizExcludedIds(quizId);
+  const bonus = quizBonus(quizId);
+  return qid => bonus || excluded.indexOf(qid) === -1;
 }
 
 function quizScoredMax(quizId) {
@@ -1954,7 +1968,10 @@ function handleSetQuizExclusions(data) {
 
   const validIds = questions.map(q => q.id);
   const excluded = (Array.isArray(data.excluded) ? data.excluded : []).filter(id => validIds.indexOf(id) !== -1);
+  const bonus = !!data.bonus && excluded.length > 0;
   PropertiesService.getScriptProperties().setProperty('QUIZ_EXCLUDED_' + quizId, JSON.stringify(excluded));
+  PropertiesService.getScriptProperties().setProperty('QUIZ_BONUS_' + quizId, String(bonus));
+  const counts = quizCountsToward(quizId);
 
   const sheet = getOrCreateQuizSheet(quizId);
   const lastRow = sheet.getLastRow();
@@ -1967,7 +1984,7 @@ function handleSetQuizExclusions(data) {
       if (current === '' || current === null) return [current];   // not graded yet
       let total = 0;
       questions.forEach((q, i) => {
-        if (excluded.indexOf(q.id) === -1) total += Number(r[3 + i * 3 + 1]) || 0;
+        if (counts(q.id)) total += Number(r[3 + i * 3 + 1]) || 0;
       });
       rowsUpdated++;
       return [total];
@@ -1976,9 +1993,9 @@ function handleSetQuizExclusions(data) {
   }
 
   const maxPoints = quizScoredMax(quizId);
-  logActivity('QUIZ_EXCLUSIONS', 'teacher', quizId + ' | not scored: ' + (excluded.join(', ') || 'none') +
-    ' | max ' + maxPoints + ' | ' + rowsUpdated + ' rows recalculated');
-  return { success: true, excluded, maxPoints, rowsUpdated };
+  logActivity('QUIZ_EXCLUSIONS', 'teacher', quizId + ' | ' + (bonus ? 'extra credit' : 'not scored') + ': ' +
+    (excluded.join(', ') || 'none') + ' | max ' + maxPoints + ' | ' + rowsUpdated + ' rows recalculated');
+  return { success: true, excluded, bonus, maxPoints, rowsUpdated };
 }
 
 // QUIZ_QUESTIONS: legacy claw-quiz fallback removed. Quiz content lives in quiz-content.js (not tracked in git).
@@ -2104,15 +2121,15 @@ function handleGradeQuizPending(e) {
     return { success: false, gradingPending: true, error: err.toString() };
   }
 
-  // Calculate total (excluded questions don't count) and write grades back to the row in one batch
-  const excluded = quizExcludedIds(quizId);
+  // Calculate total (excluded questions don't count unless they're extra credit) and write grades back in one batch
+  const counts = quizCountsToward(quizId);
   let aiTotal = 0;
   const newRow = rowData.slice();
   let ci = 3;
   questions.forEach(q => {
     const g = gradeMap[q.id] || { score: 0, feedback: '' };
     const score = Math.min(Number(g.score) || 0, q.maxPts);
-    if (excluded.indexOf(q.id) === -1) aiTotal += score;
+    if (counts(q.id)) aiTotal += score;
     newRow[ci + 1] = score;
     newRow[ci + 2] = g.feedback || '';
     if (gradeMap[q.id]) gradeMap[q.id].answer = answers[q.id];
@@ -2150,13 +2167,13 @@ function handleRegradeQuiz(data) {
     return { success: false, error: gradingError };
   }
 
-  const excluded = quizExcludedIds(quizId);
+  const counts = quizCountsToward(quizId);
   let aiTotal = 0;
   col = 3;
   questions.forEach(q => {
     const g = gradeMap[q.id] || { score: 0, feedback: '' };
     const score = Math.min(Number(g.score) || 0, q.maxPts);
-    if (excluded.indexOf(q.id) === -1) aiTotal += score;
+    if (counts(q.id)) aiTotal += score;
     sheet.getRange(rowNum, col + 2).setValue(score);
     sheet.getRange(rowNum, col + 3).setValue(g.feedback || '');
     col += 3;
