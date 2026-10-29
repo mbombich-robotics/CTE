@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.70',
+    VERSION: 'v2.14.71',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -5452,13 +5452,9 @@ async function loadQuizPage() {
         }
     }
 
-    if (state.quiz.submitted) {
-        renderQuizResults(page);
-        if (state.quiz.gradingPending) pollForGrades();
-        return;
-    }
-
-    // Fetch quiz meta (question text) from backend if not yet loaded
+    // Fetch quiz meta (question text, per-question points) from backend if not yet loaded.
+    // Needed for results too — without it the results fall back to the legacy
+    // QUIZ_QUESTION_META point values (4/4/4/4/4/6/bonus).
     if (!state.quiz.meta) {
         try {
             const res = await fetch(`${CONFIG.SHEETS_API_URL}?action=getQuizMeta&quizId=${encodeURIComponent(state.config.quizKey || 'edp_quiz')}&_t=${Date.now()}`);
@@ -5468,6 +5464,12 @@ async function loadQuizPage() {
         } catch(e) {
             state.quiz.metaError = 'Network error: ' + (e.message || e);
         }
+    }
+
+    if (state.quiz.submitted) {
+        renderQuizResults(page);
+        if (state.quiz.gradingPending) pollForGrades();
+        return;
     }
 
     if (!state.quiz.meta) {
@@ -5803,18 +5805,20 @@ function renderQuizResults(page) {
         return 'background:#fee2e2; color:#991b1b;';
     }
 
-    const resultQuestions = state.quiz.meta?.questions || QUIZ_QUESTION_META;
+    // Without meta, list the graded questions with no denominator rather than legacy point values.
+    const resultQuestions = state.quiz.meta?.questions
+        || Object.keys(grades).map((id, i) => ({ id, label: 'Question ' + (i + 1), pts: null }));
     const quizMaxPts = state.quiz.meta?.maxPoints;
     let cardsHtml = '';
     resultQuestions.forEach(q => {
         const g = grades[q.id] || { score: null, feedback: '' };
         const scoreNull = g.score === null || g.score === undefined || g.score === '';
-        const score = scoreNull ? null : Math.min(Number(g.score) || 0, q.pts);
+        const score = scoreNull ? null : (q.pts == null ? Number(g.score) || 0 : Math.min(Number(g.score) || 0, q.pts));
         const badgePart = q.excluded
             ? `<span style="font-size:13px; font-weight:700; padding:3px 12px; border-radius:12px; background:#f3f4f6; color:#6b7280;">Not scored</span>`
             : scoreNull
             ? `<span style="font-size:13px; font-weight:700; padding:3px 12px; border-radius:12px; background:#f3f4f6; color:#6b7280;">Pending</span>`
-            : `<span style="font-size:13px; font-weight:700; padding:3px 12px; border-radius:12px; ${badgeStyle(score, q.pts)}">${score} / ${q.pts}</span>`;
+            : `<span style="font-size:13px; font-weight:700; padding:3px 12px; border-radius:12px; ${badgeStyle(score, q.pts ?? Math.max(score, 1))}">${q.pts == null ? score + ' pts' : score + ' / ' + q.pts}</span>`;
         const answerBlock = g.answer
             ? `<p style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--gray-400); margin-bottom:6px;">Your Answer</p>
                <p style="font-size:14px; color:var(--gray-700); line-height:1.65; background:#f8fafc; border-radius:6px; padding:12px 14px; border-left:3px solid var(--gray-300); margin-bottom:12px; white-space:pre-wrap;">${escapeHtmlQuiz(g.answer)}</p>`
