@@ -243,7 +243,7 @@ const COMPONENT_BATCH_CRITERIA = [
     { id: 'reflection',      label: 'Reflection',      max: 4 },
 ];
 
-// Deliverable IDs that support Batch AI Grade (excludes D11 which has its own handler).
+// Deliverable IDs that support Batch AI Grade and the per-student "Re-grade with AI" button.
 // CAD Quiz practicals (28, 426) are left out: Verify Work grades them before the student submits.
 const DOC_GRADABLE_IDS = new Set([11, 21, 22, 23, 421, 422, 423, 424, 425]);
 
@@ -2275,7 +2275,7 @@ function loadGradeTable() {
                     </div>
                 </td>
                 <td>${formatPeriod(student.period)}</td>
-                <td>${status}</td>
+                <td>${status}${isSubmitted && assignmentId !== 10 ? `<div style="margin-top:4px;">${regradeButtonHtml(student.email, assignmentId)}</div>` : ''}</td>
                 <td style="text-align:center; color: var(--gray-600); font-weight:500;">${aiGrade !== '' ? aiGrade : '—'}</td>
                 <td>
                     <input type="number" class="adjustment-input" data-email="${student.email}"
@@ -2440,7 +2440,7 @@ function refreshGradeView() {
             batchBtn.innerHTML = '<i class="fas fa-robot"></i> Batch AI Grade';
             document.getElementById('saveAllGradesBtn').insertAdjacentElement('beforebegin', batchBtn);
         }
-        batchBtn.onclick   = assignmentId === 11 ? runBatchD11Grading : () => runBatchDocGrading(assignmentId);
+        batchBtn.onclick   = () => runBatchDocGrading(assignmentId);
         batchBtn.style.display = '';
         batchBtn.disabled      = false;
         batchBtn.innerHTML     = '<i class="fas fa-robot"></i> Batch AI Grade';
@@ -2581,6 +2581,7 @@ function renderReviewCard(student, assignmentId, maxPts, grade, feedback, docUrl
     </div>
     <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
       ${docLink}
+      ${regradeButtonHtml(student.email, assignmentId)}
       <span id="${statusId}" style="font-size:11px; color:var(--gray-400); white-space:nowrap;">${isGraded ? '<i class="fas fa-check" style="color:#16a34a;"></i> Graded' : '● Unsaved'}</span>
       <button onclick="saveStudentGradeInline('${student.email.replace(/'/g, "\\'")}', ${assignmentId}, '${statusId}')"
               style="padding:4px 14px; background:var(--primary); color:white; border:none; border-radius:5px; font-size:12px; font-weight:600; cursor:pointer;">
@@ -2666,164 +2667,109 @@ async function saveStudentGradeInline(email, assignmentId, statusId) {
     }
 }
 
-// ============================================
-// D1.1 BATCH AI GRADER
-// ============================================
+// Criteria used to total the AI grades for a doc-graded deliverable.
+function aiGradeCriteria(deliverableId, courseKey) {
+    // 422 (Doorstop Design Brief) reuses the D1.1 criteria set
+    const criteriaKey = deliverableId === 422 ? 11 : deliverableId;
+    return (BRIEF_CRITERIA[criteriaKey] || []).filter(c => !(c.skipFor8AER && courseKey === '8aer'));
+}
 
-async function runBatchD11Grading() {
-    const btn = document.getElementById('batchAiGradeBtn');
-    const courseKey  = state.activeCourse;
-    const course     = CONFIG.COURSES[courseKey] || CONFIG.COURSES['hsaer'];
-    const allCriteria = BRIEF_CRITERIA[11] || [];
-    const criteria   = allCriteria.filter(c => !(c.skipFor8AER && courseKey === '8aer'));
-    const maxTotal   = criteria.reduce((s, c) => s + c.max, 0);
+// Runs the AI grader on one student's submitted deliverable row.
+// Returns { total, feedbackText }, or null if the row has nothing gradable.
+async function aiGradeSubmission(deliverableId, sub) {
+    const courseKey = state.activeCourse;
+    const course    = CONFIG.COURSES[courseKey] || CONFIG.COURSES['hsaer'];
+    const criteria  = aiGradeCriteria(deliverableId, courseKey);
+    const maxTotal  = criteria.reduce((s, c) => s + c.max, 0);
+    const email     = sub[0];
 
-    // Collect all submitted students with Google Doc URLs (from state, not DOM)
-    const periodFilter = document.getElementById('gradePeriodFilter').value;
-    const tasks = [];
-    (state.rawData.deliverables || []).forEach(sub => {
-        if (sub[2] != 11 || sub[7] !== 'completed') return;
-        if (sub[9] !== null && sub[9] !== undefined && sub[9] !== '') return; // skip already-graded
-        const email = sub[0];
-        const student = state.students.find(s => s.email === email);
-        if (!student) return;
-        if (periodFilter !== 'all' && student.period !== periodFilter) return;
+    let payload;
+    if (deliverableId === 425) {
+        // D2.5 stores formatted text in sub[4] (content column), not a Google Doc URL
+        const content = (sub[4] || '').trim();
+        if (!content) return null;
+        payload = { action: 'gradeDesignBrief', token: CONFIG.TEACHER_TOKEN, email, content, deliverableId };
+    } else {
         const docUrl = (sub[5] || sub[4] || '').trim();
-        if (!docUrl.includes('docs.google.com')) return;
-        tasks.push({ email, docUrl });
-    });
-
-    if (tasks.length === 0) {
-        alert('No submitted students with Google Doc URLs found. Make sure the assignment is set to D1.1 and students have submitted.');
-        return;
-    }
-
-    btn.disabled = true;
-    let done = 0;
-    const BATCH_SIZE = 5;
-
-    const updateBtn = () => {
-        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Grading ${done} / ${tasks.length}…`;
-    };
-    updateBtn();
-
-    for (let i = 0; i < tasks.length; i += BATCH_SIZE) {
-        const batch = tasks.slice(i, i + BATCH_SIZE);
-
-        await Promise.allSettled(batch.map(async ({ email, docUrl }) => {
-            try {
-                const res = await fetch(course.apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({
-                        action: 'gradeDesignBrief',
-                        token: CONFIG.TEACHER_TOKEN,
-                        email,
-                        docUrl,
-                        deliverableId: 11
-                    })
-                });
-                const data = await res.json();
-
-                if (data.success && data.grades) {
-                    // Build total + per-criterion feedback text
-                    let total = 0;
-                    const lines = criteria.map(c => {
-                        const g = data.grades[c.id] || {};
-                        const score = (g.score !== null && g.score !== undefined)
-                            ? Math.min(Number(g.score) || 0, c.max) : 0;
-                        total += score;
-                        const fb = (g.feedback || '').replace(/\n/g, ' ');
-                        return `${c.label}: ${score}/${c.max} — ${fb}`;
-                    });
-                    const feedbackText = lines.join('\n') + `\n\nTotal: ${total}/${maxTotal}`;
-                    const slug = email.replace(/[^a-zA-Z0-9]/g, '-');
-
-                    // ── Card view ──────────────────────────────────────────────
-                    const gradeCard = document.getElementById(`rg-${slug}`);
-                    const feedCard  = document.getElementById(`rf-${slug}`);
-                    const statusEl  = gradeCard ? document.getElementById(gradeCard.dataset.status) : null;
-                    if (gradeCard) { gradeCard.value = total; }
-                    if (feedCard)  { feedCard.value  = feedbackText; }
-                    if (statusEl)  { markCardUnsaved(gradeCard.dataset.status); }
-
-                    // ── Table view (fallback) ──────────────────────────────────
-                    const row = document.querySelector(`#gradeTableBody tr[data-email="${CSS.escape(email)}"]`);
-                    if (row) {
-                        row.dataset.aigrade = total;
-                        const cells = row.querySelectorAll('td');
-                        if (cells[3]) cells[3].textContent = total;
-                        const finalCell = row.querySelector('.final-score-cell');
-                        if (finalCell) {
-                            finalCell.dataset.base = total;
-                            const adj = parseFloat(row.querySelector('.adjustment-input')?.value) || 0;
-                            finalCell.textContent = total + adj;
-                        }
-                        const feedbackInput = row.querySelector('.feedback-input');
-                        if (feedbackInput) feedbackInput.value = feedbackText;
-                    }
-                }
-            } catch (e) {
-                // silently skip — keeps "—" / empty
-            }
-            done++;
-            updateBtn();
-        }));
-
-        // Brief pause between batches to be polite to the API
-        if (i + BATCH_SIZE < tasks.length) {
-            await new Promise(r => setTimeout(r, 600));
+        if (!docUrl.includes('docs.google.com')) return null;
+        if (deliverableId === 11) {
+            payload = { action: 'gradeDesignBrief', token: CONFIG.TEACHER_TOKEN, email, docUrl, deliverableId: 11 };
+        } else {
+            const m = docUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            if (!m) return null;
+            payload = { action: 'getDocAIFeedback', token: CONFIG.TEACHER_TOKEN, email, docId: m[1], deliverableId };
         }
     }
 
-    btn.innerHTML = `<i class="fas fa-check"></i> Graded ${done}`;
-    btn.disabled = false;
-    showToast(
-        `AI grading complete — ${done} students scored. Review the AI Grade column, adjust if needed, then click Save and Close.`,
-        'success', 6000
-    );
+    const res  = await fetch(course.apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!data.success || !data.grades) throw new Error(data.error || 'Grader returned no scores');
+
+    let total = 0;
+    const lines = criteria.map(c => {
+        const g     = data.grades[c.id] || {};
+        const score = (g.score !== null && g.score !== undefined) ? Math.min(Number(g.score) || 0, c.max) : 0;
+        total += score;
+        return `${c.label}: ${score}/${c.max} — ${(g.feedback || '').replace(/\n/g, ' ')}`;
+    });
+    let feedbackText = lines.join('\n') + `\n\nTotal: ${total}/${maxTotal}`;
+    if ([22, 23, 423].includes(deliverableId) && total < 10) {
+        feedbackText += '\n\nPlease update this doc and resubmit it for credit. Send me an email when your changes are complete.';
+    }
+    return { total, feedbackText };
+}
+
+// Puts an AI result into the student's review card and/or grade-table row (unsaved).
+function applyAiGrade(email, total, feedbackText) {
+    const slug = email.replace(/[^a-zA-Z0-9]/g, '-');
+
+    // ── Card view ──────────────────────────────────────────────
+    const gradeCard = document.getElementById(`rg-${slug}`);
+    const feedCard  = document.getElementById(`rf-${slug}`);
+    if (gradeCard) { gradeCard.value = total; }
+    if (feedCard)  { feedCard.value  = feedbackText; }
+    if (gradeCard?.dataset.status) markCardUnsaved(gradeCard.dataset.status);
+
+    // ── Table view ─────────────────────────────────────────────
+    const row = document.querySelector(`#gradeTableBody tr[data-email="${CSS.escape(email)}"]`);
+    if (row) {
+        row.dataset.aigrade = total;
+        const cells = row.querySelectorAll('td');
+        if (cells[3]) cells[3].textContent = total;
+        const finalCell = row.querySelector('.final-score-cell');
+        if (finalCell) {
+            finalCell.dataset.base = total;
+            const adj = parseFloat(row.querySelector('.adjustment-input')?.value) || 0;
+            finalCell.textContent = total + adj;
+        }
+        const feedbackInput = row.querySelector('.feedback-input');
+        if (feedbackInput) feedbackInput.value = feedbackText;
+    }
+}
+
+// Submitted, ungraded rows for the batch graders (0 = failed batch, allow retry).
+function batchGradeRows(deliverableId) {
+    const periodFilter = document.getElementById('gradePeriodFilter').value;
+    return (state.rawData.deliverables || []).filter(sub => {
+        if (sub[2] != deliverableId || sub[7] !== 'completed') return false;
+        if (sub[9] !== null && sub[9] !== undefined && sub[9] !== '' && Number(sub[9]) > 0) return false;
+        const student = state.students.find(s => s.email === sub[0]);
+        if (!student) return false;
+        return periodFilter === 'all' || student.period === periodFilter;
+    });
 }
 
 // ============================================
-// BATCH DOC GRADING — component & design-brief deliverables
+// BATCH AI GRADING — D1.1, component & design-brief deliverables
 // ============================================
 async function runBatchDocGrading(deliverableId) {
-    const btn       = document.getElementById('batchAiGradeBtn');
-    const courseKey = state.activeCourse;
-    const course    = CONFIG.COURSES[courseKey] || CONFIG.COURSES['hsaer'];
-
-    // 422 (Doorstop Design Brief) reuses the D1.1 criteria set
-    const criteriaKey = deliverableId === 422 ? 11 : deliverableId;
-    const criteria    = BRIEF_CRITERIA[criteriaKey] || [];
-    const maxTotal    = criteria.reduce((s, c) => s + c.max, 0);
-
-    // D2.5 stores formatted text in sub[4] (content column), not a Google Doc URL
-    const isPlainText = deliverableId === 425;
-
-    const periodFilter = document.getElementById('gradePeriodFilter').value;
-    const tasks = [];
-    (state.rawData.deliverables || []).forEach(sub => {
-        if (sub[2] != deliverableId || sub[7] !== 'completed') return;
-        if (sub[9] !== null && sub[9] !== undefined && sub[9] !== '' && Number(sub[9]) > 0) return; // skip already-graded (0 = failed batch, allow retry)
-        const email   = sub[0];
-        const student = state.students.find(s => s.email === email);
-        if (!student) return;
-        if (periodFilter !== 'all' && student.period !== periodFilter) return;
-
-        if (isPlainText) {
-            const content = (sub[4] || '').trim();
-            if (!content) return;
-            tasks.push({ email, content });
-        } else {
-            const docUrl = (sub[5] || sub[4] || '').trim();
-            if (!docUrl.includes('docs.google.com')) return;
-            const m = docUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
-            if (!m) return;
-            tasks.push({ email, docId: m[1] });
-        }
-    });
-
-    if (tasks.length === 0) {
+    const btn  = document.getElementById('batchAiGradeBtn');
+    const rows = batchGradeRows(deliverableId);
+    if (rows.length === 0) {
         alert('No submitted, ungraded students found for this deliverable in the selected period.');
         return;
     }
@@ -2831,69 +2777,58 @@ async function runBatchDocGrading(deliverableId) {
     btn.disabled = true;
     let done = 0;
     const BATCH_SIZE = 5;
-    const updateBtn = () => { btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Grading ${done} / ${tasks.length}…`; };
+    const updateBtn = () => { btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Grading ${done} / ${rows.length}…`; };
     updateBtn();
 
-    for (let i = 0; i < tasks.length; i += BATCH_SIZE) {
-        const batch = tasks.slice(i, i + BATCH_SIZE);
-        await Promise.allSettled(batch.map(async (task) => {
+    for (let i = 0; i < rows.length; i += BATCH_SIZE) {
+        const batch = rows.slice(i, i + BATCH_SIZE);
+        await Promise.allSettled(batch.map(async (sub) => {
             try {
-                const payload = isPlainText
-                    ? { action: 'gradeDesignBrief', token: CONFIG.TEACHER_TOKEN, email: task.email, content: task.content, deliverableId }
-                    : { action: 'getDocAIFeedback', token: CONFIG.TEACHER_TOKEN, email: task.email, docId: task.docId, deliverableId };
-                const res  = await fetch(course.apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                const email = task.email;
-
-                if (data.success && data.grades) {
-                    let total = 0;
-                    const lines = criteria.map(c => {
-                        const g     = data.grades[c.id] || {};
-                        const score = (g.score !== null && g.score !== undefined) ? Math.min(Number(g.score) || 0, c.max) : 0;
-                        total += score;
-                        return `${c.label}: ${score}/${c.max} — ${(g.feedback || '').replace(/\n/g, ' ')}`;
-                    });
-                    let feedbackText = lines.join('\n') + `\n\nTotal: ${total}/${maxTotal}`;
-                    if ([22, 23, 423].includes(deliverableId) && total < 10) {
-                        feedbackText += '\n\nPlease update this doc and resubmit it for credit. Send me an email when your changes are complete.';
-                    }
-                    const slug = email.replace(/[^a-zA-Z0-9]/g, '-');
-
-                    const gradeCard = document.getElementById(`rg-${slug}`);
-                    const feedCard  = document.getElementById(`rf-${slug}`);
-                    if (gradeCard) { gradeCard.value = total; }
-                    if (feedCard)  { feedCard.value  = feedbackText; }
-                    if (gradeCard?.dataset.status) markCardUnsaved(gradeCard.dataset.status);
-
-                    const row = document.querySelector(`#gradeTableBody tr[data-email="${CSS.escape(email)}"]`);
-                    if (row) {
-                        row.dataset.aigrade = total;
-                        const cells = row.querySelectorAll('td');
-                        if (cells[3]) cells[3].textContent = total;
-                        const finalCell = row.querySelector('.final-score-cell');
-                        if (finalCell) {
-                            finalCell.dataset.base = total;
-                            const adj = parseFloat(row.querySelector('.adjustment-input')?.value) || 0;
-                            finalCell.textContent = total + adj;
-                        }
-                        const feedbackInput = row.querySelector('.feedback-input');
-                        if (feedbackInput) feedbackInput.value = feedbackText;
-                    }
-                }
-            } catch (e) { /* silently skip */ }
+                const result = await aiGradeSubmission(deliverableId, sub);
+                if (result) applyAiGrade(sub[0], result.total, result.feedbackText);
+            } catch (e) { /* silently skip — keeps "—" / empty */ }
             done++;
             updateBtn();
         }));
-        if (i + BATCH_SIZE < tasks.length) await new Promise(r => setTimeout(r, 600));
+        // Brief pause between batches to be polite to the API
+        if (i + BATCH_SIZE < rows.length) await new Promise(r => setTimeout(r, 600));
     }
 
     btn.innerHTML = `<i class="fas fa-check"></i> Graded ${done}`;
     btn.disabled = false;
     showToast(`AI grading complete — ${done} students scored. Review grades, adjust if needed, then Save and Close.`, 'success', 6000);
+}
+
+// Re-runs the AI grader for one student (e.g. after they update a submitted doc).
+// Fills the card/row like the batch grader; the teacher reviews and saves.
+async function regradeStudentWithAI(email, deliverableId, btn) {
+    const sub = (state.rawData?.deliverables || []).filter(d => d[0] === email && d[2] == deliverableId).pop();
+    if (!sub) {
+        showToast('No submission found for this student — click Refresh and try again.', 'error', 6000);
+        return;
+    }
+    const label = btn?.innerHTML;
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Grading…'; }
+    try {
+        const result = await aiGradeSubmission(deliverableId, sub);
+        if (!result) throw new Error('No Google Doc or text found to grade');
+        applyAiGrade(email, result.total, result.feedbackText);
+        showToast(`Re-graded: ${result.total} pts. Review it, then Save.`, 'success', 6000);
+    } catch (e) {
+        showToast('AI re-grade failed: ' + e.message, 'error', 8000);
+    } finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = label; }
+    }
+}
+
+// Button for review cards / table rows on AI-gradable deliverables.
+function regradeButtonHtml(email, deliverableId) {
+    if (!DOC_GRADABLE_IDS.has(deliverableId)) return '';
+    return `<button type="button" title="Re-run the AI grader on this student's current work"
+            onclick="event.stopPropagation(); regradeStudentWithAI('${email.replace(/'/g, "\\'")}', ${deliverableId}, this)"
+            style="padding:4px 10px; background:white; color:var(--gray-700); border:1px solid var(--gray-300); border-radius:5px; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap;">
+        <i class="fas fa-robot"></i> Re-grade with AI
+    </button>`;
 }
 
 // ============================================

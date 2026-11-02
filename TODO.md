@@ -1,6 +1,6 @@
 # CTE Project — Todo List
 
-Last updated: 2026-08-30
+Last updated: 2026-11-02
 
 ---
 
@@ -30,6 +30,8 @@ Last updated: 2026-08-30
 ### Curriculum / Content
 - [ ] D4.2 quiz questions — write Q1–Q5 for Activity 4.6 Motor Control (D51 in quiz content)
 - [ ] Confirm `leo.py` API names with coworker before publishing robot programming lessons
+- [ ] Shop Safety Fundamentals lesson numbering — `Unit_03_Shop_Safety_and_Standard_Practices/Lesson_01_Shop_Safety_Fundamentals.html` is shared: HS AER calls it L3.1, 8AER calls it L4.1, but the new deck (Nov 2) says "Lesson 4.1" and "Next: Lesson 4.2". Make the in-deck numbers neutral or split into per-course copies.
+- [ ] 8AER Week 10 (Nov 3–6) — fill in Tue–Fri (currently TBD in schedule-data.json); Week 9 Mon still labeled "L4.1 Microcontroller Fundamentals"
 - [x] Generate/update syllabi PDFs from the three .md syllabus files
 
 ### Deferred (revisit later)
