@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.77',
+    VERSION: 'v2.14.78',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -899,7 +899,7 @@ const DELIVERABLES = [
             },
             {
                 title: 'Challenge 2 — Parallel Pair (your Q5 circuit)',
-                prompt: 'Power Supply set to 5 V. Red LED + its resistor in one branch, blue LED + its resistor in a second branch. Measure each branch current (move the meter), then the total. Record predicted vs. simulated for all three, and explain what happens to the other LED if you delete one branch.',
+                prompt: 'Power Supply set to 5 V. Red LED + its resistor in one branch, blue LED + its resistor in a second branch. Measure each branch current (move the meter), then the total. Record predicted vs. simulated for all three, and explain what happens to the other LED if you delete one branch. Your blue branch will probably read lower than predicted — use your reading to find the blue LED\'s real voltage: V<sub>R</sub> = I × R, then V<sub>f</sub> = 5 V − V<sub>R</sub>.',
             },
         ],
     },
@@ -4564,10 +4564,11 @@ const QUESTION_FEEDBACK = {
         q5e: { expect: [13.6, 0.0136], solution: 'Red: I = 3.0 V ÷ 220 Ω = <strong>13.6 mA</strong>' },
         q5f: { expect: [15, 0.015], solution: 'Blue: I = 1.8 V ÷ 120 Ω = <strong>15.0 mA</strong>' },
         q5g: { expect: [28.6, 0.0286], solution: 'Parallel branch currents add: 13.6 + 15.0 = <strong>28.6 mA</strong>' },
-        c1:  { expect: [17, 0.017], tolerance: 0.15,
-               solution: 'Your math predicted 17.0 mA. Tinkercad\'s LEDs don\'t drop exactly 2.2 V, so a reading within a couple of mA means your math holds up. If you saw 0 mA, check that the meter is in series and both LEDs face the same way.' },
-        c2:  { expect: [28.6, 0.0286, 13.6, 15], tolerance: 0.15,
-               solution: 'Predicted: red 13.6 mA, blue 15.0 mA, total 28.6 mA. Delete one branch and the other LED stays lit — each branch has its own path and its own resistor, which is exactly why parallel LEDs never share one.' },
+        // Challenge readings measured in Tinkercad (Nov 2026): red Vf ≈ 2.02 V, green ≈ 2.47 V, blue ≈ 3.75 V
+        c1:  { expect: [15.1, 0.0151], tolerance: 0.1,
+               solution: 'Your math predicted 17.0 mA; Tinkercad reads about <strong>15.1 mA</strong>. That gap isn\'t a mistake in your math — Tinkercad\'s green LEDs each drop about 2.47 V, a bit more than the 2.2 V "typical" value. Check it: (9 − 2 × 2.47) ÷ 270 Ω = 15.1 mA. If you saw 0 mA, make sure the meter is in series and both LEDs face the same way.' },
+        c2:  { expect: [10.4, 0.0104, 3.75], tolerance: 0.1,
+               solution: 'Predicted: red 13.6 mA, blue 15.0 mA, total 28.6 mA. Tinkercad reads about red <strong>13.5 mA</strong> (right on!), blue <strong>10.4 mA</strong>, total <strong>23.9 mA</strong>. The blue gap is the LED, not your math: V<sub>R</sub> = 0.0104 A × 120 Ω = 1.25 V, so V<sub>f</sub> = 5 − 1.25 = <strong>3.75 V</strong> — more than the 3.2 V "typical" value. That\'s why engineers check the datasheet for the exact part. And delete one branch: the other LED stays lit, because each branch has its own path and its own resistor.' },
     },
 };
 
