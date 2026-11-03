@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.76',
+    VERSION: 'v2.14.77',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -3417,7 +3417,11 @@ function initDeliverables() {
 
 function openDeliverableForm(id) {
     const deliverable = DELIVERABLES.find(d => d.id === id);
-    const existing = state.deliverables[id] || {};
+    let existing = state.deliverables[id] || {};
+    // Restore answers typed before a reload / sign-out (Ctrl+R lost a student's work)
+    if (isQuestionDeliverable(id) && existing.status !== 'completed') {
+        existing = { ...existing, ...loadDeliverableDraft(id) };
+    }
 
     const modal = document.getElementById('deliverableModal');
     const content = document.getElementById('deliverableFormContent');
@@ -4004,6 +4008,7 @@ function openDeliverableForm(id) {
     // Attach dirty listeners to form inputs
     content.querySelectorAll('textarea, input').forEach(el => {
         el.addEventListener('input', markDirty);
+        if (isQuestionDeliverable(id)) el.addEventListener('input', () => saveDeliverableDraftLocal(id));
     });
 
     // Live budget total/remaining for D0
@@ -4097,6 +4102,39 @@ const CAD_DELIVERABLE_IDS = [21, 22, 23, 24, 25, 26, 27];
 function isQuestionDeliverable(id) {
     return CAD_DELIVERABLE_IDS.includes(id) || !!DELIVERABLES.find(d => d.id === id)?.questions?.length;
 }
+
+// ── Question-deliverable draft autosave ──
+// Typed answers live only in the form until Save Draft/Submit, so a reload (Ctrl+R)
+// or sign-out wiped them. Every keystroke now goes to localStorage, and into state
+// so the 30-second cloud auto-save carries it too.
+function deliverableDraftKey(id) {
+    return 'deliverableDraft_' + (state.student?.email || 'pending') + '_' + id;
+}
+
+function saveDeliverableDraftLocal(id) {
+    const data = collectCadDeliverableData();
+    try { localStorage.setItem(deliverableDraftKey(id), JSON.stringify(data)); } catch (e) {}
+    const prev = state.deliverables[id] || {};
+    if (prev.status !== 'completed') {
+        state.deliverables[id] = { ...prev, ...data, status: 'in-progress', updatedAt: new Date().toISOString() };
+    }
+}
+
+function loadDeliverableDraft(id) {
+    try { return JSON.parse(localStorage.getItem(deliverableDraftKey(id)) || '{}'); } catch (e) { return {}; }
+}
+
+function clearDeliverableDraft(id) {
+    try { localStorage.removeItem(deliverableDraftKey(id)); } catch (e) {}
+}
+
+// Ask before a reload/close while there are unsaved changes
+window.addEventListener('beforeunload', (e) => {
+    if (state.student && isDirty) {
+        e.preventDefault();
+        e.returnValue = '';
+    }
+});
 
 function collectCadDeliverableData() {
     return {
@@ -4403,6 +4441,7 @@ function submitDeliverable(id) {
     };
 
     saveToCloud(); // immediate save on submission
+    if (isQuestionDeliverable(id)) clearDeliverableDraft(id);
     updateUI();
     if (id === 425) {
         renderD425FeedbackPanel(customData);
