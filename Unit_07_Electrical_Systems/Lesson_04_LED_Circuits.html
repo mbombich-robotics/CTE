@@ -15,6 +15,7 @@
             --border-color: #30363d;
             --green: #3fb950;
             --red: #f85149;
+            --yellow: #d29922;
         }
 
         body {
@@ -31,7 +32,7 @@
 
         .slide-container {
             width: 90%;
-            max-width: 900px;
+            max-width: 950px;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
@@ -129,7 +130,7 @@
 
         .input-group label {
             display: inline-block;
-            width: 180px;
+            width: 200px;
         }
 
         .input-group input, .input-group select {
@@ -146,6 +147,45 @@
             color: var(--green);
             margin-top: 15px;
         }
+
+        .symbol-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .symbol-card {
+            background: #0d1117;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .symbol-card svg {
+            width: 80px;
+            height: 60px;
+            margin-bottom: 10px;
+        }
+
+        .formula-card {
+            background: #0d1117;
+            border-left: 4px solid var(--accent-color);
+            padding: 15px 20px;
+            border-radius: 4px;
+            margin: 15px 0;
+            font-size: 1.3rem;
+            text-align: center;
+        }
+
+        .lab-box {
+            background: #0d1117;
+            border: 1px dashed var(--yellow);
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
@@ -157,13 +197,14 @@
     <div class="slide active">
         <h1>L7.4 LED Circuits: Illumination Creation</h1>
         <p><strong>Course:</strong> Unit 7 Electrical Systems · Robotics / Engineering (Grades 9–12)</p>
-        <p><strong>Topics:</strong> Forward Voltage (V<sub>f</sub>) · Current-Limiting Resistors · Series vs. Parallel</p>
+        <p><strong>Topics:</strong> Forward Voltage (V<sub>f</sub>) · Current Limiting Resistors · Series vs. Parallel</p>
         <hr style="border-color: var(--border-color);">
         <h3>Learning Objectives:</h3>
         <ul>
             <li><strong>Identify</strong> LED anode and cathode using physical methods.</li>
             <li><strong>Calculate</strong> current-limiting resistor values using Ohm's Law.</li>
-            <li><strong>Compare</strong> circuit dynamics in series vs. parallel LED configurations.</li>
+            <li><strong>Read &amp; Draw</strong> schematic symbols for LEDs, resistors, and power supplies.</li>
+            <li><strong>Simulate &amp; Build</strong> multi-LED circuits in Tinkercad and on breadboards.</li>
         </ul>
     </div>
 
@@ -175,7 +216,7 @@
             <li>A semiconductor diode that emits light when current flows in <span class="highlight">one direction</span> (Anode → Cathode).</li>
             <li>Acts like an electrical <em>check valve</em>: blocks reverse current flow.</li>
             <li><strong>Current-Driven:</strong> Brightness increases with current, but excessive current will instantly burn out the component.</li>
-            <li>Standard 5mm LEDs operate safely at <span class="highlight">10 mA to 20 mA</span>.</li>
+            <li>Standard 3mm and 5mm through-hole LEDs operate safely at <span class="highlight">10 mA to 20 mA</span> (0.010 A – 0.020 A).</li>
         </ul>
     </div>
 
@@ -183,46 +224,49 @@
     <div class="slide">
         <h2>Identifying Anode (+) &amp; Cathode (−)</h2>
         <div style="display: flex; gap: 20px;">
-            <div style="flex: 1;">
+            <div style="flex: 1; background: #0d1117; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
                 <h3>Anode (+) — Positive</h3>
                 <ul>
-                    <li><strong>Longer Lead</strong></li>
+                    <li><strong>Longer Lead</strong> (on new un-trimmed LEDs)</li>
                     <li>Smaller internal wire post</li>
                     <li>Connects towards higher supply voltage</li>
                 </ul>
             </div>
-            <div style="flex: 1;">
+            <div style="flex: 1; background: #0d1117; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
                 <h3>Cathode (−) — Negative</h3>
                 <ul>
                     <li><strong>Shorter Lead</strong> ("Clipped = Cathode")</li>
-                    <li><strong>Flat edge</strong> on the plastic casing</li>
-                    <li>Larger internal anvil flag</li>
-                    <li>Connects towards Ground (GND)</li>
+                    <li><strong>Flat edge</strong> on the plastic lens</li>
+                    <li>Larger internal metal anvil flag</li>
+                    <li>Connects towards Ground (GND / 0V)</li>
                 </ul>
             </div>
         </div>
+        <p style="margin-top: 15px; text-align: center;"><em>Memory Trick: Flat side = Minus = Cathode</em></p>
     </div>
 
     <!-- Slide 4: Forward Voltage & Current -->
     <div class="slide">
         <h2>Forward Voltage (V<sub>f</sub>) &amp; Forward Current (I<sub>f</sub>)</h2>
-        <p><strong>Forward Voltage (V<sub>f</sub>):</strong> The voltage drop across the LED junction required for it to conduct.</p>
+        <p><strong>Forward Voltage (V<sub>f</sub>):</strong> The fixed voltage drop across the LED junction when conducting.</p>
         <ul>
-            <li>🔴 <strong>Red LED:</strong> ≈ 1.8 V – 2.0 V</li>
-            <li>🟢 <strong>Green LED:</strong> ≈ 2.0 V – 2.4 V</li>
-            <li>🔵 <strong>Blue / White LED:</strong> ≈ 3.0 V – 3.4 V</li>
+            <li>🔴 <strong>Red LED:</strong> V<sub>f</sub> ≈ 1.8V – 2.2V (typ. 2.0V)</li>
+            <li>🟢 <strong>Green LED:</strong> V<sub>f</sub> ≈ 2.0V – 2.4V (typ. 2.2V)</li>
+            <li>🔵 <strong>Blue / White LED:</strong> V<sub>f</sub> ≈ 2.8V – 3.4V (typ. 3.2V)</li>
         </ul>
-        <p><strong>Forward Current (I<sub>f</sub>):</strong> Target operating current (typically 0.020 A / 20 mA).</p>
+        <p><strong>Forward Current (I<sub>f</sub>):</strong> Target operating current (typically 20 mA = 0.020 A).</p>
+        <p><em>Note: Supply voltage (V<sub>supply</sub>) is NOT V<sub>f</sub>. The extra voltage drops across the limiting resistor!</em></p>
     </div>
 
     <!-- Slide 5: Resistor Formula & Calculator -->
     <div class="slide">
         <h2>Calculating Current-Limiting Resistors</h2>
-        <p>Formula based on Ohm's Law (R = V ÷ I):</p>
-        <p style="font-size: 1.4rem; font-weight: bold; text-align: center; color: var(--accent-color);">
-            R = (V<sub>supply</sub> − V<sub>f</sub>) ÷ I<sub>f</sub>
-        </p>
+        <p>Formula derived from Ohm's Law (R = V / I):</p>
         
+        <div class="formula-card">
+            <strong>R = (V<sub>supply</sub> − V<sub>f</sub>) / I<sub>f</sub></strong>
+        </div>
+
         <div class="calculator-box">
             <h3>Interactive Resistor Calculator</h3>
             <div class="input-group">
@@ -248,25 +292,110 @@
 
     <!-- Slide 6: Series vs Parallel -->
     <div class="slide">
-        <h2>Wiring Multiple LEDs</h2>
-        <h3>Series Wiring</h3>
-        <ul>
-            <li>Voltage requirement accumulates: V<sub>total</sub> = V<sub>f1</sub> + V<sub>f2</sub> + …</li>
-            <li>Uses <strong>one</strong> resistor for the chain.</li>
-            <li>If one LED fails, the entire loop opens.</li>
-        </ul>
-        <h3>Parallel Wiring</h3>
-        <ul>
-            <li>Each LED requires its <strong>own individual resistor</strong>.</li>
-            <li>Never share a single resistor across parallel LEDs (causes thermal runaway / current hogging).</li>
-            <li>If one LED fails, the remaining branches continue functioning.</li>
-        </ul>
+        <h2>Wiring Multiple LEDs: Series vs. Parallel</h2>
+        <div style="display: flex; gap: 20px;">
+            <div style="flex: 1; background: #0d1117; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <h3>Series Circuit</h3>
+                <ul>
+                    <li>LED voltages add up: V<sub>total</sub> = V<sub>f1</sub> + V<sub>f2</sub> + ...</li>
+                    <li>Uses <strong>ONE</strong> shared resistor for the chain.</li>
+                    <li>Same current flows through all LEDs.</li>
+                    <li>If one LED fails, all go dark.</li>
+                </ul>
+            </div>
+            <div style="flex: 1; background: #0d1117; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <h3>Parallel Circuit</h3>
+                <ul>
+                    <li>Each LED gets its <strong>OWN</strong> limiting resistor.</li>
+                    <li><strong>Never share a resistor</strong> in parallel (causes thermal runaway / current hogging).</li>
+                    <li>All LEDs receive full supply voltage.</li>
+                    <li>If one LED fails, others stay lit.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 7: Schematic Symbols & Circuit Diagram (Replaced Slide) -->
+    <div class="slide">
+        <h2>Schematics &amp; Yesterday's Build</h2>
+        <p>Engineers draw circuits using standard schematic symbols before building on a breadboard.</p>
+
+        <div class="symbol-grid">
+            <div class="symbol-card">
+                <svg viewBox="0 0 100 60">
+                    <line x1="10" y1="30" x2="40" y2="30" stroke="#58a6ff" stroke-width="2"/>
+                    <line x1="60" y1="30" x2="90" y2="30" stroke="#58a6ff" stroke-width="2"/>
+                    <polygon points="40,15 40,45 60,30" fill="none" stroke="#58a6ff" stroke-width="2"/>
+                    <line x1="60" y1="15" x2="60" y2="45" stroke="#58a6ff" stroke-width="2"/>
+                    <line x1="45" y1="10" x2="55" y2="0" stroke="#f0883e" stroke-width="2"/>
+                    <polygon points="55,0 49,0 55,6" fill="#f0883e"/>
+                    <line x1="55" y1="10" x2="65" y2="0" stroke="#f0883e" stroke-width="2"/>
+                    <polygon points="65,0 59,0 65,6" fill="#f0883e"/>
+                </svg>
+                <br><strong>LED</strong><br><small>Anode (+) ➔ Cathode (−)</small>
+            </div>
+            <div class="symbol-card">
+                <svg viewBox="0 0 100 60">
+                    <line x1="10" y1="30" x2="25" y2="30" stroke="#58a6ff" stroke-width="2"/>
+                    <polyline points="25,30 30,15 40,45 50,15 60,45 70,15 75,30" fill="none" stroke="#58a6ff" stroke-width="2"/>
+                    <line x1="75" y1="30" x2="90" y2="30" stroke="#58a6ff" stroke-width="2"/>
+                </svg>
+                <br><strong>Resistor (R)</strong><br><small>Limits Current</small>
+            </div>
+            <div class="symbol-card">
+                <svg viewBox="0 0 100 60">
+                    <line x1="10" y1="30" x2="42" y2="30" stroke="#58a6ff" stroke-width="2"/>
+                    <line x1="58" y1="30" x2="90" y2="30" stroke="#58a6ff" stroke-width="2"/>
+                    <line x1="42" y1="10" x2="42" y2="50" stroke="#58a6ff" stroke-width="3"/>
+                    <line x1="50" y1="20" x2="50" y2="40" stroke="#58a6ff" stroke-width="1.5"/>
+                    <line x1="58" y1="10" x2="58" y2="50" stroke="#58a6ff" stroke-width="3"/>
+                    <text x="30" y="20" fill="#3fb950" font-size="14" font-weight="bold">+</text>
+                    <text x="65" y="20" fill="#c9d1d9" font-size="14">−</text>
+                </svg>
+                <br><strong>DC Power Source</strong><br><small>Voltage Supply</small>
+            </div>
+        </div>
+
+        <div style="background: #0d1117; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+            <h3 style="margin-bottom: 5px;">Yesterday's Circuit Schematic:</h3>
+            <p style="margin-top: 0;">Single LED with a <strong>220 Ω resistor</strong> in series from a 5V supply:</p>
+            <p style="font-family: monospace; color: var(--green); background: #161b22; padding: 10px; border-radius: 4px;">
+                +5V ──── [ R = 220 Ω ] ──── (Anode) ──[ LED ]── (Cathode) ──── GND (0V)
+            </p>
+            <p><strong>Current Calculation:</strong> I = (5V − 2.0V) / 220 Ω = 3V / 220 Ω = <strong>13.6 mA</strong> ✓ (Safe!)</p>
+        </div>
+    </div>
+
+    <!-- Slide 8: Lab & Tinkercad Challenge -->
+    <div class="slide">
+        <h2>Today's Hands-On Lab &amp; Simulation</h2>
+        <p>Now let's expand from yesterday's single LED circuit! Build and simulate <strong>2 new configurations</strong>:</p>
+        
+        <div class="lab-box">
+            <h3>Circuit 1: Two LEDs in Series</h3>
+            <ul>
+                <li>Power Supply: 9V battery</li>
+                <li>LEDs: 2 Red LEDs in series (V<sub>f</sub> = 2.0V + 2.0V = 4.0V)</li>
+                <li>Calculate & select resistor R for 20 mA target current.</li>
+            </ul>
+        </div>
+
+        <div class="lab-box" style="border-color: var(--heading-color); margin-top: 15px;">
+            <h3>Circuit 2: Two LEDs in Parallel</h3>
+            <ul>
+                <li>Power Supply: 5V supply</li>
+                <li>LEDs: 2 Green LEDs in parallel</li>
+                <li>Place individual limiting resistors for each LED branch.</li>
+            </ul>
+        </div>
+
+        <p style="margin-top: 15px;"><strong>Workflow:</strong> 1. Calculate R ➔ 2. Test in Tinkercad Circuits ➔ 3. Assemble on physical breadboard ➔ 4. Verify with DMM.</p>
     </div>
 
     <!-- Navigation Controls -->
     <div class="nav-controls">
         <button id="prevBtn" onclick="changeSlide(-1)">Previous</button>
-        <span id="slideIndicator">Slide 1 of 6</span>
+        <span id="slideIndicator">Slide 1 of 8</span>
         <button id="nextBtn" onclick="changeSlide(1)">Next</button>
     </div>
 </div>

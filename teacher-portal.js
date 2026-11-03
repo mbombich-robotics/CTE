@@ -22,7 +22,7 @@ const CONFIG = {
         hsaer: {
             name: 'HS Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
-            currentAppVersion: 'v2.14.74',
+            currentAppVersion: 'v2.14.75',
             hasTeams: false,
             totalDeliverables: 10,
             totalPoints: 755,
@@ -46,7 +46,7 @@ const CONFIG = {
         '8aer': {
             name: '8th Grade Applied Engineering & Robotics',
             apiUrl: 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
-            currentAppVersion: 'v2.14.74',
+            currentAppVersion: 'v2.14.75',
             hasTeams: false,
             totalDeliverables: 10,   // TODO: trim when 8th grade pacing is finalized
             totalPoints: 755,        // TODO: update when pacing is finalized
@@ -67,7 +67,7 @@ const CONFIG = {
         dbl: {
             name: 'Design & Build Lab',
             apiUrl: 'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec',
-            currentAppVersion: 'v2.14.74',
+            currentAppVersion: 'v2.14.75',
             hasTeams: false,
             totalDeliverables: 7,    // TODO: update when D&B Lab deliverables are defined
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
@@ -75,7 +75,7 @@ const CONFIG = {
                 0: 20, 10: 10, 11: 28,
                 421: 20, 422: 20, 423: 20, 424: 4, 425: 10, 426: 10,
                 431: 50,
-                471: 40,
+                471: 40, 472: 20,
                 481: 30, 482: 25, 483: 30, 484: 50,
                 491: 20, 492: 20, 493: 25, 494: 50,
                 501: 20, 502: 25, 503: 50,
@@ -179,7 +179,8 @@ const TRACK_DELIVERABLES = {
         { id: 425, label: 'D2.5 — Wedge Physics Activity',                 week: 9  },
         { id: 426, label: 'CAD Quiz Practical — Doorstop Wedge',           week: 9  },
         // Unit 7: Electrical Systems
-        { id: 471, label: 'D7.1 — Unit 7 Lab Results',                     week: 11 },
+        { id: 472, label: "D7.1 — Ohm's Law & LED Circuits Activity",      week: 10 },
+        { id: 471, label: 'D7.2 — Unit 7 Lab Results',                     week: 11 },
         // Project 2: Christmas Ornament / Gift
         { id: 482, label: 'P2.1 — Design Brief + LED Model Screenshot',    week: 12 },
         { id: 483, label: 'P2.2 — F360 Model + Bambu Studio Screenshot',  week: 14 },

@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.74',
+    VERSION: 'v2.14.75',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -836,8 +836,49 @@ const DELIVERABLES = [
     },
     // ── DBL: Unit 7 Electrical Systems ───────────────────────────────────
     {
+        id: 472,
+        shortLabel: 'D7.1',
+        title: 'D7.1 — Ohm\'s Law & LED Circuits Activity',
+        unit: '07',
+        week: 10,
+        points: 20,
+        phase: 'electrical',
+        tracks: ['dbl'],
+        alwaysOpen: true,
+        description: 'Do the Ohm\'s Law math first (Q1–Q5), then build your Q4 and Q5 circuits in Tinkercad Circuits to prove your predictions. Kit resistors: 100, 120, 150, 180, 220, 270, 330, 390, 470 Ω, and 1 kΩ. When choosing a resistor, pick the smallest kit value that is at least as large as your calculated R — rounding up keeps the current at or below the target.',
+        requirements: [
+            'Q1–Q5: for each calculation, write the formula, plug in your numbers, and give the answer with units (V, mA, or Ω)',
+            'Challenge 1 + Challenge 2: build each circuit in Tinkercad, measure the current with the multimeter, and compare it to your prediction',
+            'Two screenshots (one per challenge) with the simulation running — LEDs lit and the multimeter reading visible',
+            'Paste your Tinkercad share link(s) in Supporting Documentation',
+            'Scoring: Q1–Q5 = 2 pts each · each challenge = 5 pts (circuit wired correctly, reading recorded, comparison explained)',
+        ],
+        questionsLabel: 'Part 1 — Do the Math (Q1–Q5)',
+        questionsIntro: 'Show the formula, your numbers plugged in, and the answer with units. Use the kit resistor list above.',
+        questions: [
+            'A 9 V battery is connected across a 470 Ω resistor. How much current flows? Give your answer in mA.',
+            'A resistor is connected to a 5 V supply, and the multimeter reads 22.7 mA. What is the resistance?',
+            'A blue LED (V<sub>f</sub> = 3.2 V) runs from a 9 V battery at a target of 20 mA. (a) Calculate R. (b) Choose the kit resistor. (c) Calculate the actual current with that resistor. (d) Why not use the next-smaller kit value?',
+            '<strong>Challenge 1 prediction.</strong> Two green LEDs (V<sub>f</sub> = 2.2 V each) are wired in series with one resistor on a 9 V battery, target 20 mA. (a) What is the total LED voltage? (b) Calculate R. (c) Choose the kit resistor. (d) Predict the current.',
+            '<strong>Challenge 2 prediction.</strong> A 5 V supply powers two LEDs in parallel, each in its own branch with its own resistor: a red LED (V<sub>f</sub> = 2.0 V) and a blue LED (V<sub>f</sub> = 3.2 V), target 15 mA each. (a) Calculate and choose the resistor for each branch. (b) Predict each branch current. (c) Predict the total current from the supply (add the branches).',
+        ],
+        challengesLabel: 'Part 2 — Prove It in Tinkercad',
+        challengesIntro: 'tinkercad.com → Circuits → Create new Circuit. Put the multimeter in <strong>current (A)</strong> mode and wire it <strong>in series</strong> with the part you are measuring, then click <strong>Start Simulation</strong>. Upload a screenshot of each running circuit below.',
+        challenges: [
+            {
+                title: 'Challenge 1 — Series Pair (your Q4 circuit)',
+                prompt: '9 V battery → your Q4 resistor → two green LEDs in series → back to the battery. Record: the resistor you used, your predicted current, the simulated current, and one sentence on why they match or differ.',
+            },
+            {
+                title: 'Challenge 2 — Parallel Pair (your Q5 circuit)',
+                prompt: 'Power Supply set to 5 V. Red LED + its resistor in one branch, blue LED + its resistor in a second branch. Measure each branch current (move the meter), then the total. Record predicted vs. simulated for all three, and explain what happens to the other LED if you delete one branch.',
+            },
+        ],
+    },
+    {
         id: 471,
-        title: 'D7.1 — Unit 7 Lab Results',
+        shortLabel: 'D7.2',
+        title: 'D7.2 — Unit 7 Lab Results',
         unit: '07',
         week: 11,
         points: 40,
@@ -3404,12 +3445,24 @@ function openDeliverableForm(id) {
 
             ${deliverable.questions?.length ? `
             <div class="form-group">
-                <label>Learning Check — Q1–Q5</label>
-                <p style="font-size:13px;color:var(--gray-500);margin-bottom:14px;margin-top:4px;">Answer in your own words (2–4 sentences each). Answer from what you built — not from notes.</p>
+                <label>${deliverable.questionsLabel || 'Learning Check — Q1–Q5'}</label>
+                <p style="font-size:13px;color:var(--gray-500);margin-bottom:14px;margin-top:4px;">${deliverable.questionsIntro || 'Answer in your own words (2–4 sentences each). Answer from what you built — not from notes.'}</p>
                 ${deliverable.questions.map((q, i) => `
                 <div style="margin-bottom:16px;">
                     <label for="cad-q${i+1}" style="font-size:14px;font-weight:500;margin-bottom:6px;display:block;">Q${i+1}: ${q}</label>
                     <textarea id="cad-q${i+1}" rows="3" placeholder="Your answer…" style="width:100%;padding:8px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;resize:vertical;box-sizing:border-box;">${existing['q'+(i+1)]||''}</textarea>
+                </div>`).join('')}
+            </div>` : ''}
+
+            ${deliverable.challenges?.length ? `
+            <div class="form-group">
+                <label>${deliverable.challengesLabel || 'Challenges'}</label>
+                <p style="font-size:13px;color:var(--gray-500);margin-bottom:14px;margin-top:4px;">${deliverable.challengesIntro || ''}</p>
+                ${deliverable.challenges.map((c, i) => `
+                <div style="margin-bottom:16px;">
+                    <label for="cad-c${i+1}" style="font-size:14px;font-weight:600;margin-bottom:4px;display:block;">${c.title}</label>
+                    <p style="font-size:13px;color:var(--gray-600);margin:0 0 6px;">${c.prompt}</p>
+                    <textarea id="cad-c${i+1}" rows="4" placeholder="Resistor used, predicted vs. simulated current, explanation…" style="width:100%;padding:8px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;resize:vertical;box-sizing:border-box;">${existing['c'+(i+1)]||''}</textarea>
                 </div>`).join('')}
             </div>` : ''}
 
@@ -3998,6 +4051,11 @@ function removeDeliverablePhoto(driveId, deliverableId, element) {
 
 const CAD_DELIVERABLE_IDS = [21, 22, 23, 24, 25, 26, 27];
 
+// Deliverables whose form is the generic Q1–Qn (+ optional challenges) block
+function isQuestionDeliverable(id) {
+    return CAD_DELIVERABLE_IDS.includes(id) || !!DELIVERABLES.find(d => d.id === id)?.questions?.length;
+}
+
 function collectCadDeliverableData() {
     return {
         level: document.querySelector('input[name="cadLevel"]:checked')?.value || '',
@@ -4006,6 +4064,8 @@ function collectCadDeliverableData() {
         q3: document.getElementById('cad-q3')?.value || '',
         q4: document.getElementById('cad-q4')?.value || '',
         q5: document.getElementById('cad-q5')?.value || '',
+        c1: document.getElementById('cad-c1')?.value || '',
+        c2: document.getElementById('cad-c2')?.value || '',
     };
 }
 
@@ -4019,7 +4079,7 @@ function saveDeliverableDraft(id) {
         ...(id === 0 ? collectDeliverable0CustomData() : {}),
         ...(id === 10 ? collectD10Data() : {}),
         ...(id === 425 ? collectD425Data() : {}),
-        ...(CAD_DELIVERABLE_IDS.includes(id) ? collectCadDeliverableData() : {}),
+        ...(isQuestionDeliverable(id) ? collectCadDeliverableData() : {}),
         // photos are written to state live on upload, preserved here via spread
         status: 'in-progress',
         updatedAt: new Date().toISOString()
@@ -4032,11 +4092,18 @@ function saveDeliverableDraft(id) {
 function formatCadDeliverableContent(id, customData) {
     const deliverable = DELIVERABLES.find(d => d.id === id);
     const levelLabel = { L1: 'Level 1 — Replicate exactly', L2: 'Level 2 — Modify + document', L3: 'Level 3 — Custom design' };
+    const plain = s => s.replace(/<sub>(.*?)<\/sub>/g, '_$1').replace(/<[^>]+>/g, '');
     let out = `=== ${deliverable.title} ===\n`;
-    out += `Completion Level: ${levelLabel[customData.level] || customData.level || '(not set)'}\n\n`;
+    if (CAD_DELIVERABLE_IDS.includes(id)) {
+        out += `Completion Level: ${levelLabel[customData.level] || customData.level || '(not set)'}\n\n`;
+    }
     (deliverable.questions || []).forEach((q, i) => {
-        out += `Q${i+1}: ${q}\n`;
+        out += `Q${i+1}: ${plain(q)}\n`;
         out += `A: ${customData['q'+(i+1)] || '(not answered)'}\n\n`;
+    });
+    (deliverable.challenges || []).forEach((c, i) => {
+        out += `${c.title}\n`;
+        out += `Results: ${customData['c'+(i+1)] || '(not answered)'}\n\n`;
     });
     return out.trim();
 }
@@ -4243,6 +4310,17 @@ function submitDeliverable(id) {
             showToast('Please upload at least one screenshot', 'error');
             return;
         }
+    } else if (isQuestionDeliverable(id)) {
+        const qa = collectCadDeliverableData();
+        const missingQ = deliverable.questions.findIndex((_, i) => (qa['q'+(i+1)] || '').trim().length < 5);
+        if (missingQ >= 0) { showToast(`Answer Q${missingQ + 1} — show your math`, 'error'); return; }
+        const missingC = (deliverable.challenges || []).findIndex((_, i) => (qa['c'+(i+1)] || '').trim().length < 20);
+        if (missingC >= 0) { showToast(`Record your Tinkercad results for Challenge ${missingC + 1}`, 'error'); return; }
+        const needPhotos = (deliverable.challenges || []).length;
+        if (photos.length < needPhotos) {
+            showToast(`Upload ${needPhotos} screenshot${needPhotos === 1 ? '' : 's'} — one per challenge`, 'error');
+            return;
+        }
     } else {
         if (!content || content.length < 50) {
             showToast('Please provide more detail (at least 50 characters)', 'error');
@@ -4250,8 +4328,8 @@ function submitDeliverable(id) {
         }
     }
 
-    const customData = id === 0 ? collectDeliverable0CustomData() : id === 10 ? collectD10Data() : id === 425 ? collectD425Data() : CAD_DELIVERABLE_IDS.includes(id) ? collectCadDeliverableData() : {};
-    let finalContent = id === 0 ? formatDeliverable0Content(customData) : id === 10 ? formatD10Content(customData) : id === 425 ? formatD425Content(customData) : CAD_DELIVERABLE_IDS.includes(id) ? formatCadDeliverableContent(id, customData) : content;
+    const customData = id === 0 ? collectDeliverable0CustomData() : id === 10 ? collectD10Data() : id === 425 ? collectD425Data() : isQuestionDeliverable(id) ? collectCadDeliverableData() : {};
+    let finalContent = id === 0 ? formatDeliverable0Content(customData) : id === 10 ? formatD10Content(customData) : id === 425 ? formatD425Content(customData) : isQuestionDeliverable(id) ? formatCadDeliverableContent(id, customData) : content;
 
     // Append photo links to content for Sheets storage
     if (photos.length > 0) {
