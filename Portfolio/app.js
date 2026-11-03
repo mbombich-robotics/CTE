@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.75',
+    VERSION: 'v2.14.76',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -849,8 +849,7 @@ const DELIVERABLES = [
         requirements: [
             'Q1–Q5: for each calculation, write the formula, plug in your numbers, and give the answer with units (V, mA, or Ω)',
             'Challenge 1 + Challenge 2: build each circuit in Tinkercad, measure the current with the multimeter, and compare it to your prediction',
-            'Two screenshots (one per challenge) with the simulation running — LEDs lit and the multimeter reading visible',
-            'Paste your Tinkercad share link(s) in Supporting Documentation',
+            'Build both circuits while signed in to our Tinkercad class so Mr. Bombich can open them',
             'Scoring: Q1–Q5 = 2 pts each · each challenge = 5 pts (circuit wired correctly, reading recorded, comparison explained)',
         ],
         questionsLabel: 'Part 1 — Do the Math (Q1–Q5)',
@@ -858,12 +857,41 @@ const DELIVERABLES = [
         questions: [
             'A 9 V battery is connected across a 470 Ω resistor. How much current flows? Give your answer in mA.',
             'A resistor is connected to a 5 V supply, and the multimeter reads 22.7 mA. What is the resistance?',
-            'A blue LED (V<sub>f</sub> = 3.2 V) runs from a 9 V battery at a target of 20 mA. (a) Calculate R. (b) Choose the kit resistor. (c) Calculate the actual current with that resistor. (d) Why not use the next-smaller kit value?',
-            '<strong>Challenge 1 prediction.</strong> Two green LEDs (V<sub>f</sub> = 2.2 V each) are wired in series with one resistor on a 9 V battery, target 20 mA. (a) What is the total LED voltage? (b) Calculate R. (c) Choose the kit resistor. (d) Predict the current.',
-            '<strong>Challenge 2 prediction.</strong> A 5 V supply powers two LEDs in parallel, each in its own branch with its own resistor: a red LED (V<sub>f</sub> = 2.0 V) and a blue LED (V<sub>f</sub> = 3.2 V), target 15 mA each. (a) Calculate and choose the resistor for each branch. (b) Predict each branch current. (c) Predict the total current from the supply (add the branches).',
+            {
+                text: 'A blue LED (V<sub>f</sub> = 3.2 V) runs from a 9 V battery at a target of 20 mA.',
+                parts: [
+                    { label: '(a) Calculate R.', placeholder: 'Formula → numbers plugged in → answer in Ω' },
+                    { label: '(b) Choose the kit resistor.', placeholder: 'Kit resistor in Ω' },
+                    { label: '(c) Calculate the actual current with that resistor.', placeholder: 'Formula → numbers plugged in → answer in mA' },
+                    { label: '(d) Why not use the next-smaller kit value? Show the current it would give.', placeholder: 'Current with the smaller resistor (mA), then one sentence' },
+                ],
+            },
+            {
+                text: '<strong>Challenge 1 prediction.</strong> Two green LEDs (V<sub>f</sub> = 2.2 V each) are wired in series with one resistor on a 9 V battery, target 20 mA.',
+                parts: [
+                    { label: '(a) What is the total LED voltage?', placeholder: 'Add the LED voltages → answer in V' },
+                    { label: '(b) Calculate R.', placeholder: 'Formula → numbers plugged in → answer in Ω' },
+                    { label: '(c) Choose the kit resistor.', placeholder: 'Kit resistor in Ω' },
+                    { label: '(d) Predict the current with that resistor.', placeholder: 'Formula → numbers plugged in → answer in mA' },
+                ],
+            },
+            {
+                text: '<strong>Challenge 2 prediction.</strong> A 5 V supply powers two LEDs in parallel, each in its own branch with its own resistor: a red LED (V<sub>f</sub> = 2.0 V) and a blue LED (V<sub>f</sub> = 3.2 V), target 15 mA each.',
+                parts: [
+                    { label: '(a) Red branch: calculate R.', placeholder: 'Formula → numbers plugged in → answer in Ω' },
+                    { label: '(b) Red branch: choose the kit resistor.', placeholder: 'Kit resistor in Ω' },
+                    { label: '(c) Blue branch: calculate R.', placeholder: 'Formula → numbers plugged in → answer in Ω' },
+                    { label: '(d) Blue branch: choose the kit resistor.', placeholder: 'Kit resistor in Ω' },
+                    { label: '(e) Predict the red branch current.', placeholder: 'Formula → numbers plugged in → answer in mA' },
+                    { label: '(f) Predict the blue branch current.', placeholder: 'Formula → numbers plugged in → answer in mA' },
+                    { label: '(g) Predict the total current from the supply (add the branches).', placeholder: 'Red + blue → answer in mA' },
+                ],
+            },
         ],
         challengesLabel: 'Part 2 — Prove It in Tinkercad',
-        challengesIntro: 'tinkercad.com → Circuits → Create new Circuit. Put the multimeter in <strong>current (A)</strong> mode and wire it <strong>in series</strong> with the part you are measuring, then click <strong>Start Simulation</strong>. Upload a screenshot of each running circuit below.',
+        challengesIntro: 'Open our class: <a href="https://www.tinkercad.com/joinclass/4GFGSGMWW" target="_blank" rel="noopener" style="font-weight:600;">Join Tinkercad Class →</a> Then go to Circuits → Create new Circuit. Put the multimeter in <strong>current (A)</strong> mode and wire it <strong>in series</strong> with the part you are measuring, then click <strong>Start Simulation</strong>.',
+        hidePhotos: true,
+        hideLinks: true,
         challenges: [
             {
                 title: 'Challenge 1 — Series Pair (your Q4 circuit)',
@@ -3447,7 +3475,18 @@ function openDeliverableForm(id) {
             <div class="form-group">
                 <label>${deliverable.questionsLabel || 'Learning Check — Q1–Q5'}</label>
                 <p style="font-size:13px;color:var(--gray-500);margin-bottom:14px;margin-top:4px;">${deliverable.questionsIntro || 'Answer in your own words (2–4 sentences each). Answer from what you built — not from notes.'}</p>
-                ${deliverable.questions.map((q, i) => `
+                ${deliverable.questions.map((q, i) => q.parts ? `
+                <div style="margin-bottom:16px;">
+                    <div style="font-size:14px;font-weight:500;margin-bottom:6px;">Q${i+1}: ${q.text}</div>
+                    ${q.parts.map((p, j) => {
+                        const key = 'q' + (i+1) + String.fromCharCode(97 + j);
+                        return `
+                    <div style="margin:0 0 8px 16px;">
+                        <label for="cad-${key}" style="font-size:13px;margin-bottom:4px;display:block;">${p.label}</label>
+                        <input type="text" id="cad-${key}" placeholder="${p.placeholder || 'Your answer…'}" value="${escapeHtml(existing[key] || '').replace(/"/g, '&quot;')}" style="width:100%;padding:8px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;box-sizing:border-box;">
+                    </div>`;
+                    }).join('')}
+                </div>` : `
                 <div style="margin-bottom:16px;">
                     <label for="cad-q${i+1}" style="font-size:14px;font-weight:500;margin-bottom:6px;display:block;">Q${i+1}: ${q}</label>
                     <textarea id="cad-q${i+1}" rows="3" placeholder="Your answer…" style="width:100%;padding:8px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;resize:vertical;box-sizing:border-box;">${existing['q'+(i+1)]||''}</textarea>
@@ -3904,7 +3943,7 @@ function openDeliverableForm(id) {
                 <textarea id="deliverableContent" rows="8" placeholder="Describe what you did, paste your code, explain your process...">${existing.content || ''}</textarea>
             </div>` : ''}
 
-            ${(id !== 0 && id !== 10 && id !== 425) ? `
+            ${(id !== 0 && id !== 10 && id !== 425 && !deliverable.hidePhotos) ? `
             <div class="form-group">
                 <label>
                     Photos / Screenshots
@@ -3938,7 +3977,7 @@ function openDeliverableForm(id) {
                 </div>
             </div>` : ''}
 
-            ${id !== 10 && id !== 425 ? `
+            ${id !== 10 && id !== 425 && !deliverable.hideLinks ? `
             <div class="form-group">
                 <label for="deliverableLinks">Supporting Documentation</label>
                 <textarea id="deliverableLinks" rows="3" placeholder="Links, notes, or brief code snippets">${existing.links || ''}</textarea>
@@ -3950,6 +3989,9 @@ function openDeliverableForm(id) {
                 </button>
                 ${id === 0 ? `<button type="button" class="btn btn-secondary" onclick="checkD0Work()">
                     <i class="fas fa-comments"></i> Check My Work
+                </button>` : ''}
+                ${QUESTION_FEEDBACK[id] && existing.status === 'completed' ? `<button type="button" class="btn btn-secondary" onclick="renderQuestionFeedbackPanel(DELIVERABLES.find(d => d.id === ${id}), state.deliverables[${id}])">
+                    <i class="fas fa-lightbulb"></i> View Feedback
                 </button>` : ''}
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-paper-plane"></i> Submit
@@ -4066,7 +4108,20 @@ function collectCadDeliverableData() {
         q5: document.getElementById('cad-q5')?.value || '',
         c1: document.getElementById('cad-c1')?.value || '',
         c2: document.getElementById('cad-c2')?.value || '',
+        // Multi-part questions: q3a, q3b, …
+        ...Object.fromEntries([...document.querySelectorAll('[id^="cad-q"]')]
+            .filter(el => /^cad-q\d+[a-z]$/.test(el.id))
+            .map(el => [el.id.slice(4), el.value || ''])),
     };
+}
+
+// Answer text for question i (0-based): multi-part answers are joined "(a) … / (b) …"
+function questionAnswer(q, i, data) {
+    if (!q.parts) return data['q' + (i+1)] || '';
+    return q.parts.map((p, j) => {
+        const a = (data['q' + (i+1) + String.fromCharCode(97 + j)] || '').trim();
+        return a ? `${p.label.match(/^\(\w\)/)?.[0] || ''} ${a}`.trim() : '';
+    }).filter(Boolean).join('\n   ');
 }
 
 function saveDeliverableDraft(id) {
@@ -4098,8 +4153,8 @@ function formatCadDeliverableContent(id, customData) {
         out += `Completion Level: ${levelLabel[customData.level] || customData.level || '(not set)'}\n\n`;
     }
     (deliverable.questions || []).forEach((q, i) => {
-        out += `Q${i+1}: ${plain(q)}\n`;
-        out += `A: ${customData['q'+(i+1)] || '(not answered)'}\n\n`;
+        out += `Q${i+1}: ${plain(q.parts ? q.text + ' ' + q.parts.map(p => p.label).join(' ') : q)}\n`;
+        out += `A: ${questionAnswer(q, i, customData) || '(not answered)'}\n\n`;
     });
     (deliverable.challenges || []).forEach((c, i) => {
         out += `${c.title}\n`;
@@ -4312,15 +4367,16 @@ function submitDeliverable(id) {
         }
     } else if (isQuestionDeliverable(id)) {
         const qa = collectCadDeliverableData();
-        const missingQ = deliverable.questions.findIndex((_, i) => (qa['q'+(i+1)] || '').trim().length < 5);
-        if (missingQ >= 0) { showToast(`Answer Q${missingQ + 1} — show your math`, 'error'); return; }
+        for (const [i, q] of deliverable.questions.entries()) {
+            if (q.parts) {
+                const j = q.parts.findIndex((_, j) => !(qa['q' + (i+1) + String.fromCharCode(97 + j)] || '').trim());
+                if (j >= 0) { showToast(`Answer Q${i + 1}${String.fromCharCode(97 + j)}`, 'error'); return; }
+            } else if ((qa['q'+(i+1)] || '').trim().length < 5) {
+                showToast(`Answer Q${i + 1} — show your math`, 'error'); return;
+            }
+        }
         const missingC = (deliverable.challenges || []).findIndex((_, i) => (qa['c'+(i+1)] || '').trim().length < 20);
         if (missingC >= 0) { showToast(`Record your Tinkercad results for Challenge ${missingC + 1}`, 'error'); return; }
-        const needPhotos = (deliverable.challenges || []).length;
-        if (photos.length < needPhotos) {
-            showToast(`Upload ${needPhotos} screenshot${needPhotos === 1 ? '' : 's'} — one per challenge`, 'error');
-            return;
-        }
     } else {
         if (!content || content.length < 50) {
             showToast('Please provide more detail (at least 50 characters)', 'error');
@@ -4350,6 +4406,11 @@ function submitDeliverable(id) {
     updateUI();
     if (id === 425) {
         renderD425FeedbackPanel(customData);
+        showCelebration(`${deliverable.title} Submitted!`);
+        return;
+    }
+    if (QUESTION_FEEDBACK[id]) {
+        renderQuestionFeedbackPanel(deliverable, customData);
         showCelebration(`${deliverable.title} Submitted!`);
         return;
     }
@@ -4437,6 +4498,100 @@ function renderD425FeedbackPanel(data) {
           <i class="fas fa-times"></i> Close
         </button>
       </div>`;
+}
+
+// ============================================
+// QUESTION FEEDBACK — shown after submitting a Q/challenge deliverable
+// ============================================
+// Per answer field: expect = accepted numbers (an answer "matches" if any number in it
+// is within tolerance), solution = worked answer shown either way. Completion earns the
+// credit, so the tone is encouraging whether or not the numbers match.
+const QUESTION_FEEDBACK = {
+    472: {
+        q1:  { expect: [19.1, 0.0191], solution: 'I = V ÷ R = 9 V ÷ 470 Ω = 0.0191 A → × 1000 = <strong>19.1 mA</strong>' },
+        q2:  { expect: [220], solution: 'Convert first: 22.7 mA = 0.0227 A. Then R = V ÷ I = 5 V ÷ 0.0227 A = <strong>220 Ω</strong>' },
+        q3a: { expect: [290], solution: 'R = (V<sub>supply</sub> − V<sub>f</sub>) ÷ I = (9 − 3.2) ÷ 0.020 = 5.8 ÷ 0.020 = <strong>290 Ω</strong>' },
+        q3b: { expect: [330], solution: '<strong>330 Ω</strong> — the smallest kit resistor that is at least 290 Ω' },
+        q3c: { expect: [17.6, 0.0176], solution: 'I = 5.8 V ÷ 330 Ω = 0.0176 A = <strong>17.6 mA</strong> — safely under the 20 mA target' },
+        q3d: { expect: [21.5, 0.0215], solution: '270 Ω would give 5.8 ÷ 270 = <strong>21.5 mA</strong> — over the 20 mA target, so the LED runs hotter and wears out sooner' },
+        q4a: { expect: [4.4], solution: 'In series the LED voltages add: 2.2 V + 2.2 V = <strong>4.4 V</strong>' },
+        q4b: { expect: [230], solution: 'R = (9 − 4.4) ÷ 0.020 = 4.6 ÷ 0.020 = <strong>230 Ω</strong>' },
+        q4c: { expect: [270], solution: '<strong>270 Ω</strong> — 220 Ω is smaller than 230 Ω and would push the current to 20.9 mA' },
+        q4d: { expect: [17, 0.017], solution: 'I = 4.6 V ÷ 270 Ω = 0.0170 A = <strong>17.0 mA</strong>' },
+        q5a: { expect: [200], solution: 'Red: R = (5 − 2.0) ÷ 0.015 = 3.0 ÷ 0.015 = <strong>200 Ω</strong>' },
+        q5b: { expect: [220], solution: '<strong>220 Ω</strong> — the smallest kit resistor that is at least 200 Ω' },
+        q5c: { expect: [120], solution: 'Blue: R = (5 − 3.2) ÷ 0.015 = 1.8 ÷ 0.015 = <strong>120 Ω</strong>' },
+        q5d: { expect: [120], solution: '<strong>120 Ω</strong> — an exact match in the kit' },
+        q5e: { expect: [13.6, 0.0136], solution: 'Red: I = 3.0 V ÷ 220 Ω = <strong>13.6 mA</strong>' },
+        q5f: { expect: [15, 0.015], solution: 'Blue: I = 1.8 V ÷ 120 Ω = <strong>15.0 mA</strong>' },
+        q5g: { expect: [28.6, 0.0286], solution: 'Parallel branch currents add: 13.6 + 15.0 = <strong>28.6 mA</strong>' },
+        c1:  { expect: [17, 0.017], tolerance: 0.15,
+               solution: 'Your math predicted 17.0 mA. Tinkercad\'s LEDs don\'t drop exactly 2.2 V, so a reading within a couple of mA means your math holds up. If you saw 0 mA, check that the meter is in series and both LEDs face the same way.' },
+        c2:  { expect: [28.6, 0.0286, 13.6, 15], tolerance: 0.15,
+               solution: 'Predicted: red 13.6 mA, blue 15.0 mA, total 28.6 mA. Delete one branch and the other LED stays lit — each branch has its own path and its own resistor, which is exactly why parallel LEDs never share one.' },
+    },
+};
+
+const PRAISE = ['Nailed it!', 'Spot on!', 'Exactly right!', 'Great work!', 'You got it!'];
+
+function answerMatches(text, expect, tolerance = 0.025) {
+    const nums = (String(text).match(/\d*\.?\d+/g) || []).map(Number);
+    return nums.some(n => expect.some(e => Math.abs(n - e) <= Math.abs(e) * tolerance));
+}
+
+function renderQuestionFeedbackPanel(deliverable, data) {
+    const key = QUESTION_FEEDBACK[deliverable.id];
+    const panel = document.getElementById('deliverableFormContent');
+    if (!key || !panel) return;
+    let n = 0;
+
+    const row = (field, label) => {
+        const fb = key[field];
+        if (!fb) return '';
+        const answer = (data[field] || '').trim();
+        const ok = answer && answerMatches(answer, fb.expect, fb.tolerance);
+        const head = ok
+            ? `<span style="color:var(--success);font-weight:600;"><i class="fas fa-check-circle"></i> ${PRAISE[n++ % PRAISE.length]}</span>`
+            : `<span style="color:#b26a00;font-weight:600;"><i class="fas fa-lightbulb"></i> Good effort — here's how it works out:</span>`;
+        return `
+        <div style="margin:0 0 10px ${label ? '14px' : '0'};">
+            ${label ? `<div style="font-size:13px;font-weight:500;">${label}</div>` : ''}
+            ${answer ? `<div style="font-size:12px;color:var(--gray-500);margin:2px 0;">You wrote: ${escapeHtml(answer)}</div>` : ''}
+            <div style="font-size:13.5px;line-height:1.55;">${head} ${fb.solution}</div>
+        </div>`;
+    };
+
+    const questions = deliverable.questions.map((q, i) => `
+        <div class="card" style="margin-bottom:12px;">
+            <h4 style="margin-bottom:8px;">Q${i+1}</h4>
+            ${q.parts
+                ? q.parts.map((p, j) => row('q' + (i+1) + String.fromCharCode(97 + j), p.label)).join('')
+                : row('q' + (i+1))}
+        </div>`).join('');
+
+    const challenges = (deliverable.challenges || []).map((c, i) => `
+        <div class="card" style="margin-bottom:12px;">
+            <h4 style="margin-bottom:8px;">${c.title}</h4>
+            ${row('c' + (i+1))}
+        </div>`).join('');
+
+    panel.innerHTML = `
+      <div style="text-align:center;padding:24px 0 12px;">
+        <i class="fas fa-check-circle" style="font-size:52px;color:var(--success);display:block;margin-bottom:12px;"></i>
+        <h2 style="margin:0 0 4px;">Activity Submitted!</h2>
+        <p style="color:var(--gray-500);font-size:14px;margin:0;">${deliverable.title}</p>
+      </div>
+      <div class="card" style="margin-bottom:16px;border-left:4px solid var(--primary);">
+        <p style="font-size:14px;line-height:1.6;margin:0;">You earn credit for working through every question — nice job sticking with it! Below is the worked math for each answer. Where your numbers differ, compare your steps to the solution: most mix-ups come from forgetting to convert mA to A, or from forgetting to subtract V<sub>f</sub> before dividing.</p>
+      </div>
+      ${questions}
+      ${challenges}
+      <div style="text-align:center;margin-top:8px;">
+        <button class="btn btn-primary" onclick="document.getElementById('deliverableModal').classList.remove('active')">
+          <i class="fas fa-times"></i> Close
+        </button>
+      </div>`;
+    panel.scrollTop = 0;
 }
 
 // ============================================
