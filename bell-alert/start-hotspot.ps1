@@ -17,7 +17,7 @@ $pollEvery      = 20    # seconds between checks
 
 # ── School-hours window (24-hour HH:MM) ──────────────────────────────────────
 $schoolHoursStart = "05:45"
-$schoolHoursEnd   = "09:00"
+$schoolHoursEnd   = "15:30"
 
 # ── School LAN gateway ────────────────────────────────────────────────────────
 # Set this to the school's ethernet gateway IP (e.g. "10.1.0.1").

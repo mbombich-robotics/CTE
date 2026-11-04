@@ -5,7 +5,7 @@
     Creates two scheduled tasks (no admin needed):
 
       MobileHotspot-7AM  Runs start-hotspot.ps1 at log on and every 30 min
-                         from 6:00 to 8:30 AM, Mon-Fri. The script's own
+                         from 6:00 AM to 3:00 PM, Mon-Fri (restarts it after a mid-day reboot). The script's own
                          school-hours window and LAN guard decide whether
                          to actually start the hotspot.
       Bell Alert         Runs bell_scheduler.py (pythonw, no console) at log on
@@ -31,7 +31,7 @@ $principal = New-ScheduledTaskPrincipal -UserId $user -LogonType Interactive -Ru
 $hotspotName = "MobileHotspot-7AM"
 $days = 'Monday','Tuesday','Wednesday','Thursday','Friday'
 $hotspotTriggers = @(New-ScheduledTaskTrigger -AtLogOn -User $user)
-foreach ($t in '6:00AM','6:30AM','7:00AM','7:30AM','8:00AM','8:30AM') {
+foreach ($t in '6:00AM','6:30AM','7:00AM','7:30AM','8:00AM','8:30AM','9:00AM','9:30AM','10:00AM','10:30AM','11:00AM','11:30AM','12:00PM','12:30PM','1:00PM','1:30PM','2:00PM','2:30PM','3:00PM') {
     $hotspotTriggers += New-ScheduledTaskTrigger -Weekly -DaysOfWeek $days -At $t
 }
 $hotspotAction = New-ScheduledTaskAction `
