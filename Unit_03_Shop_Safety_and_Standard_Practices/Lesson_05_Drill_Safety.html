@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 3.5: Drill Safety | Unit 3 — Shop Safety</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: #0a0e27;
+            color: #e0e0e0;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+
+        .presentation {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            min-height: 100%;
+            display: none;
+            padding: 55px 60px 120px 60px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 100%);
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .slide-content {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(196, 30, 58, 0.8),
+                         0 0 60px rgba(196, 30, 58, 0.4);
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 1.8rem;
+            color: #00d4ff;
+            font-weight: 300;
+            margin-bottom: 50px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            font-size: 3rem;
+            margin-bottom: 40px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: #ff6b9d;
+            font-size: 2rem;
+            margin-top: 40px;
+            margin-bottom: 25px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        h4 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        p {
+            font-size: 1.4rem;
+            line-height: 1.9;
+            margin-bottom: 20px;
+            color: #d0d0d0;
+        }
+
+        ul {
+            list-style: none;
+            margin: 30px 0;
+        }
+
+        ul li {
+            padding: 15px 0 15px 40px;
+            position: relative;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            color: #d0d0d0;
+        }
+
+        ul li:before {
+            content: "▸";
+            color: #c41e3a;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+            font-size: 1.8rem;
+        }
+
+        strong {
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%);
+            border-left: 5px solid #00d4ff;
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(196, 30, 58, 0.2) 0%, rgba(196, 30, 58, 0.1) 100%);
+            border-left: 5px solid #c41e3a;
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(196, 30, 58, 0.3);
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, rgba(80, 250, 123, 0.15) 0%, rgba(80, 250, 123, 0.08) 100%);
+            border-left: 5px solid #50fa7b;
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(80, 250, 123, 0.2);
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(255, 184, 108, 0.15) 0%, rgba(255, 184, 108, 0.08) 100%);
+            border-left: 5px solid #ffb86c;
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(255, 184, 108, 0.2);
+        }
+
+        .danger-box {
+            background: linear-gradient(135deg, rgba(255, 85, 85, 0.2) 0%, rgba(255, 85, 85, 0.1) 100%);
+            border: 3px solid #ff5555;
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 40px rgba(255, 85, 85, 0.4);
+        }
+
+        .danger-box h3 {
+            color: #ff5555;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #c41e3a 0%, #8b1429 100%);
+            color: #ffffff;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 45px;
+            font-weight: 700;
+            margin-right: 15px;
+            font-size: 1.2rem;
+            box-shadow: 0 0 20px rgba(196, 30, 58, 0.5);
+        }
+
+        .safety-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .safety-card {
+            background: linear-gradient(135deg, rgba(196, 30, 58, 0.15) 0%, rgba(196, 30, 58, 0.05) 100%);
+            border: 2px solid rgba(196, 30, 58, 0.4);
+            border-radius: 15px;
+            padding: 35px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .safety-card:hover {
+            border-color: #00d4ff;
+            box-shadow: 0 8px 40px rgba(0, 212, 255, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .ppe-icon {
+            font-size: 3.5rem;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .quiz-question {
+            background: rgba(10, 14, 39, 0.7);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+
+        .quiz-options {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .quiz-options li {
+            padding: 18px 25px;
+            margin: 15px 0;
+            background: rgba(26, 26, 46, 0.7);
+            border: 2px solid rgba(196, 30, 58, 0.3);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.3rem;
+        }
+
+        .quiz-options li:before {
+            content: none;
+        }
+
+        .quiz-options li:hover {
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.15);
+            transform: translateX(10px);
+        }
+
+        .quiz-options li.correct {
+            border-color: #50fa7b;
+            background: rgba(80, 250, 123, 0.2);
+        }
+
+        .quiz-options li.incorrect {
+            border-color: #ff5555;
+            background: rgba(255, 85, 85, 0.2);
+        }
+
+        /* Navigation Bar */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 2px solid rgba(196, 30, 58, 0.5);
+            padding: 20px;
+            z-index: 1000;
+            box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-button {
+            padding: 15px 35px;
+            background: linear-gradient(135deg, #c41e3a 0%, #8b1429 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 4px 15px rgba(196, 30, 58, 0.4);
+        }
+
+        .nav-button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #8b1429 0%, #c41e3a 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(196, 30, 58, 0.6);
+        }
+
+        .nav-button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .slide-indicator {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #00d4ff;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .slide {
+                padding: 40px 25px 100px 25px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            h3 {
+                font-size: 1.5rem;
+            }
+
+            .subtitle {
+                font-size: 1.3rem;
+            }
+
+            p, ul li {
+                font-size: 1.1rem;
+            }
+
+            .safety-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-button {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Lesson 3.5 additions */
+        .video-wrap {
+            position: relative;
+            width: 100%;
+            max-width: 960px;
+            aspect-ratio: 16 / 9;
+            margin: 30px auto;
+            border: 2px solid rgba(0, 212, 255, 0.4);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+        }
+
+        .video-wrap iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .sign-link {
+            display: inline-block;
+            margin: 10px 15px 10px 0;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #0b4ea2 0%, #083a7a 100%);
+            color: #ffffff;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(11, 78, 162, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .sign-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 212, 255, 0.5);
+        }
+
+        .phase-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .phase-card {
+            border-radius: 12px;
+            padding: 25px 28px;
+            background: rgba(26, 26, 46, 0.7);
+            border-top: 6px solid;
+        }
+
+        .phase-card.pre { border-color: #3b82f6; }
+        .phase-card.during { border-color: #ff5555; }
+        .phase-card.post { border-color: #50fa7b; }
+
+        .phase-card h4 { margin-bottom: 10px; }
+
+        .phase-card ul { margin: 10px 0 0; }
+
+        .phase-card ul li {
+            padding: 8px 0 8px 32px;
+            font-size: 1.15rem;
+            line-height: 1.5;
+        }
+
+        .phase-card ul li:before { content: "☐"; color: #d0d0d0; font-size: 1.2rem; }
+
+        .quiz-feedback {
+            font-size: 1.15rem;
+            margin-top: 10px;
+            min-height: 1.5em;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- Slide 1: Title & Objectives -->
+        <div class="slide active">
+            <div class="slide-content">
+                <h1>🔩 DRILL SAFETY</h1>
+                <p class="subtitle">Drill Press · Cordless Drill/Driver</p>
+
+                <div class="danger-box">
+                    <h3>⚠️ BEFORE YOU TOUCH A DRILL</h3>
+                    <p style="font-size: 1.3rem; line-height: 1.9;">Drills are the most-used power tools in the shop, and that makes it easy to get careless with them. <strong>You need Mr. Bombich's training and sign-off before you use either drill on your own.</strong></p>
+                </div>
+
+                <h3>Learning Objectives</h3>
+                <ul>
+                    <li>Identify the main drilling hazards: entanglement, spinning work, flying chips, and hot bits</li>
+                    <li>Choose the right PPE and dress for drilling, and explain why gloves are not allowed</li>
+                    <li>Follow the posted <strong>Safe Operating Procedure</strong> checklists before, during, and after drilling</li>
+                    <li>Know when and how to stop: release, step back, and switch off</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 2: Hazards -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>⚡ HOW DRILLS HURT PEOPLE</h2>
+
+                <div class="safety-grid">
+                    <div class="safety-card">
+                        <div class="ppe-icon">🌀</div>
+                        <h4>Entanglement</h4>
+                        <p>Hair, gloves, sleeves, and hoodie strings wrap around a spinning chuck in a fraction of a second, and the drill doesn't stop.</p>
+                    </div>
+                    <div class="safety-card">
+                        <div class="ppe-icon">🔄</div>
+                        <h4>Spinning Work</h4>
+                        <p>When the bit grabs an unclamped part, the part spins with it and its sharp edges become a blade. This happens most often as the bit <strong>breaks through</strong> the bottom.</p>
+                    </div>
+                    <div class="safety-card">
+                        <div class="ppe-icon">🎯</div>
+                        <h4>Flying Chips & Keys</h4>
+                        <p>Chips and broken bits fly toward your eyes. A <strong>chuck key left in the chuck</strong> gets thrown out when the motor starts.</p>
+                    </div>
+                    <div class="safety-card">
+                        <div class="ppe-icon">🔥</div>
+                        <h4>Heat & Sharp Edges</h4>
+                        <p>Bits and metal chips get hot enough to burn. Freshly drilled holes leave sharp burrs that need to be deburred.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Video -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🎬 WATCH: DRILL PRESS SAFETY</h2>
+                <p>As you watch, look for three things: <strong>how the work is held</strong>, <strong>where the operator's hands are</strong>, and <strong>what happens to the chuck key</strong>.</p>
+
+                <div class="video-wrap">
+                    <iframe src="https://www.youtube-nocookie.com/embed/RNLmF4XRezw" title="Newton Makerspace Drill Press Safety Video" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+
+                <p style="text-align: center; font-size: 1.1rem;">Video: Durham Technical Community College · <a href="https://www.youtube.com/watch?v=RNLmF4XRezw" target="_blank" rel="noopener" style="color: #00d4ff;">open on YouTube</a></p>
+            </div>
+        </div>
+
+        <!-- Slide 4: PPE -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🥽 PPE & DRESS CODE</h2>
+
+                <div class="safety-grid">
+                    <div class="safety-card">
+                        <h4>✅ Safety Glasses</h4>
+                        <p>Always, for both drills. Wear them from the moment you pick up the tool until clean-up is finished.</p>
+                    </div>
+                    <div class="safety-card">
+                        <h4>✅ Closed-Toe Shoes</h4>
+                        <p>Hot chips, dropped parts, and dropped drills all end up on the floor.</p>
+                    </div>
+                    <div class="safety-card">
+                        <h4>✅ Hair Tied Back</h4>
+                        <p>Tie back long hair and roll up loose sleeves. Anything that hangs down can reach the chuck.</p>
+                    </div>
+                    <div class="safety-card">
+                        <h4>❌ No Gloves · No Jewelry</h4>
+                        <p>A spinning bit grabs fabric and pulls your hand in with it. Rings, watches, lanyards, and hoodie strings do the same.</p>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <p><strong>Wait — no gloves?</strong> Gloves protect you from sharp edges and hot parts when the tool is <em>off</em>. Near a rotating tool, a glove becomes the thing that pulls you in. Take them off before you drill, and put them back on to handle hot or sharp parts afterward.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Drill press SOP -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🏭 DRILL PRESS: THE POSTED SOP</h2>
+                <p>This checklist is posted at the drill press. Run through it <strong>every time</strong> you use the machine.</p>
+
+                <div class="phase-grid">
+                    <div class="phase-card pre">
+                        <h4 style="color: #3b82f6;">1 · Before</h4>
+                        <ul>
+                            <li>Hole marked and center-punched</li>
+                            <li>Pulley cover closed, no lock or tag</li>
+                            <li>Bit tight, <strong>chuck key REMOVED</strong></li>
+                            <li>Work <strong>clamped</strong>, never hand-held</li>
+                            <li>Depth stop set</li>
+                            <li>Know where ON/OFF and the E-stop are</li>
+                        </ul>
+                    </div>
+                    <div class="phase-card during">
+                        <h4 style="color: #ff5555;">2 · During</h4>
+                        <ul>
+                            <li>Bit runs true, with no wobble</li>
+                            <li>Hands 3 inches or more from the bit</li>
+                            <li>Steady pressure and peck drilling</li>
+                            <li>Ease off at breakthrough</li>
+                            <li>Work spins? <strong>Let go, step back, switch OFF</strong></li>
+                        </ul>
+                    </div>
+                    <div class="phase-card post">
+                        <h4 style="color: #50fa7b;">3 · After</h4>
+                        <ul>
+                            <li>OFF, and let the spindle stop on its own</li>
+                            <li>Deburr the part</li>
+                            <li>Bit, key, and vise put away</li>
+                            <li><strong>Brush</strong> chips, never your hands</li>
+                            <li>Leave it safe for the next person</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <a class="sign-link" href="Sign_Drill_Press.html" target="_blank">📄 Open the full Drill Press sign</a>
+            </div>
+        </div>
+
+        <!-- Slide 6: Cordless drill SOP -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🔋 CORDLESS DRILL: THE POSTED SOP</h2>
+                <p>A cordless drill is smaller, but it still twists hard enough to sprain a wrist or spin a part out of your hand.</p>
+
+                <div class="phase-grid">
+                    <div class="phase-card pre">
+                        <h4 style="color: #3b82f6;">1 · Before</h4>
+                        <ul>
+                            <li><strong>Trigger locked</strong> before touching the chuck</li>
+                            <li>Bit seated fully and tightened</li>
+                            <li>Direction, speed, and clutch set</li>
+                            <li>Work clamped, <strong>never in your hand or on your lap</strong></li>
+                            <li>Check what's behind and under the work</li>
+                        </ul>
+                    </div>
+                    <div class="phase-card during">
+                        <h4 style="color: #ff5555;">2 · During</h4>
+                        <ul>
+                            <li>Firm grip, both hands</li>
+                            <li>Free hand never behind the work</li>
+                            <li>Binds? <strong>Release the trigger</strong></li>
+                            <li><strong>Forward</strong> all the way through and out</li>
+                            <li>Reverse only to back out a jammed bit</li>
+                        </ul>
+                    </div>
+                    <div class="phase-card post">
+                        <h4 style="color: #50fa7b;">3 · After</h4>
+                        <ul>
+                            <li>Trigger locked, <strong>battery out</strong></li>
+                            <li>Bit removed (it may be hot!)</li>
+                            <li>Battery on the charger</li>
+                            <li>Drill put away, bench brushed clean</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <a class="sign-link" href="Sign_Cordless_Drill.html" target="_blank">📄 Open the full Cordless Drill sign</a>
+            </div>
+        </div>
+
+        <!-- Slide 7: The non-negotiables -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🚫 THE NON-NEGOTIABLES</h2>
+
+                <div class="danger-box">
+                    <h3>Break one of these and you're done for the day</h3>
+                    <ul>
+                        <li><strong>The chuck key never stays in the chuck.</strong> Put it back in its holder before power goes on.</li>
+                        <li><strong>The work is clamped.</strong> Never hold it in your hand, and never hold it on your lap.</li>
+                        <li><strong>Never grab spinning work.</strong> Let go, step back, and switch off.</li>
+                        <li><strong>No gloves, no jewelry, hair tied back</strong> anywhere near a spinning bit.</li>
+                        <li><strong>Never slow the chuck with your hand,</strong> and never clear chips while it's moving.</li>
+                    </ul>
+                </div>
+
+                <div class="success-box">
+                    <p><strong>Something feel wrong?</strong> Stop and tell Mr. Bombich. Strange noises, wobbling bits, smoke, and a part that won't stay put are all good reasons to stop. You will never get in trouble for stopping a tool to ask.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Quick check -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🎯 QUICK CHECK</h2>
+
+                <div class="quiz-question">
+                    <h4>1. Why are gloves not allowed at the drill press?</h4>
+                    <ul class="quiz-options">
+                        <li onclick="checkAnswer(this)">They make it harder to feel how tight the chuck is.</li>
+                        <li onclick="checkAnswer(this)" data-correct>A spinning bit can grab the fabric and pull your hand in.</li>
+                        <li onclick="checkAnswer(this)">They leave fibers in the hole that dull the bit faster.</li>
+                        <li onclick="checkAnswer(this)">They make it harder to read the scale on the depth stop.</li>
+                    </ul>
+                </div>
+
+                <div class="quiz-question">
+                    <h4>2. The part you're drilling starts spinning with the bit. What do you do?</h4>
+                    <ul class="quiz-options">
+                        <li onclick="checkAnswer(this)">Grab the part firmly and pull it away from the bit.</li>
+                        <li onclick="checkAnswer(this)">Push down harder on the feed handle to finish the hole.</li>
+                        <li onclick="checkAnswer(this)" data-correct>Let go of the part, step back, and switch the machine off.</li>
+                        <li onclick="checkAnswer(this)">Flip the spindle into reverse so the part unwinds itself.</li>
+                    </ul>
+                </div>
+
+                <div class="quiz-question">
+                    <h4>3. What must happen right after you tighten a bit in the drill press chuck?</h4>
+                    <ul class="quiz-options">
+                        <li onclick="checkAnswer(this)" data-correct>Remove the chuck key and put it back in its holder.</li>
+                        <li onclick="checkAnswer(this)">Run the press at top speed to seat the bit in place.</li>
+                        <li onclick="checkAnswer(this)">Loosen the chuck a quarter turn so the bit can center.</li>
+                        <li onclick="checkAnswer(this)">Oil the bit so it cuts cleanly through the material.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Quick check (part 2) -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🎯 QUICK CHECK (PART 2)</h2>
+
+                <div class="quiz-question">
+                    <h4>4. When should you use reverse on the cordless drill?</h4>
+                    <ul class="quiz-options">
+                        <li onclick="checkAnswer(this)">To pull the bit back out after every hole you drill.</li>
+                        <li onclick="checkAnswer(this)" data-correct>To back out a bit that has jammed in the hole.</li>
+                        <li onclick="checkAnswer(this)">To start a hole so the bit doesn't wander off the mark.</li>
+                        <li onclick="checkAnswer(this)">To drill faster through hard material like aluminum.</li>
+                    </ul>
+                </div>
+
+                <div class="quiz-question">
+                    <h4>5. Before changing a bit on the cordless drill, you should…</h4>
+                    <ul class="quiz-options">
+                        <li onclick="checkAnswer(this)">Set the clutch ring to its highest number setting.</li>
+                        <li onclick="checkAnswer(this)" data-correct>Lock the trigger by centering the direction switch.</li>
+                        <li onclick="checkAnswer(this)">Run it in reverse so the chuck loosens on its own.</li>
+                        <li onclick="checkAnswer(this)">Switch the speed selector from gear 2 down to gear 1.</li>
+                    </ul>
+                </div>
+
+                <div class="quiz-question">
+                    <h4>6. How do you clear chips off the drill press table?</h4>
+                    <ul class="quiz-options">
+                        <li onclick="checkAnswer(this)">Wipe them off with your hand once the bit slows down.</li>
+                        <li onclick="checkAnswer(this)">Blow them off the table with the compressed air gun.</li>
+                        <li onclick="checkAnswer(this)" data-correct>Use a brush after the spindle has completely stopped.</li>
+                        <li onclick="checkAnswer(this)">Sweep them away with a rag while the bit is turning.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Wrap-up -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>✅ NEXT STEPS</h2>
+
+                <div class="info-box">
+                    <h3>🔧 Hands-On Sign-Off</h3>
+                    <p>Before you use either drill on your own, Mr. Bombich will watch you complete the full checklist at the machine: setup, drilling one hole, and clean-up. Once you pass, you're signed off for that tool.</p>
+                </div>
+
+                <div class="success-box">
+                    <h3>📋 The Signs Stay With the Tools</h3>
+                    <p>Each tool has its checklist posted beside it. You don't have to memorize it. Read it and follow it, every time.</p>
+                    <a class="sign-link" href="Sign_Drill_Press.html" target="_blank">📄 Drill Press</a>
+                    <a class="sign-link" href="Sign_Cordless_Drill.html" target="_blank">📄 Cordless Drill</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="nav-bar">
+        <div class="nav-container">
+            <button class="nav-button" id="prevBtn" onclick="changeSlide(-1)">← PREVIOUS</button>
+            <a href="index.html" class="nav-button" style="text-decoration: none;">⌂ BACK TO UNIT 3</a>
+            <div class="slide-indicator">
+                <span id="currentSlide">1</span> / <span id="totalSlides">10</span>
+            </div>
+            <button class="nav-button" id="nextBtn" onclick="changeSlide(1)">NEXT →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.toggle('active', index === currentSlide);
+            });
+
+            document.getElementById('currentSlide').textContent = currentSlide + 1;
+            document.getElementById('totalSlides').textContent = totalSlides;
+
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide < 0) currentSlide = 0;
+            if (currentSlide >= totalSlides) currentSlide = totalSlides - 1;
+            updateSlide();
+        }
+
+        // Mark the pick, and always reveal the correct option
+        function checkAnswer(element) {
+            const options = element.parentElement.querySelectorAll('li');
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt.hasAttribute('data-correct')) opt.classList.add('correct');
+            });
+            if (!element.hasAttribute('data-correct')) element.classList.add('incorrect');
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') {
+                changeSlide(-1);
+            } else if (event.key === 'ArrowRight' || event.key === ' ') {
+                event.preventDefault();
+                changeSlide(1);
+            }
+        });
+
+        // Initialize
+        updateSlide();
+    </script>
+</body>
+</html>
