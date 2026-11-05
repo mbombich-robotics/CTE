@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Lesson 7.7: Switches | Unit 7 — Electrical Systems</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --text-color: #c9d1d9;
+            --heading-color: #58a6ff;
+            --accent-color: #f0883e;
+            --border-color: #30363d;
+            --green: #3fb950;
+            --red: #f85149;
+            --yellow: #d29922;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .slide-container {
+            width: 90%;
+            max-width: 1000px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            padding: 40px;
+            box-sizing: border-box;
+            margin: 70px 0 30px;
+        }
+
+        h1, h2, h3 { color: var(--heading-color); margin-top: 0; }
+        h1 { font-size: 2.2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
+        h2 { font-size: 1.6rem; margin-bottom: 15px; }
+        h3 { font-size: 1.2rem; margin-bottom: 8px; }
+        p, li { font-size: 1.1rem; line-height: 1.6; }
+        ul, ol { padding-left: 22px; }
+        .highlight { color: var(--accent-color); font-weight: bold; }
+
+        .slide { display: none; }
+        .slide.active { display: block; }
+
+        .nav-controls {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border-color);
+        }
+        button {
+            background-color: #21262d; color: var(--text-color);
+            border: 1px solid var(--border-color); padding: 10px 20px;
+            border-radius: 6px; cursor: pointer; font-size: 1rem;
+        }
+        button:hover { background-color: #30363d; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .back-link {
+            position: fixed; top: 16px; left: 16px;
+            color: var(--heading-color); text-decoration: none; font-weight: 600;
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            padding: 6px 12px; border-radius: 6px;
+        }
+
+        .two-col { display: flex; gap: 20px; flex-wrap: wrap; }
+        .two-col > div { flex: 1 1 280px; }
+        .box {
+            background: #0d1117; border: 1px solid var(--border-color);
+            border-radius: 8px; padding: 15px 18px;
+        }
+        .lab-box {
+            background: #0d1117; border: 1px dashed var(--yellow);
+            padding: 15px 20px; border-radius: 8px; margin-top: 15px;
+        }
+        .warn-box {
+            background: rgba(248, 81, 73, 0.08); border-left: 4px solid var(--red);
+            padding: 12px 18px; border-radius: 4px; margin-top: 15px;
+        }
+        .formula-card {
+            background: #0d1117; border-left: 4px solid var(--accent-color);
+            padding: 12px 20px; border-radius: 4px; margin: 15px 0;
+            font-size: 1.2rem; text-align: center;
+        }
+
+        /* Images: white-background diagrams and screenshots */
+        .figure {
+            background: #fff; border-radius: 8px; padding: 10px;
+            text-align: center; margin: 10px 0;
+        }
+        .figure img { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+        .figure.small img { max-height: 280px; }
+        .caption { font-size: 0.95rem; color: #8b949e; text-align: center; margin-top: 6px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid var(--border-color); padding: 8px 10px; text-align: left; font-size: 1.02rem; }
+        th { background: #21262d; color: var(--heading-color); }
+        td.num { text-align: center; font-weight: bold; color: var(--accent-color); }
+
+        .type-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 12px; }
+        .type-grid .box h3 { margin-bottom: 4px; }
+        .type-grid .box p { margin: 0; font-size: 1rem; line-height: 1.45; }
+
+        /* Quick check */
+        .quiz-question { margin: 18px 0 6px; font-weight: bold; font-size: 1.1rem; }
+        .quiz-options { list-style: none; padding: 0; margin: 0; }
+        .quiz-options li {
+            background: #0d1117; border: 1px solid var(--border-color); border-radius: 6px;
+            padding: 8px 14px; margin: 6px 0; cursor: pointer; font-size: 1.02rem; line-height: 1.4;
+        }
+        .quiz-options li:hover { border-color: var(--heading-color); }
+        .quiz-options li.correct { border-color: var(--green); background: rgba(63, 185, 80, 0.12); }
+        .quiz-options li.incorrect { border-color: var(--red); background: rgba(248, 81, 73, 0.12); }
+
+        .checklist { list-style: none; padding-left: 0; }
+        .checklist li::before { content: "☐ "; color: var(--accent-color); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back-link" title="Back to Unit 7">← Unit 7</a>
+
+<div class="slide-container">
+
+    <!-- Slide 1: Title -->
+    <div class="slide active">
+        <h1>L7.7 Switches: Poles, Throws &amp; Motor Control</h1>
+        <p><strong>Course:</strong> Unit 7 Electrical Systems · Robotics / Engineering (Grades 9–12)</p>
+        <p><strong>Topics:</strong> SPST · SPDT · DPST · DPDT · Momentary vs. Maintained · Reversing a DC Motor · Limit Switches</p>
+        <hr style="border-color: var(--border-color);">
+        <h3>Learning Objectives:</h3>
+        <ul>
+            <li><strong>Name</strong> a switch by its poles and throws, and count its terminals.</li>
+            <li><strong>Read</strong> the schematic symbols for SPST, SPDT, DPST, and DPDT switches.</li>
+            <li><strong>Explain</strong> how a DPDT switch reverses a DC motor.</li>
+            <li><strong>Simulate</strong> a motor-reversing circuit and a "useless box" with a limit switch in Tinkercad.</li>
+        </ul>
+    </div>
+
+    <!-- Slide 2: What a switch does -->
+    <div class="slide">
+        <h2>What Does a Switch Do?</h2>
+        <p>A switch is a mechanical part that <span class="highlight">opens or closes a path</span> for current, or picks <em>which</em> path current takes.</p>
+        <div class="two-col">
+            <div class="box">
+                <h3>Closed = ON</h3>
+                <p>Contacts touch. A complete loop lets current flow, so the load runs.</p>
+            </div>
+            <div class="box">
+                <h3>Open = OFF</h3>
+                <p>Contacts are apart. The air gap breaks the loop, so no current flows.</p>
+            </div>
+        </div>
+        <h3 style="margin-top: 20px;">Two words that name every switch:</h3>
+        <ul>
+            <li><strong>Pole</strong>: how many <em>separate circuits</em> the switch controls at the same time. Each pole has its own <strong>common</strong> terminal.</li>
+            <li><strong>Throw</strong>: how many <em>positions</em> each pole can connect its common to.</li>
+        </ul>
+        <p><em>Think of a pole as a railroad track and a throw as the number of tracks the switch can send the train down.</em></p>
+    </div>
+
+    <!-- Slide 3: Poles and throws schematics -->
+    <div class="slide">
+        <h2>The Four Basic Switch Types</h2>
+        <div class="figure small">
+            <img src="images/switch_schematics.png" alt="Schematic symbols for SPST, SPDT, DPST, and DPDT switches">
+        </div>
+        <table>
+            <tr><th>Name</th><th>Means</th><th>Terminals</th><th>Typical use</th></tr>
+            <tr><td><strong>SPST</strong></td><td>Single Pole, Single Throw</td><td class="num">2</td><td>Simple on/off: a light switch</td></tr>
+            <tr><td><strong>SPDT</strong></td><td>Single Pole, Double Throw</td><td class="num">3</td><td>Pick path A or path B</td></tr>
+            <tr><td><strong>DPST</strong></td><td>Double Pole, Single Throw</td><td class="num">4</td><td>Turn two circuits on/off together</td></tr>
+            <tr><td><strong>DPDT</strong></td><td>Double Pole, Double Throw</td><td class="num">6</td><td>Reverse a motor</td></tr>
+        </table>
+        <p style="margin-top: 10px;">The dashed or solid bar between the two poles (S3, S4) means they are <strong>mechanically linked</strong>. One lever moves both.</p>
+    </div>
+
+    <!-- Slide 4: Counting terminals -->
+    <div class="slide">
+        <h2>Counting Terminals</h2>
+        <div class="formula-card">Terminals = Poles × (Throws + 1)</div>
+        <p>Each pole has <strong>one common</strong> plus <strong>one terminal per throw</strong>.</p>
+        <ul>
+            <li>SPDT: 1 × (2 + 1) = <span class="highlight">3</span> → common in the middle, one throw on each side</li>
+            <li>DPDT: 2 × (2 + 1) = <span class="highlight">6</span> → two rows of three</li>
+        </ul>
+        <div class="lab-box">
+            <h3>🔍 Find the common with a multimeter</h3>
+            <ol>
+                <li>Set the DMM to <strong>continuity</strong> (the beeper).</li>
+                <li>Put one probe on the middle terminal. Touch the other probe to each outside terminal.</li>
+                <li>Flip the switch and repeat. The common beeps with a <em>different</em> outside terminal in each position.</li>
+            </ol>
+            <p style="margin-bottom: 0;">Don't assume the middle pin is common on every switch. <strong>Test it.</strong></p>
+        </div>
+    </div>
+
+    <!-- Slide 5: Switch styles -->
+    <div class="slide">
+        <h2>Switch Styles You'll See in the Shop</h2>
+        <div class="type-grid">
+            <div class="box"><h3>Toggle</h3><p>Lever flips and stays put. Common in SPDT and DPDT. This is the switch in a useless box.</p></div>
+            <div class="box"><h3>Slide</h3><p>Small, cheap SPDT. The Tinkercad slide switch is one of these: middle pin is common.</p></div>
+            <div class="box"><h3>Rocker</h3><p>Power switches on tools and power strips. Often lit, often rated for 120 V AC.</p></div>
+            <div class="box"><h3>Pushbutton</h3><p>Usually momentary. <strong>NO</strong> closes only while pressed; <strong>NC</strong> opens only while pressed.</p></div>
+            <div class="box"><h3>Limit / Micro switch</h3><p>A lever pressed by a moving part. Has COM, NO, and NC terminals. Used for robot end stops.</p></div>
+            <div class="box"><h3>Reed</h3><p>Glass tube with contacts that close near a magnet. Door sensors and pneumatic cylinder sensors.</p></div>
+        </div>
+        <div class="two-col" style="margin-top: 14px;">
+            <div class="box"><strong>Maintained (latching):</strong> stays where you leave it. Toggle, slide, rocker.</div>
+            <div class="box"><strong>Momentary:</strong> springs back when you let go. Pushbutton, limit switch.</div>
+        </div>
+        <p style="margin-bottom: 0;"><strong>Ratings matter:</strong> every switch has a maximum voltage and current, and DC ratings are usually lower than AC ratings. A motor's startup current can be several times its running current.</p>
+    </div>
+
+    <!-- Slide 6: DPDT motor reversing -->
+    <div class="slide">
+        <h2>Reversing a DC Motor with a DPDT</h2>
+        <div class="two-col">
+            <div style="flex: 1.3 1 360px;">
+                <div class="figure">
+                    <img src="images/dpdt_motor_reversing.png" alt="Two DPDT motor reversing circuits showing current paths in red for each switch position">
+                </div>
+            </div>
+            <div>
+                <p>A DC motor spins one way or the other depending on <strong>which terminal gets +</strong>.</p>
+                <ul>
+                    <li>The battery connects to the two <strong>commons</strong>.</li>
+                    <li>The outside terminals are <span class="highlight">cross-wired</span> to the motor.</li>
+                    <li><strong>Top:</strong> + (red) reaches the motor's <strong>+</strong> terminal.</li>
+                    <li><strong>Bottom:</strong> flip the switch and the cross-wires send + to the motor's <strong>−</strong> terminal. The motor reverses.</li>
+                </ul>
+                <p>Trace the red path in each picture with your finger.</p>
+            </div>
+        </div>
+        <p style="margin-bottom: 0;"><em>The H-bridge motor driver from L7.6 does the same job with transistors, so a robot's code can flip the direction instead of your hand.</em></p>
+    </div>
+
+    <!-- Slide 7: Tinkercad build 1 -->
+    <div class="slide">
+        <h2>Tinkercad Build 1: Two Slide Switches as a DPDT</h2>
+        <div class="figure">
+            <img src="images/tinkercad_useless_box_1.png" alt="Tinkercad circuit: 2xAA battery pack, breadboard with two slide switches, wired to a hobby gearmotor">
+        </div>
+        <p>Tinkercad has no DPDT toggle, so we use <strong>two SPDT slide switches</strong>, one for each pole.</p>
+        <ol>
+            <li>Battery <strong>+</strong> to the top + rail and <strong>−</strong> to the bottom − rail.</li>
+            <li>Top switch: middle pin (common) to <strong>+</strong>. Bottom switch: middle pin to <strong>−</strong>.</li>
+            <li>Top-left and bottom-right pins go to one motor terminal. Top-right and bottom-left go to the other. <em>That's the cross-wire.</em></li>
+            <li>Start the simulation. Slide <strong>both</strong> switches together and watch the RPM change sign.</li>
+        </ol>
+        <div class="warn-box">
+            <strong>⚠ Always move both sliders together.</strong> The two switches aren't linked, so if only one is flipped, + and − land on the <strong>same motor terminal</strong>. That's a dead short across the battery. A real DPDT links the poles so this can't happen.
+        </div>
+    </div>
+
+    <!-- Slide 8: Useless box -->
+    <div class="slide">
+        <h2>The "Useless Box"</h2>
+        <p>Flip the switch ON, a finger pops out and flips it OFF, and the finger hides again. It's useless, but it shows exactly how a <strong>DPDT + limit switch</strong> control a motor.</p>
+        <ol>
+            <li><strong>You flip the toggle.</strong> The DPDT sends current one way and the motor swings the arm <em>out</em>.</li>
+            <li><strong>The arm pushes the toggle back.</strong> The DPDT reverses the current and the motor pulls the arm <em>home</em>.</li>
+            <li><strong>The arm hits the limit switch.</strong> The limit switch opens the circuit and the motor stops.</li>
+        </ol>
+        <div class="box">
+            <strong>Why doesn't the limit switch stop the arm from going out?</strong>
+            <p style="margin-bottom: 0;">It's wired into <span class="highlight">one throw wire</span>, not a common. That wire only carries current when the toggle is in the "go home" position. The "go out" path doesn't pass through the limit switch at all.</p>
+        </div>
+    </div>
+
+    <!-- Slide 9: Tinkercad build 2 -->
+    <div class="slide">
+        <h2>Tinkercad Build 2: Add the Limit Switch</h2>
+        <div class="figure">
+            <img src="images/tinkercad_useless_box_2.png" alt="Tinkercad useless box circuit with a third slide switch added in one motor wire as a limit switch; motor shows -97 RPM">
+        </div>
+        <ol>
+            <li>Add a <strong>third slide switch</strong> off the breadboard. It plays the limit switch.</li>
+            <li>Cut one <strong>throw wire</strong> (a wire from an outside pin to the motor) and route it through the limit switch. Use the middle pin and one outside pin.</li>
+            <li>Run the simulation in both directions. In one direction the limit switch does nothing; in the other it <strong>stops the motor</strong>.</li>
+            <li>Label that stopping direction "<strong>HOME</strong>" on your screenshot.</li>
+        </ol>
+        <p style="margin-bottom: 0;"><em>Stretch:</em> Why would putting the limit switch in the battery's + wire break the useless box?</p>
+    </div>
+
+    <!-- Slide 10: Quick check -->
+    <div class="slide">
+        <h2>Quick Check (1 of 2)</h2>
+        <div class="quiz-question">1. How many terminals does a DPDT switch have?</div>
+        <ul class="quiz-options">
+            <li onclick="checkAnswer(this)">4</li>
+            <li onclick="checkAnswer(this)">8</li>
+            <li onclick="checkAnswer(this)" data-correct>6</li>
+            <li onclick="checkAnswer(this)">3</li>
+        </ul>
+        <div class="quiz-question">2. In a switch's name, what does the number of throws tell you?</div>
+        <ul class="quiz-options">
+            <li onclick="checkAnswer(this)">How many separate circuits the switch controls at once.</li>
+            <li onclick="checkAnswer(this)" data-correct>How many positions each pole can connect its common to.</li>
+            <li onclick="checkAnswer(this)">How much current the contacts can carry before damage.</li>
+            <li onclick="checkAnswer(this)">How many times it can be flipped before it wears out.</li>
+        </ul>
+        <div class="quiz-question">3. A momentary pushbutton is labeled NO. What does that mean?</div>
+        <ul class="quiz-options">
+            <li onclick="checkAnswer(this)">The circuit is closed until you press it and opens while held.</li>
+            <li onclick="checkAnswer(this)">The circuit stays closed after one press until pressed again.</li>
+            <li onclick="checkAnswer(this)">The button isn't rated for the circuit's operating voltage.</li>
+            <li onclick="checkAnswer(this)" data-correct>The circuit is open until you press it and closes while held.</li>
+        </ul>
+    </div>
+
+    <!-- Slide 11: Quick check 2 -->
+    <div class="slide">
+        <h2>Quick Check (2 of 2)</h2>
+        <div class="quiz-question">4. Why does flipping the DPDT make the motor run backward?</div>
+        <ul class="quiz-options">
+            <li onclick="checkAnswer(this)">The switch adds a second battery that pushes current backward.</li>
+            <li onclick="checkAnswer(this)" data-correct>The cross-wires swap which motor terminal gets + and which gets −.</li>
+            <li onclick="checkAnswer(this)">The second pole slows the motor until it stops and turns back.</li>
+            <li onclick="checkAnswer(this)">The switch changes the battery's DC into AC for the motor.</li>
+        </ul>
+        <div class="quiz-question">5. In Build 1, what happens if you flip only one of the two slide switches?</div>
+        <ul class="quiz-options">
+            <li onclick="checkAnswer(this)">The motor spins at half speed because only one pole is powered.</li>
+            <li onclick="checkAnswer(this)">The motor keeps spinning the same way until both are flipped.</li>
+            <li onclick="checkAnswer(this)" data-correct>+ and − land on the same motor terminal and short the battery.</li>
+            <li onclick="checkAnswer(this)">The slide switch locks in place until the other one is moved.</li>
+        </ul>
+        <div class="quiz-question">6. Why is the useless box's limit switch wired into a throw wire instead of a common?</div>
+        <ul class="quiz-options">
+            <li onclick="checkAnswer(this)">So it carries less current and lasts longer than the main toggle.</li>
+            <li onclick="checkAnswer(this)">So the motor gets full battery voltage while the arm is moving.</li>
+            <li onclick="checkAnswer(this)" data-correct>So it stops only the return direction, not the push-out direction.</li>
+            <li onclick="checkAnswer(this)">So the toggle and the limit switch can use the same part number.</li>
+        </ul>
+    </div>
+
+    <!-- Slide 12: Done checklist -->
+    <div class="slide">
+        <h2>Done Checklist</h2>
+        <ul class="checklist">
+            <li>I can name SPST, SPDT, DPST, and DPDT and count their terminals.</li>
+            <li>I can trace the current path through the DPDT motor-reversing schematic in both positions.</li>
+            <li><strong>Build 1:</strong> my motor runs both directions in Tinkercad (screenshot showing + RPM and − RPM).</li>
+            <li><strong>Build 2:</strong> my limit switch stops the motor in the HOME direction only (screenshot, HOME labeled).</li>
+            <li>I answered the stretch question: why the limit switch can't go in the battery's + wire.</li>
+        </ul>
+        <div class="lab-box">
+            <h3>🔧 Next: the real thing</h3>
+            <p style="margin-bottom: 0;">On the bench, a real DPDT toggle replaces the two slide switches. Use your multimeter's continuity mode to find the commons <strong>before</strong> you solder or connect anything.</p>
+        </div>
+    </div>
+
+    <!-- Navigation Controls -->
+    <div class="nav-controls">
+        <button id="prevBtn" onclick="changeSlide(-1)">Previous</button>
+        <span id="slideIndicator">Slide 1 of 12</span>
+        <button id="nextBtn" onclick="changeSlide(1)">Next</button>
+    </div>
+</div>
+
+<script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const slideIndicator = document.getElementById('slideIndicator');
+
+    function updateSlides() {
+        slides.forEach((slide, index) => {
+            slide.classList.toggle('active', index === currentSlide);
+        });
+        slideIndicator.innerText = `Slide ${currentSlide + 1} of ${slides.length}`;
+        document.getElementById('prevBtn').disabled = currentSlide === 0;
+        document.getElementById('nextBtn').disabled = currentSlide === slides.length - 1;
+    }
+
+    function changeSlide(direction) {
+        currentSlide += direction;
+        updateSlides();
+        window.scrollTo(0, 0);
+    }
+
+    function checkAnswer(element) {
+        const options = element.parentElement.querySelectorAll('li');
+        options.forEach(opt => {
+            opt.style.pointerEvents = 'none';
+            if (opt.hasAttribute('data-correct')) opt.classList.add('correct');
+        });
+        if (!element.hasAttribute('data-correct')) element.classList.add('incorrect');
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' && currentSlide < slides.length - 1) changeSlide(1);
+        if (e.key === 'ArrowLeft' && currentSlide > 0) changeSlide(-1);
+    });
+
+    updateSlides();
+</script>
+
+</body>
+</html>
