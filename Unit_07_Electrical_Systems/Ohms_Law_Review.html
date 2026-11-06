@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Ohm's Law Review | Unit 7 — Electrical Systems</title>
+    <style>
+        @page { size: letter portrait; margin: 0.5in; }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; background: #e5e5e5; color: #111;
+            font-family: Arial, Helvetica, sans-serif; font-size: 10.5pt; line-height: 1.35;
+        }
+        .page {
+            width: 8.5in; min-height: 11in; margin: 20px auto; padding: 0.5in;
+            background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+        }
+        @media print {
+            body { background: #fff; }
+            .page { width: auto; min-height: 0; margin: 0; padding: 0; box-shadow: none; }
+            .page + .page { break-before: page; }
+            .no-print { display: none; }
+        }
+        .head { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid #111; padding-bottom: 6px; margin-bottom: 10px; }
+        .head h1 { font-size: 17pt; margin: 0; }
+        .head .sub { font-size: 9pt; color: #444; }
+        .fields { font-size: 10pt; text-align: right; line-height: 1.9; }
+        h2 { font-size: 11.5pt; margin: 10px 0 5px; padding: 3px 8px; background: #eee; border-left: 5px solid #111; }
+        .hint { font-size: 9pt; color: #444; margin: 0 0 6px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #555; padding: 5px 7px; text-align: left; vertical-align: top; }
+        th { background: #f2f2f2; font-size: 9.5pt; }
+        td.blank { height: 0.3in; }
+        .formulas { display: flex; gap: 14px; margin-top: 8px; }
+        .formulas div { flex: 1; border: 1px solid #555; padding: 6px 8px; height: 0.45in; font-size: 10pt; }
+        .conv { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px; }
+        .conv div { padding: 3px 0; }
+        ol { margin: 0; padding-left: 20px; }
+        .prob li { margin-bottom: 4px; }
+        .work { border: 1px dashed #888; height: 0.68in; margin: 3px 0 6px; position: relative; }
+        .work::after { content: "Formula · Plug in with units · Answer with units"; position: absolute; right: 6px; bottom: 3px; font-size: 7pt; color: #999; }
+        .ans { display: inline-block; border-bottom: 1px solid #111; min-width: 1.4in; }
+        .short li { margin-bottom: 3px; }
+        .lines { border-bottom: 1px solid #999; height: 0.24in; }
+        .ref { font-size: 9pt; border: 1px solid #555; padding: 6px 10px; margin-top: 6px; }
+        .print-btn { position: fixed; top: 16px; right: 16px; padding: 10px 18px; font-size: 14px; font-weight: bold;
+            background: #c41e3a; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">🖨 Print</button>
+
+<!-- Page 1 -->
+<div class="page">
+    <div class="head">
+        <div>
+            <h1>Ohm's Law Review</h1>
+            <div class="sub">Unit 7 · Electrical Systems · L7.1 Ohm's Law</div>
+        </div>
+        <div class="fields">Name: ______________________________<br>Date: ____________ Period: ______</div>
+    </div>
+
+    <h2>Part A · The Big Three</h2>
+    <p class="hint">Fill in the blank cells.</p>
+    <table>
+        <tr><th style="width:16%">Quantity</th><th style="width:10%">Symbol</th><th style="width:16%">Unit</th><th style="width:12%">Unit symbol</th><th>What it means (in your own words)</th></tr>
+        <tr><td>Voltage</td><td class="blank"></td><td class="blank"></td><td>V</td><td class="blank"></td></tr>
+        <tr><td class="blank"></td><td>I</td><td>Ampere (amp)</td><td class="blank"></td><td class="blank"></td></tr>
+        <tr><td>Resistance</td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+    </table>
+    <p class="hint" style="margin-top:8px;">Write Ohm's Law three ways: solved for V, for I, and for R.</p>
+    <div class="formulas"><div>V =</div><div>I =</div><div>R =</div></div>
+
+    <h2>Part B · Units &amp; Prefixes</h2>
+    <p class="hint">Convert each value. Remember: milli (m) = 1/1,000 · kilo (k) = 1,000 · mega (M) = 1,000,000</p>
+    <div class="conv">
+        <div>1. &nbsp;0.025 A = <span class="ans"></span> mA</div>
+        <div>4. &nbsp;2,200 Ω = <span class="ans"></span> kΩ</div>
+        <div>2. &nbsp;4.7 kΩ = <span class="ans"></span> Ω</div>
+        <div>5. &nbsp;0.5 V = <span class="ans"></span> mV</div>
+        <div>3. &nbsp;350 mA = <span class="ans"></span> A</div>
+        <div>6. &nbsp;1.5 MΩ = <span class="ans"></span> Ω</div>
+    </div>
+
+    <h2>Part C · Solve It</h2>
+    <p class="hint">Show the formula, plug in with units (convert to A, V, Ω first), and box your answer with units.</p>
+    <ol class="prob">
+        <li>A 9 V battery is connected across a 450 Ω resistor. What is the current?</li>
+        <div class="work"></div>
+        <li>2 A flows through a 6 Ω heating element. What voltage is across it?</li>
+        <div class="work"></div>
+        <li>A 12 V lamp draws 0.5 A. What is its resistance?</li>
+        <div class="work"></div>
+        <li>A 5 V Arduino pin drives current through a 1 kΩ resistor. What is the current in mA?</li>
+        <div class="work"></div>
+    </ol>
+</div>
+
+<!-- Page 2 -->
+<div class="page">
+    <h2 style="margin-top:0;">Part C · Solve It (continued)</h2>
+    <ol class="prob" start="5">
+        <li>20 mA flows through a 220 Ω resistor. What voltage is across the resistor?</li>
+        <div class="work"></div>
+        <li>A sensor needs 10 mA from a 3.3 V supply. What resistance would draw exactly that current?</li>
+        <div class="work"></div>
+        <li>A stalled robot drive motor pulls 30 A from a 12 V battery. What is the motor's resistance when stalled?</li>
+        <div class="work"></div>
+        <li>A 9 V battery is connected to a 4.7 kΩ resistor. What is the current in mA? (Round to two decimal places.)</li>
+        <div class="work"></div>
+    </ol>
+
+    <h2>Part D · Predict It</h2>
+    <p class="hint">No calculator needed. Answer each one and give a one-sentence reason.</p>
+    <ol class="short">
+        <li>The voltage stays the same and the resistance <strong>doubles</strong>. What happens to the current?<div class="lines"></div></li>
+        <li>The resistance stays the same and the voltage <strong>triples</strong>. What happens to the current?<div class="lines"></div></li>
+        <li>A wire connects + straight to − (about 0 Ω). What happens to the current, and why is it dangerous?<div class="lines"></div><div class="lines"></div></li>
+        <li>The switch in a circuit is open. What is the current, and what is the resistance of the open gap?<div class="lines"></div></li>
+    </ol>
+
+    <h2>Part E · LED Resistors</h2>
+    <div class="ref"><strong>R = (V<sub>supply</sub> − V<sub>f</sub>) ÷ I</strong> &nbsp;·&nbsp; Round <strong>up</strong> to the next standard value: 100, 120, 150, 180, 220, 270, 330, 360, 390, 470, 560, 680 Ω</div>
+    <ol class="prob" start="1" style="margin-top:6px;">
+        <li>A red LED (V<sub>f</sub> = 2.0 V) runs at 20 mA from a 9 V battery. Calculate R, then pick the standard resistor.</li>
+        <div class="work"></div>
+        <li>A blue LED (V<sub>f</sub> = 3.2 V) runs at 15 mA from a 5 V supply. Calculate R, then pick the standard resistor.</li>
+        <div class="work"></div>
+    </ol>
+</div>
+
+</body>
+</html>
