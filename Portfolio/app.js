@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.78',
+    VERSION: 'v2.14.79',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -2449,6 +2449,7 @@ function navigateTo(pageId) {
 
     if (pageId === 'dashboard') updateUI();
     if (pageId === 'quiz') loadQuizPage();
+    if (pageId === 'safety') loadSafetyPage();
 }
 
 // ============================================
@@ -6154,3 +6155,222 @@ function renderQuizResults(page) {
 function escapeHtmlQuiz(str) {
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+
+// ============================================
+// SAFETY TESTS — pass/fail, unlimited attempts
+// ============================================
+// Questions live in the backend's private SAFETY_QUIZ_REGISTRY. Each attempt is graded
+// right away; missed questions are flagged without revealing the right answer, and the
+// student can retake until they pass. Independent of the teacher-activated quiz above.
+const safetyState = { list: null, error: null, active: null, meta: null, result: null };
+
+async function loadSafetyPage() {
+    const page = document.getElementById('safetyPage');
+    if (!page || !state.student) return;
+    safetyState.active = null;
+    safetyState.result = null;
+    page.innerHTML = `
+        <div class="page-header"><h1 class="page-title"><i class="fas fa-hard-hat"></i> Safety Tests</h1></div>
+        <div style="text-align:center; padding:60px 20px; color:var(--gray-500);">
+            <i class="fas fa-spinner fa-spin" style="font-size:2rem; margin-bottom:16px;"></i>
+            <p>Loading your safety tests…</p>
+        </div>`;
+    try {
+        const res = await fetch(`${CONFIG.SHEETS_API_URL}?action=listSafetyQuizzes&email=${encodeURIComponent(state.student.email)}&_t=${Date.now()}`);
+        const data = await res.json();
+        safetyState.list = data.quizzes || [];
+        safetyState.error = data.error || null;
+    } catch (e) {
+        safetyState.list = null;
+        safetyState.error = 'Network error: ' + (e.message || e);
+    }
+    renderSafetyList();
+}
+
+function renderSafetyList() {
+    const page = document.getElementById('safetyPage');
+    if (!page) return;
+    const list = safetyState.list;
+    let body;
+    if (!list) {
+        body = `<div class="card" style="color:var(--danger); padding:20px;">Unable to load safety tests. Refresh the page or tell Mr. Bombich.
+                <br><span style="font-size:12px; color:var(--gray-500);">${escapeHtmlQuiz(safetyState.error || '')}</span></div>`;
+    } else if (!list.length) {
+        body = `<div class="card" style="padding:20px; color:var(--gray-600);">No safety tests are posted for your class yet.</div>`;
+    } else {
+        body = list.map(q => {
+            const status = q.passed
+                ? `<span style="font-weight:700; color:#065f46; background:#d1fae5; padding:3px 12px; border-radius:12px;"><i class="fas fa-check"></i> PASSED</span>`
+                : q.attempts
+                ? `<span style="font-weight:700; color:#92400e; background:#fef3c7; padding:3px 12px; border-radius:12px;">Not passed yet · ${q.attempts} attempt${q.attempts !== 1 ? 's' : ''}</span>`
+                : `<span style="font-weight:700; color:#6b7280; background:#f3f4f6; padding:3px 12px; border-radius:12px;">Not started</span>`;
+            const btn = q.passed
+                ? ''
+                : `<button type="button" class="btn btn-primary" onclick="startSafetyQuiz('${escapeHtmlQuiz(q.quizId)}')">
+                       <i class="fas ${q.attempts ? 'fa-redo' : 'fa-play'}"></i> ${q.attempts ? 'Retake Test' : 'Start Test'}
+                   </button>`;
+            return `
+                <div class="card" style="border:1px solid var(--gray-200); margin-bottom:18px; padding:22px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:8px;">
+                        <h3 style="margin:0;">${escapeHtmlQuiz(q.name)}</h3>
+                        ${status}
+                    </div>
+                    <p style="font-size:14px; color:var(--gray-600); margin-bottom:${btn ? '14px' : '0'};">
+                        ${q.questionCount} questions · pass with ${q.passPct}% · unlimited attempts
+                        ${q.review ? `<br>Review: ${escapeHtmlQuiz(q.review)}` : ''}
+                    </p>
+                    ${btn}
+                </div>`;
+        }).join('');
+    }
+    page.innerHTML = `
+        <div class="page-header">
+            <h1 class="page-title"><i class="fas fa-hard-hat"></i> Safety Tests</h1>
+            <p style="color:var(--gray-500); margin-top:6px;">Pass each test before you are trained to Operator level on that equipment.</p>
+        </div>
+        <div class="card" style="border-left:4px solid var(--warning, #f59e0b); background:rgba(245,158,11,0.05); margin-bottom:24px; padding:16px 20px;">
+            <p style="font-size:14px; color:var(--gray-600); line-height:1.6; margin:0;">
+                These tests are <strong>pass / fail</strong>. You must answer <strong>every question correctly</strong> to pass.
+                If you miss any, you'll see which ones. Review that topic and retake the test as many times as you need.
+            </p>
+        </div>
+        ${body}`;
+}
+
+function shuffleSafety(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+async function startSafetyQuiz(quizId) {
+    const page = document.getElementById('safetyPage');
+    safetyState.active = quizId;
+    safetyState.result = null;
+    page.innerHTML = `<div style="text-align:center; padding:60px 20px; color:var(--gray-500);"><i class="fas fa-spinner fa-spin" style="font-size:2rem;"></i></div>`;
+    try {
+        const res = await fetch(`${CONFIG.SHEETS_API_URL}?action=getQuizMeta&quizId=${encodeURIComponent(quizId)}&_t=${Date.now()}`);
+        const data = await res.json();
+        if (!data.questions) throw new Error(data.error || 'No questions returned');
+        safetyState.meta = data;
+    } catch (e) {
+        showToast('Could not load the test: ' + e.message, 'error');
+        renderSafetyList();
+        return;
+    }
+    const meta = safetyState.meta;
+    // Shuffle question order and option order on every attempt; values stay the original letters.
+    const questionsHtml = shuffleSafety(meta.questions).map((q, i) => `
+        <div class="card" id="sq-${q.id}" style="border:1px solid var(--gray-200); margin-bottom:18px; padding:22px;">
+            <span style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--gray-400);">Question ${i + 1}</span>
+            <p style="font-size:15px; line-height:1.65; margin:8px 0 14px; color:var(--gray-700);">${escapeHtmlQuiz(q.text)}</p>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                ${shuffleSafety(q.options || []).map(opt => `
+                    <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:14px; color:var(--gray-700); padding:10px 14px; border:1px solid var(--gray-200); border-radius:6px;">
+                        <input type="radio" name="sans-${q.id}" value="${escapeHtmlQuiz(String(opt).charAt(0))}" style="width:16px; height:16px; accent-color:var(--primary);"
+                               onchange="document.getElementById('sq-${q.id}').style.borderColor='var(--primary)'">
+                        ${escapeHtmlQuiz(String(opt).replace(/^\s*[A-Z]\)\s*/, ''))}
+                    </label>`).join('')}
+            </div>
+        </div>`).join('');
+    page.innerHTML = `
+        <div class="page-header">
+            <h1 class="page-title"><i class="fas fa-hard-hat"></i> ${escapeHtmlQuiz(meta.name)}</h1>
+            <p style="color:var(--gray-500); margin-top:6px;">${meta.questions.length} questions · answer every question correctly to pass</p>
+        </div>
+        <form id="safetyForm">
+            ${questionsHtml}
+            <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:8px;">
+                <button type="button" class="btn btn-secondary" onclick="loadSafetyPage()"><i class="fas fa-arrow-left"></i> Back</button>
+                <button type="submit" class="btn btn-primary" style="flex:1; padding:14px; font-size:16px;"><i class="fas fa-paper-plane"></i> Submit Test</button>
+            </div>
+        </form>`;
+    document.getElementById('safetyForm').addEventListener('submit', submitSafetyQuiz);
+    window.scrollTo(0, 0);
+}
+
+async function submitSafetyQuiz(e) {
+    e.preventDefault();
+    const meta = safetyState.meta;
+    const quizId = safetyState.active;
+    const btn = e.target.querySelector('button[type=submit]');
+    if (btn.disabled) return;
+    const missing = meta.questions.filter(q => !document.querySelector(`input[name="sans-${q.id}"]:checked`));
+    if (missing.length) {
+        missing.forEach(q => { document.getElementById('sq-' + q.id).style.borderColor = 'var(--danger, #ef4444)'; });
+        showToast(`Answer every question before submitting (${missing.length} left).`, 'error');
+        return;
+    }
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Grading…';
+    const payload = { action: 'submitQuiz', quizId, email: state.student.email, name: state.student.name,
+                      timestamp: new Date().toLocaleString() };
+    meta.questions.forEach(q => { payload[q.id] = document.querySelector(`input[name="sans-${q.id}"]:checked`).value; });
+    try {
+        const post = async () => (await fetch(CONFIG.SHEETS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload) })).json();
+        let data = await post();
+        if (data.error === 'grading_pending') {
+            // An earlier attempt was saved but never graded (tab closed mid-grade): grade it, then submit this one
+            await fetch(`${CONFIG.SHEETS_API_URL}?action=gradeQuizPending&email=${encodeURIComponent(state.student.email)}&quizId=${encodeURIComponent(quizId)}&_t=${Date.now()}`);
+            data = await post();
+        }
+        if (!data.success) {
+            if (data.error === 'already_passed') { showToast('You already passed this test.', 'success'); loadSafetyPage(); return; }
+            throw new Error(data.error || 'Submission failed');
+        }
+        // MC grading is instant on the backend; retry a few times in case of a slow response
+        let graded = null;
+        for (let i = 0; i < 4 && !graded; i++) {
+            const r = await fetch(`${CONFIG.SHEETS_API_URL}?action=gradeQuizPending&email=${encodeURIComponent(state.student.email)}&quizId=${encodeURIComponent(quizId)}&_t=${Date.now()}`);
+            const d = await r.json();
+            if (d.success && d.grades) graded = d;
+            else await new Promise(r2 => setTimeout(r2, 2000));
+        }
+        if (!graded) throw new Error('Grading did not finish — refresh in a minute to see your result.');
+        safetyState.result = graded;
+        renderSafetyResult();
+    } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Test';
+        showToast('Submission error: ' + err.message, 'error');
+    }
+}
+
+function renderSafetyResult() {
+    const page = document.getElementById('safetyPage');
+    const meta = safetyState.meta;
+    const r = safetyState.result;
+    const missed = meta.questions.filter(q => !(r.grades[q.id] && Number(r.grades[q.id].score) >= (q.pts || 1)));
+    const correct = meta.questions.length - missed.length;
+    const banner = r.passed
+        ? `<div class="card" style="border-left:4px solid var(--success, #10b981); background:rgba(16,185,129,0.06); padding:24px; margin-bottom:24px;">
+               <h2 style="margin:0 0 6px; color:#065f46;"><i class="fas fa-check-circle"></i> PASSED</h2>
+               <p style="margin:0; color:var(--gray-700);">${correct} / ${meta.questions.length} correct on attempt ${r.attempt}. Mr. Bombich can now train you to the next level on this equipment.</p>
+           </div>`
+        : `<div class="card" style="border-left:4px solid var(--danger, #ef4444); background:rgba(239,68,68,0.05); padding:24px; margin-bottom:24px;">
+               <h2 style="margin:0 0 6px; color:#991b1b;"><i class="fas fa-redo"></i> Not passed yet</h2>
+               <p style="margin:0; color:var(--gray-700);">${correct} / ${meta.questions.length} correct on attempt ${r.attempt}. You need every question right.
+               Review the questions below${meta.review ? ` and <strong>${escapeHtmlQuiz(meta.review)}</strong>` : ''}, then retake the test.</p>
+           </div>`;
+    const missedHtml = missed.length
+        ? `<h3 style="margin:0 0 12px;">Questions to review</h3>` + missed.map(q => `
+            <div class="card" style="border:1px solid var(--gray-200); margin-bottom:14px; padding:18px;">
+                <p style="font-size:15px; line-height:1.6; margin:0; color:var(--gray-700);"><i class="fas fa-times-circle" style="color:var(--danger, #ef4444);"></i> ${escapeHtmlQuiz(q.text)}</p>
+            </div>`).join('')
+        : '';
+    page.innerHTML = `
+        <div class="page-header"><h1 class="page-title"><i class="fas fa-hard-hat"></i> ${escapeHtmlQuiz(meta.name)}</h1></div>
+        ${banner}
+        ${missedHtml}
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:8px;">
+            <button type="button" class="btn btn-secondary" onclick="loadSafetyPage()"><i class="fas fa-arrow-left"></i> All Safety Tests</button>
+            ${r.passed ? '' : `<button type="button" class="btn btn-primary" onclick="startSafetyQuiz('${escapeHtmlQuiz(safetyState.active)}')"><i class="fas fa-redo"></i> Retake Test</button>`}
+        </div>`;
+    window.scrollTo(0, 0);
+}
+
+window.loadSafetyPage = loadSafetyPage;
+window.startSafetyQuiz = startSafetyQuiz;

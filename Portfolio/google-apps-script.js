@@ -388,6 +388,9 @@ function doGet(e) {
       case 'getQuizMeta':
         return jsonResponse(handleGetQuizMeta(e));
 
+      case 'listSafetyQuizzes':
+        return jsonResponse(handleListSafetyQuizzes(e));
+
       case 'repair':
         return jsonResponse(repairStudent(e.parameter.email));
 
@@ -1889,28 +1892,49 @@ Remember: respond with ONLY the JSON object, no other text.`;
 //     edp_quiz: { name, sheetName, maxPoints, context, questions: [{id, label, maxPts, question, rubric}, ...] }
 //   };
 
+// Safety tests live in a second private file, quiz-content-safety.js, which defines
+// SAFETY_QUIZ_REGISTRY. Those quizzes are pass/fail (passFail: true, passPct) with
+// unlimited attempts: every attempt is a new row on the quiz sheet, and the latest
+// row is the student's current status. They are listed on the portfolio's Safety page,
+// independent of the single teacher-activated quiz (quizKey).
+
+// Helper — returns the registry entry for a quiz ID from either registry (or null)
+function quizDef(quizId) {
+  if (typeof QUIZ_REGISTRY !== 'undefined' && QUIZ_REGISTRY[quizId]) return QUIZ_REGISTRY[quizId];
+  if (typeof SAFETY_QUIZ_REGISTRY !== 'undefined' && SAFETY_QUIZ_REGISTRY[quizId]) return SAFETY_QUIZ_REGISTRY[quizId];
+  return null;
+}
+
+function quizIsPassFail(quizId) {
+  const q = quizDef(quizId);
+  return !!(q && q.passFail);
+}
+
+// Points needed to pass a pass/fail quiz (passPct defaults to 100%)
+function quizPassPoints(quizId) {
+  const q = quizDef(quizId) || {};
+  const pct = q.passPct != null ? Number(q.passPct) : 100;
+  return Math.ceil((Number(quizScoredMax(quizId)) || 0) * pct / 100);
+}
+
 // Helper — returns questions array for a quiz ID (falls back to [] if registry not loaded)
 function quizQuestions(quizId) {
-  if (typeof QUIZ_REGISTRY !== 'undefined' && QUIZ_REGISTRY[quizId]) {
-    return QUIZ_REGISTRY[quizId].questions;
-  }
-  return [];
+  const q = quizDef(quizId);
+  return q ? q.questions : [];
 }
 
 // Helper — returns the sheet name for a quiz ID
 function quizSheetName(quizId) {
-  if (typeof QUIZ_REGISTRY !== 'undefined' && QUIZ_REGISTRY[quizId]) {
-    return QUIZ_REGISTRY[quizId].sheetName;
-  }
-  return SHEET_NAMES.QUIZ; // fallback to legacy constant
+  const q = quizDef(quizId);
+  return q ? q.sheetName : SHEET_NAMES.QUIZ; // fallback to legacy constant
 }
 
 function handleGetQuizMeta(e) {
   const quizId = (e.parameter.quizId || 'edp_quiz').trim();
-  if (typeof QUIZ_REGISTRY === 'undefined' || !QUIZ_REGISTRY[quizId]) {
+  const quiz = quizDef(quizId);
+  if (!quiz) {
     return { error: 'Quiz registry not loaded or quiz not found: ' + quizId };
   }
-  const quiz = QUIZ_REGISTRY[quizId];
   const excluded = quizExcludedIds(quizId);
   return {
     quizId,
@@ -1918,9 +1942,44 @@ function handleGetQuizMeta(e) {
     maxPoints: quizScoredMax(quizId),
     excluded,
     bonus: quizBonus(quizId),
+    passFail: !!quiz.passFail,
+    passPct: quiz.passFail ? (quiz.passPct != null ? quiz.passPct : 100) : null,
+    passPoints: quiz.passFail ? quizPassPoints(quizId) : null,
+    review: quiz.review || null,
     questions: quiz.questions.map(q => ({ id: q.id, label: q.label, pts: q.maxPts, text: q.question, type: q.type || 'open', options: q.options || null,
                                           excluded: excluded.indexOf(q.id) !== -1 }))
   };
+}
+
+// Lists the safety tests with this student's status on each (no question content).
+function handleListSafetyQuizzes(e) {
+  const email = (e.parameter.email || '').trim();
+  if (typeof SAFETY_QUIZ_REGISTRY === 'undefined') return { quizzes: [] };
+  const ids = Object.keys(SAFETY_QUIZ_REGISTRY)
+    .sort((a, b) => (SAFETY_QUIZ_REGISTRY[a].order || 99) - (SAFETY_QUIZ_REGISTRY[b].order || 99));
+  const quizzes = ids.map(quizId => {
+    const quiz = SAFETY_QUIZ_REGISTRY[quizId];
+    const item = { quizId, name: quiz.name, questionCount: quiz.questions.length,
+                   passPct: quiz.passPct != null ? quiz.passPct : 100, review: quiz.review || null,
+                   attempts: 0, passed: false, passedAt: null, gradingPending: false, lastScore: null };
+    if (!email) return item;
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(quiz.sheetName);
+    if (!sheet || sheet.getLastRow() < 2) return item;
+    const n = quiz.questions.length;
+    const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 3 + n * 3 + 4).getValues()
+      .filter(r => String(r[1]).toLowerCase().trim() === email.toLowerCase());
+    item.attempts = rows.length;
+    const passRow = rows.find(r => r[3 + n * 3 + 3] === 'PASS');
+    if (passRow) { item.passed = true; item.passedAt = String(passRow[0]); }
+    if (rows.length) {
+      const last = rows[rows.length - 1];
+      const total = last[3 + n * 3];
+      item.gradingPending = !item.passed && (total === '' || total === null);
+      item.lastScore = (total === '' || total === null) ? null : Number(total);
+    }
+    return item;
+  });
+  return { quizzes };
 }
 
 // ── Question exclusions ("no-grade" a question after the fact) ──────────────────
@@ -1952,7 +2011,7 @@ function quizCountsToward(quizId) {
 function quizScoredMax(quizId) {
   const excluded = quizExcludedIds(quizId);
   const questions = quizQuestions(quizId);
-  if (!questions.length) return ((typeof QUIZ_REGISTRY !== 'undefined' && QUIZ_REGISTRY[quizId]) || {}).maxPoints;
+  if (!questions.length) return (quizDef(quizId) || {}).maxPoints;
   return questions.reduce((sum, q) => sum + (excluded.indexOf(q.id) === -1 ? (Number(q.maxPts) || 0) : 0), 0);
 }
 
@@ -2015,6 +2074,7 @@ function getOrCreateQuizSheet(quizId) {
       headers.push(q.label + ' Answer', q.label + ' AI Score', q.label + ' AI Feedback');
     });
     headers.push('AI Total', 'Teacher Final Score');
+    if (quizIsPassFail(quizId)) headers.push('Attempt', 'Result');
     sheet.appendRow(headers);
     sheet.setFrozenRows(1);
     let col = 4;
@@ -2030,12 +2090,26 @@ function getOrCreateQuizSheet(quizId) {
   return sheet;
 }
 
+// Returns the 1-based row of the student's LATEST submission (0 if none). One-attempt
+// quizzes only ever have one row per email; pass/fail quizzes get a row per attempt.
 function quizEmailSubmitted(sheet, email) {
   const data = sheet.getDataRange().getValues();
-  for (let i = 1; i < data.length; i++) {
+  for (let i = data.length - 1; i >= 1; i--) {
     if (String(data[i][1]).toLowerCase().trim() === email.toLowerCase().trim()) return i + 1; // 1-based row
   }
   return 0;
+}
+
+// Pass/fail bookkeeping columns sit after Teacher Final Score (1-based).
+function quizAttemptCol(quizId) { return quizQuestions(quizId).length * 3 + 6; }
+function quizResultCol(quizId)  { return quizQuestions(quizId).length * 3 + 7; }
+
+// Writes PASS / NOT YET for a graded pass/fail attempt; returns the pass/fail summary.
+function quizRecordResult(quizId, sheet, rowNum, aiTotal) {
+  const passed = Number(aiTotal) >= quizPassPoints(quizId);
+  sheet.getRange(rowNum, quizResultCol(quizId)).setValue(passed ? 'PASS' : 'NOT YET');
+  const attempt = sheet.getRange(rowNum, quizAttemptCol(quizId)).getValue();
+  return { passFail: true, passed, attempt: Number(attempt) || 1, passPoints: quizPassPoints(quizId) };
 }
 
 function handleCheckQuiz(e) {
@@ -2056,7 +2130,14 @@ function handleCheckQuiz(e) {
   });
   const aiTotal = rowData[col];
   const gradingPending = (aiTotal === '' || aiTotal === null || aiTotal === undefined);
-  return { submitted: true, grades, aiTotal, gradingPending };
+  const result = { submitted: true, grades, aiTotal, gradingPending };
+  if (quizIsPassFail(quizId)) {
+    result.passFail   = true;
+    result.attempt    = Number(rowData[col + 2]) || 1;
+    result.passed     = rowData[col + 3] === 'PASS';
+    result.passPoints = quizPassPoints(quizId);
+  }
+  return result;
 }
 
 function handleSubmitQuiz(data) {
@@ -2067,7 +2148,18 @@ function handleSubmitQuiz(data) {
   const questions = quizQuestions(quizId).length ? quizQuestions(quizId) : QUIZ_QUESTIONS;
 
   const sheet = getOrCreateQuizSheet(quizId);
-  if (quizEmailSubmitted(sheet, email)) return { success: false, error: 'already_submitted' };
+  const passFail = quizIsPassFail(quizId);
+  const prevRow = quizEmailSubmitted(sheet, email);
+  let attempt = 1;
+  if (prevRow) {
+    if (!passFail) return { success: false, error: 'already_submitted' };
+    // Pass/fail: a retake is allowed only after the latest attempt is graded and not passed
+    const n = questions.length;
+    const prev = sheet.getRange(prevRow, 1, 1, n * 3 + 7).getValues()[0];
+    if (prev[n * 3 + 6] === 'PASS') return { success: false, error: 'already_passed' };
+    if (prev[n * 3 + 3] === '' || prev[n * 3 + 3] === null) return { success: false, error: 'grading_pending' };
+    attempt = (Number(prev[n * 3 + 5]) || 1) + 1;
+  }
 
   // Save answers immediately — grading happens separately via gradeQuizPending
   const row = [data.timestamp || new Date().toLocaleString(), email, data.name || ''];
@@ -2075,10 +2167,11 @@ function handleSubmitQuiz(data) {
     row.push((data[q.id] || '').trim(), '', ''); // answer, empty score, empty feedback
   });
   row.push('', ''); // empty aiTotal, empty teacher-final col
+  if (passFail) row.push(attempt, '');
   sheet.appendRow(row);
 
-  logActivity('QUIZ_SUBMIT', email, 'Answers saved — grading pending');
-  return { success: true, gradingPending: true };
+  logActivity('QUIZ_SUBMIT', email, quizId + (passFail ? ' attempt ' + attempt : '') + ' — answers saved, grading pending');
+  return { success: true, gradingPending: true, attempt };
 }
 
 function handleGradeQuizPending(e) {
@@ -2104,7 +2197,9 @@ function handleGradeQuizPending(e) {
       grades[q.id] = { answer: rowData[c], score: rowData[c + 1], feedback: rowData[c + 2] };
       c += 3;
     });
-    return { success: true, grades, aiTotal: existingTotal };
+    const done = { success: true, grades, aiTotal: existingTotal };
+    if (quizIsPassFail(quizId)) Object.assign(done, quizRecordResult(quizId, sheet, rowNum, existingTotal));
+    return done;
   }
 
   // Read saved answers
@@ -2138,8 +2233,10 @@ function handleGradeQuizPending(e) {
   newRow[ci] = aiTotal; // aiTotal column
   sheet.getRange(rowNum, 1, 1, newRow.length).setValues([newRow]);
 
-  logActivity('QUIZ_GRADE', email, `AI Total: ${aiTotal}/${quizScoredMax(quizId)}`);
-  return { success: true, grades: gradeMap, aiTotal };
+  const graded = { success: true, grades: gradeMap, aiTotal };
+  if (quizIsPassFail(quizId)) Object.assign(graded, quizRecordResult(quizId, sheet, rowNum, aiTotal));
+  logActivity('QUIZ_GRADE', email, `${quizId} AI Total: ${aiTotal}/${quizScoredMax(quizId)}` + (graded.passFail ? (graded.passed ? ' PASS' : ' NOT YET') : ''));
+  return graded;
 }
 
 function handleRegradeQuiz(data) {
@@ -2179,6 +2276,7 @@ function handleRegradeQuiz(data) {
     col += 3;
   });
   sheet.getRange(rowNum, col + 1).setValue(aiTotal);
+  if (quizIsPassFail(quizId)) quizRecordResult(quizId, sheet, rowNum, aiTotal);
 
   logActivity('QUIZ_REGRADE', email, `AI Total: ${aiTotal}/${quizScoredMax(quizId)}`);
   return { success: true, grades: gradeMap, aiTotal };
@@ -2226,10 +2324,13 @@ function gradeQuiz(quizId, answers) {
       if (match) correctText = String(match).replace(/^\s*[A-Z]\)\s*/i, '').trim();
     }
 
+    // Pass/fail quizzes allow retakes, so they never reveal the correct answer.
     gradeMap[q.id] = {
       score:    isRight ? q.maxPts : 0,
       feedback: isRight
         ? 'Correct!'
+        : quizIsPassFail(quizId)
+        ? 'Incorrect — review this topic and try again.'
         : 'Incorrect — the correct answer is ' + q.correctAnswer + (correctText ? ': ' + correctText : '') + '.'
     };
   });
@@ -2237,9 +2338,7 @@ function gradeQuiz(quizId, answers) {
   // If there are no open-ended questions, skip Claude entirely
   if (!openQuestions.length) return gradeMap;
 
-  const context = (typeof QUIZ_REGISTRY !== 'undefined' && QUIZ_REGISTRY[quizId])
-    ? (QUIZ_REGISTRY[quizId].context || 'robotics and programming')
-    : 'robotics and programming';
+  const context = (quizDef(quizId) || {}).context || 'robotics and programming';
 
   const apiKey = PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY');
   if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set in Script Properties.');
