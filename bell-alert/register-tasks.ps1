@@ -51,11 +51,16 @@ Write-Host "Registered '$hotspotName'."
 
 # ── Bell scheduler ────────────────────────────────────────────────────────────
 $bellName = "Bell Alert"
-$bellTrigger = New-ScheduledTaskTrigger -AtLogOn -User $user
-$bellTrigger.Delay = "PT1M"   # give the hotspot a head start
+$bellLogon = New-ScheduledTaskTrigger -AtLogOn -User $user
+$bellLogon.Delay = "PT1M"   # give the hotspot a head start
+# Safety net: start it every school-day morning too, in case it died or never
+# started (laptop asleep at logon, etc.). IgnoreNew makes this a no-op if running.
+$bellMorning = New-ScheduledTaskTrigger -Weekly -DaysOfWeek $days -At '6:45AM'
+$bellTrigger = @($bellLogon, $bellMorning)
 $bellAction = New-ScheduledTaskAction -Execute $pythonw -Argument "bell_scheduler.py" -WorkingDirectory $dir
 $bellSettings = New-ScheduledTaskSettingsSet `
     -MultipleInstances IgnoreNew `
+    -StartWhenAvailable `
     -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries `
     -ExecutionTimeLimit ([TimeSpan]::Zero) `
     -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1)

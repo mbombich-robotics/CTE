@@ -167,6 +167,27 @@ def build_events(bells: list[tuple[str, str]]) -> list[tuple[datetime, bool]]:
     return events
 
 
+# ── Waiting ───────────────────────────────────────────────────────────────────
+def wait_until(target: datetime, chunk_s: float = 30.0) -> None:
+    """Sleep until the wall clock reaches `target`, in short chunks.
+
+    One long time.sleep() does not count time the laptop spends asleep, so a
+    10-hour "sleep until midnight" could still be waiting days later after the
+    lid was closed over a weekend. Re-checking datetime.now() every chunk keeps
+    us pinned to the real clock, so we catch up within 30 s of waking.
+    """
+    while True:
+        remaining = (target - datetime.now()).total_seconds()
+        if remaining <= 0:
+            return
+        time.sleep(min(remaining, chunk_s))
+
+
+def _day_label(d: date) -> str:
+    # "%-d" is not supported on Windows — build the label by hand.
+    return f"{d.strftime('%A %b')} {d.day}"
+
+
 # ── Main loop ─────────────────────────────────────────────────────────────────
 def run():
     log.info("Bell alert scheduler started  macs=%s", SHELLY_MACS)
@@ -188,28 +209,23 @@ def run():
         today = now.date()
         bells = get_today_bells()
 
-        if bells is None:
-            midnight = datetime(today.year, today.month, today.day) + timedelta(days=1)
-            sleep_s  = (midnight - now).total_seconds() + 5
-            reason   = "weekend" if today.weekday() >= 5 else "skip / no school"
-            log.info("No bells today (%s) — sleeping until %s", reason, midnight.date())
-            time.sleep(sleep_s)
-            # Reload config and re-resolve after midnight
-            importlib.reload(_cfg)
-            log.info("Config reloaded for %s", (today + timedelta(days=1)).strftime("%A %b %-d"))
-            shelly_ips = resolve_ips() or shelly_ips
-            continue
-
-        pending = [(dt, on) for dt, on in build_events(bells) if dt > now]
+        pending = [] if bells is None else [(dt, on) for dt, on in build_events(bells) if dt > now]
 
         if not pending:
-            midnight = datetime(today.year, today.month, today.day) + timedelta(days=1)
-            sleep_s  = (midnight - now).total_seconds() + 5
-            log.info("All bells done for today — sleeping until %s", midnight.date())
-            time.sleep(sleep_s)
-            # Reload config and re-resolve after midnight
-            importlib.reload(_cfg)
-            log.info("Config reloaded for %s", (today + timedelta(days=1)).strftime("%A %b %-d"))
+            midnight = datetime(today.year, today.month, today.day) + timedelta(days=1, seconds=5)
+            if bells is None:
+                reason = "weekend" if today.weekday() >= 5 else "skip / no school"
+                log.info("No bells today (%s) — sleeping until %s", reason, midnight.date())
+            else:
+                log.info("All bells done for today — sleeping until %s", midnight.date())
+            wait_until(midnight)
+            # New day (possibly several days later if the laptop slept): reload config
+            # and re-resolve. Errors here must not kill the scheduler.
+            try:
+                importlib.reload(_cfg)
+                log.info("Config reloaded for %s", _day_label(date.today()))
+            except Exception as e:
+                log.error("Config reload failed — keeping previous config: %s", e)
             shelly_ips = resolve_ips() or shelly_ips
             continue
 
@@ -219,10 +235,19 @@ def run():
         if sleep_s > 0:
             log.info("Next event: %s %s  (in %.0f s)",
                      next_dt.strftime("%H:%M"), "ON" if next_on else "OFF", sleep_s)
-            time.sleep(max(sleep_s - 1, 0))
+            wait_until(next_dt - timedelta(seconds=1))
 
         while datetime.now() < next_dt:
             time.sleep(0.1)
+
+        # Woke up long after this event (laptop was asleep)? Skip it instead of
+        # flashing a stale bell; an ON whose OFF has also passed is pointless.
+        if (datetime.now() - next_dt).total_seconds() > 120:
+            log.warning("Missed %s %s (laptop asleep?) — skipping",
+                        next_dt.strftime("%H:%M"), "ON" if next_on else "OFF")
+            if not next_on:
+                set_plugs(False, shelly_ips)   # make sure the light isn't left on
+            continue
 
         # Re-resolve immediately before firing — IP may have changed since startup
         # if the hotspot restarted or a DHCP lease was renewed mid-day.
