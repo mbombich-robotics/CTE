@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.80',
+    VERSION: 'v2.14.81',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -6359,7 +6359,8 @@ function renderSafetyResult() {
         ? `<h3 style="margin:0 0 12px;">Questions to review</h3>` + missed.map(q => `
             <div class="card" style="border:1px solid var(--gray-200); margin-bottom:14px; padding:18px;">
                 <p style="font-size:15px; line-height:1.6; margin:0; color:var(--gray-700);"><i class="fas fa-times-circle" style="color:var(--danger, #ef4444);"></i> ${escapeHtmlQuiz(q.text)}</p>
-                ${q.hint ? `<p style="font-size:13px; margin:8px 0 0 22px; color:var(--gray-600);"><i class="fas fa-book-open" style="color:var(--primary, #3b82f6);"></i> Review: ${escapeHtmlQuiz(q.hint)}</p>` : ''}
+                ${q.hint ? `<p style="font-size:14px; margin:8px 0 0 22px; color:var(--gray-700);"><i class="fas fa-lightbulb" style="color:#f59e0b;"></i> Hint: ${escapeHtmlQuiz(q.hint)}</p>` : ''}
+                ${q.ref ? `<p style="font-size:12px; margin:4px 0 0 22px; color:var(--gray-500);"><i class="fas fa-book-open"></i> Review: ${escapeHtmlQuiz(q.ref)}</p>` : ''}
             </div>`).join('')
         : '';
     page.innerHTML = `

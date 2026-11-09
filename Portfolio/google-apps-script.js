@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.78';
+const BACKEND_VERSION = 'v2.14.81';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -1947,7 +1947,7 @@ function handleGetQuizMeta(e) {
     passPoints: quiz.passFail ? quizPassPoints(quizId) : null,
     review: quiz.review || null,
     questions: quiz.questions.map(q => ({ id: q.id, label: q.label, pts: q.maxPts, text: q.question, type: q.type || 'open', options: q.options || null,
-                                          hint: q.hint || null, excluded: excluded.indexOf(q.id) !== -1 }))
+                                          hint: q.hint || null, ref: q.ref || null, excluded: excluded.indexOf(q.id) !== -1 }))
   };
 }
 
