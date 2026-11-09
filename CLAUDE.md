@@ -41,6 +41,16 @@ When generating multiple-choice exam questions (final, midterm, unit quiz), **th
 
 ---
 
+## Portfolio quizzes — one script file per new quiz
+
+Each new quiz (or quiz set) gets its **own** Apps Script file, e.g. `Portfolio/quiz-content-safety.js` — do NOT append new quizzes into the existing per-course `quiz-content-<course>.js` files.
+
+- The file defines its own registry constant (e.g. `SAFETY_QUIZ_REGISTRY`); the backend's `quizDef()` lookup in `google-apps-script.js` must be taught to check it.
+- The name must match `quiz-content*.js` so `.gitignore` keeps it (and its answers) out of the public repo. Never commit quiz content or answer keys.
+- Tell the user which file(s) to paste into each course's Apps Script project and to deploy a new version.
+
+---
+
 ## Notes for Claude
 
 - Prefer this file over local auto-memory for anything durable and project-wide.
