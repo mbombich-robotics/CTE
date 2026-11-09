@@ -1947,7 +1947,7 @@ function handleGetQuizMeta(e) {
     passPoints: quiz.passFail ? quizPassPoints(quizId) : null,
     review: quiz.review || null,
     questions: quiz.questions.map(q => ({ id: q.id, label: q.label, pts: q.maxPts, text: q.question, type: q.type || 'open', options: q.options || null,
-                                          excluded: excluded.indexOf(q.id) !== -1 }))
+                                          hint: q.hint || null, excluded: excluded.indexOf(q.id) !== -1 }))
   };
 }
 
