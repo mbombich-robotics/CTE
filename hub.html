@@ -1016,6 +1016,16 @@ function renderThisWeek(track, weekData, meta, week, isCurrent) {
   // Build lesson rows from daily schedule entries
   const days = (weekData?.daily || []).filter(d => !d.content.startsWith('No School'));
   const lessonRows = days.map(d => {
+    if (Array.isArray(d.links) && d.links.length) {
+      // One day, several resources: one clickable row per link
+      return d.links.map(l => `<a class="lesson-row" href="${h(l.url)}" target="_blank" rel="noopener">
+        <div class="l-icon">▶️</div>
+        <div class="l-info">
+          <div class="l-type">${h(d.day)} · ${h(d.content)}</div>
+          <div class="l-name">${h(l.label)}</div>
+        </div>
+        <span class="l-arr">›</span></a>`).join('');
+    }
     if (d.url) {
       return `<a class="lesson-row" href="${h(appendTrack(d.url, track))}" target="_blank" rel="noopener">
         <div class="l-icon">📐</div>
