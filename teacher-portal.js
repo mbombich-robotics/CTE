@@ -1811,7 +1811,8 @@ function updateGradeReport() {
                 .filter(r => String(r[1]).toLowerCase().trim() === String(email).toLowerCase().trim());
             let text = '', style = 'color: var(--gray-300);', title = '';
             if (rows.length) {
-                const passed = rows.some(r => r[3 + n * 3 + 3] === 'PASS');
+                // Search the whole row: rows from before a question-count change have PASS in a different column.
+                const passed = rows.some(r => r.slice(3).some(v => v === 'PASS'));
                 const last = rows[rows.length - 1];
                 const pending = !passed && (last[3 + n * 3] === '' || last[3 + n * 3] == null);
                 text  = passed ? 'PASS' : (pending ? 'pending' : 'Not yet');

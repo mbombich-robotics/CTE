@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.82';
+const BACKEND_VERSION = 'v2.14.83';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -1980,10 +1980,10 @@ function handleListSafetyQuizzes(e) {
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(quiz.sheetName);
     if (!sheet || sheet.getLastRow() < 2) return item;
     const n = quiz.questions.length;
-    const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 3 + n * 3 + 4).getValues()
+    const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, Math.max(sheet.getLastColumn(), 3 + n * 3 + 4)).getValues()
       .filter(r => String(r[1]).toLowerCase().trim() === email.toLowerCase());
     item.attempts = rows.length;
-    const passRow = rows.find(r => r[3 + n * 3 + 3] === 'PASS');
+    const passRow = rows.find(quizRowPassed);
     if (passRow) { item.passed = true; item.passedAt = String(passRow[0]); }
     if (rows.length) {
       const last = rows[rows.length - 1];
@@ -2114,6 +2114,13 @@ function quizEmailSubmitted(sheet, email) {
   return 0;
 }
 
+// True if a pass/fail quiz row is marked PASS. Searches the whole row rather than one
+// fixed column: rows written before the question count changed have their Result
+// column further right (or left) than the current layout puts it.
+function quizRowPassed(row) {
+  return row.slice(3).some(v => v === 'PASS');
+}
+
 // Pass/fail bookkeeping columns sit after Teacher Final Score (1-based).
 function quizAttemptCol(quizId) { return quizQuestions(quizId).length * 3 + 6; }
 function quizResultCol(quizId)  { return quizQuestions(quizId).length * 3 + 7; }
@@ -2148,7 +2155,7 @@ function handleCheckQuiz(e) {
   if (quizIsPassFail(quizId)) {
     result.passFail   = true;
     result.attempt    = Number(rowData[col + 2]) || 1;
-    result.passed     = rowData[col + 3] === 'PASS';
+    result.passed     = quizRowPassed(rowData);
     result.passPoints = quizPassPoints(quizId);
   }
   return result;
@@ -2169,8 +2176,8 @@ function handleSubmitQuiz(data) {
     if (!passFail) return { success: false, error: 'already_submitted' };
     // Pass/fail: a retake is allowed only after the latest attempt is graded and not passed
     const n = questions.length;
-    const prev = sheet.getRange(prevRow, 1, 1, n * 3 + 7).getValues()[0];
-    if (prev[n * 3 + 6] === 'PASS') return { success: false, error: 'already_passed' };
+    const prev = sheet.getRange(prevRow, 1, 1, Math.max(sheet.getLastColumn(), n * 3 + 7)).getValues()[0];
+    if (quizRowPassed(prev)) return { success: false, error: 'already_passed' };
     if (prev[n * 3 + 3] === '' || prev[n * 3 + 3] === null) return { success: false, error: 'grading_pending' };
     attempt = (Number(prev[n * 3 + 5]) || 1) + 1;
   }
