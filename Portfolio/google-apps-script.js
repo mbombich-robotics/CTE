@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.81';
+const BACKEND_VERSION = 'v2.14.82';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -1447,6 +1447,19 @@ function loadAllData() {
     });
   }
 
+  // Pass/fail safety tests: rows go into the same `quizzes` map, plus a small
+  // list (in display order) so the teacher portal can add a column per test.
+  const safetyQuizzes = [];
+  if (typeof SAFETY_QUIZ_REGISTRY !== 'undefined') {
+    Object.keys(SAFETY_QUIZ_REGISTRY)
+      .sort((a, b) => (SAFETY_QUIZ_REGISTRY[a].order || 99) - (SAFETY_QUIZ_REGISTRY[b].order || 99))
+      .forEach(quizId => {
+        const q = SAFETY_QUIZ_REGISTRY[quizId];
+        quizzes[quizId] = safeGetSheet(q.sheetName).slice(1);
+        safetyQuizzes.push({ id: quizId, name: q.name, questionCount: q.questions.length });
+      });
+  }
+
   return {
     students:     students.slice(1),
     reflections:  reflections.slice(1),
@@ -1455,6 +1468,7 @@ function loadAllData() {
     quiz:         quiz.slice(1),     // legacy — kept so older frontends still work
     quizzes:      quizzes,           // new — keyed by quizId
     quizSettings: quizSettings,      // excluded questions + scored max per quiz
+    safetyQuizzes: safetyQuizzes,    // [{id, name, questionCount}] — pass/fail, rows in quizzes[id]
     summary: {
       totalStudents:     Math.max(0, students.length - 1),
       totalReflections:  Math.max(0, reflections.length - 1),

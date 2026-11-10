@@ -1711,6 +1711,9 @@ function updateGradeReport() {
     if (showQuizzes) {
         course.quizzes.forEach(q => headers.push(q.name));
     }
+    // Pass/fail safety tests (unlimited retakes) — shown as PASS / Not yet, not in Total.
+    const safetyQuizzes = (typeFilter === 'quiz' || typeFilter === 'all') ? (state.rawData?.safetyQuizzes || []) : [];
+    safetyQuizzes.forEach(q => headers.push(q.name));
     headers.push('Total');
 
     thead.innerHTML = `<tr>${headers.map(h => `<th style="position: sticky; top: 0; background: var(--gray-100); padding: 8px; text-align: left; font-size: 12px; white-space: nowrap;">${h}</th>`).join('')}</tr>`;
@@ -1801,6 +1804,23 @@ function updateGradeReport() {
                 row.push(`<td style="padding: 6px 8px; text-align: center; ${cellStyle}"${title}>${quizScore !== '' ? quizScore : (started ? '-' : '')}</td>`);
             });
         }
+
+        safetyQuizzes.forEach(sq => {
+            const n = sq.questionCount;
+            const rows = (state.rawData?.quizzes?.[sq.id] || [])
+                .filter(r => String(r[1]).toLowerCase().trim() === String(email).toLowerCase().trim());
+            let text = '', style = 'color: var(--gray-300);', title = '';
+            if (rows.length) {
+                const passed = rows.some(r => r[3 + n * 3 + 3] === 'PASS');
+                const last = rows[rows.length - 1];
+                const pending = !passed && (last[3 + n * 3] === '' || last[3 + n * 3] == null);
+                text  = passed ? 'PASS' : (pending ? 'pending' : 'Not yet');
+                style = passed ? 'color: var(--success, #16a34a); font-weight: 600;' : 'color: var(--warning);';
+                title = ` title="${rows.length} attempt${rows.length === 1 ? '' : 's'}"`;
+                if (!passed) text += ` (${rows.length})`;
+            }
+            row.push(`<td style="padding: 6px 8px; text-align: center; white-space: nowrap; ${style}"${title}>${text}</td>`);
+        });
 
         row.push(`<td style="padding: 6px 8px; text-align: center; font-weight: 600;">${total}${maxTotal > 0 ? '/' + maxTotal : ''}</td>`);
 
