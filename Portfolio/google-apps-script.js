@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.83';
+const BACKEND_VERSION = 'v2.14.85';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -932,12 +932,14 @@ function saveDeliverable(student, id, deliverable) {
       (existingGrade === '' || existingGrade === null || existingGrade === undefined)) {
     const score = latestPracticalScore(student.email, id);
     if (score !== '') {
-      sheet.getRange(rowIndex, 10, 1, 3).setValues([[score, 'Verify Work screenshot check: ' + score + '/10', new Date().toISOString()]]);
+      sheet.getRange(rowIndex, 10, 1, 3).setValues([[score, 'Verify Work screenshot check: ' + score + '/' + practicalMax(id), new Date().toISOString()]]);
     }
   }
 }
 
-const CAD_PRACTICAL_IDS = [28, 426];
+// Screenshot-checked deliverables (Verify Work -> score recorded on submit):
+// CAD Quiz practicals 28 / 426 and DBL D2.6 Fusion tutorials 427.
+const CAD_PRACTICAL_IDS = [28, 426, 427];
 
 /**
  * Teacher records a student's email-submitted deliverable.
@@ -2784,7 +2786,7 @@ function handleCreateDeliverableDoc(data) {
 
   // Look up template: specific key first, then shared component fallback.
   // CAD Quiz practicals (28, 426) have their own templates — never fall back to Component.
-  var NO_COMPONENT_FALLBACK = [28, 426];
+  var NO_COMPONENT_FALLBACK = [28, 426, 427];
   var props      = PropertiesService.getScriptProperties();
   var templateId = props.getProperty('DELIVERABLE_DOC_TEMPLATE_' + templateLookupId)
                 || (NO_COMPONENT_FALLBACK.indexOf(deliverableId) === -1
@@ -2847,7 +2849,7 @@ function handleGetDocAIFeedback(data) {
 
   // CAD Quiz practicals have their own budget: CAD_PRACTICAL_CHECK_LIMIT checks in total,
   // separate from (and not counted against) the daily limit for other deliverables.
-  var isPractical = deliverableId === 426 || deliverableId === 28;
+  var isPractical = CAD_PRACTICAL_IDS.indexOf(deliverableId) !== -1;
   var practicalChecksUsed = 0;
   if (isPractical && !isTeacher) {
     practicalChecksUsed = countPracticalChecks(email, deliverableId);
@@ -2902,7 +2904,7 @@ function handleGetDocAIFeedback(data) {
 
     // CAD Quiz practicals are graded by looking at the screenshots themselves.
     var grades = isPractical
-      ? gradeCadPracticalScreenshots(body, deliverableId)
+      ? (deliverableId === 427 ? gradeFusionTutorialScreenshots(body) : gradeCadPracticalScreenshots(body, deliverableId))
       : gradeDocWithRubric(imageNote + text, deliverableId);
 
     if (isTeacher) {
@@ -2910,7 +2912,7 @@ function handleGetDocAIFeedback(data) {
     } else if (isPractical) {
       var practicalScore = Object.keys(grades).reduce(function(sum, k) { return sum + (Number(grades[k].score) || 0); }, 0);
       logActivity('DOC_AI_PRACTICAL', email, 'D' + deliverableId + ' | check ' + (practicalChecksUsed + 1) + '/' + CAD_PRACTICAL_CHECK_LIMIT +
-        ' | score ' + practicalScore + '/10');
+        ' | score ' + practicalScore + '/' + practicalMax(deliverableId));
       return { success: true, grades: grades, checksUsed: practicalChecksUsed + 1, checkLimit: CAD_PRACTICAL_CHECK_LIMIT };
     } else {
       logActivity('DOC_AI_FEEDBACK', email, 'D' + deliverableId + ' | use ' + (usedToday + 1) + '/' + DAILY_AI_FEEDBACK_LIMIT + ' today');
@@ -3194,6 +3196,115 @@ reflection (max 4): Depth and specificity of the Section 4 reflection. 4=specifi
 var CAD_PRACTICAL_CHECK_LIMIT = 5;   // Verify Work clicks per practical (total, not per day)
 var CAD_PRACTICAL_MAX_IMAGES = 6;
 var CAD_PRACTICAL_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'];
+
+function practicalMax(deliverableId) { return Number(deliverableId) === 427 ? 20 : 10; }
+
+/**
+ * DBL D2.6 (427): screenshots of the two "Fusion in 30 Days" models. Two checks, 10 / 5 / 0:
+ *   soda_bottle - 10 finished bottle shown in 3D / 5 started or 2D sketch only
+ *   phone_case  - 10 finished phone case shown in 3D / 5 started or 2D sketch only
+ */
+function gradeFusionTutorialScreenshots(body) {
+  var imgs = collectDocImages_(body);
+  if (!imgs.content.length) {
+    var none = imgs.skippedLarge
+      ? 'Your screenshots are too large to check — use Win+Shift+S to capture just the Fusion window, then paste again.'
+      : 'No screenshots found. Paste them into the doc with Win+Shift+S, then Ctrl+V.';
+    return {
+      soda_bottle: { score: 0, max: 10, feedback: none },
+      phone_case:  { score: 0, max: 10, feedback: none }
+    };
+  }
+  var content = imgs.content;
+  content.push({ type: 'text', text:
+    'These are screenshots a high school student pasted into a Google Doc. They followed two Autodesk Fusion 360 video tutorials ' +
+    'and should show two finished 3D models: a soda bottle (a round bottle, usually made by revolving a profile, often with a neck/cap and a shaped base) ' +
+    'and a phone case (a thin-walled rounded-rectangle shell that wraps a phone, often with a camera cutout and button openings).\n\n' +
+    'Score each model. Use the best screenshot for each; one screenshot may show both.\n\n' +
+    'soda_bottle:\n' +
+    '  10 = a screenshot shows a finished soda bottle as a 3D solid body.\n' +
+    '  5  = the bottle is clearly started but unfinished, or only a 2D sketch/profile of it is shown.\n' +
+    '  0  = no screenshot shows a soda bottle.\n\n' +
+    'phone_case:\n' +
+    '  10 = a screenshot shows a finished phone case as a 3D solid body (a hollow shell, not just a solid block).\n' +
+    '  5  = the case is clearly started but unfinished (for example a solid block not yet shelled), or only a 2D sketch is shown.\n' +
+    '  0  = no screenshot shows a phone case.\n\n' +
+    'Be fair: student versions will not match the video exactly. Do not take points off for color, appearance, or small differences in details.\n\n' +
+    'Feedback: one short, direct sentence written to the student. On 10, say which screenshot earned it. On 5 or 0, say exactly what to add or change to earn 10.' +
+    (imgs.skippedLarge ? ' (Note: ' + imgs.skippedLarge + ' screenshot(s) were too large to include.)' : '')
+  });
+  var grades = callScreenshotGrader_(content, ['soda_bottle', 'phone_case'], [0, 5, 10]);
+  grades.soda_bottle.max = 10;
+  grades.phone_case.max  = 10;
+  return grades;
+}
+
+// Collects up to CAD_PRACTICAL_MAX_IMAGES doc images as Claude image blocks.
+function collectDocImages_(body) {
+  var images = body.getImages();
+  var content = [];
+  var skippedLarge = 0;
+  for (var i = 0; i < images.length && content.length < CAD_PRACTICAL_MAX_IMAGES; i++) {
+    var blob  = images[i].getBlob();
+    var type  = blob.getContentType();
+    var bytes = blob.getBytes();
+    if (CAD_PRACTICAL_IMAGE_TYPES.indexOf(type) === -1) continue;
+    if (bytes.length > 5 * 1024 * 1024) { skippedLarge++; continue; }  // API limit is 5 MB per image
+    content.push({ type: 'image', source: { type: 'base64', media_type: type, data: Utilities.base64Encode(bytes) } });
+  }
+  return { content: content, skippedLarge: skippedLarge };
+}
+
+// Sends screenshot content to Claude and returns {key: {score, feedback}} for each key.
+function callScreenshotGrader_(content, keys, scores) {
+  var check = {
+    type: 'object',
+    properties: {
+      score:    { type: 'integer', enum: scores },
+      feedback: { type: 'string' }
+    },
+    required: ['score', 'feedback'],
+    additionalProperties: false
+  };
+  var props = {};
+  keys.forEach(function(k) { props[k] = check; });
+
+  var apiKey = PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY');
+  if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set in Script Properties.');
+
+  var response = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
+    method:  'post',
+    headers: {
+      'x-api-key':         apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-beta':    'server-side-fallback-2026-07-01',
+      'content-type':      'application/json'
+    },
+    payload: JSON.stringify({
+      model:      'claude-opus-5-5',
+      max_tokens: 8000,
+      fallbacks:  'default',              // re-run on another model if a safety classifier declines
+      output_config: {
+        effort: 'low',                    // a quick visual check; keeps the call well inside Apps Script's fetch timeout
+        format: {
+          type: 'json_schema',
+          schema: { type: 'object', properties: props, required: keys, additionalProperties: false }
+        }
+      },
+      messages: [{ role: 'user', content: content }]
+    }),
+    muteHttpExceptions: true
+  });
+
+  var result = JSON.parse(response.getContentText());
+  if (result.type === 'error') throw new Error('Claude API: ' + result.error.message);
+  if (result.stop_reason === 'refusal') throw new Error('The screenshot check was declined — ask Mr. Bombich to review your doc.');
+  if (result.stop_reason === 'max_tokens') throw new Error('The screenshot check ran out of room — please try Verify Work again.');
+
+  var textBlock = (result.content || []).filter(function(b) { return b.type === 'text'; })[0];
+  if (!textBlock) throw new Error('No result from the screenshot check.');
+  return JSON.parse(textBlock.text);
+}
 
 function gradeCadPracticalScreenshots(body, deliverableId) {
   var part = deliverableId === 426
