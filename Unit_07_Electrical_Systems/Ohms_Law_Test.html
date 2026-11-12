@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <title>Ohm's Law Test | Unit 7 — Electrical Systems</title>
+    <style>
+        @page { size: letter portrait; margin: 0.5in; }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; background: #e5e5e5; color: #111;
+            font-family: Arial, Helvetica, sans-serif; font-size: 10.5pt; line-height: 1.35;
+        }
+        .page {
+            width: 8.5in; min-height: 11in; margin: 20px auto; padding: 0.5in;
+            background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+        }
+        @media print {
+            body { background: #fff; }
+            .page { width: auto; min-height: 0; margin: 0; padding: 0; box-shadow: none; }
+            .no-print { display: none; }
+        }
+        .head { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid #111; padding-bottom: 6px; margin-bottom: 8px; }
+        .head h1 { font-size: 17pt; margin: 0; }
+        .head .sub { font-size: 9pt; color: #444; }
+        .fields { font-size: 10pt; text-align: right; line-height: 1.9; }
+        h2 { font-size: 11.5pt; margin: 9px 0 5px; padding: 3px 8px; background: #eee; border-left: 5px solid #111; }
+        .hint { font-size: 9pt; color: #444; margin: 0 0 5px; }
+        .refbar { display: flex; gap: 10px; }
+        .formulas { flex: 0 0 40%; border: 2px solid #111; padding: 6px 10px; }
+        .formulas .t, .units .t { font-size: 8.5pt; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; color: #444; margin-bottom: 3px; }
+        .formulas .eq { display: flex; justify-content: space-between; font-size: 13pt; font-weight: bold; }
+        .units { flex: 1; border: 2px solid #111; padding: 6px 10px; }
+        .units .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px 16px; font-size: 10pt; }
+        .conv { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px; }
+        .ans { display: inline-block; border-bottom: 1px solid #111; min-width: 1.4in; }
+        ol { margin: 0; padding-left: 20px; }
+        .prob li { margin-bottom: 3px; }
+        .work { border: 1px dashed #888; height: 0.74in; margin: 3px 0 4px; position: relative; }
+        .work::after { content: "Formula · Plug in with units · Answer with units"; position: absolute; right: 6px; bottom: 3px; font-size: 7pt; color: #999; }
+        .ref { font-size: 9pt; border: 1px solid #555; padding: 5px 10px; }
+        .pts { float: right; font-size: 9pt; font-weight: normal; color: #444; }
+        .print-btn { position: fixed; top: 16px; right: 16px; padding: 10px 18px; font-size: 14px; font-weight: bold;
+            background: #c41e3a; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">🖨 Print</button>
+
+<div class="page">
+    <div class="head">
+        <div>
+            <h1>Ohm's Law Test</h1>
+            <div class="sub">Unit 7 · Electrical Systems</div>
+        </div>
+        <div class="fields">Name: ______________________________<br>Date: ____________ Period: ______ &nbsp;Score: ______ / 30</div>
+    </div>
+
+    <div class="refbar">
+        <div class="formulas">
+            <div class="t">Ohm's Law</div>
+            <div class="eq"><span>V = I × R</span><span>I = V ÷ R</span><span>R = V ÷ I</span></div>
+        </div>
+        <div class="units">
+            <div class="t">Conversions</div>
+            <div class="grid">
+                <div>1 A = 1,000 mA</div><div>1 mA = 0.001 A</div>
+                <div>1 kΩ = 1,000 Ω</div><div>1 Ω = 0.001 kΩ</div>
+            </div>
+        </div>
+    </div>
+
+    <h2>Part A · Units &amp; Prefixes <span class="pts">1 pt each · 4 pts</span></h2>
+    <div class="conv">
+        <div>1. &nbsp;0.04 A = <span class="ans"></span> mA</div>
+        <div>3. &nbsp;750 mA = <span class="ans"></span> A</div>
+        <div>2. &nbsp;3.3 kΩ = <span class="ans"></span> Ω</div>
+        <div>4. &nbsp;6,800 Ω = <span class="ans"></span> kΩ</div>
+    </div>
+
+    <h2>Part B · Solve It <span class="pts">4 pts each · 20 pts</span></h2>
+    <p class="hint">Show the formula, plug in with units (convert to A, V, Ω first), and box your answer with units.</p>
+    <ol class="prob">
+        <li>A 12 V battery is connected across a 600 Ω resistor. What is the current?</li>
+        <div class="work"></div>
+        <li>1.5 A flows through an 8 Ω speaker coil. What voltage is across it?</li>
+        <div class="work"></div>
+        <li>A 9 V motor draws 0.3 A. What is its resistance?</li>
+        <div class="work"></div>
+        <li>15 mA flows through a 330 Ω resistor. What voltage is across the resistor?</li>
+        <div class="work"></div>
+        <li>A 5 V supply is connected to a 2.2 kΩ resistor. What is the current in mA? (Round to two decimal places.)</li>
+        <div class="work"></div>
+    </ol>
+
+    <h2>Part C · LED Resistor <span class="pts">6 pts</span></h2>
+    <div class="ref"><strong>R = (V<sub>supply</sub> − V<sub>f</sub>) ÷ I</strong> &nbsp;·&nbsp; Round <strong>up</strong> to the next standard value: 100, 120, 150, 180, 220, 270, 330, 360, 390, 470, 560, 680 Ω</div>
+    <ol class="prob" style="margin-top:5px;">
+        <li>A green LED (V<sub>f</sub> = 2.2 V) runs at 20 mA from a 5 V supply. Calculate R, then pick the standard resistor.</li>
+        <div class="work"></div>
+    </ol>
+</div>
+
+</body>
+</html>
