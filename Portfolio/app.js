@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.81',
+    VERSION: 'v2.14.84',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -814,6 +814,26 @@ const DELIVERABLES = [
         checkLimit: 5,           // must match CAD_PRACTICAL_CHECK_LIMIT in google-apps-script.js
         checklistItems: [
             'My doc has an <strong>isometric view</strong>, a <strong>fully constrained sketch</strong> (all lines black), and the <strong>timeline</strong>.',
+        ],
+    },
+    // Fusion 360 tutorials (week 11): soda bottle (Day 2) + phone case (Day 10)
+    {
+        id: 427,
+        shortLabel: 'D2.6',
+        title: 'D2.6 — Fusion 360 Tutorials: Soda Bottle + Phone Case',
+        unit: '02',
+        week: 11,
+        points: 20,
+        phase: 'cad',
+        tracks: ['dbl'],
+        alwaysOpen: true,
+        description: 'Turn in screenshots of the two Fusion 360 models you built from the "Fusion in 30 Days" videos: the soda bottle (Day 2) and the phone case (Day 10).',
+        requirements: [
+            'Soda bottle: screenshot of the finished model in an isometric view',
+            'Phone case: screenshot of the finished model in an isometric view',
+            'Include the timeline at the bottom of the screen in at least one screenshot',
+            'In the box below, write one new Fusion 360 tool or command you learned and what it does',
+            'Scoring: soda bottle = 8 pts · phone case = 8 pts · tool explanation = 4 pts',
         ],
     },
     // ── DBL: Unit 3 Safety ────────────────────────────────────────────────

@@ -73,7 +73,7 @@ const CONFIG = {
             totalPoints: 0,          // TODO: update when D&B Lab grading is defined
             deliverablePoints: {
                 0: 20, 10: 10, 11: 28,
-                421: 20, 422: 20, 423: 20, 424: 4, 425: 10, 426: 10,
+                421: 20, 422: 20, 423: 20, 424: 4, 425: 10, 426: 10, 427: 20,
                 431: 50,
                 471: 40, 472: 20,
                 481: 30, 482: 25, 483: 30, 484: 50,
@@ -178,6 +178,7 @@ const TRACK_DELIVERABLES = {
         { id: 424, label: 'D2.4 — Doorstop Final Documentation',           week: 8  },
         { id: 425, label: 'D2.5 — Wedge Physics Activity',                 week: 9  },
         { id: 426, label: 'CAD Quiz Practical — Doorstop Wedge',           week: 9  },
+        { id: 427, label: 'D2.6 — Fusion 360 Tutorials: Soda Bottle + Phone Case', week: 11 },
         // Unit 7: Electrical Systems
         { id: 472, label: "D7.1 — Ohm's Law & LED Circuits Activity",      week: 10 },
         { id: 471, label: 'D7.2 — Unit 7 Lab Results',                     week: 11 },
