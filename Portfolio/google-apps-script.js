@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.85';
+const BACKEND_VERSION = 'v2.14.86';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -938,8 +938,8 @@ function saveDeliverable(student, id, deliverable) {
 }
 
 // Screenshot-checked deliverables (Verify Work -> score recorded on submit):
-// CAD Quiz practicals 28 / 426 and DBL D2.6 Fusion tutorials 427.
-const CAD_PRACTICAL_IDS = [28, 426, 427];
+// CAD Quiz practicals 28 / 426 and DBL Fusion tutorials 427 (D2.6) / 428 (D2.7).
+const CAD_PRACTICAL_IDS = [28, 426, 427, 428];
 
 /**
  * Teacher records a student's email-submitted deliverable.
@@ -2786,7 +2786,7 @@ function handleCreateDeliverableDoc(data) {
 
   // Look up template: specific key first, then shared component fallback.
   // CAD Quiz practicals (28, 426) have their own templates — never fall back to Component.
-  var NO_COMPONENT_FALLBACK = [28, 426, 427];
+  var NO_COMPONENT_FALLBACK = [28, 426, 427, 428];
   var props      = PropertiesService.getScriptProperties();
   var templateId = props.getProperty('DELIVERABLE_DOC_TEMPLATE_' + templateLookupId)
                 || (NO_COMPONENT_FALLBACK.indexOf(deliverableId) === -1
@@ -2904,7 +2904,7 @@ function handleGetDocAIFeedback(data) {
 
     // CAD Quiz practicals are graded by looking at the screenshots themselves.
     var grades = isPractical
-      ? (deliverableId === 427 ? gradeFusionTutorialScreenshots(body) : gradeCadPracticalScreenshots(body, deliverableId))
+      ? (FUSION_TUTORIAL_SPECS[deliverableId] ? gradeFusionTutorialScreenshots(body, deliverableId) : gradeCadPracticalScreenshots(body, deliverableId))
       : gradeDocWithRubric(imageNote + text, deliverableId);
 
     if (isTeacher) {
@@ -3197,45 +3197,73 @@ var CAD_PRACTICAL_CHECK_LIMIT = 5;   // Verify Work clicks per practical (total,
 var CAD_PRACTICAL_MAX_IMAGES = 6;
 var CAD_PRACTICAL_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'];
 
-function practicalMax(deliverableId) { return Number(deliverableId) === 427 ? 20 : 10; }
+function practicalMax(deliverableId) { return FUSION_TUTORIAL_SPECS[deliverableId] ? 20 : 10; }
 
 /**
- * DBL D2.6 (427): screenshots of the two "Fusion in 30 Days" models. Two checks, 10 / 5 / 0:
- *   soda_bottle - 10 finished bottle shown in 3D / 5 started or 2D sketch only
- *   phone_case  - 10 finished phone case shown in 3D / 5 started or 2D sketch only
+ * DBL Fusion tutorial deliverables, screenshot-checked. Each model scores 10 / 5 / 0.
+ *   427 D2.6 - soda bottle + phone case
+ *   428 D2.7 - ice cube tray + coat hanger (isometric views only)
  */
-function gradeFusionTutorialScreenshots(body) {
+var FUSION_TUTORIAL_SPECS = {
+  427: {
+    intro: 'They followed two Autodesk Fusion 360 video tutorials and should show two finished 3D models: ' +
+      'a soda bottle (a round bottle, usually made by revolving a profile, often with a neck/cap and a shaped base) ' +
+      'and a phone case (a thin-walled rounded-rectangle shell that wraps a phone, often with a camera cutout and button openings).',
+    models: [
+      { key: 'soda_bottle', name: 'soda bottle',
+        full: 'a screenshot shows a finished soda bottle as a 3D solid body.',
+        half: 'the bottle is clearly started but unfinished, or only a 2D sketch/profile of it is shown.' },
+      { key: 'phone_case', name: 'phone case',
+        full: 'a screenshot shows a finished phone case as a 3D solid body (a hollow shell, not just a solid block).',
+        half: 'the case is clearly started but unfinished (for example a solid block not yet shelled), or only a 2D sketch is shown.' }
+    ]
+  },
+  428: {
+    intro: 'They followed an Autodesk Fusion 360 video tutorial to build an ice cube tray, and learned to model a paperclip (a wire swept along a bent path) ' +
+      'and then applied that skill to design their own coat hanger. The doc should show two finished 3D models, each in an ISOMETRIC view ' +
+      '(the camera looking down at a corner so three sides show at once, like the Fusion ViewCube Home view), not a flat front, top, or side view: ' +
+      'an ice cube tray (a rectangular tray with a grid of hollow pockets/cavities) ' +
+      'and a coat hanger (a round wire swept along a path: a hook on top and a triangular or shoulder-shaped body, like a wire clothes hanger).',
+    models: [
+      { key: 'ice_cube_tray', name: 'ice cube tray',
+        full: 'a screenshot shows a finished ice cube tray as a 3D solid with hollow pockets, in an isometric view.',
+        half: 'the tray is finished but shown in a flat front/top/side view instead of isometric, OR it is clearly started but unfinished (for example a solid block with no pockets yet), or only a 2D sketch is shown.' },
+      { key: 'coat_hanger', name: 'coat hanger',
+        full: 'a screenshot shows a finished coat hanger as a 3D swept wire body with a hook, in an isometric view.',
+        half: 'the hanger is finished but shown in a flat front/top/side view instead of isometric, OR only the 2D path sketch is shown (no swept wire), OR it is clearly unfinished (for example no hook). A paperclip alone does not count as a coat hanger.' }
+    ]
+  }
+};
+
+function gradeFusionTutorialScreenshots(body, deliverableId) {
+  var spec = FUSION_TUTORIAL_SPECS[deliverableId];
+  var keys = spec.models.map(function(m) { return m.key; });
   var imgs = collectDocImages_(body);
   if (!imgs.content.length) {
     var none = imgs.skippedLarge
       ? 'Your screenshots are too large to check — use Win+Shift+S to capture just the Fusion window, then paste again.'
       : 'No screenshots found. Paste them into the doc with Win+Shift+S, then Ctrl+V.';
-    return {
-      soda_bottle: { score: 0, max: 10, feedback: none },
-      phone_case:  { score: 0, max: 10, feedback: none }
-    };
+    var empty = {};
+    keys.forEach(function(k) { empty[k] = { score: 0, max: 10, feedback: none }; });
+    return empty;
   }
+  var rubric = spec.models.map(function(m) {
+    return m.key + ':\n' +
+      '  10 = ' + m.full + '\n' +
+      '  5  = ' + m.half + '\n' +
+      '  0  = no screenshot shows a ' + m.name + '.';
+  }).join('\n\n');
   var content = imgs.content;
   content.push({ type: 'text', text:
-    'These are screenshots a high school student pasted into a Google Doc. They followed two Autodesk Fusion 360 video tutorials ' +
-    'and should show two finished 3D models: a soda bottle (a round bottle, usually made by revolving a profile, often with a neck/cap and a shaped base) ' +
-    'and a phone case (a thin-walled rounded-rectangle shell that wraps a phone, often with a camera cutout and button openings).\n\n' +
+    'These are screenshots a high school student pasted into a Google Doc. ' + spec.intro + '\n\n' +
     'Score each model. Use the best screenshot for each; one screenshot may show both.\n\n' +
-    'soda_bottle:\n' +
-    '  10 = a screenshot shows a finished soda bottle as a 3D solid body.\n' +
-    '  5  = the bottle is clearly started but unfinished, or only a 2D sketch/profile of it is shown.\n' +
-    '  0  = no screenshot shows a soda bottle.\n\n' +
-    'phone_case:\n' +
-    '  10 = a screenshot shows a finished phone case as a 3D solid body (a hollow shell, not just a solid block).\n' +
-    '  5  = the case is clearly started but unfinished (for example a solid block not yet shelled), or only a 2D sketch is shown.\n' +
-    '  0  = no screenshot shows a phone case.\n\n' +
+    rubric + '\n\n' +
     'Be fair: student versions will not match the video exactly. Do not take points off for color, appearance, or small differences in details.\n\n' +
     'Feedback: one short, direct sentence written to the student. On 10, say which screenshot earned it. On 5 or 0, say exactly what to add or change to earn 10.' +
     (imgs.skippedLarge ? ' (Note: ' + imgs.skippedLarge + ' screenshot(s) were too large to include.)' : '')
   });
-  var grades = callScreenshotGrader_(content, ['soda_bottle', 'phone_case'], [0, 5, 10]);
-  grades.soda_bottle.max = 10;
-  grades.phone_case.max  = 10;
+  var grades = callScreenshotGrader_(content, keys, [0, 5, 10]);
+  keys.forEach(function(k) { grades[k].max = 10; });
   return grades;
 }
 

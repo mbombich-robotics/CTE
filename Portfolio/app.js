@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.85',
+    VERSION: 'v2.14.86',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -839,6 +839,32 @@ const DELIVERABLES = [
         checkLimit: 5,           // must match CAD_PRACTICAL_CHECK_LIMIT in google-apps-script.js
         checklistItems: [
             'My doc has a screenshot of my finished <strong>soda bottle</strong> and my finished <strong>phone case</strong>.',
+        ],
+    },
+    // Fusion 360 tutorials (week 12): ice cube tray + coat hanger (paperclip sweep skill applied)
+    {
+        id: 428,
+        shortLabel: 'D2.7',
+        title: 'D2.7 — Fusion 360: Ice Cube Tray + Coat Hanger',
+        unit: '02',
+        week: 12,
+        points: 20,
+        phase: 'cad',
+        tracks: ['dbl'],
+        alwaysOpen: true,
+        type: 'googleDoc',             // template: DELIVERABLE_DOC_TEMPLATE_428
+        aiGated: true,
+        feedbackButtonLabel: 'Verify Work',
+        description: 'Turn in isometric screenshots of two Fusion 360 models: the ice cube tray from the tutorial, and the coat hanger you designed using the sweep skill from the paperclip tutorial.',
+        verifySteps: [
+            'In Fusion, click the <strong>Home</strong> icon on the ViewCube so each model is in an <strong>isometric view</strong>.',
+            'Paste two screenshots into the doc (<strong>Win+Shift+S</strong> then <strong>Ctrl+V</strong>): your finished <strong>ice cube tray</strong> and your finished <strong>coat hanger</strong>.',
+        ],
+        verifyCheckText: 'AI looks at your screenshots for a finished ice cube tray and a finished coat hanger, each in an isometric view.',
+        partialCreditAfter: 2,   // Submit unlocks after this many checks, even without full marks
+        checkLimit: 5,           // must match CAD_PRACTICAL_CHECK_LIMIT in google-apps-script.js
+        checklistItems: [
+            'My doc has an <strong>isometric</strong> screenshot of my finished <strong>ice cube tray</strong> and my finished <strong>coat hanger</strong>.',
         ],
     },
     // ── DBL: Unit 3 Safety ────────────────────────────────────────────────
@@ -4783,6 +4809,10 @@ const DOC_RUBRIC_CRITERIA = {
     427: [                             // D2.6 Fusion 360 Tutorials (DBL) — screenshot check, 10 pts each
         { key: 'soda_bottle', label: 'Soda Bottle Model', max: 10 },
         { key: 'phone_case',  label: 'Phone Case Model',  max: 10 },
+    ],
+    428: [                             // D2.7 Ice Cube Tray + Coat Hanger (DBL) — screenshot check, 10 pts each
+        { key: 'ice_cube_tray', label: 'Ice Cube Tray (isometric)', max: 10 },
+        { key: 'coat_hanger',   label: 'Coat Hanger (isometric)',   max: 10 },
     ],
     28: [                              // CAD Quiz Practical (AER) — screenshot check, 5 pts each
         { key: 'iso_view',           label: 'Isometric View',            max: 5 },
