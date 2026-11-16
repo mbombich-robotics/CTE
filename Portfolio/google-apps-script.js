@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.86';
+const BACKEND_VERSION = 'v2.14.87';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2491,6 +2491,36 @@ function handleGetStudentAIFeedback(data) {
 }
 
 /**
+ * One-time admin fix (run from the Apps Script editor): unlinks a student's Google Doc
+ * for one deliverable so "Create My Document" appears again and pulls the current template.
+ * Edit the two values below, then Run. The old doc stays in the student's Drive.
+ */
+function adminUnlinkDeliverableDoc() {
+  var STUDENT = '14724';   // full email, or just the part before the @
+  var DELIVERABLE_ID = 428; // DBL D2.7
+
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAMES.STUDENTS);
+  var rows  = sheet.getDataRange().getValues();
+  for (var i = 1; i < rows.length; i++) {
+    var email = String(rows[i][0] || '').toLowerCase().trim();
+    if (email !== STUDENT.toLowerCase() && email.split('@')[0] !== STUDENT.toLowerCase()) continue;
+    var raw = rows[i][8]; // col I — fullState JSON
+    if (!raw || !String(raw).trim()) { Logger.log('No saved state for ' + email); return; }
+    var state = JSON.parse(raw);
+    var d = state.deliverables && state.deliverables[DELIVERABLE_ID];
+    if (!d) { Logger.log('Deliverable ' + DELIVERABLE_ID + ' not found for ' + email + ' — nothing to do.'); return; }
+    if (d.status === 'completed') { Logger.log('Deliverable ' + DELIVERABLE_ID + ' is already submitted for ' + email + ' — not changed.'); return; }
+    Logger.log('Removing doc ' + (d.docUrl || d.docId) + ' from ' + email + ' / D' + DELIVERABLE_ID);
+    delete state.deliverables[DELIVERABLE_ID];
+    sheet.getRange(i + 1, 9).setValue(JSON.stringify(state));
+    logActivity('ADMIN_UNLINK_DOC', 'teacher', 'Unlinked D' + DELIVERABLE_ID + ' doc for ' + email);
+    Logger.log('✅ Done. Have the student hard-refresh the portfolio, then click Create My Document.');
+    return;
+  }
+  Logger.log('No student found matching ' + STUDENT);
+}
+
+/**
  * Teacher-only: reset a submitted deliverable back to in-progress
  * so the student can correct and resubmit.
  */
@@ -2780,12 +2810,13 @@ function handleCreateDeliverableDoc(data) {
 
   var deliverableTitle = data.deliverableTitle || '';
 
-  // Some deliverables reuse another deliverable's template (e.g. DBL D2.2 reuses the Design Brief)
-  var TEMPLATE_ALIASES = { 422: 11 };
+  // Some deliverables reuse another deliverable's template
+  // (DBL D2.2 reuses the Design Brief; DBL D2.7 reuses the D2.6 screenshot doc, DELIVERABLE_DOC_TEMPLATE_427)
+  var TEMPLATE_ALIASES = { 422: 11, 428: 427 };
   var templateLookupId = TEMPLATE_ALIASES[deliverableId] || deliverableId;
 
   // Look up template: specific key first, then shared component fallback.
-  // CAD Quiz practicals (28, 426) have their own templates — never fall back to Component.
+  // CAD Quiz practicals (28, 426) and DBL D2.6 / D2.7 (427, 428) never fall back to Component.
   var NO_COMPONENT_FALLBACK = [28, 426, 427, 428];
   var props      = PropertiesService.getScriptProperties();
   var templateId = props.getProperty('DELIVERABLE_DOC_TEMPLATE_' + templateLookupId)
