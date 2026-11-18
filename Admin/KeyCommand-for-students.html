@@ -3,13 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<style>body{margin:0}[hidden]{display:none!important}</style>
-</head>
-<body>
 <title>Key Command</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
+body{margin:0}[hidden]{display:none!important}
 /* Layout: a drawing sheet. Title block on top, one framed work area, a live keyboard map under it. */
 :root{
   --paper:#e9eef4; --sheet:#f8fafc; --ink:#12304f; --ink-soft:#4f6a87; --line:#b4c4d6;
@@ -74,6 +72,18 @@ button:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
 .btn--quiet:hover{background:transparent; color:var(--ink); text-decoration:underline}
 kbd{font-family:var(--f-mono); font-weight:700; font-size:.95em; border:1.5px solid var(--ink); border-bottom-width:3px; border-radius:4px; padding:1px 8px; background:var(--key); white-space:nowrap}
 
+/* Daily Challenge Banner */
+.daily-box{
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px 20px;
+  padding:12px 14px; border:1.5px solid var(--ink); background:var(--paper); border-radius:3px;
+}
+.daily-info{flex:1 1 260px; min-width:0}
+.daily-tag{display:inline-block; font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; background:var(--accent); color:var(--on-accent); padding:1px 6px; border-radius:2px; margin-bottom:4px}
+.daily-info h2{font-family:var(--f-display); font-weight:700; font-size:21px; text-transform:uppercase; letter-spacing:.02em; line-height:1.1}
+.daily-info p{font-size:14px; color:var(--ink-soft); margin-top:2px}
+.daily-act{display:flex; align-items:center; gap:12px}
+.daily-best{font-family:var(--f-mono); font-size:13px; color:var(--ink-soft); text-align:right}
+
 /* Menu */
 .intro{max-width:65ch; color:var(--ink-soft)}
 .modes{display:flex; flex-direction:column}
@@ -87,6 +97,7 @@ kbd{font-family:var(--f-mono); font-weight:700; font-size:.95em; border:1.5px so
 .lvl:hover .lvl-sub{color:var(--on-accent)}
 .lvl-name{font-weight:600}
 .lvl-sub{font-size:13px; color:var(--ink-soft); font-family:var(--f-mono)}
+
 /* Leaderboard */
 .lb{border-top:1px solid var(--line); padding:12px 0 4px; display:flex; flex-direction:column; gap:8px}
 .lb-head{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:4px 12px}
@@ -128,7 +139,7 @@ kbd{font-family:var(--f-mono); font-weight:700; font-size:.95em; border:1.5px so
 .stage{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:10px; min-height:170px}
 .bigkey{font-family:var(--f-display); font-weight:700; font-size:clamp(44px,9vw,76px); line-height:1; text-transform:uppercase; letter-spacing:.02em}
 .desc{color:var(--ink-soft); max-width:52ch}
-.scenario{font-size:clamp(20px,3.2vw,27px); font-weight:500; line-height:1.25; max-width:30ch; text-wrap:balance}
+.scenario{font-size:clamp(20px,3.2vw,27px); font-weight:500; line-height:1.25; max-width:34ch; text-wrap:balance}
 .answer{display:flex; align-items:center; gap:8px; font-size:18px; min-height:34px}
 .answer.is-hidden{visibility:hidden}
 .answer .act{font-weight:600; margin-right:6px}
@@ -145,7 +156,29 @@ kbd{font-family:var(--f-mono); font-weight:700; font-size:.95em; border:1.5px so
 @keyframes blink{50%{opacity:0}}
 .feedback{min-height:26px; text-align:center; font-weight:600}
 .feedback.good{color:var(--good)} .feedback.bad{color:var(--bad)} .feedback.note{color:var(--ink-soft)}
-.pause{position:absolute; inset:0; background:var(--sheet); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; text-align:center; padding:20px}
+.pause{position:absolute; inset:0; background:var(--sheet); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; text-align:center; padding:20px; z-index:10}
+
+/* CAD Workflow Combo Breadcrumbs */
+.wf-steps{display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px; margin-top:6px}
+.wf-pill{
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:8px 12px; border:1.5px solid var(--line); border-radius:4px;
+  background:var(--key); min-width:86px; transition:all .15s;
+}
+.wf-pill.active{border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 30%,transparent)}
+.wf-pill.done{background:var(--good-bg); border-color:var(--good); color:var(--ink)}
+.wf-pill-lbl{font-size:12px; font-weight:600; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em}
+.wf-pill.done .wf-pill-lbl{color:var(--good)}
+.wf-pill kbd{font-size:14px}
+.wf-pill.is-blind kbd{visibility:hidden}
+.wf-arrow{color:var(--ink-soft); font-weight:700}
+
+/* NumLock Warning Banner */
+.nl-banner{
+  display:inline-flex; align-items:center; gap:8px; padding:6px 14px;
+  background:var(--accent); color:var(--on-accent); font-weight:700; font-size:14px;
+  border-radius:4px; margin:0 auto;
+}
 
 /* File Missions: practice app window and file dialog */
 .fm{width:100%; display:flex; flex-direction:column; gap:12px; text-align:left}
@@ -217,6 +250,8 @@ kbd{font-family:var(--f-mono); font-weight:700; font-size:.95em; border:1.5px so
 .readout b{color:var(--ink)}
 @media (prefers-reduced-motion: reduce){ .k.hint span,.caret{animation:none} .bar i{transition:none} }
 </style>
+</head>
+<body>
 
 <div class="wrap">
   <header class="titleblock">
@@ -226,7 +261,7 @@ kbd{font-family:var(--f-mono); font-weight:700; font-size:.95em; border:1.5px so
     </div>
     <dl class="tb-cells">
       <div><dt>Rank</dt><dd id="rank">Intern</dd></div>
-      <div><dt>Stars</dt><dd id="starcount" class="mono">0/36</dd></div>
+      <div><dt>Stars</dt><dd id="starcount" class="mono">0/45</dd></div>
       <div><dt>Audio</dt><dd class="audio"><button class="tog" id="t-music" type="button">Music</button><button class="tog" id="t-sfx" type="button">Sound</button></dd></div>
     </dl>
   </header>
@@ -234,10 +269,23 @@ kbd{font-family:var(--f-mono); font-weight:700; font-size:.95em; border:1.5px so
   <main class="sheet">
     <section id="s-menu">
       <p class="intro">Pick a drill. <b>Guided</b> shows you the answer on the keyboard map. <b>Fading</b> shows it only if you hesitate. <b>Blind</b> shows it only after a miss. Earn up to three stars per level for accuracy and speed.</p>
+
+      <div class="daily-box" id="daily-box">
+        <div class="daily-info">
+          <span class="daily-tag" id="daily-date">Daily Shop Challenge</span>
+          <h2>Same 15 Prompts For Every Student Today</h2>
+          <p>Mixed keys, Fusion shortcuts, numpad dimensions, and workflow combos.</p>
+        </div>
+        <div class="daily-act">
+          <div class="daily-best" id="daily-best">Today's best:<br><b>—</b></div>
+          <button class="btn btn--main" id="btn-daily" type="button">Start Daily</button>
+        </div>
+      </div>
+
       <div class="modes" id="modes"></div>
       <div class="lb" id="lb"></div>
       <div class="menu-foot">
-        <span>Your stars are saved in this browser on this computer.</span>
+        <span id="save-note">Your stars are saved in this browser on this computer.</span>
         <button class="btn btn--quiet" id="reset" type="button">Reset my progress</button>
       </div>
     </section>
@@ -261,6 +309,7 @@ kbd{font-family:var(--f-mono); font-weight:700; font-size:.95em; border:1.5px so
         <button class="btn btn--quiet" id="quit" type="button">Quit</button>
       </div>
       <div class="bar"><i id="bar"></i></div>
+      <div class="nl-banner" id="nl-global" hidden>⚠️ NumLock is OFF — Press NumLock above 7 to activate your number pad!</div>
       <div class="stage" id="stage"></div>
       <p class="feedback" id="feedback" aria-live="polite"></p>
     </section>
@@ -279,6 +328,7 @@ kbd{font-family:var(--f-mono); font-weight:700; font-size:.95em; border:1.5px so
       <p class="lb-note" id="res-lb"></p>
       <div class="actions">
         <button class="btn btn--main" id="res-again" type="button">Play again (Enter)</button>
+        <button class="btn" id="res-slow" type="button" hidden>Drill My Slow Keys</button>
         <button class="btn" id="res-next" type="button">Next level</button>
         <button class="btn btn--quiet" id="res-menu" type="button">Menu (Esc)</button>
       </div>
@@ -303,6 +353,32 @@ const $ = id => document.getElementById(id);
 const ri = (a,b) => a + Math.floor(Math.random()*(b-a+1));
 const pick = a => a[ri(0,a.length-1)];
 const shuffle = a => { a = a.slice(); for(let i=a.length-1;i>0;i--){ const j=ri(0,i); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+
+/* ---------- Deterministic Daily Seed PRNG ---------- */
+function getTodayKey(){
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function getTodaySeed(){
+  const d = new Date();
+  return d.getFullYear()*10000 + (d.getMonth()+1)*100 + d.getDate();
+}
+function mulberry32(seed){
+  return function(){
+    let t = (seed += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function seededShuffle(arr, rand){
+  const a = arr.slice();
+  for(let i=a.length-1; i>0; i--){
+    const j = Math.floor(rand() * (i+1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 /* ---------- Keyboard map ---------- */
 const KB = [];
@@ -364,7 +440,7 @@ function keyName(code){
 const MODS = ['ControlLeft','ControlRight','ShiftLeft','ShiftRight','AltLeft','AltRight','MetaLeft','MetaRight'];
 
 /* ---------- Content ---------- */
-const T = (label,codes,desc) => ({label,codes,desc});
+const T = (label,codes,desc) => ({kind:'hunt',label,codes,desc});
 const HUNT_CORE = [
   T('Esc',['Escape'],'Cancels the active tool or closes a dialog box.'),
   T('Tab',['Tab'],'Jumps to the next input box, like from length to angle.'),
@@ -401,7 +477,7 @@ Object.assign(DESC,{CapsLock:'Locks letters to capitals. Easy to hit by accident
   MetaLeft:'Opens the Start menu.',MetaRight:'Opens the Start menu.',Insert:'Switches between insert and overwrite typing.',
   PrintScreen:'Takes a screenshot.'});
 
-const C = (action,keys,codes,mods,text) => ({action,keys,codes,ctrl:!!mods.ctrl,shift:!!mods.shift,text});
+const C = (action,keys,codes,mods,text) => ({kind:'combo',action,keys,codes,ctrl:!!mods.ctrl,shift:!!mods.shift,text});
 const COMBOS = [
   C('Undo',['Ctrl','Z'],['KeyZ'],{ctrl:1},'You just deleted the wrong line.'),
   C('Redo',['Ctrl','Y'],['KeyY'],{ctrl:1},'You undid one step too many. Bring it back.'),
@@ -439,6 +515,52 @@ const FUSION = [
 const WIN = COMBOS.slice();
 COMBOS.push(...FUSION);
 
+/* ---------- CAD Workflow Combos (New Mode 5) ---------- */
+const W = (title,text,steps) => ({kind:'workflow',title,text,steps});
+const WORKFLOWS = [
+  W('Extrude a Cylinder','Sketch a center circle, dimension it, and pull it into a 3D boss.',[
+    {label:'Circle',hint:'C',codes:['KeyC'],ctrl:false},
+    {label:'Dimension',hint:'D',codes:['KeyD'],ctrl:false},
+    {label:'Extrude',hint:'E',codes:['KeyE'],ctrl:false}
+  ]),
+  W('Box & Round Edges','Draw a rectangle, extrude it into a block, and round off a sharp edge.',[
+    {label:'Rectangle',hint:'R',codes:['KeyR'],ctrl:false},
+    {label:'Extrude',hint:'E',codes:['KeyE'],ctrl:false},
+    {label:'Fillet',hint:'F',codes:['KeyF'],ctrl:false}
+  ]),
+  W('Sketch Cleanup','Draw a line, trim away the overhang, and mark a reference line as construction.',[
+    {label:'Line',hint:'L',codes:['KeyL'],ctrl:false},
+    {label:'Trim',hint:'T',codes:['KeyT'],ctrl:false},
+    {label:'Construction',hint:'X',codes:['KeyX'],ctrl:false}
+  ]),
+  W('Check & Save Part','Fit the lost part on screen, measure a face, and save your progress.',[
+    {label:'Fit View',hint:'F6',codes:['F6'],ctrl:false},
+    {label:'Measure',hint:'I',codes:['KeyI'],ctrl:false},
+    {label:'Save',hint:'Ctrl+S',codes:['KeyS'],ctrl:true}
+  ]),
+  W('Drill & Fasten','Add a screw hole, move the component into place, and confirm.',[
+    {label:'Hole',hint:'H',codes:['KeyH'],ctrl:false},
+    {label:'Move',hint:'M',codes:['KeyM'],ctrl:false},
+    {label:'Confirm',hint:'Enter',codes:['Enter','NumpadEnter'],ctrl:false}
+  ]),
+  W('Offset Pocket','Offset a sketch profile, push-pull the face down, and save the file.',[
+    {label:'Offset',hint:'O',codes:['KeyO'],ctrl:false},
+    {label:'Press Pull',hint:'Q',codes:['KeyQ'],ctrl:false},
+    {label:'Save',hint:'Ctrl+S',codes:['KeyS'],ctrl:true}
+  ]),
+  W('Duplicate & Undo Mistake','Copy the selected feature, paste it, then undo when it lands in the wrong spot.',[
+    {label:'Copy',hint:'Ctrl+C',codes:['KeyC'],ctrl:true},
+    {label:'Paste',hint:'Ctrl+V',codes:['KeyV'],ctrl:true},
+    {label:'Undo',hint:'Ctrl+Z',codes:['KeyZ'],ctrl:true}
+  ]),
+  W('Toolbox to Solid','Pop up the shortcut toolbox, draw a circle, extrude it, and fit the view.',[
+    {label:'Toolbox',hint:'S',codes:['KeyS'],ctrl:false},
+    {label:'Circle',hint:'C',codes:['KeyC'],ctrl:false},
+    {label:'Extrude',hint:'E',codes:['KeyE'],ctrl:false},
+    {label:'Fit View',hint:'F6',codes:['F6'],ctrl:false}
+  ])
+];
+
 const NUM_CODE = {'.':'NumpadDecimal','+':'NumpadAdd','-':'NumpadSubtract','*':'NumpadMultiply','/':'NumpadDivide','\n':'NumpadEnter'};
 const numCode = ch => NUM_CODE[ch] || ('Numpad'+ch);
 const NUM_GEN = [
@@ -454,12 +576,14 @@ const MODES = {
     ready:'Ten dimensions. Type each one on the number pad and finish with the number pad Enter.'},
   combo:{name:'Shortcut Scenarios',blurb:'Read the situation, then press the key or shortcut that fixes it.',count:12,
     ready:'Twelve situations: six Windows shortcuts and six Fusion shortcuts. Press what you would press.'},
+  workflow:{name:'CAD Workflows',blurb:'Chain 3 to 4 Fusion shortcuts together in sequence to build a part.',count:8,
+    ready:'Eight real CAD workflows. Hit each shortcut in order for a +300 workflow bonus.'},
   files:{name:'File Missions',blurb:'Save, Save As and Open in a practice Windows dialog. Right name, right folder, right type.',count:8,
     ready:'Eight missions in a practice app. Use the mouse and keyboard the way you would in Windows.'}
 };
-const MODE_IDS = ['hunt','numpad','combo','files'];
+const MODE_IDS = ['hunt','numpad','combo','workflow','files'];
 const LEVELS = ['Guided','Fading','Blind'];
-const RANKS = [[36,'Chief Engineer'],[27,'Engineer'],[17,'Designer'],[8,'Drafter'],[0,'Intern']];
+const RANKS = [[45,'Chief Engineer'],[34,'Engineer'],[22,'Designer'],[10,'Drafter'],[0,'Intern']];
 
 /* ---------- Saved progress ---------- */
 const STORE_KEY = 'keycommand-v1';
@@ -468,10 +592,7 @@ function saveProg(p){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(p)); }
 let prog = loadProg();
 const starStr = n => '★'.repeat(n) + '☆'.repeat(3-n);
 
-/* ---------- Class leaderboard ----------
-   Works only when the game is opened from the student portfolio, which adds
-   #c=<course>&e=<email> to the link. Scores go to that course's portfolio backend.
-   Opened any other way (double-click, no link), the game plays the same with no leaderboard. */
+/* ---------- Class leaderboard ---------- */
 const BACKENDS = {
   hsaer: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
   '8aer': 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
@@ -484,12 +605,15 @@ const ID = (() => {
     if(c && e){
       id = {course:c, email:e.trim().toLowerCase()};
       sessionStorage.setItem('keycommand-id', JSON.stringify(id));
-      history.replaceState(null, '', location.pathname + location.search);   // keep the email out of the address bar
+      history.replaceState(null, '', location.pathname + location.search);
     } else id = JSON.parse(sessionStorage.getItem('keycommand-id'));
   }catch(err){}
   return id && BACKENDS[id.course] && id.email ? id : null;
 })();
 const LB = {state:'idle', all:[], period:[], myPeriod:null};
+const periodNum = p => { const m = String(p == null ? '' : p).match(/\d+/); return m ? +m[0] : null; };
+const ordinal = n => n + (n%100>=11 && n%100<=13 ? 'th' : ['th','st','nd','rd'][n%10] || 'th');
+const periodLabel = p => { const n = periodNum(p); return n == null ? '' : ordinal(n)+' Hour'; };
 async function loadBoard(){
   if(!ID) return renderBoard();
   LB.state = 'loading'; renderBoard();
@@ -506,7 +630,7 @@ async function loadBoard(){
   if(!ok){ LB.state = 'error'; return renderBoard(); }
   all.sort((a,b) => b.stars-a.stars || b.points-a.points || a.name.localeCompare(b.name));
   LB.all = all;
-  LB.period = LB.myPeriod==null ? [] : all.filter(p => p.course===ID.course && String(p.period)===String(LB.myPeriod));
+  LB.period = periodNum(LB.myPeriod)==null ? [] : all.filter(p => p.course===ID.course && periodNum(p.period)===periodNum(LB.myPeriod));
   LB.state = 'ready'; renderBoard();
 }
 function boardList(title, list, showPeriod){
@@ -524,7 +648,7 @@ function boardList(title, list, showPeriod){
     const rk = document.createElement('span'); rk.className = 'r'; rk.textContent = (i+1)+'.';
     const nm = document.createElement('span'); nm.className = 'n'; nm.textContent = p.name + (p.me ? ' (you)' : '');
     li.append(rk, nm);
-    if(showPeriod && p.period!=='' && p.period!=null){ const pd = document.createElement('span'); pd.className = 'p'; pd.textContent = 'P'+p.period; li.appendChild(pd); }
+    if(showPeriod && periodNum(p.period)!=null){ const pd = document.createElement('span'); pd.className = 'p'; pd.textContent = periodLabel(p.period); li.appendChild(pd); }
     const sc = document.createElement('span'); sc.className = 's'; sc.textContent = '★'+p.stars+'  '+p.points;
     li.appendChild(sc); ol.appendChild(li);
   }
@@ -537,18 +661,20 @@ function renderBoard(){
   const sub = document.createElement('p'); sub.className = 'lb-note'; sub.textContent = 'Most stars wins. Ties go to the higher total of your best scores.';
   head.append(h, sub); box.appendChild(head);
   const note = t => { const p = document.createElement('p'); p.className = 'lb-note'; p.textContent = t; box.appendChild(p); };
+  $('save-note').textContent = ID ? 'The stars on the drill buttons are saved on this computer. Leaderboard scores are saved to your class.'
+    : 'Your stars are saved in this browser on this computer.';
   if(!ID) return note('Open Key Command from your portfolio to get on the class leaderboard.');
   if(LB.state==='loading' && !LB.all.length) return note('Loading the leaderboard…');
   if(LB.state==='error') return note('The leaderboard did not load. Your stars are still saved on this computer.');
   if(LB.state!=='ready' && !LB.all.length) return;
   const cols = document.createElement('div'); cols.className = 'lb-cols';
-  cols.append(boardList(LB.myPeriod==null ? 'Your class period' : 'Period '+LB.myPeriod, LB.period, false), boardList('All classes', LB.all, true));
+  cols.append(boardList(periodNum(LB.myPeriod)==null ? 'Your class period' : periodLabel(LB.myPeriod), LB.period, false), boardList('All classes', LB.all, true));
   box.appendChild(cols);
-  if(LB.myPeriod==null) note('Your portfolio has no class period yet, so you only show up under All classes.');
+  if(periodNum(LB.myPeriod)==null) note('Your portfolio has no class period yet, so you only show up under All classes.');
 }
 function postScore(rec){
   const out = $('res-lb');
-  if(!ID){ out.textContent = ''; return; }
+  if(!ID || !MODES[rec.mode]){ out.textContent = ''; return; }
   out.textContent = 'Sending your score to the leaderboard…';
   fetch(BACKENDS[ID.course], {method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(Object.assign({action:'keyCommandScore', email:ID.email}, rec))})
     .then(r => r.json())
@@ -581,7 +707,7 @@ function saved(ev,name,ext,path){
   if(!samePath(ev.path,path)) return 'You saved '+ev.file+' in '+pathText(ev.path)+'. It belongs in '+pathText(path)+'.';
   return true;
 }
-const M = (title,text,par,keys,steps,setup,check) => ({title,text,par,keys,steps,setup,check});
+const M = (title,text,par,keys,steps,setup,check) => ({kind:'files',title,text,par,keys,steps,setup,check});
 const MISSIONS = [
   M('First save','This drawing has never been saved. Save it as hinge in Documents > CAD Class > '+P1+'.',45000,['ControlLeft','KeyS'],
     ['Press Ctrl + S. A new file has no name yet, so Save As opens.','Double-click CAD Class, then '+P1+'.','Type hinge in the File name box.','Press Enter or click Save.'],
@@ -774,7 +900,7 @@ function fmClose(){
   d.hidden = true; d.textContent = ''; fmTitle();
 }
 
-/* ---------- Audio (all generated in the browser, no sound files) ---------- */
+/* ---------- Audio (Enhanced with Mechanical Clicks & Pitch Escalation) ---------- */
 const AU = {ctx:null, mg:null, sfx:true, music:true, timer:0, step:0, next:0};
 try{ const a = JSON.parse(localStorage.getItem('keycommand-audio')); if(a){ AU.sfx = a.sfx!==false; AU.music = a.music!==false; } }catch(e){}
 function actx(){
@@ -788,18 +914,35 @@ function actx(){
 function tone(freq,t,dur,type,vol,dest){
   const c = AU.ctx, o = c.createOscillator(), g = c.createGain();
   o.type = type; o.frequency.setValueAtTime(freq,t);
-  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.01); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.008); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
   o.connect(g); g.connect(dest || c.destination); o.start(t); o.stop(t+dur+.03);
   return o;
 }
-function sfx(name){
+function sfx(name, streak = 0){
   if(!AU.sfx) return; const c = actx(); if(!c) return; const t = c.currentTime;
-  if(name==='good'){ tone(660,t,.09,'triangle',.18); tone(990,t+.07,.14,'triangle',.18); }
-  else if(name==='tick') tone(880,t,.05,'triangle',.1);
-  else if(name==='soft') tone(440,t,.12,'triangle',.12);
-  else if(name==='bad'){ const o = tone(180,t,.28,'sawtooth',.13); o.frequency.exponentialRampToValueAtTime(90,t+.26); }
-  else if(name==='up') [523,659,784,1047].forEach((f,i) => tone(f,t+i*.06,.12,'square',.07));
-  else if(name==='win') [523,659,784,1047,784,1047].forEach((f,i) => tone(f,t+i*.11,.22,'triangle',.16));
+  if(name==='click'){
+    const o = tone(1150,t,.025,'triangle',.09);
+    o.frequency.exponentialRampToValueAtTime(320,t+.024);
+  } else if(name==='good'){
+    // Pitch climbs by semitone up to 12 steps as streak rises
+    const mult = Math.pow(2, Math.min(streak, 12) / 12);
+    tone(520 * mult, t, .08, 'triangle', .18);
+    tone(780 * mult, t+.06, .13, 'triangle', .18);
+  } else if(name==='step'){
+    const mult = Math.pow(2, Math.min(streak, 12) / 12);
+    tone(620 * mult, t, .06, 'sine', .15);
+  } else if(name==='tick'){
+    tone(880,t,.05,'triangle',.1);
+  } else if(name==='soft'){
+    tone(440,t,.12,'triangle',.12);
+  } else if(name==='bad'){
+    const o = tone(165,t,.24,'sawtooth',.14);
+    o.frequency.exponentialRampToValueAtTime(70,t+.22);
+  } else if(name==='up'){
+    [523,659,784,1047].forEach((f,i) => tone(f,t+i*.055,.11,'square',.07));
+  } else if(name==='win'){
+    [523,659,784,1047,784,1047].forEach((f,i) => tone(f,t+i*.10,.21,'triangle',.16));
+  }
 }
 const midi = n => 440*Math.pow(2,(n-69)/12);
 const CHORDS = [[45,57,60,64],[41,53,57,60],[48,55,60,64],[43,55,59,62]];
@@ -827,12 +970,26 @@ function toggleAudio(which,e){
   AU[which] = !AU[which]; e.currentTarget.blur();
   try{ localStorage.setItem('keycommand-audio', JSON.stringify({sfx:AU.sfx, music:AU.music})); }catch(err){}
   if(!AU.music) musicStop(); else if(S.screen==='play' && !S.paused) musicStart();
-  if(which==='sfx' && AU.sfx) sfx('good');
+  if(which==='sfx' && AU.sfx) sfx('good', 4);
   renderAudio();
 }
 
+/* ---------- Global NumLock Check ---------- */
+function checkNumLock(e){
+  if(typeof e.getModifierState !== 'function') return;
+  const on = e.getModifierState('NumLock');
+  const banner = $('nl-global');
+  if(!on){
+    if(banner) banner.hidden = false;
+    if(keyEl['NumLock']) keyEl['NumLock'].classList.add('hint');
+  } else {
+    if(banner) banner.hidden = true;
+    if(keyEl['NumLock'] && !targetCodes().includes('NumLock')) keyEl['NumLock'].classList.remove('hint');
+  }
+}
+
 /* ---------- Screens ---------- */
-const S = {screen:'menu'};
+const S = {screen:'menu', customQueue:null, slowPool:[]};
 function show(name){
   S.screen = name;
   for(const s of ['menu','ready','play','results']) $('s-'+s).hidden = (s!==name);
@@ -860,54 +1017,113 @@ function renderMenu(){
     });
     rowEl.append(txt,lv); box.appendChild(rowEl);
   }
-  $('starcount').textContent = total+'/36';
+  $('starcount').textContent = total+'/45';
   $('rank').textContent = RANKS.find(r => total>=r[0])[1];
+
+  // Update Daily Challenge banner
+  const tk = getTodayKey();
+  $('daily-date').textContent = 'Daily Shop Challenge · ' + tk;
+  const dRec = prog['daily-' + tk];
+  $('daily-best').innerHTML = "Today's best:<br><b>" + (dRec ? dRec.best + ' pts (' + starStr(dRec.stars) + ')' : '—') + '</b>';
 }
-function ready(mode,level){
-  S.mode = mode; S.level = level;
-  $('ready-eyebrow').textContent = 'Level '+(level+1)+' · '+LEVELS[level];
-  $('ready-title').textContent = MODES[mode].name;
-  $('ready-sub').textContent = MODES[mode].ready;
+function ready(mode,level,customQ=null){
+  S.mode = mode; S.level = level; S.customQueue = customQ;
+  if(mode === 'daily'){
+    $('ready-eyebrow').textContent = 'Daily Shop Challenge · ' + getTodayKey();
+    $('ready-title').textContent = 'Classroom Daily Drill';
+    $('ready-sub').textContent = '15 mixed prompts identical for every student today. Compare your score on the board!';
+  } else if(mode === 'hotspot'){
+    $('ready-eyebrow').textContent = 'Targeted Practice · Guided';
+    $('ready-title').textContent = 'Slow Key Hotspot Drill';
+    $('ready-sub').textContent = 'Focused practice on the keys and shortcuts that took you longest in the last round.';
+  } else {
+    $('ready-eyebrow').textContent = 'Level '+(level+1)+' · '+LEVELS[level];
+    $('ready-title').textContent = MODES[mode].name;
+    $('ready-sub').textContent = MODES[mode].ready;
+  }
   show('ready');
+}
+
+/* ---------- Daily Deck Builder ---------- */
+function buildDailyDeck(){
+  const rand = mulberry32(getTodaySeed());
+  const hunts = seededShuffle([...HUNT_CORE, ...HUNT_MORE], rand).slice(0, 5);
+  const combos = seededShuffle([...WIN, ...FUSION], rand).slice(0, 5);
+  const nums = Array.from({length:3}, () => {
+    const whole = Math.floor(rand()*180) + 5;
+    const dec = ['.25','.5','.75','.125',''][Math.floor(rand()*5)];
+    return {kind:'numpad', value: whole + dec};
+  });
+  const wfs = seededShuffle(WORKFLOWS, rand).slice(0, 2);
+  return seededShuffle([...hunts, ...combos, ...nums, ...wfs], rand);
 }
 
 /* ---------- Round ---------- */
 let hintTimer = 0, nextTimer = 0;
 function begin(){
-  const m = MODES[S.mode];
-  if(S.mode==='hunt') S.queue = shuffle([...HUNT_CORE, ...shuffle(HUNT_MORE).slice(0, m.count-HUNT_CORE.length)]);
-  else if(S.mode==='combo') S.queue = shuffle([...shuffle(WIN).slice(0,6), ...shuffle(FUSION).slice(0,6)]);
-  else if(S.mode==='files') S.queue = MISSIONS.slice();
-  else S.queue = Array.from({length:m.count}, () => ({value:NUM_GEN[S.level]()}));
-  Object.assign(S,{idx:0,score:0,streak:0,bestStreak:0,clean:0,misses:{},totalTime:0,totalPar:0,locked:false,paused:false});
-  $('hud-mode').textContent = m.name+' · '+LEVELS[S.level];
+  if(S.customQueue){
+    S.queue = S.customQueue.slice();
+  } else if(S.mode==='daily'){
+    S.queue = buildDailyDeck();
+  } else {
+    const m = MODES[S.mode];
+    if(S.mode==='hunt') S.queue = shuffle([...HUNT_CORE, ...shuffle(HUNT_MORE).slice(0, m.count-HUNT_CORE.length)]);
+    else if(S.mode==='combo') S.queue = shuffle([...shuffle(WIN).slice(0,6), ...shuffle(FUSION).slice(0,6)]);
+    else if(S.mode==='workflow') S.queue = shuffle(WORKFLOWS).slice(0, m.count);
+    else if(S.mode==='files') S.queue = MISSIONS.slice();
+    else S.queue = Array.from({length:m.count}, () => ({kind:'numpad', value:NUM_GEN[S.level]()}));
+  }
+  Object.assign(S,{idx:0,score:0,streak:0,bestStreak:0,clean:0,misses:{},timings:[],totalTime:0,totalPar:0,locked:false,paused:false});
+  $('hud-mode').textContent = S.mode==='daily' ? 'Daily Challenge' : S.mode==='hotspot' ? 'Hotspot Drill' : MODES[S.mode].name+' · '+LEVELS[S.level];
   show('play'); musicStart(); nextPrompt();
 }
+const promptKind = () => S.cur.kind || S.mode;
 function par(){
-  if(S.mode==='files') return S.cur.par;
-  if(S.mode==='hunt') return 1600;
-  if(S.mode==='combo') return 4000;
+  const k = promptKind();
+  if(k==='files') return S.cur.par;
+  if(k==='hunt') return 1600;
+  if(k==='combo') return 4000;
+  if(k==='workflow') return S.cur.steps.length * 2400;
   return 650*(S.cur.value.length+1)+500;
 }
 function nextPrompt(){
   clearHint(); setFeedback('','');
   if(S.idx >= S.queue.length) return finish();
   S.cur = S.queue[S.idx]; S.missed = false; S.pos = 0; S.tries = 0; S.nlWarn = false;
+  const k = promptKind();
   const st = $('stage'); st.textContent = '';
   const eb = document.createElement('p'); eb.className = 'eyebrow';
-  if(S.mode==='hunt'){
+  if(k==='hunt'){
     eb.textContent = 'Find this key';
-    const k = document.createElement('div'); k.className='bigkey'; k.textContent=S.cur.label;
+    const big = document.createElement('div'); big.className='bigkey'; big.textContent=S.cur.label;
     const d = document.createElement('p'); d.className='desc'; d.textContent=S.cur.desc;
-    st.append(eb,k,d);
-  } else if(S.mode==='combo'){
+    st.append(eb,big,d);
+  } else if(k==='combo'){
     eb.textContent = 'What do you press?';
     const sc = document.createElement('p'); sc.className='scenario'; sc.textContent=S.cur.text;
     const an = document.createElement('div'); an.className='answer is-hidden'; an.id='answer';
     const act = document.createElement('span'); act.className='act'; act.textContent=S.cur.action+':'; an.appendChild(act);
-    S.cur.keys.forEach((k,i) => { if(i) an.append('+'); const kb=document.createElement('kbd'); kb.textContent=k; an.appendChild(kb); });
+    S.cur.keys.forEach((keyTxt,i) => { if(i) an.append('+'); const kb=document.createElement('kbd'); kb.textContent=keyTxt; an.appendChild(kb); });
     st.append(eb,sc,an);
-  } else if(S.mode==='files'){
+  } else if(k==='workflow'){
+    eb.textContent = 'CAD Workflow Combo · ' + S.cur.title;
+    const sc = document.createElement('p'); sc.className='scenario'; sc.textContent=S.cur.text;
+    const pills = document.createElement('div'); pills.className='wf-steps'; pills.id='wf-steps';
+    S.cur.steps.forEach((step, idx) => {
+      if(idx > 0){
+        const arr = document.createElement('span'); arr.className='wf-arrow'; arr.textContent='→';
+        pills.appendChild(arr);
+      }
+      const pill = document.createElement('div');
+      pill.className = 'wf-pill' + (idx===0 ? ' active' : '') + (S.level===2 ? ' is-blind' : '');
+      pill.id = 'wf-pill-' + idx;
+      const lbl = document.createElement('span'); lbl.className='wf-pill-lbl'; lbl.textContent=step.label;
+      const kb = document.createElement('kbd'); kb.textContent=step.hint;
+      pill.append(lbl, kb);
+      pills.appendChild(pill);
+    });
+    st.append(eb,sc,pills);
+  } else if(k==='files'){
     fmStart();
   } else {
     eb.textContent = 'Type this on the number pad, then press its Enter key';
@@ -921,19 +1137,30 @@ function nextPrompt(){
 }
 function scheduleHint(){
   clearTimeout(hintTimer);
+  const k = promptKind();
   if(S.level===0) showHint();
-  else if(S.level===1) hintTimer = setTimeout(showHint, S.mode==='files'?15000 : S.mode==='combo'?4000 : S.mode==='hunt'?2500 : 2000);
+  else if(S.level===1) hintTimer = setTimeout(showHint, k==='files'?15000 : k==='workflow'?3000 : k==='combo'?4000 : k==='hunt'?2500 : 2000);
 }
 function targetCodes(){
-  if(S.mode==='files') return S.cur.keys;
-  if(S.mode==='hunt') return S.cur.codes;
-  if(S.mode==='numpad') return [numCode((S.cur.value+'\n')[S.pos])];
+  if(!S.cur) return [];
+  const k = promptKind();
+  if(k==='files') return S.cur.keys;
+  if(k==='hunt') return S.cur.codes;
+  if(k==='numpad') return [numCode((S.cur.value+'\n')[S.pos])];
+  if(k==='workflow'){
+    const step = S.cur.steps[S.pos];
+    return step ? [...(step.ctrl?['ControlLeft']:[]), step.codes[0]] : [];
+  }
   return [...(S.cur.ctrl?['ControlLeft']:[]), ...(S.cur.shift?['ShiftLeft']:[]), S.cur.codes[0]];
 }
 function showHint(){
   clearHint();
   targetCodes().forEach(c => keyEl[c] && keyEl[c].classList.add('hint'));
   const a = $('answer'); if(a) a.classList.remove('is-hidden');
+  if(promptKind()==='workflow'){
+    const pill = $('wf-pill-' + S.pos);
+    if(pill) pill.classList.remove('is-blind');
+  }
 }
 function clearHint(){
   clearTimeout(hintTimer);
@@ -957,9 +1184,10 @@ function updateHud(){
 }
 const mult = () => Math.min(4, 1+Math.floor(S.streak/5));
 function miss(code,msg){
+  const k = promptKind();
   if(!S.missed){
     S.missed = true; S.streak = 0;
-    const label = S.mode==='files' ? S.cur.title : S.mode==='hunt' ? S.cur.label : S.mode==='combo' ? S.cur.keys.join(' + ') : 'Number pad';
+    const label = k==='files' ? S.cur.title : k==='hunt' ? S.cur.label : k==='workflow' ? S.cur.title : k==='combo' ? S.cur.keys.join(' + ') : 'Number pad';
     S.misses[label] = (S.misses[label]||0)+1;
   }
   S.tries++;
@@ -968,28 +1196,37 @@ function miss(code,msg){
   setFeedback(msg+' One more try.','bad'); updateHud();
 }
 function skip(msg){
+  const k = promptKind();
   S.totalTime += performance.now()-S.start; S.totalPar += par();
-  const ans = S.mode==='files' ? msg : S.mode==='hunt' ? 'That one was '+S.cur.label+'.'
-    : S.mode==='combo' ? 'The answer was '+S.cur.keys.join(' + ')+' ('+S.cur.action+').'
+  if(k !== 'numpad' && k !== 'files'){
+    S.timings.push({item: S.cur, time: 99999, missed: true});
+  }
+  const ans = k==='files' ? msg : k==='hunt' ? 'That one was '+S.cur.label+'.'
+    : k==='workflow' ? 'Workflow sequence was '+S.cur.steps.map(s=>s.hint).join(' → ')+'.'
+    : k==='combo' ? 'The answer was '+S.cur.keys.join(' + ')+' ('+S.cur.action+').'
     : 'Skipping this dimension.';
   setFeedback(ans+' Moving on.','bad');
   S.locked = true; S.idx++; updateHud();
-  nextTimer = setTimeout(() => { S.locked=false; nextPrompt(); }, S.mode==='files' ? 3500 : 1600);
+  nextTimer = setTimeout(() => { S.locked=false; nextPrompt(); }, k==='files' ? 3500 : 1600);
 }
-function hit(code){
+function hit(code, extraBonus=0){
   const t = performance.now()-S.start, p = par();
+  const k = promptKind();
   S.totalTime += t; S.totalPar += p;
+  if(k !== 'numpad' && k !== 'files'){
+    S.timings.push({item: S.cur, time: t, missed: S.missed});
+  }
   if(!S.missed){
     const m0 = mult();
     S.clean++; S.streak++; S.bestStreak = Math.max(S.bestStreak,S.streak);
-    sfx(mult()>m0 ? 'up' : 'good');
+    sfx(mult()>m0 ? 'up' : 'good', S.streak);
     const bonus = Math.round(100*Math.max(0,Math.min(1,(2*p-t)/(1.5*p))));
-    const pts = (100+bonus)*mult(); S.score += pts;
-    setFeedback('+'+pts,'good');
+    const pts = (100+bonus)*mult() + extraBonus; S.score += pts;
+    setFeedback('+'+pts + (extraBonus ? ' (includes +'+extraBonus+' Workflow Bonus!)' : ''),'good');
   } else { sfx('soft'); setFeedback('Got it. No points after a miss.','note'); }
   flash(code,'ok'); clearHint();
   S.locked = true; S.idx++; updateHud();
-  nextTimer = setTimeout(() => { S.locked=false; nextPrompt(); }, S.mode==='files' ? 1200 : 500);
+  nextTimer = setTimeout(() => { S.locked=false; nextPrompt(); }, k==='files' ? 1200 : 500);
 }
 function describe(e){
   return [e.ctrlKey&&'Ctrl', e.shiftKey&&'Shift', e.altKey&&'Alt', keyName(e.code)].filter(Boolean).join(' + ');
@@ -1028,6 +1265,30 @@ const HANDLERS = {
     const other = COMBOS.find(o => o.codes.includes(e.code) && o.ctrl===e.ctrlKey && o.shift===e.shiftKey);
     miss(e.code,'That was '+describe(e)+(other?' ('+other.action+')':'')+'.');
   },
+  workflow(e){
+    if(MODS.includes(e.code)) return;
+    const step = S.cur.steps[S.pos];
+    if(step.codes.includes(e.code) && e.ctrlKey===!!step.ctrl && !e.altKey){
+      const pill = $('wf-pill-' + S.pos);
+      if(pill){ pill.classList.remove('active','is-blind'); pill.classList.add('done'); }
+      S.pos++;
+      if(S.pos >= S.cur.steps.length){
+        return hit(e.code, 300);
+      }
+      const nextPill = $('wf-pill-' + S.pos);
+      if(nextPill) nextPill.classList.add('active');
+      sfx('step', S.streak + S.pos);
+      flash(e.code, 'ok');
+      S.tries = 0;
+      clearHint();
+      scheduleHint();
+      return;
+    }
+    if(step.codes.includes(e.code) && step.ctrl && !e.ctrlKey){
+      return miss(e.code, 'Hold Ctrl down first for ' + step.hint + '.');
+    }
+    miss(e.code, 'Step ' + (S.pos+1) + ' (' + step.label + ') needs ' + step.hint + '.');
+  },
   numpad(e){
     if(MODS.includes(e.code) || e.code==='NumLock' || e.code==='Backspace') return;
     const seq = S.cur.value+'\n', want = numCode(seq[S.pos]);
@@ -1049,17 +1310,57 @@ const HANDLERS = {
 function finish(){
   const n = S.queue.length, acc = S.clean/n;
   const stars = (acc>=.9 && S.totalTime<=S.totalPar) ? 3 : acc>=.8 ? 2 : acc>=.5 ? 1 : 0;
-  const key = S.mode+'-'+S.level, rec = prog[key] || {stars:0,best:0};
-  const newBest = S.score > rec.best;
-  prog[key] = {stars:Math.max(rec.stars,stars), best:Math.max(rec.best,S.score)}; saveProg(prog);
-  postScore({mode:S.mode, level:S.level, score:S.score, stars, accuracy:Math.round(acc*100)});
-  $('res-eyebrow').textContent = MODES[S.mode].name+' · Level '+(S.level+1)+' '+LEVELS[S.level];
+
+  let newBest = false, prevBest = 0;
+  if(S.mode === 'daily'){
+    const dKey = 'daily-' + getTodayKey();
+    const rec = prog[dKey] || {stars:0, best:0};
+    prevBest = rec.best;
+    newBest = S.score > rec.best;
+    prog[dKey] = {stars:Math.max(rec.stars,stars), best:Math.max(rec.best,S.score)};
+    saveProg(prog);
+    $('res-eyebrow').textContent = 'Daily Shop Challenge · ' + getTodayKey();
+    $('res-lb').textContent = 'Compare your Daily Score with classmates on the board!';
+  } else if(S.mode === 'hotspot'){
+    $('res-eyebrow').textContent = 'Slow Key Hotspot Drill';
+    $('res-lb').textContent = 'Hotspot drills are unranked practice.';
+  } else {
+    const key = S.mode+'-'+S.level, rec = prog[key] || {stars:0,best:0};
+    prevBest = rec.best;
+    newBest = S.score > rec.best;
+    prog[key] = {stars:Math.max(rec.stars,stars), best:Math.max(rec.best,S.score)}; saveProg(prog);
+    postScore({mode:S.mode, level:S.level, score:S.score, stars, accuracy:Math.round(acc*100)});
+    $('res-eyebrow').textContent = MODES[S.mode].name+' · Level '+(S.level+1)+' '+LEVELS[S.level];
+  }
+
   $('res-stars').textContent = starStr(stars);
-  $('res-title').textContent = newBest && rec.best ? 'New best score' : stars===3 ? 'Clean work' : stars===2 ? 'Solid run' : stars===1 ? 'Getting there' : 'Keep practicing';
+  $('res-title').textContent = newBest && prevBest ? 'New best score' : stars===3 ? 'Clean work' : stars===2 ? 'Solid run' : stars===1 ? 'Getting there' : 'Keep practicing';
   $('res-score').textContent = S.score;
   $('res-acc').textContent = Math.round(acc*100)+'%';
   $('res-time').textContent = (S.totalTime/n/1000).toFixed(1)+'s';
   $('res-streak').textContent = S.bestStreak;
+
+  // Build Slow-Key Hotspot Pool
+  const sortedSlow = S.timings.slice().sort((a,b) => b.time - a.time);
+  const uniqueSlow = [];
+  const seen = new Set();
+  for(const entry of sortedSlow){
+    const id = entry.item.label || entry.item.action || entry.item.title;
+    if(id && !seen.has(id) && (entry.missed || entry.time > 1400)){
+      seen.add(id);
+      uniqueSlow.push(entry.item);
+    }
+    if(uniqueSlow.length >= 4) break;
+  }
+  S.slowPool = uniqueSlow;
+  const slowBtn = $('res-slow');
+  if(S.slowPool.length >= 2){
+    slowBtn.hidden = false;
+    slowBtn.textContent = 'Drill My Slow Keys (' + S.slowPool.length + ')';
+  } else {
+    slowBtn.hidden = true;
+  }
+
   const trouble = Object.entries(S.misses).sort((a,b) => b[1]-a[1]).slice(0,4).map(x => x[0]+(x[1]>1?' ('+x[1]+')':''));
   let note = '';
   if(S.mode!=='numpad' && trouble.length) note = (S.mode==='files' ? 'Missions to retry: ' : 'Keys to practice: ')+trouble.join(', ')+'. ';
@@ -1067,7 +1368,7 @@ function finish(){
   else if(stars<2) note += 'Two stars needs 80% right on the first try.';
   else if(stars===2) note += 'Three stars needs 90% right on the first try, at speed.';
   $('res-note').textContent = note;
-  $('res-next').hidden = S.level>=2;
+  $('res-next').hidden = (S.mode==='daily' || S.mode==='hotspot' || S.level>=2);
   musicStop(); if(stars) sfx('win');
   renderMenu(); show('results'); S.resultsAt = performance.now();
 }
@@ -1076,14 +1377,20 @@ function toMenu(){ clearTimeout(nextTimer); musicStop(); renderMenu(); show('men
 /* ---------- Input ---------- */
 const passthrough = e => ['F5','F11','F12','NumLock','CapsLock'].includes(e.code) || (e.ctrlKey && e.code==='KeyR') || (e.ctrlKey && e.shiftKey && e.code==='KeyI');
 window.addEventListener('keydown', e => {
+  checkNumLock(e);
   if(keyEl[e.code]) keyEl[e.code].classList.add('down');
-  if(S.screen==='play' && S.mode==='files'){
-    if(S.locked || S.paused){ if(!passthrough(e)) e.preventDefault(); return; }
-    HANDLERS.files(e);
-  } else if(S.screen==='play'){
-    if(!passthrough(e)) e.preventDefault();
-    if(e.repeat || S.locked || S.paused) return;
-    HANDLERS[S.mode](e);
+  if(!e.repeat) sfx('click');
+
+  if(S.screen==='play'){
+    const k = promptKind();
+    if(k==='files'){
+      if(S.locked || S.paused){ if(!passthrough(e)) e.preventDefault(); return; }
+      HANDLERS.files(e);
+    } else {
+      if(!passthrough(e)) e.preventDefault();
+      if(e.repeat || S.locked || S.paused) return;
+      HANDLERS[k](e);
+    }
   } else if(S.screen==='ready'){
     if(e.code==='Space'){ e.preventDefault(); begin(); }
     else if(e.code==='Escape') toMenu();
@@ -1099,7 +1406,7 @@ window.addEventListener('keydown', e => {
 });
 window.addEventListener('keyup', e => {
   if(keyEl[e.code]) keyEl[e.code].classList.remove('down');
-  if(S.screen==='play' && !passthrough(e) && (S.mode!=='files' || e.code==='AltLeft' || e.code==='AltRight')) e.preventDefault();
+  if(S.screen==='play' && !passthrough(e) && (promptKind()!=='files' || e.code==='AltLeft' || e.code==='AltRight')) e.preventDefault();
 });
 window.addEventListener('blur', () => {
   for(const c in keyEl) keyEl[c].classList.remove('down');
@@ -1115,6 +1422,13 @@ $('ready-back').addEventListener('click', toMenu);
 $('res-menu').addEventListener('click', toMenu);
 $('res-again').addEventListener('click', e => { e.currentTarget.blur(); begin(); });
 $('res-next').addEventListener('click', e => { e.currentTarget.blur(); ready(S.mode, S.level+1); });
+$('btn-daily').addEventListener('click', () => ready('daily', 1));
+$('res-slow').addEventListener('click', e => {
+  e.currentTarget.blur();
+  if(!S.slowPool.length) return;
+  const deck = Array.from({length:8}, (_,i) => S.slowPool[i % S.slowPool.length]);
+  ready('hotspot', 0, shuffle(deck));
+});
 let resetArmed = false;
 $('reset').addEventListener('click', e => {
   if(!resetArmed){ resetArmed = true; e.currentTarget.textContent = 'Click again to erase all stars'; return; }
