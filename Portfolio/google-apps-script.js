@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.88';
+const BACKEND_VERSION = 'v2.14.89';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2503,7 +2503,7 @@ function handleGetStudentAIFeedback(data) {
 // Students sheet (never from the game), so the board shows "First L." and the real period.
 // ============================================
 var KEY_COMMAND_SHEET = 'Key Command';
-var KEY_COMMAND_MODES = ['hunt', 'numpad', 'combo', 'files'];
+var KEY_COMMAND_MODES = ['hunt', 'numpad', 'combo', 'workflow', 'files'];
 
 function keyCommandSheet_() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
