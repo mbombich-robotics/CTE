@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.86',
+    VERSION: 'v2.14.87',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -2485,9 +2485,20 @@ function attachDirtyListeners() {
 function initNavigation() {
     document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', () => {
+            if (item.dataset.external === 'keycommand') return openKeyCommand();
             navigateTo(item.dataset.page);
         });
     });
+}
+
+// Key Command keyboard game: the link carries course + email so scores reach this
+// course's backend for the class leaderboard (name and period come from the Students sheet).
+function openKeyCommand() {
+    if (!state.student?.email) { showToast('Sign in first to play Key Command.', 'error'); return; }
+    const course = Object.keys(CONFIG.BACKEND_URLS).find(k => CONFIG.BACKEND_URLS[k] === CONFIG.SHEETS_API_URL)
+        || state.student.course || 'hsaer';
+    const url = '../Admin/KeyCommand-for-students.html#c=' + encodeURIComponent(course) + '&e=' + encodeURIComponent(state.student.email);
+    window.open(url, '_blank', 'noopener');
 }
 
 function navigateTo(pageId) {

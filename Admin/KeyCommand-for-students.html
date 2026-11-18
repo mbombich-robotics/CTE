@@ -1,0 +1,1133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Key Command</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: a drawing sheet. Title block on top, one framed work area, a live keyboard map under it. */
+:root{
+  --paper:#e9eef4; --sheet:#f8fafc; --ink:#12304f; --ink-soft:#4f6a87; --line:#b4c4d6;
+  --grid:rgba(18,48,79,.06); --key:#ffffff; --accent:#f28a1c; --on-accent:#221300;
+  --good:#18794a; --bad:#c22f3d; --good-bg:#cdeedd; --bad-bg:#f9d4d8;
+  --f-display:"Barlow Semi Condensed","Arial Narrow",Arial,sans-serif;
+  --f-body:"Barlow","Segoe UI",Arial,sans-serif;
+  --f-mono:"JetBrains Mono",Consolas,"Courier New",monospace;
+  --u:clamp(12px,calc((100vw - 34px) / 23),42px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e2744; --sheet:#133153; --ink:#e8f1fb; --ink-soft:#a3bcd9; --line:#3a6291;
+    --grid:rgba(200,225,255,.06); --key:#1a3f69; --accent:#ffa53d; --on-accent:#221300;
+    --good:#5fd699; --bad:#ff8a95; --good-bg:#17503a; --bad-bg:#6a2630; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e2744; --sheet:#133153; --ink:#e8f1fb; --ink-soft:#a3bcd9; --line:#3a6291;
+  --grid:rgba(200,225,255,.06); --key:#1a3f69; --accent:#ffa53d; --on-accent:#221300;
+  --good:#5fd699; --bad:#ff8a95; --good-bg:#17503a; --bad-bg:#6a2630; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--paper); color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.45;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+}
+.wrap{
+  max-width:1000px; margin:0 auto; padding-block:16px 28px;
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex; flex-direction:column; gap:14px;
+}
+h1,h2,h3,p,dl,dd{margin:0}
+.mono{font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.eyebrow{font-size:12px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft)}
+
+/* Title block */
+.titleblock{display:flex; flex-wrap:wrap; border:1.5px solid var(--ink); background:var(--sheet)}
+.tb-name{flex:1 1 240px; min-width:0; padding:10px 14px}
+.tb-name h1{font-family:var(--f-display); font-weight:700; font-size:28px; line-height:1; letter-spacing:.02em; text-transform:uppercase}
+.tb-name p{font-size:13px; color:var(--ink-soft); margin-top:4px}
+.tb-cells{display:flex; flex:0 1 auto}
+.tb-cells div{padding:8px 16px; border-left:1.5px solid var(--ink); min-width:110px}
+.tb-cells dt{font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft)}
+.tb-cells dd{font-family:var(--f-display); font-weight:600; font-size:20px}
+.audio{display:flex; gap:6px; padding-top:3px}
+.tog{font-family:var(--f-body); font-size:13px; font-weight:600; padding:2px 8px; border:1.5px solid var(--ink); border-radius:3px; background:var(--ink); color:var(--sheet); white-space:nowrap}
+.tog[aria-pressed="false"]{background:transparent; color:var(--ink-soft); border-color:var(--line); text-decoration:line-through}
+@media (max-width:520px){ .tb-cells{flex:1 1 100%; border-top:1.5px solid var(--ink)} .tb-cells div{flex:1} .tb-cells div:first-child{border-left:0} }
+
+/* Sheet */
+.sheet{position:relative; border:1.5px solid var(--ink); background:var(--sheet); padding:18px 20px; min-height:300px; display:flex; flex-direction:column}
+.sheet>section{flex:1; display:flex; flex-direction:column; gap:14px}
+button{font:inherit; color:inherit; cursor:pointer}
+button:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+.btn{border:1.5px solid var(--ink); background:transparent; padding:8px 14px; font-weight:600; border-radius:3px}
+.btn:hover{background:var(--ink); color:var(--sheet)}
+.btn--main{background:var(--accent); color:var(--on-accent); border-color:var(--accent)}
+.btn--main:hover{background:var(--accent); color:var(--on-accent); filter:brightness(1.08)}
+.btn--quiet{border-color:transparent; color:var(--ink-soft); font-weight:500; padding:4px 8px; font-size:14px}
+.btn--quiet:hover{background:transparent; color:var(--ink); text-decoration:underline}
+kbd{font-family:var(--f-mono); font-weight:700; font-size:.95em; border:1.5px solid var(--ink); border-bottom-width:3px; border-radius:4px; padding:1px 8px; background:var(--key); white-space:nowrap}
+
+/* Menu */
+.intro{max-width:65ch; color:var(--ink-soft)}
+.modes{display:flex; flex-direction:column}
+.mode{display:flex; flex-wrap:wrap; align-items:center; gap:10px 20px; padding:14px 0; border-top:1px solid var(--line)}
+.mode-text{flex:1 1 260px; min-width:0}
+.mode h2{font-family:var(--f-display); font-weight:700; font-size:24px; text-transform:uppercase; letter-spacing:.02em; line-height:1.1}
+.mode p{color:var(--ink-soft); font-size:15px}
+.levels{display:flex; flex-wrap:wrap; gap:8px}
+.lvl{border:1.5px solid var(--ink); background:var(--key); border-radius:3px; padding:7px 12px; min-width:104px; text-align:left; display:flex; flex-direction:column; gap:1px}
+.lvl:hover{background:var(--accent); color:var(--on-accent); border-color:var(--accent)}
+.lvl:hover .lvl-sub{color:var(--on-accent)}
+.lvl-name{font-weight:600}
+.lvl-sub{font-size:13px; color:var(--ink-soft); font-family:var(--f-mono)}
+/* Leaderboard */
+.lb{border-top:1px solid var(--line); padding:12px 0 4px; display:flex; flex-direction:column; gap:8px}
+.lb-head{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:4px 12px}
+.lb h2{font-family:var(--f-display); font-weight:700; font-size:24px; text-transform:uppercase; letter-spacing:.02em; line-height:1.1}
+.lb-note{font-size:14px; color:var(--ink-soft)}
+.lb-cols{display:flex; flex-wrap:wrap; gap:12px 28px}
+.lb-col{flex:1 1 280px; min-width:0}
+.lb-col h3{font-size:12px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 4px}
+.lb ol{list-style:none; margin:0; padding:0}
+.lb li{display:flex; align-items:center; gap:10px; padding:4px 6px; border-bottom:1px solid var(--line); font-size:15px}
+.lb li.gap{justify-content:center; color:var(--ink-soft); border-bottom:0; padding:0; line-height:1}
+.lb .r{font-family:var(--f-mono); font-weight:700; min-width:2.2em; color:var(--ink-soft)}
+.lb .n{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.lb .p{font-size:13px; color:var(--ink-soft)}
+.lb .s{font-family:var(--f-mono); white-space:nowrap}
+.lb li.me{background:var(--accent); color:var(--on-accent); border-color:var(--accent); font-weight:600}
+.lb li.me .r,.lb li.me .p{color:var(--on-accent)}
+.menu-foot{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; border-top:1px solid var(--line); padding-top:10px; font-size:14px; color:var(--ink-soft)}
+
+/* Ready + results */
+.center{align-items:center; justify-content:center; text-align:center}
+.big{font-family:var(--f-display); font-weight:700; font-size:clamp(30px,6vw,46px); line-height:1.05; text-transform:uppercase; letter-spacing:.02em; text-wrap:balance}
+.sub{color:var(--ink-soft); max-width:56ch}
+.stars{font-size:40px; letter-spacing:.1em; color:var(--accent); line-height:1}
+.stats{display:flex; flex-wrap:wrap; justify-content:center; border:1.5px solid var(--ink)}
+.stats div{padding:8px 18px; border-left:1px solid var(--line); min-width:110px}
+.stats div:first-child{border-left:0}
+.stats dt{font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft)}
+.stats dd{font-family:var(--f-mono); font-weight:700; font-size:22px}
+.actions{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; align-items:center}
+
+/* Play */
+.hud{display:flex; flex-wrap:wrap; align-items:center; gap:6px 22px; font-size:14px}
+.hud b{font-family:var(--f-mono); font-size:17px}
+.hud .spacer{flex:1}
+.hud-label{color:var(--ink-soft); font-weight:600; letter-spacing:.08em; text-transform:uppercase; font-size:12px; margin-right:6px}
+.bar{height:4px; background:var(--line)}
+.bar i{display:block; height:100%; width:0; background:var(--ink); transition:width .2s}
+.stage{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:10px; min-height:170px}
+.bigkey{font-family:var(--f-display); font-weight:700; font-size:clamp(44px,9vw,76px); line-height:1; text-transform:uppercase; letter-spacing:.02em}
+.desc{color:var(--ink-soft); max-width:52ch}
+.scenario{font-size:clamp(20px,3.2vw,27px); font-weight:500; line-height:1.25; max-width:30ch; text-wrap:balance}
+.answer{display:flex; align-items:center; gap:8px; font-size:18px; min-height:34px}
+.answer.is-hidden{visibility:hidden}
+.answer .act{font-weight:600; margin-right:6px}
+.target{font-size:clamp(40px,8vw,64px); font-weight:700; line-height:1}
+.dimline{display:flex; align-items:center; width:min(100%,460px)}
+.tick{width:1.5px; height:38px; background:var(--ink)}
+.ext{flex:1; border-top:1.5px solid var(--ink); position:relative; height:0}
+.ext::before{content:""; position:absolute; top:-5.5px; border-top:5px solid transparent; border-bottom:5px solid transparent}
+.ext.l::before{left:0; border-right:12px solid var(--ink)}
+.ext.r::before{right:0; border-left:12px solid var(--ink)}
+.entry{font-family:var(--f-mono); font-weight:700; font-size:24px; min-width:150px; min-height:44px; padding:4px 12px; border:1.5px solid var(--ink); background:var(--key); display:flex; align-items:center; justify-content:center}
+.entry .typed{color:var(--good)}
+.caret{width:2px; height:26px; background:var(--accent); margin-left:2px; animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.feedback{min-height:26px; text-align:center; font-weight:600}
+.feedback.good{color:var(--good)} .feedback.bad{color:var(--bad)} .feedback.note{color:var(--ink-soft)}
+.pause{position:absolute; inset:0; background:var(--sheet); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; text-align:center; padding:20px}
+
+/* File Missions: practice app window and file dialog */
+.fm{width:100%; display:flex; flex-direction:column; gap:12px; text-align:left}
+.fm-text{font-size:19px; font-weight:500; max-width:70ch}
+.fm-steps{margin:6px 0 0; padding-left:22px; color:var(--ink-soft); font-size:15px}
+.fm-steps.is-hidden{display:none}
+.fm-fb{text-align:left; margin-top:6px}
+.crumbs button{color:var(--ink)}
+.win{border:1.5px solid var(--ink); background:var(--paper); display:flex; flex-direction:column; min-width:0}
+.win-title{display:flex; justify-content:space-between; gap:10px; background:var(--ink); color:var(--sheet); padding:5px 10px; font-weight:600; font-size:14px}
+.win-app{opacity:.75; font-weight:500}
+.win-menu{position:relative; border-bottom:1px solid var(--line); background:var(--sheet); padding:2px 4px}
+.menu-btn{border:0; background:transparent; padding:4px 10px; border-radius:3px; font-size:14px}
+.menu-btn:hover{background:var(--line)}
+.menu{position:absolute; left:4px; top:100%; z-index:3; background:var(--sheet); border:1.5px solid var(--ink); min-width:230px; display:flex; flex-direction:column; padding:4px}
+.menu button{display:flex; justify-content:space-between; gap:24px; border:0; background:transparent; padding:6px 10px; font-size:14px; text-align:left}
+.menu button:hover{background:var(--accent); color:var(--on-accent)}
+.menu button span:last-child{font-family:var(--f-mono); font-size:12px; opacity:.8}
+.win-body{position:relative; min-height:400px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:14px; color:var(--ink-soft)}
+.win-art{width:min(60%,240px)}
+.win-status{font-size:14px; text-align:center}
+.dlg{position:absolute; inset:10px; background:var(--sheet); border:1.5px solid var(--ink); display:flex; flex-direction:column; color:var(--ink); box-shadow:4px 4px 0 var(--line); font-size:14px; min-width:0}
+.dlg-title{display:flex; justify-content:space-between; align-items:center; padding:5px 10px; border-bottom:1px solid var(--line); font-weight:600}
+.dlg-x{border:0; background:transparent; font-size:18px; line-height:1; padding:0 6px}
+.dlg-bar{display:flex; flex-wrap:wrap; gap:6px; align-items:center; padding:6px 10px; border-bottom:1px solid var(--line)}
+.dlg-bar>button,.dd>button{border:1px solid var(--line); background:var(--key); border-radius:3px; padding:3px 9px; font-size:13px}
+.crumbs{flex:1 1 160px; min-width:0; display:flex; flex-wrap:wrap; align-items:center; gap:2px; border:1px solid var(--line); background:var(--key); padding:2px 6px; border-radius:3px; color:var(--ink-soft)}
+.crumbs button{border:0; background:transparent; padding:1px 4px; font-size:13px; border-radius:2px}
+.crumbs button:hover{background:var(--line)}
+.dlg-main{flex:1; display:flex; min-height:0}
+.dlg-nav,.dlg-list{list-style:none; margin:0; padding:6px; overflow:auto}
+.dlg-nav{flex:0 0 150px; border-right:1px solid var(--line)}
+.dlg-nav button{width:100%; text-align:left; border:0; background:transparent; padding:4px 6px; border-radius:3px; font-size:14px}
+.dlg-nav button:hover{background:var(--line)}
+.dlg-list{flex:1; min-width:0}
+.dlg-list li{display:flex; align-items:center; gap:8px; padding:4px 6px; border-radius:3px; cursor:default; user-select:none; -webkit-user-select:none}
+.dlg-list li:hover{background:var(--line)}
+.dlg-list li.sel{background:var(--accent); color:var(--on-accent)}
+.dlg-list li.empty{color:var(--ink-soft)}
+.dlg-list li.empty:hover{background:transparent}
+.dlg-list input{font:inherit; padding:1px 5px; border:1px solid var(--ink); background:var(--key); color:var(--ink); min-width:0}
+.ico{flex:0 0 16px; height:12px; border-radius:2px; background:var(--accent)}
+.ico.f{flex-basis:12px; height:16px; background:transparent; border:1.5px solid var(--ink-soft)}
+.dlg-fields{display:grid; grid-template-columns:auto 1fr; gap:6px 10px; align-items:center; padding:8px 10px; border-top:1px solid var(--line)}
+.dlg-fields input{font:inherit; padding:4px 8px; border:1px solid var(--ink); background:var(--key); color:var(--ink); min-width:0; width:100%}
+.dd{position:relative; min-width:0}
+.dd>button{width:100%; text-align:left}
+.dd ul{position:absolute; left:0; right:0; bottom:100%; list-style:none; margin:0; padding:4px; background:var(--sheet); border:1.5px solid var(--ink); z-index:4}
+.dd ul button{width:100%; text-align:left; border:0; background:transparent; padding:4px 6px; font-size:13px}
+.dd ul button:hover{background:var(--accent); color:var(--on-accent)}
+.dlg-note{min-height:20px; padding:0 10px; color:var(--bad); font-weight:600; font-size:13px}
+.dlg-actions{display:flex; justify-content:flex-end; gap:8px; padding:8px 10px}
+@media (max-width:520px){ .dlg-nav{flex-basis:96px} }
+
+/* Keyboard map */
+.kbwrap{display:flex; flex-direction:column; align-items:center; gap:8px}
+.kb{position:relative; width:calc(var(--u) * 23); height:calc(var(--u) * 6.5); user-select:none; -webkit-user-select:none}
+.k{position:absolute; padding:calc(var(--u) * .05)}
+.k span{display:flex; align-items:center; justify-content:center; width:100%; height:100%; background:var(--key); border:1px solid var(--line); border-bottom-width:2px; border-radius:4px; font-family:var(--f-mono); font-weight:700; font-size:calc(var(--u) * .36); color:var(--ink); overflow:hidden; white-space:nowrap}
+.k.word span{font-family:var(--f-body); font-weight:600; font-size:calc(var(--u) * .27)}
+.k.dim span{color:var(--ink-soft); font-weight:500; opacity:.6}
+.k.down span{border-color:var(--ink); background:var(--line); opacity:1}
+.k.hint span{background:var(--accent); border-color:var(--accent); color:var(--on-accent); opacity:1; animation:pulse 1s ease-in-out infinite}
+.k.ok span{background:var(--good-bg); border-color:var(--good); color:var(--ink); opacity:1; animation:none}
+.k.no span{background:var(--bad-bg); border-color:var(--bad); color:var(--ink); opacity:1; animation:none}
+@keyframes pulse{50%{box-shadow:0 0 0 calc(var(--u) * .12) color-mix(in srgb,var(--accent) 35%,transparent)}}
+.zone{position:absolute; display:flex; align-items:center; justify-content:center; font-size:calc(var(--u) * .26); font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft)}
+.readout{min-height:24px; font-size:15px; color:var(--ink-soft); text-align:center; max-width:70ch}
+.readout b{color:var(--ink)}
+@media (prefers-reduced-motion: reduce){ .k.hint span,.caret{animation:none} .bar i{transition:none} }
+</style>
+
+<div class="wrap">
+  <header class="titleblock">
+    <div class="tb-name">
+      <h1>Key Command</h1>
+      <p>Keyboard drills for the CAD lab. Needs a full keyboard with a number pad.</p>
+    </div>
+    <dl class="tb-cells">
+      <div><dt>Rank</dt><dd id="rank">Intern</dd></div>
+      <div><dt>Stars</dt><dd id="starcount" class="mono">0/36</dd></div>
+      <div><dt>Audio</dt><dd class="audio"><button class="tog" id="t-music" type="button">Music</button><button class="tog" id="t-sfx" type="button">Sound</button></dd></div>
+    </dl>
+  </header>
+
+  <main class="sheet">
+    <section id="s-menu">
+      <p class="intro">Pick a drill. <b>Guided</b> shows you the answer on the keyboard map. <b>Fading</b> shows it only if you hesitate. <b>Blind</b> shows it only after a miss. Earn up to three stars per level for accuracy and speed.</p>
+      <div class="modes" id="modes"></div>
+      <div class="lb" id="lb"></div>
+      <div class="menu-foot">
+        <span>Your stars are saved in this browser on this computer.</span>
+        <button class="btn btn--quiet" id="reset" type="button">Reset my progress</button>
+      </div>
+    </section>
+
+    <section id="s-ready" class="center" hidden>
+      <p class="eyebrow" id="ready-eyebrow"></p>
+      <h2 class="big" id="ready-title"></h2>
+      <p class="sub" id="ready-sub"></p>
+      <p>Hands on the keyboard. Press <kbd>Space</kbd> to start.</p>
+      <button class="btn btn--quiet" id="ready-back" type="button">Back to menu (Esc)</button>
+    </section>
+
+    <section id="s-play" hidden>
+      <div class="hud">
+        <span><span class="hud-label" id="hud-mode"></span></span>
+        <span><span class="hud-label">Prompt</span><b id="hud-prog">1/20</b></span>
+        <span><span class="hud-label">Streak</span><b id="hud-streak">0</b></span>
+        <span><span class="hud-label">Multiplier</span><b id="hud-mult">x1</b></span>
+        <span class="spacer"></span>
+        <span><span class="hud-label">Score</span><b id="hud-score">0</b></span>
+        <button class="btn btn--quiet" id="quit" type="button">Quit</button>
+      </div>
+      <div class="bar"><i id="bar"></i></div>
+      <div class="stage" id="stage"></div>
+      <p class="feedback" id="feedback" aria-live="polite"></p>
+    </section>
+
+    <section id="s-results" class="center" hidden>
+      <p class="eyebrow" id="res-eyebrow"></p>
+      <div class="stars" id="res-stars"></div>
+      <h2 class="big" id="res-title"></h2>
+      <dl class="stats">
+        <div><dt>Score</dt><dd id="res-score">0</dd></div>
+        <div><dt>First try</dt><dd id="res-acc">0%</dd></div>
+        <div><dt>Avg time</dt><dd id="res-time">0s</dd></div>
+        <div><dt>Best streak</dt><dd id="res-streak">0</dd></div>
+      </dl>
+      <p class="sub" id="res-note"></p>
+      <p class="lb-note" id="res-lb"></p>
+      <div class="actions">
+        <button class="btn btn--main" id="res-again" type="button">Play again (Enter)</button>
+        <button class="btn" id="res-next" type="button">Next level</button>
+        <button class="btn btn--quiet" id="res-menu" type="button">Menu (Esc)</button>
+      </div>
+    </section>
+
+    <div class="pause" id="pause" hidden>
+      <h2 class="big">Paused</h2>
+      <p class="sub">The game can't hear your keyboard right now. Click here to keep playing.</p>
+    </div>
+  </main>
+
+  <section class="kbwrap">
+    <div class="kb" id="kb" aria-hidden="true"></div>
+    <p class="readout" id="readout">Press any key to see where it lives on the map.</p>
+  </section>
+</div>
+
+<script>
+(function(){
+"use strict";
+const $ = id => document.getElementById(id);
+const ri = (a,b) => a + Math.floor(Math.random()*(b-a+1));
+const pick = a => a[ri(0,a.length-1)];
+const shuffle = a => { a = a.slice(); for(let i=a.length-1;i>0;i--){ const j=ri(0,i); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+
+/* ---------- Keyboard map ---------- */
+const KB = [];
+function row(y, x, items){
+  for(const [code,label,w=1,o={}] of items){
+    if(code) KB.push({code,label,x,y,w,h:o.h||1,dim:!!o.dim});
+    x += w;
+  }
+}
+const letters = s => [...s].map(c => ['Key'+c, c, 1, {dim:1}]);
+const sym = (code,label) => [code,label,1,{dim:1}];
+const fk = (a,b) => { const r=[]; for(let i=a;i<=b;i++) r.push(['F'+i,'F'+i,1,i===2?{}:{dim:1}]); return r; };
+const gap = w => [null,'',w];
+row(0,0,[['Escape','Esc'],gap(1),...fk(1,4),gap(.5),...fk(5,8),gap(.5),...fk(9,12)]);
+row(1.5,0,[sym('Backquote','`'),...[1,2,3,4,5,6,7,8,9,0].map(d=>['Digit'+d,''+d]),sym('Minus','-'),sym('Equal','='),['Backspace','Backspace',2]]);
+row(2.5,0,[['Tab','Tab',1.5],...letters('QWERTYUIOP'),sym('BracketLeft','['),sym('BracketRight',']'),['Backslash','\\',1.5,{dim:1}]]);
+row(3.5,0,[['CapsLock','Caps',1.75],...letters('ASDFGHJKL'),sym('Semicolon',';'),sym('Quote',"'"),['Enter','Enter',2.25]]);
+row(4.5,0,[['ShiftLeft','Shift',2.25],...letters('ZXCVBNM'),sym('Comma',','),sym('Period','.'),sym('Slash','/'),['ShiftRight','Shift',2.75]]);
+row(5.5,0,[['ControlLeft','Ctrl',1.25],['MetaLeft','Win',1.25],['AltLeft','Alt',1.25],['Space','',6.25],['AltRight','Alt',1.25],['MetaRight','Win',1.25],['ContextMenu','Menu',1.25],['ControlRight','Ctrl',1.25]]);
+row(0,15.5,[['PrintScreen','PrtSc',1,{dim:1}],['ScrollLock','ScrLk',1,{dim:1}],['Pause','Pause',1,{dim:1}]]);
+row(1.5,15.5,[['Insert','Ins'],['Home','Home'],['PageUp','PgUp']]);
+row(2.5,15.5,[['Delete','Del'],['End','End'],['PageDown','PgDn']]);
+row(4.5,15.5,[gap(1),['ArrowUp','↑']]);
+row(5.5,15.5,[['ArrowLeft','←'],['ArrowDown','↓'],['ArrowRight','→']]);
+row(1.5,19,[['NumLock','Num'],['NumpadDivide','/'],['NumpadMultiply','*'],['NumpadSubtract','-']]);
+row(2.5,19,[['Numpad7','7'],['Numpad8','8'],['Numpad9','9'],['NumpadAdd','+',1,{h:2}]]);
+row(3.5,19,[['Numpad4','4'],['Numpad5','5'],['Numpad6','6']]);
+row(4.5,19,[['Numpad1','1'],['Numpad2','2'],['Numpad3','3'],['NumpadEnter','Enter',1,{h:2}]]);
+row(5.5,19,[['Numpad0','0',2],['NumpadDecimal','.']]);
+
+const keyEl = {};
+const u = n => 'calc(var(--u) * ' + n + ')';
+(function buildKb(){
+  const kb = $('kb');
+  for(const k of KB){
+    const d = document.createElement('div');
+    d.className = 'k' + (k.label.length>1 ? ' word' : '') + (k.dim ? ' dim' : '');
+    d.style.left=u(k.x); d.style.top=u(k.y); d.style.width=u(k.w); d.style.height=u(k.h);
+    const s = document.createElement('span'); s.textContent = k.label; d.appendChild(s);
+    kb.appendChild(d); keyEl[k.code] = d;
+  }
+  const z = document.createElement('div'); z.className='zone'; z.textContent='Number pad';
+  z.style.left=u(19); z.style.top=u(.4); z.style.width=u(4); z.style.height=u(1);
+  kb.appendChild(z);
+})();
+
+const NAMES = {Escape:'Esc',Space:'Spacebar',ControlLeft:'Ctrl',ControlRight:'Ctrl',ShiftLeft:'Shift',ShiftRight:'Shift',AltLeft:'Alt',AltRight:'Alt',
+  MetaLeft:'the Windows key',MetaRight:'the Windows key',ContextMenu:'the Menu key',CapsLock:'Caps Lock',NumLock:'Num Lock',Delete:'Delete',Insert:'Insert',
+  PageUp:'Page Up',PageDown:'Page Down',ArrowUp:'Up arrow',ArrowDown:'Down arrow',ArrowLeft:'Left arrow',ArrowRight:'Right arrow',
+  PrintScreen:'Print Screen',ScrollLock:'Scroll Lock',NumpadEnter:'Numpad Enter',NumpadDecimal:'Numpad .',NumpadAdd:'Numpad +',NumpadSubtract:'Numpad -',
+  NumpadMultiply:'Numpad *',NumpadDivide:'Numpad /'};
+function keyName(code){
+  if(NAMES[code]) return NAMES[code];
+  if(/^Numpad\d$/.test(code)) return 'Numpad ' + code.slice(6);
+  if(/^Digit\d$/.test(code)) return 'top-row ' + code.slice(5);
+  if(/^Key[A-Z]$/.test(code)) return code.slice(3);
+  const k = KB.find(k => k.code===code); return k ? k.label : code;
+}
+const MODS = ['ControlLeft','ControlRight','ShiftLeft','ShiftRight','AltLeft','AltRight','MetaLeft','MetaRight'];
+
+/* ---------- Content ---------- */
+const T = (label,codes,desc) => ({label,codes,desc});
+const HUNT_CORE = [
+  T('Esc',['Escape'],'Cancels the active tool or closes a dialog box.'),
+  T('Tab',['Tab'],'Jumps to the next input box, like from length to angle.'),
+  T('Ctrl',['ControlLeft','ControlRight'],'Hold it with a letter for shortcuts like Ctrl + Z.'),
+  T('Shift',['ShiftLeft','ShiftRight'],'Hold it while clicking to select several things.'),
+  T('Alt',['AltLeft','AltRight'],'Opens menu shortcuts. Alt + Tab switches windows.'),
+  T('Delete',['Delete'],'Removes whatever is selected.'),
+  T('Backspace',['Backspace'],'Erases the character to the left of the cursor.'),
+  T('Enter',['Enter'],'Confirms what you typed. This is the one on the main keyboard.'),
+  T('Numpad Enter',['NumpadEnter'],'Confirms a dimension without leaving the number pad.'),
+  T('Spacebar',['Space'],'In many CAD programs it repeats the last command.')
+];
+const HUNT_MORE = [
+  T('Up arrow',['ArrowUp'],'Nudges the selection or rotates the view.'),
+  T('Down arrow',['ArrowDown'],'Nudges the selection or rotates the view.'),
+  T('Left arrow',['ArrowLeft'],'Nudges the selection or rotates the view.'),
+  T('Right arrow',['ArrowRight'],'Nudges the selection or rotates the view.'),
+  T('Home',['Home'],'Jumps to the start of a line. In some CAD programs it resets the view.'),
+  T('End',['End'],'Jumps to the end of a line.'),
+  T('Page Up',['PageUp'],'Scrolls up one screen.'),
+  T('Page Down',['PageDown'],'Scrolls down one screen.'),
+  T('F2',['F2'],'Renames the selected file or feature.'),
+  T('Numpad .',['NumpadDecimal'],'The decimal point for dimensions like 2.75.'),
+  T('Numpad +',['NumpadAdd'],'Math works inside most dimension boxes.'),
+  T('Numpad -',['NumpadSubtract'],'Math works inside most dimension boxes.'),
+  T('Numpad *',['NumpadMultiply'],'Multiply, inside a dimension box.'),
+  T('Numpad /',['NumpadDivide'],'Divide, inside a dimension box. Handy for halves.'),
+  ...[0,1,2,3,4,5,6,7,8,9].map(d => T('Numpad '+d,['Numpad'+d],'The number pad is the fastest way to type dimensions.'))
+];
+const DESC = {};
+[...HUNT_CORE,...HUNT_MORE].forEach(t => t.codes.forEach(c => DESC[c] = t.desc));
+Object.assign(DESC,{CapsLock:'Locks letters to capitals. Easy to hit by accident when reaching for Tab or Shift.',
+  NumLock:'Turns the number pad on and off. If the pad stops typing numbers, press this.',
+  MetaLeft:'Opens the Start menu.',MetaRight:'Opens the Start menu.',Insert:'Switches between insert and overwrite typing.',
+  PrintScreen:'Takes a screenshot.'});
+
+const C = (action,keys,codes,mods,text) => ({action,keys,codes,ctrl:!!mods.ctrl,shift:!!mods.shift,text});
+const COMBOS = [
+  C('Undo',['Ctrl','Z'],['KeyZ'],{ctrl:1},'You just deleted the wrong line.'),
+  C('Redo',['Ctrl','Y'],['KeyY'],{ctrl:1},'You undid one step too many. Bring it back.'),
+  C('Save',['Ctrl','S'],['KeyS'],{ctrl:1},'You have been sketching for ten minutes and have not saved.'),
+  C('Copy',['Ctrl','C'],['KeyC'],{ctrl:1},'You need a duplicate of the selected hole. Copy it first.'),
+  C('Paste',['Ctrl','V'],['KeyV'],{ctrl:1},'The hole is copied. Now drop it into the drawing.'),
+  C('Cut',['Ctrl','X'],['KeyX'],{ctrl:1},'This note belongs on another sheet. Lift it out so you can paste it there.'),
+  C('Select all',['Ctrl','A'],['KeyA'],{ctrl:1},'In File Explorer, you want to select every file in the folder at once.'),
+  C('Open',['Ctrl','O'],['KeyO'],{ctrl:1},'Open the file you worked on yesterday.'),
+  C('Print',['Ctrl','P'],['KeyP'],{ctrl:1},'Your drawing is finished and ready for paper.'),
+  C('Find',['Ctrl','F'],['KeyF'],{ctrl:1},'On a long web page, search for the word "bracket".'),
+  C('Cancel',['Esc'],['Escape'],{},'The line tool is stuck to your cursor and you want out.'),
+  C('Delete',['Delete'],['Delete'],{},'A circle is selected and you want it gone.'),
+  C('Next box',['Tab'],['Tab'],{},'You typed the length. Jump to the angle box.'),
+  C('Confirm',['Enter'],['Enter','NumpadEnter'],{},'The dimension is typed in. Lock it in.'),
+  C('Rename',['F2'],['F2'],{},'The file is selected and needs a better name.')
+];
+const FUSION = [
+  C('Line',['L'],['KeyL'],{},'In a Fusion sketch, start drawing a line.'),
+  C('Circle',['C'],['KeyC'],{},'In a Fusion sketch, start a center diameter circle.'),
+  C('Rectangle',['R'],['KeyR'],{},'In a Fusion sketch, start a two-point rectangle.'),
+  C('Dimension',['D'],['KeyD'],{},'Your Fusion sketch is drawn. Now add a dimension to it.'),
+  C('Trim',['T'],['KeyT'],{},'Two sketch lines overlap in Fusion. Cut away the extra piece.'),
+  C('Offset',['O'],['KeyO'],{},'In a Fusion sketch, copy this outline a set distance away.'),
+  C('Construction',['X'],['KeyX'],{},'In Fusion, turn the selected line into a dashed construction line.'),
+  C('Extrude',['E'],['KeyE'],{},'Your Fusion sketch is finished. Pull it into a 3D solid.'),
+  C('Fillet',['F'],['KeyF'],{},'In Fusion, round over a sharp edge on the solid.'),
+  C('Hole',['H'],['KeyH'],{},'In Fusion, add a hole for a screw.'),
+  C('Press Pull',['Q'],['KeyQ'],{},'In Fusion, push a face of the solid in or out.'),
+  C('Move',['M'],['KeyM'],{},'In Fusion, move the selected body.'),
+  C('Measure',['I'],['KeyI'],{},'In Fusion, check the distance between two faces.'),
+  C('Toolbox',['S'],['KeyS'],{},'In Fusion, pop up the shortcut toolbox at your cursor.'),
+  C('Fit view',['F6'],['F6'],{},'You zoomed in too far in Fusion and lost the part. Fit it back on screen.')
+];
+const WIN = COMBOS.slice();
+COMBOS.push(...FUSION);
+
+const NUM_CODE = {'.':'NumpadDecimal','+':'NumpadAdd','-':'NumpadSubtract','*':'NumpadMultiply','/':'NumpadDivide','\n':'NumpadEnter'};
+const numCode = ch => NUM_CODE[ch] || ('Numpad'+ch);
+const NUM_GEN = [
+  () => Math.random()<.6 ? ''+ri(2,250) : ri(0,40)+pick(['.5','.25','.75']),
+  () => Math.random()<.6 ? (ri(100,9999)/100).toFixed(2) : ri(0,12)+pick(['.125','.375','.625','.875','.0625']),
+  () => { const a=ri(2,99), b=ri(2,12); return pick([a+'/'+b, a+'*'+b, a+'.5+'+b+'.25', (a+b)+'-'+b+'.75']); }
+];
+
+const MODES = {
+  hunt:{name:'Key Hunt',blurb:'A key is called. Find it and press it as fast as you can.',count:20,
+    ready:'Twenty keys, one at a time. Esc, Tab, Ctrl and the number pad all show up.'},
+  numpad:{name:'Numpad Entry',blurb:'Type dimensions on the number pad only. The top-row numbers do not count.',count:10,
+    ready:'Ten dimensions. Type each one on the number pad and finish with the number pad Enter.'},
+  combo:{name:'Shortcut Scenarios',blurb:'Read the situation, then press the key or shortcut that fixes it.',count:12,
+    ready:'Twelve situations: six Windows shortcuts and six Fusion shortcuts. Press what you would press.'},
+  files:{name:'File Missions',blurb:'Save, Save As and Open in a practice Windows dialog. Right name, right folder, right type.',count:8,
+    ready:'Eight missions in a practice app. Use the mouse and keyboard the way you would in Windows.'}
+};
+const MODE_IDS = ['hunt','numpad','combo','files'];
+const LEVELS = ['Guided','Fading','Blind'];
+const RANKS = [[36,'Chief Engineer'],[27,'Engineer'],[17,'Designer'],[8,'Drafter'],[0,'Intern']];
+
+/* ---------- Saved progress ---------- */
+const STORE_KEY = 'keycommand-v1';
+function loadProg(){ try{ return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }catch(e){ return {}; } }
+function saveProg(p){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(p)); }catch(e){} }
+let prog = loadProg();
+const starStr = n => '★'.repeat(n) + '☆'.repeat(3-n);
+
+/* ---------- Class leaderboard ----------
+   Works only when the game is opened from the student portfolio, which adds
+   #c=<course>&e=<email> to the link. Scores go to that course's portfolio backend.
+   Opened any other way (double-click, no link), the game plays the same with no leaderboard. */
+const BACKENDS = {
+  hsaer: 'https://script.google.com/macros/s/AKfycbxKkugJxRzBOUzSF52btnOa8PmE_B87Fi0vJSA8s-L179KWlA71jUgUhjdUMzNomRgE/exec',
+  '8aer': 'https://script.google.com/macros/s/AKfycbz9JkbfmqlgDdcpCBSIiEifnTu6HK1Q1-KJi0KYdB16u-UnLVZZdxeDPqeHQErrvE-y/exec',
+  dbl:    'https://script.google.com/macros/s/AKfycbxdoDufO0qoot1SekT6O8l8pPCCQLcOY49vxnb0SnNqd4ebtrRYgOyb-LLmk0-Tj-BCfw/exec'
+};
+const ID = (() => {
+  let id = null;
+  try{
+    const h = new URLSearchParams(location.hash.slice(1)), c = h.get('c'), e = h.get('e');
+    if(c && e){
+      id = {course:c, email:e.trim().toLowerCase()};
+      sessionStorage.setItem('keycommand-id', JSON.stringify(id));
+      history.replaceState(null, '', location.pathname + location.search);   // keep the email out of the address bar
+    } else id = JSON.parse(sessionStorage.getItem('keycommand-id'));
+  }catch(err){}
+  return id && BACKENDS[id.course] && id.email ? id : null;
+})();
+const LB = {state:'idle', all:[], period:[], myPeriod:null};
+async function loadBoard(){
+  if(!ID) return renderBoard();
+  LB.state = 'loading'; renderBoard();
+  const courses = Object.keys(BACKENDS);
+  const got = await Promise.allSettled(courses.map(c =>
+    fetch(BACKENDS[c]+'?action=keyCommandBoard'+(c===ID.course ? '&email='+encodeURIComponent(ID.email) : '')+'&_t='+Date.now()).then(r => r.json())));
+  const all = []; let ok = false;
+  got.forEach((r,i) => {
+    if(r.status!=='fulfilled' || !r.value || !r.value.success) return;
+    ok = true;
+    if(courses[i]===ID.course) LB.myPeriod = r.value.myPeriod;
+    for(const p of r.value.players || []) all.push(Object.assign({}, p, {course:courses[i], me:!!p.me && courses[i]===ID.course}));
+  });
+  if(!ok){ LB.state = 'error'; return renderBoard(); }
+  all.sort((a,b) => b.stars-a.stars || b.points-a.points || a.name.localeCompare(b.name));
+  LB.all = all;
+  LB.period = LB.myPeriod==null ? [] : all.filter(p => p.course===ID.course && String(p.period)===String(LB.myPeriod));
+  LB.state = 'ready'; renderBoard();
+}
+function boardList(title, list, showPeriod){
+  const col = document.createElement('div'); col.className = 'lb-col';
+  const h = document.createElement('h3'); h.textContent = title; col.appendChild(h);
+  if(!list.length){ const p = document.createElement('p'); p.className = 'lb-note'; p.textContent = 'No scores yet. Finish a round to get on the board.'; col.appendChild(p); return col; }
+  const ol = document.createElement('ol');
+  const meAt = list.findIndex(p => p.me);
+  const rows = list.slice(0,10).map((p,i) => [p,i]);
+  if(meAt >= 10) rows.push(null, [list[meAt],meAt]);
+  for(const r of rows){
+    const li = document.createElement('li');
+    if(!r){ li.className = 'gap'; li.textContent = '⋯'; ol.appendChild(li); continue; }
+    const [p,i] = r; if(p.me) li.className = 'me';
+    const rk = document.createElement('span'); rk.className = 'r'; rk.textContent = (i+1)+'.';
+    const nm = document.createElement('span'); nm.className = 'n'; nm.textContent = p.name + (p.me ? ' (you)' : '');
+    li.append(rk, nm);
+    if(showPeriod && p.period!=='' && p.period!=null){ const pd = document.createElement('span'); pd.className = 'p'; pd.textContent = 'P'+p.period; li.appendChild(pd); }
+    const sc = document.createElement('span'); sc.className = 's'; sc.textContent = '★'+p.stars+'  '+p.points;
+    li.appendChild(sc); ol.appendChild(li);
+  }
+  col.appendChild(ol); return col;
+}
+function renderBoard(){
+  const box = $('lb'); box.textContent = '';
+  const head = document.createElement('div'); head.className = 'lb-head';
+  const h = document.createElement('h2'); h.textContent = 'Leaderboard';
+  const sub = document.createElement('p'); sub.className = 'lb-note'; sub.textContent = 'Most stars wins. Ties go to the higher total of your best scores.';
+  head.append(h, sub); box.appendChild(head);
+  const note = t => { const p = document.createElement('p'); p.className = 'lb-note'; p.textContent = t; box.appendChild(p); };
+  if(!ID) return note('Open Key Command from your portfolio to get on the class leaderboard.');
+  if(LB.state==='loading' && !LB.all.length) return note('Loading the leaderboard…');
+  if(LB.state==='error') return note('The leaderboard did not load. Your stars are still saved on this computer.');
+  if(LB.state!=='ready' && !LB.all.length) return;
+  const cols = document.createElement('div'); cols.className = 'lb-cols';
+  cols.append(boardList(LB.myPeriod==null ? 'Your class period' : 'Period '+LB.myPeriod, LB.period, false), boardList('All classes', LB.all, true));
+  box.appendChild(cols);
+  if(LB.myPeriod==null) note('Your portfolio has no class period yet, so you only show up under All classes.');
+}
+function postScore(rec){
+  const out = $('res-lb');
+  if(!ID){ out.textContent = ''; return; }
+  out.textContent = 'Sending your score to the leaderboard…';
+  fetch(BACKENDS[ID.course], {method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(Object.assign({action:'keyCommandScore', email:ID.email}, rec))})
+    .then(r => r.json())
+    .then(d => { out.textContent = d && d.success ? 'Score sent to the class leaderboard.' : 'The leaderboard did not take this score. Your stars are still saved on this computer.'; loadBoard(); })
+    .catch(() => { out.textContent = 'Could not reach the leaderboard. Your stars are still saved on this computer.'; });
+}
+
+/* ---------- File Missions ---------- */
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const TYPES = [['dwg','Drawing (*.dwg)'],['pdf','PDF document (*.pdf)'],['stl','3D print mesh (*.stl)']];
+const P1 = 'Project 1 - Bracket', P2 = 'Project 2 - Phone Stand', USB = 'USB Drive (E:)';
+const CAD = ['Documents','CAD Class'], P1PATH = [...CAD,P1];
+const dir = (name,...children) => ({name,dir:true,children});
+const file = name => ({name});
+function newFs(){
+  return dir('This PC',
+    dir('Desktop', file('Fusion shortcut.lnk')),
+    dir('Documents', dir('CAD Class', dir(P1, file('bracket_v1.dwg')), dir(P2, file('stand_sketch.dwg')), dir('Exports')), file('English essay.docx')),
+    dir('Downloads', file('gear_template.dwg'), file('worksheet.pdf')),
+    dir(USB));
+}
+let F = null;
+const node = path => path.reduce((n,name) => n && n.children.find(c => c.dir && c.name===name), F.fs);
+const samePath = (a,b) => !!a && !!b && a.join('/').toLowerCase()===b.join('/').toLowerCase();
+const pathText = p => p.length ? p.join(' > ') : 'This PC';
+const putDoc = (name,path,dirty) => { node(path).children.push(file(name+'.dwg')); F.doc = {name,ext:'dwg',path:path.slice(),dirty}; };
+function saved(ev,name,ext,path){
+  if(ev.name.toLowerCase()!==name) return 'You named it "'+ev.name+'". The mission asked for "'+name+'".';
+  if(ev.ext!==ext) return 'You saved it as a .'+ev.ext+' file. It needs to be a .'+ext+' file. Check "Save as type".';
+  if(!samePath(ev.path,path)) return 'You saved '+ev.file+' in '+pathText(ev.path)+'. It belongs in '+pathText(path)+'.';
+  return true;
+}
+const M = (title,text,par,keys,steps,setup,check) => ({title,text,par,keys,steps,setup,check});
+const MISSIONS = [
+  M('First save','This drawing has never been saved. Save it as hinge in Documents > CAD Class > '+P1+'.',45000,['ControlLeft','KeyS'],
+    ['Press Ctrl + S. A new file has no name yet, so Save As opens.','Double-click CAD Class, then '+P1+'.','Type hinge in the File name box.','Press Enter or click Save.'],
+    () => {}, ev => ev.type==='save' ? saved(ev,'hinge','dwg',P1PATH) : null),
+  M('Quick save','You changed hinge. Save your changes into the same file.',12000,['ControlLeft','KeyS'],
+    ['Press Ctrl + S. The file already has a name and a folder, so it saves with no dialog.'],
+    () => putDoc('hinge',P1PATH,true),
+    ev => ev.type!=='save' ? null : ev.via==='quick' ? true : 'You did not need Save As here. Ctrl + S saves straight into the same file.'),
+  M('New version','Keep hinge as it is. Save a second version named hinge_v2 in the same folder.',35000,[],
+    ['Click File, then Save As. Plain Save would overwrite hinge.','The dialog opens in the same folder. Stay there.','Change the file name to hinge_v2.','Click Save.'],
+    () => putDoc('hinge',P1PATH,false),
+    ev => ev.type!=='save' ? null : ev.via==='quick' ? 'That saved over hinge. Use File > Save As to make a new file.' : saved(ev,'hinge_v2','dwg',P1PATH)),
+  M('Open a file','Open gear_template. It is in Downloads.',30000,['ControlLeft','KeyO'],
+    ['Press Ctrl + O, or click File then Open.','Click Downloads on the left.','Click gear_template.dwg, then click Open.'],
+    () => {}, ev => ev.type!=='open' ? null : ev.name==='gear_template' ? true : 'You opened '+ev.file+'. The mission asked for gear_template.'),
+  M('Save a copy elsewhere','gear_template is open from Downloads. Save a copy with the same name in Documents > CAD Class > '+P2+'.',45000,[],
+    ['Click File, then Save As.','Click Documents on the left, then open CAD Class and '+P2+'.','Leave the name as gear_template and click Save.'],
+    () => { F.doc = {name:'gear_template',ext:'dwg',path:['Downloads'],dirty:false}; },
+    ev => ev.type!=='save' ? null : ev.via==='quick' ? 'That saved it back into Downloads. Use File > Save As to choose a different folder.' : saved(ev,'gear_template','dwg',[...CAD,P2])),
+  M('New folder','Make a new folder named Project 3 inside CAD Class. Save this drawing in it as gear.',60000,['ControlLeft','KeyS'],
+    ['Press Ctrl + S.','Double-click CAD Class.','Click New folder, type Project 3, press Enter.','Double-click Project 3 to go inside it.','Type gear as the file name and click Save.'],
+    () => {}, ev => ev.type==='save' ? saved(ev,'gear','dwg',[...CAD,'Project 3']) : null),
+  M('Export a PDF','Your teacher wants a PDF. Save this drawing as gear in Documents > CAD Class > Exports, with the type set to PDF.',50000,[],
+    ['Click File, then Save As.','Click Up to go back to CAD Class, then open Exports.','Open the "Save as type" list and choose PDF.','Keep the name gear and click Save.'],
+    () => { node(CAD).children.push(dir('Project 3')); putDoc('gear',[...CAD,'Project 3'],false); },
+    ev => ev.type!=='save' ? null : ev.via==='quick' ? 'That saved the drawing again as a .dwg. Use File > Save As and change the type.' : saved(ev,'gear','pdf',[...CAD,'Exports'])),
+  M('Back up to USB','Open hinge_v2 from '+P1+', then save a copy of it to the '+USB+'.',70000,['ControlLeft','KeyO'],
+    ['Press Ctrl + O and go to CAD Class, then '+P1+'.','Open hinge_v2.dwg.','Click File, then Save As.','Click '+USB+' on the left, then click Save.'],
+    () => { node(P1PATH).children.push(file('hinge.dwg'),file('hinge_v2.dwg')); },
+    ev => ev.type!=='save' ? null : F.opened!=='hinge_v2' ? 'Open hinge_v2 first (Ctrl + O), so the backup is the real drawing.'
+      : ev.via==='quick' ? 'That saved it in the folder it was already in. Use File > Save As to pick the USB drive.' : saved(ev,'hinge_v2','dwg',[USB]))
+];
+function fmStart(){
+  F = {fs:newFs(), doc:{name:null,ext:'dwg',path:null,dirty:true}, dlg:null, status:'', opened:null};
+  S.cur.setup();
+  F.status = F.doc.path ? F.doc.name+'.'+F.doc.ext+' is open from '+pathText(F.doc.path)+(F.doc.dirty ? '. It has unsaved changes.' : '.') : 'This drawing has not been saved yet.';
+  const st = $('stage'); st.textContent = '';
+  const wrap = document.createElement('div'); wrap.className = 'fm';
+  const item = (act,label,keys) => '<button type="button" data-act="'+act+'"><span>'+label+'</span><span>'+keys+'</span></button>';
+  wrap.innerHTML =
+    '<div class="fm-brief"><p class="eyebrow">Mission '+(S.idx+1)+' of '+S.queue.length+' · '+esc(S.cur.title)+'</p>'
+    +'<p class="fm-text">'+esc(S.cur.text)+'</p>'
+    +'<ol class="fm-steps is-hidden" id="answer">'+S.cur.steps.map(s => '<li>'+esc(s)+'</li>').join('')+'</ol><p class="feedback fm-fb" id="fm-fb" aria-live="polite"></p></div>'
+    +'<div class="win"><div class="win-title"><span id="w-title"></span><span class="win-app">DraftPad</span></div>'
+    +'<div class="win-menu"><button type="button" class="menu-btn" id="m-file">File</button><div class="menu" id="menu" hidden>'
+    +item('open','Open…','Ctrl+O')+item('save','Save','Ctrl+S')+item('saveas','Save As…','Ctrl+Shift+S')+item('print','Print','Ctrl+P')
+    +'</div></div>'
+    +'<div class="win-body"><svg class="win-art" viewBox="0 0 200 90" aria-hidden="true"><rect x="20" y="15" width="160" height="60" rx="6" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="55" cy="45" r="12" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="145" cy="45" r="12" fill="none" stroke="currentColor" stroke-width="2"/></svg>'
+    +'<p class="win-status" id="w-status"></p><div class="dlg" id="dlg" hidden></div></div></div>';
+  st.appendChild(wrap);
+  $('m-file').addEventListener('click', () => { if(!F.dlg) $('menu').hidden = !$('menu').hidden; });
+  $('menu').addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if(b) fmAct(b.dataset.act); });
+  fmTitle();
+}
+function fmTitle(){
+  $('w-title').textContent = (F.doc.name ? F.doc.name+'.'+F.doc.ext : 'Untitled')+(F.doc.dirty ? ' *' : '');
+  $('w-status').textContent = F.status;
+}
+function fmEvent(ev){
+  if(S.locked) return;
+  ev.file = ev.name+'.'+ev.ext;
+  const r = S.cur.check(ev);
+  if(r===true) hit(); else if(typeof r==='string') miss(null,r);
+}
+function fmAct(act){
+  $('menu').hidden = true;
+  if(S.locked || F.dlg) return;
+  if(act==='open') fmDlg('open');
+  else if(act==='saveas') fmDlg('save');
+  else if(act==='save') fmSave();
+  else { F.status = 'Sent to the printer.'; fmTitle(); }
+}
+function fmSave(){
+  if(!F.doc.path) return fmDlg('save');
+  F.doc.dirty = false; F.status = 'Saved to '+pathText(F.doc.path)+'.'; fmTitle();
+  fmEvent({type:'save',via:'quick',name:F.doc.name,ext:F.doc.ext,path:F.doc.path.slice()});
+}
+const fmNote = t => { $('d-note').textContent = t; };
+function fmDlg(kind){
+  $('menu').hidden = true;
+  F.dlg = {kind, path:(kind==='save' && F.doc.path) ? F.doc.path.slice() : ['Documents'], sel:null, type:F.doc.ext, armed:null, picked:false};
+  const d = $('dlg'); d.hidden = false;
+  d.innerHTML =
+    '<div class="dlg-title"><span>'+(kind==='save'?'Save As':'Open')+'</span><button type="button" class="dlg-x" id="d-x" aria-label="Close">×</button></div>'
+    +'<div class="dlg-bar"><button type="button" id="d-up">↑ Up</button><div class="crumbs" id="d-crumbs"></div>'+(kind==='save'?'<button type="button" id="d-new">New folder</button>':'')+'</div>'
+    +'<div class="dlg-main"><ul class="dlg-nav" id="d-nav"></ul><ul class="dlg-list" id="d-list"></ul></div>'
+    +'<div class="dlg-fields"><label for="d-name">File name</label><input id="d-name" type="text" autocomplete="off" spellcheck="false">'
+    +(kind==='save'?'<span>Save as type</span><div class="dd"><button type="button" id="d-type"></button><ul id="d-types" hidden></ul></div>':'')+'</div>'
+    +'<p class="dlg-note" id="d-note"></p>'
+    +'<div class="dlg-actions"><button type="button" class="btn btn--main" id="d-ok">'+(kind==='save'?'Save':'Open')+'</button><button type="button" class="btn" id="d-cancel">Cancel</button></div>';
+  const nm = $('d-name'); nm.value = kind==='save' ? (F.doc.name || 'Untitled') : '';
+  nm.addEventListener('input', () => { F.dlg.picked = false; F.dlg.armed = null; });
+  $('d-x').addEventListener('click', fmClose); $('d-cancel').addEventListener('click', fmClose);
+  $('d-ok').addEventListener('click', fmOk);
+  $('d-up').addEventListener('click', () => { if(F.dlg.path.length) fmGo(F.dlg.path.slice(0,-1)); });
+  for(const c of F.fs.children){
+    const li = document.createElement('li'), b = document.createElement('button');
+    b.type = 'button'; b.textContent = c.name; b.addEventListener('click', () => fmGo([c.name]));
+    li.appendChild(b); $('d-nav').appendChild(li);
+  }
+  if(kind==='save'){
+    $('d-new').addEventListener('click', fmNewFolder);
+    $('d-type').addEventListener('click', () => { $('d-types').hidden = !$('d-types').hidden; });
+    for(const [ext,label] of TYPES){
+      const li = document.createElement('li'), b = document.createElement('button');
+      b.type = 'button'; b.textContent = label;
+      b.addEventListener('click', () => { F.dlg.type = ext; F.dlg.armed = null; $('d-types').hidden = true; fmType(); });
+      li.appendChild(b); $('d-types').appendChild(li);
+    }
+    fmType();
+  }
+  const list = $('d-list');
+  list.addEventListener('click', e => { const li = e.target.closest('li[data-name]'); if(li) fmSelect(li.dataset.name); });
+  list.addEventListener('dblclick', e => {
+    const li = e.target.closest('li[data-name]'); if(!li) return;
+    const n = node(F.dlg.path).children.find(c => c.name===li.dataset.name); if(!n) return;
+    if(n.dir) fmGo([...F.dlg.path,n.name]); else { fmSelect(n.name); fmOk(); }
+  });
+  fmList(); nm.focus(); nm.select();
+}
+function fmType(){ $('d-type').textContent = TYPES.find(t => t[0]===F.dlg.type)[1]+'  ▾'; }
+function fmGo(path){ Object.assign(F.dlg,{path,sel:null,armed:null,picked:false}); fmNote(''); fmList(); }
+function fmList(){
+  const D = F.dlg, here = node(D.path), cr = $('d-crumbs'), list = $('d-list');
+  cr.textContent = '';
+  ['This PC',...D.path].forEach((name,i) => {
+    if(i) cr.append('›');
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = name;
+    b.addEventListener('click', () => fmGo(D.path.slice(0,i))); cr.appendChild(b);
+  });
+  list.textContent = '';
+  const items = here.children.slice().sort((a,b) => (!!b.dir-!!a.dir) || a.name.localeCompare(b.name));
+  if(!items.length){ const li = document.createElement('li'); li.className = 'empty'; li.textContent = 'This folder is empty.'; list.appendChild(li); }
+  for(const n of items){
+    const li = document.createElement('li'), ic = document.createElement('span'), t = document.createElement('span');
+    li.dataset.name = n.name; if(n.name===D.sel) li.className = 'sel';
+    ic.className = 'ico'+(n.dir ? '' : ' f'); t.textContent = n.name;
+    li.append(ic,t); list.appendChild(li);
+  }
+}
+function fmSelect(name){
+  const D = F.dlg, n = node(D.path).children.find(c => c.name===name); if(!n) return;
+  D.sel = name; D.armed = null;
+  for(const li of $('d-list').children) li.classList.toggle('sel', li.dataset.name===name);
+  if(n.dir){ D.picked = true; if(D.kind==='open') $('d-name').value = ''; }
+  else { D.picked = false; $('d-name').value = D.kind==='save' ? n.name.replace(/\.[^.]+$/,'') : n.name; }
+}
+function fmNewFolder(){
+  if(!F.dlg.path.length) return fmNote('Open a folder first. You cannot make a folder directly in This PC.');
+  if($('d-rename')) return;
+  const li = document.createElement('li'), ic = document.createElement('span'), inp = document.createElement('input');
+  ic.className = 'ico'; inp.id = 'd-rename'; inp.type = 'text'; inp.value = 'New folder'; inp.autocomplete = 'off';
+  li.append(ic,inp); $('d-list').prepend(li); inp.focus(); inp.select();
+  inp.addEventListener('blur', () => {
+    if(!F || !F.dlg) return;
+    const name = inp.value.trim().replace(/[\\/:*?"<>|]/g,'');
+    if(inp.dataset.cancel || !name) return fmList();
+    const kids = node(F.dlg.path).children; let n = name, i = 2;
+    while(kids.some(c => c.name.toLowerCase()===n.toLowerCase())) n = name+' ('+(i++)+')';
+    kids.push(dir(n)); fmList(); fmSelect(n);
+  });
+}
+function fmOk(){
+  const D = F.dlg; if(!D || S.locked) return;
+  const here = node(D.path), sel = D.sel && here.children.find(c => c.name===D.sel);
+  if(D.picked && sel && sel.dir) return fmGo([...D.path,sel.name]);
+  let raw = $('d-name').value.trim();
+  if(D.kind==='open'){
+    if(!raw) return fmNote('Click a file first.');
+    const low = raw.toLowerCase();
+    const f = here.children.find(c => !c.dir && (c.name.toLowerCase()===low || c.name.replace(/\.[^.]+$/,'').toLowerCase()===low));
+    if(!f) return fmNote('There is no file named "'+raw+'" in this folder.');
+    const m = f.name.match(/^(.*)\.([^.]+)$/), path = D.path.slice();
+    F.doc = {name:m[1],ext:m[2],path,dirty:false}; F.opened = m[1]; F.status = 'Opened from '+pathText(path)+'.';
+    fmClose(); return fmEvent({type:'open',name:m[1],ext:m[2],path});
+  }
+  if(!D.path.length) return fmNote('Pick a folder first. Nothing can be saved directly in This PC.');
+  raw = raw.replace(/\.(dwg|pdf|stl)$/i,'');
+  if(!raw) return fmNote('Type a file name first.');
+  if(/[\\/:*?"<>|]/.test(raw)) return fmNote('A file name cannot contain \\ / : * ? " < > |');
+  const full = raw+'.'+D.type, ex = here.children.find(c => !c.dir && c.name.toLowerCase()===full.toLowerCase());
+  if(ex && D.armed!==full){ D.armed = full; return fmNote(full+' already exists here. Click Save again to replace it.'); }
+  if(ex) ex.name = full; else here.children.push(file(full));
+  const path = D.path.slice(), ext = D.type;
+  F.doc = {name:raw,ext,path,dirty:false}; F.status = 'Saved to '+pathText(path)+'.';
+  fmClose(); fmEvent({type:'save',via:'dialog',name:raw,ext,path});
+}
+function fmClose(){
+  F.dlg = null; const d = $('dlg'); if(!d) return;
+  d.hidden = true; d.textContent = ''; fmTitle();
+}
+
+/* ---------- Audio (all generated in the browser, no sound files) ---------- */
+const AU = {ctx:null, mg:null, sfx:true, music:true, timer:0, step:0, next:0};
+try{ const a = JSON.parse(localStorage.getItem('keycommand-audio')); if(a){ AU.sfx = a.sfx!==false; AU.music = a.music!==false; } }catch(e){}
+function actx(){
+  if(!AU.ctx){
+    const A = window.AudioContext || window.webkitAudioContext; if(!A) return null;
+    try{ AU.ctx = new A(); AU.mg = AU.ctx.createGain(); AU.mg.gain.value = .5; AU.mg.connect(AU.ctx.destination); }catch(e){ AU.ctx = null; return null; }
+  }
+  if(AU.ctx.state==='suspended') AU.ctx.resume();
+  return AU.ctx;
+}
+function tone(freq,t,dur,type,vol,dest){
+  const c = AU.ctx, o = c.createOscillator(), g = c.createGain();
+  o.type = type; o.frequency.setValueAtTime(freq,t);
+  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.01); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g); g.connect(dest || c.destination); o.start(t); o.stop(t+dur+.03);
+  return o;
+}
+function sfx(name){
+  if(!AU.sfx) return; const c = actx(); if(!c) return; const t = c.currentTime;
+  if(name==='good'){ tone(660,t,.09,'triangle',.18); tone(990,t+.07,.14,'triangle',.18); }
+  else if(name==='tick') tone(880,t,.05,'triangle',.1);
+  else if(name==='soft') tone(440,t,.12,'triangle',.12);
+  else if(name==='bad'){ const o = tone(180,t,.28,'sawtooth',.13); o.frequency.exponentialRampToValueAtTime(90,t+.26); }
+  else if(name==='up') [523,659,784,1047].forEach((f,i) => tone(f,t+i*.06,.12,'square',.07));
+  else if(name==='win') [523,659,784,1047,784,1047].forEach((f,i) => tone(f,t+i*.11,.22,'triangle',.16));
+}
+const midi = n => 440*Math.pow(2,(n-69)/12);
+const CHORDS = [[45,57,60,64],[41,53,57,60],[48,55,60,64],[43,55,59,62]];
+const ARPS = [[1,2,3,2,1,3,2,3],[3,2,1,2,3,1,2,1]];
+function musicTick(){
+  const c = AU.ctx, spb = 60/112/2;
+  if(AU.next < c.currentTime) AU.next = c.currentTime+.05;
+  while(AU.next < c.currentTime+.3){
+    const i = AU.step%8, ch = CHORDS[Math.floor(AU.step/8)%4], arp = ARPS[Math.floor(AU.step/32)%2];
+    if(i%4===0) tone(midi(ch[0]),AU.next,spb*3.6,'triangle',.22,AU.mg);
+    tone(midi(ch[arp[i]]+12),AU.next,spb*.9,'square',.045,AU.mg);
+    AU.step++; AU.next += spb;
+  }
+}
+function musicStart(){
+  if(!AU.music || AU.timer) return; const c = actx(); if(!c) return;
+  AU.next = c.currentTime+.05; AU.timer = setInterval(musicTick,100); musicTick();
+}
+function musicStop(){ clearInterval(AU.timer); AU.timer = 0; }
+function renderAudio(){
+  $('t-music').setAttribute('aria-pressed', AU.music); $('t-music').textContent = AU.music ? 'Music on' : 'Music off';
+  $('t-sfx').setAttribute('aria-pressed', AU.sfx); $('t-sfx').textContent = AU.sfx ? 'Sound on' : 'Sound off';
+}
+function toggleAudio(which,e){
+  AU[which] = !AU[which]; e.currentTarget.blur();
+  try{ localStorage.setItem('keycommand-audio', JSON.stringify({sfx:AU.sfx, music:AU.music})); }catch(err){}
+  if(!AU.music) musicStop(); else if(S.screen==='play' && !S.paused) musicStart();
+  if(which==='sfx' && AU.sfx) sfx('good');
+  renderAudio();
+}
+
+/* ---------- Screens ---------- */
+const S = {screen:'menu'};
+function show(name){
+  S.screen = name;
+  for(const s of ['menu','ready','play','results']) $('s-'+s).hidden = (s!==name);
+  $('pause').hidden = true;
+  clearHint();
+  $('readout').textContent = name==='menu' ? 'Press any key to see where it lives on the map.' : '';
+}
+function renderMenu(){
+  const box = $('modes'); box.textContent = '';
+  let total = 0;
+  for(const id of MODE_IDS){
+    const m = MODES[id];
+    const rowEl = document.createElement('div'); rowEl.className = 'mode';
+    const txt = document.createElement('div'); txt.className = 'mode-text';
+    const h = document.createElement('h2'); h.textContent = m.name;
+    const p = document.createElement('p'); p.textContent = m.blurb;
+    txt.append(h,p);
+    const lv = document.createElement('div'); lv.className = 'levels';
+    LEVELS.forEach((name,i) => {
+      const rec = prog[id+'-'+i] || {stars:0,best:0}; total += rec.stars;
+      const b = document.createElement('button'); b.type='button'; b.className='lvl'; b.id='lvl-'+id+'-'+i;
+      const n = document.createElement('span'); n.className='lvl-name'; n.textContent=(i+1)+'  '+name;
+      const s = document.createElement('span'); s.className='lvl-sub'; s.textContent=starStr(rec.stars)+(rec.best?'  '+rec.best:'');
+      b.append(n,s); b.addEventListener('click',() => ready(id,i)); lv.appendChild(b);
+    });
+    rowEl.append(txt,lv); box.appendChild(rowEl);
+  }
+  $('starcount').textContent = total+'/36';
+  $('rank').textContent = RANKS.find(r => total>=r[0])[1];
+}
+function ready(mode,level){
+  S.mode = mode; S.level = level;
+  $('ready-eyebrow').textContent = 'Level '+(level+1)+' · '+LEVELS[level];
+  $('ready-title').textContent = MODES[mode].name;
+  $('ready-sub').textContent = MODES[mode].ready;
+  show('ready');
+}
+
+/* ---------- Round ---------- */
+let hintTimer = 0, nextTimer = 0;
+function begin(){
+  const m = MODES[S.mode];
+  if(S.mode==='hunt') S.queue = shuffle([...HUNT_CORE, ...shuffle(HUNT_MORE).slice(0, m.count-HUNT_CORE.length)]);
+  else if(S.mode==='combo') S.queue = shuffle([...shuffle(WIN).slice(0,6), ...shuffle(FUSION).slice(0,6)]);
+  else if(S.mode==='files') S.queue = MISSIONS.slice();
+  else S.queue = Array.from({length:m.count}, () => ({value:NUM_GEN[S.level]()}));
+  Object.assign(S,{idx:0,score:0,streak:0,bestStreak:0,clean:0,misses:{},totalTime:0,totalPar:0,locked:false,paused:false});
+  $('hud-mode').textContent = m.name+' · '+LEVELS[S.level];
+  show('play'); musicStart(); nextPrompt();
+}
+function par(){
+  if(S.mode==='files') return S.cur.par;
+  if(S.mode==='hunt') return 1600;
+  if(S.mode==='combo') return 4000;
+  return 650*(S.cur.value.length+1)+500;
+}
+function nextPrompt(){
+  clearHint(); setFeedback('','');
+  if(S.idx >= S.queue.length) return finish();
+  S.cur = S.queue[S.idx]; S.missed = false; S.pos = 0; S.tries = 0; S.nlWarn = false;
+  const st = $('stage'); st.textContent = '';
+  const eb = document.createElement('p'); eb.className = 'eyebrow';
+  if(S.mode==='hunt'){
+    eb.textContent = 'Find this key';
+    const k = document.createElement('div'); k.className='bigkey'; k.textContent=S.cur.label;
+    const d = document.createElement('p'); d.className='desc'; d.textContent=S.cur.desc;
+    st.append(eb,k,d);
+  } else if(S.mode==='combo'){
+    eb.textContent = 'What do you press?';
+    const sc = document.createElement('p'); sc.className='scenario'; sc.textContent=S.cur.text;
+    const an = document.createElement('div'); an.className='answer is-hidden'; an.id='answer';
+    const act = document.createElement('span'); act.className='act'; act.textContent=S.cur.action+':'; an.appendChild(act);
+    S.cur.keys.forEach((k,i) => { if(i) an.append('+'); const kb=document.createElement('kbd'); kb.textContent=k; an.appendChild(kb); });
+    st.append(eb,sc,an);
+  } else if(S.mode==='files'){
+    fmStart();
+  } else {
+    eb.textContent = 'Type this on the number pad, then press its Enter key';
+    const t = document.createElement('div'); t.className='target mono'; t.textContent=S.cur.value;
+    const dl = document.createElement('div'); dl.className='dimline';
+    dl.innerHTML = '<span class="tick"></span><span class="ext l"></span><div class="entry"><span class="typed" id="typed"></span><span class="caret"></span></div><span class="ext r"></span><span class="tick"></span>';
+    st.append(eb,t,dl);
+  }
+  S.start = performance.now();
+  updateHud(); scheduleHint();
+}
+function scheduleHint(){
+  clearTimeout(hintTimer);
+  if(S.level===0) showHint();
+  else if(S.level===1) hintTimer = setTimeout(showHint, S.mode==='files'?15000 : S.mode==='combo'?4000 : S.mode==='hunt'?2500 : 2000);
+}
+function targetCodes(){
+  if(S.mode==='files') return S.cur.keys;
+  if(S.mode==='hunt') return S.cur.codes;
+  if(S.mode==='numpad') return [numCode((S.cur.value+'\n')[S.pos])];
+  return [...(S.cur.ctrl?['ControlLeft']:[]), ...(S.cur.shift?['ShiftLeft']:[]), S.cur.codes[0]];
+}
+function showHint(){
+  clearHint();
+  targetCodes().forEach(c => keyEl[c] && keyEl[c].classList.add('hint'));
+  const a = $('answer'); if(a) a.classList.remove('is-hidden');
+}
+function clearHint(){
+  clearTimeout(hintTimer);
+  for(const c in keyEl) keyEl[c].classList.remove('hint');
+}
+function flash(code,cls){
+  const el = keyEl[code]; if(!el) return;
+  el.classList.add(cls); setTimeout(() => el.classList.remove(cls), 450);
+}
+function setFeedback(text,kind){
+  const f=$('feedback'), g=$('fm-fb');
+  f.textContent = g ? '' : text; f.className='feedback '+kind;
+  if(g){ g.textContent=text; g.className='feedback fm-fb '+kind; }
+}
+function updateHud(){
+  $('hud-prog').textContent = Math.min(S.idx+1,S.queue.length)+'/'+S.queue.length;
+  $('hud-streak').textContent = S.streak;
+  $('hud-mult').textContent = 'x'+mult();
+  $('hud-score').textContent = S.score;
+  $('bar').style.width = (100*S.idx/S.queue.length)+'%';
+}
+const mult = () => Math.min(4, 1+Math.floor(S.streak/5));
+function miss(code,msg){
+  if(!S.missed){
+    S.missed = true; S.streak = 0;
+    const label = S.mode==='files' ? S.cur.title : S.mode==='hunt' ? S.cur.label : S.mode==='combo' ? S.cur.keys.join(' + ') : 'Number pad';
+    S.misses[label] = (S.misses[label]||0)+1;
+  }
+  S.tries++;
+  sfx('bad'); flash(code,'no'); showHint();
+  if(S.tries>=2) return skip(msg);
+  setFeedback(msg+' One more try.','bad'); updateHud();
+}
+function skip(msg){
+  S.totalTime += performance.now()-S.start; S.totalPar += par();
+  const ans = S.mode==='files' ? msg : S.mode==='hunt' ? 'That one was '+S.cur.label+'.'
+    : S.mode==='combo' ? 'The answer was '+S.cur.keys.join(' + ')+' ('+S.cur.action+').'
+    : 'Skipping this dimension.';
+  setFeedback(ans+' Moving on.','bad');
+  S.locked = true; S.idx++; updateHud();
+  nextTimer = setTimeout(() => { S.locked=false; nextPrompt(); }, S.mode==='files' ? 3500 : 1600);
+}
+function hit(code){
+  const t = performance.now()-S.start, p = par();
+  S.totalTime += t; S.totalPar += p;
+  if(!S.missed){
+    const m0 = mult();
+    S.clean++; S.streak++; S.bestStreak = Math.max(S.bestStreak,S.streak);
+    sfx(mult()>m0 ? 'up' : 'good');
+    const bonus = Math.round(100*Math.max(0,Math.min(1,(2*p-t)/(1.5*p))));
+    const pts = (100+bonus)*mult(); S.score += pts;
+    setFeedback('+'+pts,'good');
+  } else { sfx('soft'); setFeedback('Got it. No points after a miss.','note'); }
+  flash(code,'ok'); clearHint();
+  S.locked = true; S.idx++; updateHud();
+  nextTimer = setTimeout(() => { S.locked=false; nextPrompt(); }, S.mode==='files' ? 1200 : 500);
+}
+function describe(e){
+  return [e.ctrlKey&&'Ctrl', e.shiftKey&&'Shift', e.altKey&&'Alt', keyName(e.code)].filter(Boolean).join(' + ');
+}
+const HANDLERS = {
+  files(e){
+    const t = e.target || {}, inField = t.tagName==='INPUT', enter = e.code==='Enter' || e.code==='NumpadEnter';
+    if(t.id==='d-rename'){
+      if(enter){ e.preventDefault(); t.blur(); }
+      else if(e.code==='Escape'){ e.preventDefault(); t.dataset.cancel = '1'; t.blur(); }
+      return;
+    }
+    if(e.ctrlKey && !e.altKey){
+      if(passthrough(e)) return;
+      if(!(inField && ['KeyA','KeyC','KeyV','KeyX','KeyZ','KeyY'].includes(e.code))) e.preventDefault();
+      if(e.repeat) return;
+      if(e.code==='KeyS'){ $('menu').hidden = true; if(F.dlg) return; if(e.shiftKey) fmDlg('save'); else fmSave(); }
+      else if(e.code==='KeyO') fmAct('open');
+      else if(e.code==='KeyP') fmAct('print');
+      return;
+    }
+    if(e.code==='Escape'){ e.preventDefault(); if(!$('menu').hidden) $('menu').hidden = true; else if(F.dlg) fmClose(); return; }
+    if(enter && F.dlg){ if(t.tagName==='BUTTON') return; e.preventDefault(); return fmOk(); }
+    if(['AltLeft','AltRight','F6','F10'].includes(e.code)) e.preventDefault();
+    if(!inField && t.tagName!=='BUTTON' && ['Space','ArrowUp','ArrowDown','PageUp','PageDown','Home','End','Backspace'].includes(e.code)) e.preventDefault();
+  },
+  hunt(e){
+    if(S.cur.codes.includes(e.code)) return hit(e.code);
+    miss(e.code,'That was '+keyName(e.code)+'. '+S.cur.label+' is lit up on the map.');
+  },
+  combo(e){
+    const c = S.cur;
+    if(MODS.includes(e.code)) return;
+    if(c.codes.includes(e.code) && e.ctrlKey===c.ctrl && e.shiftKey===c.shift && !e.altKey) return hit(e.code);
+    if(c.codes.includes(e.code) && c.ctrl && !e.ctrlKey) return miss(e.code,'Hold Ctrl down first, then tap '+c.keys[1]+'.');
+    const other = COMBOS.find(o => o.codes.includes(e.code) && o.ctrl===e.ctrlKey && o.shift===e.shiftKey);
+    miss(e.code,'That was '+describe(e)+(other?' ('+other.action+')':'')+'.');
+  },
+  numpad(e){
+    if(MODS.includes(e.code) || e.code==='NumLock' || e.code==='Backspace') return;
+    const seq = S.cur.value+'\n', want = numCode(seq[S.pos]);
+    if(/^Numpad(\d|Decimal)$/.test(e.code) && !e.getModifierState('NumLock')){
+      flash('NumLock','hint'); S.nlWarn = true;
+      return setFeedback('Num Lock is off. Press Num Lock at the top-left of the number pad, then keep going.','bad');
+    }
+    if(e.code===want){
+      if(seq[S.pos]==='\n') return hit(e.code);
+      $('typed').textContent += seq[S.pos]; S.pos++;
+      S.tries = 0; sfx('tick'); flash(e.code,'ok'); if(!S.missed || S.nlWarn) setFeedback('',''); S.nlWarn = false;
+      return scheduleHint();
+    }
+    const main = /^Digit\d$/.test(e.code) || ['Enter','Period','Slash','Minus','Equal'].includes(e.code);
+    miss(e.code, main ? 'That was the main keyboard. Use the number pad on the right.'
+      : 'That was '+keyName(e.code)+'. Next is '+keyName(want)+'.');
+  }
+};
+function finish(){
+  const n = S.queue.length, acc = S.clean/n;
+  const stars = (acc>=.9 && S.totalTime<=S.totalPar) ? 3 : acc>=.8 ? 2 : acc>=.5 ? 1 : 0;
+  const key = S.mode+'-'+S.level, rec = prog[key] || {stars:0,best:0};
+  const newBest = S.score > rec.best;
+  prog[key] = {stars:Math.max(rec.stars,stars), best:Math.max(rec.best,S.score)}; saveProg(prog);
+  postScore({mode:S.mode, level:S.level, score:S.score, stars, accuracy:Math.round(acc*100)});
+  $('res-eyebrow').textContent = MODES[S.mode].name+' · Level '+(S.level+1)+' '+LEVELS[S.level];
+  $('res-stars').textContent = starStr(stars);
+  $('res-title').textContent = newBest && rec.best ? 'New best score' : stars===3 ? 'Clean work' : stars===2 ? 'Solid run' : stars===1 ? 'Getting there' : 'Keep practicing';
+  $('res-score').textContent = S.score;
+  $('res-acc').textContent = Math.round(acc*100)+'%';
+  $('res-time').textContent = (S.totalTime/n/1000).toFixed(1)+'s';
+  $('res-streak').textContent = S.bestStreak;
+  const trouble = Object.entries(S.misses).sort((a,b) => b[1]-a[1]).slice(0,4).map(x => x[0]+(x[1]>1?' ('+x[1]+')':''));
+  let note = '';
+  if(S.mode!=='numpad' && trouble.length) note = (S.mode==='files' ? 'Missions to retry: ' : 'Keys to practice: ')+trouble.join(', ')+'. ';
+  if(stars===2 && acc>=.9) note += 'You were accurate. Go faster for the third star.';
+  else if(stars<2) note += 'Two stars needs 80% right on the first try.';
+  else if(stars===2) note += 'Three stars needs 90% right on the first try, at speed.';
+  $('res-note').textContent = note;
+  $('res-next').hidden = S.level>=2;
+  musicStop(); if(stars) sfx('win');
+  renderMenu(); show('results'); S.resultsAt = performance.now();
+}
+function toMenu(){ clearTimeout(nextTimer); musicStop(); renderMenu(); show('menu'); }
+
+/* ---------- Input ---------- */
+const passthrough = e => ['F5','F11','F12','NumLock','CapsLock'].includes(e.code) || (e.ctrlKey && e.code==='KeyR') || (e.ctrlKey && e.shiftKey && e.code==='KeyI');
+window.addEventListener('keydown', e => {
+  if(keyEl[e.code]) keyEl[e.code].classList.add('down');
+  if(S.screen==='play' && S.mode==='files'){
+    if(S.locked || S.paused){ if(!passthrough(e)) e.preventDefault(); return; }
+    HANDLERS.files(e);
+  } else if(S.screen==='play'){
+    if(!passthrough(e)) e.preventDefault();
+    if(e.repeat || S.locked || S.paused) return;
+    HANDLERS[S.mode](e);
+  } else if(S.screen==='ready'){
+    if(e.code==='Space'){ e.preventDefault(); begin(); }
+    else if(e.code==='Escape') toMenu();
+  } else if(S.screen==='results'){
+    if(e.target.closest && e.target.closest('button')) return;
+    if(e.code==='Enter' || e.code==='NumpadEnter'){ e.preventDefault(); if(!e.repeat && performance.now()-S.resultsAt > 1200) begin(); }
+    else if(e.code==='Escape') toMenu();
+  } else {
+    const r = $('readout'); r.textContent = '';
+    const b = document.createElement('b'); b.textContent = keyName(e.code).replace(/^the /,'');
+    r.append(b, DESC[e.code] ? '  '+DESC[e.code] : '');
+  }
+});
+window.addEventListener('keyup', e => {
+  if(keyEl[e.code]) keyEl[e.code].classList.remove('down');
+  if(S.screen==='play' && !passthrough(e) && (S.mode!=='files' || e.code==='AltLeft' || e.code==='AltRight')) e.preventDefault();
+});
+window.addEventListener('blur', () => {
+  for(const c in keyEl) keyEl[c].classList.remove('down');
+  if(S.screen==='play' && !S.paused){ S.paused = true; S.pausedAt = performance.now(); $('pause').hidden = false; musicStop(); }
+});
+function resume(){
+  if(S.screen==='play' && S.paused){ S.paused = false; S.start += performance.now()-S.pausedAt; $('pause').hidden = true; musicStart(); }
+}
+window.addEventListener('focus', resume);
+$('pause').addEventListener('click', resume);
+$('quit').addEventListener('click', toMenu);
+$('ready-back').addEventListener('click', toMenu);
+$('res-menu').addEventListener('click', toMenu);
+$('res-again').addEventListener('click', e => { e.currentTarget.blur(); begin(); });
+$('res-next').addEventListener('click', e => { e.currentTarget.blur(); ready(S.mode, S.level+1); });
+let resetArmed = false;
+$('reset').addEventListener('click', e => {
+  if(!resetArmed){ resetArmed = true; e.currentTarget.textContent = 'Click again to erase all stars'; return; }
+  resetArmed = false; e.currentTarget.textContent = 'Reset my progress';
+  prog = {}; saveProg(prog); renderMenu();
+});
+$('t-music').addEventListener('click', e => toggleAudio('music',e));
+$('t-sfx').addEventListener('click', e => toggleAudio('sfx',e));
+renderAudio();
+renderMenu();
+loadBoard();
+})();
+</script>
+
+</body>
+</html>

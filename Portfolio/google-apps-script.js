@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.87';
+const BACKEND_VERSION = 'v2.14.88';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -379,6 +379,9 @@ function doGet(e) {
       case 'getConfig':
         return jsonResponse(handleGetConfig());
 
+      case 'keyCommandBoard':
+        return jsonResponse(handleKeyCommandBoard(e.parameter));
+
       case 'checkQuiz':
         return jsonResponse(handleCheckQuiz(e));
 
@@ -431,6 +434,9 @@ function doPost(e) {
 
       case 'submitDeliverable':
         return jsonResponse(submitDeliverable(data));
+
+      case 'keyCommandScore':
+        return jsonResponse(handleKeyCommandScore(data));
 
       case 'saveGrades':
         return jsonResponse(saveGrades(data.grades));
@@ -2488,6 +2494,84 @@ function handleGetStudentAIFeedback(data) {
   } catch(e) {
     return { success: false, error: e.message };
   }
+}
+
+// ============================================
+// KEY COMMAND LEADERBOARD
+// The Key Command keyboard game (Admin/KeyCommand-for-students.html), opened from the
+// portfolio, posts each finished round here. Name and period always come from the
+// Students sheet (never from the game), so the board shows "First L." and the real period.
+// ============================================
+var KEY_COMMAND_SHEET = 'Key Command';
+var KEY_COMMAND_MODES = ['hunt', 'numpad', 'combo', 'files'];
+
+function keyCommandSheet_() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName(KEY_COMMAND_SHEET);
+  if (!sh) {
+    sh = ss.insertSheet(KEY_COMMAND_SHEET);
+    sh.appendRow(['Timestamp', 'Email', 'Name', 'Period', 'Drill', 'Level', 'Score', 'Stars', 'Accuracy %']);
+    sh.setFrozenRows(1);
+  }
+  return sh;
+}
+
+// email -> {name, period} from the Students sheet
+function keyCommandRoster_() {
+  var rows = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAMES.STUDENTS).getDataRange().getValues();
+  var roster = {};
+  for (var i = 1; i < rows.length; i++) {
+    var email = String(rows[i][0] || '').toLowerCase().trim();
+    if (email) roster[email] = { name: String(rows[i][1] || ''), period: rows[i][3] };
+  }
+  return roster;
+}
+
+// "Maria Lopez" -> "Maria L."
+function keyCommandDisplayName_(full, email) {
+  var parts = String(full || '').trim().split(/\s+/).filter(String);
+  if (!parts.length) return email.split('@')[0];
+  return parts.length > 1 ? parts[0] + ' ' + parts[parts.length - 1].charAt(0).toUpperCase() + '.' : parts[0];
+}
+
+function handleKeyCommandScore(data) {
+  var email = String(data.email || '').toLowerCase().trim();
+  var mode  = String(data.mode || '');
+  var level = Number(data.level), score = Number(data.score), stars = Number(data.stars), acc = Number(data.accuracy);
+  if (!email) return { success: false, error: 'Missing email.' };
+  if (KEY_COMMAND_MODES.indexOf(mode) === -1 || [0, 1, 2].indexOf(level) === -1) return { success: false, error: 'Unknown drill.' };
+  if (!(score >= 0 && score <= 100000) || [0, 1, 2, 3].indexOf(stars) === -1) return { success: false, error: 'Bad score.' };
+  var me = keyCommandRoster_()[email];
+  if (!me) return { success: false, error: 'Not registered in this portfolio.' };
+  keyCommandSheet_().appendRow([new Date(), email, me.name, me.period, mode, level + 1, Math.round(score), stars, isFinite(acc) ? acc : '']);
+  return { success: true };
+}
+
+// Every player's best stars and best score per drill level, summed.
+function handleKeyCommandBoard(params) {
+  var meEmail = String(params.email || '').toLowerCase().trim();
+  var roster  = keyCommandRoster_();
+  var rows    = keyCommandSheet_().getDataRange().getValues();
+  var best = {};   // email -> { 'hunt-1': {stars, score}, ... }
+  for (var i = 1; i < rows.length; i++) {
+    var email = String(rows[i][1] || '').toLowerCase().trim();
+    if (!email || !roster[email]) continue;   // dropped students fall off the board
+    var key = rows[i][4] + '-' + rows[i][5];
+    var b = best[email] || (best[email] = {});
+    var cur = b[key] || (b[key] = { stars: 0, score: 0 });
+    cur.stars = Math.max(cur.stars, Number(rows[i][7]) || 0);
+    cur.score = Math.max(cur.score, Number(rows[i][6]) || 0);
+  }
+  var players = Object.keys(best).map(function(email) {
+    var stars = 0, points = 0;
+    Object.keys(best[email]).forEach(function(k) { stars += best[email][k].stars; points += best[email][k].score; });
+    var p = { name: keyCommandDisplayName_(roster[email].name, email), period: roster[email].period, stars: stars, points: points };
+    if (email === meEmail) p.me = true;
+    return p;
+  });
+  players.sort(function(a, b) { return b.stars - a.stars || b.points - a.points; });
+  var myPeriod = meEmail && roster[meEmail] && roster[meEmail].period !== '' ? roster[meEmail].period : null;
+  return { success: true, players: players, myPeriod: myPeriod };
 }
 
 /**
