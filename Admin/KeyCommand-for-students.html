@@ -19,22 +19,45 @@ body{margin:0}[hidden]{display:none!important}
   --u:clamp(12px,calc((100vw - 34px) / 23),42px);
 }
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
+  :root:not([data-theme="blueprint"]):not([data-theme="crt"]):not([data-theme="cyber"]):not([data-theme="gold"]){
     --paper:#0e2744; --sheet:#133153; --ink:#e8f1fb; --ink-soft:#a3bcd9; --line:#3a6291;
     --grid:rgba(200,225,255,.06); --key:#1a3f69; --accent:#ffa53d; --on-accent:#221300;
     --good:#5fd699; --bad:#ff8a95; --good-bg:#17503a; --bad-bg:#6a2630; color-scheme:dark;
   }
 }
-:root[data-theme="dark"]{
-  --paper:#0e2744; --sheet:#133153; --ink:#e8f1fb; --ink-soft:#a3bcd9; --line:#3a6291;
-  --grid:rgba(200,225,255,.06); --key:#1a3f69; --accent:#ffa53d; --on-accent:#221300;
-  --good:#5fd699; --bad:#ff8a95; --good-bg:#17503a; --bad-bg:#6a2630; color-scheme:dark;
+
+/* Unlockable Workstation Themes */
+:root[data-theme="blueprint"]{
+  --paper:#e9eef4; --sheet:#f8fafc; --ink:#12304f; --ink-soft:#4f6a87; --line:#b4c4d6;
+  --grid:rgba(18,48,79,.06); --key:#ffffff; --accent:#f28a1c; --on-accent:#221300;
+  --good:#18794a; --bad:#c22f3d; --good-bg:#cdeedd; --bad-bg:#f9d4d8; color-scheme:light;
 }
+:root[data-theme="solidworks"]{
+  --paper:#161b22; --sheet:#1f2630; --ink:#e6edf3; --ink-soft:#8b949e; --line:#30363d;
+  --grid:rgba(56,189,248,.07); --key:#262f3d; --accent:#38bdf8; --on-accent:#082032;
+  --good:#3fb950; --bad:#f85149; --good-bg:#163824; --bad-bg:#4c1d24; color-scheme:dark;
+}
+:root[data-theme="crt"]{
+  --paper:#050d07; --sheet:#09170d; --ink:#4ade80; --ink-soft:#22c55e; --line:#14532d;
+  --grid:rgba(74,222,128,.08); --key:#0d2314; --accent:#4ade80; --on-accent:#041208;
+  --good:#86efac; --bad:#f87171; --good-bg:#14532d; --bad-bg:#450a0a; color-scheme:dark;
+}
+:root[data-theme="cyber"]{
+  --paper:#130924; --sheet:#1d0e36; --ink:#f5d0fe; --ink-soft:#c084fc; --line:#4c1d95;
+  --grid:rgba(232,121,249,.08); --key:#2b1450; --accent:#f43f5e; --on-accent:#ffffff;
+  --good:#2dd4bf; --bad:#fb7185; --good-bg:#115e59; --bad-bg:#881337; color-scheme:dark;
+}
+:root[data-theme="gold"]{
+  --paper:#121212; --sheet:#1a1a1a; --ink:#fef08a; --ink-soft:#ca8a04; --line:#3f3f46;
+  --grid:rgba(250,204,21,.06); --key:#27272a; --accent:#eab308; --on-accent:#18181b;
+  --good:#4ade80; --bad:#f87171; --good-bg:#14532d; --bad-bg:#7f1d1d; color-scheme:dark;
+}
+
 *{box-sizing:border-box}
 body{
   background:var(--paper); color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.45;
   background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
-  background-size:24px 24px;
+  background-size:24px 24px; transition:background-color .25s, color .25s;
 }
 .wrap{
   max-width:1000px; margin:0 auto; padding-block:16px 28px;
@@ -47,20 +70,45 @@ h1,h2,h3,p,dl,dd{margin:0}
 
 /* Title block */
 .titleblock{display:flex; flex-wrap:wrap; border:1.5px solid var(--ink); background:var(--sheet)}
-.tb-name{flex:1 1 240px; min-width:0; padding:10px 14px}
+.tb-name{flex:1 1 220px; min-width:0; padding:10px 14px}
 .tb-name h1{font-family:var(--f-display); font-weight:700; font-size:28px; line-height:1; letter-spacing:.02em; text-transform:uppercase}
 .tb-name p{font-size:13px; color:var(--ink-soft); margin-top:4px}
-.tb-cells{display:flex; flex:0 1 auto}
-.tb-cells div{padding:8px 16px; border-left:1.5px solid var(--ink); min-width:110px}
+.tb-cells{display:flex; flex-wrap:wrap; flex:0 1 auto}
+.tb-cells div{padding:8px 14px; border-left:1.5px solid var(--ink); min-width:100px}
 .tb-cells dt{font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft)}
 .tb-cells dd{font-family:var(--f-display); font-weight:600; font-size:20px}
 .audio{display:flex; gap:6px; padding-top:3px}
 .tog{font-family:var(--f-body); font-size:13px; font-weight:600; padding:2px 8px; border:1.5px solid var(--ink); border-radius:3px; background:var(--ink); color:var(--sheet); white-space:nowrap}
 .tog[aria-pressed="false"]{background:transparent; color:var(--ink-soft); border-color:var(--line); text-decoration:line-through}
-@media (max-width:520px){ .tb-cells{flex:1 1 100%; border-top:1.5px solid var(--ink)} .tb-cells div{flex:1} .tb-cells div:first-child{border-left:0} }
+.theme-sel{
+  font-family:var(--f-body); font-size:13px; font-weight:600; padding:2px 6px; margin-top:3px;
+  border:1.5px solid var(--ink); border-radius:3px; background:var(--key); color:var(--ink); cursor:pointer;
+}
+@media (max-width:640px){ .tb-cells{flex:1 1 100%; border-top:1.5px solid var(--ink)} .tb-cells div{flex:1} .tb-cells div:first-child{border-left:0} }
 
-/* Sheet */
-.sheet{position:relative; border:1.5px solid var(--ink); background:var(--sheet); padding:18px 20px; min-height:300px; display:flex; flex-direction:column}
+/* Sheet + Streak Heat Effects */
+.sheet{
+  position:relative; border:1.5px solid var(--ink); background:var(--sheet);
+  padding:18px 20px; min-height:300px; display:flex; flex-direction:column;
+  transition:box-shadow .3s ease, border-color .3s ease;
+}
+.sheet.heat-2{
+  border-color:#0ea5e9;
+  box-shadow:0 0 18px rgba(14,165,233,.25);
+}
+.sheet.heat-3{
+  border-color:var(--accent);
+  box-shadow:0 0 24px color-mix(in srgb,var(--accent) 40%,transparent);
+}
+.sheet.heat-4{
+  border-color:var(--accent);
+  box-shadow:0 0 32px color-mix(in srgb,var(--accent) 65%,transparent), inset 0 0 12px color-mix(in srgb,var(--accent) 18%,transparent);
+  animation:overdrivePulse 1.4s infinite alternate;
+}
+@keyframes overdrivePulse{
+  from{box-shadow:0 0 22px color-mix(in srgb,var(--accent) 45%,transparent)}
+  to{box-shadow:0 0 38px color-mix(in srgb,var(--accent) 80%,transparent)}
+}
 .sheet>section{flex:1; display:flex; flex-direction:column; gap:14px}
 button{font:inherit; color:inherit; cursor:pointer}
 button:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
@@ -129,14 +177,33 @@ kbd{font-family:var(--f-mono); font-weight:700; font-size:.95em; border:1.5px so
 .stats dd{font-family:var(--f-mono); font-weight:700; font-size:22px}
 .actions{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; align-items:center}
 
-/* Play */
+/* Play + Shop Bot */
 .hud{display:flex; flex-wrap:wrap; align-items:center; gap:6px 22px; font-size:14px}
 .hud b{font-family:var(--f-mono); font-size:17px}
 .hud .spacer{flex:1}
 .hud-label{color:var(--ink-soft); font-weight:600; letter-spacing:.08em; text-transform:uppercase; font-size:12px; margin-right:6px}
-.bar{height:4px; background:var(--line)}
-.bar i{display:block; height:100%; width:0; background:var(--ink); transition:width .2s}
-.stage{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:10px; min-height:170px}
+.bar{height:5px; background:var(--line); border-radius:2px; overflow:hidden}
+.bar i{display:block; height:100%; width:0; background:var(--accent); transition:width .25s ease}
+.play-body{position:relative; flex:1; display:flex; flex-direction:column}
+.stage{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:10px; min-height:175px; padding-right:110px}
+@media (max-width:650px){ .stage{padding-right:0} .bot-box{display:none} }
+
+/* Reactive CAD Shop-Bot */
+.bot-box{
+  position:absolute; right:4px; bottom:4px; width:100px;
+  display:flex; flex-direction:column; align-items:center; gap:4px; pointer-events:none;
+}
+.bot-bubble{
+  font-family:var(--f-mono); font-size:11px; font-weight:700; text-align:center;
+  background:var(--key); border:1.5px solid var(--ink); border-radius:4px;
+  padding:3px 6px; color:var(--ink); line-height:1.2; min-height:22px;
+  box-shadow:2px 2px 0 var(--line); transition:transform .15s;
+}
+.bot-svg{width:68px; height:68px; transition:transform .2s}
+.bot-box.bounce .bot-svg{transform:translateY(-5px) scale(1.06)}
+.bot-box.shake .bot-svg{animation:botShake .3s ease}
+@keyframes botShake{25%{transform:translateX(-4px)} 75%{transform:translateX(4px)}}
+
 .bigkey{font-family:var(--f-display); font-weight:700; font-size:clamp(44px,9vw,76px); line-height:1; text-transform:uppercase; letter-spacing:.02em}
 .desc{color:var(--ink-soft); max-width:52ch}
 .scenario{font-size:clamp(20px,3.2vw,27px); font-weight:500; line-height:1.25; max-width:34ch; text-wrap:balance}
@@ -180,7 +247,7 @@ kbd{font-family:var(--f-mono); font-weight:700; font-size:.95em; border:1.5px so
   border-radius:4px; margin:0 auto;
 }
 
-/* File Missions: practice app window and file dialog */
+/* File Missions */
 .fm{width:100%; display:flex; flex-direction:column; gap:12px; text-align:left}
 .fm-text{font-size:19px; font-weight:500; max-width:70ch}
 .fm-steps{margin:6px 0 0; padding-left:22px; color:var(--ink-soft); font-size:15px}
@@ -233,18 +300,36 @@ kbd{font-family:var(--f-mono); font-weight:700; font-size:.95em; border:1.5px so
 .dlg-actions{display:flex; justify-content:flex-end; gap:8px; padding:8px 10px}
 @media (max-width:520px){ .dlg-nav{flex-basis:96px} }
 
-/* Keyboard map */
+/* Keyboard map + Tactile Keycap Physics + Floating Score Particles */
 .kbwrap{display:flex; flex-direction:column; align-items:center; gap:8px}
 .kb{position:relative; width:calc(var(--u) * 23); height:calc(var(--u) * 6.5); user-select:none; -webkit-user-select:none}
 .k{position:absolute; padding:calc(var(--u) * .05)}
-.k span{display:flex; align-items:center; justify-content:center; width:100%; height:100%; background:var(--key); border:1px solid var(--line); border-bottom-width:2px; border-radius:4px; font-family:var(--f-mono); font-weight:700; font-size:calc(var(--u) * .36); color:var(--ink); overflow:hidden; white-space:nowrap}
+.k span{
+  display:flex; align-items:center; justify-content:center; width:100%; height:100%;
+  background:var(--key); border:1px solid var(--line); border-bottom-width:3px; border-radius:4px;
+  font-family:var(--f-mono); font-weight:700; font-size:calc(var(--u) * .36); color:var(--ink);
+  overflow:hidden; white-space:nowrap; transition:transform .06s ease, border-bottom-width .06s ease;
+}
 .k.word span{font-family:var(--f-body); font-weight:600; font-size:calc(var(--u) * .27)}
 .k.dim span{color:var(--ink-soft); font-weight:500; opacity:.6}
-.k.down span{border-color:var(--ink); background:var(--line); opacity:1}
+.k.down span{border-color:var(--ink); background:var(--line); opacity:1; transform:translateY(2px); border-bottom-width:1px}
 .k.hint span{background:var(--accent); border-color:var(--accent); color:var(--on-accent); opacity:1; animation:pulse 1s ease-in-out infinite}
 .k.ok span{background:var(--good-bg); border-color:var(--good); color:var(--ink); opacity:1; animation:none}
 .k.no span{background:var(--bad-bg); border-color:var(--bad); color:var(--ink); opacity:1; animation:none}
 @keyframes pulse{50%{box-shadow:0 0 0 calc(var(--u) * .12) color-mix(in srgb,var(--accent) 35%,transparent)}}
+
+.float-pts{
+  position:absolute; font-family:var(--f-mono); font-weight:700; font-size:15px;
+  color:var(--good); pointer-events:none; z-index:20; transform:translate(-50%,0);
+  text-shadow:0 1px 2px var(--sheet);
+  animation:floatUp .75s cubic-bezier(.16,1,.3,1) forwards;
+}
+@keyframes floatUp{
+  0%{opacity:1; transform:translate(-50%, 0) scale(.9)}
+  40%{opacity:1; transform:translate(-50%, -22px) scale(1.1)}
+  100%{opacity:0; transform:translate(-50%, -44px) scale(1)}
+}
+
 .zone{position:absolute; display:flex; align-items:center; justify-content:center; font-size:calc(var(--u) * .26); font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft)}
 .readout{min-height:24px; font-size:15px; color:var(--ink-soft); text-align:center; max-width:70ch}
 .readout b{color:var(--ink)}
@@ -262,11 +347,15 @@ kbd{font-family:var(--f-mono); font-weight:700; font-size:.95em; border:1.5px so
     <dl class="tb-cells">
       <div><dt>Rank</dt><dd id="rank">Intern</dd></div>
       <div><dt>Stars</dt><dd id="starcount" class="mono">0/45</dd></div>
+      <div>
+        <dt>Theme</dt>
+        <dd><select id="theme-sel" class="theme-sel" aria-label="Workstation Theme"></select></dd>
+      </div>
       <div><dt>Audio</dt><dd class="audio"><button class="tog" id="t-music" type="button">Music</button><button class="tog" id="t-sfx" type="button">Sound</button></dd></div>
     </dl>
   </header>
 
-  <main class="sheet">
+  <main class="sheet" id="sheet">
     <section id="s-menu">
       <p class="intro">Pick a drill. <b>Guided</b> shows you the answer on the keyboard map. <b>Fading</b> shows it only if you hesitate. <b>Blind</b> shows it only after a miss. Earn up to three stars per level for accuracy and speed.</p>
 
@@ -310,7 +399,51 @@ kbd{font-family:var(--f-mono); font-weight:700; font-size:.95em; border:1.5px so
       </div>
       <div class="bar"><i id="bar"></i></div>
       <div class="nl-banner" id="nl-global" hidden>⚠️ NumLock is OFF — Press NumLock above 7 to activate your number pad!</div>
-      <div class="stage" id="stage"></div>
+      <div class="play-body">
+        <div class="stage" id="stage"></div>
+        <!-- Reactive SVG CAD Shop-Bot -->
+        <div class="bot-box" id="bot-box" aria-hidden="true">
+          <div class="bot-bubble" id="bot-msg">READY</div>
+          <svg class="bot-svg" viewBox="0 0 80 80">
+            <!-- Antenna -->
+            <line x1="40" y1="8" x2="40" y2="18" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="40" cy="6" r="4" fill="var(--accent)"/>
+            <!-- Head Chassis -->
+            <rect x="14" y="18" width="52" height="44" rx="8" fill="var(--key)" stroke="currentColor" stroke-width="3"/>
+            <!-- Ears -->
+            <rect x="8" y="32" width="6" height="16" rx="2" fill="var(--accent)"/>
+            <rect x="66" y="32" width="6" height="16" rx="2" fill="var(--accent)"/>
+            <!-- Visor Screen -->
+            <rect x="20" y="25" width="40" height="18" rx="4" fill="var(--paper)" stroke="currentColor" stroke-width="2"/>
+            <!-- Normal Eyes -->
+            <g id="bot-eyes-idle">
+              <circle cx="31" cy="34" r="3.5" fill="currentColor"/>
+              <circle cx="49" cy="34" r="3.5" fill="currentColor"/>
+            </g>
+            <!-- Cool Sunglasses (Streak 5+) -->
+            <g id="bot-eyes-cool" hidden>
+              <polygon points="22,29 38,29 36,39 24,39" fill="var(--accent)"/>
+              <polygon points="42,29 58,29 56,39 44,39" fill="var(--accent)"/>
+              <line x1="38" y1="31" x2="42" y2="31" stroke="currentColor" stroke-width="2.5"/>
+            </g>
+            <!-- Overdrive Visor (Streak 15+) -->
+            <g id="bot-eyes-fire" hidden>
+              <rect x="23" y="30" width="34" height="8" rx="2" fill="var(--accent)"/>
+              <line x1="25" y1="34" x2="55" y2="34" stroke="var(--sheet)" stroke-width="2" stroke-dasharray="4 3"/>
+            </g>
+            <!-- Miss Eyes -->
+            <g id="bot-eyes-miss" hidden>
+              <path d="M27 31 L35 37 M35 31 L27 37" stroke="var(--bad)" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M45 31 L53 37 M53 31 L45 37" stroke="var(--bad)" stroke-width="2.5" stroke-linecap="round"/>
+            </g>
+            <!-- Mouth Grille -->
+            <rect x="28" y="49" width="24" height="6" rx="3" fill="var(--line)"/>
+            <line x1="34" y1="49" x2="34" y2="55" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="40" y1="49" x2="40" y2="55" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="46" y1="49" x2="46" y2="55" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+        </div>
+      </div>
       <p class="feedback" id="feedback" aria-live="polite"></p>
     </section>
 
@@ -353,6 +486,40 @@ const $ = id => document.getElementById(id);
 const ri = (a,b) => a + Math.floor(Math.random()*(b-a+1));
 const pick = a => a[ri(0,a.length-1)];
 const shuffle = a => { a = a.slice(); for(let i=a.length-1;i>0;i--){ const j=ri(0,i); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+
+/* ---------- Unlockable Workstation Themes ---------- */
+const THEMES = [
+  {id:'blueprint', name:'Blueprint', stars:0},
+  {id:'solidworks', name:'SolidWorks Dark', stars:10},
+  {id:'crt', name:'Retro CRT', stars:22},
+  {id:'cyber', name:'Cyber-Shop', stars:34},
+  {id:'gold', name:'CNC Gold', stars:45}
+];
+function applyTheme(id){
+  document.documentElement.setAttribute('data-theme', id);
+  try{ localStorage.setItem('keycommand-theme', id); }catch(e){}
+}
+function renderThemes(totalStars){
+  const sel = $('theme-sel');
+  const saved = (() => { try{ return localStorage.getItem('keycommand-theme'); }catch(e){ return null; } })() || 'blueprint';
+  sel.textContent = '';
+  for(const t of THEMES){
+    const opt = document.createElement('option');
+    const unlocked = totalStars >= t.stars;
+    opt.value = t.id;
+    opt.disabled = !unlocked;
+    opt.textContent = unlocked ? t.name : `${t.name} (${t.stars}★)`;
+    sel.appendChild(opt);
+  }
+  const valid = THEMES.find(t => t.id === saved && totalStars >= t.stars);
+  const activeId = valid ? valid.id : 'blueprint';
+  sel.value = activeId;
+  applyTheme(activeId);
+}
+$('theme-sel').addEventListener('change', e => {
+  applyTheme(e.target.value);
+  e.target.blur();
+});
 
 /* ---------- Deterministic Daily Seed PRNG ---------- */
 function getTodayKey(){
@@ -515,7 +682,7 @@ const FUSION = [
 const WIN = COMBOS.slice();
 COMBOS.push(...FUSION);
 
-/* ---------- CAD Workflow Combos (New Mode 5) ---------- */
+/* ---------- CAD Workflow Combos ---------- */
 const W = (title,text,steps) => ({kind:'workflow',title,text,steps});
 const WORKFLOWS = [
   W('Extrude a Cylinder','Sketch a center circle, dimension it, and pull it into a 3D boss.',[
@@ -563,17 +730,35 @@ const WORKFLOWS = [
 
 const NUM_CODE = {'.':'NumpadDecimal','+':'NumpadAdd','-':'NumpadSubtract','*':'NumpadMultiply','/':'NumpadDivide','\n':'NumpadEnter'};
 const numCode = ch => NUM_CODE[ch] || ('Numpad'+ch);
-const NUM_GEN = [
-  () => Math.random()<.6 ? ''+ri(2,250) : ri(0,40)+pick(['.5','.25','.75']),
-  () => Math.random()<.6 ? (ri(100,9999)/100).toFixed(2) : ri(0,12)+pick(['.125','.375','.625','.875','.0625']),
-  () => { const a=ri(2,99), b=ri(2,12); return pick([a+'/'+b, a+'*'+b, a+'.5+'+b+'.25', (a+b)+'-'+b+'.75']); }
+// Real shop dimensions in mm (no random numbers). Every round uses all of them in a new order.
+// Clearance holes are ISO 273 normal fit. inch = the inch size, used on Blind as a Fusion expression.
+const NUM_SET = [
+  {mm:'3.4',  what:'M3 clearance hole'},
+  {mm:'4.5',  what:'M4 clearance hole'},
+  {mm:'5.5',  what:'M5 clearance hole'},
+  {mm:'6.6',  what:'M6 clearance hole'},
+  {mm:'28.65', what:'Bore for a 1.125 in bearing'},
+  {mm:'3.175', inch:'0.125', what:'1/8 in'},
+  {mm:'6.35',  inch:'0.25',  what:'1/4 in'},
+  {mm:'12.7',  inch:'0.5',   what:'1/2 in'},
+  {mm:'19.05', inch:'0.75',  what:'3/4 in'},
+  {mm:'25.4',  inch:'1',     what:'1 in'},
+  {mm:'38.1',  inch:'1.5',   what:'1-1/2 in'},
+  {mm:'50.8',  inch:'2',     what:'2 in'},
+  {mm:'76.2',  inch:'3',     what:'3 in'},
+  {mm:'101.6', inch:'4',     what:'4 in'}
 ];
+// Guided + Fading: type the mm value. Blind: inch sizes are typed as Fusion math (1.5*25.4), the way you'd enter them in a dimension box.
+function numItem(n, level){
+  if(level===2 && n.inch) return {kind:'numpad', value:n.inch+'*25.4', what:n.what+' typed as Fusion math. Fusion turns it into '+n.mm+' mm.'};
+  return {kind:'numpad', value:n.mm, what:n.inch ? n.what+', converted to mm' : n.what+', in mm'};
+}
 
 const MODES = {
   hunt:{name:'Key Hunt',blurb:'A key is called. Find it and press it as fast as you can.',count:20,
     ready:'Twenty keys, one at a time. Esc, Tab, Ctrl and the number pad all show up.'},
-  numpad:{name:'Numpad Entry',blurb:'Type dimensions on the number pad only. The top-row numbers do not count.',count:10,
-    ready:'Ten dimensions. Type each one on the number pad and finish with the number pad Enter.'},
+  numpad:{name:'Numpad Entry',blurb:'Type real shop dimensions on the number pad only. The top-row numbers do not count.',count:14,
+    ready:'Fourteen real dimensions: M3 to M6 clearance holes, a bearing bore, and inch sizes in mm. Type each on the number pad and finish with the number pad Enter.'},
   combo:{name:'Shortcut Scenarios',blurb:'Read the situation, then press the key or shortcut that fixes it.',count:12,
     ready:'Twelve situations: six Windows shortcuts and six Fusion shortcuts. Press what you would press.'},
   workflow:{name:'CAD Workflows',blurb:'Chain 3 to 4 Fusion shortcuts together in sequence to build a part.',count:8,
@@ -900,7 +1085,7 @@ function fmClose(){
   d.hidden = true; d.textContent = ''; fmTitle();
 }
 
-/* ---------- Audio (Enhanced with Mechanical Clicks & Pitch Escalation) ---------- */
+/* ---------- Audio ---------- */
 const AU = {ctx:null, mg:null, sfx:true, music:true, timer:0, step:0, next:0};
 try{ const a = JSON.parse(localStorage.getItem('keycommand-audio')); if(a){ AU.sfx = a.sfx!==false; AU.music = a.music!==false; } }catch(e){}
 function actx(){
@@ -924,7 +1109,6 @@ function sfx(name, streak = 0){
     const o = tone(1150,t,.025,'triangle',.09);
     o.frequency.exponentialRampToValueAtTime(320,t+.024);
   } else if(name==='good'){
-    // Pitch climbs by semitone up to 12 steps as streak rises
     const mult = Math.pow(2, Math.min(streak, 12) / 12);
     tone(520 * mult, t, .08, 'triangle', .18);
     tone(780 * mult, t+.06, .13, 'triangle', .18);
@@ -974,6 +1158,51 @@ function toggleAudio(which,e){
   renderAudio();
 }
 
+/* ---------- Shop Bot & Visual Juice ---------- */
+const BOT_QUIPS = {
+  idle: ['LOCKED IN', 'READY', 'EYES UP', 'CAD MODE'],
+  good: ['CLEAN!', 'SHARP!', 'SOLID!', 'NICE HIT!'],
+  streak5: ['LOCKED ON!', 'DIALED IN!', 'SMOOTH!'],
+  streak15: ['OVERDRIVE!', 'UNSTOPPABLE!', 'CAD GOD!'],
+  miss: ['CHECK MAP', 'RETRY!', 'OOPS!', 'RE-ALIGN']
+};
+function updateBot(mood = 'idle', customText = ''){
+  const box = $('bot-box');
+  if(!box) return;
+  $('bot-eyes-idle').hidden = mood !== 'idle';
+  $('bot-eyes-cool').hidden = mood !== 'cool';
+  $('bot-eyes-fire').hidden = mood !== 'fire';
+  $('bot-eyes-miss').hidden = mood !== 'miss';
+  $('bot-msg').textContent = customText || pick(BOT_QUIPS[mood === 'cool' ? 'streak5' : mood === 'fire' ? 'streak15' : mood]);
+
+  box.classList.remove('bounce', 'shake');
+  void box.offsetWidth;
+  if(mood === 'miss') box.classList.add('shake');
+  else if(mood !== 'idle') box.classList.add('bounce');
+}
+
+function updateSheetHeat(streak){
+  const sh = $('sheet');
+  sh.classList.remove('heat-2', 'heat-3', 'heat-4');
+  if(S.screen !== 'play') return;
+  if(streak >= 15) sh.classList.add('heat-4');
+  else if(streak >= 10) sh.classList.add('heat-3');
+  else if(streak >= 5) sh.classList.add('heat-2');
+}
+
+function spawnFloatPts(code, text){
+  const el = keyEl[code];
+  const kb = $('kb');
+  if(!el || !kb) return;
+  const p = document.createElement('div');
+  p.className = 'float-pts';
+  p.textContent = text;
+  p.style.left = `calc(${el.style.left} + (${el.style.width} / 2))`;
+  p.style.top = el.style.top;
+  kb.appendChild(p);
+  setTimeout(() => p.remove(), 760);
+}
+
 /* ---------- Global NumLock Check ---------- */
 function checkNumLock(e){
   if(typeof e.getModifierState !== 'function') return;
@@ -995,6 +1224,7 @@ function show(name){
   for(const s of ['menu','ready','play','results']) $('s-'+s).hidden = (s!==name);
   $('pause').hidden = true;
   clearHint();
+  updateSheetHeat(name==='play' ? S.streak : 0);
   $('readout').textContent = name==='menu' ? 'Press any key to see where it lives on the map.' : '';
 }
 function renderMenu(){
@@ -1019,6 +1249,7 @@ function renderMenu(){
   }
   $('starcount').textContent = total+'/45';
   $('rank').textContent = RANKS.find(r => total>=r[0])[1];
+  renderThemes(total);
 
   // Update Daily Challenge banner
   const tk = getTodayKey();
@@ -1049,11 +1280,7 @@ function buildDailyDeck(){
   const rand = mulberry32(getTodaySeed());
   const hunts = seededShuffle([...HUNT_CORE, ...HUNT_MORE], rand).slice(0, 5);
   const combos = seededShuffle([...WIN, ...FUSION], rand).slice(0, 5);
-  const nums = Array.from({length:3}, () => {
-    const whole = Math.floor(rand()*180) + 5;
-    const dec = ['.25','.5','.75','.125',''][Math.floor(rand()*5)];
-    return {kind:'numpad', value: whole + dec};
-  });
+  const nums = seededShuffle(NUM_SET, rand).slice(0, 3).map(n => numItem(n, 0));
   const wfs = seededShuffle(WORKFLOWS, rand).slice(0, 2);
   return seededShuffle([...hunts, ...combos, ...nums, ...wfs], rand);
 }
@@ -1071,11 +1298,14 @@ function begin(){
     else if(S.mode==='combo') S.queue = shuffle([...shuffle(WIN).slice(0,6), ...shuffle(FUSION).slice(0,6)]);
     else if(S.mode==='workflow') S.queue = shuffle(WORKFLOWS).slice(0, m.count);
     else if(S.mode==='files') S.queue = MISSIONS.slice();
-    else S.queue = Array.from({length:m.count}, () => ({kind:'numpad', value:NUM_GEN[S.level]()}));
+    else S.queue = shuffle(NUM_SET).map(n => numItem(n, S.level));
   }
   Object.assign(S,{idx:0,score:0,streak:0,bestStreak:0,clean:0,misses:{},timings:[],totalTime:0,totalPar:0,locked:false,paused:false});
   $('hud-mode').textContent = S.mode==='daily' ? 'Daily Challenge' : S.mode==='hotspot' ? 'Hotspot Drill' : MODES[S.mode].name+' · '+LEVELS[S.level];
-  show('play'); musicStart(); nextPrompt();
+  show('play');
+  updateBot('idle', 'LET\'S GO!');
+  musicStart();
+  nextPrompt();
 }
 const promptKind = () => S.cur.kind || S.mode;
 function par(){
@@ -1128,9 +1358,10 @@ function nextPrompt(){
   } else {
     eb.textContent = 'Type this on the number pad, then press its Enter key';
     const t = document.createElement('div'); t.className='target mono'; t.textContent=S.cur.value;
+    const wh = document.createElement('p'); wh.className='desc'; wh.textContent=S.cur.what || '';
     const dl = document.createElement('div'); dl.className='dimline';
     dl.innerHTML = '<span class="tick"></span><span class="ext l"></span><div class="entry"><span class="typed" id="typed"></span><span class="caret"></span></div><span class="ext r"></span><span class="tick"></span>';
-    st.append(eb,t,dl);
+    st.append(eb,t,wh,dl);
   }
   S.start = performance.now();
   updateHud(); scheduleHint();
@@ -1181,6 +1412,7 @@ function updateHud(){
   $('hud-mult').textContent = 'x'+mult();
   $('hud-score').textContent = S.score;
   $('bar').style.width = (100*S.idx/S.queue.length)+'%';
+  updateSheetHeat(S.streak);
 }
 const mult = () => Math.min(4, 1+Math.floor(S.streak/5));
 function miss(code,msg){
@@ -1192,6 +1424,7 @@ function miss(code,msg){
   }
   S.tries++;
   sfx('bad'); flash(code,'no'); showHint();
+  updateBot('miss');
   if(S.tries>=2) return skip(msg);
   setFeedback(msg+' One more try.','bad'); updateHud();
 }
@@ -1207,7 +1440,7 @@ function skip(msg){
     : 'Skipping this dimension.';
   setFeedback(ans+' Moving on.','bad');
   S.locked = true; S.idx++; updateHud();
-  nextTimer = setTimeout(() => { S.locked=false; nextPrompt(); }, k==='files' ? 3500 : 1600);
+  nextTimer = setTimeout(() => { S.locked=false; updateBot('idle'); nextPrompt(); }, k==='files' ? 3500 : 1600);
 }
 function hit(code, extraBonus=0){
   const t = performance.now()-S.start, p = par();
@@ -1223,7 +1456,12 @@ function hit(code, extraBonus=0){
     const bonus = Math.round(100*Math.max(0,Math.min(1,(2*p-t)/(1.5*p))));
     const pts = (100+bonus)*mult() + extraBonus; S.score += pts;
     setFeedback('+'+pts + (extraBonus ? ' (includes +'+extraBonus+' Workflow Bonus!)' : ''),'good');
-  } else { sfx('soft'); setFeedback('Got it. No points after a miss.','note'); }
+    spawnFloatPts(code, '+'+pts);
+    updateBot(S.streak >= 15 ? 'fire' : S.streak >= 5 ? 'cool' : 'idle', S.streak >= 15 ? 'OVERDRIVE!' : S.streak >= 5 ? 'x'+mult()+' STREAK!' : pick(BOT_QUIPS.good));
+  } else {
+    sfx('soft'); setFeedback('Got it. No points after a miss.','note');
+    updateBot('idle', 'RECOVERED');
+  }
   flash(code,'ok'); clearHint();
   S.locked = true; S.idx++; updateHud();
   nextTimer = setTimeout(() => { S.locked=false; nextPrompt(); }, k==='files' ? 1200 : 500);
@@ -1279,6 +1517,7 @@ const HANDLERS = {
       if(nextPill) nextPill.classList.add('active');
       sfx('step', S.streak + S.pos);
       flash(e.code, 'ok');
+      spawnFloatPts(e.code, 'STEP ' + S.pos);
       S.tries = 0;
       clearHint();
       scheduleHint();
