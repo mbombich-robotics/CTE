@@ -151,6 +151,7 @@ kbd{font-family:var(--f-mono); font-weight:700; font-size:.95em; border:1.5px so
 .lb-head{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:4px 12px}
 .lb h2{font-family:var(--f-display); font-weight:700; font-size:24px; text-transform:uppercase; letter-spacing:.02em; line-height:1.1}
 .lb-note{font-size:14px; color:var(--ink-soft)}
+.lb-pick{align-self:flex-start; font:inherit; font-size:15px; padding:6px 10px; border:1.5px solid var(--ink); border-radius:0; background:var(--bg, transparent); color:inherit; max-width:100%}
 .lb-cols{display:flex; flex-wrap:wrap; gap:12px 28px}
 .lb-col{flex:1 1 280px; min-width:0}
 .lb-col h3{font-size:12px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 4px}
@@ -454,7 +455,7 @@ kbd{font-family:var(--f-mono); font-weight:700; font-size:.95em; border:1.5px so
       <dl class="stats">
         <div><dt>Score</dt><dd id="res-score">0</dd></div>
         <div><dt>First try</dt><dd id="res-acc">0%</dd></div>
-        <div><dt>Avg time</dt><dd id="res-time">0s</dd></div>
+        <div title="Total time to answer every prompt. Each miss adds 3 seconds."><dt>Time</dt><dd id="res-time">0s</dd></div>
         <div><dt>Best streak</dt><dd id="res-streak">0</dd></div>
       </dl>
       <p class="sub" id="res-note"></p>
@@ -795,7 +796,12 @@ const ID = (() => {
   }catch(err){}
   return id && BACKENDS[id.course] && id.email ? id : null;
 })();
-const LB = {state:'idle', all:[], period:[], myPeriod:null};
+const LB = {state:'idle', drills:{}, myPeriod:null, drill:null};
+const MISS_PENALTY_MS = 3000;
+// Leaderboard drills: "hunt-1" = Key Hunt level 1 (Guided). One fastest-time board per drill level.
+const DRILL_KEYS = Object.keys(MODES).flatMap(m => [1,2,3].map(l => m+'-'+l));
+const drillLabel = k => { const [m,l] = k.split('-'); return MODES[m].name+' · L'+l+' '+LEVELS[l-1]; };
+const fmtTime = s => s >= 60 ? Math.floor(s/60)+':'+(s%60).toFixed(1).padStart(4,'0') : (+s).toFixed(1)+'s';
 const periodNum = p => { const m = String(p == null ? '' : p).match(/\d+/); return m ? +m[0] : null; };
 const ordinal = n => n + (n%100>=11 && n%100<=13 ? 'th' : ['th','st','nd','rd'][n%10] || 'th');
 const periodLabel = p => { const n = periodNum(p); return n == null ? '' : ordinal(n)+' Hour'; };
@@ -805,23 +811,23 @@ async function loadBoard(){
   const courses = Object.keys(BACKENDS);
   const got = await Promise.allSettled(courses.map(c =>
     fetch(BACKENDS[c]+'?action=keyCommandBoard'+(c===ID.course ? '&email='+encodeURIComponent(ID.email) : '')+'&_t='+Date.now()).then(r => r.json())));
-  const all = []; let ok = false;
+  const drills = {}; let ok = false;
   got.forEach((r,i) => {
     if(r.status!=='fulfilled' || !r.value || !r.value.success) return;
     ok = true;
     if(courses[i]===ID.course) LB.myPeriod = r.value.myPeriod;
-    for(const p of r.value.players || []) all.push(Object.assign({}, p, {course:courses[i], me:!!p.me && courses[i]===ID.course}));
+    const d = r.value.drills || {};
+    for(const k in d) for(const p of d[k]) (drills[k] = drills[k] || []).push(Object.assign({}, p, {course:courses[i], me:!!p.me && courses[i]===ID.course}));
   });
   if(!ok){ LB.state = 'error'; return renderBoard(); }
-  all.sort((a,b) => b.stars-a.stars || b.points-a.points || a.name.localeCompare(b.name));
-  LB.all = all;
-  LB.period = periodNum(LB.myPeriod)==null ? [] : all.filter(p => p.course===ID.course && periodNum(p.period)===periodNum(LB.myPeriod));
+  for(const k in drills) drills[k].sort((a,b) => a.time-b.time || a.name.localeCompare(b.name));
+  LB.drills = drills;
   LB.state = 'ready'; renderBoard();
 }
 function boardList(title, list, showPeriod){
   const col = document.createElement('div'); col.className = 'lb-col';
   const h = document.createElement('h3'); h.textContent = title; col.appendChild(h);
-  if(!list.length){ const p = document.createElement('p'); p.className = 'lb-note'; p.textContent = 'No scores yet. Finish a round to get on the board.'; col.appendChild(p); return col; }
+  if(!list.length){ const p = document.createElement('p'); p.className = 'lb-note'; p.textContent = 'No times yet. Finish this drill to get on the board.'; col.appendChild(p); return col; }
   const ol = document.createElement('ol');
   const meAt = list.findIndex(p => p.me);
   const rows = list.slice(0,10).map((p,i) => [p,i]);
@@ -834,7 +840,7 @@ function boardList(title, list, showPeriod){
     const nm = document.createElement('span'); nm.className = 'n'; nm.textContent = p.name + (p.me ? ' (you)' : '');
     li.append(rk, nm);
     if(showPeriod && periodNum(p.period)!=null){ const pd = document.createElement('span'); pd.className = 'p'; pd.textContent = periodLabel(p.period); li.appendChild(pd); }
-    const sc = document.createElement('span'); sc.className = 's'; sc.textContent = '★'+p.stars+'  '+p.points;
+    const sc = document.createElement('span'); sc.className = 's'; sc.textContent = fmtTime(p.time);
     li.appendChild(sc); ol.appendChild(li);
   }
   col.appendChild(ol); return col;
@@ -843,17 +849,29 @@ function renderBoard(){
   const box = $('lb'); box.textContent = '';
   const head = document.createElement('div'); head.className = 'lb-head';
   const h = document.createElement('h2'); h.textContent = 'Leaderboard';
-  const sub = document.createElement('p'); sub.className = 'lb-note'; sub.textContent = 'Most stars wins. Ties go to the higher total of your best scores.';
+  const sub = document.createElement('p'); sub.className = 'lb-note'; sub.textContent = 'Fastest time wins. Each miss adds 3 seconds.';
   head.append(h, sub); box.appendChild(head);
   const note = t => { const p = document.createElement('p'); p.className = 'lb-note'; p.textContent = t; box.appendChild(p); };
-  $('save-note').textContent = ID ? 'The stars on the drill buttons are saved on this computer. Leaderboard scores are saved to your class.'
+  $('save-note').textContent = ID ? 'The stars on the drill buttons are saved on this computer. Your best times are saved to your class leaderboard.'
     : 'Your stars are saved in this browser on this computer.';
   if(!ID) return note('Open Key Command from your portfolio to get on the class leaderboard.');
-  if(LB.state==='loading' && !LB.all.length) return note('Loading the leaderboard…');
+  if(LB.state==='loading' && LB.state!=='ready' && !Object.keys(LB.drills).length) return note('Loading the leaderboard…');
   if(LB.state==='error') return note('The leaderboard did not load. Your stars are still saved on this computer.');
-  if(LB.state!=='ready' && !LB.all.length) return;
+  if(LB.state!=='ready' && !Object.keys(LB.drills).length) return;
+  if(!LB.drill || DRILL_KEYS.indexOf(LB.drill)===-1) LB.drill = DRILL_KEYS.find(k => LB.drills[k] && LB.drills[k].length) || DRILL_KEYS[0];
+  const pick = document.createElement('select'); pick.className = 'lb-pick'; pick.setAttribute('aria-label', 'Drill');
+  for(const k of DRILL_KEYS){
+    const o = document.createElement('option'); o.value = k;
+    o.textContent = drillLabel(k) + (LB.drills[k] && LB.drills[k].length ? '' : '  (no times yet)');
+    pick.appendChild(o);
+  }
+  pick.value = LB.drill;
+  pick.addEventListener('change', () => { LB.drill = pick.value; renderBoard(); $('lb').querySelector('.lb-pick').focus(); });
+  box.appendChild(pick);
+  const all = LB.drills[LB.drill] || [];
+  const mine = periodNum(LB.myPeriod)==null ? [] : all.filter(p => p.course===ID.course && periodNum(p.period)===periodNum(LB.myPeriod));
   const cols = document.createElement('div'); cols.className = 'lb-cols';
-  cols.append(boardList(periodNum(LB.myPeriod)==null ? 'Your class period' : periodLabel(LB.myPeriod), LB.period, false), boardList('All classes', LB.all, true));
+  cols.append(boardList(periodNum(LB.myPeriod)==null ? 'Your class period' : periodLabel(LB.myPeriod), mine, false), boardList('All classes', all, true));
   box.appendChild(cols);
   if(periodNum(LB.myPeriod)==null) note('Your portfolio has no class period yet, so you only show up under All classes.');
 }
@@ -1549,8 +1567,10 @@ const HANDLERS = {
 function finish(){
   const n = S.queue.length, acc = S.clean/n;
   const stars = (acc>=.9 && S.totalTime<=S.totalPar) ? 3 : acc>=.8 ? 2 : acc>=.5 ? 1 : 0;
+  // Race time: time spent answering every prompt, plus 3 s for each prompt not answered on the first try.
+  const misses = n - S.clean, raceMs = Math.round(S.totalTime + MISS_PENALTY_MS*misses);
 
-  let newBest = false, prevBest = 0;
+  let newBest = false, prevBest = 0, newTime = false;
   if(S.mode === 'daily'){
     const dKey = 'daily-' + getTodayKey();
     const rec = prog[dKey] || {stars:0, best:0};
@@ -1567,16 +1587,18 @@ function finish(){
     const key = S.mode+'-'+S.level, rec = prog[key] || {stars:0,best:0};
     prevBest = rec.best;
     newBest = S.score > rec.best;
-    prog[key] = {stars:Math.max(rec.stars,stars), best:Math.max(rec.best,S.score)}; saveProg(prog);
-    postScore({mode:S.mode, level:S.level, score:S.score, stars, accuracy:Math.round(acc*100)});
+    newTime = !!rec.time && raceMs < rec.time;
+    prog[key] = {stars:Math.max(rec.stars,stars), best:Math.max(rec.best,S.score), time: rec.time ? Math.min(rec.time, raceMs) : raceMs}; saveProg(prog);
+    LB.drill = S.mode+'-'+(S.level+1);
+    postScore({mode:S.mode, level:S.level, score:S.score, stars, accuracy:Math.round(acc*100), timeMs:raceMs});
     $('res-eyebrow').textContent = MODES[S.mode].name+' · Level '+(S.level+1)+' '+LEVELS[S.level];
   }
 
   $('res-stars').textContent = starStr(stars);
-  $('res-title').textContent = newBest && prevBest ? 'New best score' : stars===3 ? 'Clean work' : stars===2 ? 'Solid run' : stars===1 ? 'Getting there' : 'Keep practicing';
+  $('res-title').textContent = newTime ? 'New best time' : newBest && prevBest ? 'New best score' : stars===3 ? 'Clean work' : stars===2 ? 'Solid run' : stars===1 ? 'Getting there' : 'Keep practicing';
   $('res-score').textContent = S.score;
   $('res-acc').textContent = Math.round(acc*100)+'%';
-  $('res-time').textContent = (S.totalTime/n/1000).toFixed(1)+'s';
+  $('res-time').textContent = fmtTime(raceMs/1000) + (misses ? ' (+'+(misses*MISS_PENALTY_MS/1000)+'s)' : '');
   $('res-streak').textContent = S.bestStreak;
 
   // Build Slow-Key Hotspot Pool

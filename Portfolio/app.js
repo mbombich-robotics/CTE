@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.88',
+    VERSION: 'v2.14.89',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -991,7 +991,7 @@ const DELIVERABLES = [
         ]
     },
     // ── DBL: Project 2 — Christmas Ornament / Gift ────────────────────────
-    // LED test-fit log: shroud OD + test fitter ID for every test print. Template: DELIVERABLE_DOC_TEMPLATE_480
+    // LED test-fit log: shroud OD once (fixed) + test fitter ID for every test print. Template: DELIVERABLE_DOC_TEMPLATE_480
     {
         id: 480,
         shortLabel: 'P2.0',
@@ -1005,14 +1005,14 @@ const DELIVERABLES = [
         type: 'googleDoc',
         aiGated: true,
         feedbackButtonLabel: 'Verify Work',
-        description: 'Record your LED measurements and every test print. For each iteration, write the LED shroud outside diameter (OD) and your test fitter inside diameter (ID), or how much bigger it is than the shroud OD.',
+        description: 'Record your LED measurements and every test print. Write the LED shroud outside diameter (OD) once. Then, for each iteration, write your test fitter inside diameter (ID), or how much bigger it is than the shroud OD.',
         verifySteps: [
             'Measure the LED shroud OD with calipers and write it in mm.',
             'For each test print, log the test fitter ID (or the offset from the shroud OD) and how it fit.',
         ],
-        verifyCheckText: 'AI checks that every iteration has both numbers: the shroud OD and the test fitter ID or offset.',
+        verifyCheckText: 'AI checks for the shroud OD (once) and a test fitter ID or offset for every iteration.',
         checklistItems: [
-            'Every iteration in my doc has the <strong>LED shroud OD</strong> and the <strong>test fitter ID</strong> (or offset).',
+            'My doc has the <strong>LED shroud OD</strong>, and every iteration has a <strong>test fitter ID</strong> (or offset).',
         ],
     },
     {
@@ -4850,7 +4850,7 @@ const DOC_RUBRIC_CRITERIA = {
         { key: 'coat_hanger',   label: 'Coat Hanger (isometric)',   max: 10 },
     ],
     480: [                             // P2.0 LED Dimensions + Test Fit Log (DBL) — completeness check
-        { key: 'shroud_od',  label: 'LED Shroud OD (each iteration)',      max: 5 },
+        { key: 'shroud_od',  label: 'LED Shroud OD',      max: 5 },
         { key: 'fitter_id',  label: 'Test Fitter ID / Offset (each iteration)', max: 5 },
     ],
     28: [                              // CAD Quiz Practical (AER) — screenshot check, 5 pts each

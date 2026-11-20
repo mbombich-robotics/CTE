@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.79',
+    VERSION: 'v2.9.80',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -311,7 +311,7 @@ const BRIEF_CRITERIA = {
     ],
     // DBL P2.0: LED Dimensions + Test Fit Log — completeness check (2 × 5 pts = 10 pts)
     480: [
-        { id: 'shroud_od', label: 'LED Shroud OD (each iteration)',          max: 5 },
+        { id: 'shroud_od', label: 'LED Shroud OD',          max: 5 },
         { id: 'fitter_id', label: 'Test Fitter ID / Offset (each iteration)', max: 5 },
     ],
     // CAD Quiz Practicals — screenshot check, pass/fail (2 × 5 pts = 10 pts)
@@ -3445,33 +3445,58 @@ async function applyAndSaveBriefGrade(email, deliverableId) {
 // KEY COMMAND PROJECTOR BOARD
 // ============================================
 // Reads the public keyCommandBoard action from every course backend (no student emails are
-// returned) and shows the overall top 10 plus the top 5 in each class hour. Refreshes every minute.
-const KC_BOARD = { timer: null, all: 10, perClass: 5 };
+// returned). One board per drill level, ranked by fastest time (each miss adds 3 s in the game).
+// Shows the overall top 10 and the top 5 in each class hour, rotating to the next drill every
+// 15 seconds. Data refreshes every minute.
+const KC_BOARD = { dataTimer: null, rotateTimer: null, all: 10, perClass: 5, drills: {}, keys: [], idx: 0, status: '' };
 const KC_COURSE_SHORT = { hsaer: 'HS AE&R', '8aer': '8th AE&R', dbl: 'Design & Build Lab' };
+const KC_MODES = [['hunt', 'Key Hunt'], ['numpad', 'Numpad Entry'], ['combo', 'Shortcut Scenarios'], ['workflow', 'CAD Workflows'], ['files', 'File Missions']];
+const KC_LEVELS = ['Guided', 'Fading', 'Blind'];
+const KC_DRILL_KEYS = KC_MODES.flatMap(([m]) => [1, 2, 3].map(l => m + '-' + l));
+const KC_ROTATE_MS = 15000;
 
 function kcPeriodNum(p) { const m = String(p == null ? '' : p).match(/\d+/); return m ? +m[0] : null; }
 function kcOrdinal(n) { return n + ((n % 100 >= 11 && n % 100 <= 13) ? 'th' : (['th', 'st', 'nd', 'rd'][n % 10] || 'th')); }
 function kcEsc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]); }
+function kcDrillLabel(k) { const [m, l] = k.split('-'); return (KC_MODES.find(x => x[0] === m) || [m, m])[1] + ' · Level ' + l + ' ' + (KC_LEVELS[l - 1] || ''); }
+function kcTime(s) { s = Number(s) || 0; return s >= 60 ? Math.floor(s / 60) + ':' + (s % 60).toFixed(1).padStart(4, '0') : s.toFixed(1) + 's'; }
 
 function openKeyCommandBoard() {
     document.getElementById('kcBoard').hidden = false;
     document.documentElement.style.overflow = 'hidden';   // no page scrollbars behind the board
     loadKeyCommandBoard();
-    clearInterval(KC_BOARD.timer);
-    KC_BOARD.timer = setInterval(loadKeyCommandBoard, 60000);
+    clearInterval(KC_BOARD.dataTimer);
+    KC_BOARD.dataTimer = setInterval(loadKeyCommandBoard, 60000);
+    kcRestartRotation();
     document.addEventListener('keydown', kcBoardKey);
 }
 
 function closeKeyCommandBoard() {
     document.getElementById('kcBoard').hidden = true;
     document.documentElement.style.overflow = '';
-    clearInterval(KC_BOARD.timer);
-    KC_BOARD.timer = null;
+    clearInterval(KC_BOARD.dataTimer); KC_BOARD.dataTimer = null;
+    clearInterval(KC_BOARD.rotateTimer); KC_BOARD.rotateTimer = null;
     document.removeEventListener('keydown', kcBoardKey);
     if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
 }
 
-function kcBoardKey(e) { if (e.key === 'Escape' && !document.fullscreenElement) closeKeyCommandBoard(); }
+function kcBoardKey(e) {
+    if (e.key === 'Escape' && !document.fullscreenElement) closeKeyCommandBoard();
+    else if (e.key === 'ArrowRight') kcStep(1);
+    else if (e.key === 'ArrowLeft') kcStep(-1);
+}
+
+function kcRestartRotation() {
+    clearInterval(KC_BOARD.rotateTimer);
+    KC_BOARD.rotateTimer = setInterval(() => kcStep(1, true), KC_ROTATE_MS);
+}
+
+function kcStep(dir, auto) {
+    if (!KC_BOARD.keys.length) return;
+    KC_BOARD.idx = (KC_BOARD.idx + dir + KC_BOARD.keys.length) % KC_BOARD.keys.length;
+    if (!auto) kcRestartRotation();   // a manual step gets a full 15 s on screen
+    renderKeyCommandBoard();
+}
 
 function toggleKeyCommandFullscreen() {
     const el = document.getElementById('kcBoard');
@@ -3480,28 +3505,47 @@ function toggleKeyCommandFullscreen() {
 }
 
 async function loadKeyCommandBoard() {
-    const status = document.getElementById('kcBoardStatus');
     const courses = Object.keys(CONFIG.COURSES).filter(k => CONFIG.COURSES[k].apiUrl && KC_COURSE_SHORT[k]);
     const results = await Promise.all(courses.map(async course => {
         try {
             const res = await fetch(`${CONFIG.COURSES[course].apiUrl}?action=keyCommandBoard&_t=${Date.now()}`);
             const data = await res.json();
             if (!data.success) throw new Error(data.error || 'failed');
-            return { course, players: (data.players || []).map(p => ({ ...p, course })) };
+            return { course, drills: data.drills || {} };
         } catch (e) {
-            return { course, failed: true, players: [] };
+            return { course, failed: true, drills: {} };
         }
     }));
     if (document.getElementById('kcBoard').hidden) return;
 
-    const players = results.flatMap(r => r.players)
-        .sort((a, b) => (b.stars - a.stars) || (b.points - a.points));
+    const drills = {};
+    results.forEach(r => Object.keys(r.drills).forEach(k =>
+        r.drills[k].forEach(p => (drills[k] = drills[k] || []).push({ ...p, course: r.course }))));
+    Object.values(drills).forEach(list => list.sort((a, b) => a.time - b.time));
+    const current = KC_BOARD.keys[KC_BOARD.idx];
+    KC_BOARD.drills = drills;
+    KC_BOARD.keys = KC_DRILL_KEYS.filter(k => drills[k] && drills[k].length);
+    KC_BOARD.idx = Math.max(0, KC_BOARD.keys.indexOf(current));
+
+    const down = results.filter(r => r.failed).map(r => KC_COURSE_SHORT[r.course]);
+    const time = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    KC_BOARD.status = `Updated ${time}` + (down.length ? ` · could not reach ${down.join(', ')}` : '');
+    renderKeyCommandBoard();
+}
+
+function renderKeyCommandBoard() {
+    document.getElementById('kcBoardStatus').textContent = KC_BOARD.status;
+    const key = KC_BOARD.keys[KC_BOARD.idx];
+    document.getElementById('kcDrillName').textContent = key ? kcDrillLabel(key) : 'No times yet';
+    document.getElementById('kcDrillPos').textContent = KC_BOARD.keys.length > 1 ? `${KC_BOARD.idx + 1} of ${KC_BOARD.keys.length} drills` : '';
+    const players = key ? KC_BOARD.drills[key] : [];
+
     const groups = {};
     players.forEach(p => {
         const n = kcPeriodNum(p.period);
         if (n == null) return;
-        const key = p.course + '|' + n;
-        (groups[key] = groups[key] || { course: p.course, hour: n, players: [] }).players.push(p);
+        const gk = p.course + '|' + n;
+        (groups[gk] = groups[gk] || { course: p.course, hour: n, players: [] }).players.push(p);
     });
     const order = Object.keys(KC_COURSE_SHORT);
     const classes = Object.values(groups).sort((a, b) => a.hour - b.hour || order.indexOf(a.course) - order.indexOf(b.course));
@@ -3509,23 +3553,18 @@ async function loadKeyCommandBoard() {
     document.getElementById('kcAllCard').innerHTML =
         `<h2>All Classes <small>${players.length} player${players.length === 1 ? '' : 's'}</small></h2>` +
         kcList(players.slice(0, KC_BOARD.all), true);
-    document.getElementById('kcClasses').innerHTML = classes.length
-        ? classes.map(c => `<section class="kc-card"><h2>${kcOrdinal(c.hour)} Hour <small>${kcEsc(KC_COURSE_SHORT[c.course])}</small></h2>` +
-            kcList(c.players.slice(0, KC_BOARD.perClass), false) + `</section>`).join('')
-        : '';
-
-    const down = results.filter(r => r.failed).map(r => KC_COURSE_SHORT[r.course]);
-    const time = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-    status.textContent = `Updated ${time}` + (down.length ? ` · could not reach ${down.join(', ')}` : '');
+    document.getElementById('kcClasses').innerHTML = classes.map(c =>
+        `<section class="kc-card"><h2>${kcOrdinal(c.hour)} Hour <small>${kcEsc(KC_COURSE_SHORT[c.course])}</small></h2>` +
+        kcList(c.players.slice(0, KC_BOARD.perClass), false) + `</section>`).join('');
 }
 
 function kcList(list, showClass) {
-    if (!list.length) return `<p class="kc-empty">No scores yet.</p>`;
+    if (!list.length) return `<p class="kc-empty">No times yet.</p>`;
     return '<ol>' + list.map((p, i) => {
         const n = kcPeriodNum(p.period);
         const cls = showClass ? `<small>${n != null ? kcOrdinal(n) + ' Hour · ' : ''}${kcEsc(KC_COURSE_SHORT[p.course])}</small>` : '';
         return `<li><span class="kc-rank">${i + 1}</span><span class="kc-name">${kcEsc(p.name)}${cls}</span>` +
-            `<span class="kc-stars">★ ${Number(p.stars) || 0}</span><span class="kc-pts">${(Number(p.points) || 0).toLocaleString()}</span></li>`;
+            `<span class="kc-pts"></span><span class="kc-stars">${kcTime(p.time)}</span></li>`;
     }).join('') + '</ol>';
 }
 
@@ -3533,3 +3572,4 @@ window.openKeyCommandBoard = openKeyCommandBoard;
 window.closeKeyCommandBoard = closeKeyCommandBoard;
 window.loadKeyCommandBoard = loadKeyCommandBoard;
 window.toggleKeyCommandFullscreen = toggleKeyCommandFullscreen;
+window.kcStep = kcStep;

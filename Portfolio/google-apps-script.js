@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.90';
+const BACKEND_VERSION = 'v2.14.91';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2510,8 +2510,10 @@ function keyCommandSheet_() {
   var sh = ss.getSheetByName(KEY_COMMAND_SHEET);
   if (!sh) {
     sh = ss.insertSheet(KEY_COMMAND_SHEET);
-    sh.appendRow(['Timestamp', 'Email', 'Name', 'Period', 'Drill', 'Level', 'Score', 'Stars', 'Accuracy %']);
+    sh.appendRow(['Timestamp', 'Email', 'Name', 'Period', 'Drill', 'Level', 'Score', 'Stars', 'Accuracy %', 'Time (s)']);
     sh.setFrozenRows(1);
+  } else if (sh.getRange(1, 10).getValue() === '') {
+    sh.getRange(1, 10).setValue('Time (s)');   // sheets made before v2.14.91
   }
   return sh;
 }
@@ -2543,20 +2545,29 @@ function handleKeyCommandScore(data) {
   if (!(score >= 0 && score <= 100000) || [0, 1, 2, 3].indexOf(stars) === -1) return { success: false, error: 'Bad score.' };
   var me = keyCommandRoster_()[email];
   if (!me) return { success: false, error: 'Not registered in this portfolio.' };
-  keyCommandSheet_().appendRow([new Date(), email, me.name, me.period, mode, level + 1, Math.round(score), stars, isFinite(acc) ? acc : '']);
+  // Race time = answer time + 3 s per miss, sent in ms; stored in seconds (2 decimals).
+  var timeMs = Number(data.timeMs);
+  var timeS  = timeMs > 0 && timeMs < 3600000 ? Math.round(timeMs / 10) / 100 : '';
+  keyCommandSheet_().appendRow([new Date(), email, me.name, me.period, mode, level + 1, Math.round(score), stars, isFinite(acc) ? acc : '', timeS]);
   return { success: true };
 }
 
-// Every player's best stars and best score per drill level, summed.
+// Every player's best stars/score per drill level (summed), plus the fastest time on each drill level.
 function handleKeyCommandBoard(params) {
   var meEmail = String(params.email || '').toLowerCase().trim();
   var roster  = keyCommandRoster_();
   var rows    = keyCommandSheet_().getDataRange().getValues();
   var best = {};   // email -> { 'hunt-1': {stars, score}, ... }
+  var times = {};  // 'hunt-1' -> { email: fastest seconds }
   for (var i = 1; i < rows.length; i++) {
     var email = String(rows[i][1] || '').toLowerCase().trim();
     if (!email || !roster[email]) continue;   // dropped students fall off the board
     var key = rows[i][4] + '-' + rows[i][5];
+    var t = Number(rows[i][9]);
+    if (t > 0) {
+      var tk = times[key] || (times[key] = {});
+      if (!(tk[email] <= t)) tk[email] = t;
+    }
     var b = best[email] || (best[email] = {});
     var cur = b[key] || (b[key] = { stars: 0, score: 0 });
     cur.stars = Math.max(cur.stars, Number(rows[i][7]) || 0);
@@ -2570,8 +2581,17 @@ function handleKeyCommandBoard(params) {
     return p;
   });
   players.sort(function(a, b) { return b.stars - a.stars || b.points - a.points; });
+  // Fastest time per drill level (the ranking students see). players[] stays for older copies of the game.
+  var drills = {};
+  Object.keys(times).forEach(function(k) {
+    drills[k] = Object.keys(times[k]).map(function(email) {
+      var p = { name: keyCommandDisplayName_(roster[email].name, email), period: roster[email].period, time: times[k][email] };
+      if (email === meEmail) p.me = true;
+      return p;
+    }).sort(function(a, b) { return a.time - b.time; });
+  });
   var myPeriod = meEmail && roster[meEmail] && roster[meEmail].period !== '' ? roster[meEmail].period : null;
-  return { success: true, players: players, myPeriod: myPeriod };
+  return { success: true, players: players, drills: drills, myPeriod: myPeriod };
 }
 
 /**
@@ -3193,14 +3213,15 @@ reflection (max 4): Depth and specificity of the Section 4 reflection. 4=specifi
     criteriaKeys = ['shroud_od', 'fitter_id'];
     overridePrefix =
       'You are checking a high school student\'s LED test-fit log. Students measure the LED shroud outside diameter (OD) with calipers, ' +
-      'then 3D print small test fitters to find a tight fit. For EVERY iteration (test print) they record two numbers: ' +
-      'the LED shroud OD, and the test fitter inside diameter (ID) OR the offset from the shroud OD (for example "+0.2 mm"). ' +
+      'then 3D print small test fitters to find a tight fit. The shroud OD is a FIXED measurement of the LED, so it only needs to be written ONCE ' +
+      '(do not expect it on every iteration). For EVERY iteration (test print) they record the test fitter inside diameter (ID) OR the offset from the shroud OD (for example "+0.2 mm"). ' +
       'This is a completeness check, not a quality rubric. Values are normally in mm; accept inches if labeled. ' +
       'Placeholder text (underscores, "___", "mm" with no number, blank cells) does NOT count as a value.\n\n' +
-      'An iteration is any row or entry where the student wrote at least one real number. Ignore fully blank template rows.\n\n' +
+      'An iteration is a test-print row or entry (it has a test fitter ID/offset, or fit notes for a print). A line or cell that only gives ' +
+      'the shroud OD is NOT an iteration. Ignore fully blank template rows.\n\n' +
       'CRITERIA (each max 5):\n\n' +
-      'shroud_od (max 5): 5=every iteration has a real numeric shroud OD AND at least 2 iterations are logged; ' +
-      '3=shroud OD recorded but only 1 iteration logged; 2=at least one iteration is missing its shroud OD; 0=no shroud OD values.\n\n' +
+      'shroud_od (max 5): 5=a real numeric LED shroud OD appears anywhere in the document (once is enough; never take points off ' +
+      'because iterations do not repeat it); 0=no shroud OD value anywhere.\n\n' +
       'fitter_id (max 5): 5=every iteration has a real numeric test fitter ID or offset AND at least 2 iterations are logged; ' +
       '3=fitter ID/offset recorded but only 1 iteration logged; 2=at least one iteration is missing its fitter ID/offset; 0=no fitter values.\n\n' +
       'FEEDBACK STYLE: Speak to the student as "you". One or two short sentences. Full marks → confirm what you found. ' +

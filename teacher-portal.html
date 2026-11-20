@@ -41,6 +41,12 @@
         .kc-tools button { background: #1f2937; color: #e5e7eb; border: 1px solid #374151; border-radius: 8px;
             padding: 8px 14px; font-size: 14px; cursor: pointer; }
         .kc-tools button:hover { background: #374151; }
+        .kc-drillbar { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+        .kc-drillbar h2 { font-size: clamp(22px, 2.4vw, 34px); font-weight: 800; color: #fbbf24; }
+        .kc-drillbar span { color: #6b7280; font-size: 15px; }
+        .kc-drillbar button { background: #1f2937; color: #e5e7eb; border: 1px solid #374151; border-radius: 8px;
+            width: 38px; height: 38px; cursor: pointer; font-size: 15px; }
+        .kc-drillbar button:hover { background: #374151; }
         .kc-grid { display: grid; grid-template-columns: minmax(320px, 1.25fr) minmax(0, 2fr); gap: 22px; align-items: start; }
         .kc-classes { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
         @media (max-width: 1000px) { .kc-grid { grid-template-columns: 1fr; } }
@@ -1489,11 +1495,17 @@
                 <button type="button" onclick="closeKeyCommandBoard()" title="Close (Esc)"><i class="fas fa-times"></i> Close</button>
             </div>
         </div>
+        <div class="kc-drillbar">
+            <button type="button" onclick="kcStep(-1)" title="Previous drill"><i class="fas fa-chevron-left"></i></button>
+            <h2 id="kcDrillName">—</h2>
+            <span id="kcDrillPos"></span>
+            <button type="button" onclick="kcStep(1)" title="Next drill"><i class="fas fa-chevron-right"></i></button>
+        </div>
         <div class="kc-grid">
             <section class="kc-card kc-all" id="kcAllCard"></section>
             <div class="kc-classes" id="kcClasses"></div>
         </div>
-        <p class="kc-note">Ranked by stars, then points. Open Key Command from your portfolio to get on the board. Updates every minute.</p>
+        <p class="kc-note">Fastest time on each drill. Each miss adds 3 seconds. Open Key Command from your portfolio to get on the board. Shows a new drill every 15 seconds.</p>
     </div>
 
     <script src="teacher-portal.js"></script>
