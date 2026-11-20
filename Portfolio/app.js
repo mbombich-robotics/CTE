@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.87',
+    VERSION: 'v2.14.88',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -991,6 +991,30 @@ const DELIVERABLES = [
         ]
     },
     // ── DBL: Project 2 — Christmas Ornament / Gift ────────────────────────
+    // LED test-fit log: shroud OD + test fitter ID for every test print. Template: DELIVERABLE_DOC_TEMPLATE_480
+    {
+        id: 480,
+        shortLabel: 'P2.0',
+        title: 'P2.0 — LED Dimensions + Test Fit Log',
+        unit: 'p2',
+        week: 12,
+        points: 10,
+        phase: 'ornament',
+        tracks: ['dbl'],
+        alwaysOpen: true,
+        type: 'googleDoc',
+        aiGated: true,
+        feedbackButtonLabel: 'Verify Work',
+        description: 'Record your LED measurements and every test print. For each iteration, write the LED shroud outside diameter (OD) and your test fitter inside diameter (ID), or how much bigger it is than the shroud OD.',
+        verifySteps: [
+            'Measure the LED shroud OD with calipers and write it in mm.',
+            'For each test print, log the test fitter ID (or the offset from the shroud OD) and how it fit.',
+        ],
+        verifyCheckText: 'AI checks that every iteration has both numbers: the shroud OD and the test fitter ID or offset.',
+        checklistItems: [
+            'Every iteration in my doc has the <strong>LED shroud OD</strong> and the <strong>test fitter ID</strong> (or offset).',
+        ],
+    },
     {
         id: 482,
         shortLabel: 'P2.1',
@@ -4824,6 +4848,10 @@ const DOC_RUBRIC_CRITERIA = {
     428: [                             // D2.7 Ice Cube Tray + Coat Hanger (DBL) — screenshot check, 10 pts each
         { key: 'ice_cube_tray', label: 'Ice Cube Tray (isometric)', max: 10 },
         { key: 'coat_hanger',   label: 'Coat Hanger (isometric)',   max: 10 },
+    ],
+    480: [                             // P2.0 LED Dimensions + Test Fit Log (DBL) — completeness check
+        { key: 'shroud_od',  label: 'LED Shroud OD (each iteration)',      max: 5 },
+        { key: 'fitter_id',  label: 'Test Fitter ID / Offset (each iteration)', max: 5 },
     ],
     28: [                              // CAD Quiz Practical (AER) — screenshot check, 5 pts each
         { key: 'iso_view',           label: 'Isometric View',            max: 5 },

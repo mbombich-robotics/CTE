@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.89';
+const BACKEND_VERSION = 'v2.14.90';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2900,8 +2900,8 @@ function handleCreateDeliverableDoc(data) {
   var templateLookupId = TEMPLATE_ALIASES[deliverableId] || deliverableId;
 
   // Look up template: specific key first, then shared component fallback.
-  // CAD Quiz practicals (28, 426) and DBL D2.6 / D2.7 (427, 428) never fall back to Component.
-  var NO_COMPONENT_FALLBACK = [28, 426, 427, 428];
+  // CAD Quiz practicals (28, 426), DBL D2.6 / D2.7 (427, 428) and P2.0 (480) never fall back to Component.
+  var NO_COMPONENT_FALLBACK = [28, 426, 427, 428, 480];
   var props      = PropertiesService.getScriptProperties();
   var templateId = props.getProperty('DELIVERABLE_DOC_TEMPLATE_' + templateLookupId)
                 || (NO_COMPONENT_FALLBACK.indexOf(deliverableId) === -1
@@ -3186,6 +3186,27 @@ reflection (max 4): Depth and specificity of the Section 4 reflection. 4=specifi
       'FEEDBACK STYLE: One sentence, direct. Score 1 → confirm what you found. Score 0 → one specific action to fix it.\n\n' +
       'Return ONLY valid JSON, no markdown or explanation:\n' +
       '{"settings_complete": {"score": 1, "max": 1, "feedback": "..."}, "photo_attached": {"score": 1, "max": 1, "feedback": "..."}, "does_it_work": {"score": 1, "max": 1, "feedback": "..."}, "post_processing": {"score": 1, "max": 1, "feedback": "..."}}\n\n' +
+      'STUDENT DOCUMENT:';
+
+  } else if (deliverableId === 480) {
+    // ── DBL P2.0: LED Dimensions + Test Fit Log — completeness check ───────
+    criteriaKeys = ['shroud_od', 'fitter_id'];
+    overridePrefix =
+      'You are checking a high school student\'s LED test-fit log. Students measure the LED shroud outside diameter (OD) with calipers, ' +
+      'then 3D print small test fitters to find a tight fit. For EVERY iteration (test print) they record two numbers: ' +
+      'the LED shroud OD, and the test fitter inside diameter (ID) OR the offset from the shroud OD (for example "+0.2 mm"). ' +
+      'This is a completeness check, not a quality rubric. Values are normally in mm; accept inches if labeled. ' +
+      'Placeholder text (underscores, "___", "mm" with no number, blank cells) does NOT count as a value.\n\n' +
+      'An iteration is any row or entry where the student wrote at least one real number. Ignore fully blank template rows.\n\n' +
+      'CRITERIA (each max 5):\n\n' +
+      'shroud_od (max 5): 5=every iteration has a real numeric shroud OD AND at least 2 iterations are logged; ' +
+      '3=shroud OD recorded but only 1 iteration logged; 2=at least one iteration is missing its shroud OD; 0=no shroud OD values.\n\n' +
+      'fitter_id (max 5): 5=every iteration has a real numeric test fitter ID or offset AND at least 2 iterations are logged; ' +
+      '3=fitter ID/offset recorded but only 1 iteration logged; 2=at least one iteration is missing its fitter ID/offset; 0=no fitter values.\n\n' +
+      'FEEDBACK STYLE: Speak to the student as "you". One or two short sentences. Full marks → confirm what you found. ' +
+      'Otherwise → name the iteration(s) that are missing a number, or say to log another test print.\n\n' +
+      'Return ONLY valid JSON, no markdown or explanation:\n' +
+      '{"shroud_od": {"score": 5, "max": 5, "feedback": "..."}, "fitter_id": {"score": 5, "max": 5, "feedback": "..."}}\n\n' +
       'STUDENT DOCUMENT:';
 
   } else if (deliverableId === 425) {

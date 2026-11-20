@@ -74,6 +74,7 @@ const CONFIG = {
             deliverablePoints: {
                 0: 20, 10: 10, 11: 28,
                 421: 20, 422: 20, 423: 20, 424: 4, 425: 10, 426: 10, 427: 20, 428: 20,
+                480: 10,
                 431: 50,
                 471: 40, 472: 20,
                 481: 30, 482: 25, 483: 30, 484: 50,
@@ -184,6 +185,7 @@ const TRACK_DELIVERABLES = {
         { id: 472, label: "D7.1 — Ohm's Law & LED Circuits Activity",      week: 10 },
         { id: 471, label: 'D7.2 — Unit 7 Lab Results',                     week: 11 },
         // Project 2: Christmas Ornament / Gift
+        { id: 480, label: 'P2.0 — LED Dimensions + Test Fit Log',          week: 12 },
         { id: 482, label: 'P2.1 — Design Brief + LED Model Screenshot',    week: 12 },
         { id: 483, label: 'P2.2 — F360 Model + Bambu Studio Screenshot',  week: 14 },
         { id: 484, label: 'P2.3 — Completed Ornament + S1 Portfolio',      week: 16 },
@@ -248,7 +250,7 @@ const COMPONENT_BATCH_CRITERIA = [
 
 // Deliverable IDs that support Batch AI Grade and the per-student "Re-grade with AI" button.
 // CAD Quiz practicals (28, 426) are left out: Verify Work grades them before the student submits.
-const DOC_GRADABLE_IDS = new Set([11, 21, 22, 23, 421, 422, 423, 424, 425]);
+const DOC_GRADABLE_IDS = new Set([11, 21, 22, 23, 421, 422, 423, 424, 425, 480]);
 
 // Criteria definitions for Design Brief AI grading
 const BRIEF_CRITERIA = {
@@ -306,6 +308,11 @@ const BRIEF_CRITERIA = {
         { id: 'photo_attached',    label: 'Photo of Finished Doorstop',    max: 1 },
         { id: 'does_it_work',      label: '"Does It Work?" Answered',       max: 1 },
         { id: 'post_processing',   label: 'Post-Processing Notes',          max: 1 },
+    ],
+    // DBL P2.0: LED Dimensions + Test Fit Log — completeness check (2 × 5 pts = 10 pts)
+    480: [
+        { id: 'shroud_od', label: 'LED Shroud OD (each iteration)',          max: 5 },
+        { id: 'fitter_id', label: 'Test Fitter ID / Offset (each iteration)', max: 5 },
     ],
     // CAD Quiz Practicals — screenshot check, pass/fail (2 × 5 pts = 10 pts)
     426: [   // DBL: Doorstop Wedge
