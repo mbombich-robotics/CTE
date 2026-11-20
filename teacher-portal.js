@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.78',
+    VERSION: 'v2.9.79',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -3440,3 +3440,96 @@ async function applyAndSaveBriefGrade(email, deliverableId) {
     await saveStudentGrades();
     showToast(`Design Brief grade saved: ${total} pts`);
 }
+
+// ============================================
+// KEY COMMAND PROJECTOR BOARD
+// ============================================
+// Reads the public keyCommandBoard action from every course backend (no student emails are
+// returned) and shows the overall top 10 plus the top 5 in each class hour. Refreshes every minute.
+const KC_BOARD = { timer: null, all: 10, perClass: 5 };
+const KC_COURSE_SHORT = { hsaer: 'HS AE&R', '8aer': '8th AE&R', dbl: 'Design & Build Lab' };
+
+function kcPeriodNum(p) { const m = String(p == null ? '' : p).match(/\d+/); return m ? +m[0] : null; }
+function kcOrdinal(n) { return n + ((n % 100 >= 11 && n % 100 <= 13) ? 'th' : (['th', 'st', 'nd', 'rd'][n % 10] || 'th')); }
+function kcEsc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]); }
+
+function openKeyCommandBoard() {
+    document.getElementById('kcBoard').hidden = false;
+    document.documentElement.style.overflow = 'hidden';   // no page scrollbars behind the board
+    loadKeyCommandBoard();
+    clearInterval(KC_BOARD.timer);
+    KC_BOARD.timer = setInterval(loadKeyCommandBoard, 60000);
+    document.addEventListener('keydown', kcBoardKey);
+}
+
+function closeKeyCommandBoard() {
+    document.getElementById('kcBoard').hidden = true;
+    document.documentElement.style.overflow = '';
+    clearInterval(KC_BOARD.timer);
+    KC_BOARD.timer = null;
+    document.removeEventListener('keydown', kcBoardKey);
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+}
+
+function kcBoardKey(e) { if (e.key === 'Escape' && !document.fullscreenElement) closeKeyCommandBoard(); }
+
+function toggleKeyCommandFullscreen() {
+    const el = document.getElementById('kcBoard');
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    else if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
+}
+
+async function loadKeyCommandBoard() {
+    const status = document.getElementById('kcBoardStatus');
+    const courses = Object.keys(CONFIG.COURSES).filter(k => CONFIG.COURSES[k].apiUrl && KC_COURSE_SHORT[k]);
+    const results = await Promise.all(courses.map(async course => {
+        try {
+            const res = await fetch(`${CONFIG.COURSES[course].apiUrl}?action=keyCommandBoard&_t=${Date.now()}`);
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error || 'failed');
+            return { course, players: (data.players || []).map(p => ({ ...p, course })) };
+        } catch (e) {
+            return { course, failed: true, players: [] };
+        }
+    }));
+    if (document.getElementById('kcBoard').hidden) return;
+
+    const players = results.flatMap(r => r.players)
+        .sort((a, b) => (b.stars - a.stars) || (b.points - a.points));
+    const groups = {};
+    players.forEach(p => {
+        const n = kcPeriodNum(p.period);
+        if (n == null) return;
+        const key = p.course + '|' + n;
+        (groups[key] = groups[key] || { course: p.course, hour: n, players: [] }).players.push(p);
+    });
+    const order = Object.keys(KC_COURSE_SHORT);
+    const classes = Object.values(groups).sort((a, b) => a.hour - b.hour || order.indexOf(a.course) - order.indexOf(b.course));
+
+    document.getElementById('kcAllCard').innerHTML =
+        `<h2>All Classes <small>${players.length} player${players.length === 1 ? '' : 's'}</small></h2>` +
+        kcList(players.slice(0, KC_BOARD.all), true);
+    document.getElementById('kcClasses').innerHTML = classes.length
+        ? classes.map(c => `<section class="kc-card"><h2>${kcOrdinal(c.hour)} Hour <small>${kcEsc(KC_COURSE_SHORT[c.course])}</small></h2>` +
+            kcList(c.players.slice(0, KC_BOARD.perClass), false) + `</section>`).join('')
+        : '';
+
+    const down = results.filter(r => r.failed).map(r => KC_COURSE_SHORT[r.course]);
+    const time = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    status.textContent = `Updated ${time}` + (down.length ? ` · could not reach ${down.join(', ')}` : '');
+}
+
+function kcList(list, showClass) {
+    if (!list.length) return `<p class="kc-empty">No scores yet.</p>`;
+    return '<ol>' + list.map((p, i) => {
+        const n = kcPeriodNum(p.period);
+        const cls = showClass ? `<small>${n != null ? kcOrdinal(n) + ' Hour · ' : ''}${kcEsc(KC_COURSE_SHORT[p.course])}</small>` : '';
+        return `<li><span class="kc-rank">${i + 1}</span><span class="kc-name">${kcEsc(p.name)}${cls}</span>` +
+            `<span class="kc-stars">★ ${Number(p.stars) || 0}</span><span class="kc-pts">${(Number(p.points) || 0).toLocaleString()}</span></li>`;
+    }).join('') + '</ol>';
+}
+
+window.openKeyCommandBoard = openKeyCommandBoard;
+window.closeKeyCommandBoard = closeKeyCommandBoard;
+window.loadKeyCommandBoard = loadKeyCommandBoard;
+window.toggleKeyCommandFullscreen = toggleKeyCommandFullscreen;

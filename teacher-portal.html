@@ -29,6 +29,44 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        /* ── Key Command projector board ───────────────────────────── */
+        .kc-board { position: fixed; inset: 0; z-index: 3000; background: #0b1020; color: #e5e7eb;
+            overflow-y: auto; padding: 28px 32px 40px; font-family: inherit; }
+        .kc-board[hidden] { display: none; }
+        .kc-head { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 22px; }
+        .kc-head h1 { font-size: clamp(26px, 3.2vw, 44px); font-weight: 800; color: #fff; display: flex; align-items: center; gap: 14px; }
+        .kc-head h1 i { color: #fbbf24; }
+        .kc-sub { color: #9ca3af; font-size: clamp(13px, 1.1vw, 17px); }
+        .kc-tools { margin-left: auto; display: flex; gap: 8px; }
+        .kc-tools button { background: #1f2937; color: #e5e7eb; border: 1px solid #374151; border-radius: 8px;
+            padding: 8px 14px; font-size: 14px; cursor: pointer; }
+        .kc-tools button:hover { background: #374151; }
+        .kc-grid { display: grid; grid-template-columns: minmax(320px, 1.25fr) minmax(0, 2fr); gap: 22px; align-items: start; }
+        .kc-classes { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
+        @media (max-width: 1000px) { .kc-grid { grid-template-columns: 1fr; } }
+        .kc-card { background: #111827; border: 1px solid #1f2937; border-radius: 14px; padding: 16px 18px; }
+        .kc-card h2 { font-size: clamp(17px, 1.5vw, 22px); font-weight: 700; color: #fff; margin-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+        .kc-card h2 small { font-size: 13px; font-weight: 500; color: #6b7280; }
+        .kc-card.kc-all { border-color: #b45309; box-shadow: 0 0 0 1px #b4530955 inset; }
+        .kc-card.kc-all h2 { font-size: clamp(22px, 2vw, 30px); color: #fbbf24; }
+        .kc-card ol { list-style: none; }
+        .kc-card li { display: grid; grid-template-columns: 2.2em 1fr auto auto; gap: 10px; align-items: center;
+            padding: 7px 4px; border-top: 1px solid #1f2937; font-size: clamp(15px, 1.25vw, 19px); }
+        .kc-card.kc-all li { font-size: clamp(18px, 1.6vw, 26px); padding: 9px 4px; }
+        .kc-card li:first-child { border-top: none; }
+        .kc-rank { font-weight: 800; color: #6b7280; text-align: right; }
+        .kc-card li:nth-child(1) .kc-rank { color: #fbbf24; }
+        .kc-card li:nth-child(2) .kc-rank { color: #d1d5db; }
+        .kc-card li:nth-child(3) .kc-rank { color: #d97706; }
+        .kc-name { font-weight: 600; color: #f9fafb; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .kc-name small { display: block; font-weight: 500; font-size: .62em; color: #9ca3af; }
+        .kc-stars { color: #fbbf24; font-weight: 700; white-space: nowrap; }
+        .kc-pts { color: #9ca3af; font-variant-numeric: tabular-nums; white-space: nowrap; min-width: 4.5em; text-align: right; }
+        .kc-empty { color: #6b7280; padding: 10px 4px; font-size: 15px; }
+        .kc-note { color: #6b7280; font-size: 13px; margin-top: 18px; }
+
+
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
             background: var(--gray-100);
@@ -960,6 +998,10 @@
                 <i class="fas fa-trophy"></i> Leaderboard
             </button>
 
+            <button class="btn btn-small" id="kcBoardBtn" onclick="openKeyCommandBoard()" title="Key Command leaderboard for the projector (all classes)" style="background: #111827; color: #fbbf24; border: none; font-weight: 600;">
+                <i class="fas fa-keyboard"></i> Key Command
+            </button>
+
             <button class="btn btn-secondary btn-small" onclick="openWeekSettings()" title="Configure deliverable due dates and skip settings">
                 <i class="fas fa-cog"></i> Week Settings
             </button>
@@ -1434,6 +1476,24 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Key Command projector board (all classes) -->
+    <div class="kc-board" id="kcBoard" hidden>
+        <div class="kc-head">
+            <h1><i class="fas fa-keyboard"></i> Key Command Leaderboard</h1>
+            <span class="kc-sub" id="kcBoardStatus">Loading…</span>
+            <div class="kc-tools">
+                <button type="button" onclick="loadKeyCommandBoard()" title="Refresh now"><i class="fas fa-sync-alt"></i></button>
+                <button type="button" onclick="toggleKeyCommandFullscreen()" title="Full screen"><i class="fas fa-expand"></i> Full screen</button>
+                <button type="button" onclick="closeKeyCommandBoard()" title="Close (Esc)"><i class="fas fa-times"></i> Close</button>
+            </div>
+        </div>
+        <div class="kc-grid">
+            <section class="kc-card kc-all" id="kcAllCard"></section>
+            <div class="kc-classes" id="kcClasses"></div>
+        </div>
+        <p class="kc-note">Ranked by stars, then points. Open Key Command from your portfolio to get on the board. Updates every minute.</p>
     </div>
 
     <script src="teacher-portal.js"></script>
