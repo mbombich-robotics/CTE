@@ -51,6 +51,14 @@ Each new quiz (or quiz set) gets its **own** Apps Script file, e.g. `Portfolio/q
 
 ---
 
+## Git workflow
+
+- Single-developer repo: work directly on `main`. Don't create feature branches. The site deploys from `main`.
+- Still commit and push only when the user says to.
+- Deliverable due dates are set in the daily schedule (`deliverable` in `schedule-data.json`), not the teacher portal. A deliverable opens in the portfolio when its schedule week starts.
+
+---
+
 ## Notes for Claude
 
 - Prefer this file over local auto-memory for anything durable and project-wide.
