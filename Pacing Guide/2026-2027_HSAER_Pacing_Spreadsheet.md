@@ -15,17 +15,19 @@
 | 5 | Sep 28–Oct 2 | 5 | 2 — CAD | ⚡ Sep 30 (20-min period) | **L2.5: C2 Wheel Hub Cap** — bolt circle, counterbore, hex bore, student design face; print + iterate | D2.2 — C2: Component Design (first deadline Fri Oct 2 — extended) |
 | 6 | Oct 5–9 | 5 | 2 — CAD | | C2 wrap-up — iterate, caliper check, finalize; **L2.6: C3 Motor Mount** intro (Thu Oct 8) — begin sketch | **D2.2 extended deadline** Fri Oct 9 |
 | 7 | Oct 12–16 | 5 | 2 — CAD | 🚌 Mfg Day field trip Oct 21 — check roster | **D2.2 turn-in Mon Oct 12**; L2.6 C3 Motor Mount — full week modeling + printing | **D2.2 — C2: Component Design** (turn-in Mon Oct 12) |
-| 8 | Oct 19–23 | 5 | 2 — CAD | 2nd yr: **C8: Electronics Board Mount** w/ strain relief | Final robot CAD assembly | **Q2: CAD Quiz**; D2.8 — Robot Assembly |
-| 9 | Oct 26–30 | 4 | 3 — Safety | 🟡 🔴 Records Day Oct 30 | OSHA/LOTO/PPE/SDS; Matthew Henne case study; drill press, pedestal grinder, hand drill certs; CNC awareness; manufacturing processes | **Q3: Safety Quiz**; Tool Cert Cards |
-| 10 | Nov 2–6 | 5 | 3 — Safety | | CNC toolpaths; cut decks | D3.1 — Toolpaths to cut deck |
-| 11 | Nov 9–13 | 5 | Build | ⚡ Nov 11 (20-min period) | Robot physical assembly | |
-| **12** | **Nov 16–20** | **5** | **4 — Programming** | | **L4.1 (Microcontroller Fundamentals) + A4.1 (Blink); L4.2 (Variables & Types) + A4.2** | |
-| **13** | **Nov 23–24** | **2** | **4 — Programming** | **🟡 Mon–Tue only** | **L4.3 (Functions) + A4.3 (SOS with Functions)** | **D4.1 — Programming Basics: Lessons 4.1–4.3** |
+| 8 | Oct 19–23 | 5 | 2 — CAD | 🚌 Mfg Day field trip Wed Oct 21 (2nd–5th hr) | L2.6 C3 Motor Mount — iterate, final adjustments, queue print, caliper check | |
+| 9 | Oct 26–30 | 4 | 2 — CAD | 🟡 🔴 Records Day Oct 30 | C3 — iterate, caliper check, finalize; **CAD Quiz Tue Oct 27**; begin D2.3 documentation | **Q2: CAD Quiz** (Tue Oct 27) · D2.3 — C3 Motor Mount (documentation begun) |
+| 10 | Nov 2–6 | 5 | 2 — CAD | | C5 Omni Wheel Mount + robot CAD assembly — work sessions all week | |
+| 11 | Nov 9–13 | 5 | 2 — CAD | ⚡ Nov 11 (20-min period) | Robot CAD assembly; new component design: battery mount + IR sensor mount | **D2.4 — C5 Omni Wheel Mount** (Fri Nov 13) |
+| 12 | Nov 16–20 | 5 | 2 → 3 — Safety | | Complete robot CAD assembly (Mon–Wed); L3.1 Shop Safety Fundamentals; drill press + CNC training; **Safety tests Fri Nov 20** | **Q3: Safety Tests** (Fri Nov 20, portfolio) |
+| 13 | Nov 23–24 | 2 | 3 → Build | 🟡 Mon–Tue only | CNC awareness training (Mon); cut decks on the CNC + assemble robots (Tue) | |
 | — | Nov 25–28 | — | — | 🌿 Thanksgiving Break | | |
-| **14** | **Nov 30–Dec 4** | **5** | **4 — Programming** | | **Finish L4.4 (Digital Input) + A4.4 (Switches); L4.5 (PWM) + A4.5** | |
-| **15** | **Dec 7–11** | **5** | **4 — Programming** | | **L4.6 (Motor Control) + A4.6** | **D4.2 — Programming Basics: Lessons 4.4–4.6; Q4: Programming Quiz** |
+| **14** | **Nov 30–Dec 4** | **5** | **4 — Programming** | ⚠️ not re-planned yet — robot build still in progress | **Finish L4.4 (Digital Input) + A4.4 (Switches); L4.5 (PWM) + A4.5** | |
+| **15** | **Dec 7–11** | **5** | **4 — Programming** | ⚠️ not re-planned yet | **L4.6 (Motor Control) + A4.6** | **D4.2 — Programming Basics: Lessons 4.4–4.6; Q4: Programming Quiz** |
 | 16 | Dec 14–18 | 5 | 3D Print Holiday Project | | Students design and print a small item to take home — ornament, keychain, name plate, or similar; student chooses and customizes | |
 | — | Dec 21–Jan 3 | — | — | 🌿 Winter Break | | |
+
+> ⚠️ **Synced to the daily schedule through week 13 (Nov 24).** The CAD unit ran about 4 weeks past plan, and safety moved to week 12. Unit 4 programming had not started by Thanksgiving, so weeks 14–19 still show the original plan and need re-planning.
 
 ---
 
@@ -71,8 +73,8 @@
 | # | Name | Week | Scope |
 |---|------|------|-------|
 | Q1 | EDP Quiz | 3 | Unit 1 — Engineering Design Process |
-| Q2 | CAD Quiz | 8 | Unit 2 — Fundamentals of CAD |
-| Q3 | Safety Quiz | 9 | Unit 3 — Shop Safety |
+| Q2 | CAD Quiz | 9 (Tue Oct 27) | Unit 2 — Fundamentals of CAD |
+| Q3 | Safety Tests | 12 (Fri Nov 20) | Unit 3 — Shop Safety |
 | Q4 | Programming Quiz | 15 | Unit 4 — Programming, Electronics & Sensors |
 | Q5 | Midterm Exam | 19 | Units 1–4 cumulative |
 | Q6 | AI Quiz | 24 | Unit 5 — AI & Machine Learning |
@@ -90,13 +92,13 @@
 | D1.1 | Design Brief | 2 |
 | D2.1 | C1 — Wheel Hub | 4 |
 | D2.2 | C2 — Wheel Hub Cap | 7 *(extended Oct 12)* |
-| D2.3 | C3 — Motor Sleeve Mount | *(TBD ~wk 9)* |
-| D2.4 | C4 — Robot Deck | *(TBD ~wk 11)* |
-| D2.5 | C5 — Omni Wheel Mount | *(TBD ~wk 12)* |
-| D2.6 | C6 — IR Sensor Mount | *(TBD ~wk 12)* |
-| D2.7 | C7 — Ultrasonic Sensor Mount | *(TBD ~wk 12)* |
-| D2.8 | Robot Assembly | 8 |
-| D3.1 | Tool Safety Certifications | 10 |
+| D2.3 | C3 — Motor Sleeve Mount | 9 *(documentation begun Oct 29; no due date on the schedule)* |
+| D2.4 | C5 — Omni Wheel Mount *(schedule label; portfolio id 25)* | 11 (Fri Nov 13) |
+| — | C4 — Robot Deck | 13 *(decks cut on the CNC Tue Nov 24; no deliverable on the schedule)* |
+| — | C6 — IR Sensor Mount + battery mount | 11–12 *(designed during robot assembly; no due date on the schedule)* |
+| — | C7 — Ultrasonic Sensor Mount | *(not on the schedule yet)* |
+| D2.8 | Robot Assembly | 12 *(CAD assembly completed; physical build wk 13+)* |
+| D3.1 | Tool Safety Certifications | 12–13 *(drill press + CNC training; no due date on the schedule)* |
 | D4.1 | Programming Basics: Lessons 4.1–4.3 | 13 |
 | D4.2 | Programming Basics: Lessons 4.4–4.6 | 15 |
 | D4.3 | IMU Navigation | 18 |

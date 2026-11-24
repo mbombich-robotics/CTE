@@ -328,39 +328,44 @@
 //  Format: 'YYYY-MM-DD'  |  times are Eastern (America/Detroit)
 // ============================================================
 const CONFIG = {
-    confettiHour:    10,   // 10:56 AM Eastern
-    confettiMin:     56,
+    // Each event has its own dismissal time ('HH:MM', 24-hour, Eastern):
+    // full day = '14:29', half day = '10:56'.
     confettiEndHour: 15,   // 3:00 PM Eastern
 
     events: [
         {
             id:    'thanksgiving',
             label: 'Thanksgiving Break',
-            date:  '2025-11-26',   // ← update each year
+            date:  '2026-11-24',   // ← update each year
+            time:  '14:29',        // full day
             confettiColors: ['#ff8c00','#cc5500','#ffcc00','#8B4513','#ff6600']
         },
         {
             id:    'christmas',
             label: 'Christmas Break',
-            date:  '2025-12-23',   // ← update each year
+            date:  '2026-12-18',   // ← update each year
+            time:  '14:29',        // full day
             confettiColors: ['#ff0000','#00cc00','#ffffff','#ffd700','#0044cc']
         },
         {
             id:    'spring',
             label: 'Spring Break',
-            date:  '2026-03-16',   // ← update each year
+            date:  '2027-03-25',   // ← update each year
+            time:  '10:56',        // half day (Records Day)
             confettiColors: ['#ff69b4','#66ff66','#ffff00','#00ccff','#ff9900']
         },
         {
             id:    'seniors',
             label: "Seniors' Last Day",
-            date:  '2026-05-14',   // ← update each year
+            date:  '2027-05-20',   // ← update each year
+            time:  '14:29',        // full day
             confettiColors: ['#ffd700','#003087','#ffffff','#c0c0c0','#ffa500']
         },
         {
             id:    'lastday',
             label: 'Last Day of School',
-            date:  '2026-06-05',   // ← update each year
+            date:  '2027-06-11',   // ← update each year
+            time:  '10:56',        // half day
             confettiColors: ['#ff4444','#ffcc00','#44aaff','#ff69b4','#66ff66']
         }
     ]
@@ -712,9 +717,10 @@ function applySvgBg(el, themeId) {
 }
 
 // ── Time helpers ──
-function getTargetMs(dateStr) {
+function getTargetMs(dateStr, timeStr) {
     const [y, m, d] = dateStr.split('-').map(Number);
-    const probe = new Date(y, m - 1, d, CONFIG.confettiHour, CONFIG.confettiMin, 0);
+    const [hh, mm] = timeStr.split(':').map(Number);
+    const probe = new Date(y, m - 1, d, hh, mm, 0);
     const etDate = new Date(probe.toLocaleString('en-US', { timeZone: 'America/Detroit' }));
     return probe.getTime() + (probe - etDate);
 }
@@ -728,9 +734,14 @@ function getConfettiEndMs(dateStr) {
 
 const events = CONFIG.events.map(e => ({
     ...e,
-    targetMs:      getTargetMs(e.date),
+    targetMs:      getTargetMs(e.date, e.time),
     confettiEndMs: getConfettiEndMs(e.date)
 }));
+
+function formatTime(timeStr) {
+    const [h, m] = timeStr.split(':').map(Number);
+    return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}`;
+}
 
 function pad(n) { return String(Math.floor(n)).padStart(2, '0'); }
 
@@ -800,7 +811,7 @@ function updateFeatured(ev) {
     }
     const t = formatCountdown(ev.targetMs - Date.now());
     featured.querySelector('.content').innerHTML =
-        `<div class="countdown-prefix">Countdown to</div><div class="event-label">${ev.label}</div><div class="event-date">${formatDate(ev.date)} &bull; 10:56 AM</div>${digitsHTML(t)}`;
+        `<div class="countdown-prefix">Countdown to</div><div class="event-label">${ev.label}</div><div class="event-date">${formatDate(ev.date)} &bull; ${formatTime(ev.time)}</div>${digitsHTML(t)}`;
 }
 
 function updateMinis() {

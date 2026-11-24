@@ -3,13 +3,14 @@
 **School year:** Aug 31, 2026 – Jun 11, 2027  
 **Grades:** 9–12 (mixed)  
 **Instructional weeks:** ~38 (≈170 days)  
+**Last synced to the daily schedule:** Nov 24, 2026 (weeks 1–13 match what happened; week 14 on is the plan).  
 **Note:** Full-year course; all students follow the same project sequence. CIP 15.0000 — EDP, CAD, manufacturing, electrical systems (Unit 7), and mechanical systems (Unit 8) satisfy the same standards as HS AER.
 
 ## Project Sequence
 | # | Project | Format | Primary Skills |
 |---|---------|--------|----------------|
 | P1 | 3D Printed Fidget Spinner | Individual | CAD, 3D printing, assembly |
-| P2 | Christmas Ornament / Gift | Individual | Multi-color 3D print, LED circuits (Unit 7) |
+| P2 | Christmas Ornament / Gift | Individual | 3D print assembly (≤ 100 g), 1–3 LEDs, LED circuits (Unit 7) |
 | P3 | LED Sign / Wall Art | Individual | xTool laser/CNC, ATtiny85, soldering |
 | P4 | Silicone Mold Making | Individual | CAD, Smooth-On pour, soap/wax casting |
 | P5 | Useless Box | Individual | Electronics, switch wiring, servo control, mechanism CAD |
@@ -26,20 +27,20 @@
 | 5 | Sep 28–Oct 2 | 5 | 2 — CAD | ⚡ Sep 30 (20-min period) | Doorstop Design Challenge — watch intro video; **Design Brief**: problem statement, constraints, criteria, concept sketches; peer review | **D2.2 — Doorstop Design Brief** (Fri Oct 2) · Q2 CAD Quiz deferred |
 | 6 | Oct 5–9 | 5 | 2 — CAD | | L2.5 Doorstop CAD — translate Design Brief into F360 model; check dimensions; export STL; queue print; first print → test function; iterate | D2.3 — Doorstop CAD Model (first deadline Fri Oct 9 — extended) · Q3 Safety + D3.1 deferred |
 | 7 | Oct 12–16 | 5 | 2 — CAD | ★ Student teacher Tue Oct 13 · 🎖️ AFSF recruiter 2nd & 4th hr Thu Oct 15 · 🚌 Mfg Day Oct 21 | **D2.3 due midnight Mon Oct 12**; receive prints; test doorstop function; post-process; document; begin **D2.4 Final Documentation** | **D2.3 — Doorstop CAD Model** (midnight Mon Oct 12) · begin **D2.4 — Doorstop Final Documentation** |
-| 8 | Oct 19–23 | 5 | P1 — Fidget Spinner | | Bearing press-fit + assembly; spin test + caliper check; photography for portfolio; class showcase | **D2.4 — Completed Spinner + Portfolio Photo** |
-| 9 | Oct 26–30 | 4 | 7 — Electrical | 🟡 🔴 Records Day Oct 30 | L7.1 Multimeter: DMM parts, measuring V/I/R, safety; L7.2 Breadboards: internal connections, power rails, schematic symbols; L7.3 LED Circuits: polarity, V_f, current-limiting resistor | |
-| 10 | Nov 2–6 | 5 | 7 — Electrical | | L7.4 Ohm's Law: V=IR, triangle, units, worked examples; L7.5 Series & Parallel: concepts, math, comparison table; breadboard lab — build and measure circuits | |
-| 11 | Nov 9–13 | 5 | 7 — Electrical | ⚡ Nov 11 (20-min period) | L7.6 Equivalent Resistance: combination circuits, 4-resistor worked example; L7.7 Kirchhoff's Laws: KCL, KVL, 5-resistor circuit lab; unit wrap-up | **Q4: Unit 7 Quiz**; **D7.1 — Lab Results** |
-| 12 | Nov 16–20 | 5 | P2 — Christmas Ornament | | Project intro; design brief (recipient, intent, LED placement); LED reverse engineering — calipers, V_f/I_f from data sheet; F360 LED model complete before ornament design begins | **P2.1 — Design Brief + LED Model Screenshot** |
-| 13 | Nov 23–24 | 2 | P2 — Christmas Ornament | 🟡 Thanksgiving week | Ornament/gift concept sketches + decision matrix; begin F360 ornament body | |
-| 14 | Nov 30–Dec 4 | 5 | P2 — Christmas Ornament | | Complete F360 model; multi-color paint in Bambu Studio; slice + verify < 200g; submit to print queue | **P2.2 — F360 Model + Bambu Studio Screenshot** |
-| 15 | Dec 7–11 | 5 | P2 — Christmas Ornament | | Post-process print; install 2 LEDs; test circuit; iterate (reprint if needed); photography | |
-| 16 | Dec 14–18 | 5 | P2 — Christmas Ornament | | Holiday showcase; portfolio submission (P1–P2 complete, S1 close) | **P2.3 — Completed Ornament + S1 Portfolio** |
+| 8 | Oct 19–23 | 5 | 2 — CAD | 🚌 Mfg Day field trip Wed Oct 21 | Doorstop final iteration + caliper check; complete D2.4 Testing Log; doorstop reflection; begin D2.5 | **D2.4 — Doorstop Final Documentation** |
+| 9 | Oct 26–30 | 4 | 7 — Electrical | ★ Student teacher Tue Oct 27 · 🟡 🔴 Records Day Oct 30 | L7.1 Ohm's Law (V = IR); **CAD Quiz Tue Oct 27**; L7.2 Using a Multimeter; L7.3 LED Circuits: polarity, V_f, current-limiting resistor | **Q2: CAD Quiz** (Tue Oct 27) · **D2.5 — Wedge Physics Activity** (Thu Oct 29) |
+| 10 | Nov 2–6 | 5 | 7 — Electrical | | L7.3 Breadboards & Circuit Assembly; L7.4 LED Circuits; L7.5 Series vs. Parallel; L7.7 Switches & Motors (DPDT reversing, Tinkercad useless box); Unit 7 summary | |
+| 11 | Nov 9–13 | 5 | 2 — CAD (Fusion tutorials) | ⚡ Nov 11 (20-min period) | Fusion 360 tutorials: soda bottle (Mon), phone case (Tue); Ohm's Law review (Wed half day); **Unit 7 Quiz Thu Nov 12**; tutorial playlist #7 (Fri) | **Q3: Unit 7 Quiz — Ohm's Law** (Thu Nov 12) · **D2.6 — Fusion Tutorials: Soda Bottle + Phone Case** (Thu Nov 12) |
+| 12 | Nov 16–20 | 5 | 2 → P2 — Christmas Ornament | | Fusion Day 3 Paperclip tutorial; coat hanger with the Sweep tool; **LED reverse engineering** (Wed): calipers, model in CAD, small test prints for a tight fit; limits and fits (Fri) | **D2.7 — Ice Cube Tray + Coat Hanger** (Wed Nov 18) · **P2.0 — LED Dimensions + Test Fit Log** |
+| 13 | Nov 23–24 | 2 | P2 — Christmas Ornament | 🟡 Thanksgiving week | Develop ornament concepts; define scope, design intent and recipient (P2.1 scope document) | P2.1 due next Mon |
+| 14 | Nov 30–Dec 4 | 5 | P2 — Christmas Ornament | | **P2.1 due Mon Nov 30**; model the ornament in F360 with the LED pocket from P2.0; one-color test prints (don't count toward 100 g); slice + verify ≤ 100 g; submit to print queue | **P2.1 — Scope Document** (Mon Nov 30) · **P2.2 — F360 Model + Bambu Studio Screenshot** (before final print) |
+| 15 | Dec 7–11 | 5 | P2 — Christmas Ornament | | Post-process; install LED(s) (1 required, up to 3); test; photos; **project complete Fri Dec 11** | **P2.3 — Finished Ornament** (Fri Dec 11) |
+| 16 | Dec 14–18 | 5 | P3 — LED Sign / Wall Art | ⏩ P3 moved up one week | Project intro; design brief; concept sketches — name sign, wall art, or logo; choose substrate (plywood/acrylic/steel) | **P3.1 — Design Brief** |
 | — | Dec 21–Jan 3 | — | — | 🌿 Winter Break | | |
-| 17 | Jan 4–8 | 5 | P3 — LED Sign / Wall Art | | Project intro; design brief; concept sketches — name sign, wall art, or logo; choose substrate (plywood/acrylic/steel) | **P3.1 — Design Brief** |
-| 18 | Jan 11–15 | 5 | P3 — LED Sign / Wall Art | ⚡ Jan 13 (20-min period) | Finalize design; lay out in F360 sketch or vector art; prepare xTool toolpath or CNC file; teacher approval gate | **P3.2 — Design File Approved** |
-| 19 | Jan 18–21 | 3 | P3 — LED Sign / Wall Art | 🔴 MLK Day Jan 18 · Records Day Jan 22 (no students) | Cut substrate — xTool laser or CNC router; deburr, sand, prime, base coat | |
-| 20 | Jan 25–29 | 5 | P3 — LED Sign / Wall Art | | ATtiny85 + WS2812B LED strip: addressable LED intro; upload starter FastLED sketch; customize animation pattern; wire and solder connections | **P3.3 — Wired LED Strip Demo** |
+| 17 | Jan 4–8 | 5 | P3 — LED Sign / Wall Art | | Finalize design; lay out in F360 sketch or vector art; prepare xTool toolpath or CNC file; teacher approval gate | **P3.2 — Design File Approved** |
+| 18 | Jan 11–15 | 5 | P3 — LED Sign / Wall Art | ⚡ Jan 13 (20-min period) | Cut substrate — xTool laser or CNC router; deburr, sand, prime, base coat | |
+| 19 | Jan 18–21 | 3 | P3 — LED Sign / Wall Art | 🔴 MLK Day Jan 18 · Records Day Jan 22 (no students) | Finish substrate; ATtiny85 + WS2812B intro: addressable LEDs, upload starter FastLED sketch | |
+| 20 | Jan 25–29 | 5 | P3 — LED Sign / Wall Art | | Customize animation pattern; wire and solder connections | **P3.3 — Wired LED Strip Demo** |
 | 21 | Feb 1–5 | 5 | P3 — LED Sign / Wall Art | | Mount LEDs to substrate; finalize wiring; test full assembly; photography; portfolio | **P3.4 — Completed Sign + Portfolio Photo** |
 | 22 | Feb 8–12 | 5 | P4 — Silicone Molds | | Project intro; Smooth-On Mold Star 15A overview (shore 15A, food-safe, 1:1 mix, 24-hr cure); design the positive in F360 — draft angles 2–3° required; partner design review checkpoint | **P4.1 — Design Brief + Partner Review** |
 | 23 | Feb 15–19 | 5 | P4 — Silicone Molds | | Complete mold assembly in F360 (positive inside box, walls ≥10mm); measure cavity volume ≥30 mL (Inspect → Measure); print mold assembly in PLA | **P4.2 — F360 Model + Cavity Volume Screenshot** |
@@ -67,10 +68,10 @@
 | # | Name | Week | Scope |
 |---|------|------|-------|
 | Q1 | EDP Quiz | 3 | Unit 1 — Engineering Design Process |
-| Q2 | CAD Quiz | *(deferred)* | Unit 2 — Fundamentals of CAD |
-| Q3 | Safety Quiz | *(deferred)* | Unit 3 — Shop Safety |
-| Q4 | Unit 7 Quiz | 11 | Unit 7 — Electrical Systems |
-| Q5 | Unit 8 Quiz | 29 | Unit 8 — Mechanisms |
+| Q2 | CAD Quiz | 9 (Tue Oct 27) | Unit 2 — Fundamentals of CAD |
+| Q3 | Unit 7 Quiz — Ohm's Law | 11 (Thu Nov 12) | Unit 7 — Electrical Systems |
+| — | Safety Quiz | *(deferred — TBD)* | Unit 3 — Shop Safety |
+| Q4 | Unit 8 Quiz | 29 | Unit 8 — Mechanisms |
 
 ---
 
@@ -83,15 +84,20 @@
 | D2.1 | Spinner Body CAD File | 4 |
 | D2.2 | Doorstop Design Brief | 5 |
 | D2.3 | Doorstop CAD Model | 7 *(extended Oct 12)* |
-| D2.4 | Doorstop Final Documentation | *(TBD ~wk 8–9)* |
+| D2.4 | Doorstop Final Documentation | 8 |
+| D2.5 | Wedge Physics Activity | 9 (Thu Oct 29) |
+| D2.6 | Fusion Tutorials: Soda Bottle + Phone Case | 11 (Thu Nov 12) |
+| D2.7 | Fusion: Ice Cube Tray + Coat Hanger | 12 (Wed Nov 18) |
 | D3.1 | Tool Cert Card | *(deferred — TBD)* |
-| D7.1 | Unit 7 Lab Results | 11 |
+| D7.1 | Ohm's Law & LED Circuits Activity | *(not on the schedule yet)* |
+| D7.2 | Unit 7 Lab Results | *(not on the schedule yet)* |
 | D8.1 | Fix Fran's Farm | 29 |
-| P2.1 | Design Brief + LED Model Screenshot | 12 |
+| P2.0 | LED Dimensions + Test Fit Log | 12 |
+| P2.1 | Scope Document | 14 (Mon Nov 30) |
 | P2.2 | F360 Model + Bambu Studio Screenshot | 14 |
-| P2.3 | Completed Ornament + S1 Portfolio | 16 |
-| P3.1 | P3 Design Brief | 17 |
-| P3.2 | Design File Approved | 18 |
+| P2.3 | Finished Ornament | 15 (Fri Dec 11) |
+| P3.1 | P3 Design Brief | 16 |
+| P3.2 | Design File Approved | 17 |
 | P3.3 | Wired LED Strip Demo | 20 |
 | P3.4 | Completed Sign + Portfolio Photo | 21 |
 | P4.1 | Design Brief + Partner Review | 22 |

@@ -401,6 +401,14 @@
         .level-a .level-name { color: #f87171; }
 
         .level-req { font-size: 0.9rem; color: #a09080; line-height: 1.6; }
+        .level-intro { font-size: 0.95rem; color: #a09080; line-height: 1.6; margin-bottom: 18px; }
+        .level-list { list-style: none; padding: 0; margin: 0; }
+        .level-list li { font-size: 0.88rem; color: #a09080; line-height: 1.5; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .level-list li:last-child { border-bottom: none; }
+        .level-list strong { color: #e8dcc8; font-weight: 700; }
+        .level-below { margin-top: 18px; font-size: 0.85rem; color: #a09080; line-height: 1.6; padding: 14px 18px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.15); }
+        .level-below span { font-family: 'Orbitron', sans-serif; font-weight: 900; color: #e8dcc8; margin-right: 8px; }
+        .level-below strong { color: #e8dcc8; }
 
         /* ── Lesson link ── */
         .lesson-link-row {
@@ -527,14 +535,14 @@
                 <div class="project-eyebrow">Design &amp; Build Lab · Project 2</div>
                 <h1 class="project-title">Christmas<br>Ornament &amp; Gift</h1>
                 <p class="project-description">
-                    Design and fabricate a multi-color 3D printed holiday ornament or small gift — entirely from scratch in Fusion 360. You'll reverse engineer an LED to model it accurately, build it into your design, and send a multi-color print to the Bambu. The best ones light up.
+                    Design and fabricate a 3D printed holiday ornament or small gift, entirely from scratch in Fusion 360. You'll reverse engineer an LED, model it accurately, and build it into your design so the finished piece lights up.
                 </p>
                 <p class="project-description" style="margin-top:10px; font-size:0.9em; opacity:0.7;">
                     The class theme is Christmas. If you celebrate a different holiday this time of year — Hanukkah, Kwanzaa, Eid, Diwali, or anything else — design for that instead. Same engineering requirements, your tradition.
                 </p>
                 <div class="meta-row">
-                    <span class="meta-chip">3 Weeks</span>
-                    <span class="meta-chip">Multi-Color Print</span>
+                    <span class="meta-chip">Due Fri Dec 11</span>
+                    <span class="meta-chip">60 Points</span>
                     <span class="meta-chip">LED Integration</span>
                     <span class="meta-chip">Reverse Engineering</span>
                     <span class="meta-chip">Individual</span>
@@ -561,22 +569,22 @@
                     <div class="constraint-card">
                         <div class="constraint-icon">⚖️</div>
                         <div class="constraint-text">
-                            <h5>Filament &lt; 200g</h5>
-                            <p>Your final print(s) must use fewer than 200g of filament combined. Prototyping material does not count. Verify in Bambu Studio before submitting your sliced file.</p>
+                            <h5>Filament: 100 g max</h5>
+                            <p>Your finished project must use 100 g of filament or less. Check the weight in Bambu Studio before you print, and report what you used. Test prints don't count toward the 100 g, but print them in one color. This is a hard limit: if you think you need more, talk to Mr. B <em>before</em> you print and explain why.</p>
                         </div>
                     </div>
                     <div class="constraint-card">
                         <div class="constraint-icon">💡</div>
                         <div class="constraint-text">
-                            <h5>Exactly 2 LEDs</h5>
-                            <p>Your design must incorporate exactly 2 LEDs. LED placement must be intentional — they should enhance the piece, not be taped on as an afterthought.</p>
+                            <h5>1 to 3 LEDs</h5>
+                            <p>At least one LED is required, and you may use up to three. Place them on purpose: they should be part of the design, not taped on as an afterthought.</p>
                         </div>
                     </div>
                     <div class="constraint-card">
-                        <div class="constraint-icon">🎨</div>
+                        <div class="constraint-icon">🎁</div>
                         <div class="constraint-text">
-                            <h5>Multi-Color Required</h5>
-                            <p>Your final print must use 2 or more filament colors via the Bambu AMS. Single-color prints do not meet the project requirements regardless of quality.</p>
+                            <h5>One Item or More</h5>
+                            <p>You work alone. You may make more than one item, as long as everything together stays within 100 g, or Mr. B has given you permission for more.</p>
                         </div>
                     </div>
                 </div>
@@ -589,7 +597,7 @@
                     <h3>🔬 No CAD file exists for this LED — you model it from the physical part</h3>
                     <ol class="led-steps">
                         <li>Obtain your LED from the class supply. Handle it carefully — the leads bend easily.</li>
-                        <li>Measure the LED body: outer diameter, body length, lens dome height. Use digital calipers. Record all dimensions with units in your design brief.</li>
+                        <li>Measure the LED body: outer diameter, body length, lens dome height. Use digital calipers. Record all dimensions with units in P2.0.</li>
                         <li>Measure the leads: length from base of body, spacing between leads (anode and cathode), lead diameter.</li>
                         <li>Document the electrical spec: forward voltage (V<sub>f</sub>) and forward current (I<sub>f</sub>) from the class reference sheet or by testing.</li>
                         <li>Model the LED as a component in Fusion 360 — body, dome, and leads as separate features. Dimension every sketch to match your measurements.</li>
@@ -604,13 +612,13 @@
                 <div class="materials-grid">
                     <div class="material-card material-required">
                         <div class="material-label">Required</div>
-                        <div class="material-name">PLA Filament — Multi-Color</div>
-                        <p class="material-desc">Your primary material. Choose your colors intentionally — the color plan should be part of your design brief. Limit: &lt;200g for the final piece. Prototyping filament (single-color, low infill) is provided separately and doesn't count toward your limit.</p>
+                        <div class="material-name">PLA Filament</div>
+                        <p class="material-desc">Your primary material. One color or several: choose on purpose and explain your choice under design intent in your scope document. Limit: 100 g for the finished project.</p>
                     </div>
                     <div class="material-card material-optional">
                         <div class="material-label">Optional — Level 2 &amp; 3</div>
                         <div class="material-name">Mixed Materials</div>
-                        <p class="material-desc">Your design may incorporate additional materials for a more complex or refined piece. Examples: a laser-engraved wood placard (xTool), fabric, wire, or sheet metal accents. Affixing methods must be designed — glue joints, press fits, or rivets. Document your assembly method in D_P2A.</p>
+                        <p class="material-desc">Your design may incorporate additional materials for a more complex or refined piece. Examples: a laser-engraved wood placard (xTool), fabric, wire, or sheet metal accents. Affixing methods must be designed — glue joints, press fits, or rivets. Describe how the parts join in your scope document.</p>
                     </div>
                 </div>
             </div>
@@ -635,20 +643,16 @@
                     <div class="deliverable-card">
                         <div class="d-left">
                             <div class="d-id">D_P2A</div>
-                            <div class="d-week">Week 1</div>
+                            <div class="d-week">Due Mon Nov 30</div>
                             <div class="d-type">Planning</div>
                         </div>
                         <div>
-                            <div class="d-title">Design Brief &amp; LED Model</div>
-                            <p class="d-desc">Define what you're making and prove you understand the LED before any design work begins. The LED model must be complete before you start modeling your ornament or gift.</p>
+                            <div class="d-title">P2.1 Scope Document</div>
+                            <p class="d-desc">One short document, 1–2 sentences per section: what you're making, why it looks the way it does, and who it's for.</p>
                             <ul class="d-items">
-                                <li>Problem statement: who is this for, what does it need to do or say</li>
-                                <li>At least 2 concept sketches of the ornament/gift with LED placement shown</li>
-                                <li>Decision matrix confirming your chosen concept</li>
-                                <li>LED measurements table: body diameter, body length, lens height, lead length, lead spacing, V<sub>f</sub>, I<sub>f</sub></li>
-                                <li>F360 screenshot of your completed LED model with dimensions visible</li>
-                                <li>Color plan: which filament colors, what goes where, and why</li>
-                                <li>If using mixed materials: assembly method sketched and justified</li>
+                                <li><strong>Scope:</strong> what you are making, the parts of your assembly and how they join, and how many grams of filament you expect to use</li>
+                                <li><strong>Design intent:</strong> what the ornament should feel like or do, and one design choice you made on purpose, and why</li>
+                                <li><strong>Recipient:</strong> a real person or specific group, and how something about them shaped your design</li>
                             </ul>
                         </div>
                     </div>
@@ -656,19 +660,15 @@
                     <div class="deliverable-card">
                         <div class="d-left">
                             <div class="d-id">D_P2B</div>
-                            <div class="d-week">Week 2</div>
-                            <div class="d-type">CAD &amp; Prototype</div>
+                            <div class="d-week">Before you print</div>
+                            <div class="d-type">CAD &amp; Slice</div>
                         </div>
                         <div>
-                            <div class="d-title">Model, Slicer Setup &amp; Prototype</div>
-                            <p class="d-desc">Your complete CAD model, sliced and ready to print, with a prototype proving the LED fits. Due before your final print is submitted to the queue.</p>
+                            <div class="d-title">P2.2 Model &amp; Slicer Check</div>
+                            <p class="d-desc">Your finished CAD model, sliced and ready to print. Turn it in before your final print goes in the queue.</p>
                             <ul class="d-items">
-                                <li>F360 screenshot: final model in isometric view showing all features</li>
-                                <li>F360 screenshot: LED model placed in or near its cavity to show fit intent</li>
-                                <li>If multi-part design: F360 assembly screenshot with joints visible</li>
-                                <li>Bambu Studio screenshot: color-painted model showing all color regions</li>
-                                <li>Bambu Studio screenshot: slicing preview confirming filament use &lt;200g</li>
-                                <li>Prototype photo: printed test piece (single color, low infill is fine) with LED physically test-fitted</li>
+                                <li>F360 screenshot: final model in isometric view, with the LED in its pocket</li>
+                                <li>Bambu Studio screenshot: slicing preview showing 100 g of filament or less</li>
                             </ul>
                         </div>
                     </div>
@@ -676,18 +676,16 @@
                     <div class="deliverable-card">
                         <div class="d-left">
                             <div class="d-id">D_P2C</div>
-                            <div class="d-week">Week 3</div>
+                            <div class="d-week">Due Fri Dec 11</div>
                             <div class="d-type">Finished Product</div>
                         </div>
                         <div>
-                            <div class="d-title">Final Product &amp; Iteration Log</div>
-                            <p class="d-desc">Your finished, lit piece — ready to give as a gift or hang on a tree. Two photos required so both the print quality and the LED effect are visible.</p>
+                            <div class="d-title">P2.3 Finished Ornament</div>
+                            <p class="d-desc">Your finished, lit piece, ready to give as a gift or hang on a tree.</p>
                             <ul class="d-items">
-                                <li>Photo: finished piece in normal light — shows print quality and color accuracy</li>
-                                <li>Photo: finished piece with LEDs on in a dim environment — shows the lighting effect</li>
-                                <li>If mixed materials: photo showing the assembly/affixing detail</li>
-                                <li>Iteration log: at least one change made after the prototype (design, fit, color, or assembly) with before/after description</li>
-                                <li>Filament weight confirmed: actual weight of finished piece documented</li>
+                                <li>Photo: finished piece in normal light</li>
+                                <li>Photo: finished piece with the LED on in a dim room</li>
+                                <li>Filament used: the actual grams for the finished piece</li>
                             </ul>
                         </div>
                     </div>
@@ -698,23 +696,47 @@
             <!-- Grading -->
             <div class="section-block">
                 <h2 class="section-title">Grading Levels</h2>
+                <p class="level-intro">The minimum for a C: an assembly of at least two items, 100 g of filament or less, and a complete scope document. Each step up asks for more thought, not more material.</p>
+                <p class="level-intro">Each of the six rows is worth 10 points, 60 in all: A = 10, B = 8.5, C = 7.5, Below C = 5, not turned in = 0.</p>
                 <div class="levels-grid">
                     <div class="level-card level-c">
                         <div class="level-grade">C</div>
-                        <div class="level-name">Level 1 — Complete</div>
-                        <p class="level-req">A finished, original multi-color 3D print that is recognizably a holiday ornament or gift. 1–2 filament colors. 2 LEDs installed. No assembly required. All three deliverables submitted on time with an iteration log entry.</p>
+                        <div class="level-name">Minimum</div>
+                        <ul class="level-list">
+                            <li><strong>Assembly:</strong> Two items joined into one ornament (for example a cookie ornament with an LED).</li>
+                            <li><strong>Scope document:</strong> Scope, design intent and recipient are each addressed in a few sentences.</li>
+                            <li><strong>Design intent:</strong> One design choice is named and explained.</li>
+                            <li><strong>Fit to recipient:</strong> A recipient is named.</li>
+                            <li><strong>Filament:</strong> Within 100 g.</li>
+                            <li><strong>Finish:</strong> Complete and usable, with visible flaws.</li>
+                        </ul>
                     </div>
                     <div class="level-card level-b">
                         <div class="level-grade">B</div>
-                        <div class="level-name">Level 2 — Refined</div>
-                        <p class="level-req">Complete Level 1, plus: 3 or more filament colors used intentionally. LED cavity modeled to hold the LEDs without adhesive (press fit). Either a multi-part design with a simple assembly, or additional material incorporated (laser-engraved wood, etc.). Iteration log shows a meaningful design change with evidence.</p>
+                        <div class="level-name">Refined</div>
+                        <ul class="level-list">
+                            <li><strong>Assembly:</strong> Two or more items joined and working, with a joint you chose on purpose.</li>
+                            <li><strong>Scope document:</strong> All three parts are present and mostly specific.</li>
+                            <li><strong>Design intent:</strong> At least two choices are explained and visible in the ornament.</li>
+                            <li><strong>Fit to recipient:</strong> The design suits the recipient in an obvious way.</li>
+                            <li><strong>Filament:</strong> Within 100 g, and the amount used is reported.</li>
+                            <li><strong>Finish:</strong> Mostly clean, with small flaws that do not affect use.</li>
+                        </ul>
                     </div>
                     <div class="level-card level-a">
                         <div class="level-grade">A</div>
-                        <div class="level-name">Level 3 — Exceptional</div>
-                        <p class="level-req">Complete Level 2, plus: multiple modeled parts with a fully constrained F360 assembly (joints, mates, no free degrees of freedom). High design complexity — compound curves, detailed features, or mechanical function. Exceptional print quality and color execution. The finished piece is a genuinely excellent product you'd be proud to give as a gift.</p>
+                        <div class="level-name">Exceptional</div>
+                        <ul class="level-list">
+                            <li><strong>Assembly:</strong> Two or more items joined in a way that is planned and clearly works, such as a light that is hidden, held, or powered neatly.</li>
+                            <li><strong>Scope document:</strong> All three parts are clear, specific, and match what you built.</li>
+                            <li><strong>Design intent:</strong> Several choices are explained, and the finished ornament shows them.</li>
+                            <li><strong>Fit to recipient:</strong> The design clearly suits a named person or group, and you can say how.</li>
+                            <li><strong>Filament:</strong> Planned amount is close to the amount used, with little waste.</li>
+                            <li><strong>Finish:</strong> Clean print, parts fit well, and it is ready to hang or give.</li>
+                        </ul>
                     </div>
                 </div>
+                <p class="level-below"><span>Below C</span> <strong>Assembly:</strong> Only one item, or the parts do not stay together. <strong>Scope document:</strong> A part is missing, or the document is not turned in. <strong>Design intent:</strong> No reasons are given for how it looks or works. <strong>Fit to recipient:</strong> No recipient is named. <strong>Filament:</strong> Over 100 g without permission. <strong>Finish:</strong> Unfinished or not usable as an ornament.</p>
             </div>
 
         </main>

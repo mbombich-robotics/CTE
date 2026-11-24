@@ -61,10 +61,14 @@
 | 5 | Sep 28 – Oct 2 | 5 | ⚡ Sep 30 | **L2.5: C2 Wheel Hub Cap** — bolt circle, counterbore, hex bore, student design choice; print + iterate. D2.2 first deadline Fri Oct 2 — extended |
 | 6 | Oct 5–9 | 5 | | C2 wrap-up — iterate, caliper check, finalize; **L2.6: C3 Motor Sleeve Mount** intro (Thu Oct 8) — begin sketch. D2.2 extended deadline Fri Oct 9 |
 | 7 | Oct 12–16 | 5 | 🚌 Mfg Day Oct 21 | **D2.2 turn-in Mon Oct 12**; **L2.6: C3 Motor Sleeve Mount** — full week: sleeve bore, nut-capture rail, screw holes; print + iterate |
-| 8 | Oct 19–23 | 5 | | C3 wrap-up + caliper check; **L2.7: C4 Robot Deck** — outer profile + motor mount holes; begin assembly file |
+| 8 | Oct 19–23 | 5 | 🚌 Mfg Day Oct 21 | **L2.6: C3 Motor Sleeve Mount** — iterate, final adjustments, queue print, caliper check |
+| 9 | Oct 26–30 | 4 | 🟡 🔴 Records Day Oct 30 | C3 — iterate, finalize; **CAD Quiz Tue Oct 27**; begin D2.3 documentation |
+| 10 | Nov 2–6 | 5 | | **C5 Omni Wheel Mount** + robot CAD assembly work sessions |
+| 11 | Nov 9–13 | 5 | ⚡ Nov 11 | Robot CAD assembly; new components: battery mount + IR sensor mount; **D2.4 C5 Omni Wheel Mount due Fri Nov 13** |
+| 12 | Nov 16–20 | 5 | | Complete robot CAD assembly (Mon–Wed) → Unit 3 starts Thu |
 
 **Unit 2 deliverables:** D21–D27 — one per component; each requires screenshot + level selection + learning check Q1–Q5. All 7 required before build phase.  
-**Quizzes:** Mid-unit checkpoint (TBD ~wk 6–7) + CAD quiz (TBD ~wk 9–10). ⚠️ Both shifted due to slower-than-planned C1/C2 pace.
+**Quizzes:** CAD quiz given Tue Oct 27 (wk 9). The mid-unit checkpoint quiz was not given.
 
 ---
 
@@ -73,11 +77,11 @@
 
 | Wk | Dates | Days | Notes | Content |
 |----|-------|------|-------|---------|
-| 9 | Oct 26–30 | 4 | 🟡 🔴 Records Day Oct 30 | OSHA/LOTO/PPE/SDS; Matthew Henne case study; drill press cert |
-| 10 | Nov 2–6 | 5 | | Pedestal grinder cert; hand drill cert; **CNC awareness** (Year 1: safety, what the machine does, toolpath concepts — not independent operation); safety quiz |
+| 12 | Nov 19–20 | 2 | | **L3.1 Shop Safety Fundamentals**; drill press + CNC training; **Safety tests Fri Nov 20** (portfolio) |
+| 13 | Nov 23 | 1 | 🟡 Thanksgiving week | **CNC awareness** training |
 
 **Unit 3 deliverable:** Signed certification card for each tool. All certs required before build phase.  
-**Safety quiz** end of Week 10.
+**Safety tests** Fri Nov 20 (week 12). *Actual: Unit 3 ran wk 12–13 instead of wk 9–10.*
 
 **CNC progression across years (same machine, deeper responsibility each year):**
 - Year 1: Awareness — safety rules, observe operation, understand toolpaths conceptually
@@ -93,9 +97,10 @@
 
 | Wk | Dates | Days | Notes | Content |
 |----|-------|------|-------|---------|
-| 11 | Nov 9–13 | 5 | ⚡ Nov 11 (20-min day) | Assemble frame: motors, wheels, caster; mount electronics board; wire motors and battery; caliper check |
+| 13 | Nov 24 | 1 | 🟡 Thanksgiving week | Cut decks on the CNC; begin assembling robots |
+| 14+ | Nov 30 → | | ⚠️ not re-planned yet | Finish frame: motors, wheels, caster; mount electronics board; wire motors and battery; caliper check |
 
-**Build gate:** Robot rolls under manual power with all components mounted before Week 12.
+**Build gate:** Robot rolls under manual power with all components mounted before programming starts. *Actual: decks cut Nov 24 (wk 13); build continues after Thanksgiving.*
 
 ---
 
@@ -103,6 +108,8 @@
 > **Change from last year:** Programming starts mid-November (Week 12) on the physical robot students just built. Three lessons introduce the language; two more build toward motor control. All basics wrap up before Winter Break.
 
 **Lesson / Activity numbering:**  L4.1 + A4.1 · L4.2 + A4.2 · **L4.3 + A4.3 (Functions)** · L4.4 + A4.4 (Digital Input) · L4.5 + A4.5 (PWM) · L4.6 (Motor Control)
+
+> ⚠️ **Not re-planned yet.** Synced to the daily schedule through week 13 (Nov 24): programming had not started by Thanksgiving, so the weeks below are the original plan.
 
 | Wk | Dates | Days | Notes | Content |
 |----|-------|------|-------|---------|
@@ -250,9 +257,9 @@ Every assignment has up to 4 levels. Students choose their level — grade refle
 ## Quiz Schedule (all quizzes built into portfolio system)
 More quizzes than 2025-26. Every unit gets at least one; long units get a mid-unit checkpoint.
 - **EDP quiz** — Week 3 ✓ (Sep 16 — students tested printed C1 before taking quiz)
-- **CAD checkpoint quiz** — TBD ~wk 6–7 (originally week 5; shifted due to C1/C2 pace)
-- **CAD quiz** — TBD ~wk 9–10 (originally week 8; shifted accordingly)
-- **Safety quiz** — end of Week 10
+- **CAD checkpoint quiz** — not given
+- **CAD quiz** — Week 9 ✓ (Tue Oct 27)
+- **Safety tests** — Week 12 ✓ (Fri Nov 20, portfolio)
 - **Programming quiz (Lessons 1–5)** — Week 18
 - **Programming quiz (Lessons 6–9)** — ~Week 20
 - Additional quizzes TBD: line following, scanner, claw units

@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.91';
+const BACKEND_VERSION = 'v2.14.92';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -2920,8 +2920,8 @@ function handleCreateDeliverableDoc(data) {
   var templateLookupId = TEMPLATE_ALIASES[deliverableId] || deliverableId;
 
   // Look up template: specific key first, then shared component fallback.
-  // CAD Quiz practicals (28, 426), DBL D2.6 / D2.7 (427, 428) and P2.0 (480) never fall back to Component.
-  var NO_COMPONENT_FALLBACK = [28, 426, 427, 428, 480];
+  // CAD Quiz practicals (28, 426), DBL D2.6 / D2.7 (427, 428), P2.0 (480) and P2.1 (482) never fall back to Component.
+  var NO_COMPONENT_FALLBACK = [28, 426, 427, 428, 480, 482];
   var props      = PropertiesService.getScriptProperties();
   var templateId = props.getProperty('DELIVERABLE_DOC_TEMPLATE_' + templateLookupId)
                 || (NO_COMPONENT_FALLBACK.indexOf(deliverableId) === -1
@@ -3228,6 +3228,31 @@ reflection (max 4): Depth and specificity of the Section 4 reflection. 4=specifi
       'Otherwise → name the iteration(s) that are missing a number, or say to log another test print.\n\n' +
       'Return ONLY valid JSON, no markdown or explanation:\n' +
       '{"shroud_od": {"score": 5, "max": 5, "feedback": "..."}, "fitter_id": {"score": 5, "max": 5, "feedback": "..."}}\n\n' +
+      'STUDENT DOCUMENT:';
+
+  } else if (deliverableId === 482) {
+    // ── DBL P2.1: Ornament Scope Document — short doc, three parts ────────
+    criteriaKeys = ['scope', 'design_intent', 'recipient'];
+    overridePrefix =
+      'You are giving feedback on a high school student\'s short scope document for a 3D printed holiday ornament or small gift. ' +
+      'It is NOT a full design brief: do not ask for criteria tables, a problem statement, a decision matrix or sketches. ' +
+      'Project rules: the project is an assembly of at least two items (for example a printed cookie ornament with an LED); ' +
+      'at least 1 and up to 3 LEDs; the finished project uses 100 g of filament or less (test prints do not count); students work alone. ' +
+      'Placeholder text (underscores, "___", template instructions left unchanged) does NOT count as an answer. ' +
+      'Students were asked for only 1-2 sentences per section: do not take off points for being brief.\n\n' +
+      'CRITERIA:\n\n' +
+      'scope (max 4): What the student is making, the parts of the assembly and how they join, and the grams of filament they expect to use. ' +
+      '4=all three are present and specific (names the parts, says how they join, gives a gram estimate of 100 g or less); ' +
+      '3=all three present but one is vague; 2=one of the three is missing, or the gram estimate is over 100 g; 1=only a sentence naming the object; 0=blank.\n\n' +
+      'design_intent (max 3): At least one design choice made on purpose, with a reason. One well-explained choice earns full marks. ' +
+      '3=a specific choice with a clear reason; 2=a choice with a vague reason; 1=describes the look but gives no reason; 0=blank.\n\n' +
+      'recipient (max 3): A real person or specific group, and how something about them shaped the design. ' +
+      '3=names a specific recipient AND links a detail about them to a design choice; 2=names a specific recipient but the link to the design is vague; ' +
+      '1=generic recipient ("someone", "my family") with no link; 0=blank.\n\n' +
+      'FEEDBACK STYLE: Speak to the student as "you". One or two short sentences per criterion. Full marks → say what is specific. ' +
+      'Otherwise → name the one thing to add.\n\n' +
+      'Return ONLY valid JSON, no markdown or explanation:\n' +
+      '{"scope": {"score": 4, "max": 4, "feedback": "..."}, "design_intent": {"score": 3, "max": 3, "feedback": "..."}, "recipient": {"score": 3, "max": 3, "feedback": "..."}}\n\n' +
       'STUDENT DOCUMENT:';
 
   } else if (deliverableId === 425) {

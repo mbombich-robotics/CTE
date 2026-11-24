@@ -18,13 +18,18 @@
 | 5 | Sep 28–Oct 2 | 5 | 2 — CAD | ⚡ Sep 30 (20-min period) | **L2.5: C2 Wheel Hub Cap** — bolt circle, counterbore, hex bore, student design face; print + iterate | D2.2 first deadline Fri Oct 2 — extended |
 | 6 | Oct 5–9 | 5 | 2 — CAD | | C2 wrap-up — iterate, caliper check, finalize; C3 Motor Mount intro (Thu Oct 8) — begin sketch | **D2.2 extended deadline** Fri Oct 9 |
 | 7 | Oct 12–16 | 5 | 2 — CAD | 🚌 Mfg Day field trip Oct 21 | **D2.2 turn-in Mon Oct 12**; L2.6 C3 Motor Mount — full week modeling + printing | **D2.2 — C2: Component Design** (turn-in Mon Oct 12) |
-| 8 | Oct 19–23 | 5 | Build | | Assemble frame: motors, wheels, caster; mount electronics board; wire motors and battery; caliper check — **build gate: robot rolls under manual power** | |
-| 9 | Oct 26–30 | 4 | 4 — Programming | 🟡 🔴 Records Day Oct 30 | L4.1 Microcontroller Fundamentals: what is a microcontroller, IDE setup, MicroPython REPL; A4.1 Blink — onboard LED, `utime.sleep()`, basic program loop | **D4.1 — Blink (A4.1)** |
-| 10 | Nov 2–6 | 5 | 4 — Programming | | L4.3 Functions: define, call, parameters; A4.3 — SOS pattern using named functions; refactor blink from wk 9 | **D4.2 — SOS with Functions (A4.3)** |
-| 11 | Nov 9–13 | 5 | 4 — Programming | ⚡ Nov 11 (20-min period) | L4.6 Motor Control: H-bridge, direction/speed; write `drive_forward()`, `turn_left()`, `stop()` functions; test on physical robot | **D4.3 — Robot Drives a Square** |
-| 12 | Nov 16–20 | 5 | 4 — Programming | | Robot Driving Challenge: timed obstacle course; iterate and refine drive functions; intro to `utime.sleep_ms()` for precision timing | **Q4: Programming Quiz**; **D4.4 — Robot Driving Challenge** |
-| 13 | Nov 23–24 | 2 | 4 — Programming | 🟡 Thanksgiving week | Buffer / make-up; finish robot driving challenge submissions | |
+| 8 | Oct 19–23 | 5 | 2 — CAD | 🚌 Mfg Day field trip Wed Oct 21 (2nd–5th hr) | L2.6 C3 Motor Mount — iterate, final adjustments, queue print, caliper check | |
+| 9 | Oct 26–30 | 4 | 4 — Programming | 🟡 🔴 Records Day Oct 30 | L4.1 Microcontroller Fundamentals: IDE setup, MicroPython REPL; A4.1 Blink; **CAD Quiz Thu Oct 29** | **Q2: CAD Quiz** (Thu Oct 29) · **D4.1 — Blink (A4.1)** (Thu Oct 29) |
+| 10 | Nov 2–6 | 5 | 3 — Safety | | L4.1 Shop Safety Fundamentals (2 days, through LOTO); drill safety — drill press + cordless drill; Thu–Fri TBD on the schedule | |
+| 11 | Nov 9–13 | 5 | 3 — Safety → Build | ⚡ Nov 11 (20-min period) | Safety review; **safety tests Tue Nov 10**; robot case review using the middle school's competition robot (Wed); finish safety tests + robot assemblies; CNC awareness safety training (Fri) | **Q3: Safety Tests** (Tue Nov 10) |
+| 12 | Nov 16–20 | 5 | Build | | Complete robot assembly — all week | |
+| 13 | Nov 23–24 | 2 | Build | 🟡 Thanksgiving week | CNC awareness training (Mon); cut decks on the CNC + assemble robots (Tue) | |
 | — | Nov 25–28 | — | — | 🌿 Thanksgiving Break | | |
+
+> ⚠️ **Synced to the daily schedule through week 13 (Nov 24).** Safety moved to weeks 10–11 and the robot build to weeks 11–13, so programming stopped after Blink (D4.1). D4.2–D4.4 and the programming quiz still need a place; weeks 14–19 below are the original plan and need re-planning.
+
+| Week | Dates | Days | Unit | Notes | Content | Deliverable / Quiz |
+|------|-------|------|------|-------|---------|--------------------|
 | 14 | Nov 30–Dec 4 | 5 | 8 — Mechanisms | | Simple machines + mechanical advantage (POE 111/113); gear ratios — teacher-provided gear STL files; students print and assemble 2-stage gear train; calculate input/output RPM | **D8.1 — Gear Ratio Calculation Sheet** |
 | 15 | Dec 7–11 | 5 | 8 — Mechanisms | ⚠️ MOY Math i-Ready Dec 7–8 — 2 days reduced; no quiz conflict | CAD: students design a housing or output arm to hold teacher-provided gear train; print and assemble; measure actual vs. calculated MA | **D8.2 — CAD Housing File + Reflection** |
 | 16 | Dec 14–18 | 5 | 8 — Mechanisms | | 3D Print Holiday Project — design and print a small take-home item (ornament, keychain, small mechanism toy); teacher approves design before print | **D8.3 — Holiday Print** |
@@ -67,9 +72,9 @@
 | # | Name | G1 Week | G2 Week | Scope |
 |---|------|---------|---------|-------|
 | Q1 | EDP Quiz | 3 (Wed Sep 16+) | 3 | Unit 1 — Engineering Design Process |
-| Q2 | CAD Quiz | *(TBD)* | 5 | Unit 2 — Fundamentals of CAD |
-| Q3 | Safety Quiz | *(TBD)* | 6 | Unit 3 — Shop Safety |
-| Q4 | Programming Quiz | 12 | 12 | Unit 4 — Programming, Electronics & Sensors |
+| Q2 | CAD Quiz | 9 (Thu Oct 29) | 5 | Unit 2 — Fundamentals of CAD |
+| Q3 | Safety Tests | 11 (Tue Nov 10) | 6 | Unit 3 — Shop Safety |
+| Q4 | Programming Quiz | *(TBD — not re-planned)* | 12 | Unit 4 — Programming, Electronics & Sensors |
 | Q5 | Final Exam | 19 | 19 | Units 1–4 + Unit 8 cumulative |
 
 ---
@@ -82,12 +87,12 @@
 | D1.1 | Design Brief + Concept Sketches | 2 | 2 |
 | D2.1 | C1 — Key Dimensions + Iteration Log | 4 | 3 |
 | D2.2 | C2 — Key Dimensions + Iteration Log | 7 *(extended Oct 12)* | 4 |
-| D2.3 | Robot Assembly | *(TBD ~wk 9)* | 5 |
-| D3.1 | Tool Safety Certifications | *(TBD ~wk 10)* | 6 |
+| D2.3 | Robot Assembly | 12–13 *(no due date on the schedule)* | 5 |
+| D3.1 | Tool Safety Certifications | 10–11 *(no due date on the schedule)* | 6 |
 | D4.1 | Blink (A4.1) | 9 | 9 |
-| D4.2 | SOS with Functions (A4.3) | 10 | 10 |
-| D4.3 | Robot Drives a Square | 11 | 11 |
-| D4.4 | Robot Driving Challenge | 12 | 12 |
+| D4.2 | SOS with Functions (A4.3) | *(TBD — not re-planned)* | 10 |
+| D4.3 | Robot Drives a Square | *(TBD — not re-planned)* | 11 |
+| D4.4 | Robot Driving Challenge | *(TBD — not re-planned)* | 12 |
 | D8.1 | Gear Ratio Calculation Sheet | 14 | 14 |
 | D8.2 | CAD Housing File + Reflection | 15 | 15–16 ⚠️ |
 | D8.3 | Holiday Print (G1) / 3D Print Design Project (G2) | 16 | 16 |

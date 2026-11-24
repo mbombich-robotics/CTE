@@ -6,7 +6,7 @@
 // ============================================
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.9.80',
+    VERSION: 'v2.9.81',
 
     // Google OAuth Client ID (same as student portals)
     GOOGLE_CLIENT_ID: '1002661691088-8g0dskdehhmgc8jigbua15l3ih7td4ka.apps.googleusercontent.com',
@@ -74,10 +74,10 @@ const CONFIG = {
             deliverablePoints: {
                 0: 20, 10: 10, 11: 28,
                 421: 20, 422: 20, 423: 20, 424: 4, 425: 10, 426: 10, 427: 20, 428: 20,
-                480: 10,
+                480: 10,  // P2 total = 60: 480 + 482 + 483 + 484
                 431: 50,
                 471: 40, 472: 20,
-                481: 30, 482: 25, 483: 30, 484: 50,
+                481: 30, 482: 10, 483: 10, 484: 30,
                 491: 20, 492: 20, 493: 25, 494: 50,
                 501: 20, 502: 25, 503: 50,
                 511: 20, 512: 25, 513: 75,
@@ -186,9 +186,9 @@ const TRACK_DELIVERABLES = {
         { id: 471, label: 'D7.2 — Unit 7 Lab Results',                     week: 11 },
         // Project 2: Christmas Ornament / Gift
         { id: 480, label: 'P2.0 — LED Dimensions + Test Fit Log',          week: 12 },
-        { id: 482, label: 'P2.1 — Design Brief + LED Model Screenshot',    week: 12 },
+        { id: 482, label: 'P2.1 — Scope Document',                         week: 14 },
         { id: 483, label: 'P2.2 — F360 Model + Bambu Studio Screenshot',  week: 14 },
-        { id: 484, label: 'P2.3 — Completed Ornament + S1 Portfolio',      week: 16 },
+        { id: 484, label: 'P2.3 — Finished Ornament',                      week: 15 },
         // Project 3: LED Sign / Wall Art
         { id: 491, label: 'P3.1 — P3 Design Brief',                        week: 17 },
         { id: 492, label: 'P3.2 — Design File Approved',                   week: 18 },
@@ -250,7 +250,7 @@ const COMPONENT_BATCH_CRITERIA = [
 
 // Deliverable IDs that support Batch AI Grade and the per-student "Re-grade with AI" button.
 // CAD Quiz practicals (28, 426) are left out: Verify Work grades them before the student submits.
-const DOC_GRADABLE_IDS = new Set([11, 21, 22, 23, 421, 422, 423, 424, 425, 480]);
+const DOC_GRADABLE_IDS = new Set([11, 21, 22, 23, 421, 422, 423, 424, 425, 480, 482]);
 
 // Criteria definitions for Design Brief AI grading
 const BRIEF_CRITERIA = {
@@ -313,6 +313,12 @@ const BRIEF_CRITERIA = {
     480: [
         { id: 'shroud_od', label: 'LED Shroud OD',          max: 5 },
         { id: 'fitter_id', label: 'Test Fitter ID / Offset (each iteration)', max: 5 },
+    ],
+    // DBL P2.1: Scope Document — scope, design intent, recipient (4 + 3 + 3 = 10 pts)
+    482: [
+        { id: 'scope',         label: 'Scope',         max: 4 },
+        { id: 'design_intent', label: 'Design Intent', max: 3 },
+        { id: 'recipient',     label: 'Recipient',     max: 3 },
     ],
     // CAD Quiz Practicals — screenshot check, pass/fail (2 × 5 pts = 10 pts)
     426: [   // DBL: Doorstop Wedge

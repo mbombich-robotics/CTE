@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.89',
+    VERSION: 'v2.14.90',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -1015,23 +1015,18 @@ const DELIVERABLES = [
             'My doc has the <strong>LED shroud OD</strong>, and every iteration has a <strong>test fitter ID</strong> (or offset).',
         ],
     },
+    // One short scope document (not a full design brief). Template: DELIVERABLE_DOC_TEMPLATE_482
     {
         id: 482,
         shortLabel: 'P2.1',
-        title: 'P2.1 — Design Brief + LED Model Screenshot',
+        title: 'P2.1 — Scope Document',
         unit: 'p2',
-        week: 12,
-        points: 25,
+        week: 14,
+        points: 10,
         phase: 'ornament',
         tracks: ['dbl'],
-        description: 'Write a design brief for your ornament/gift and reverse-engineer the LED from a data sheet.',
-        requirements: [
-            'Design brief: recipient, intent, and LED placement described in 2–3 sentences',
-            'At least 2 measurable criteria (size, LED count, print time, etc.)',
-            'LED data sheet: V_f and I_f recorded for your chosen LED',
-            'F360 LED model: matches caliper measurements — screenshot of completed model',
-            'Reflection: why must the LED model exist before the ornament design begins?'
-        ]
+        type: 'googleDoc',
+        description: 'One short document, 1–2 sentences per section. Scope: what you are making, the parts of your assembly and how they join, and how many grams of filament you expect to use (100 g max). Design intent: what the ornament should feel like or do, and one choice you made on purpose, with the reason. Recipient: a real person or specific group, and how something about them shaped your design. Due Mon Nov 30.',
     },
     {
         id: 483,
@@ -1039,34 +1034,29 @@ const DELIVERABLES = [
         title: 'P2.2 — F360 Model + Bambu Studio Screenshot',
         unit: 'p2',
         week: 14,
-        points: 30,
+        points: 10,
         phase: 'ornament',
         tracks: ['dbl'],
-        description: 'Complete the ornament/gift model in Fusion 360 and prepare for multi-color printing.',
+        description: 'Your finished ornament/gift model, sliced and ready to print. Turn it in before your final print goes in the queue.',
         requirements: [
-            'F360 ornament body: LED pocket(s) incorporated from P2.1 model',
-            'Screenshot: isometric view of completed ornament model',
-            'Bambu Studio: multi-color paint applied — screenshot showing color layers',
-            'Slice verified: < 200 g filament and < 8 hr print time',
-            'Print submitted to queue — file name and date recorded'
+            'F360 screenshot: final model in isometric view, with the LED in its pocket',
+            'Bambu Studio screenshot: slicing preview showing 100 g of filament or less'
         ]
     },
     {
         id: 484,
         shortLabel: 'P2.3',
-        title: 'P2.3 — Completed Ornament + S1 Portfolio',
+        title: 'P2.3 — Finished Ornament',
         unit: 'p2',
-        week: 16,
-        points: 50,
+        week: 15,
+        points: 30,
         phase: 'ornament',
         tracks: ['dbl'],
-        description: 'Finish, photograph, and light your ornament/gift, and submit your complete S1 portfolio.',
+        description: 'Your finished, lit ornament/gift, ready to give or hang. Due Fri Dec 11.',
         requirements: [
-            'Post-processing complete: supports removed, any touch-up done',
-            '2 LEDs installed and tested — circuit works, LED lights up',
-            'Portfolio photo: ornament lit on a clean or festive background',
-            'All P1–P2 reflections written and submitted',
-            'S1 portfolio self-grade review completed'
+            'Photo: finished piece in normal light',
+            'Photo: finished piece with the LED on in a dim room',
+            'Filament used: the actual grams for the finished piece (100 g max unless Mr. B gave permission)'
         ]
     },
     // ── DBL: Project 3 — LED Sign / Wall Art ─────────────────────────────
@@ -4852,6 +4842,11 @@ const DOC_RUBRIC_CRITERIA = {
     480: [                             // P2.0 LED Dimensions + Test Fit Log (DBL) — completeness check
         { key: 'shroud_od',  label: 'LED Shroud OD',      max: 5 },
         { key: 'fitter_id',  label: 'Test Fitter ID / Offset (each iteration)', max: 5 },
+    ],
+    482: [                             // P2.1 Scope Document (DBL) — 4 + 3 + 3 = 10 pts
+        { key: 'scope',         label: 'Scope',         max: 4 },
+        { key: 'design_intent', label: 'Design Intent', max: 3 },
+        { key: 'recipient',     label: 'Recipient',     max: 3 },
     ],
     28: [                              // CAD Quiz Practical (AER) — screenshot check, 5 pts each
         { key: 'iso_view',           label: 'Isometric View',            max: 5 },
