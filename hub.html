@@ -275,14 +275,14 @@ const TRACKS = {
 // ── COUNTDOWN EVENTS  ─────────────────────────────────────
 // UPDATE DATES each year. Times are Eastern (America/Detroit).
 const CD_CONFIG = {
-  confettiHour: 10, confettiMin: 56,  // 10:56 AM Eastern
+  // Each event has its own dismissal time ('HH:MM', 24-hour): full day '14:29', half day '10:56'.
   confettiEndHour: 15,                 // 3:00 PM Eastern
   events: [
-    { id:'thanksgiving', label:'Thanksgiving Break', date:'2026-11-25', colors:['#ff8c00','#cc5500','#ffcc00','#8B4513','#ff6600'] },
-    { id:'christmas',    label:'Christmas Break',    date:'2026-12-22', colors:['#ff0000','#00cc00','#ffffff','#ffd700','#0044cc'] },
-    { id:'spring',       label:'Spring Break',       date:'2027-03-15', colors:['#ff69b4','#66ff66','#ffff00','#00ccff','#ff9900'] },
-    { id:'seniors',      label:"Seniors' Last Day",  date:'2027-05-13', colors:['#ffd700','#003087','#ffffff','#c0c0c0','#ffa500'] },
-    { id:'lastday',      label:'Last Day of School', date:'2027-06-04', colors:['#ff4444','#ffcc00','#44aaff','#ff69b4','#66ff66'] },
+    { id:'thanksgiving', label:'Thanksgiving Break', date:'2026-11-24', time:'14:29', colors:['#ff8c00','#cc5500','#ffcc00','#8B4513','#ff6600'] },
+    { id:'christmas',    label:'Christmas Break',    date:'2026-12-18', time:'14:29', colors:['#ff0000','#00cc00','#ffffff','#ffd700','#0044cc'] },
+    { id:'spring',       label:'Spring Break',       date:'2027-03-25', time:'10:56', colors:['#ff69b4','#66ff66','#ffff00','#00ccff','#ff9900'] },
+    { id:'seniors',      label:"Seniors' Last Day",  date:'2027-05-20', time:'14:29', colors:['#ffd700','#003087','#ffffff','#c0c0c0','#ffa500'] },
+    { id:'lastday',      label:'Last Day of School', date:'2027-06-11', time:'10:56', colors:['#ff4444','#ffcc00','#44aaff','#ff69b4','#66ff66'] },
   ]
 };
 
@@ -876,9 +876,10 @@ function h(s) {
 }
 
 // ── COUNTDOWN LOGIC ───────────────────────────────────────
-function getTargetMs(dateStr) {
+function getTargetMs(dateStr, timeStr) {
   const [y,m,d] = dateStr.split('-').map(Number);
-  const probe = new Date(y, m-1, d, CD_CONFIG.confettiHour, CD_CONFIG.confettiMin, 0);
+  const [hh,mm] = timeStr.split(':').map(Number);
+  const probe = new Date(y, m-1, d, hh, mm, 0);
   const et    = new Date(probe.toLocaleString('en-US', {timeZone:'America/Detroit'}));
   return probe.getTime() + (probe - et);
 }
@@ -891,10 +892,14 @@ function getConfettiEndMs(dateStr) {
 
 const CD_EVENTS = CD_CONFIG.events.map(e => ({
   ...e,
-  targetMs:      getTargetMs(e.date),
+  targetMs:      getTargetMs(e.date, e.time),
   confettiEndMs: getConfettiEndMs(e.date),
 }));
 
+function formatTime(timeStr) {
+  const [hh,mm] = timeStr.split(':').map(Number);
+  return `${hh % 12 || 12}:${String(mm).padStart(2,'0')} ${hh < 12 ? 'AM' : 'PM'}`;
+}
 function pad2(n) { return String(Math.floor(n)).padStart(2,'0'); }
 
 function formatDate(dateStr) {
@@ -925,7 +930,7 @@ function renderCountdown() {
     const sep   = '<div class="cd-sep">:</div>';
     body = `
       <div class="cd-event-name">${h(ev.label)}</div>
-      <div class="cd-event-date">${h(formatDate(ev.date))} &bull; 10:56 AM</div>
+      <div class="cd-event-date">${h(formatDate(ev.date))} &bull; ${h(formatTime(ev.time))}</div>
       <div class="cd-digits">
         <div class="cd-unit"><div class="cd-num">${pad2(days)}</div><div class="cd-lbl">Days</div></div>
         ${sep}
