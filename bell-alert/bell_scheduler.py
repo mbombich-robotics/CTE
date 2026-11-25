@@ -93,18 +93,20 @@ def mac_to_ip(mac: str) -> str | None:
     return candidates[0]
 
 
-def resolve_ips() -> list[str]:
+def resolve_ips(quiet: bool = False) -> list[str]:
     """
     Resolve all configured MAC addresses to their current IPs via the ARP table.
-    Logs and skips any that aren't found.
+    Logs and skips any that aren't found. quiet=True skips the log lines
+    (used by the once-a-minute health check).
     """
     ips = []
     for mac in SHELLY_MACS:
         ip = mac_to_ip(mac)
         if ip:
-            log.info("Resolved  %-20s → %s", mac, ip)
+            if not quiet:
+                log.info("Resolved  %-20s → %s", mac, ip)
             ips.append(ip)
-        else:
+        elif not quiet:
             log.error("MAC %s not in ARP table — plug offline or not yet connected", mac)
     return ips
 
@@ -167,6 +169,93 @@ def build_events(bells: list[tuple[str, str]]) -> list[tuple[datetime, bool]]:
     return events
 
 
+# ── Health check + hotspot recovery ───────────────────────────────────────────
+# The laptop's Wi-Fi card can stop broadcasting while Windows still reports the
+# hotspot as On (seen 2026-11-24: plug and phones could not see the SSID for 2 h).
+# Every minute during school hours we ask the plug for its status. After
+# HEALTH_FAILS_BEFORE_RESET misses in a row we run reset-hotspot.ps1 (Wi-Fi radio
+# off/on + hotspot restart), at most once per RESET_COOLDOWN. When the plug comes
+# back we set it to whatever the schedule says right now, so a light stuck ON
+# from a failed OFF gets turned off.
+HEALTH_EVERY_S           = 60
+HEALTH_FAILS_BEFORE_RESET = 3
+RESET_COOLDOWN           = timedelta(minutes=10)
+HEALTH_HOURS             = ("06:30", "15:30")
+RESET_SCRIPT             = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reset-hotspot.ps1")
+
+_health = {"last_check": None, "fails": 0, "last_reset": None, "was_down": False}
+
+
+def _in_health_hours(now: datetime) -> bool:
+    if now.weekday() >= 5:
+        return False
+    start, end = HEALTH_HOURS
+    return start <= now.strftime("%H:%M") <= end
+
+
+def plug_reachable(ip: str) -> bool:
+    try:
+        return requests.get(f"http://{ip}/rpc/Switch.GetStatus?id=0", timeout=3).ok
+    except Exception:
+        return False
+
+
+def expected_state(now: datetime) -> bool:
+    """True if the schedule says the light should be ON at this moment."""
+    bells = get_today_bells() or []
+    for on_str, off_str in bells:
+        on_dt  = datetime.combine(now.date(), datetime.strptime(on_str,  "%H:%M").time())
+        off_dt = datetime.combine(now.date(), datetime.strptime(off_str, "%H:%M").time())
+        if on_dt <= now < off_dt:
+            return True
+    return False
+
+
+def reset_hotspot(reason: str = "") -> None:
+    log.warning("Running reset-hotspot.ps1%s", f" — {reason}" if reason else "")
+    _health["last_reset"] = datetime.now()
+    try:
+        r = subprocess.run(
+            ["powershell.exe", "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass",
+             "-File", RESET_SCRIPT],
+            capture_output=True, text=True, timeout=120, creationflags=_NO_WINDOW)
+        for line in (r.stdout or "").strip().splitlines():
+            log.info("  %s", line.strip())
+        if r.returncode != 0:
+            log.warning("reset-hotspot.ps1 exited %d %s", r.returncode, (r.stderr or "").strip()[:300])
+    except Exception as exc:
+        log.error("reset-hotspot.ps1 failed to run: %s", exc)
+
+
+def health_tick() -> None:
+    """Called from wait loops. Cheap when it's not time to check."""
+    now = datetime.now()
+    if _health["last_check"] and (now - _health["last_check"]).total_seconds() < HEALTH_EVERY_S:
+        return
+    _health["last_check"] = now
+    if not _in_health_hours(now) or get_today_bells() is None:
+        _health["fails"] = 0
+        return
+
+    ips = [ip for ip in resolve_ips(quiet=True) if plug_reachable(ip)]
+    if ips:
+        if _health["was_down"]:
+            want = expected_state(now)
+            log.info("Plug back online at %s — setting it %s to match the schedule",
+                     ips, "ON" if want else "OFF")
+            set_plugs(want, ips)
+        _health["fails"] = 0
+        _health["was_down"] = False
+        return
+
+    _health["fails"] += 1
+    _health["was_down"] = True
+    log.warning("Health check: plug not answering (%d in a row)", _health["fails"])
+    cooled = _health["last_reset"] is None or now - _health["last_reset"] >= RESET_COOLDOWN
+    if _health["fails"] >= HEALTH_FAILS_BEFORE_RESET and cooled:
+        reset_hotspot(f"plug unreachable for {_health['fails']} checks")
+
+
 # ── Waiting ───────────────────────────────────────────────────────────────────
 def wait_until(target: datetime, chunk_s: float = 30.0) -> None:
     """Sleep until the wall clock reaches `target`, in short chunks.
@@ -181,6 +270,10 @@ def wait_until(target: datetime, chunk_s: float = 30.0) -> None:
         if remaining <= 0:
             return
         time.sleep(min(remaining, chunk_s))
+        try:
+            health_tick()
+        except Exception as exc:   # a health-check bug must never stop the bells
+            log.error("Health check error: %s", exc)
 
 
 def _day_label(d: date) -> str:
@@ -201,7 +294,7 @@ def run():
     while not shelly_ips:
         attempt += 1
         log.warning("No plugs resolved yet — waiting 30 s (attempt %d)…", attempt)
-        time.sleep(30)
+        wait_until(datetime.now() + timedelta(seconds=30))
         shelly_ips = resolve_ips()
 
     while True:

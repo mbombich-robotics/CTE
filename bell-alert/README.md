@@ -78,6 +78,9 @@ python override.py test
 # Force on / off
 python override.py on
 python override.py off
+
+# Hotspot stuck (Windows says On, but no device can see it): Wi-Fi radio off/on + hotspot restart
+python override.py reset
 ```
 
 ---
@@ -136,16 +139,9 @@ Restart the scheduler after editing: Task Scheduler → End → Run.
 
 | Symptom | Check |
 |---------|-------|
-| `No Shelly IPs found` on startup | `.env` file missing or `SHELLY_IP_1` is still the placeholder |
-| `Connection refused` or timeout | Wrong IP, or Shelly is offline — run `python override.py status` |
+| `No Shelly MACs found` on startup | `.env` file missing or `SHELLY_MAC_1` not set |
+| `not in ARP table` / timeouts in the log | Plug is off the hotspot — run `python override.py status` |
+| Hotspot "On" but no device (not even a phone) sees the SSID | Wi-Fi card stuck — `python override.py reset`. The scheduler also does this by itself (below) |
 | Plug responds to `override.py` but not at bell time | Check the log; verify bell times in `config.py` are 24-hour format |
-| Gen 2 plug returns HTTP error | Gen 2 uses a different API — see note below |
 
-**Gen 2 note:** Shelly Plus models use an RPC API. If `python override.py status` fails with a non-200 response, the plug is Gen 2. Change the URL in `bell_scheduler.py` and `override.py` from:
-```
-http://{ip}/relay/0?turn={state}
-```
-to:
-```
-http://{ip}/rpc/Switch.Set?id=0&on={"true" if on else "false"}
-```
+**Auto-recovery:** on school days between 6:30 and 3:30, the scheduler checks the plug once a minute. After 3 missed checks in a row it runs `reset-hotspot.ps1` (Wi-Fi radio off/on, then hotspot restart), at most once every 10 minutes. The script only runs on the school LAN with an ethernet uplink, so it never touches Wi-Fi at home. When the plug comes back, the scheduler sets it ON or OFF to match the schedule, so a light stuck ON gets turned off. Watch for `Health check` and `[reset]` lines in `logs/bell_alert.log` and `logs/hotspot-start.log`.
