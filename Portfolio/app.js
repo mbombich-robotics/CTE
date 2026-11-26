@@ -14,7 +14,7 @@ const URL_TRACK = _rawTrack;
 
 const CONFIG = {
     // App version - update when deploying changes
-    VERSION: 'v2.14.90',
+    VERSION: 'v2.14.91',
 
     // Backend URL - swapped at login via setBackendForCourse(); default is HS AE&R
     SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyDV5If2s_zHp2louBI8pE2J3rnC46q7OXEUWkGKCVgLP05iWjNN0x-4UKGzuBBGRLw/exec',
@@ -1005,10 +1005,10 @@ const DELIVERABLES = [
         type: 'googleDoc',
         aiGated: true,
         feedbackButtonLabel: 'Verify Work',
-        description: 'Record your LED measurements and every test print. Write the LED shroud outside diameter (OD) once. Then, for each iteration, write your test fitter inside diameter (ID), or how much bigger it is than the shroud OD.',
+        description: 'Record your LED measurements and every test print. Write the LED shroud outside diameter (OD) once. Then, for each iteration, record the hole size: the test fitter inside diameter (ID), the offset from the shroud OD, or the measured diameter of your print. Typed or visible in a screenshot both count.',
         verifySteps: [
             'Measure the LED shroud OD with calipers and write it in mm.',
-            'For each test print, log the test fitter ID (or the offset from the shroud OD) and how it fit.',
+            'For each test print, log the hole size (ID, offset, or measured diameter; typed or in a screenshot) and how it fit.',
         ],
         verifyCheckText: 'AI checks for the shroud OD (once) and a test fitter ID or offset for every iteration.',
         checklistItems: [

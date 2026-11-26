@@ -19,7 +19,7 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const BACKEND_VERSION = 'v2.14.92';
+const BACKEND_VERSION = 'v2.14.93';
 
 // Shared secret — must match CONFIG.TEACHER_TOKEN in teacher-portal.js
 const TEACHER_TOKEN = 'rp-portal-teach-2026';
@@ -3040,7 +3040,8 @@ function handleGetDocAIFeedback(data) {
     // CAD Quiz practicals are graded by looking at the screenshots themselves.
     var grades = isPractical
       ? (FUSION_TUTORIAL_SPECS[deliverableId] ? gradeFusionTutorialScreenshots(body, deliverableId) : gradeCadPracticalScreenshots(body, deliverableId))
-      : gradeDocWithRubric(imageNote + text, deliverableId);
+      : gradeDocWithRubric(imageNote + text, deliverableId,
+          DOC_RUBRIC_SEES_IMAGES.indexOf(deliverableId) !== -1 ? collectDocImages_(body).content : null);
 
     if (isTeacher) {
       logActivity('DOC_AI_BATCH', email, 'D' + deliverableId + ' | teacher batch');
@@ -3146,7 +3147,10 @@ function countAIFeedbackToday(email) {
  * Grades a Google Doc deliverable against its rubric using Claude Haiku.
  * Add a new if/else block here for each new googleDoc deliverable.
  */
-function gradeDocWithRubric(docText, deliverableId) {
+// Doc rubrics that also look at the doc's screenshots (values may only appear in a photo or CAD sketch).
+var DOC_RUBRIC_SEES_IMAGES = [480];
+
+function gradeDocWithRubric(docText, deliverableId, images) {
   var rubric, criteriaKeys, overridePrefix;
 
   if (deliverableId === 11) {
@@ -3214,16 +3218,20 @@ reflection (max 4): Depth and specificity of the Section 4 reflection. 4=specifi
     overridePrefix =
       'You are checking a high school student\'s LED test-fit log. Students measure the LED shroud outside diameter (OD) with calipers, ' +
       'then 3D print small test fitters to find a tight fit. The shroud OD is a FIXED measurement of the LED, so it only needs to be written ONCE ' +
-      '(do not expect it on every iteration). For EVERY iteration (test print) they record the test fitter inside diameter (ID) OR the offset from the shroud OD (for example "+0.2 mm"). ' +
-      'This is a completeness check, not a quality rubric. Values are normally in mm; accept inches if labeled. ' +
+      '(do not expect it on every iteration). For EVERY iteration (test print) they record a number for the hole size. ' +
+      'ACCEPT ANY of these as the iteration\'s value: the test fitter inside diameter (ID), the offset from the shroud OD (for example "+0.2 mm"), ' +
+      'the actual measured diameter of the printed piece, or the hole diameter from their CAD sketch. Do not reject a value because it is a diameter instead of an offset, or the other way round. ' +
+      'Values may be typed in the document OR visible in the attached screenshots/photos (for example a dimension in a Fusion 360 sketch, or calipers in a photo). ' +
+      'A number you can read in an image counts exactly the same as a typed number. ' +
+      'This is a completeness check, not a quality rubric: when in doubt, give the student credit. Values are normally in mm; accept inches if labeled. ' +
       'Placeholder text (underscores, "___", "mm" with no number, blank cells) does NOT count as a value.\n\n' +
       'An iteration is a test-print row or entry (it has a test fitter ID/offset, or fit notes for a print). A line or cell that only gives ' +
       'the shroud OD is NOT an iteration. Ignore fully blank template rows.\n\n' +
       'CRITERIA (each max 5):\n\n' +
       'shroud_od (max 5): 5=a real numeric LED shroud OD appears anywhere in the document (once is enough; never take points off ' +
       'because iterations do not repeat it); 0=no shroud OD value anywhere.\n\n' +
-      'fitter_id (max 5): 5=every iteration has a real numeric test fitter ID or offset AND at least 2 iterations are logged; ' +
-      '3=fitter ID/offset recorded but only 1 iteration logged; 2=at least one iteration is missing its fitter ID/offset; 0=no fitter values.\n\n' +
+      'fitter_id (max 5): 5=every iteration has a number for the hole size (ID, offset, measured diameter, or CAD diameter; typed or in a screenshot) AND at least 2 iterations are logged; ' +
+      '3=a hole-size number recorded but only 1 iteration logged; 2=at least one iteration has no hole-size number anywhere (text or image); 0=no hole-size numbers at all.\n\n' +
       'FEEDBACK STYLE: Speak to the student as "you". One or two short sentences. Full marks → confirm what you found. ' +
       'Otherwise → name the iteration(s) that are missing a number, or say to log another test print.\n\n' +
       'Return ONLY valid JSON, no markdown or explanation:\n' +
@@ -3353,7 +3361,9 @@ reflection (max 4): Depth and specificity of the Section 4 reflection. 4=specifi
             type: 'text',
             text: '\n' + docText                   // uncached — unique per student
           }
-        ]
+        ].concat(images && images.length
+          ? [{ type: 'text', text: '\nSCREENSHOTS/PHOTOS FROM THE DOCUMENT (in order):' }].concat(images)
+          : [])
       }]
     }),
     muteHttpExceptions: true
